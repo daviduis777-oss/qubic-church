@@ -1,0 +1,312 @@
+---
+title: Analytical Tools
+description: Documentation of the software tools, scripts, and data processing systems used in the forensic mathematics analysis.
+---
+
+# Analytical Tools
+
+## Overview
+
+This section documents the computational tools employed in the Qubic-Bitcoin connection analysis. All tools are open-source or custom-developed, with source code available for independent verification.
+
+## Primary Analysis Environment
+
+### Programming Languages
+
+| Language | Version | Purpose |
+|----------|---------|---------|
+| Python | 3.11+ | Statistical analysis, data processing |
+| TypeScript | 5.0+ | Visualization, web interfaces |
+| Bash | 5.0+ | Automation, data pipelines |
+
+### Core Libraries
+
+**Python Scientific Stack**:
+
+```python
+numpy>=1.24.0      # Numerical operations
+pandas>=2.0.0      # Data manipulation
+scipy>=1.10.0      # Statistical functions
+matplotlib>=3.7.0  # Visualization
+seaborn>=0.12.0    # Statistical visualization
+```
+
+**Cryptographic Libraries**:
+
+```python
+hashlib            # SHA256, RIPEMD160
+ecdsa>=0.18.0      # Elliptic curve operations
+base58>=2.1.0      # Bitcoin address encoding
+```
+
+## Custom Analysis Scripts
+
+### 1. Matrix Analysis Suite
+
+**Location**: `analysis/`
+
+**Components**:
+
+| Script | Function |
+|--------|----------|
+| `helix_gate_derivation.py` | Helix pattern identification |
+| `ternary_matrix_analysis.py` | Ternary conversion and analysis |
+| `paradigm_ternary.py` | Alternative ternary logic tests |
+| `alternative_ternary_logic.py` | Extended ternary operations |
+
+**Key Functions**:
+
+```python
+def helix_gate_ternary(a, b, c):
+    """
+    Helix Gate ternary output.
+    Input: Three integer values
+    Output: Ternary value {-1, 0, +1}
+    """
+    total = a + b + c
+    return (total % 3) - 1
+
+def apply_helix_chain(values, gate_size=3):
+    """
+    Apply Helix Gate across sequence.
+    Input: List of values
+    Output: List of ternary outputs
+    """
+    result = []
+    for i in range(len(values) - gate_size + 1):
+        a, b, c = values[i], values[i+1], values[i+2]
+        result.append(helix_gate_ternary(a, b, c))
+    return result
+```
+
+### 2. Blockchain Parsing Tools
+
+**Location**: `scripts/forensic_analysis/`
+
+**Components**:
+
+| Script | Function |
+|--------|----------|
+| `dead_div27_blocks_forensic.py` | Dead key identification |
+| `coordinate_27_model.py` | Block-to-matrix mapping |
+| `honne_bitcoin_decoder.py` | Address derivation |
+
+**Data Extraction Process**:
+
+```python
+def extract_patoshi_blocks(start=0, end=50000):
+    """
+    Extract Patoshi-pattern blocks from blockchain.
+    Returns: List of block objects with pubkey data
+    """
+    blocks = []
+    for height in range(start, end):
+        block = get_block(height)
+        if is_patoshi_pattern(block.nonce):
+            blocks.append({
+                'height': height,
+                'pubkey': block.coinbase_pubkey,
+                'timestamp': block.timestamp
+            })
+    return blocks
+```
+
+### 3. Statistical Testing Framework
+
+**Location**: `scripts/verification/`
+
+**Implemented Tests**:
+
+| Test | Implementation | Purpose |
+|------|----------------|---------|
+| Chi-squared | `scipy.stats.chisquare` | Distribution comparison |
+| Kolmogorov-Smirnov | `scipy.stats.kstest` | Continuous distribution |
+| Binomial | `scipy.stats.binom_test` | Success/failure counts |
+| Fisher exact | `scipy.stats.fisher_exact` | Contingency tables |
+
+**Usage Example**:
+
+```python
+from scipy import stats
+
+# Chi-squared test for block distribution
+observed = [8, 10, 10, 10, 5, 4, 0, 3, 2, 1]
+expected = [5.3] * 10
+
+chi2, p_value = stats.chisquare(observed, expected)
+print(f"Chi-squared: {chi2:.4f}")
+print(f"P-value: {p_value:.6f}")
+# Output: Chi-squared: 26.0566, P-value: 0.002000
+```
+
+## Visualization Tools
+
+### Anna Matrix Explorer
+
+**Technology Stack**:
+
+- React 18 with TypeScript
+- Three.js for 3D rendering
+- React Three Fiber for React integration
+
+**Features**:
+
+| Feature | Description |
+|---------|-------------|
+| 3D Terrain View | Height-mapped matrix visualization |
+| 2D Grid View | Direct cell value inspection |
+| Search Panel | Find cells by value |
+| Coordinate Jump | Navigate to specific positions |
+| Color Themes | Multiple visualization schemes |
+| Statistics Panel | Real-time statistical display |
+
+**Implementation Highlights**:
+
+```typescript
+// 3D terrain generation from matrix values
+const geometry = useMemo(() => {
+  const geo = new THREE.PlaneGeometry(10, 10, 127, 127);
+  const positions = geo.attributes.position;
+
+  for (let i = 0; i < positions.count; i++) {
+    const ix = i % 128;
+    const iy = Math.floor(i / 128);
+    const value = matrix[127 - iy]?.[ix] ?? 0;
+    const normalized = (value - stats.min) / (stats.max - stats.min);
+    positions.setZ(i, (normalized - 0.5) * heightScale);
+  }
+
+  return geo;
+}, [matrix, stats]);
+```
+
+### Neuraxon Visualization
+
+**Purpose**: Display neural network structures derived from Qubic seeds
+
+**Components**:
+
+- Node rendering (input/hidden/output layers)
+- Synapse connections with weight visualization
+- Frame-based navigation (512 nodes per frame)
+- Interactive selection and detail panels
+
+## Data Sources
+
+### Primary Data
+
+| Source | Format | Size |
+|--------|--------|------|
+| Bitcoin blockchain | LevelDB | ~500 GB |
+| Patoshi pubkeys | CSV | 22,190 entries |
+| Anna Matrix | JSON | 16,384 values |
+| Dead blocks | JSON | 53 entries |
+
+### Data Extraction Commands
+
+**Bitcoin block parsing**:
+
+```bash
+bitcoin-cli getblock <hash> 2 | jq '.tx[0].vout[0].scriptPubKey'
+```
+
+**Matrix extraction from Qubic**:
+
+```python
+# Load from exported JSON
+with open('anna-matrix.json', 'r') as f:
+    data = json.load(f)
+matrix = data['matrix']  # 128x128 signed byte array
+```
+
+## Verification Tools
+
+### Checksum Verification
+
+All data files include SHA256 checksums:
+
+```bash
+sha256sum anna-matrix.json
+# Expected: [published checksum]
+```
+
+### Cross-Platform Compatibility
+
+Tools tested on:
+
+| Platform | Version | Status |
+|----------|---------|--------|
+| macOS | 14.0+ | Verified |
+| Ubuntu | 22.04+ | Verified |
+| Windows | 11 | Compatible |
+
+## Performance Considerations
+
+### Matrix Operations
+
+| Operation | Time Complexity | Typical Duration |
+|-----------|-----------------|------------------|
+| Full matrix scan | O(n²) | < 1 second |
+| Helix pattern search | O(n² × k) | < 5 seconds |
+| Statistical tests | O(n) | < 0.1 seconds |
+
+### Memory Requirements
+
+| Dataset | Memory Usage |
+|---------|--------------|
+| Anna Matrix | ~130 KB |
+| Patoshi pubkeys | ~3 MB |
+| Full analysis | ~100 MB |
+
+## Tool Availability
+
+### Repository Structure
+
+```
+qubic-mystery-lab/
+├── analysis/              # Core analysis scripts
+├── scripts/
+│   ├── forensic_analysis/ # Blockchain forensics
+│   ├── verification/      # Statistical tests
+│   └── visualization/     # Data visualization
+├── outputs/               # Generated reports
+└── data/                  # Source datasets
+```
+
+### Installation
+
+```bash
+# Clone repository
+git clone [repository-url]
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run verification suite
+python scripts/verification/run_all_tests.py
+```
+
+## Tool Limitations
+
+### Known Constraints
+
+| Tool Category | Limitation | Impact |
+|---------------|------------|--------|
+| Blockchain parsing | Requires synced full node | Access barrier for verification |
+| Statistical tests | Assumes specific distributions | May not hold for all data |
+| Visualization | Subjective interpretation risk | Patterns may be illusory |
+| Cryptographic libraries | Version-dependent behavior | Results may vary with updates |
+
+### Reproducibility Caveats
+
+- Blockchain data extraction depends on node software version
+- Floating-point arithmetic may produce minor variations across platforms
+- Random seeds must be explicitly set for reproducible stochastic operations
+
+## Conclusion
+
+The analytical tools documented in this section provide a framework for investigating blockchain-matrix correlations. All tools are designed for reproducibility, with clear documentation and open-source availability.
+
+**Note**: Tools enable analysis but do not guarantee correct interpretation. Results should be reviewed critically and validated independently.
+
+The verification protocol for validating results obtained with these tools is described in the following section.

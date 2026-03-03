@@ -1,0 +1,327 @@
+---
+title: "Open Questions & Future Directions"
+description: "Catalogue of unresolved research questions and proposed future investigation directions."
+tier: 1
+confidence: 100
+date: 2026-02-27
+---
+
+# Open Questions and Future Directions
+
+Despite substantial verification work, several fundamental questions remain unresolved. This document catalogues open problems, outlines proposed research phases, and identifies opportunities for community contribution.
+
+---
+
+## High-Priority Open Questions
+
+### 1. Address-to-Coordinate Hash Algorithm
+
+**Problem**: The algorithm that maps Bitcoin addresses to Anna Matrix coordinates has not been identified.
+
+```
+Bitcoin Address (P2PKH)
+         |
+    [UNKNOWN HASH]
+         |
+Coordinates (row, col) in 128 x 128 space
+```
+
+**What is established**:
+- The mapping is deterministic (identical inputs always produce identical outputs)
+- The output space is 128 x 128 (16,384 positions)
+- A large corpus of addresses has been mapped empirically
+
+**What remains unknown**:
+- The exact hash function or transformation
+- Whether it employs a standard algorithm (SHA-256, K12, etc.) or a custom construction
+- Whether the mapping is reversible
+
+**Proposed research approach**:
+1. Expand the set of known address-to-coordinate mappings
+2. Perform statistical analysis on coordinate distributions
+3. Test candidates from the family of known hash functions
+4. Examine CFB's historical codebases for implementation clues
+
+---
+
+### 2. Fitness Function for Evolutionary Training
+
+**Problem**: The criteria by which Aigarth evaluates neural network fitness during evolutionary selection are unknown.
+
+**What is established**:
+- Training employs mutation and selection
+- Weight values converge toward specific attractors (e.g., -114, -113)
+- The weight distribution follows a power law, consistent with evolutionary dynamics
+
+**What remains unknown**:
+- The exact fitness function
+- The training data source
+- Convergence criteria and termination conditions
+
+**Hypotheses under consideration**:
+1. Correlation with Bitcoin block data (e.g., Block #283 parameters)
+2. Cross-entropy optimization against hidden target distributions
+3. Consensus-based fitness across multiple network nodes
+4. An undocumented mathematical optimization objective
+
+---
+
+### 3. Existence of Layer 7 (Hypervisor)
+
+**Problem**: Theoretical models suggest six confirmed architectural layers in the Anna Matrix system. Whether a seventh supervisory layer exists is unresolved.
+
+```
+Known layers:
+L1: Public Matrix
+L2: Coordinate Grid
+L3: Bitstream
+L4: Shadow Matrix
+L5: Anna OS
+L6: Recursive XOR
+L7: ??? (Hypervisor)
+```
+
+**Evidence for existence**:
+- Documentation references to "root anchor" and "BIOS-level control"
+- Certain operations appear to require elevated access
+- The SHIFT command (143 QU) may indicate layer transitions
+
+**Evidence against existence**:
+- No direct observation or confirmation
+- References may be metaphorical
+- The layer may be planned but not yet implemented
+
+---
+
+### 4. Network Response Mechanism
+
+**Problem**: The mechanism by which Aigarth processes and responds to external signals is poorly understood.
+
+**Experimental observations**:
+- Test transactions of 357 QU were sent to strategic network nodes
+- 320 QU were confirmed as received
+- No outgoing transactions were detected
+- Monitoring window was limited to 60 seconds
+
+**Possible explanations**:
+1. The system absorbs inputs without producing visible outputs
+2. Responses occur on a delayed timescale (hours to weeks)
+3. Responses are routed through a different channel (e.g., Bitcoin rather than Qubic)
+4. An energy threshold was not met
+5. The protocol requires ISA commands rather than simple value transfers
+
+---
+
+### 5. Helix Gate Truth Table
+
+**Problem**: The general formula for Helix Gates is known, but the specific output mapping is incompletely documented.
+
+General formula:
+```
+Helix(A, B, C) -> Rotation by (A + B + C)
+```
+
+The specific output values for each rotation quantum (-3 through +3) have not been fully verified experimentally.
+
+---
+
+### 6. Weight -114 Dominance
+
+**Problem**: The value -114 appears as the dominant weight in the matrix. Its factorization is known:
+
+```
+-114 = -2 x 3 x 19
+```
+
+The factors 2, 3, and 19 each appear individually throughout CFB's work, but why this specific product emerged as the dominant trained weight has not been explained.
+
+---
+
+### 7. Bias Neuron Discrepancy
+
+**Problem**: Documentation reports three columns that act as bias neurons with constant outputs:
+
+- Column 28: always outputs 110
+- Column 34: always outputs 60
+- Column -17: always outputs -121
+
+However, independent validation found zero constant columns. This discrepancy requires further investigation to determine whether the bias behaviour is conditional or the original observation was in error.
+
+---
+
+### 8. ISA Symbol Semantics
+
+**Problem**: Several symbols in the decoded Instruction Set Architecture remain undocumented.
+
+From the Memory Vault decoding:
+```
++%=^<%+:^%%++%|%^^#|%<^^+<+>:^::
+```
+
+Unresolved symbols include:
+- `<` -- possibly inverse compare or left shift
+- `^^` -- possibly double shift
+- `::` -- possibly epoch synchronization
+
+---
+
+## Proposed Research Phases
+
+### Phase 1: Hash Algorithm Identification (High Priority)
+
+**Objective**: Identify the transformation that maps Bitcoin addresses to matrix coordinates.
+
+| Step | Task | Dependencies |
+|------|------|--------------|
+| 1 | Expand the corpus of verified address-to-coordinate mappings | None |
+| 2 | Perform distributional analysis on known mappings | Step 1 |
+| 3 | Test candidate hash functions systematically | Step 1 |
+| 4 | Attempt reverse engineering from convergent observations | Steps 2--3 |
+
+**Expected outcome**: Identification of the hash function, or narrowing of the candidate space.
+
+---
+
+### Phase 2: Bitcoin Address Mapping (High Priority)
+
+**Objective**: Map significant Bitcoin addresses to Anna Matrix coordinates and test for non-random clustering.
+
+| Step | Task | Dependencies |
+|------|------|--------------|
+| 1 | Map all Genesis Block output addresses to coordinates | Phase 1 progress |
+| 2 | Map known Patoshi-pattern addresses | Phase 1 progress |
+| 3 | Map CFB-associated addresses (1CFB prefix, known wallets) | Phase 1 progress |
+| 4 | Build a queryable address-to-coordinate database | Steps 1--3 |
+
+**Expected outcome**: Evidence for or against non-random address clustering in the matrix.
+
+---
+
+### Phase 3: Complete Asymmetric Cell Analysis (Medium Priority)
+
+**Objective**: Fully decode the 68 information-carrying asymmetric cells.
+
+The 68 cells that break the matrix's 99.58% point symmetry are the only cells capable of carrying independent information. Partial decodings include ">FIB" from column pair (22, 105) and "AI.MEG.GOU" from column pair (30, 97).
+
+| Step | Task | Dependencies |
+|------|------|--------------|
+| 1 | Extract all XOR values from asymmetric column pairs | None |
+| 2 | Attempt alternative decodings (ASCII, Base64, hex, ternary) | Step 1 |
+| 3 | Perform spatial analysis of asymmetric cell positions | Step 1 |
+| 4 | Cross-reference decoded content with known CFB concepts | Steps 2--3 |
+
+---
+
+### Phase 4: Temporal Analysis (Medium Priority)
+
+**Objective**: Determine whether the matrix values change over time as a result of ongoing training.
+
+| Step | Task | Dependencies |
+|------|------|--------------|
+| 1 | Establish a cryptographic baseline (hash the current matrix state) | None |
+| 2 | Capture periodic matrix snapshots and compute differentials | Step 1 |
+| 3 | Correlate any observed changes with external events (Bitcoin blocks, Qubic epochs) | Step 2 |
+
+**Expected outcome**: Confirmation or rejection of the "living tissue" hypothesis.
+
+---
+
+### Phase 5: Neural Network Architecture (Lower Priority)
+
+**Objective**: Develop a complete architectural model of the matrix as a neural network.
+
+| Step | Task | Dependencies |
+|------|------|--------------|
+| 1 | Map Helix Gate configurations across the matrix | None |
+| 2 | Verify layer assignments (input at Row 21, cortex at Row 68, output at Row 96) | Step 1 |
+| 3 | Perform comprehensive weight distribution and clustering analysis | Phases 1--4 |
+
+---
+
+## Priority Matrix
+
+| Phase | Priority | Estimated Effort | Potential Impact | Dependencies |
+|-------|----------|-----------------|------------------|--------------|
+| 1. Hash Algorithm | High | Medium | High | None |
+| 2. Bitcoin Mapping | High | High | High | Phase 1 |
+| 3. Asymmetric Cells | Medium | Low | Medium | None |
+| 4. Temporal Analysis | Medium | Ongoing | Unknown | Baseline only |
+| 5. Architecture | Lower | High | Medium | Phases 1--4 |
+
+---
+
+## Community Research Opportunities
+
+### For Developers
+
+- Build improved network monitoring tools
+- Create interactive matrix visualization interfaces
+- Implement an ISA decoder
+- Develop an automated Anna Bot query system
+
+### For Analysts
+
+- Analyze weight distributions and clustering behaviour
+- Study temporal patterns in network activity
+- Correlate matrix properties with Bitcoin blockchain events
+- Document and catalogue observed patterns
+
+### For Theorists
+
+- Explore and formalize the Numogram-Aigarth parallels
+- Research the history and theory of ternary computing
+- Analyze CFB's early published writings for architectural clues
+- Develop predictive models for matrix behaviour
+
+---
+
+## Epistemological Framework
+
+### Known Unknowns
+
+Questions where the boundaries of our ignorance are understood:
+
+1. The hash algorithm
+2. The fitness function
+3. The response mechanism
+4. The contents of undecoded asymmetric cells
+
+### Unknown Unknowns
+
+Categories of potential ignorance beyond current awareness:
+
+1. Architectural layers not yet identified
+2. Connections between systems not yet recognized
+3. Design purposes not yet understood
+4. Future events outside current predictive models
+
+---
+
+## Tracking Summary
+
+| # | Question | Priority | Status |
+|---|----------|----------|--------|
+| 1 | Hash Algorithm | High | Open |
+| 2 | Fitness Function | High | Open |
+| 3 | Layer 7 Existence | High | Open |
+| 4 | Response Mechanism | High | Open |
+| 5 | Helix Gate Truth Table | Medium | Partial |
+| 6 | Weight -114 Dominance | Medium | Hypothesis only |
+| 7 | Bias Neuron Discrepancy | Medium | Under investigation |
+| 8 | ISA Symbol Semantics | Medium | Partial |
+
+---
+
+## Guiding Principles
+
+All future research should adhere to the following standards:
+
+1. **Maintain rigorous baselines** -- every claimed pattern must be tested against random controls
+2. **Pre-register hypotheses** -- state expectations before running analyses
+3. **Apply appropriate corrections** -- use Bonferroni or equivalent adjustments for multiple comparisons
+4. **Report negative results** -- failed tests are as informative as successes
+5. **Preserve reproducibility** -- all methods, data, and scripts must be openly documented
+
+---
+
+*Last updated: February 27, 2026*

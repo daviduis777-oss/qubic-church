@@ -1,0 +1,19 @@
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "root": false,
+  "extends": ["@opendocs/biome-config"],
+  "files": {
+    "includes": [
+      "**",
+      "!**/node_modules",
+      "!**/.next",
+      "!**/out",
+      "!**/dist",
+      "!**/build",
+      "!**/coverage",
+      "!**/*.config.js",
+      "!**/*.config.ts",
+      "!**/contentlayer.config.ts"
+    ]
+  }
+}

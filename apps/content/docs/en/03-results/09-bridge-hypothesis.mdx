@@ -1,0 +1,609 @@
+---
+title: "Bridge Hypothesis"
+description: "The central hypothesis that mathematical relationships connect Bitcoin's blockchain structure to the Qubic protocol, with evidence assessment and technical specification."
+tier: 2
+confidence: 65
+date: 2026-02-27
+---
+
+# Bridge Hypothesis
+
+<Callout type="warning" title="Assessment Status">
+This document synthesizes findings from multiple research phases (January--February 2026). Independent validation found that **most individual claims do not survive Bonferroni correction** for multiple testing. The hypothesis remains partially supported: the Anna Matrix is a proven engineered artifact, and certain mathematical relationships are reproducible, but the interpretive framework connecting Bitcoin to Qubic is **largely unsubstantiated** after honest statistical correction.
+
+**March 3, 2026 prediction**: The prediction that a "time-lock activation" would occur on March 3, 2026 was made during this research. That date is imminent. Readers should evaluate outcomes independently once it passes.
+</Callout>
+
+---
+
+## Executive Summary
+
+The Bridge Hypothesis proposes that mathematical relationships embedded in Bitcoin's early blockchain structure and the Qubic protocol's Anna Matrix constitute evidence of a designed connection between the two systems. Specifically, it claims that CFB (Come-from-Beyond, Qubic's creator) embedded cryptographic signatures in early Bitcoin blocks that correspond to architectural constants in the Anna Matrix. After independent validation, only one finding (a combined address pattern at p = 2.05 x 10^-8) survives rigorous statistical correction. The individual mathematical observations (timestamp modular arithmetic, block 576 coinbase content, matrix cell values) are reproducible, but the framework claiming they form a "bridge" is largely unsupported after correcting for post-hoc parameter selection and multiple testing.
+
+---
+
+## Key Findings
+
+| Finding | Evidence | Tier | Confidence | Post-Correction Status |
+|---------|----------|------|------------|------------------------|
+| Anna Matrix 99.58% point symmetry | Matrix data, Monte Carlo controls | 1 | 99%+ | Confirmed |
+| Block 576 Extra Byte = 0x1b (27) | Blockchain-verifiable coinbase data | 1 | High | Confirmed (unique in sample) |
+| Pre-Genesis timestamp mod 121 = 43 | Calculator-verifiable arithmetic | 1 | Low | Not significant (Bonferroni p = 1.0) |
+| 27-divisible blocks cell sum = 177 (0xB1) | Matrix cell extraction, 4 blocks | 1 | Low | Marginal (Bonferroni p = 0.021) |
+| 15 "1CFB" prefix addresses in 983,040 | Address generation statistics | 2 | None | Not significant (Bonferroni p = 1.0) |
+| Combined address pattern | Monte Carlo validated | 1 | High | Significant (p = 2.05 x 10^-8) |
+| 576 mod 27 = 0 | Arithmetic check | -- | 0% | False (576 mod 27 = 9) |
+| Combined probability &lt; 10^-12 | Independence assumption | -- | 0% | Invalid (conditions not independent) |
+
+---
+
+## The Hypothesis
+
+### Core Claim
+
+The Bridge Hypothesis asserts that mathematical constants appearing in Bitcoin's early blockchain (particularly in genesis-era blocks) correspond to architectural parameters in the Qubic Anna Matrix. If true, this would suggest that the same individual or group designed both systems with intentional cross-references.
+
+### What This Would Require
+
+For the hypothesis to hold, the following must be true:
+
+1. **The Anna Matrix is intentionally designed** -- Confirmed. With 99.58% adherence to the point symmetry rule (matrix[r,c] + matrix[127-r, 127-c] = -1) versus 0.39% expected by chance, this is effectively certain.
+
+2. **Bitcoin early blocks contain deliberate mathematical signatures** -- Partially supported. Block 576 contains a unique Extra Byte (0x1b = 27), but this appears in the extra nonce field, which varies during mining. Whether it was deliberately placed or is a mining artifact is undetermined.
+
+3. **The same designer created both systems** -- Unproven. No cryptographic signature links the two. CFB has publicly denied being Satoshi Nakamoto (Discord Message ID: 1437804692095762433).
+
+4. **Mathematical correlations are statistically significant** -- Mostly not. After Bonferroni correction, most individual claims fail to reach significance.
+
+---
+
+## Evidence Assessment
+
+### Tier 1: Proven Mathematics
+
+These findings are reproducible with a calculator or by querying the blockchain directly.
+
+#### Anna Matrix Point Symmetry
+
+The Anna Matrix is a 128 x 128 grid of signed bytes (-128 to +127). It exhibits 99.58% adherence to the rule:
+
+```
+matrix[r, c] + matrix[127 - r, 127 - c] = -1
+```
+
+- Random expectation: 0.39%
+- Z-Score: 137.06
+- Statistical significance: p < 10^-500 (this specific claim is valid because the test is pre-specified, not post-hoc)
+
+This confirms the matrix is a deliberately engineered artifact. Its purpose appears to be computational (Aigarth neural processing), as documented in the Anna Matrix analysis.
+
+```python
+def verify_point_symmetry(matrix):
+    """Verify the point symmetry rule across all 16,384 cells."""
+    symmetric = 0
+    total = 128 * 128
+    for r in range(128):
+        for c in range(128):
+            if matrix[r][c] + matrix[127 - r][127 - c] == -1:
+                symmetric += 1
+    return (symmetric / total) * 100
+# Result: 99.58%
+```
+
+#### Block 576 Extra Byte
+
+Block 576 (mined January 12, 2009) is the first and only block in the first 50,000 blocks containing a non-zero Extra Byte in its coinbase transaction.
+
+| Property | Value | Verification |
+|----------|-------|--------------|
+| Block height | 576 | Blockchain |
+| Block hash | `000000002436274e351576ee5c9d6a96ce64072d02713d20c32c36bf70f9fbb5` | Blockchain |
+| Extra Byte (hex) | 0x1b | Coinbase script |
+| Extra Byte (decimal) | 27 | Conversion |
+| 576 = 24^2 | True | Arithmetic |
+| 576 mod 27 | **9** (not 0) | Arithmetic |
+
+<Callout type="error" title="Corrected Hash">
+The previously documented hash `000000005f7e0f4f8e39...` was incorrect. The hash above was verified via blockstream.info API on February 6, 2026.
+</Callout>
+
+The byte 0x1b appears in the extra nonce field of the coinbase script. This field varies during mining, so the byte could be a mining artifact rather than a deliberate placement. However, its uniqueness in the sample (1 of 50,000 blocks) is notable.
+
+#### Pre-Genesis Timestamp Modular Arithmetic
+
+The Pre-Genesis block timestamp (1221069728, corresponding to 2008-09-10 20:02:08 UTC) satisfies:
+
+```
+1221069728 mod 121 = 43
+```
+
+Where 121 = 11^2 (a Qubic architectural constant) and 43 is a prime number.
+
+<Callout type="warning" title="Not Significant After Correction">
+The divisor 121 was selected post-hoc because it produces the remainder 43. Testing all divisors from 2 to 200 reveals that 3 divisors (55, 121, 191) produce remainder 43. After Bonferroni correction for 199 tested divisors: **p = 1.0 (not significant)**.
+
+The arithmetic fact is true. The statistical significance is not.
+</Callout>
+
+#### 27-Divisible Block Mapping
+
+Four Patoshi-attributed blocks divisible by 27 were mapped to Anna Matrix coordinates:
+
+| Block | Coordinates | Cell Value |
+|-------|-------------|------------|
+| 3,996 | [20, 28] | 85 |
+| 10,611 | [9, 115] | 60 |
+| 16,065 | [83, 65] | 100 |
+| 36,153 | [59, 57] | -68 |
+| **Sum** | -- | **177 = 0xB1** |
+
+The sum (177) matches byte 4 of the Pre-Genesis hash when masked to a single byte.
+
+<Callout type="warning" title="Marginal After Correction">
+Monte Carlo simulation (10,000 runs) found p = 0.0019 for random blocks divisible by 27 summing to 177. After Bonferroni correction for 11 tested divisors: **p = 0.021 (marginal)**. Additionally, 4 of 11 tested divisors produce notable hex byte sums.
+</Callout>
+
+### Tier 2: Interpretive Correlations
+
+These findings involve pattern recognition applied to confirmed data, where the interpretive framework is subjective.
+
+#### Mathematical Constants
+
+Several numbers recur across both Bitcoin and Qubic contexts:
+
+| Constant | Bitcoin Context | Qubic Context |
+|----------|----------------|---------------|
+| 27 (3^3) | Block 576 Extra Byte | Ternary architecture constant |
+| 137 | -- | Fine structure constant; CFB coordinate sum (45 + 92) |
+| 576 (24^2) | Block height with unique Extra Byte | -- |
+| 676 (26^2) | -- | Computor count (676 validators) |
+| 121 (11^2) | Timestamp divisor (post-hoc) | Computor penalty parameter |
+
+These recurrences may reflect the mathematical preferences of a single designer, or they may reflect the human tendency to find patterns in numbers that have many divisors and relationships.
+
+#### Address Derivation
+
+Three derivation methods (SHA-256, K12, Qubic ternary hash) were used to generate Bitcoin addresses from Qubic seeds:
+
+- **983,040** matrix-generated addresses (systematic derivation from matrix positions)
+- **20,955** extracted addresses (from 6,985 Qubic seed sequences)
+
+The K12 double-hash derivation formula has been verified against the official Qubic CLI. However, no derived address has been matched to a known significant Bitcoin address (e.g., Patoshi addresses, the 1CFB vanity address at block 264) despite 4,943,648 derivation attempts.
+
+#### 1CFB Prefix Addresses
+
+15 addresses with the "1CFB" prefix were found among 983,040 matrix-generated addresses. Under uniform Base58 distribution, approximately 5 would be expected.
+
+After Bonferroni correction for 195,112 possible 4-character prefixes: **p = 1.0 (not significant)**. This is a textbook look-elsewhere effect.
+
+### Tier 3: Speculation
+
+#### CFB = Satoshi Nakamoto
+
+The hypothesis that CFB created Bitcoin is based on circumstantial evidence (mathematical signatures, timing of events, CFB's own statements about early Bitcoin mining). However:
+
+- CFB has publicly denied the connection
+- No cryptographic signature proves the link
+- The "evidence" consists of pattern-matching on numbers that naturally recur in mathematical systems
+
+#### Asset Migration Protocol
+
+The idea that a "programmatic asset migration protocol" would transfer Bitcoin to Qubic has no working implementation. The 4,943,648 address derivation tests found zero matches, and no smart contract or bridge mechanism has been demonstrated.
+
+#### Time-Locked Activation
+
+The claim that Bitcoin addresses would "unlock" on a specific date (March 3, 2026) was based on interpretive decoding. Standard Bitcoin does not support time-locks tied to external protocols without on-chain scripting.
+
+---
+
+## Technical Specification
+
+### Anna Matrix Structure
+
+```
+Dimensions: 128 x 128 = 16,384 cells
+Value Range: [-128, +127] (signed 8-bit integer)
+Symmetry Rule: matrix[r, c] + matrix[127-r, 127-c] = -1
+Symmetry Adherence: 99.58% (68 exceptions)
+File: apps/web/public/data/anna-matrix-min.json
+```
+
+### Exception Cells (Symmetry-Breaking Positions)
+
+The 68 cells that break point symmetry form linear stripes concentrated in specific columns:
+
+| Column | Anomaly Count | Role |
+|--------|--------------|------|
+| 22 | 13 | Primary stripe |
+| 97 | 14 | Secondary stripe |
+| 30 | 4 | Tertiary stripe |
+| 41 | 2 | Minor stripe |
+
+These structured exceptions may serve as alignment markers or functional indicators within the matrix architecture.
+
+### Special Matrix Positions
+
+| Position | Value | Property |
+|----------|-------|----------|
+| (45, 92) | -118 | Coordinate sum = 137 (fine structure constant) |
+| (82, 35) | 117 | Mirror of (45, 92); -118 + 117 = -1 |
+| (22, 22) | 100 | Only position where value = mirror value; 100 XOR 127 = 27 |
+
+### JINN Memory Architecture (Hypothesized)
+
+The Anna Matrix rows have been mapped to a hypothesized neural network architecture:
+
+```
+Row Range     Function              Address Range
+-------------------------------------------------
+0-20          Initialization        0-2,687
+21            Bitcoin Input Layer   2,688-2,815
+22-67         Hidden Layer 1        2,816-8,703
+68            Primary Cortex        8,704-8,831
+69-95         Hidden Layer 2        8,832-12,287
+96            Output Layer          12,288-12,415
+97-127        Buffer/Reserved       12,416-16,383
+```
+
+This architecture mapping is inferred from analysis of cell value distributions and is not confirmed by any official Qubic documentation.
+
+### Block-to-Matrix Mapping Algorithm
+
+```python
+def map_block_to_matrix(block_height, divisor=27):
+    """
+    Map a Bitcoin block height to Anna Matrix coordinates.
+
+    Parameters:
+        block_height: Bitcoin block number
+        divisor: Mapping divisor (default: 27)
+
+    Returns:
+        tuple: (row, column) in the 128x128 matrix
+    """
+    quotient = block_height // divisor
+    row = quotient % 128
+    col = block_height % 128
+    return row, col
+```
+
+### Hash160-to-Coordinates Mapping
+
+```python
+def hash160_to_matrix_coordinates(hash160: bytes) -> tuple:
+    """
+    Map a Bitcoin address Hash160 to Anna Matrix coordinates.
+
+    Note: This mapping is deterministic but whether it
+    produces meaningful results is unproven.
+    """
+    hash160_int = int.from_bytes(hash160, 'big')
+    position = hash160_int % 16384  # 128 x 128
+    row = position // 128
+    col = position % 128
+    return row, col
+```
+
+### Address Derivation Methods
+
+Three methods convert Qubic seeds to Bitcoin addresses:
+
+**Method 1: SHA-256 (Bitcoin-native)**
+```python
+def derive_sha256(qubic_seed: str) -> tuple:
+    private_key = sha256(qubic_seed.encode()).digest()
+    public_key = secp256k1_pubkey(private_key)
+    address = pubkey_to_p2pkh(public_key)
+    return address, private_key
+```
+
+**Method 2: K12 (Keccak-based, Qubic-native)**
+```python
+def derive_k12(qubic_seed: str) -> tuple:
+    private_key = k12(qubic_seed.encode(), output_length=32)
+    public_key = secp256k1_pubkey(private_key)
+    address = pubkey_to_p2pkh(public_key)
+    return address, private_key
+```
+
+**Method 3: Qubic Ternary Hash**
+```python
+def derive_qubic(qubic_seed: str) -> tuple:
+    hash_val = qubic_hash(qubic_seed)
+    private_key = ternary_to_binary(hash_val)
+    public_key = secp256k1_pubkey(private_key)
+    address = pubkey_to_p2pkh(public_key)
+    return address, private_key
+```
+
+All three methods are deterministic and reproducible. The K12 double-hash formula has been verified against the official Qubic CLI. However, none of the 4,943,648 derivation attempts matched any known significant Bitcoin address.
+
+---
+
+## Debunked Claims
+
+Intellectual honesty requires documenting claims that were made and subsequently disproved.
+
+| Claim | Status | Explanation |
+|-------|--------|-------------|
+| 576 mod 27 = 0 | **False** | 576 mod 27 = 9. This arithmetic error was present in early documentation. |
+| Block 576 hash = `000000005f7e...` | **Wrong** | Incorrect hash was documented. Actual hash verified via blockstream.info. |
+| Combined probability &lt; 10^-12 | **Invalid** | Conditions are not independent; all reference the number 576. Multiplying dependent probabilities is mathematically unsound. |
+| P(random) &lt; 10^-500 for bridge | **Fabricated** | Physically implausible for the dataset size. Honest value is approximately p &lt; 0.001. |
+| "HYPOTHESIS VALIDATED with 100% certainty" | **False** | No hypothesis in this research has been validated with certainty. |
+| 1CFB prefix count is significant | **Not significant** | p = 1.0 after Bonferroni correction for 195,112 possible 4-character prefixes. |
+| Timestamp mod 121 = 43 is significant | **Not significant** | p = 1.0 after Bonferroni correction for 199 tested divisors. |
+| Bayesian posterior = 99.6% for design | **Misleading** | Bayesian posterior ranges from 2% to 99.9% depending on prior assumptions. Presenting a single value is cherry-picking. |
+
+---
+
+## Statistical Assessment
+
+### Valid Findings
+
+**Combined address pattern (p = 2.05 x 10^-8)**
+
+This is the only finding that survives all statistical corrections. It was validated via Monte Carlo simulation and represents a 1-in-48.8-million probability under the null hypothesis. This is statistically remarkable and cannot be easily dismissed as chance.
+
+**Anna Matrix point symmetry (p < 10^-500)**
+
+The symmetry test is pre-specified (not post-hoc), and the result is unambiguous. The matrix is engineered. However, its purpose appears to be computational (Aigarth neural architecture), not necessarily related to Bitcoin.
+
+### Invalid Methodologies
+
+The following methodological errors were identified during independent validation:
+
+1. **Post-hoc parameter selection**: Divisors, prefixes, and moduli were chosen because they produced interesting results, then presented as if they were pre-specified hypotheses.
+
+2. **Multiplying dependent probabilities**: Several claims calculated "combined" probabilities by multiplying individual p-values that share common parameters (e.g., the number 576 appears in multiple "independent" findings). This is statistically invalid.
+
+3. **Look-elsewhere effect**: Testing many possible patterns and reporting only those that match inflates apparent significance. Bonferroni correction addresses this.
+
+4. **Confirmation bias in narrative construction**: True mathematical facts (timestamp values, block contents) were woven into a narrative that assumed intentional design, without adequately considering null hypotheses.
+
+### Corrected Evidence Summary
+
+| Finding | Original p-value | Corrected p-value | Verdict |
+|---------|-----------------|-------------------|---------|
+| Timestamp mod 121 = 43 | 0.00826 | 1.0 | Not significant |
+| Block 576 Extra Byte = 27 | "Unique" | Confirmed present | Confirmed but base rate unknown |
+| 27-div blocks sum = 177 | &lt; 0.001 | 0.021 | Marginal |
+| 1CFB prefix (15/983k) | 0.000245 | 1.0 | Not significant |
+| Combined address pattern | 2.05e-8 | 2.05e-8 | Significant |
+| Combined bridge probability | &lt; 10^-12 | Invalid | Conditions not independent |
+
+---
+
+## Limitations and Caveats
+
+### Fundamental Limitations
+
+| Limitation | Impact | Notes |
+|------------|--------|-------|
+| Post-hoc analysis | Inflates apparent significance | Conservative corrections applied where possible |
+| Selection of divisor 27 | Could be cherry-picked | 27 has independent significance in ternary computing, but was also selected for its fit |
+| Matrix provenance | Extracted from compiled binary | Cannot independently verify the matrix was not modified |
+| Single data points | Block 576 is one block | Highly specific but statistically fragile |
+| CFB denial | Undermines identity claims | Discord Message ID: 1437804692095762433 |
+| Zero derivation matches | 4.9M tests, 0 hits | Either the derivation method is wrong, or no connection exists |
+
+### Alternative Explanations
+
+| Finding | Alternative Explanation | Assessment |
+|---------|------------------------|------------|
+| Timestamp mod 121 = 43 | Random coincidence | Likely coincidence (p = 1.0 after correction) |
+| Block 576 Extra Byte = 27 | Mining artifact in extra nonce field | Plausible; extra nonce varies during mining |
+| 27-divisible block sum = 177 | Cherry-picked divisor among many tested | Marginal; 4 of 11 tested divisors produce notable sums |
+| 1CFB prefix addresses | Expected by chance (look-elsewhere) | Confirmed not significant |
+| Mathematical constant recurrence | Common numbers in mathematical systems | Plausible; 27, 121, 137, 676 all have many mathematical relationships |
+| Anna Matrix engineering | Computational purpose (Aigarth) | Most parsimonious explanation; does not require Bitcoin connection |
+
+### What Would Strengthen the Hypothesis
+
+| Evidence | Impact if Found |
+|----------|----------------|
+| Cryptographic proof linking Bitcoin key to Qubic key | Would conclusively prove connection |
+| CFB signing a message with a Patoshi-era key | Would prove identity claim |
+| Working bridge mechanism (code, not theory) | Would prove technical feasibility |
+| Pre-registered prediction that verifies | Would demonstrate non-random design |
+| Anna Matrix containing verifiable Bitcoin data | Would prove cross-system embedding |
+
+### What Would Falsify the Hypothesis
+
+| Observation | Impact |
+|-------------|--------|
+| Pre-Genesis timestamp from different source code version | Would invalidate mod 121 finding |
+| Block 576 Extra Byte found in other early blocks | Would reduce uniqueness |
+| Matrix values differ across Qubic versions | Would suggest post-hoc alignment |
+| March 3, 2026 passes with no event | Would falsify time-lock prediction |
+| Alternative explanation for Anna Matrix purpose | Would reduce bridge interpretation |
+
+---
+
+## Reproduction Instructions
+
+### Quick Verification (< 1 minute)
+
+```bash
+# Verify timestamp modulo (arithmetic fact, not statistical claim)
+python3 -c "print(1221069728 % 121)"
+# Expected: 43
+
+# Verify 576 is NOT divisible by 27
+python3 -c "print(576 % 27, 576 == 24**2)"
+# Expected: 9 True
+
+# Verify boot address calculation
+python3 -c "print(625284 % 16384)"
+# Expected: 2692
+```
+
+### Full Verification Script
+
+```python
+#!/usr/bin/env python3
+"""
+Complete verification of Bridge Hypothesis findings.
+All calculations are deterministic and produce identical results on any machine.
+Runtime: < 1 second.
+"""
+
+def verify_all():
+    results = {}
+
+    # Test 1: Timestamp modulo (arithmetic fact)
+    results['timestamp_mod_121'] = 1221069728 % 121 == 43
+
+    # Test 2: Block 576 properties
+    results['576_mod_27_equals_9'] = 576 % 27 == 9  # NOT 0
+    results['576_is_perfect_square'] = 576 == 24 ** 2
+    results['extra_byte_is_27'] = 0x1b == 27
+
+    # Test 3: 27-divisible block cell sum
+    cells = [85, 60, 100, -68]
+    results['cell_sum_is_177'] = sum(cells) == 177
+    results['hex_match_0xb1'] = hex(177) == '0xb1'
+
+    # Test 4: Boot address
+    boot = 625284 % 16384
+    results['boot_address'] = boot == 2692
+    results['boot_row_is_21'] = boot // 128 == 21
+
+    # Test 5: Square root formula
+    results['sqrt_formula'] = (576 ** 0.5) + (676 ** 0.5) == 50.0
+
+    print("=" * 55)
+    print("BRIDGE HYPOTHESIS - VERIFICATION RESULTS")
+    print("=" * 55)
+    for test, passed in results.items():
+        status = "PASS" if passed else "FAIL"
+        print(f"  {test}: {status}")
+    print("=" * 55)
+    all_pass = all(results.values())
+    print(f"All arithmetic facts: {'CONFIRMED' if all_pass else 'ERRORS FOUND'}")
+    print()
+    print("NOTE: These confirm arithmetic facts only.")
+    print("Statistical significance is a separate question.")
+    return all_pass
+
+if __name__ == "__main__":
+    verify_all()
+```
+
+### Anna Matrix Symmetry Verification
+
+```python
+#!/usr/bin/env python3
+"""Verify Anna Matrix point symmetry from the public data file."""
+
+import json
+
+def verify_symmetry(matrix_path: str) -> float:
+    with open(matrix_path) as f:
+        data = json.load(f)
+
+    symmetric = 0
+    for r in range(128):
+        for c in range(128):
+            if data[r][c] + data[127 - r][127 - c] == -1:
+                symmetric += 1
+
+    percentage = (symmetric / 16384) * 100
+    print(f"Symmetric cells: {symmetric} / 16384")
+    print(f"Percentage: {percentage:.2f}%")
+    print(f"Exception cells: {16384 - symmetric}")
+    return percentage
+
+# Usage:
+# verify_symmetry("apps/web/public/data/anna-matrix-min.json")
+# Expected: 99.58%
+```
+
+### Block 576 Verification
+
+Block 576 coinbase data can be verified independently via any Bitcoin block explorer or API:
+
+```bash
+# Via blockstream.info API
+curl -s "https://blockstream.info/api/block-height/576" | \
+  xargs -I {} curl -s "https://blockstream.info/api/block/{}/txs" | \
+  python3 -c "import sys, json; tx=json.load(sys.stdin)[0]; print(tx['vin'][0]['scriptsig'])"
+
+# Via blockchain.info
+curl -s "https://blockchain.info/rawblock/576"
+```
+
+The coinbase scriptSig should contain byte 0x1b (decimal 27) in the extra nonce position.
+
+---
+
+## Summary
+
+The Bridge Hypothesis proposes a designed mathematical connection between Bitcoin and Qubic. After rigorous independent validation:
+
+**What is confirmed:**
+- The Anna Matrix is an engineered artifact with 99.58% point symmetry
+- Block 576 contains a unique Extra Byte (0x1b = 27) in its coinbase
+- A combined address pattern survives all statistical corrections (p = 2.05 x 10^-8)
+- The arithmetic facts documented here are reproducible
+
+**What is not confirmed:**
+- Statistical significance of most individual correlations (Bonferroni corrections reduce them to insignificance)
+- The interpretive framework connecting these facts into a "bridge"
+- Any identity claim linking CFB to Satoshi Nakamoto
+- The existence of a working asset migration mechanism
+
+**What has been disproved:**
+- 576 mod 27 = 0 (false; actual value is 9)
+- Combined probability < 10^-12 (invalid; conditions not independent)
+- P < 10^-500 for the bridge (fabricated; honest value approximately p < 0.001)
+- Several documented hash values (incorrect, now corrected)
+
+The Anna Matrix's purpose is most parsimoniously explained by its computational role in the Aigarth neural architecture. The mathematical constants (27, 121, 137, 676) have natural explanations within Qubic's ternary architecture without requiring a Bitcoin connection. The hypothesis remains open but is not supported at the level previously claimed.
+
+---
+
+## References
+
+### Verification Documents
+
+- Bridge Validation Report -- Independent validation of major claims
+- Probability Corrections -- Complete statistical audit
+- Statistical Foundations -- Methodology documentation
+
+### Data Sources
+
+| Source | Content | Location |
+|--------|---------|----------|
+| Anna Matrix | 128x128 signed-byte grid | `apps/web/public/data/anna-matrix-min.json` |
+| Bitcoin Blockchain | Block 576 and early block data | Public ledger (blockstream.info) |
+| Pre-Genesis Timestamp | 1221069728 | Archived Bitcoin source code |
+
+### Analysis Scripts
+
+All verification scripts are available in `apps/web/scripts/`:
+
+| Script | Purpose |
+|--------|---------|
+| `BRIDGE_V1_TIMESTAMP.py` | Timestamp modular analysis with Bonferroni |
+| `BRIDGE_V1_BLOCK576.py` | Block 576 coinbase verification |
+| `BRIDGE_V1_BLOCK_MAPPING.py` | Block-to-matrix mapping with Monte Carlo |
+| `BRIDGE_V2_PREFIX_BASE_RATE.py` | 1CFB prefix base rate calculation |
+| `BITCOIN_BLOCKS_1_676_MAPPING.py` | Block address mapping framework |
+| `BONFERRONI_COMPLETE_AUDIT.py` | Complete statistical audit |
+
+---
+
+## Citation
+
+```bibtex
+@article{bridge-hypothesis,
+  title   = {Bridge Hypothesis: Mathematical Relationships Between Bitcoin
+             and the Qubic Protocol},
+  year    = {2026},
+  month   = {February},
+  note    = {Tier 2 hypothesis. Most individual claims not significant
+             after Bonferroni correction. One combined pattern survives
+             at p = 2.05e-8. Reproducible verification scripts provided.}
+}
+```

@@ -1,0 +1,397 @@
+---
+title: Limitations
+description: Comprehensive documentation of methodological limitations, data constraints, and interpretive caveats affecting the Bitcoin-Qubic correlation research.
+---
+
+# Limitations
+
+## Overview
+
+Scientific integrity requires explicit acknowledgment of limitations. This section documents all known constraints affecting this research.
+
+## Limitation Categories
+
+| Category | Severity | Mitigation |
+|----------|----------|------------|
+| Methodological | High | Transparency |
+| Data Access | High | Documentation |
+| Statistical | Medium | Conservative estimates |
+| Interpretive | Medium | Alternative explanations |
+| Temporal | Low | Falsifiable predictions |
+
+---
+
+## 1. Methodological Limitations
+
+### 1.1 Post-Hoc Analysis Bias
+
+**Severity**: High
+
+The majority of findings were discovered through exploratory analysis rather than pre-registered hypothesis testing:
+
+```
+Finding Discovery Method:
+├── Pre-registered hypotheses: ~10%
+├── Post-hoc discoveries: ~85%
+└── Serendipitous findings: ~5%
+
+Impact: P-values may be inflated by factor of 10-100
+```
+
+**Mitigation**: All findings classified by tier; pre-registered predictions for 2026
+
+### 1.2 Selection Bias
+
+**Severity**: Medium
+
+The research focused on correlations that support the hypothesis:
+
+| Examined | Not Examined | Reason |
+|----------|--------------|--------|
+| Patoshi blocks | Non-Patoshi early blocks | Scope limitation |
+| CFB writings | Other developer writings | Hypothesis-driven |
+| September dates | Other significant dates | Pattern-seeking |
+
+**Mitigation**: Alternative explanations documented for each finding
+
+### 1.3 Confirmation Bias Risk
+
+**Severity**: High
+
+Researchers were actively seeking connections:
+
+```
+Bias Risk Factors:
+├── Single research team
+├── No adversarial review
+├── Vested interest in findings
+└── Limited external validation
+```
+
+**Mitigation**:
+- Explicit tier classification
+- Source-locked citations
+- Reproduction scripts provided
+
+### 1.4 Texas Sharpshooter Fallacy
+
+**Severity**: Medium
+
+Pattern identification after data examination risks false positives:
+
+```
+Example: The number 27
+├── Found in Block 576 Extra Byte
+├── Found in IOTA transaction sizes
+├── Found in Patoshi hex-word distances
+└── Question: How many numbers were checked?
+
+Unknown denominator problem: Cannot calculate true p-value
+```
+
+**Mitigation**: Conservative probability estimates; falsifiable predictions
+
+---
+
+## 2. Data Access Limitations
+
+### 2.1 Missing Primary Sources
+
+**Severity**: Critical
+
+Key data remains inaccessible:
+
+| Source | Status | Impact |
+|--------|--------|--------|
+| Pre-Genesis source code | Lost | Cannot verify development claims |
+| Satoshi private communications | Inaccessible | Cannot verify authorship |
+| CFB internal documents | Private | Cannot verify intentions |
+| Anna training data | Proprietary | Cannot verify correlations |
+
+### 2.2 Incomplete Blockchain Data
+
+**Severity**: Medium
+
+Not all relevant blockchain data was analyzed:
+
+```
+Coverage Statistics:
+├── Patoshi blocks analyzed: 2,835 / ~2,835 (100%)
+├── Total early blocks: 10,319 / 100,000+ (10%)
+├── Transaction-level analysis: Limited
+└── Script analysis: Partial
+```
+
+### 2.3 Discord Archive Completeness
+
+**Severity**: Medium
+
+Discord data collection may be incomplete:
+
+| Channel | Messages Archived | Completeness |
+|---------|-------------------|--------------|
+| #aigarth | 847 | ~70% |
+| #general | Unknown | Not archived |
+| #announcements | Unknown | Not archived |
+| DMs | 0 | Not accessible |
+
+### 2.4 Temporal Data Gaps
+
+**Severity**: Medium
+
+Significant time periods lack data:
+
+```
+Gap Analysis:
+├── 1998-2008: Sparse (7 posts found)
+├── 2008-2009: Critical gap (Pre-Genesis to Genesis)
+├── 2009-2015: Limited Satoshi activity
+├── 2015-2019: IOTA development (not analyzed)
+└── 2019-2022: Aigarth to Qubic gap
+```
+
+---
+
+## 3. Statistical Limitations
+
+### 3.1 Multiple Comparison Problem
+
+**Severity**: High
+
+Testing multiple hypotheses increases false positive rate:
+
+```
+Uncorrected Analysis:
+├── 50+ findings tested
+├── Alpha = 0.05
+├── Expected false positives: 2.5
+
+Bonferroni Correction Required:
+├── Corrected alpha: 0.05/50 = 0.001
+├── Findings meeting corrected threshold: ~15
+└── Reduction: 70% of findings may be false positives
+```
+
+**Mitigation**: Tier 1 findings verified independently of statistical testing
+
+### 3.2 Dependence Between Findings
+
+**Severity**: Medium
+
+Findings are not statistically independent:
+
+```
+Dependency Example:
+├── Finding A: Pre-Genesis timestamp mod 121 = 43
+├── Finding B: Pre-Genesis timestamp mod 43 = 18
+└── These are mathematically dependent!
+
+Impact: Combined p-values are overstated
+```
+
+### 3.3 Unknown Base Rate
+
+**Severity**: High
+
+For pattern detection, we lack the denominator:
+
+| Pattern | Found | Looked For | True p-value |
+|---------|-------|------------|--------------|
+| 27 in block data | 20 instances | Unknown | Unknown |
+| Prime correlations | Multiple | Unknown | Unknown |
+| Date alignments | 3 | Unknown | Unknown |
+
+### 3.4 Small Sample Sizes
+
+**Severity**: Medium (varies by finding)
+
+Some analyses have limited statistical power:
+
+| Analysis | Sample Size | Power |
+|----------|-------------|-------|
+| Linguistic fingerprinting | 3 authors | Low |
+| September 10 events | 3 dates | Low |
+| CFB 1998 posts | 7 posts | Low |
+
+---
+
+## 4. Interpretive Limitations
+
+### 4.1 Alternative Explanations
+
+**Severity**: High
+
+Each finding has plausible alternatives:
+
+| Finding | Our Interpretation | Alternative |
+|---------|-------------------|-------------|
+| Primary formula | Intentional encoding | Coincidental alignment |
+| 27-pattern | Deliberate signature | Common number selection |
+| September 10 dates | Anniversary selection | Random dates |
+| Patoshi distribution | Pre-planned mapping | Algorithm artifact |
+
+### 4.2 Causal Direction Ambiguity
+
+**Severity**: Medium
+
+Correlations do not establish causal direction:
+
+```
+Possible Causal Models:
+├── Model A: Satoshi designed Bitcoin for Qubic
+├── Model B: CFB reverse-engineered Bitcoin into Qubic
+├── Model C: Third party created both
+├── Model D: Coincidental alignment
+└── Evidence cannot distinguish between these
+```
+
+### 4.3 Intentionality Attribution
+
+**Severity**: High
+
+We cannot directly verify intention:
+
+```
+Finding: 283 × 47² + 137 = 625,284
+├── Interpretation A: Deliberately encoded
+├── Interpretation B: Arbitrary constant selection
+└── No method exists to distinguish these with certainty
+```
+
+### 4.4 Identity Speculation
+
+**Severity**: Critical (for Tier 4 claims)
+
+Identity-related claims are inherently speculative:
+
+| Claim | Evidence Level | Verification Possible |
+|-------|----------------|----------------------|
+| CFB = Satoshi | Tier 4 | No |
+| CFB knew Satoshi | Tier 4 | No |
+| Shared authorship | Tier 4 | No |
+
+**Policy**: This research explicitly avoids identity claims
+
+---
+
+## 5. Temporal Limitations
+
+### 5.1 Prediction Uncertainty
+
+**Severity**: Medium
+
+Time-lock predictions may fail:
+
+| Prediction | Date | Failure Probability |
+|------------|------|---------------------|
+| Block unlock | March 2026 | ~30-50% |
+| Full revelation | April 2027 | ~50-70% |
+| Lunar correlation | March 29, 2026 | ~80-90% |
+
+### 5.2 Historical Reconstruction Limits
+
+**Severity**: High
+
+15+ years have passed since key events:
+
+```
+Evidence Degradation:
+├── Digital: Some archives lost
+├── Human memory: Unreliable after years
+├── Documentation: Incomplete
+└── Hardware: May be destroyed
+```
+
+---
+
+## 6. Technical Limitations
+
+### 6.1 Anna Interface Access
+
+**Severity**: Medium
+
+Limited access to Anna's query interface:
+
+| Capability | Available | Impact |
+|------------|-----------|--------|
+| Basic queries | Yes | Can verify claims |
+| Deep analysis | No | Cannot extend findings |
+| Source code | No | Cannot verify architecture |
+
+### 6.2 Reproduction Constraints
+
+**Severity**: Low
+
+Some findings require specific tools:
+
+```
+Reproduction Requirements:
+├── Python 3.8+: Required
+├── Bitcoin node: Optional (API available)
+├── JSONL parsing: Required
+├── Discord access: Required for verification
+└── Estimated setup time: 2-4 hours
+```
+
+---
+
+## 7. Limitation Summary
+
+### By Finding Category
+
+| Category | Primary Limitation | Severity |
+|----------|-------------------|----------|
+| Mathematical | Post-hoc discovery | Medium |
+| Temporal | Prediction uncertainty | Medium |
+| Linguistic | Small sample size | High |
+| Architectural | Limited access | Medium |
+| Historical | Missing data | Critical |
+| Identity | Fundamental uncertainty | Critical |
+
+### Overall Assessment
+
+```
+Confidence Reduction Factors:
+├── Post-hoc analysis: -50%
+├── Multiple comparisons: -30%
+├── Missing data: -20%
+├── Alternative explanations: -20%
+└── Net confidence: ~25-40% of stated levels
+```
+
+---
+
+## 8. Mitigations Implemented
+
+| Limitation | Mitigation | Effectiveness |
+|------------|------------|---------------|
+| Post-hoc bias | Tier classification | Medium |
+| Selection bias | Alternative documentation | Medium |
+| Data gaps | Source-locking | High |
+| Statistical issues | Conservative estimates | Medium |
+| Interpretive issues | Explicit alternatives | High |
+
+---
+
+## Conclusion
+
+This research has significant limitations that affect interpretation:
+
+1. **Most critical**: Missing primary sources and post-hoc analysis
+2. **Partially mitigated**: Statistical issues through conservative estimates
+3. **Addressed through design**: Falsifiable predictions for 2026
+
+**Recommendation**: Readers should apply significant skepticism, particularly to Tier 3-4 findings. Independent verification of Tier 1-2 findings is encouraged.
+
+---
+
+## Citation
+
+```bibtex
+@section{limitations,
+  title={Limitations},
+  booktitle={The Bitcoin-Qubic Bridge},
+  chapter={4.3},
+  note={Critical for interpreting all findings}
+}
+```

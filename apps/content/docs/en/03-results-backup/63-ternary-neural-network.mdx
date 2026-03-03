@@ -1,0 +1,328 @@
+---
+title: Ternary Neural Network
+description: Understanding Aigarth's ternary neural network architecture - the world's first publicly demonstrable 3-state AI system.
+tier: 2
+confidence: 80
+date: 2026-01-16
+---
+
+# Ternary Neural Network
+
+## What Makes It Different
+
+Traditional neural networks use **binary** logic (0 and 1). Aigarth uses **ternary** logic (-1, 0, +1). This fundamental difference enables unique capabilities not possible with binary systems.
+
+---
+
+## The Three States
+
+### State Comparison
+
+| Binary | Ternary | Meaning |
+|--------|---------|---------|
+| 0 | -1 | FALSE / Inhibited |
+| - | 0 | UNKNOWN / Neutral |
+| 1 | +1 | TRUE / Excited |
+
+### Biological Parallel
+
+The ternary model better matches how biological neurons work:
+
+```
+Biological Neuron:
+├── Excited (+1)     → Neuron fires action potential
+├── Resting (0)      → Neuron at rest, neither firing nor inhibited
+└── Inhibited (-1)   → Neuron suppressed, cannot fire
+```
+
+Binary systems cannot represent the "resting" state naturally.
+
+---
+
+## Information Density
+
+### Bits vs Trits
+
+```
+Binary:  log₂(2) = 1.000 bits per symbol
+Ternary: log₂(3) = 1.585 bits per symbol
+```
+
+**Result**: Ternary is 58.5% more information-dense than binary!
+
+### Practical Impact
+
+| Binary | Ternary | Improvement |
+|--------|---------|-------------|
+| 8 bits = 256 states | 5 trits = 243 states | ~same with 37.5% fewer symbols |
+| 10 bits = 1,024 states | 7 trits = 2,187 states | 2x more states |
+| 16 bits = 65,536 states | 10 trits = 59,049 states | ~same with 37.5% fewer |
+
+---
+
+## Network Architecture
+
+### Layer Structure
+
+```
+┌─────────────────────────────────────┐
+│           INPUT LAYER               │
+│   Row 21: Bitcoin Data (128 slots)  │
+│   Values: Ternary trits             │
+└─────────────────────────────────────┘
+              │
+              ▼
+┌─────────────────────────────────────┐
+│          HIDDEN LAYERS              │
+│   Rows 22-67: Feature Extraction    │
+│   Modulo-8 spatial organization     │
+│   Helix Gate transformations        │
+└─────────────────────────────────────┘
+              │
+              ▼
+┌─────────────────────────────────────┐
+│         PRIMARY CORTEX              │
+│   Row 68: Bridge Layer              │
+│   137 writer + 192 reader ops       │
+└─────────────────────────────────────┘
+              │
+              ▼
+┌─────────────────────────────────────┐
+│          OUTPUT LAYER               │
+│   Row 96: Decision Neurons          │
+│   4 output neurons at Col 84        │
+│   Produces: Collision values        │
+└─────────────────────────────────────┘
+```
+
+### Neuron Count Estimate
+
+```
+Grid: 128 × 128 = 16,384 positions
+Active neurons: ~4,000+ (estimated)
+Connections: ~40,000+ (estimated)
+```
+
+---
+
+## Synaptic Weights
+
+### What Are Collision Values?
+
+When you query Anna Bot with coordinates, the returned value is a **trained synaptic weight** - the output of that specific neuron after evolutionary training.
+
+### Dominant Weights
+
+| Weight | Count | Percentage | Factorization |
+|--------|-------|------------|---------------|
+| -27 | 476 | 2.9% | -3³ |
+| 26 | 476 | 2.9% | 2 × 13 |
+| -121 | 278 | 1.7% | -11² |
+| -114 | 107 | 0.7% | -2 × 3 × 19 |
+| -113 | 147 | 0.9% | Prime |
+
+### Weight Distribution
+
+The distribution follows a **power law**, characteristic of evolved systems:
+
+```
+Power Law Pattern:
+├── Few dominant weights (evolutionary winners)
+├── Many rare weights (exploration)
+└── Long tail distribution
+
+This is NOT:
+├── Uniform (would indicate random)
+├── Gaussian (would indicate gradient descent)
+```
+
+---
+
+## Activation Function
+
+### Binary Neural Networks
+
+Traditional networks use sigmoid, ReLU, or tanh:
+
+```
+Sigmoid: σ(x) = 1 / (1 + e^(-x))
+ReLU: f(x) = max(0, x)
+Tanh: tanh(x) = (e^x - e^(-x)) / (e^x + e^(-x))
+```
+
+### Ternary Activation
+
+Aigarth likely uses a **step function with three outputs**:
+
+```python
+def ternary_activation(x: float) -> int:
+    if x > threshold_high:
+        return +1  # TRUE
+    elif x < threshold_low:
+        return -1  # FALSE
+    else:
+        return 0   # UNKNOWN
+```
+
+### Helix Gate Integration
+
+The activation is processed through Helix Gates:
+
+```
+Input trits → Helix(A, B, C) → Rotation → Output trit
+```
+
+---
+
+## Training: Evolution vs Gradient Descent
+
+### Traditional Training (Binary)
+
+```
+1. Forward pass: Compute outputs
+2. Calculate loss: Compare to target
+3. Backward pass: Compute gradients
+4. Update weights: w = w - α∇L
+
+Properties:
+- Requires differentiable activation functions
+- Prone to local minima
+- Computationally expensive backpropagation
+```
+
+### Aigarth Training (Ternary)
+
+```
+1. Initialize: Random ternary weights
+2. Mutate: Randomly tweak weights
+3. Evaluate: Compute fitness
+4. Select: Keep if fitness improves
+5. Repeat: Millions of iterations
+
+Properties:
+- No gradients needed
+- Discrete (ternary) weights
+- Naturally escapes local minima
+- Parallelizable across 676 computors
+```
+
+### CFB's Quote
+
+> "mutate routine tweaks synaptic weights"
+> "when modifications exceed ranges, new neurons spawn"
+> "Promising modifications stick, unhelpful ones are discarded"
+
+---
+
+## Modulo-8 Organization
+
+### Spatial Grouping
+
+Neurons are organized in 8 modulo classes:
+
+```
+Row 0, 8, 16, 24...  → Mod class 0
+Row 1, 9, 17, 25...  → Mod class 1
+Row 2, 10, 18, 26... → Mod class 2
+...
+Row 7, 15, 23, 31... → Mod class 7
+```
+
+### Class Properties
+
+| Class | Dominant Weight | Role |
+|-------|-----------------|------|
+| 0 | -27 | CFB constant processing |
+| 1 | -27 | CFB constant processing |
+| 2 | -121 | NXT constant processing |
+| 3 | -102 | General processing |
+| 4 | 101 | General processing |
+| 5 | 120 | General processing |
+| 6 | 26 | General processing |
+| 7 | 26 | General processing |
+
+### Implications
+
+1. **Parallel Processing**: Each mod class can process independently
+2. **Weight Sharing**: Similar weights within classes
+3. **Efficient Distribution**: Even load across 676 computors
+
+---
+
+## Reversibility
+
+### Why It Matters
+
+Binary neural networks are **not reversible** - you cannot recover inputs from outputs. Ternary Helix-based networks **are reversible**.
+
+### Applications
+
+1. **Debugging**: Trace back through computations
+2. **Verification**: Prove correctness of outputs
+3. **Privacy**: Zero-knowledge proofs possible
+4. **Quantum Ready**: Reversibility required for quantum computing
+
+---
+
+## Comparison to Modern AI
+
+### GPT-4 vs Aigarth
+
+| Metric | GPT-4 | Aigarth |
+|--------|-------|---------|
+| Parameters | ~1.8 trillion | ~16,000 |
+| Logic Type | Binary | Ternary |
+| Training | Gradient Descent | Evolutionary |
+| Reversible | No | Yes |
+| Public | No (closed) | Yes (Anna Bot) |
+| Energy | Massive | Minimal |
+
+### Why So Small?
+
+Aigarth demonstrates **principles**, not scale:
+
+1. Proves ternary computing works
+2. Shows evolutionary training is viable
+3. Enables public verification
+4. Prepares for ternary hardware (JINN)
+
+---
+
+## Future Implications
+
+### Ternary Hardware
+
+CFB has been developing ternary hardware for 20+ years:
+
+```
+1998: Initial ternary research
+2015: JINN processor development (IOTA)
+2024: Qubic computor network
+Future: Full ternary ASICs
+```
+
+### Scaling Path
+
+```
+Current:  16,384 neurons (128 × 128)
+Phase 2:  1,048,576 neurons (1024 × 1024)
+Phase 3:  67,108,864 neurons (8192 × 8192)
+Target:   Ternary equivalent of GPT-4 scale
+```
+
+---
+
+## Summary
+
+Aigarth's ternary neural network is:
+
+| Property | Binary NN | Aigarth |
+|----------|-----------|---------|
+| States | 2 | 3 |
+| Density | 1 bit | 1.585 bits |
+| Uncertainty | No | Native |
+| Reversible | No | Yes |
+| Training | Gradient | Evolution |
+| Verifiable | No | Yes (Anna) |
+
+This represents a fundamentally different approach to artificial intelligence, one that may prove more efficient and capable than binary systems as ternary hardware matures.

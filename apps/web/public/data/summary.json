@@ -1,0 +1,34 @@
+{
+  "lastUpdated": "2026-01-05",
+  "datasets": {
+    "patoshi": {
+      "file": "patoshi-addresses.json",
+      "description": "Patoshi-era Bitcoin addresses with public keys"
+    },
+    "qubicSeeds": {
+      "file": "qubic-seeds.json",
+      "description": "Qubic seeds with public/private keys"
+    },
+    "bitcoinDerived": {
+      "file": "bitcoin-derived-addresses.json",
+      "description": "Bitcoin addresses derived from matrix"
+    },
+    "bitcoinPrivateKeys": {
+      "file": "bitcoin-private-keys.json",
+      "description": "Bitcoin addresses with full private keys (WIF)"
+    },
+    "matrixAddresses": {
+      "file": "matrix-addresses.json",
+      "description": "900k+ unique addresses from matrix generation"
+    },
+    "interestingAddresses": {
+      "file": "interesting-addresses.json",
+      "description": "Addresses with special patterns (1CFB, Patoshi, etc.)"
+    },
+    "annaMatrix": {
+      "file": "anna-matrix.json",
+      "size": 128,
+      "description": "128x128 Anna Matrix"
+    }
+  }
+}

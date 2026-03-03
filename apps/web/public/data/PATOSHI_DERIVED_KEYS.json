@@ -1,0 +1,41 @@
+{
+  "source": "Patoshi Bridge Blocks",
+  "blocks": [
+    1776,
+    2115,
+    4263,
+    5151
+  ],
+  "derived_keys": [
+    {
+      "method": "XOR Pubkeys",
+      "private_key": "00b301ec16269923d13d8655b9c48cbfdd9703db83f703de1846d3866ee5b928",
+      "address": "1PbocyBy59DxkcAetJ5USZ364mrC76WcZt"
+    },
+    {
+      "method": "SHA256 Concat",
+      "private_key": "712d4147687d2789dc1fcd4b151630c039e4e9f4077af5f330da9d95bdf999e6",
+      "address": "1AUiwawZf31QvpiASLc1odEmc9JxspRVAZ"
+    },
+    {
+      "method": "Block 1776 PK",
+      "private_key": "3ef9f0b0f0c801d8ed400654528431fd7ecb38235202667fff418345bbf8c36b",
+      "address": "1LuddwoWWbTuCNaUVkEZ9GJ4Xj43juDZtb"
+    },
+    {
+      "method": "SHA256 Blocks",
+      "private_key": "7c5fbb56cc7f8ea0420218c4ef15697a90fa93d6e8f24ba06f66bf866d3b1912",
+      "address": "1Q6uWCbWRi8GMaYSKiiY3M6nbgvrHrEFL6"
+    },
+    {
+      "method": "Combined Coords",
+      "private_key": "2e1475a4c1007451013d6c5d627a13c1c953aad85de32e17bbf181cc67ad6a52",
+      "address": "146TFxMWgkDMYH6f2GTt4qyFwWkYVzDYfE"
+    },
+    {
+      "method": "XOR SHA256s",
+      "private_key": "8b29968d44b572863ad2d1ede13014a3fdec8f8d486ca5dc27e713125954b21f",
+      "address": "1QFwMUn9euWoxN9AbVD8VjvJPCp1JY6E6k"
+    }
+  ]
+}

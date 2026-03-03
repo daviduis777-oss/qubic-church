@@ -1,0 +1,46 @@
+{
+  "total": 772,
+  "extractionDate": "2026-01-02",
+  "successfullyExtracted": 772,
+  "securityNotice": "PRIVATE KEYS REDACTED FOR SECURITY",
+  "explanation": "This file previously contained 772 Bitcoin private keys derived from the Anna Matrix using various XOR transformations. The private keys have been removed for security reasons. The addresses and derivation metadata remain available for research purposes.",
+  "methodology": {
+    "description": "Keys were derived by applying XOR operations to Anna Matrix positions",
+    "variants": ["step7", "step27", "col", "diag", "row"],
+    "xorValues": [0, 7, 13, 27, 33]
+  },
+  "records": [
+    {
+      "id": 0,
+      "address": "1CFZJsuVYDqioNUMH9jdVNhENA6jvzR8GX",
+      "position": [3, 3],
+      "method": "step27",
+      "xorVariant": 27,
+      "cfVariant": "1CFZ",
+      "privateKeyRedacted": true,
+      "blockchainStatus": "UNVERIFIED - Not checked on blockchain"
+    },
+    {
+      "id": 1,
+      "address": "1CFMGD8fuZbLuw1icR4C9ymLmaqtQzctba",
+      "position": [34, 34],
+      "method": "step7",
+      "xorVariant": 7,
+      "cfVariant": "1CFM",
+      "privateKeyRedacted": true,
+      "blockchainStatus": "UNVERIFIED - Not checked on blockchain"
+    },
+    {
+      "id": 2,
+      "address": "1CF7pSKvM4ZkaNRUy3tf1mXkD3XTHj7XHu",
+      "position": [89, 3],
+      "method": "step27",
+      "xorVariant": 27,
+      "cfVariant": "1CF7",
+      "privateKeyRedacted": true,
+      "blockchainStatus": "UNVERIFIED - Not checked on blockchain"
+    }
+  ],
+  "fullDatasetNote": "The complete dataset of 772 addresses (without private keys) is available in bitcoin-derived-addresses.json",
+  "disclaimer": "These addresses were mathematically generated from the Anna Matrix. They have NOT been verified on the Bitcoin blockchain and likely have zero balance and no transaction history."
+}

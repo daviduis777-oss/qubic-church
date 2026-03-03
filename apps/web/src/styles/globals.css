@@ -1,0 +1,2364 @@
+@import "tailwindcss";
+
+@plugin "tailwindcss-animate";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: hsl(0 0% 100%);
+  --foreground: hsl(240 10% 3.9%);
+  --card: hsl(0 0% 100%);
+  --card-primary: hsl(0 0% 6% / 0);
+  --card-foreground: hsl(240 10% 3.9%);
+  --popover: hsl(0 0% 100%);
+  --popover-foreground: hsl(240 10% 3.9%);
+  --primary: hsl(240 5.9% 10%);
+  --primary-active: hsl(161 100% 69%);
+  --primary-foreground: hsl(0 0% 98%);
+  --secondary: hsl(240 4.8% 95.9%);
+  --secondary-foreground: hsl(240 5.9% 10%);
+  --muted: hsl(240 4.8% 95.9%);
+  --muted-foreground: hsl(240 3.8% 46.1%);
+  --accent: hsl(240 4.8% 95.9%);
+  --accent-foreground: hsl(240 5.9% 10%);
+  --destructive: hsl(0 72.22% 50.59%);
+  --destructive-foreground: hsl(0 0% 98%);
+  --border: hsl(240 5.9% 90%);
+  --input: hsl(240 5.9% 90%);
+  --ring: hsl(240 5% 64.9%);
+  --radius: 0.5rem;
+
+  /* Brand Colors */
+  --bitcoin-orange: hsl(25 95% 53%);
+  --bitcoin-orange-light: hsl(35 95% 60%);
+  --qubic-purple: hsl(43 96% 56%);
+  --qubic-purple-light: hsl(43 80% 65%);
+
+  /* Status Colors - Verification Badges */
+  --verified: hsl(142 76% 36%);
+  --verified-bg: hsl(142 76% 36% / 0.15);
+  --high-confidence: hsl(217 91% 60%);
+  --high-confidence-bg: hsl(217 91% 60% / 0.15);
+  --warning: hsl(38 92% 50%);
+  --warning-bg: hsl(38 92% 50% / 0.15);
+  --unknown: hsl(45 93% 47%);
+  --unknown-bg: hsl(45 93% 47% / 0.15);
+  --disproven: hsl(0 0% 45%);
+  --disproven-bg: hsl(0 0% 45% / 0.15);
+
+  /* Surface Layers (Light Mode) */
+  --surface-0: hsl(0 0% 100%);
+  --surface-1: hsl(0 0% 98%);
+  --surface-2: hsl(0 0% 96%);
+  --surface-3: hsl(0 0% 94%);
+
+  /* Designer Hero Variables */
+  --gold: #f0c030;
+  --sdim: #3a7090;
+  --white: #f4f6fd;
+  --void: #000;
+  --signal: #5bc8f5;
+}
+
+.dark {
+  --background: hsl(0 0% 2%);
+  --foreground: hsl(0 0% 98%);
+  --card: hsl(0 0% 3%);
+  --card-foreground: hsl(0 0% 98%);
+  --popover: hsl(0 0% 3%);
+  --popover-foreground: hsl(0 0% 98%);
+  --primary: hsl(0 0% 98%);
+  --primary-active: hsl(43 96% 56%);
+  --primary-foreground: hsl(240 5.9% 10%);
+  --secondary: hsl(0 0% 12%);
+  --secondary-foreground: hsl(0 0% 98%);
+  --muted: hsl(0 0% 12%);
+  --muted-foreground: hsl(0 0% 55%);
+  --accent: hsl(0 0% 12%);
+  --accent-foreground: hsl(0 0% 98%);
+  --destructive: hsl(0 62.8% 30.6%);
+  --destructive-foreground: hsl(0 85.7% 97.3%);
+  --border: hsl(0 0% 14%);
+  --input: hsl(0 0% 14%);
+  --ring: hsl(43 50% 60%);
+
+  /* Brand Colors (Same in dark mode) */
+  --bitcoin-orange: hsl(25 95% 53%);
+  --bitcoin-orange-light: hsl(35 95% 60%);
+  --qubic-purple: hsl(43 96% 56%);
+  --qubic-purple-light: hsl(43 80% 65%);
+
+  /* Status Colors - Enhanced for dark mode */
+  --verified: hsl(142 76% 42%);
+  --verified-bg: hsl(142 76% 36% / 0.2);
+  --high-confidence: hsl(217 91% 65%);
+  --high-confidence-bg: hsl(217 91% 60% / 0.2);
+  --warning: hsl(38 92% 55%);
+  --warning-bg: hsl(38 92% 50% / 0.2);
+  --unknown: hsl(45 93% 52%);
+  --unknown-bg: hsl(45 93% 47% / 0.2);
+  --disproven: hsl(0 0% 55%);
+  --disproven-bg: hsl(0 0% 45% / 0.2);
+
+  /* Surface Layers (Dark Mode) */
+  --surface-0: hsl(0 0% 2%);
+  --surface-1: hsl(0 0% 5%);
+  --surface-2: hsl(0 0% 9%);
+  --surface-3: hsl(0 0% 13%);
+
+  /* Church Gold Palette */
+  --church-gold: hsl(43 96% 56%);
+  --church-gold-dim: hsl(43 60% 40%);
+  --church-navy: hsl(240 30% 10%);
+  --church-chalk: hsl(40 20% 85%);
+
+  /* Church Signal Colors (from QubicChurch reference) */
+  --church-signal: #5bc8f5;
+  --church-signal-dim: #3a7090;
+  --church-signal-light: #7dd8f8;
+  --church-purple-void: #05040a;
+  --church-purple-panel: #0a0a12;
+  --church-gold-bright: #f0c030;
+  --church-gold-dark: #c8960a;
+  --church-red: rgba(180,40,30,0.9);
+  --church-red-dim: rgba(180,40,30,0.15);
+  --church-teal: #128274;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-primary: var(--card-primary);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-active: var(--primary-active);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  /* Brand Colors */
+  --color-bitcoin-orange: var(--bitcoin-orange);
+  --color-bitcoin-orange-light: var(--bitcoin-orange-light);
+  --color-qubic-purple: var(--qubic-purple);
+  --color-qubic-purple-light: var(--qubic-purple-light);
+
+  /* Status Colors */
+  --color-verified: var(--verified);
+  --color-verified-bg: var(--verified-bg);
+  --color-high-confidence: var(--high-confidence);
+  --color-high-confidence-bg: var(--high-confidence-bg);
+  --color-warning: var(--warning);
+  --color-warning-bg: var(--warning-bg);
+  --color-unknown: var(--unknown);
+  --color-unknown-bg: var(--unknown-bg);
+  --color-disproven: var(--disproven);
+  --color-disproven-bg: var(--disproven-bg);
+
+  /* Surface Layers */
+  --color-surface-0: var(--surface-0);
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+
+  /* Church Gold Palette */
+  --color-church-gold: var(--church-gold);
+  --color-church-gold-dim: var(--church-gold-dim);
+  --color-church-navy: var(--church-navy);
+  --color-church-chalk: var(--church-chalk);
+
+  /* Church Signal Colors */
+  --color-church-signal: var(--church-signal);
+  --color-church-signal-dim: var(--church-signal-dim);
+  --color-church-signal-light: var(--church-signal-light);
+  --color-church-purple-void: var(--church-purple-void);
+  --color-church-purple-panel: var(--church-purple-panel);
+  --color-church-gold-bright: var(--church-gold-bright);
+  --color-church-gold-dark: var(--church-gold-dark);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scrollbar-gutter: stable;
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Modern headings with Inter font - override all serif */
+  h1, h2, h3, h4, h5, h6,
+  h1.font-serif, h2.font-serif, h3.font-serif, h4.font-serif, h5.font-serif, h6.font-serif,
+  .font-serif h1, .font-serif h2, .font-serif h3, .font-serif h4, .font-serif h5, .font-serif h6 {
+    font-family: var(--font-heading), system-ui, -apple-system, sans-serif !important;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    font-style: normal;
+  }
+
+  /* Remove serif from font-serif class globally */
+  .font-serif {
+    font-family: var(--font-heading), system-ui, -apple-system, sans-serif !important;
+  }
+
+  /* Global focus-visible for keyboard navigation (gold ring on dark bg) */
+  a:focus-visible,
+  button:focus-visible,
+  [role="link"]:focus-visible {
+    outline: 1px solid rgba(212, 175, 55, 0.5);
+    outline-offset: 2px;
+  }
+}
+
+@utility step {
+  counter-increment: step;
+}
+
+@utility step-before {
+  content: counter(step);
+  @apply absolute w-9 h-9 bg-muted rounded-full font-mono font-medium text-center text-base inline-flex items-center justify-center -indent-px border-4 border-background;
+  @apply ml-[-50px] mt-[-4px];
+}
+
+@keyframes accordion-down {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--radix-accordion-content-height);
+  }
+}
+
+@keyframes accordion-up {
+  from {
+    height: var(--radix-accordion-content-height);
+  }
+  to {
+    height: 0;
+  }
+}
+
+/* Container styles - equivalent to Tailwind v3 config */
+.container {
+  width: 100%;
+  padding-right: 2rem;
+  padding-left: 2rem;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+@media (min-width: 1400px) {
+  .container {
+    max-width: 1400px;
+  }
+}
+
+@media (min-width: 1920px) {
+  .container {
+    max-width: 1600px;
+    padding-right: 3rem;
+    padding-left: 3rem;
+  }
+}
+
+@media (min-width: 2560px) {
+  .container {
+    max-width: 1920px;
+    padding-right: 4rem;
+    padding-left: 4rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding-right: 1rem;
+    padding-left: 1rem;
+  }
+}
+
+/* ========================================
+   TYPOGRAPHY SCALE
+   ======================================== */
+
+.text-display-xl {
+  font-size: clamp(2.5rem, 5vw + 1rem, 4.5rem);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+
+.text-display-lg {
+  font-size: clamp(2rem, 4vw + 0.5rem, 3.5rem);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.text-display-md {
+  font-size: clamp(1.5rem, 3vw + 0.25rem, 2.5rem);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.text-body-lg {
+  font-size: 1.125rem;
+  line-height: 1.75;
+}
+
+.text-caption {
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+}
+
+.text-label {
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}
+
+/* ========================================
+   MICRO-INTERACTIONS
+   ======================================== */
+
+.hover-lift {
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+}
+
+.active-scale:active {
+  transform: scale(0.97);
+}
+
+/* Glow Effects */
+.hover-glow-orange {
+  position: relative;
+}
+
+.hover-glow-orange::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, var(--bitcoin-orange), var(--bitcoin-orange-light));
+  opacity: 0;
+  transition: opacity 0.3s ease-out;
+  z-index: -1;
+  filter: blur(12px);
+}
+
+.hover-glow-orange:hover::before {
+  opacity: 0.4;
+}
+
+.hover-glow-purple {
+  position: relative;
+}
+
+.hover-glow-purple::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, var(--qubic-purple), var(--qubic-purple-light));
+  opacity: 0;
+  transition: opacity 0.3s ease-out;
+  z-index: -1;
+  filter: blur(12px);
+}
+
+.hover-glow-purple:hover::before {
+  opacity: 0.4;
+}
+
+/* Premium Gradients */
+.gradient-bitcoin {
+  background: linear-gradient(135deg, var(--bitcoin-orange), var(--bitcoin-orange-light));
+}
+
+.gradient-qubic {
+  background: linear-gradient(135deg, var(--qubic-purple), var(--qubic-purple-light));
+}
+
+.gradient-bitcoin-text {
+  background: linear-gradient(135deg, var(--bitcoin-orange), var(--bitcoin-orange-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-qubic-text {
+  background: linear-gradient(135deg, var(--qubic-purple), var(--qubic-purple-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ========================================
+   VERIFICATION BADGE STYLES
+   ======================================== */
+
+.badge-verified {
+  background-color: var(--verified-bg);
+  color: var(--verified);
+  border: 1px solid var(--verified);
+}
+
+.badge-high-confidence {
+  background-color: var(--high-confidence-bg);
+  color: var(--high-confidence);
+  border: 1px solid var(--high-confidence);
+}
+
+.badge-warning {
+  background-color: var(--warning-bg);
+  color: var(--warning);
+  border: 1px solid var(--warning);
+}
+
+.badge-unknown {
+  background-color: var(--unknown-bg);
+  color: var(--unknown);
+  border: 1px solid var(--unknown);
+}
+
+.badge-disproven {
+  background-color: var(--disproven-bg);
+  color: var(--disproven);
+  border: 1px solid var(--disproven);
+  text-decoration: line-through;
+}
+
+/* ========================================
+   PREMIUM ANIMATIONS
+   ======================================== */
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px var(--bitcoin-orange) / 0.3;
+  }
+  50% {
+    box-shadow: 0 0 40px var(--bitcoin-orange) / 0.5;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes celebration-burst {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes gradient {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* ========================================
+   PREMIUM GALAXY HERO ANIMATIONS
+   ======================================== */
+
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes pulse-gentle {
+  0%, 100% {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.02);
+  }
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes float-cosmic {
+  0%, 100% {
+    transform: translateY(0) translateX(0);
+  }
+  33% {
+    transform: translateY(-10px) translateX(5px);
+  }
+  66% {
+    transform: translateY(5px) translateX(-5px);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s linear infinite;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient 6s ease infinite;
+}
+
+/* Premium Galaxy Hero Animations */
+.animate-pulse-slow {
+  animation: pulse-slow 4s ease-in-out infinite;
+}
+
+.animate-pulse-gentle {
+  animation: pulse-gentle 3s ease-in-out infinite;
+}
+
+.animate-spin-slow {
+  animation: spin-slow 8s linear infinite;
+}
+
+.animate-float-cosmic {
+  animation: float-cosmic 6s ease-in-out infinite;
+}
+
+/* Radial gradient utility for cosmic effects */
+.bg-gradient-radial {
+  background-image: radial-gradient(circle, var(--tw-gradient-stops));
+}
+
+/* NFT Image Transition */
+@keyframes fadeInScale {
+  0% {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* ========================================
+   ACCESSIBILITY
+   ======================================== */
+
+/* Focus indicators */
+.focus-ring:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .hover-lift:hover {
+    transform: none;
+  }
+
+  .animate-float,
+  .animate-shimmer,
+  .animate-pulse-glow,
+  .animate-gradient,
+  .animate-pulse-slow,
+  .animate-pulse-gentle,
+  .animate-spin-slow,
+  .animate-float-cosmic,
+  .animate-founder-awake {
+    animation: none;
+  }
+}
+
+/* ========================================
+   GAMIFICATION PROGRESS BAR
+   ======================================== */
+
+.progress-ring {
+  transform: rotate(-90deg);
+}
+
+.progress-ring-circle {
+  transition: stroke-dashoffset 0.5s ease-out;
+}
+
+/* Surface Layers Utility Classes */
+.surface-0 {
+  background-color: var(--surface-0);
+}
+
+.surface-1 {
+  background-color: var(--surface-1);
+}
+
+.surface-2 {
+  background-color: var(--surface-2);
+}
+
+.surface-3 {
+  background-color: var(--surface-3);
+}
+
+/* ========================================
+   CHURCH GOLD PALETTE
+   ======================================== */
+
+.gradient-gold {
+  background: linear-gradient(135deg, var(--church-gold), var(--church-gold-dim));
+}
+
+.gradient-gold-text {
+  background: linear-gradient(135deg, hsl(43 96% 56%), hsl(48 96% 65%));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hover-glow-gold {
+  position: relative;
+}
+
+.hover-glow-gold::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, var(--church-gold), var(--church-gold-dim));
+  opacity: 0;
+  transition: opacity 0.3s ease-out;
+  z-index: -1;
+  filter: blur(12px);
+}
+
+.hover-glow-gold:hover::before {
+  opacity: 0.4;
+}
+
+@keyframes chalk-flicker {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 0.4; }
+}
+
+.animate-chalk-flicker {
+  animation: chalk-flicker 4s ease-in-out infinite;
+}
+
+/* ========================================
+   CHURCH GLITCH ANIMATIONS (from QubicChurch reference)
+   ======================================== */
+
+@keyframes logoGlitch {
+  0%, 89%, 100% { text-shadow: none; transform: none; }
+  90% { text-shadow: -2px 0 rgba(255,0,80,0.9), 2px 0 rgba(0,200,255,0.9); transform: translateX(2px); }
+  91% { text-shadow: 2px 0 rgba(255,0,80,0.9), -2px 0 rgba(0,200,255,0.9); transform: translateX(-3px) skewX(-1deg); }
+  92% { text-shadow: -4px 0 rgba(255,0,80,0.5), 4px 0 rgba(0,200,255,0.5); transform: translateX(1px); }
+  93% { text-shadow: none; transform: translateX(2px) skewX(2deg); }
+  94%, 99% { text-shadow: none; transform: none; }
+}
+
+@keyframes textGlitch {
+  0%, 74%, 100% { transform: none; opacity: 1; }
+  75% { transform: translateX(-4px) skewX(1.5deg); opacity: 0.85; }
+  75.4% { transform: translateX(4px); opacity: 0.9; }
+  75.8% { transform: translateX(-2px) skewX(-1deg); opacity: 0.85; }
+  76.2%, 99% { transform: none; opacity: 1; }
+}
+
+@keyframes buttonPulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(240,192,48,0.4); }
+  50% { box-shadow: 0 0 30px rgba(240,192,48,0.7), 0 0 50px rgba(240,192,48,0.3); }
+}
+
+@keyframes pulseRing {
+  0%, 100% { transform: scale(1); opacity: 0.4; }
+  50% { transform: scale(1.08); opacity: 0.9; }
+}
+
+@keyframes modalGlitch {
+  0% { transform: translateX(-6px) skewX(-2deg); filter: hue-rotate(60deg); }
+  33% { transform: translateX(6px); filter: hue-rotate(-60deg); }
+  66% { transform: translateX(-3px) skewX(1deg); filter: none; }
+  100% { transform: none; }
+}
+
+@keyframes rgbSplit {
+  0%, 100% { text-shadow: none; }
+  25% { text-shadow: -5px 0 rgba(255,0,60,0.7), 5px 0 rgba(0,180,255,0.7); }
+  50% { text-shadow: 4px 0 rgba(255,0,60,0.5), -4px 0 rgba(0,180,255,0.5); }
+  75% { text-shadow: -3px 2px rgba(255,0,60,0.4), 3px -2px rgba(0,180,255,0.4); }
+}
+
+@keyframes linePulse {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 1; }
+}
+
+@keyframes lockPulse {
+  0%, 100% { box-shadow: 0 0 60px rgba(180,40,30,0.04); }
+  50% { box-shadow: 0 0 120px rgba(180,40,30,0.1), inset 0 0 60px rgba(180,40,30,0.04); }
+}
+
+.animate-logo-glitch {
+  animation: logoGlitch 8s infinite;
+}
+
+.animate-text-glitch {
+  animation: textGlitch 12s infinite;
+}
+
+.animate-button-pulse {
+  animation: buttonPulse 2.5s ease-in-out infinite;
+}
+
+.animate-pulse-ring {
+  animation: pulseRing 3s ease-in-out infinite;
+}
+
+.animate-line-pulse {
+  animation: linePulse 2s ease-in-out infinite;
+}
+
+.animate-lock-pulse {
+  animation: lockPulse 4s ease-in-out infinite;
+}
+
+/* ========================================
+   CRT SCAN LINES
+   ======================================== */
+
+.church-scan-lines::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9997;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.03) 2px,
+    rgba(0,0,0,0.03) 4px
+  );
+}
+
+/* ========================================
+   CHURCH TYPOGRAPHY UTILITIES
+   ======================================== */
+
+.font-cinzel {
+  font-family: var(--font-cinzel), 'Cinzel', serif;
+}
+
+.font-cormorant {
+  font-family: var(--font-cormorant), 'Cormorant Garamond', serif;
+}
+
+.font-share-tech {
+  font-family: var(--font-share-tech), 'Share Tech Mono', monospace;
+}
+
+.font-ibm-plex {
+  font-family: var(--font-ibm-plex), 'IBM Plex Mono', monospace;
+}
+
+/* ========================================
+   CHURCH DESIGN ELEMENTS
+   ======================================== */
+
+/* Museum plaque - gold left border accent box */
+.church-plaque {
+  position: relative;
+  padding: 1.2rem 1.6rem 1.2rem 2rem;
+  background: rgba(240,192,48,0.025);
+}
+
+.church-plaque::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(to bottom, var(--church-gold-bright, #f0c030), var(--church-gold-dark, #c8960a));
+  box-shadow: 0 0 20px rgba(240,192,48,0.3);
+}
+
+/* Signal blue left border (for quotes) */
+.church-signal-border {
+  border-left: 2px solid rgba(91,200,245,0.3);
+  padding-left: 1.6rem;
+}
+
+/* Strikethrough text style from manifesto */
+.church-strike {
+  text-decoration: line-through;
+  text-decoration-color: rgba(240,192,48,0.25);
+  color: rgba(255,255,255,0.38);
+}
+
+/* ========================================
+   FOUNDERS GRID - Awake Slot Animation
+   ======================================== */
+
+@keyframes founderAwake {
+  0%, 100% {
+    border-color: rgba(91,200,245,0.6);
+    box-shadow: 0 0 6px rgba(91,200,245,0.15), inset 0 0 4px rgba(91,200,245,0.05);
+  }
+  50% {
+    border-color: rgba(91,200,245,0.85);
+    box-shadow: 0 0 12px rgba(91,200,245,0.3), inset 0 0 8px rgba(91,200,245,0.1);
+  }
+}
+
+.founder-slot-awake {
+  border: 1px solid rgba(91,200,245,0.6);
+  background: rgba(20,40,60,0.9);
+  animation: founderAwake 3s ease-in-out infinite;
+}
+
+.animate-founder-awake {
+  animation: founderAwake 3s ease-in-out infinite;
+}
+
+/* Founders grid responsive column overrides */
+@media (min-width: 768px) {
+  .founders-grid-responsive {
+    grid-template-columns: repeat(8, 1fr) !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .founders-grid-responsive {
+    grid-template-columns: repeat(10, 1fr) !important;
+  }
+}
+
+/* -- Church Modal Body Styles -- */
+.church-modal-body .mf-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: rgba(91,200,245,0.5);
+  border-bottom: 1px solid rgba(91,200,245,0.15);
+  display: inline-block;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.2rem;
+}
+
+.church-modal-body .mf-body {
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.5);
+  line-height: 1.7;
+  margin-bottom: 1rem;
+}
+
+.church-modal-body .mf-accent {
+  color: #D4AF37;
+  font-weight: 600;
+}
+
+.church-modal-body .mf-highlight {
+  color: rgba(255,255,255,0.7);
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin: 1rem 0;
+}
+
+.church-modal-body .mf-divider {
+  width: 50px;
+  height: 1px;
+  background: linear-gradient(to right, rgba(212,175,55,0.4), transparent);
+  margin: 2rem 0;
+}
+
+.church-modal-body .mf-principle {
+  font-size: 1.1rem;
+  color: rgba(212,175,55,0.7);
+  margin-bottom: 1rem;
+}
+
+.church-modal-body .mf-accent-line {
+  font-size: 1rem;
+  color: rgba(212,175,55,0.65);
+  margin: 1.2rem 0;
+}
+
+.church-modal-body .mf-three-lines p {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.45);
+  line-height: 1.8;
+  padding-left: 1rem;
+  border-left: 1px solid rgba(91,200,245,0.15);
+  margin-bottom: 0.6rem;
+}
+
+.church-modal-body .mf-architects-block {
+  border: 1px solid rgba(212,175,55,0.12);
+  padding: 1.5rem 2rem;
+  background: rgba(212,175,55,0.02);
+  margin: 1.5rem 0;
+}
+
+.church-modal-body .mf-architects-block p {
+  color: rgba(255,255,255,0.7);
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 0.5rem;
+}
+
+.church-modal-body .mf-strike {
+  text-decoration: line-through;
+  text-decoration-color: rgba(240,192,48,0.3);
+  color: rgba(255,255,255,0.35);
+  font-size: 0.9rem;
+  margin-bottom: 0.4rem;
+}
+
+.church-modal-body .mf-final-lines p {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 0.4rem;
+}
+
+.church-modal-body .mf-final-impact {
+  font-size: 1.05rem;
+  color: rgba(212,175,55,0.8);
+  margin-top: 0.8rem;
+}
+
+
+/* ══════════════════════════════════════════
+   DESIGNER HERO STYLES
+   From: qubic-hero-light (4).html
+   ══════════════════════════════════════════ */
+
+/* ── NAV ── */
+.church-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1.6rem 5rem;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(240,192,48,0.1);
+}
+
+.nav-logo {
+  font-family: 'Cinzel', serif;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  color: var(--gold);
+  text-decoration: none;
+  animation: logoGlitch 8s infinite;
+}
+
+/* DROPDOWN MENU - Eye-catching button */
+.nav-dropdown {
+  position: absolute;
+  left: 5rem;
+}
+
+.dropdown-btn {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: #000;
+  background: var(--gold);
+  border: none;
+  padding: 0.85rem 1.6rem;
+  cursor: pointer;
+  transition: opacity 0.3s, transform 0.3s, box-shadow 0.3s;
+  font-weight: 600;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(240,192,48,0.4);
+  animation: buttonPulse 2.5s ease-in-out infinite;
+}
+
+.dropdown-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.3);
+  transform: translate(-50%,-50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.dropdown-btn:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.dropdown-btn:hover {
+  box-shadow: 0 0 35px rgba(240,192,48,0.7);
+  transform: translateY(-2px);
+}
+
+.dropdown-btn::after {
+  content: '\25BC';
+  font-size: 0.5rem;
+  margin-left: 0.9rem;
+  transition: transform 0.3s;
+  display: inline-block;
+}
+
+.dropdown-btn.active::after {
+  transform: rotate(180deg);
+}
+
+/* ── RADIAL MENU OVERLAY ── */
+.radial-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  background: rgba(0,0,0,0.75);
+  backdrop-filter: blur(6px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+
+.radial-overlay.active {
+  display: flex;
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ── HERO ── */
+.screen-hero {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+.anna-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: url("/images/anna-chalk-bg.png");
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.anna-bg::after {
+  display: none;
+}
+
+.planet-btn::after {
+  content: '';
+  position: absolute;
+  inset: -22px;
+  border-radius: 50%;
+  border: 1px solid rgba(240,192,48,0.15);
+  animation: pulseRing 3s ease-in-out 1s infinite;
+  pointer-events: none;
+}
+
+/* HERO QUOTE */
+.hero-quote {
+  position: absolute;
+  z-index: 10;
+  top: 50%;
+  left: clamp(1.5rem, 8vw, 12rem);
+  transform: translateY(-50%);
+  max-width: 45%;
+}
+
+.quote-line {
+  display: block;
+  width: 56px;
+  height: 1px;
+  background: var(--gold);
+  box-shadow: 0 0 18px rgba(240,192,48,0.7);
+  margin-bottom: 1.2rem;
+}
+
+.quote-text {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.6rem, 2.8vw, 3rem);
+  font-style: normal;
+  font-weight: 600;
+  color: var(--white);
+  line-height: 1.35;
+  text-shadow:
+    0 2px 60px rgba(0,0,0,1),
+    0 0 80px rgba(0,0,0,0.95);
+  margin-bottom: 1.2rem;
+  letter-spacing: 0.02em;
+}
+
+.quote-attr {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(0.72rem, 0.95vw, 0.9rem);
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--gold);
+  opacity: 0.9;
+}
+
+.quote-attr a {
+  color: var(--gold);
+  text-decoration: none;
+  transition: opacity 0.3s;
+}
+
+.quote-attr a:hover {
+  opacity: 1;
+  text-shadow: 0 0 12px rgba(240,192,48,0.6);
+}
+
+.quote-org {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(0.8rem, 1vw, 0.95rem);
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-top: 0.8rem;
+  opacity: 0.85;
+}
+
+/* HERO COUNTDOWN */
+.hero-countdown {
+  position: absolute;
+  z-index: 10;
+  bottom: 3.5rem;
+  left: clamp(1.5rem, 10vw, 16rem);
+}
+
+.cd-pretext {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(0.6rem, 0.75vw, 0.72rem);
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--sdim);
+  margin-bottom: 0.8rem;
+  text-align: center;
+  animation: logoGlitch 7s 2s infinite;
+}
+
+.cd-block {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.cd-unit {
+  text-align: center;
+}
+
+.cd-num {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(2.2rem, 3.5vw, 3.8rem);
+  color: #ffffff;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-shadow: 0 0 20px rgba(255,255,255,0.15);
+}
+
+.cd-sep {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(1.5rem, 2.5vw, 2.5rem);
+  color: rgba(240,192,48,0.55);
+  padding-bottom: 10px;
+  line-height: 1;
+}
+
+.cd-lbl {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(0.38rem, 0.5vw, 0.48rem);
+  letter-spacing: 0.25em;
+  color: var(--sdim);
+  text-transform: uppercase;
+  margin-top: 4px;
+  display: block;
+  text-align: center;
+}
+
+.cd-date-line {
+  margin-top: 0.7rem;
+  font-family: 'Cinzel', serif;
+  font-size: clamp(0.75rem, 1vw, 0.95rem);
+  letter-spacing: 0.3em;
+  color: var(--gold);
+  text-align: center;
+  animation: logoGlitch 11s 5s infinite;
+}
+
+/* SCROLL HINTS */
+.hero-scroll-left {
+  position: absolute;
+  z-index: 10;
+  bottom: 3.8rem;
+  left: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.hero-scroll-right {
+  position: absolute;
+  z-index: 10;
+  bottom: 3.8rem;
+  right: 5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.scroll-line {
+  width: 1px;
+  height: 42px;
+  background: linear-gradient(to bottom, transparent, var(--sdim));
+  animation: linePulse 2s ease-in-out infinite;
+}
+
+.scroll-text-vertical {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.38em;
+  color: var(--sdim);
+  text-transform: uppercase;
+  writing-mode: vertical-rl;
+}
+
+/* ── MODAL ── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s;
+}
+
+.modal-overlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.modal {
+  position: relative;
+  width: min(720px, 90vw);
+  max-height: 80vh;
+  overflow-y: auto;
+  background: #05040a;
+  border: 1px solid rgba(240,192,48,0.2);
+  border-left: 3px solid var(--gold);
+  padding: 3rem 3.5rem;
+  transform: translateY(24px) scale(0.97);
+  transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
+  scrollbar-width: none;
+}
+
+.modal::-webkit-scrollbar {
+  display: none;
+}
+
+.modal-overlay.open .modal {
+  transform: translateY(0) scale(1);
+}
+
+.modal.glitch-open {
+  animation: modalGlitch 0.35s steps(3);
+}
+
+.modal-close {
+  position: absolute;
+  top: 1.2rem;
+  right: 1.5rem;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  color: var(--sdim);
+  background: none;
+  border: 3px solid rgba(240,192,48,0.9);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.modal-close:hover {
+  color: var(--gold);
+}
+
+.modal-hook {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.35rem, 1.9vw, 1.65rem);
+  color: var(--white);
+  line-height: 1.7;
+  margin-bottom: 2.2rem;
+}
+
+.modal-hook .accent {
+  color: var(--gold);
+}
+
+.modal-rule {
+  width: 60px;
+  height: 1px;
+  margin-bottom: 2.2rem;
+  background: linear-gradient(to right, var(--gold), transparent);
+}
+
+.modal-body {
+  font-size: clamp(1.25rem, 1.6vw, 1.45rem);
+  color: #ffffff;
+  line-height: 2;
+  font-style: normal;
+  font-weight: 400;
+  border-left: 2px solid rgba(91,200,245,0.3);
+  padding-left: 1.6rem;
+  margin-bottom: 2rem;
+  font-family: 'Share Tech Mono', monospace;
+  letter-spacing: 0.015em;
+}
+
+.modal-body em {
+  color: #7dd8f8;
+  font-style: normal;
+  font-weight: 600;
+}
+
+.modal-close-text {
+  font-size: clamp(1.1rem, 1.4vw, 1.3rem);
+  color: #ffffff;
+  line-height: 1.95;
+  font-weight: 400;
+  font-style: normal;
+  font-family: 'Share Tech Mono', monospace;
+  letter-spacing: 0.015em;
+  margin-bottom: 2.2rem;
+  padding-top: 0.8rem;
+}
+
+.modal-close-text strong {
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 1.12em;
+  letter-spacing: 0.02em;
+  display: block;
+  margin: 0.5rem 0;
+}
+
+.modal-tagline {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1rem, 1.25vw, 1.15rem);
+  letter-spacing: 0.16em;
+  color: var(--gold);
+  line-height: 1.8;
+  padding: 1.4rem 1.8rem;
+  border: 1px solid rgba(240,192,48,0.22);
+  border-left: 3px solid var(--gold);
+  background: rgba(240,192,48,0.04);
+  margin-bottom: 2.5rem;
+  display: inline-block;
+}
+
+.modal-vivancos {
+  padding: 1.8rem 2rem;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-left: 2px solid rgba(240,192,48,0.2);
+}
+
+.modal-vivancos p:first-child {
+  font-size: clamp(1.35rem, 1.7vw, 1.55rem);
+  font-style: normal;
+  font-weight: 400;
+  color: #ffffff;
+  line-height: 1.9;
+  margin-bottom: 1rem;
+}
+
+.modal-vivancos p:last-child {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.28em;
+  color: var(--gold);
+  opacity: 0.8;
+  text-transform: uppercase;
+}
+
+.modal-vivancos a {
+  color: var(--gold);
+  text-decoration: none;
+  transition: opacity 0.3s;
+}
+
+.modal-vivancos a:hover {
+  opacity: 1;
+  text-shadow: 0 0 12px rgba(240,192,48,0.6);
+}
+
+/* ── RADIAL MENU ── */
+.radial-menu {
+  position: relative;
+  width: 520px;
+  height: 520px;
+  flex-shrink: 0;
+  transform: scale(0.8);
+  opacity: 0;
+  transition: transform 0.4s cubic-bezier(0.16,1,0.3,1), opacity 0.4s ease;
+}
+
+.radial-overlay.active .radial-menu {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.radial-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.radial-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #0a0a12 60%, #050508 100%);
+  border: 2px solid rgba(240,192,48,0.6);
+  box-shadow: 0 0 30px rgba(240,192,48,0.25), inset 0 0 20px rgba(0,0,0,0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 0.3rem;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.radial-center-symbol {
+  font-size: 1.6rem;
+  color: var(--gold);
+  opacity: 0.9;
+  line-height: 1;
+}
+
+.radial-center-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.3em;
+  color: var(--gold);
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.radial-center-sub {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.5rem;
+  letter-spacing: 0.2em;
+  color: var(--sdim);
+  text-transform: uppercase;
+  opacity: 0.7;
+  transition: opacity 0.3s, color 0.3s;
+}
+
+.seg-label-wrap {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  pointer-events: none;
+}
+
+.seg-label-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  transform: translate(-50%,-50%);
+  transition: opacity 0.25s, transform 0.25s;
+}
+
+.seg-icon {
+  font-size: 1.4rem;
+  color: var(--gold);
+  opacity: 0.65;
+  transition: opacity 0.25s, filter 0.25s;
+  filter: drop-shadow(0 0 0px rgba(240,192,48,0));
+}
+
+.seg-name {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold);
+  opacity: 0.65;
+  white-space: nowrap;
+  transition: opacity 0.25s, color 0.25s;
+  text-shadow: 0 2px 8px rgba(0,0,0,1);
+}
+
+.seg-label-inner.hovered .seg-icon {
+  opacity: 1;
+  transform: scale(1.2);
+  filter: drop-shadow(0 0 8px rgba(240,192,48,0.8));
+}
+
+.seg-label-inner.hovered .seg-name {
+  opacity: 1;
+  text-shadow: 0 0 12px rgba(240,192,48,0.7);
+}
+
+/* ── WHEEL PRIMARY SEGMENTS (CFB, Manifesto, Mission) ── */
+.seg-primary-glow {
+  filter: drop-shadow(0 0 6px rgba(240,192,48,0.4));
+}
+
+/* ── MANIFESTO MODAL ── */
+.mf-opening-quote {
+  text-align: center;
+  padding: 2rem 2rem 2.2rem;
+  margin-bottom: 2.5rem;
+  border-bottom: 1px solid rgba(240,192,48,0.12);
+}
+
+.mf-oq-text {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.05rem, 1.4vw, 1.2rem);
+  color: rgba(255,255,255,0.92);
+  line-height: 1.8;
+  letter-spacing: 0.03em;
+  margin-bottom: 1rem;
+}
+
+.mf-oq-attr a {
+  color: #f0c030;
+  text-decoration: none;
+}
+
+.mf-oq-attr {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.4em;
+  color: var(--gold);
+  opacity: 0.8;
+  text-transform: uppercase;
+}
+
+.mf-block {
+  margin-bottom: 2.2rem;
+}
+
+.mf-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.5em;
+  color: var(--sdim);
+  text-transform: uppercase;
+  margin-bottom: 1.4rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid rgba(91,200,245,0.2);
+}
+
+.mf-strike-group {
+  margin-bottom: 1.4rem;
+}
+
+.mf-strike {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(0.9rem, 1.15vw, 1.05rem);
+  color: rgba(255,255,255,0.38);
+  line-height: 2;
+  margin: 0;
+  text-decoration: line-through;
+  text-decoration-color: rgba(240,192,48,0.25);
+  letter-spacing: 0.01em;
+}
+
+.mf-accent-line {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1rem, 1.3vw, 1.15rem);
+  color: var(--gold);
+  line-height: 1.8;
+  margin: 1.2rem 0;
+  letter-spacing: 0.03em;
+}
+
+.mf-body {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(0.88rem, 1.1vw, 1rem);
+  color: rgba(255,255,255,0.82);
+  line-height: 2;
+  letter-spacing: 0.01em;
+  margin-bottom: 1rem;
+}
+
+.mf-body strong {
+  color: var(--white);
+  font-weight: 700;
+}
+
+.mf-principle {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.1rem, 1.4vw, 1.25rem);
+  color: var(--white);
+  line-height: 1.7;
+  margin-bottom: 1.2rem;
+  letter-spacing: 0.03em;
+}
+
+.mf-three-lines {
+  border-left: 2px solid rgba(91,200,245,0.3);
+  padding-left: 1.4rem;
+  margin: 1.4rem 0;
+}
+
+.mf-three-lines p {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(0.85rem, 1.05vw, 0.96rem);
+  color: rgba(255,255,255,0.75);
+  line-height: 2;
+  margin: 0;
+  letter-spacing: 0.01em;
+}
+
+.mf-highlight {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1rem, 1.3vw, 1.15rem);
+  color: var(--white);
+  background: rgba(240,192,48,0.06);
+  border: 1px solid rgba(240,192,48,0.2);
+  border-left: 3px solid var(--gold);
+  padding: 1rem 1.4rem;
+  line-height: 1.7;
+  letter-spacing: 0.03em;
+  margin-top: 1.2rem;
+}
+
+.mf-architects-block {
+  padding: 1.6rem 2rem;
+  border: 1px solid rgba(240,192,48,0.2);
+  border-left: 3px solid var(--gold);
+  background: rgba(240,192,48,0.04);
+  margin-bottom: 1.8rem;
+}
+
+.mf-architects-block p {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1rem, 1.3vw, 1.15rem);
+  color: var(--white);
+  line-height: 1.9;
+  margin: 0 0 0.5rem 0;
+  letter-spacing: 0.03em;
+}
+
+.mf-architects-block p strong {
+  color: var(--gold);
+}
+
+.mf-final-lines {
+  text-align: center;
+  padding: 1.5rem 0 0.5rem;
+}
+
+.mf-final-lines p {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(0.88rem, 1.1vw, 1rem);
+  color: rgba(255,255,255,0.65);
+  line-height: 2;
+  margin: 0;
+  letter-spacing: 0.03em;
+}
+
+.mf-final-impact {
+  font-family: 'Cinzel', serif !important;
+  font-size: clamp(1.05rem, 1.35vw, 1.2rem) !important;
+  color: var(--gold) !important;
+  margin-top: 0.8rem !important;
+  letter-spacing: 0.05em !important;
+}
+
+.mf-closing-quote {
+  margin-top: 2.5rem;
+  padding: 1.8rem 2rem;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-left: 2px solid rgba(240,192,48,0.3);
+}
+
+.mf-cq-text {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(0.95rem, 1.2vw, 1.08rem);
+  color: rgba(255,255,255,0.9);
+  line-height: 1.9;
+  margin-bottom: 1rem;
+  letter-spacing: 0.02em;
+}
+
+.mf-cq-attr a {
+  color: #f0c030;
+  text-decoration: none;
+}
+
+.mf-cq-attr {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.4em;
+  color: var(--gold);
+  opacity: 0.85;
+  text-transform: uppercase;
+}
+
+.mf-divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(240,192,48,0.25), transparent);
+  margin: 0.5rem 0 2rem;
+}
+
+/* ── ROADMAP ── */
+.rm-header {
+  text-align: center;
+  padding: 0 0 2rem;
+}
+
+.rm-title-line {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1rem, 1.4vw, 1.2rem);
+  color: rgba(255,255,255,0.9);
+  letter-spacing: 0.15em;
+  margin-bottom: 0.5rem;
+}
+
+.rm-subtitle {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.4em;
+  color: rgba(255,255,255,0.3);
+  text-transform: uppercase;
+}
+
+.rm-unlock-bar {
+  background: rgba(240,192,48,0.04);
+  border: 1px solid rgba(240,192,48,0.12);
+  padding: 1rem 1.4rem;
+  margin-bottom: 2.5rem;
+}
+
+.rm-unlock-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.3em;
+  margin-bottom: 0.8rem;
+  text-transform: uppercase;
+}
+
+.rm-bar-track {
+  position: relative;
+  height: 4px;
+  background: rgba(255,255,255,0.06);
+  margin-bottom: 0.4rem;
+}
+
+.rm-bar-fill {
+  height: 100%;
+  background: linear-gradient(to right, rgba(240,192,48,0.9), rgba(240,192,48,0.5));
+  transition: width 1s ease;
+}
+
+.rm-bar-marker {
+  position: absolute;
+  top: -4px;
+  width: 2px;
+  height: 12px;
+  background: rgba(240,192,48,0.3);
+  transform: translateX(-50%);
+}
+
+.rm-bar-legend {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.5rem;
+  color: rgba(255,255,255,0.2);
+  letter-spacing: 0.1em;
+  margin-top: 0.3rem;
+}
+
+.rm-timeline {
+  position: relative;
+  padding-left: 2rem;
+}
+
+.rm-timeline::before {
+  content: '';
+  position: absolute;
+  left: 0.85rem;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(to bottom, rgba(240,192,48,0.6), rgba(240,192,48,0.15) 70%, transparent);
+}
+
+.rm-node {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 1.2rem;
+  margin-bottom: 0.4rem;
+  padding-bottom: 2rem;
+}
+
+.rm-node:last-child {
+  padding-bottom: 0;
+}
+
+.rm-node-line {
+  display: none;
+}
+
+.rm-node-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
+  margin-top: 0.1rem;
+}
+
+.rm-done .rm-node-dot {
+  background: #f0c030;
+  color: #000;
+  border: 2px solid #f0c030;
+  box-shadow: 0 0 12px rgba(240,192,48,0.5);
+}
+
+.rm-active .rm-node-dot {
+  background: rgba(91,200,245,0.15);
+  color: #5bc8f5;
+  border: 2px solid #5bc8f5;
+}
+
+.rm-pulse {
+  animation: rmPulse 2s ease-in-out infinite;
+}
+
+.rm-locked-dot {
+  background: rgba(255,255,255,0.03);
+  color: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.rm-final-dot {
+  width: 36px;
+  height: 36px;
+  background: rgba(240,192,48,0.1);
+  color: #f0c030;
+  border: 2px solid rgba(240,192,48,0.6);
+  font-size: 1rem;
+  box-shadow: 0 0 24px rgba(240,192,48,0.3);
+  animation: rmFinalPulse 3s ease-in-out infinite;
+}
+
+.rm-node-card {
+  flex: 1;
+}
+
+.rm-node-date {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.45em;
+  color: rgba(240,192,48,0.7);
+  text-transform: uppercase;
+  margin-bottom: 0.3rem;
+}
+
+.rm-node-name {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(0.95rem, 1.2vw, 1.1rem);
+  color: rgba(255,255,255,0.95);
+  letter-spacing: 0.08em;
+  margin-bottom: 0.3rem;
+}
+
+.rm-node-sub {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.62rem;
+  color: rgba(91,200,245,0.7);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 0.6rem;
+}
+
+.rm-node-body {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.55);
+  line-height: 1.9;
+  letter-spacing: 0.01em;
+}
+
+.rm-done .rm-node-body {
+  color: rgba(255,255,255,0.7);
+}
+
+.rm-active .rm-node-body {
+  color: rgba(255,255,255,0.75);
+}
+
+.rm-locked-card .rm-node-name {
+  letter-spacing: 0.3em;
+}
+
+.rm-unlock-progress {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin: 0.5rem 0;
+}
+
+.rm-unlock-track {
+  flex: 1;
+  height: 2px;
+  background: rgba(255,255,255,0.06);
+}
+
+.rm-unlock-fill {
+  height: 100%;
+  background: rgba(240,192,48,0.5);
+}
+
+.rm-unlock-progress span {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.55rem;
+  color: rgba(240,192,48,0.5);
+  white-space: nowrap;
+  letter-spacing: 0.2em;
+}
+
+.rm-final-card {
+  padding: 1.2rem 1.4rem;
+  border: 1px solid rgba(240,192,48,0.25);
+  background: rgba(240,192,48,0.04);
+}
+
+.rm-final-card .rm-node-name {
+  color: #f0c030;
+}
+
+.rm-final-card .rm-node-sub {
+  color: rgba(240,192,48,0.6);
+}
+
+.rm-final-card .rm-node-body {
+  color: rgba(255,255,255,0.65);
+}
+
+.rm-final {
+  padding-bottom: 0 !important;
+}
+
+/* Founders grid CSS is defined inline in DesignerHeroClient.tsx to avoid load-order conflicts */
+
+/* ── DESIGNER KEYFRAMES ── */
+
+@keyframes planetGlitch {
+  0% {
+    filter: hue-rotate(0deg) saturate(1) brightness(1);
+  }
+  25% {
+    filter: hue-rotate(160deg) saturate(4) brightness(1.5);
+    transform: translate(-3px,2px);
+  }
+  50% {
+    filter: hue-rotate(300deg) saturate(3) brightness(0.8);
+    transform: translate(3px,-2px) skewX(3deg);
+  }
+  75% {
+    filter: hue-rotate(60deg) saturate(5) brightness(1.3);
+    transform: translate(-1px,3px);
+  }
+  100% {
+    filter: none;
+    transform: none;
+  }
+}
+
+@keyframes arrowBounce {
+  0%, 100% {
+    transform: rotate(45deg) translateY(0);
+  }
+  50% {
+    transform: rotate(45deg) translateY(6px);
+  }
+}
+
+@keyframes rmPulse {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(91,200,245,0.4);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(91,200,245,0.8);
+  }
+}
+
+@keyframes rmFinalPulse {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(240,192,48,0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(240,192,48,0.6);
+  }
+}
+
+@keyframes cfbSectorPulse {
+  0%, 100% {
+    opacity: 0.6;
+    filter: drop-shadow(0 0 4px rgba(240,192,48,0.3));
+  }
+  50% {
+    opacity: 1;
+    filter: drop-shadow(0 0 10px rgba(240,192,48,0.6));
+  }
+}
+
+/* ── ANNA NFT AREA ── */
+.hero-anna-area {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  z-index: 10;
+  width: 38%;
+  pointer-events: none;
+}
+.hero-anna-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.hero-anna-img-wrap {
+  position: absolute;
+  inset: 0;
+}
+.hero-anna-controls {
+  position: absolute;
+  bottom: 2rem;
+  left: 0;
+  right: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  pointer-events: all;
+}
+.hero-anna-btn {
+  padding: 0.75rem;
+  color: rgba(255,255,255,0.2);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+.hero-anna-btn:hover {
+  color: rgba(255,255,255,0.6);
+}
+.hero-anna-dots {
+  display: flex;
+  gap: 6px;
+}
+.hero-anna-dot {
+  height: 4px;
+  width: 4px;
+  background: rgba(255,255,255,0.15);
+  transition: background 0.3s, width 0.3s;
+}
+.hero-anna-dot.active {
+  background: rgba(212,175,55,0.8);
+  width: 16px;
+}
+.hero-anna-label {
+  position: absolute;
+  bottom: 4rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  color: rgba(255,255,255,0.5);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.56rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+}
+
+/* ── FIBONACCI SPIRAL ── */
+.hero-fibonacci {
+  position: absolute;
+  z-index: 12;
+  pointer-events: none;
+  /* position values set inline from spiral editor state */
+}
+
+/* ── DESIGNER RESPONSIVE BREAKPOINTS ── */
+
+/* Prevent quote/countdown overlap on all screens */
+.hero-quote {
+  max-width: min(45%, calc(100% - 42%));
+}
+
+@media (max-height: 850px) {
+  .quote-text {
+    font-size: clamp(1.4rem, 2.6vw, 2.6rem) !important;
+    margin-bottom: 0.8rem;
+    line-height: 1.35;
+  }
+  .quote-line {
+    margin-bottom: 1rem;
+  }
+  .quote-attr {
+    font-size: 0.65rem !important;
+  }
+  .hero-countdown {
+    bottom: 1.5rem;
+  }
+  .cd-num {
+    font-size: clamp(1.4rem, 2.2vw, 2.2rem);
+  }
+  .cd-sep {
+    font-size: clamp(1rem, 1.5vw, 1.5rem);
+  }
+  .cd-pretext {
+    font-size: 0.55rem;
+    margin-bottom: 0.4rem;
+  }
+  .cd-date-line {
+    font-size: 0.7rem;
+    margin-top: 0.4rem;
+  }
+}
+
+@media (max-height: 700px) {
+  .quote-text {
+    font-size: clamp(1.2rem, 2.2vw, 2rem) !important;
+    margin-bottom: 0.6rem;
+  }
+  .hero-countdown {
+    bottom: 1rem;
+  }
+  .cd-num {
+    font-size: clamp(1.2rem, 2vw, 1.8rem);
+  }
+}
+
+@media (max-width: 1400px) {
+  .hero-quote {
+    left: 6rem;
+    max-width: 42%;
+  }
+  .hero-countdown {
+    left: 6rem;
+  }
+  .hero-anna-area {
+    width: 35%;
+  }
+}
+
+@media (max-width: 1280px) {
+  .hero-fibonacci {
+    display: none;
+  }
+}
+
+@media (max-width: 1100px) {
+  .church-nav {
+    padding: 1.4rem 2.5rem;
+    gap: 2rem;
+  }
+  .hero-quote {
+    left: 2.5rem;
+    max-width: 50%;
+  }
+  .quote-text {
+    font-size: clamp(1.4rem, 2.5vw, 2.4rem) !important;
+  }
+  .hero-countdown {
+    left: 2.5rem;
+  }
+  .cd-num {
+    font-size: clamp(1.4rem, 2.5vw, 2.4rem);
+  }
+  .hero-scroll-left {
+    display: none;
+  }
+  .hero-anna-area {
+    width: 32%;
+  }
+  .hero-fibonacci {
+    display: none;
+  }
+  .modal {
+    padding: 2rem 1.8rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-quote {
+    left: 1.5rem;
+    right: 1.5rem;
+    max-width: none;
+    top: 30%;
+    transform: translateY(-30%);
+  }
+  .quote-text {
+    font-size: clamp(1.1rem, 4.5vw, 1.8rem) !important;
+    margin-bottom: 0.8rem;
+  }
+  .quote-line {
+    margin-bottom: 1rem;
+  }
+  .hero-countdown {
+    left: 1.5rem;
+    bottom: 2.5rem;
+  }
+  .cd-num {
+    font-size: clamp(1.2rem, 5vw, 2rem);
+  }
+  .cd-sep {
+    font-size: clamp(0.8rem, 3vw, 1.4rem);
+  }
+  .hero-anna-area {
+    display: none;
+  }
+  .hero-fibonacci {
+    display: none !important;
+  }
+  .hero-scroll-left,
+  .hero-scroll-right {
+    display: none;
+  }
+  .church-nav {
+    padding: 1rem 1.5rem;
+    gap: 1rem;
+  }
+  .planet-btn {
+    font-size: 0.55rem !important;
+    padding: 0.7rem 1.4rem !important;
+  }
+  .nav-dropdown {
+    left: 1rem !important;
+  }
+  .anna-bg {
+    display: none !important;
+  }
+}
