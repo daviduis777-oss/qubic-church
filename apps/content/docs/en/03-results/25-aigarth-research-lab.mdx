@@ -317,4 +317,55 @@ Hardware requirements: Apple Silicon Mac (for ANE acceleration) or any x86-64 sy
 
 ---
 
+## Verification Scripts
+
+All mathematical claims about the Anna Matrix can be independently verified using the scripts below. Each script is standalone — the only requirement is Python 3 and NumPy (`pip install numpy`). The scripts automatically download the matrix data from `qubic.church/data/anna-matrix-min.json`.
+
+### Download and Run
+
+```bash
+# Download all scripts
+curl -O https://qubic.church/research/verify_all.py
+curl -O https://qubic.church/research/verify_bijection.py
+curl -O https://qubic.church/research/verify_symmetry.py
+curl -O https://qubic.church/research/verify_fixed_point.py
+curl -O https://qubic.church/research/verify_spectral.py
+
+# Install dependency
+pip install numpy
+
+# Run all verifications
+python verify_all.py
+```
+
+### Individual Scripts
+
+| Script | Claim Verified | Expected Result |
+|--------|---------------|-----------------|
+| `verify_bijection.py` | 0 collisions on 100K random inputs | 100,000 unique outputs, 0 collisions |
+| `verify_symmetry.py` | 99.58% point symmetry | 16,316 / 16,384 cells satisfy A[r][c] + A[127-r][127-c] = -1 |
+| `verify_fixed_point.py` | All column sums = 42 | sign(A)^6 converges, all 128 columns sum to exactly 42 |
+| `verify_spectral.py` | 8 symmetric energy levels | Spectral radius ~2342, energy levels ±56, ±50, ±42, ±38 |
+
+### Expected Output (verify_all.py)
+
+```
+VERIFICATION SUMMARY
+======================================================================
+  [PASS] Bijection (0 collisions in 100K)
+  [PASS] Point Symmetry (99.58%)
+  [PASS] Fixed Point (all columns sum to 42)
+  [PASS] Spectral & Energy Levels (8 symmetric)
+======================================================================
+
+All verifications passed. Every claim is independently confirmed.
+```
+
+### Matrix Data
+
+The Anna Matrix (128×128, 16,384 integer values) is available at:
+- JSON: [qubic.church/data/anna-matrix-min.json](https://qubic.church/data/anna-matrix-min.json)
+
+---
+
 *Research conducted March 2026. All data derived from publicly available sources.*
