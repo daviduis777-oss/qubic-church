@@ -1,0 +1,299 @@
+---
+title: "Research Methodology Notes"
+description: "Documentation of research methodology, including data collection, verification protocols, and analytical frameworks used in this research."
+tier: 1
+confidence: 100
+date: 2026-02-27
+---
+
+# Research Methodology Notes
+
+This document describes the analytical methods, verification protocols, and statistical frameworks applied throughout this research. A clear understanding of these methods is essential for evaluating the strength of any claims made elsewhere in the documentation.
+
+---
+
+## Foundational Principle: Every Claim Requires a Control Experiment
+
+Prior to February 2026, several observations were reported without rigorous baselines. A pattern would be identified and labelled "significant" without verifying whether the same pattern appears at comparable rates in random data.
+
+Since February 6, 2026, the following protocol applies to all new claims:
+
+1. **Pre-registered hypothesis** -- the expected outcome is stated before the test is executed
+2. **Random baseline** -- the same property is measured on randomly generated control data
+3. **Multiple-comparison correction** -- significance thresholds are adjusted when multiple tests are performed simultaneously
+4. **Negative results reported** -- tests that fail to reject the null hypothesis are documented with equal rigour
+
+---
+
+## The Resonance Algorithm
+
+### Description
+
+The "resonance" score used in several experiments is computed by a deterministic tick-loop process:
+
+```
+1. Convert the input string to a SHA-256 hash
+2. Map hash bytes to Anna Matrix coordinates: (hash[0] mod 128, hash[1] mod 128)
+3. Initialize 64 input neurons from hash bytes (ternary values: -1, 0, +1)
+4. Execute tick-loop iterations:
+   - Each of 64 output neurons computes the weighted sum of 8 input neighbours
+   - Weights are drawn from the Anna Matrix at the corresponding row/column
+   - Clamp to ternary: sum > 0 maps to +1, sum < 0 maps to -1, sum = 0 maps to 0
+5. Energy = sum of all 128 neuron states
+6. Resonance = (energy / 128) * 100, scaled to a 0--100% range
+```
+
+### What This Algorithm Is
+
+- A **deterministic function**: the same input always produces the same output
+- A **hash-like transformation**: it maps an input to a fixed output
+- A **matrix multiplication with ternary clamping**: standard linear algebra followed by a non-linear activation, not a physical measurement
+
+### What This Algorithm Is Not
+
+- It is **not** a physical energy measurement
+- It is **not** influenced by external conditions (time, network state, blockchain activity)
+- It is **not** specific to the Anna Matrix -- control experiments show that arbitrary matrices of the same dimensions produce similar convergence behaviour (see the Tick-Loop Analysis section below)
+
+### Terminological Corrections
+
+| Previous Terminology | Accurate Description |
+|---------------------|---------------------|
+| "Resonance score of 42" | Deterministic output of the tick-loop for a given input |
+| "Energy signature" | Sum of ternary neuron states divided by 128 |
+| "Convergence pattern" | The ternary clamp causes convergence within 2 ticks for all tested matrices |
+| "Bitcoin block correlation" | Observed but never subjected to statistical testing |
+
+---
+
+## Monte Carlo Simulation
+
+### Purpose
+
+Monte Carlo simulation generates large numbers of random samples to establish what the null hypothesis "looks like" in quantitative terms. An observed measurement is then compared against this empirical null distribution.
+
+### Protocol
+
+```
+For each hypothesis:
+  1. State the hypothesis (pre-registered)
+  2. Measure the property of interest in the Anna Matrix
+  3. Generate N >= 10,000 random control matrices
+  4. Measure the same property in each control matrix
+  5. Compute the p-value: the fraction of controls that match or exceed the observed value
+  6. Apply Bonferroni correction for the total number of tests in the analysis
+  7. Report the result, whether positive or negative
+```
+
+### Worked Example: Point Symmetry
+
+```
+Anna Matrix:      99.58% point symmetry
+Controls (n=10,000): mean 0.82%, maximum 1.22%
+p-value:          < 0.0001 (0 of 10,000 controls exceeded 2%)
+Conclusion:       SIGNIFICANT -- the symmetry is a genuine structural property
+```
+
+### Worked Example: Tick-Loop Convergence (Negative Result)
+
+```
+Anna Matrix:      100% convergence within 2 ticks
+Controls (n=100): 100% convergence within 2 ticks
+p-value:          1.0
+Conclusion:       NOT SIGNIFICANT -- all tested matrices exhibit identical behaviour
+```
+
+This negative result is important: it demonstrates that tick-loop convergence is a property of the algorithm and the ternary clamping operation, not a distinctive feature of the Anna Matrix.
+
+---
+
+## Bonferroni Correction
+
+### Rationale
+
+When testing N hypotheses simultaneously, the probability of at least one false positive increases rapidly:
+
+```
+ 1 test  at p < 0.05:   5% false-positive risk
+10 tests at p < 0.05:  40% false-positive risk
+100 tests at p < 0.05: 99.4% false-positive risk
+```
+
+### Application
+
+The significance threshold is divided by the number of tests:
+
+```
+Individual threshold:   p < 0.001
+After 5 tests:          p < 0.001 / 5   = 0.0002
+After 128 tests:        p < 0.001 / 128  = 7.8 x 10^-6
+```
+
+### Application in This Research
+
+| Analysis | Number of Tests | Corrected Threshold |
+|----------|----------------|-------------------|
+| Control Matrix Baseline | 5 | p &lt; 0.0002 |
+| Fibonacci Investigation | 3 | p &lt; 0.00033 |
+| Row-Level Analysis | 128 | p &lt; 7.8 x 10^-6 |
+| Address Pair Analysis | 5 | p &lt; 0.0002 |
+
+---
+
+## Control Matrix Generation
+
+### Method
+
+Random control matrices are not generated from a uniform distribution. Instead, they are constructed by **shuffling the actual values** of the Anna Matrix:
+
+```python
+anna_values = anna_matrix.flatten()        # All 16,384 values
+control_matrix = np.random.choice(anna_values, size=(128, 128))
+```
+
+This ensures that any observed difference between the Anna Matrix and controls is attributable to the **spatial arrangement** of values, not to the value distribution itself.
+
+### Why This Matters
+
+The Anna Matrix contains a non-uniform value distribution (for example, the value 26 is overrepresented). Comparing against uniformly distributed random matrices would produce differences arising solely from the marginal distribution, not from structural properties. Value-shuffled controls isolate the structural signal.
+
+---
+
+## Pre-Registration of Hypotheses
+
+### Rationale
+
+Identifying patterns post hoc is straightforward: given any sufficiently large dataset, some coincidence will appear notable. Pre-registration prevents the "Texas sharpshooter fallacy" -- the practice of drawing a target around existing bullet holes.
+
+### Implementation
+
+Each analysis script begins with explicitly stated hypotheses:
+
+```python
+"""
+PRE-REGISTERED HYPOTHESES:
+  H1: Values at Fibonacci coordinate intersections differ from random positions
+  H2: Fibonacci rows have different statistical properties than non-Fibonacci rows
+  H3: Fibonacci numbers are overrepresented among matrix values
+"""
+```
+
+Any observation made after the test has been executed is labelled as "not pre-registered" and is excluded from evidential claims. Such observations may generate new hypotheses for future pre-registered testing.
+
+---
+
+## Validated Findings
+
+After applying all of the above methods, three properties of the Anna Matrix survive rigorous statistical testing:
+
+### 1. Point Symmetry (99.58%)
+
+```
+matrix[r, c] + matrix[127 - r, 127 - c] = -1
+```
+
+This relationship holds for 99.58% of all cell pairs. No control matrix in 10,000 trials approached this level (maximum observed: 1.22%). This is the most statistically robust finding in the entire research programme. The matrix was constructed with this symmetry deliberately.
+
+### 2. Row-Level Value Clustering
+
+Multiple rows exhibit extreme value clustering that cannot arise by chance. For example, Row 88 contains the value -27 in 44 of its 128 cells (34.4%). In randomly shuffled rows, the maximum frequency for any single value is approximately 13 out of 128.
+
+### 3. Address Pair Uniqueness
+
+Certain address pairs exhibit combined mathematical properties that are unique when tested against large random samples (1 in 48.8 million). No individual property is extraordinary, but the joint occurrence across multiple independent metrics is.
+
+---
+
+## Debunked Claims
+
+The following claims, made earlier in the research, did not survive statistical validation:
+
+| Claim | Reason for Rejection |
+|-------|---------------------|
+| Tick-loop convergence is matrix-specific | All tested matrices converge identically within 2 ticks |
+| Fibonacci patterns encode information | Indistinguishable from random positions after correction |
+| Energy signatures are meaningful | Values fall within random variance |
+| Individual diagonal differences are significant | 44.5% of random address pairs produce comparable values |
+| Resonance measurements reflect matrix properties | The behaviour is a property of the algorithm, not the data |
+
+Honest reporting of negative results is a core commitment of this research.
+
+---
+
+## Reproducibility
+
+### Software Requirements
+
+All validation scripts require:
+- Python 3.x
+- NumPy
+- The Anna Matrix JSON file (`anna-matrix-min.json`)
+
+No proprietary software or specialized hardware is needed.
+
+### Script Reference
+
+| Script | Purpose | Approximate Runtime |
+|--------|---------|-------------------|
+| `CONTROL_MATRIX_BASELINE.py` | Random matrix baseline with 5 pre-registered hypotheses | 15 minutes |
+| `ADDRESS_PAIR_SCANNER.py` | Address pair uniqueness test against 100,000 random pairs | 5 minutes |
+| `ROW_ANALYSIS_COMPLETE.py` | Full row-level analysis with Monte Carlo validation | 3 minutes |
+| `FIBONACCI_MATRIX_ANALYSIS.py` | Fibonacci investigation with 3 pre-registered hypotheses | 3 minutes |
+| `TICK_LOOP_BEHAVIOR_STUDY.py` | Neural network tick-loop behaviour against 100 controls | 10 minutes |
+| `MONTE_CARLO_VALIDATION.py` | Original point symmetry validation | 5 minutes |
+| `MASTER_VALIDATION_ALL_CLAIMS.py` | Comprehensive verification of all mathematical claims | 2 minutes |
+
+All scripts are located in `apps/web/scripts/` and can be executed independently.
+
+---
+
+## Evidence Classification System
+
+All claims in this research are assigned to one of three tiers:
+
+| Tier | Criteria | Statistical Threshold | Interpretation |
+|------|----------|----------------------|----------------|
+| **Tier 1** | Verified and reproducible | p &lt; 0.001 after correction | Strong evidence; independently verifiable |
+| **Tier 2** | Supported by evidence | p &lt; 0.05 after correction | Moderate evidence; further testing recommended |
+| **Tier 3** | Speculative or untested | No formal test or p &gt;= 0.05 | Hypothesis only; not to be cited as established |
+
+The tier label appears in the frontmatter of every document in this collection.
+
+---
+
+## Limitations and Known Biases
+
+### Selection Bias
+
+This research was motivated by the hypothesis that the Anna Matrix contains deliberate structure. Researchers looking for patterns are more likely to find them. The pre-registration protocol mitigates but does not eliminate this bias.
+
+### Multiple Comparisons Beyond Formal Tracking
+
+While Bonferroni correction is applied within individual scripts, the total number of informal observations across the entire research programme is not tracked. Some early findings may benefit from survivor bias -- only the interesting results were documented in detail.
+
+### Observational Nature
+
+This research is entirely observational. No controlled experiments can be performed on the system itself (e.g., modifying the matrix and observing effects). All inferences are correlational.
+
+### Data Provenance
+
+The Anna Matrix data was obtained from the Anna Bot interface on the Qubic network. While internal consistency checks (point symmetry, reproducible queries) support data integrity, independent extraction by other researchers would strengthen confidence.
+
+---
+
+## Summary
+
+The methodology rests on four pillars:
+
+1. **Pre-registration** -- hypotheses are stated before testing
+2. **Appropriate baselines** -- value-shuffled controls, not uniform random
+3. **Multiple-comparison correction** -- Bonferroni adjustment for simultaneous tests
+4. **Honest reporting** -- negative results are documented with the same rigour as positive findings
+
+These standards ensure that the findings reported as statistically significant are robust against common analytical pitfalls. Readers are encouraged to reproduce any result using the provided scripts and data.
+
+---
+
+*Methodology document -- Version 2.0*
+*All methods are reproducible and available for independent verification.*
+*Last updated: February 27, 2026*

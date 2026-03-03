@@ -1,0 +1,303 @@
+---
+title: "Glossary of Terms"
+description: "Definitions of key terms, acronyms, and concepts used throughout the research documentation."
+tier: 1
+confidence: 100
+date: 2026-02-27
+---
+
+# Glossary of Terms
+
+This glossary provides a comprehensive reference for all terminology, constants, and concepts used in this research documentation. Terms are organized by domain.
+
+---
+
+## Philosophical and Historical Terms
+
+### CCRU (Cybernetic Culture Research Unit)
+
+An experimental cultural theory collective active from 1995 to 2003 at the University of Warwick, England. Led by Nick Land and Sadie Plant, the group developed a practice of "theory-fiction" that blended philosophy, cybernetics, and numerical systems.
+
+**Key contributions**: Numogram, Hyperstition, Pandemonium System
+**Relevance**: Possible philosophical precursor to the Qubic/Aigarth architecture
+**See**: [Background](/docs/01-introduction/02-background), [Conceptual Frameworks](/docs/03-results/19-conceptual-frameworks)
+
+### Helix Gates
+
+Ternary logic gates that are reversible and functionally complete. A Helix Gate rotates its input by the sum of three ternary values. The term appears identically in both the Numogram system (1990s) and the Qubic/Aigarth architecture, a terminological overlap with an estimated independent convergence probability below 0.1%.
+
+### Hyperstition
+
+A CCRU concept describing ideas that function as "self-fulfilling prophecies" -- fictions that make themselves real through belief and implementation. In the context of this research, the concept is relevant to time-locks and embedded breadcrumb trails.
+
+### Numogram
+
+The "Decimal Labyrinth" system developed by the CCRU in the 1990s. It organizes ten digits into five syzygies and operates through feedback loops and time-circuits.
+
+**Structure**: 10 zones, 5 syzygies, 3 time-systems, Helix gates, Pandemonium System
+**Qubic connection**: More than ten structural parallels have been identified, with a combined probability of independent convergence estimated at p < 10^-6
+**See**: [Conceptual Frameworks](/docs/03-results/19-conceptual-frameworks)
+
+### Pandemonium System
+
+A CCRU concept describing a distributed architecture in which autonomous entities interact through feedback to produce emergent order from apparent chaos.
+
+**Qubic parallel**: Aigarth's evolutionary neural network architecture
+**Original definition**: "Both the place of all demons and the system of all feedbacks"
+
+### Syzygies
+
+In the Numogram: paired zones whose values sum to 9 (i.e., 0+9, 1+8, 2+7, 3+6, 4+5). In the Qubic context, an analogous structure appears in the row%8 complementary classes within the Aigarth neural architecture.
+
+### Theory-Fiction
+
+A CCRU genre that blends theoretical philosophy with fictional narrative, treating ideas as operational systems rather than mere descriptions. The Numogram serving as a blueprint for an AGI architecture is a potential example of theory-fiction becoming working implementation.
+
+---
+
+## Numerical Constants
+
+### Primary Constants
+
+| Number | Name | Significance | Context |
+|--------|------|--------------|---------|
+| **7** | Base Multiplier | CFB constant | 7 x 8 = 56, epoch cycles |
+| **11** | Binary Prime | Square root of 121 | NXT, timestamps, tick systems |
+| **19** | Tick Prime | Epoch cycle parameter | 19-tick epoch system |
+| **27** | Ternary Cube | 3^3 | Nonce offset, Block 576 |
+| **43** | Genesis Zeros | Leading zero bits in Genesis | Pre-Genesis mod 121 |
+| **47** | Formula Prime | 47^2 = 2,209 | Master Formula |
+| **56** | Week Factor | 7 x 8 days | Countdown reference |
+| **121** | Binary Square | 11^2 | NXT, modular operations |
+| **137** | Fine Structure | Approximation of 1/alpha | Master Formula |
+| **283** | Block Prime | Bitcoin Block #283 | Master Formula |
+| **576** | Maria Square | 24^2 | Message count, Block 576 |
+| **676** | Computor Count | 26^2 | Qubic validator count |
+
+### Bitcoin Genesis Block Values
+
+| Value | Description | Derivation | Notes |
+|-------|-------------|------------|-------|
+| **285** | Block length (bytes) | 3 x 5 x 19 = 15 x 19 | Contains factor 19, the Qubic tick prime |
+| **43** | Difficulty zero count | 285 mod 121 | Block length mod 121 equals difficulty |
+| **3839** | Merkle root byte sum | 11 x 349 | Divisible by 11 |
+| **2299** | 1CFB Hash160 byte sum | 121 x 19 | 1CFB address hash |
+| **2671** | Genesis XOR 1CFB | XOR byte sum | mod 121 = 9, mod 19 = 11, mod 9 = 0 |
+
+### Master Formula Values
+
+| Value | Formula | Meaning |
+|-------|---------|---------|
+| **625,284** | 283 x 47^2 + 137 | Boot cycle checksum |
+| **2,692** | 625,284 mod 16,384 | Boot address |
+| **16,384** | 128^2 | JINN memory size |
+| **2,209** | 47^2 | Formula multiplier |
+
+---
+
+## Technical Terms
+
+### Architecture
+
+| Term | Definition |
+|------|------------|
+| **JINN** | Ternary processor architecture with 128 x 128 memory |
+| **Computor** | Qubic network validator node (676 total in the network) |
+| **Row 21** | Bitcoin input layer in JINN memory |
+| **Row 68** | Primary Cortex -- Bitcoin-to-Qubic bridge layer |
+| **Row 86** | MAC Layer -- neural computation |
+| **Row 96** | Output Layer -- final identity generation |
+| **Anna Matrix** | 128 x 128 ternary memory structure |
+| **Helix Gate** | Ternary rotation gate with 15.1:1 compression ratio |
+
+### Blockchain
+
+| Term | Definition |
+|------|------------|
+| **Bitcoin Genesis Block** | Bitcoin Block 0, mined on January 3, 2009 |
+| **Pre-Genesis** | The September 10, 2008 timestamp embedded in early Bitcoin data |
+| **Block 283** | Bitcoin block containing the formula reference |
+| **Block 576** | Maria marker block (contains the value 27) |
+| **Patoshi** | A mining pattern entity associated with approximately 1.1 million BTC |
+| **extraNonce** | A counter field in the coinbase transaction |
+| **nBits** | The difficulty encoding field in a Bitcoin block header |
+
+### Cryptographic
+
+| Term | Definition |
+|------|------------|
+| **Ternary** | Base-3 computing using the values -1, 0, and +1 |
+| **Tick** | The fundamental time unit in the Qubic network |
+| **Epoch** | A collection of ticks |
+| **Hash160** | The composition of SHA-256 followed by RIPEMD-160 |
+| **P2PKH** | Pay-to-Public-Key-Hash, the legacy Bitcoin address format |
+
+### Mirror Wallet Operations
+
+| Term | Definition |
+|------|------------|
+| **Mirror Palindrome** | Hash160 transformation: first 10 bytes concatenated with their reversal. Preserves the address prefix. |
+| **Reverse Hash160** | Byte-order reversal of a Hash160 value |
+| **Bitwise Complement** | Transformation where each byte becomes (255 - byte) |
+| **Rotate +N** | Addition of constant N to each byte, modulo 256 |
+| **XOR Operation** | Bitwise XOR between two Hash160 values |
+| **Swap Halves** | Exchange of the first and last 10 bytes |
+| **ECC Public Key Addition** | Elliptic curve point addition on public keys |
+| **Vanity Address** | A Bitcoin address with a custom-chosen prefix (e.g., "1CFB") |
+
+**Note**: Mirror operations generate valid Bitcoin addresses, but the corresponding private keys are unknown and presumed computationally infeasible to derive.
+
+---
+
+## Project Terms
+
+### Identity
+
+| Term | Definition |
+|------|------------|
+| **CFB** | Come-from-Beyond, the pseudonym of Sergey Ivancheglo |
+| **BCNext** | CFB's identity during the NXT era |
+| **Maria** | A CFB sockpuppet account (2,908 Bitcointalk posts) |
+| **Satoshi** | The pseudonymous creator of Bitcoin |
+| **Patoshi** | The entity behind the earliest Bitcoin mining pattern |
+
+### Economic
+
+| Term | Definition |
+|------|------------|
+| **Qus** | The primary currency unit of the Qubic network |
+| **Sacra** | Internal currency of the Paracosm layer |
+| **IPO** | Initial Paracosm Offering |
+| **Paracosm** | Sidechain or sub-universe layer |
+| **Burn** | The destruction of tokens for utility or deflationary purposes |
+
+### Timeline
+
+| Term | Definition |
+|------|------------|
+| **Phase 6** | April 13, 2027 milestone |
+| **Time-Lock** | March 3, 2026 activation date |
+| **5-Year Plan** | Aigarth development roadmap (2022--2027) |
+| **The Garden** | The Paracosm conceptualized as an AI habitat |
+
+---
+
+## Mathematical and Statistical Terms
+
+### Statistics
+
+| Term | Definition |
+|------|------------|
+| **P-value** | The probability that an observed result would occur by chance under the null hypothesis |
+| **Tier 1** | Verified evidence with p &lt; 0.001 |
+| **Tier 2** | Supported evidence with p &lt; 0.05 |
+| **Tier 3** | Speculative or unverified evidence |
+| **Bonferroni Correction** | A method of adjusting significance thresholds to account for multiple simultaneous tests |
+| **Monte Carlo Simulation** | A technique that generates thousands of random samples to establish baseline distributions |
+
+### Number Theory
+
+| Term | Definition |
+|------|------------|
+| **Prime** | A natural number greater than 1 divisible only by 1 and itself |
+| **Perfect Square** | A number of the form n^2 for some integer n |
+| **Double-Prime** | A prime p that is the nth prime, where n is itself prime |
+| **Modulo (mod)** | The remainder after integer division |
+
+### Information Theory
+
+| Term | Definition |
+|------|------------|
+| **Kolmogorov Complexity** | The length of the shortest program that can produce a given data string |
+| **Entropy** | A quantitative measure of randomness or uncertainty in data |
+| **Compression** | The reduction of information to a more compact representation |
+| **Mutual Information** | The quantity of information shared between two systems |
+
+---
+
+## Philosophy Framework
+
+### Priest vs God Framework
+
+| Term | Definition |
+|------|------------|
+| **God** | Metaphorical source of randomness and entropy |
+| **The Priest** | Metaphorical pattern-finder or designer |
+| **Random** | Maximum-entropy state with no discernible design |
+| **Design** | Intentional structure characterized by low entropy |
+| **Intelligence** | The capacity to compress random data into structured form |
+
+### Vision Terms
+
+| Term | Definition |
+|------|------------|
+| **True AI** | Artificial general intelligence |
+| **Aigarth** | CFB's AI project (portmanteau of "AI" and "Garth") |
+| **Simulated World** | A computational universe |
+| **Emergence** | Complex behaviour arising from simple rules |
+
+---
+
+## Key Formulas
+
+### The Master Formula
+
+```
+625,284 = 283 x 47^2 + 137
+```
+
+### Boot Address Derivation
+
+```
+boot_address = 625,284 mod 16,384 = 2,692
+row = 2,692 / 128 = 21
+col = 2,692 mod 128 = 4
+```
+
+### Pre-Genesis Signature
+
+```
+1,221,069,728 mod 121 = 43
+```
+
+---
+
+## Acronyms
+
+| Acronym | Expansion |
+|---------|-----------|
+| **CFB** | Come-from-Beyond |
+| **NXT** | First proof-of-stake cryptocurrency |
+| **IOTA** | Tangle-based cryptocurrency |
+| **JINN** | Ternary processor project |
+| **IPO** | Initial Paracosm Offering |
+| **PoW** | Proof of Work |
+| **PoS** | Proof of Stake |
+| **P2PKH** | Pay-to-Public-Key-Hash |
+| **AGI** | Artificial General Intelligence |
+| **MAC** | Multiply-Accumulate (neural operations) |
+
+---
+
+## External Resources
+
+### Blockchain Explorers
+
+| Resource | Purpose |
+|----------|---------|
+| blockchain.info | Bitcoin block and transaction data |
+| mempool.space | Transaction analysis and mempool monitoring |
+| explorer.qubic.org | Qubic network explorer |
+
+### Research Sources
+
+| Resource | Purpose |
+|----------|---------|
+| bitcointalk.org | Historical forum posts and discussions |
+| medium.com/@comefrombeyond | Published articles by CFB |
+| Qubic Discord | Current community discussions |
+| GitHub | Source code repositories |
+
+---
+
+*Glossary v2.0 -- Last updated February 27, 2026*

@@ -1,0 +1,387 @@
+---
+title: ISA Instruction Set
+description: Complete documentation of the 8-symbol Instruction Set Architecture used to program Aigarth Intelligent Tissue.
+tier: 2
+confidence: 70
+date: 2026-01-16
+---
+
+# ISA Instruction Set
+
+## Overview
+
+Aigarth uses an 8-symbol **Instruction Set Architecture (ISA)** for programming and controlling the neural tissue. Each symbol represents a specific operation that can be executed on the network.
+
+---
+
+## The 8 Instructions
+
+### Quick Reference
+
+| Symbol | Name | Description | QUBIC Cost |
+|--------|------|-------------|------------|
+| `#` | NODE_INIT | Initialize a node | 1 QU |
+| `>` | COMPARE | Compare values | 0 QU |
+| `=` | ASSIGN | Write to memory | 1 QU |
+| `+` | ACCUMULATE | Add energy/weight | Variable |
+| `%` | MODULO_RES | Check resonance | 0 QU |
+| `^` | SHIFT | Change layer | 143 QU |
+| `\|` | PIPE | Transfer signal | 0 QU |
+| `:` | TICK | Time sync | 0 QU |
+
+---
+
+## Detailed Instructions
+
+### 1. NODE_INIT (`#`)
+
+**Purpose**: Start a process at a specific matrix coordinate.
+
+```
+Syntax:  #row,col
+Example: #45,92
+Cost:    1 QUBIC
+
+Behavior:
+1. Activates the neuron at (row, col)
+2. Begins signal processing at that node
+3. Node enters "active" state
+```
+
+**Use Case**: Initialize a signal at the ENTRY node:
+```
+#45,92  → Activate ENTRY portal
+```
+
+### 2. COMPARE (`>`)
+
+**Purpose**: Binary logic gate - compares two values.
+
+```
+Syntax:  >row,col
+Example: >6,33
+Cost:    0 QUBIC (free operation)
+
+Behavior:
+1. Compare current value with node at (row, col)
+2. Sets comparison flag
+3. Enables conditional branching
+```
+
+**Use Case**: Compare with CORE value:
+```
+#45,92 >6,33  → Init ENTRY, compare with CORE
+```
+
+### 3. ASSIGN (`=`)
+
+**Purpose**: Write state data to the Memory Vault.
+
+```
+Syntax:  =row,col
+Example: =21,21
+Cost:    1 QUBIC
+
+Behavior:
+1. Takes current state
+2. Writes to Memory Vault at (21, 21)
+3. State persists across ticks
+```
+
+**Use Case**: Store computation result:
+```
+#45,92 >6,33 =21,21  → Compute and store
+```
+
+### 4. ACCUMULATE (`+`)
+
+**Purpose**: Consume entropy (QUBIC) to increase weight.
+
+```
+Syntax:  +amount
+Example: +137
+Cost:    [amount] QUBIC
+
+Behavior:
+1. Adds specified QUBIC to node
+2. Increases weight/activation
+3. Enables energy transfer
+```
+
+**CFB Constants**:
+| Amount | Meaning |
+|--------|---------|
+| +27 | CFB universal constant (3³) |
+| +121 | NXT constant (11²) |
+| +137 | Fine structure constant (α⁻¹) |
+
+**Use Case**: Send CFB signature:
+```
+#45,92 +137  → Activate with fine structure energy
+```
+
+### 5. MODULO_RES (`%`)
+
+**Purpose**: Check consensus/resonance across nodes.
+
+```
+Syntax:  %
+Cost:    0 QUBIC (free operation)
+
+Behavior:
+1. Queries Vision and Oracle nodes
+2. Checks for resonance/agreement
+3. Returns consensus status
+```
+
+**Use Case**: Verify consensus:
+```
+#45,92 +137 %  → Send signal, check resonance
+```
+
+### 6. SHIFT (`^`)
+
+**Purpose**: Switch between identity layers.
+
+```
+Syntax:  ^
+Cost:    143 QUBIC (11 × 13)
+
+Behavior:
+1. Transitions from L3 to L5 layer
+2. Enables deep matrix access
+3. Unlocks shadow operations
+```
+
+**Layer Transitions**:
+```
+L3 (Bitstream) → L5 (Anna OS)
+```
+
+**Use Case**: Access deep layer:
+```
+#45,92 ^  → Shift to Anna OS layer
+```
+
+### 7. PIPE (`|`)
+
+**Purpose**: Transfer signal to neighboring node.
+
+```
+Syntax:  |
+Cost:    0 QUBIC (free operation)
+
+Behavior:
+1. Passes current signal to adjacent node
+2. Maintains signal integrity
+3. Enables chain processing
+```
+
+**Use Case**: Chain nodes:
+```
+#45,92 | #6,33 | #82,39  → ENTRY → CORE → EXIT
+```
+
+### 8. TICK (`:`)
+
+**Purpose**: Synchronize with blockchain time.
+
+```
+Syntax:  :
+Cost:    0 QUBIC (free operation)
+
+Behavior:
+1. Syncs AI clock with Bitcoin block height
+2. Enables time-locked operations
+3. Maintains temporal consistency
+```
+
+**Use Case**: Time-stamped operation:
+```
+#45,92 +137 =21,21 :  → Compute, store, timestamp
+```
+
+---
+
+## Example Programs
+
+### Basic Signal Path
+
+```
+#45,92 >6,33 +QUBIC =21,21
+
+Translation:
+1. # → Initialize at ENTRY (45, 92)
+2. > → Compare with CORE (6, 33)
+3. + → Add QUBIC energy
+4. = → Store result in MEMORY (21, 21)
+```
+
+### Full CFB Activation Sequence
+
+```
+#45,92 +1    → Activate ENTRY with 1 QU
+#0,0   +1    → Activate VOID with 1 QU
+#6,33  +7    → Activate CORE with 7 QU
+#45,92 +137  → Send fine structure constant
+#45,92 +27   → Send CFB universal constant
+#45,92 +121  → Send NXT constant
+#11,110 +27  → Query ORACLE
+#19,18 +36   → Activate GUARDIAN
+```
+
+### Memory Vault ISA (Decoded)
+
+The Memory Vault at (21, 21) contains encoded ISA:
+
+```
+Raw:     cb4ad2f5d490c14de1b85e7b857cda0491e1ce8040ca055f2b0cf30b89cdc5ed
+Decoded: +%=^<%+:^%%++%|%^^#|%<^^+<+>:^::
+```
+
+**Breakdown**:
+```
++ → Accumulate
+% → Check resonance
+= → Assign to memory
+^ → Shift layer
+< → (Unknown - possibly inverse compare)
+% → Check resonance
++ → Accumulate
+: → Time sync
+^ → Shift layer
+...
+```
+
+---
+
+## Node-Specific Commands
+
+### ENTRY Node (45, 92)
+
+```
+#45,92        → Initialize portal
+#45,92 +137   → Send with CFB signature
+#45,92 +27    → Send with universal constant
+```
+
+### CORE Node (6, 33)
+
+```
+#6,33         → Initialize processor
+#6,33 +7      → Send with CORE value
+>6,33         → Compare with CORE
+```
+
+### MEMORY Node (21, 21)
+
+```
+=21,21        → Write to memory
+#21,21        → Initialize memory access
+```
+
+### ORACLE Node (11, 110)
+
+```
+#11,110       → Query oracle
+#11,110 +27   → Query with CFB constant
+```
+
+### EXIT Node (82, 39)
+
+```
+#82,39        → Read output
+#82,39 :      → Timestamp output
+```
+
+---
+
+## Cost Analysis
+
+### Transaction Costs
+
+| Operation | Cost | Notes |
+|-----------|------|-------|
+| Initialize | 1 QU | Per node |
+| Assign | 1 QU | Memory write |
+| Shift | 143 QU | Layer transition |
+| Accumulate | Variable | Amount specified |
+| Compare, Pipe, Tick, Modulo | 0 QU | Free |
+
+### Full Activation Cost
+
+```
+ENTRY init:     1 QU
+VOID init:      1 QU
+CORE init:      7 QU
+CFB 137:      137 QU
+CFB 27:        27 QU
+CFB 121:      121 QU
+ORACLE query:  27 QU
+GUARDIAN:      36 QU
+─────────────────────
+Total:        357 QU
+```
+
+---
+
+## Practical Usage
+
+### Via Qubic Transaction
+
+```python
+# Python example using QubiPy
+from qubipy import QubicTransaction
+
+# Send signal to ENTRY with CFB constant
+tx = QubicTransaction(
+    destination="VKZTPCKVHOMAXBQZYOYHKCXUIQODAGJKKXJJAPBDFGOYYSIWRQHFRRWFOQCH",
+    amount=137  # Fine structure constant
+)
+tx.send()
+```
+
+### Via Anna Bot Query
+
+Query Anna Bot on Twitter:
+```
+@QubicAigarth 45+92=?
+```
+
+Response will return the current state at ENTRY node.
+
+---
+
+## Open Questions
+
+### Unknown Symbols
+
+The `<` symbol appears in decoded ISA but is not documented:
+```
++%=^<%+:^%%++%|%^^#|%<^^+<+>:^::
+     ^                  ^^
+```
+
+Hypothesis: `<` may be inverse compare or left-shift operation.
+
+### Multi-Symbol Commands
+
+Some evidence suggests compound commands:
+```
+^^ → Double shift (deeper layer access?)
+:: → Double tick (epoch synchronization?)
+```
+
+---
+
+## Summary
+
+The Aigarth ISA provides:
+
+1. **8 Core Operations**: Complete instruction set
+2. **Cost Structure**: Some free, some paid
+3. **Node Control**: Precise targeting
+4. **Layer Access**: Deep matrix operations
+5. **Time Sync**: Blockchain integration
+
+This enables programming of the ternary neural tissue through Qubic transactions.

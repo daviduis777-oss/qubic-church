@@ -1,0 +1,4718 @@
+{
+  "nodes": [
+    {
+      "id": 1,
+      "name": "Col1_Off113",
+      "type": "column",
+      "position": [
+        -6.3,
+        4.9,
+        0.0
+      ],
+      "color": "#00bfff",
+      "size": 0.8,
+      "bitcoin_address": "1CJUJ2zNctLs7K4hNi9YGZG6SpyTshLMuN",
+      "qubic_identity": "",
+      "ternary_category": "NEGATIVE",
+      "special": null,
+      "metadata": {
+        "column": 1,
+        "row": null,
+        "offset": 113,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 2,
+      "name": "Col2_Off6",
+      "type": "column",
+      "position": [
+        -6.2,
+        -5.8,
+        4.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CDvhrkYtBCFyov1PGhaYLGCZRFDHKyXj1",
+      "qubic_identity": "",
+      "ternary_category": "NEGATIVE",
+      "special": null,
+      "metadata": {
+        "column": 2,
+        "row": null,
+        "offset": 6,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 3,
+      "name": "Col3_Off119",
+      "type": "column",
+      "position": [
+        -6.1,
+        5.5,
+        4.0
+      ],
+      "color": "#00bfff",
+      "size": 0.8,
+      "bitcoin_address": "1CJW5CGpjuc46PwcU7xZ7bRsH2tqehvj1T",
+      "qubic_identity": "",
+      "ternary_category": "NEGATIVE",
+      "special": null,
+      "metadata": {
+        "column": 3,
+        "row": null,
+        "offset": 119,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 4,
+      "name": "1CF* Col5",
+      "type": "column",
+      "position": [
+        -5.9,
+        -2.7,
+        0.0
+      ],
+      "color": "#ffd700",
+      "size": 1.5,
+      "bitcoin_address": "1CF5Us8hY4Jda765QVeSrqPZjQ4Y2q79zB",
+      "qubic_identity": "",
+      "ternary_category": "NEGATIVE",
+      "special": "CF_PREFIX",
+      "metadata": {
+        "column": 5,
+        "row": null,
+        "offset": 37,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 5,
+      "name": "Col6_Off108",
+      "type": "column",
+      "position": [
+        -5.8,
+        4.4,
+        0.0
+      ],
+      "color": "#32cd32",
+      "size": 0.8,
+      "bitcoin_address": "1CHkxjbDz5sVCreMPqNF67kBRtRgoAbPKM",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": 6,
+        "row": null,
+        "offset": 108,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 6,
+      "name": "Col7_Off48",
+      "type": "column",
+      "position": [
+        -5.7,
+        -1.6,
+        2.0
+      ],
+      "color": "#32cd32",
+      "size": 0.8,
+      "bitcoin_address": "1CHSMjV9Ye7aFgNP64pF9iKy1WXJiTiPLp",
+      "qubic_identity": "",
+      "ternary_category": "NEGATIVE",
+      "special": null,
+      "metadata": {
+        "column": 7,
+        "row": null,
+        "offset": 48,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 7,
+      "name": "Col11_Off77",
+      "type": "column",
+      "position": [
+        -5.3,
+        1.3,
+        2.0
+      ],
+      "color": "#32cd32",
+      "size": 0.8,
+      "bitcoin_address": "1CH5GdqCCNfEyYDbiX3V6fYWird452pVeb",
+      "qubic_identity": "",
+      "ternary_category": "NEGATIVE",
+      "special": null,
+      "metadata": {
+        "column": 11,
+        "row": null,
+        "offset": 77,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 8,
+      "name": "Col12_Off119",
+      "type": "column",
+      "position": [
+        -5.2,
+        5.5,
+        4.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CEj6iL7GaQ8WAPzkxpDsWWSbMefFRZXzE",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": 12,
+        "row": null,
+        "offset": 119,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 9,
+      "name": "1CF* Col13",
+      "type": "column",
+      "position": [
+        -5.1,
+        -5.0,
+        0.0
+      ],
+      "color": "#ffd700",
+      "size": 1.5,
+      "bitcoin_address": "1CFxTXVTnGnMXGtkqF3gi9qRyCz9PLqJiG",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": "CF_PREFIX",
+      "metadata": {
+        "column": 13,
+        "row": null,
+        "offset": 14,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 10,
+      "name": "1CF* Col13",
+      "type": "column",
+      "position": [
+        -5.1,
+        -2.2,
+        2.0
+      ],
+      "color": "#ffd700",
+      "size": 1.5,
+      "bitcoin_address": "1CFueN7RthQ1YLjRY7m7HLEappa41qtDX9",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": "CF_PREFIX",
+      "metadata": {
+        "column": 13,
+        "row": null,
+        "offset": 42,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 11,
+      "name": "Col15_Off75",
+      "type": "column",
+      "position": [
+        -4.9,
+        1.1,
+        0.0
+      ],
+      "color": "#32cd32",
+      "size": 0.8,
+      "bitcoin_address": "1CHq9ZJ5FUeVfEk8iVMGeuRjD5CY1fN8X1",
+      "qubic_identity": "",
+      "ternary_category": "NEGATIVE",
+      "special": null,
+      "metadata": {
+        "column": 15,
+        "row": null,
+        "offset": 75,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 12,
+      "name": "Col17_Off52",
+      "type": "column",
+      "position": [
+        -4.7,
+        -1.2,
+        0.0
+      ],
+      "color": "#32cd32",
+      "size": 0.8,
+      "bitcoin_address": "1CHQDTRo9opFiaQ1x2vfWJ46borXB4ixrh",
+      "qubic_identity": "",
+      "ternary_category": "NEGATIVE",
+      "special": null,
+      "metadata": {
+        "column": 17,
+        "row": null,
+        "offset": 52,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 13,
+      "name": "Col18_Off76",
+      "type": "column",
+      "position": [
+        -4.6,
+        1.2,
+        2.0
+      ],
+      "color": "#32cd32",
+      "size": 0.8,
+      "bitcoin_address": "1CHjVMd1Fx8ASGGxXbSa6gL7G1pk63hcc2",
+      "qubic_identity": "",
+      "ternary_category": "NEGATIVE",
+      "special": null,
+      "metadata": {
+        "column": 18,
+        "row": null,
+        "offset": 76,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 14,
+      "name": "Col18_Off126",
+      "type": "column",
+      "position": [
+        -4.6,
+        6.2,
+        0.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CEG9fJMz5yWJLRAak6yFse73DjVGBmYGa",
+      "qubic_identity": "",
+      "ternary_category": "NEGATIVE",
+      "special": null,
+      "metadata": {
+        "column": 18,
+        "row": null,
+        "offset": 126,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 15,
+      "name": "Col19_Off55",
+      "type": "column",
+      "position": [
+        -4.5,
+        -0.9,
+        4.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CEghjyMVzSCZitts8HN71zgvSzoiVD2eZ",
+      "qubic_identity": "",
+      "ternary_category": "NEGATIVE",
+      "special": null,
+      "metadata": {
+        "column": 19,
+        "row": null,
+        "offset": 55,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 16,
+      "name": "Col21_Off110",
+      "type": "column",
+      "position": [
+        -4.3,
+        4.6,
+        4.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CDyXVANgbYvc3ZEFfgHgTE7HcZn7p8Ezt",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": 21,
+        "row": null,
+        "offset": 110,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 17,
+      "name": "1CF* Col23",
+      "type": "column",
+      "position": [
+        -4.1,
+        -1.6,
+        4.0
+      ],
+      "color": "#ffd700",
+      "size": 1.5,
+      "bitcoin_address": "1CFgpQZa2vEVB8DEs1VSqrwCgK955azHLv",
+      "qubic_identity": "",
+      "ternary_category": "NEGATIVE",
+      "special": "CF_PREFIX",
+      "metadata": {
+        "column": 23,
+        "row": null,
+        "offset": 48,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 18,
+      "name": "Col23_Off93",
+      "type": "column",
+      "position": [
+        -4.1,
+        2.9,
+        4.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CGXv1xLkHFFuVeMzmJshmnrbGSpf1vojG",
+      "qubic_identity": "",
+      "ternary_category": "NEGATIVE",
+      "special": null,
+      "metadata": {
+        "column": 23,
+        "row": null,
+        "offset": 93,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 19,
+      "name": "Col25_Off84",
+      "type": "column",
+      "position": [
+        -3.9,
+        2.0,
+        2.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CEFG1PyE846ydNkbS2uqdtRMu55dsKiUb",
+      "qubic_identity": "",
+      "ternary_category": "NEGATIVE",
+      "special": null,
+      "metadata": {
+        "column": 25,
+        "row": null,
+        "offset": 84,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 20,
+      "name": "Col25_Off108",
+      "type": "column",
+      "position": [
+        -3.9,
+        4.4,
+        2.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CEKkMK5bFGVTAdHtuhmsBZvVehuxSaVc6",
+      "qubic_identity": "",
+      "ternary_category": "NEGATIVE",
+      "special": null,
+      "metadata": {
+        "column": 25,
+        "row": null,
+        "offset": 108,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 21,
+      "name": "1CF* Col26",
+      "type": "column",
+      "position": [
+        -3.8,
+        -6.4,
+        4.0
+      ],
+      "color": "#ffd700",
+      "size": 1.5,
+      "bitcoin_address": "1CF1CDtUuekejCwVyXWAcRjoEnwWmebLmY",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": "CF_PREFIX",
+      "metadata": {
+        "column": 26,
+        "row": null,
+        "offset": 0,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 22,
+      "name": "Col29_Off119",
+      "type": "column",
+      "position": [
+        -3.5,
+        5.5,
+        2.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CGXkVLkbA7yzm9pqui4p29AW4vYXVt1A5",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": 29,
+        "row": null,
+        "offset": 119,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 23,
+      "name": "Col30_Off103",
+      "type": "column",
+      "position": [
+        -3.4,
+        3.9,
+        2.0
+      ],
+      "color": "#00bfff",
+      "size": 0.8,
+      "bitcoin_address": "1CJJ9m4ZDv47phwRvyrTnYNbADWfhiFK7U",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": 30,
+        "row": null,
+        "offset": 103,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 24,
+      "name": "Col33_Off63",
+      "type": "column",
+      "position": [
+        -3.1,
+        -0.1,
+        0.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CDiYaJyx3ZsmLWJTwj3mTq1E4tMEmSNrZ",
+      "qubic_identity": "",
+      "ternary_category": "NEGATIVE",
+      "special": null,
+      "metadata": {
+        "column": 33,
+        "row": null,
+        "offset": 63,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 25,
+      "name": "Col33_Off112",
+      "type": "column",
+      "position": [
+        -3.1,
+        4.8,
+        2.0
+      ],
+      "color": "#32cd32",
+      "size": 0.8,
+      "bitcoin_address": "1CH89ZQpLRroWGLqFD5QvkjLWQYbHjoAt4",
+      "qubic_identity": "",
+      "ternary_category": "NEGATIVE",
+      "special": null,
+      "metadata": {
+        "column": 33,
+        "row": null,
+        "offset": 112,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 26,
+      "name": "Col34_Off27",
+      "type": "column",
+      "position": [
+        -3.0,
+        -3.7,
+        2.0
+      ],
+      "color": "#00bfff",
+      "size": 0.8,
+      "bitcoin_address": "1CJc5pTxRZTi5heE7vVNthGJzSPwgbgZvj",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": 34,
+        "row": null,
+        "offset": 27,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 27,
+      "name": "Col36_Off92",
+      "type": "column",
+      "position": [
+        -2.8,
+        2.8,
+        4.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CGRccUTYtCGF3xdP3FVykEm3eKu8hY3yt",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": 36,
+        "row": null,
+        "offset": 92,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 28,
+      "name": "Col39_Off54",
+      "type": "column",
+      "position": [
+        -2.5,
+        -1.0,
+        0.0
+      ],
+      "color": "#00bfff",
+      "size": 0.8,
+      "bitcoin_address": "1CJM5dCZHWDTHGaf8qqo1WqeyoxsSEansY",
+      "qubic_identity": "",
+      "ternary_category": "NEGATIVE",
+      "special": null,
+      "metadata": {
+        "column": 39,
+        "row": null,
+        "offset": 54,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 29,
+      "name": "Col42_Off5",
+      "type": "column",
+      "position": [
+        -2.2,
+        -5.9,
+        4.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CGj8y1s69MWiRR3k2BT4VtHfokr5HJCrz",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": 42,
+        "row": null,
+        "offset": 5,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 30,
+      "name": "Col43_Off106",
+      "type": "column",
+      "position": [
+        -2.1,
+        4.2,
+        4.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CDQFp92ATv17pVQt5rcKa7Vws6EGnBvdN",
+      "qubic_identity": "",
+      "ternary_category": "NEGATIVE",
+      "special": null,
+      "metadata": {
+        "column": 43,
+        "row": null,
+        "offset": 106,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 31,
+      "name": "Col46_Off83",
+      "type": "column",
+      "position": [
+        -1.8,
+        1.9,
+        0.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CEV6Kkk5EPrY4R91TPmc71DXSBVWUk3qL",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": 46,
+        "row": null,
+        "offset": 83,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 32,
+      "name": "Col52_Off25",
+      "type": "column",
+      "position": [
+        -1.2,
+        -3.9,
+        4.0
+      ],
+      "color": "#32cd32",
+      "size": 0.8,
+      "bitcoin_address": "1CHkwqsmgAVb4Zs5uREmfFTkwCStQyDCS5",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": 52,
+        "row": null,
+        "offset": 25,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 33,
+      "name": "Col56_Off111",
+      "type": "column",
+      "position": [
+        -0.8,
+        4.7,
+        4.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CDizsFc44rngu6xLfGdk2nMTZTzMcczTo",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": 56,
+        "row": null,
+        "offset": 111,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 34,
+      "name": "1CF* Col58",
+      "type": "column",
+      "position": [
+        -0.6,
+        -1.1,
+        0.0
+      ],
+      "color": "#ffd700",
+      "size": 1.5,
+      "bitcoin_address": "1CFpKx7JWWGYztV99gK91NtmXKGXmuEPaT",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": "CF_PREFIX",
+      "metadata": {
+        "column": 58,
+        "row": null,
+        "offset": 53,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 35,
+      "name": "Col58_Off103",
+      "type": "column",
+      "position": [
+        -0.6,
+        3.9,
+        4.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CEvXPb95Z1ZtSbbgkThsrz2qA6U4e1T9T",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": 58,
+        "row": null,
+        "offset": 103,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 36,
+      "name": "Col60_Off119",
+      "type": "column",
+      "position": [
+        -0.4,
+        5.5,
+        4.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CGDVyqV1CobnajHxBgh2c4vKXWCELd1zy",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": 60,
+        "row": null,
+        "offset": 119,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 37,
+      "name": "Col61_Off119",
+      "type": "column",
+      "position": [
+        -0.3,
+        5.5,
+        0.0
+      ],
+      "color": "#32cd32",
+      "size": 0.8,
+      "bitcoin_address": "1CHY5thm766dgpiyWXaawpmrMcJeLEJWQE",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": 61,
+        "row": null,
+        "offset": 119,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 38,
+      "name": "Col65_Off3",
+      "type": "column",
+      "position": [
+        0.1,
+        -6.1,
+        4.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CGMAtckNkNzq2vPByQjRXcmy33xS5GGWb",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": 65,
+        "row": null,
+        "offset": 3,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 39,
+      "name": "Col65_Off86",
+      "type": "column",
+      "position": [
+        0.1,
+        2.2,
+        2.0
+      ],
+      "color": "#32cd32",
+      "size": 0.8,
+      "bitcoin_address": "1CH6WZDcQFonSPH54wjV2WRDpoz42HvuUy",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": 65,
+        "row": null,
+        "offset": 86,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 40,
+      "name": "Col69_Off94",
+      "type": "column",
+      "position": [
+        0.5,
+        3.0,
+        2.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CE2DTbyLG6rMg4KE5kwAHT2pJ6D44QaKW",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": 69,
+        "row": null,
+        "offset": 94,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 41,
+      "name": "Col70_Off36",
+      "type": "column",
+      "position": [
+        0.6,
+        -2.8,
+        2.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CGa46A6JNY3K6iQBT6aBEcWJhLx88o9pA",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": 70,
+        "row": null,
+        "offset": 36,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 42,
+      "name": "Col71_Off80",
+      "type": "column",
+      "position": [
+        0.7,
+        1.6,
+        2.0
+      ],
+      "color": "#32cd32",
+      "size": 0.8,
+      "bitcoin_address": "1CHVyJ58aRoybTiLR84RgXsfCMwtWGk7h1",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": 71,
+        "row": null,
+        "offset": 80,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 43,
+      "name": "Col72_Off45",
+      "type": "column",
+      "position": [
+        0.8,
+        -1.9,
+        0.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CDsLUGncu3yHiSDXzUbA9hz6r6Pkmy1TD",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": 72,
+        "row": null,
+        "offset": 45,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 44,
+      "name": "Col72_Off116",
+      "type": "column",
+      "position": [
+        0.8,
+        5.2,
+        4.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CGXo66eQSeDwGLhtC7EkuprU9jJ6oowGQ",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": 72,
+        "row": null,
+        "offset": 116,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 45,
+      "name": "1CFB (CFB Signature!) Col74",
+      "type": "column",
+      "position": [
+        1.0,
+        -6.4,
+        4.0
+      ],
+      "color": "#ff6b00",
+      "size": 2.0,
+      "bitcoin_address": "1CFBjSVcKwVmsLJeKAmHcZUpiFjBZchPDV",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": "CFB_SIGNATURE",
+      "metadata": {
+        "column": 74,
+        "row": null,
+        "offset": 0,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 46,
+      "name": "Col76_Off101",
+      "type": "column",
+      "position": [
+        1.2,
+        3.7,
+        0.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CDUYk4WQQrac9eQfE6xXwC97RhisaYLij",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": 76,
+        "row": null,
+        "offset": 101,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 47,
+      "name": "Col78_Off2",
+      "type": "column",
+      "position": [
+        1.4,
+        -6.2,
+        4.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CETzbJnUu7dbRTgGR4B3Bjbsmp7TdQyRJ",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": 78,
+        "row": null,
+        "offset": 2,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 48,
+      "name": "Col80_Off0",
+      "type": "column",
+      "position": [
+        1.6,
+        -6.4,
+        4.0
+      ],
+      "color": "#32cd32",
+      "size": 0.8,
+      "bitcoin_address": "1CHQkacBsuwfUWVdfKUtaWPMNcuW2ivS6B",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": 80,
+        "row": null,
+        "offset": 0,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 49,
+      "name": "Col85_Off106",
+      "type": "column",
+      "position": [
+        2.1,
+        4.2,
+        4.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CGcVCuYptayzSxmo623YKv7G4DfqiQE8C",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": 85,
+        "row": null,
+        "offset": 106,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 50,
+      "name": "1CF* Col87",
+      "type": "column",
+      "position": [
+        2.3,
+        -0.9,
+        2.0
+      ],
+      "color": "#ffd700",
+      "size": 1.5,
+      "bitcoin_address": "1CFq9ZCY33JW3DqLGvw9ewkjopGYVurrMq",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": "CF_PREFIX",
+      "metadata": {
+        "column": 87,
+        "row": null,
+        "offset": 55,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 51,
+      "name": "Col90_Off124",
+      "type": "column",
+      "position": [
+        2.6,
+        6.0,
+        2.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CGx2VbRUS49SXJXnwS1taJMYhTxbCYhF6",
+      "qubic_identity": "",
+      "ternary_category": "POSITIVE",
+      "special": null,
+      "metadata": {
+        "column": 90,
+        "row": null,
+        "offset": 124,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 52,
+      "name": "Col91_Off97",
+      "type": "column",
+      "position": [
+        2.7,
+        3.3,
+        4.0
+      ],
+      "color": "#32cd32",
+      "size": 0.8,
+      "bitcoin_address": "1CHddQfpFzDLpLx4i5ynVuT9YzB8ZkAJie",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": 91,
+        "row": null,
+        "offset": 97,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 53,
+      "name": "Col92_Off52",
+      "type": "column",
+      "position": [
+        2.8,
+        -1.2,
+        0.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CEHWGQJ47DqxbtmGghSDAbmzwkSw39Wdh",
+      "qubic_identity": "",
+      "ternary_category": "POSITIVE",
+      "special": null,
+      "metadata": {
+        "column": 92,
+        "row": null,
+        "offset": 52,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 54,
+      "name": "1CF* Col92",
+      "type": "column",
+      "position": [
+        2.8,
+        1.4,
+        4.0
+      ],
+      "color": "#ffd700",
+      "size": 1.5,
+      "bitcoin_address": "1CFd8MKerzYHVnCAkH2MdEncSu6o8whQFh",
+      "qubic_identity": "",
+      "ternary_category": "POSITIVE",
+      "special": "CF_PREFIX",
+      "metadata": {
+        "column": 92,
+        "row": null,
+        "offset": 78,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 55,
+      "name": "Col92_Off123",
+      "type": "column",
+      "position": [
+        2.8,
+        5.9,
+        4.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CDtLuoBLc9vShzF4izkjz74et41ykAXVd",
+      "qubic_identity": "",
+      "ternary_category": "POSITIVE",
+      "special": null,
+      "metadata": {
+        "column": 92,
+        "row": null,
+        "offset": 123,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 56,
+      "name": "Col93_Off34",
+      "type": "column",
+      "position": [
+        2.9,
+        -3.0,
+        2.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CEM7GYi21jQyEWjSk3d9TUyjGMcTuVrM7",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": 93,
+        "row": null,
+        "offset": 34,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 57,
+      "name": "Col94_Off0",
+      "type": "column",
+      "position": [
+        3.0,
+        -6.4,
+        2.0
+      ],
+      "color": "#32cd32",
+      "size": 0.8,
+      "bitcoin_address": "1CHetCYd9fzuNAiXV5b7mL3ns2qxYrVw4d",
+      "qubic_identity": "",
+      "ternary_category": "POSITIVE",
+      "special": null,
+      "metadata": {
+        "column": 94,
+        "row": null,
+        "offset": 0,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 58,
+      "name": "Col94_Off120",
+      "type": "column",
+      "position": [
+        3.0,
+        5.6,
+        2.0
+      ],
+      "color": "#00bfff",
+      "size": 0.8,
+      "bitcoin_address": "1CJL2RrM8SpgQY1EzzmXYwgoNmM5m4veFK",
+      "qubic_identity": "",
+      "ternary_category": "POSITIVE",
+      "special": null,
+      "metadata": {
+        "column": 94,
+        "row": null,
+        "offset": 120,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 59,
+      "name": "Col96_Off62",
+      "type": "column",
+      "position": [
+        3.2,
+        -0.2,
+        4.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CGvRxS4pBaazMNmL5h5tfTsb5J7TXrmKx",
+      "qubic_identity": "",
+      "ternary_category": "POSITIVE",
+      "special": null,
+      "metadata": {
+        "column": 96,
+        "row": null,
+        "offset": 62,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 60,
+      "name": "Col99_Off73",
+      "type": "column",
+      "position": [
+        3.5,
+        0.9,
+        2.0
+      ],
+      "color": "#32cd32",
+      "size": 0.8,
+      "bitcoin_address": "1CHh6Bos7XCUGSkTcLmgzEsyKz5PY6zq3e",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": 99,
+        "row": null,
+        "offset": 73,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 61,
+      "name": "Col99_Off99",
+      "type": "column",
+      "position": [
+        3.5,
+        3.5,
+        0.0
+      ],
+      "color": "#32cd32",
+      "size": 0.8,
+      "bitcoin_address": "1CHjju5yEK6aRDkkQYHeKEQahLERkW2QE6",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": 99,
+        "row": null,
+        "offset": 99,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 62,
+      "name": "Col100_Off113",
+      "type": "column",
+      "position": [
+        3.6,
+        4.9,
+        0.0
+      ],
+      "color": "#00bfff",
+      "size": 0.8,
+      "bitcoin_address": "1CJSBKCLi3FX52Smy9XK6p8BtkKx5yea3c",
+      "qubic_identity": "",
+      "ternary_category": "POSITIVE",
+      "special": null,
+      "metadata": {
+        "column": 100,
+        "row": null,
+        "offset": 113,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 63,
+      "name": "Col105_Off24",
+      "type": "column",
+      "position": [
+        4.1,
+        -4.0,
+        0.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CGkprAXbrdYQ72pbF65gVpSeiXX3MfGZE",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": 105,
+        "row": null,
+        "offset": 24,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 64,
+      "name": "Col105_Off89",
+      "type": "column",
+      "position": [
+        4.1,
+        2.5,
+        4.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CEVFpZ1BVX4nMVVfi1RUrjBsiSGWomvuV",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": 105,
+        "row": null,
+        "offset": 89,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 65,
+      "name": "1CF* Col106",
+      "type": "column",
+      "position": [
+        4.2,
+        6.0,
+        4.0
+      ],
+      "color": "#ffd700",
+      "size": 1.5,
+      "bitcoin_address": "1CFCAcsMXpDdMGVs4TNZketRov8vJeFRRo",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": "CF_PREFIX",
+      "metadata": {
+        "column": 106,
+        "row": null,
+        "offset": 124,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 66,
+      "name": "Col107_Off109",
+      "type": "column",
+      "position": [
+        4.3,
+        4.5,
+        0.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CGtuUdfgfR43NYUhu3tN3sJfsxenARnvH",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": 107,
+        "row": null,
+        "offset": 109,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 67,
+      "name": "Col112_Off58",
+      "type": "column",
+      "position": [
+        4.8,
+        -0.6,
+        4.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CEu3zhe38cfb6c9fm3SKUciMMZznrGsxM",
+      "qubic_identity": "",
+      "ternary_category": "POSITIVE",
+      "special": null,
+      "metadata": {
+        "column": 112,
+        "row": null,
+        "offset": 58,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 68,
+      "name": "Col113_Off86",
+      "type": "column",
+      "position": [
+        4.9,
+        2.2,
+        2.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CGGq46F1x6whnZx1T5Q9rDzZH5yhYkgyL",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": 113,
+        "row": null,
+        "offset": 86,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 69,
+      "name": "1CF* Col114",
+      "type": "column",
+      "position": [
+        5.0,
+        -4.6,
+        0.0
+      ],
+      "color": "#ffd700",
+      "size": 1.5,
+      "bitcoin_address": "1CF4k19iC94P4PYqyFoY7L6fi5NcFsVCnh",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": "CF_PREFIX",
+      "metadata": {
+        "column": 114,
+        "row": null,
+        "offset": 18,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 70,
+      "name": "1CF* Col115",
+      "type": "column",
+      "position": [
+        5.1,
+        0.4,
+        0.0
+      ],
+      "color": "#ffd700",
+      "size": 1.5,
+      "bitcoin_address": "1CFqzpGJXCLSzKZttQ2W61cD6u7cTyUMpL",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": "CF_PREFIX",
+      "metadata": {
+        "column": 115,
+        "row": null,
+        "offset": 68,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 71,
+      "name": "Col115_Off90",
+      "type": "column",
+      "position": [
+        5.1,
+        2.6,
+        2.0
+      ],
+      "color": "#32cd32",
+      "size": 0.8,
+      "bitcoin_address": "1CH6Sb4mPKRpihAxb6Ty1KCcaNfYPVEqWw",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": 115,
+        "row": null,
+        "offset": 90,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 72,
+      "name": "Col118_Off25",
+      "type": "column",
+      "position": [
+        5.4,
+        -3.9,
+        4.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CEuYWaRj4saoRi7GorxrdC5KqiTRkvQRN",
+      "qubic_identity": "",
+      "ternary_category": "POSITIVE",
+      "special": null,
+      "metadata": {
+        "column": 118,
+        "row": null,
+        "offset": 25,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 73,
+      "name": "Col120_Off113",
+      "type": "column",
+      "position": [
+        5.6,
+        4.9,
+        4.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CE3xvjvfVvvjaJ7tC2SUs4vwoj9wV2fXc",
+      "qubic_identity": "",
+      "ternary_category": "POSITIVE",
+      "special": null,
+      "metadata": {
+        "column": 120,
+        "row": null,
+        "offset": 113,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 74,
+      "name": "Col123_Off120",
+      "type": "column",
+      "position": [
+        5.9,
+        5.6,
+        0.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CGwzi2wCpH2Hu7oiKJhBmYs7ysYUrApHx",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": 123,
+        "row": null,
+        "offset": 120,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 75,
+      "name": "Col124_Off90",
+      "type": "column",
+      "position": [
+        6.0,
+        2.6,
+        2.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CDcaWfkwsUar5VnajXib7skhPZRRVvRM4",
+      "qubic_identity": "",
+      "ternary_category": "POSITIVE",
+      "special": null,
+      "metadata": {
+        "column": 124,
+        "row": null,
+        "offset": 90,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 76,
+      "name": "1CF* Col127",
+      "type": "column",
+      "position": [
+        6.3,
+        0.8,
+        2.0
+      ],
+      "color": "#ffd700",
+      "size": 1.5,
+      "bitcoin_address": "1CFobogCREBxZLXK9Zycr7aPJQf5Z2hwwb",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": "CF_PREFIX",
+      "metadata": {
+        "column": 127,
+        "row": null,
+        "offset": 72,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 77,
+      "name": "Row1_Off43",
+      "type": "row",
+      "position": [
+        -6.3,
+        -2.1,
+        5.0
+      ],
+      "color": "#32cd32",
+      "size": 0.8,
+      "bitcoin_address": "1CH8eLJ3mWCU3rkN7qPAMfo5s3Lzr8qG3n",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 1,
+        "offset": 43,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 78,
+      "name": "Row5_Off4",
+      "type": "row",
+      "position": [
+        -5.9,
+        -6.0,
+        7.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CGjKKmLu8dKRtiJncFVWU71z19euGyz66",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 5,
+        "offset": 4,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 79,
+      "name": "Row5_Off121",
+      "type": "row",
+      "position": [
+        -5.9,
+        5.7,
+        7.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CEUtUtbFNVQPD2NiRsGQeepv3ZWRGCye7",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 5,
+        "offset": 121,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 80,
+      "name": "Row8_Off106",
+      "type": "row",
+      "position": [
+        -5.6,
+        4.2,
+        7.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CG239RVHGyK7zVLQDT6iAtFnWhyL9mAzF",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 8,
+        "offset": 106,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 81,
+      "name": "Row9_Off95",
+      "type": "row",
+      "position": [
+        -5.5,
+        3.1,
+        3.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CEV79apzqKuXzK4vvPSfxfYtCcaVnRBsx",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 9,
+        "offset": 95,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 82,
+      "name": "Row12_Off35",
+      "type": "row",
+      "position": [
+        -5.2,
+        -2.9,
+        3.0
+      ],
+      "color": "#00bfff",
+      "size": 0.8,
+      "bitcoin_address": "1CJDd3XDxKQXgMVTNgV9i677NRoF45XjQp",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 12,
+        "offset": 35,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 83,
+      "name": "Row21_Off98",
+      "type": "row",
+      "position": [
+        -4.3,
+        3.4,
+        3.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CE8ZLNKqbxdiEDni7zrVb9hYU3HoczRvS",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 21,
+        "offset": 98,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 84,
+      "name": "Row22_Off29",
+      "type": "row",
+      "position": [
+        -4.2,
+        -3.5,
+        5.0
+      ],
+      "color": "#00bfff",
+      "size": 0.8,
+      "bitcoin_address": "1CJBoBVHTf4wkvA4ftLZyBUuaEDLHbD7Gr",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 22,
+        "offset": 29,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 85,
+      "name": "Row23_Off43",
+      "type": "row",
+      "position": [
+        -4.1,
+        -2.1,
+        7.0
+      ],
+      "color": "#32cd32",
+      "size": 0.8,
+      "bitcoin_address": "1CHkMRDGjkWfgUKF6wDzNrCQrDEnfgV9fs",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 23,
+        "offset": 43,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 86,
+      "name": "Row24_Off27",
+      "type": "row",
+      "position": [
+        -4.0,
+        -3.7,
+        3.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CEjHjZ3Cmmp9LqjSMqXGTH5rcg9BxnR6t",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 24,
+        "offset": 27,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 87,
+      "name": "1CF* Row26",
+      "type": "row",
+      "position": [
+        -3.8,
+        -1.2,
+        7.0
+      ],
+      "color": "#ffd700",
+      "size": 1.5,
+      "bitcoin_address": "1CFkUWdsQDJbmZiCJ4fsHd2Wb89dcCy3oA",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": "CF_PREFIX",
+      "metadata": {
+        "column": null,
+        "row": 26,
+        "offset": 52,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 88,
+      "name": "Row30_Off123",
+      "type": "row",
+      "position": [
+        -3.4,
+        5.9,
+        3.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CG8WSocSf8JfofcynrCZtP1s3AHPqY8Ko",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 30,
+        "offset": 123,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 89,
+      "name": "1CF* Row35",
+      "type": "row",
+      "position": [
+        -2.9,
+        1.4,
+        7.0
+      ],
+      "color": "#ffd700",
+      "size": 1.5,
+      "bitcoin_address": "1CFqGYyrXzZbhpmdGp9ZWELPW7c4VDuB8u",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": "CF_PREFIX",
+      "metadata": {
+        "column": null,
+        "row": 35,
+        "offset": 78,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 90,
+      "name": "Row37_Off99",
+      "type": "row",
+      "position": [
+        -2.7,
+        3.5,
+        5.0
+      ],
+      "color": "#00bfff",
+      "size": 0.8,
+      "bitcoin_address": "1CJSncqUpTkVEazzbcfcd21M46oC8f2QN3",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 37,
+        "offset": 99,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 91,
+      "name": "Row43_Off101",
+      "type": "row",
+      "position": [
+        -2.1,
+        3.7,
+        5.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CDZRawvJhELBw5AHzEq1MBW4ho8kGapx2",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 43,
+        "offset": 101,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 92,
+      "name": "Row43_Off123",
+      "type": "row",
+      "position": [
+        -2.1,
+        5.9,
+        5.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CEBXY3oeWUCgxKp1TN86XdF5Nnh4DP6oz",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 43,
+        "offset": 123,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 93,
+      "name": "1CF* Row44",
+      "type": "row",
+      "position": [
+        -2.0,
+        2.1,
+        7.0
+      ],
+      "color": "#ffd700",
+      "size": 1.5,
+      "bitcoin_address": "1CFrk4P5vYKimSWcQJ5EcWHKgdYgMWhmuD",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": "CF_PREFIX",
+      "metadata": {
+        "column": null,
+        "row": 44,
+        "offset": 85,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 94,
+      "name": "Row45_Off52",
+      "type": "row",
+      "position": [
+        -1.9,
+        -1.2,
+        3.0
+      ],
+      "color": "#32cd32",
+      "size": 0.8,
+      "bitcoin_address": "1CHUJGXRjmATL7Uuvu5mt7vCsnZSSth1xz",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 45,
+        "offset": 52,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 95,
+      "name": "Row49_Off3",
+      "type": "row",
+      "position": [
+        -1.5,
+        -6.1,
+        5.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CEjDp6CGUjQiv7XURvLb4UwvUND4o3f94",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 49,
+        "offset": 3,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 96,
+      "name": "Row50_Off106",
+      "type": "row",
+      "position": [
+        -1.4,
+        4.2,
+        7.0
+      ],
+      "color": "#32cd32",
+      "size": 0.8,
+      "bitcoin_address": "1CH5MLDLuAgWjTJ9cNasrzKtXErEgQfGnx",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 50,
+        "offset": 106,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 97,
+      "name": "Row51_Off6",
+      "type": "row",
+      "position": [
+        -1.3,
+        -5.8,
+        3.0
+      ],
+      "color": "#32cd32",
+      "size": 0.8,
+      "bitcoin_address": "1CHupTJxkT5zndJAeQrpYnxKZEeCmuuWYm",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 51,
+        "offset": 6,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 98,
+      "name": "Row54_Off21",
+      "type": "row",
+      "position": [
+        -1.0,
+        -4.3,
+        3.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CEJnK3BnrZg4HsWzcq3LohoYBvYmMC9Pu",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 54,
+        "offset": 21,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 99,
+      "name": "Row55_Off8",
+      "type": "row",
+      "position": [
+        -0.9,
+        -5.6,
+        5.0
+      ],
+      "color": "#32cd32",
+      "size": 0.8,
+      "bitcoin_address": "1CH1oyQodZzgqXrLU1dkEYw3zHFQb4V9KX",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 55,
+        "offset": 8,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 100,
+      "name": "Row57_Off126",
+      "type": "row",
+      "position": [
+        -0.7,
+        6.2,
+        3.0
+      ],
+      "color": "#32cd32",
+      "size": 0.8,
+      "bitcoin_address": "1CHKedWbb2iM58asa7uPSrKnXyYLef1CoN",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 57,
+        "offset": 126,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 101,
+      "name": "Row58_Off84",
+      "type": "row",
+      "position": [
+        -0.6,
+        2.0,
+        5.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CDZdiwo2Bjwa1whhbeJwdW3w7GuQnmJ5o",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 58,
+        "offset": 84,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 102,
+      "name": "Row63_Off82",
+      "type": "row",
+      "position": [
+        -0.1,
+        1.8,
+        3.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CELDTuhx53u9yiQyXgBEDEw24ZRxwMVRy",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 63,
+        "offset": 82,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 103,
+      "name": "1CF* Row63",
+      "type": "row",
+      "position": [
+        -0.1,
+        2.6,
+        3.0
+      ],
+      "color": "#ffd700",
+      "size": 1.5,
+      "bitcoin_address": "1CFKfFGhbyCERhxctqzMYpZ6Ws1EC8F5B7",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": "CF_PREFIX",
+      "metadata": {
+        "column": null,
+        "row": 63,
+        "offset": 90,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 104,
+      "name": "1CF* Row64",
+      "type": "row",
+      "position": [
+        0.0,
+        5.6,
+        5.0
+      ],
+      "color": "#ffd700",
+      "size": 1.5,
+      "bitcoin_address": "1CFUyV6kmD4BywHHafqkNH5WpsRfhjkLog",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": "CF_PREFIX",
+      "metadata": {
+        "column": null,
+        "row": 64,
+        "offset": 120,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 105,
+      "name": "Row65_Off38",
+      "type": "row",
+      "position": [
+        0.1,
+        -2.6,
+        7.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CEY3iLBYqEDZZyq3sAgiiJMGT4QJ4viug",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 65,
+        "offset": 38,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 106,
+      "name": "Row68_Off106",
+      "type": "row",
+      "position": [
+        0.4,
+        4.2,
+        7.0
+      ],
+      "color": "#00bfff",
+      "size": 0.8,
+      "bitcoin_address": "1CJbR2jkCWV73gbEMGrvd9DhU5tq7sQDda",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 68,
+        "offset": 106,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 107,
+      "name": "Row69_Off24",
+      "type": "row",
+      "position": [
+        0.5,
+        -4.0,
+        3.0
+      ],
+      "color": "#32cd32",
+      "size": 0.8,
+      "bitcoin_address": "1CHo5hkDHmL8iyx9qctDRuimtrA6btHUyK",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 69,
+        "offset": 24,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 108,
+      "name": "Row69_Off118",
+      "type": "row",
+      "position": [
+        0.5,
+        5.4,
+        3.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CGijbTpRcvcMQeWPRg4W7oHEkwm7fjamQ",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 69,
+        "offset": 118,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 109,
+      "name": "Row72_Off6",
+      "type": "row",
+      "position": [
+        0.8,
+        -5.8,
+        3.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CGrxC1AQ6ntxGo3xa6QFHPTY6s89zFnoT",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 72,
+        "offset": 6,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 110,
+      "name": "1CF* Row73",
+      "type": "row",
+      "position": [
+        0.9,
+        -4.0,
+        5.0
+      ],
+      "color": "#ffd700",
+      "size": 1.5,
+      "bitcoin_address": "1CFwJf1ph75U14rBSAHcWWpk3fYtA9kUox",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": "CF_PREFIX",
+      "metadata": {
+        "column": null,
+        "row": 73,
+        "offset": 24,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 111,
+      "name": "Row73_Off116",
+      "type": "row",
+      "position": [
+        0.9,
+        5.2,
+        5.0
+      ],
+      "color": "#32cd32",
+      "size": 0.8,
+      "bitcoin_address": "1CHoSiRTDoCge8R8fBdBvVhSNC1uNuy1HD",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 73,
+        "offset": 116,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 112,
+      "name": "Row74_Off8",
+      "type": "row",
+      "position": [
+        1.0,
+        -5.6,
+        7.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CDYswWVb1cpmoRmopdydvErsKkAn5NYue",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 74,
+        "offset": 8,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 113,
+      "name": "1CF* Row75",
+      "type": "row",
+      "position": [
+        1.1,
+        6.2,
+        3.0
+      ],
+      "color": "#ffd700",
+      "size": 1.5,
+      "bitcoin_address": "1CFMUiC4An1Jes2EEHUYNLxzwJaXcUsP8T",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": "CF_PREFIX",
+      "metadata": {
+        "column": null,
+        "row": 75,
+        "offset": 126,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 114,
+      "name": "Row77_Off25",
+      "type": "row",
+      "position": [
+        1.3,
+        -3.9,
+        7.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CDiArQKpNJn7BdUYQ8AELbkhT2jkkf4pZ",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 77,
+        "offset": 25,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 115,
+      "name": "Row77_Off55",
+      "type": "row",
+      "position": [
+        1.3,
+        -0.9,
+        7.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CGG6AFWvteYHufSGXYJKEXFVHRgYZzyhn",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 77,
+        "offset": 55,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 116,
+      "name": "Row80_Off30",
+      "type": "row",
+      "position": [
+        1.6,
+        -3.4,
+        7.0
+      ],
+      "color": "#00bfff",
+      "size": 0.8,
+      "bitcoin_address": "1CJRyWxXR8ZAGJD8MvjPGTyYYB4X3F2DjC",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 80,
+        "offset": 30,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 117,
+      "name": "Row81_Off23",
+      "type": "row",
+      "position": [
+        1.7,
+        -4.1,
+        3.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CDhqsJedemProyzVi8uMSDT5v1XcKRVaE",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 81,
+        "offset": 23,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 118,
+      "name": "1CF* Row81",
+      "type": "row",
+      "position": [
+        1.7,
+        0.3,
+        3.0
+      ],
+      "color": "#ffd700",
+      "size": 1.5,
+      "bitcoin_address": "1CFyrXgNPCy3fBpekcYHajN9FiTSDMhTaw",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": "CF_PREFIX",
+      "metadata": {
+        "column": null,
+        "row": 81,
+        "offset": 67,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 119,
+      "name": "Row83_Off124",
+      "type": "row",
+      "position": [
+        1.9,
+        6.0,
+        7.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CGCCUmsLuL8ZM9dyH9TBpc1VLmLjiSDPV",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 83,
+        "offset": 124,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 120,
+      "name": "Row87_Off106",
+      "type": "row",
+      "position": [
+        2.3,
+        4.2,
+        3.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CEMcpBtiCkoj1HrpB5ZZPbq8kt1oDGvnN",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 87,
+        "offset": 106,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 121,
+      "name": "Row88_Off111",
+      "type": "row",
+      "position": [
+        2.4,
+        4.7,
+        5.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CGZfN69ULSNxVd6LNML1oSfh54LCczF71",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 88,
+        "offset": 111,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 122,
+      "name": "Row89_Off58",
+      "type": "row",
+      "position": [
+        2.5,
+        -0.6,
+        7.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CDw4yB4YoCEarbxMr3XQa1f3cMRgPnA4K",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 89,
+        "offset": 58,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 123,
+      "name": "Row90_Off29",
+      "type": "row",
+      "position": [
+        2.6,
+        -3.5,
+        3.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CEzZ67f66ksGcQ2cvr9QYKgtEqRdroeUQ",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 90,
+        "offset": 29,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 124,
+      "name": "Row93_Off12",
+      "type": "row",
+      "position": [
+        2.9,
+        -5.2,
+        3.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CEAYyNzxVtn2WJ3uEvCR89sG7wsVGVCvR",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 93,
+        "offset": 12,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 125,
+      "name": "1CF* Row94",
+      "type": "row",
+      "position": [
+        3.0,
+        -5.8,
+        5.0
+      ],
+      "color": "#ffd700",
+      "size": 1.5,
+      "bitcoin_address": "1CFLdUb37uZJ3zcZ8LdpuJA5o1q3qAwQuY",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": "CF_PREFIX",
+      "metadata": {
+        "column": null,
+        "row": 94,
+        "offset": 6,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 126,
+      "name": "Row97_Off119",
+      "type": "row",
+      "position": [
+        3.3,
+        5.5,
+        5.0
+      ],
+      "color": "#32cd32",
+      "size": 0.8,
+      "bitcoin_address": "1CHepuYMebdf2mb45maY8jWpNLN1AkyQiF",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 97,
+        "offset": 119,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 127,
+      "name": "Row99_Off67",
+      "type": "row",
+      "position": [
+        3.5,
+        0.3,
+        3.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CET7co366mDH9F8DV7ACK6Uo2RXvX3Ttz",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 99,
+        "offset": 67,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 128,
+      "name": "Row99_Off94",
+      "type": "row",
+      "position": [
+        3.5,
+        3.0,
+        3.0
+      ],
+      "color": "#00bfff",
+      "size": 0.8,
+      "bitcoin_address": "1CJ9cERNVdneLSCvUWV1KCaWojHChMNhGX",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 99,
+        "offset": 94,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 129,
+      "name": "1CF* Row100",
+      "type": "row",
+      "position": [
+        3.6,
+        5.8,
+        5.0
+      ],
+      "color": "#ffd700",
+      "size": 1.5,
+      "bitcoin_address": "1CFTZVrpmn6Qkqo1EEa8QbzZuaqBaxNxAt",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": "CF_PREFIX",
+      "metadata": {
+        "column": null,
+        "row": 100,
+        "offset": 122,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 130,
+      "name": "Row101_Off46",
+      "type": "row",
+      "position": [
+        3.7,
+        -1.8,
+        7.0
+      ],
+      "color": "#00bfff",
+      "size": 0.8,
+      "bitcoin_address": "1CJU6JChMfHUxg9QuuMMS7ye4uYS9FTXP3",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 101,
+        "offset": 46,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 131,
+      "name": "Row101_Off93",
+      "type": "row",
+      "position": [
+        3.7,
+        2.9,
+        7.0
+      ],
+      "color": "#00bfff",
+      "size": 0.8,
+      "bitcoin_address": "1CJZNDfMUriwhMPAc9nRAHPNWBwmrNnUne",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 101,
+        "offset": 93,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 132,
+      "name": "Row106_Off70",
+      "type": "row",
+      "position": [
+        4.2,
+        0.6,
+        5.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CGYbRWxxTq9pRkZRa48ViqSo73iUvdBVE",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 106,
+        "offset": 70,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 133,
+      "name": "Row107_Off89",
+      "type": "row",
+      "position": [
+        4.3,
+        2.5,
+        7.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CDkXUqzFb2KCZcp5AyAjVwpxoewMPBfs7",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 107,
+        "offset": 89,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 134,
+      "name": "Row109_Off72",
+      "type": "row",
+      "position": [
+        4.5,
+        0.8,
+        5.0
+      ],
+      "color": "#32cd32",
+      "size": 0.8,
+      "bitcoin_address": "1CHgASSAemYJSK42HXtn7TZxUB86qrumep",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 109,
+        "offset": 72,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 135,
+      "name": "1CF* Row111",
+      "type": "row",
+      "position": [
+        4.7,
+        -4.0,
+        3.0
+      ],
+      "color": "#ffd700",
+      "size": 1.5,
+      "bitcoin_address": "1CFw9Ni7FD5A6xvt9HsemQC6bG8pqNEMo5",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": "CF_PREFIX",
+      "metadata": {
+        "column": null,
+        "row": 111,
+        "offset": 24,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 136,
+      "name": "Row112_Off85",
+      "type": "row",
+      "position": [
+        4.8,
+        2.1,
+        5.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CEvhAkLuYJV4Sgn4xK2Uzv6mo5NPXcQbt",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 112,
+        "offset": 85,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 137,
+      "name": "Row113_Off106",
+      "type": "row",
+      "position": [
+        4.9,
+        4.2,
+        7.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CDpusg4X9dkQnpNec1jB4XLnEtFAHgLMF",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 113,
+        "offset": 106,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 138,
+      "name": "Row114_Off95",
+      "type": "row",
+      "position": [
+        5.0,
+        3.1,
+        3.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CENtsdM65kNtiE9QWf7s4vdvVWdWeuxcK",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 114,
+        "offset": 95,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 139,
+      "name": "Row119_Off108",
+      "type": "row",
+      "position": [
+        5.5,
+        4.4,
+        7.0
+      ],
+      "color": "#00bfff",
+      "size": 0.8,
+      "bitcoin_address": "1CJFNAsRZzY7cmCLLypHaGZWpCo47Z44n2",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 119,
+        "offset": 108,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 140,
+      "name": "Row120_Off25",
+      "type": "row",
+      "position": [
+        5.6,
+        -3.9,
+        3.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CECRjuJ6FmBPGBTT4dfxVuFNN8p1FZ1PL",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 120,
+        "offset": 25,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 141,
+      "name": "Row122_Off37",
+      "type": "row",
+      "position": [
+        5.8,
+        -2.7,
+        7.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CE9sZhB3djYzdLcBAXpVPgiZ9cJLt6dDR",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 122,
+        "offset": 37,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 142,
+      "name": "Row122_Off83",
+      "type": "row",
+      "position": [
+        5.8,
+        1.9,
+        7.0
+      ],
+      "color": "#32cd32",
+      "size": 0.8,
+      "bitcoin_address": "1CHzxf3czGJnjKbqfEx3p3QPLa2uTLQqHL",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 122,
+        "offset": 83,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 143,
+      "name": "1CF* Row123",
+      "type": "row",
+      "position": [
+        5.9,
+        -4.7,
+        3.0
+      ],
+      "color": "#ffd700",
+      "size": 1.5,
+      "bitcoin_address": "1CFqXgF1ZoqtdRH5wfr8oxK6zpJCR8vfd4",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": "CF_PREFIX",
+      "metadata": {
+        "column": null,
+        "row": 123,
+        "offset": 17,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 144,
+      "name": "Row124_Off16",
+      "type": "row",
+      "position": [
+        6.0,
+        -4.8,
+        5.0
+      ],
+      "color": "#00bfff",
+      "size": 0.8,
+      "bitcoin_address": "1CJKumsEv7feBde6NQpszV8T698KcKKoCn",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 124,
+        "offset": 16,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 145,
+      "name": "Row126_Off86",
+      "type": "row",
+      "position": [
+        6.2,
+        2.2,
+        3.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CDX3rokgv2jQYZzByV8FivFUXmJcxNvTH",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 126,
+        "offset": 86,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 146,
+      "name": "Row127_Off46",
+      "type": "row",
+      "position": [
+        6.3,
+        -1.8,
+        5.0
+      ],
+      "color": "#32cd32",
+      "size": 0.8,
+      "bitcoin_address": "1CHUJf5fLQ1kgqsjK389gQMcLkanxCHG2W",
+      "qubic_identity": "",
+      "ternary_category": "ROW",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": 127,
+        "offset": 46,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 147,
+      "name": "XOR_3_124_Off79",
+      "type": "xor_pair",
+      "position": [
+        -0.05,
+        1.5,
+        6.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CDwAfgpZsACUf96HLw4mN89bbRVaxiabq",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": null,
+        "offset": 79,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 148,
+      "name": "XOR_5_122_Off84",
+      "type": "xor_pair",
+      "position": [
+        -0.05,
+        2.0,
+        10.0
+      ],
+      "color": "#00bfff",
+      "size": 0.8,
+      "bitcoin_address": "1CJ9R9gwDwNb18dvz8f12KuDQQZuyCaSJY",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": null,
+        "offset": 84,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 149,
+      "name": "XOR_7_120_Off76",
+      "type": "xor_pair",
+      "position": [
+        -0.05,
+        1.2,
+        8.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CEospXAkDfn1dnbGMF2nApXgGK2wUg2LT",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": null,
+        "offset": 76,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 150,
+      "name": "XOR_13_114_Off45",
+      "type": "xor_pair",
+      "position": [
+        -0.05,
+        -1.9,
+        8.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CDg4DL6pntbB2VzLE2tTg9VR312jmTPGc",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": null,
+        "offset": 45,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 151,
+      "name": "XOR_14_113_Off77",
+      "type": "xor_pair",
+      "position": [
+        -0.05,
+        1.3,
+        10.0
+      ],
+      "color": "#32cd32",
+      "size": 0.8,
+      "bitcoin_address": "1CHGQX6qcE94kUdnCs93FbDizj1dmovJgq",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": null,
+        "offset": 77,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 152,
+      "name": "XOR_16_111_Off18",
+      "type": "xor_pair",
+      "position": [
+        -0.05,
+        -4.6,
+        8.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CG7hJqEzd9M3gVLZhdr14box7BfF4NLuo",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": null,
+        "offset": 18,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 153,
+      "name": "XOR_17_110_Off18",
+      "type": "xor_pair",
+      "position": [
+        -0.05,
+        -4.6,
+        10.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CEPv18Yp1gTnc1PrCFkKi2RroKFRmokfL",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": null,
+        "offset": 18,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 154,
+      "name": "XOR_17_110_Off28",
+      "type": "xor_pair",
+      "position": [
+        -0.05,
+        -3.6,
+        10.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CED3FRiaMNqKD9gypXLKcW9iwgJeg62Nm",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": null,
+        "offset": 28,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 155,
+      "name": "XOR_18_109_Off44",
+      "type": "xor_pair",
+      "position": [
+        -0.05,
+        -2.0,
+        6.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CE1uQVqvWcbiwfCrAimxNqcX9H7uTyQE4",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": null,
+        "offset": 44,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 156,
+      "name": "XOR_20_107_Off15",
+      "type": "xor_pair",
+      "position": [
+        -0.05,
+        -4.9,
+        10.0
+      ],
+      "color": "#32cd32",
+      "size": 0.8,
+      "bitcoin_address": "1CHko3VtAtChxq4nWRqSw6crWKxNZHk1uB",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": null,
+        "offset": 15,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 157,
+      "name": "XOR_20_107_Off64",
+      "type": "xor_pair",
+      "position": [
+        -0.05,
+        0.0,
+        10.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CGsJDxZXBMpAkTh1siVhpeuHK4zPXLLUH",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": null,
+        "offset": 64,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 158,
+      "name": "XOR_34_93_Off84",
+      "type": "xor_pair",
+      "position": [
+        -0.05,
+        2.0,
+        8.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CDodRHEiP6rfgiKkt3HLdDwCKbC3q7CBc",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": null,
+        "offset": 84,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 159,
+      "name": "XOR_37_90_Off4",
+      "type": "xor_pair",
+      "position": [
+        -0.05,
+        -6.0,
+        8.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CEgnB2qaYrkHJkcb7ww9oKuArvLjWwoXT",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": null,
+        "offset": 4,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 160,
+      "name": "XOR_39_88_Off40",
+      "type": "xor_pair",
+      "position": [
+        -0.05,
+        -2.4,
+        6.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CErMJj54ENoDXs7RZEZ87NjkidsLyKTBL",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": null,
+        "offset": 40,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 161,
+      "name": "XOR_41_86_Off63",
+      "type": "xor_pair",
+      "position": [
+        -0.05,
+        -0.1,
+        10.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CGBLTpym2hNBTCN2t7PNuySpsyhUHw57M",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": null,
+        "offset": 63,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 162,
+      "name": "1CF* XOR_43_84",
+      "type": "xor_pair",
+      "position": [
+        -0.05,
+        -0.7,
+        8.0
+      ],
+      "color": "#ffd700",
+      "size": 1.5,
+      "bitcoin_address": "1CFyLE8g7U479pXT8A2AMQmQ7AEj8bif3C",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": "CF_PREFIX",
+      "metadata": {
+        "column": null,
+        "row": null,
+        "offset": 57,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 163,
+      "name": "XOR_48_79_Off27",
+      "type": "xor_pair",
+      "position": [
+        -0.05,
+        -3.7,
+        6.0
+      ],
+      "color": "#32cd32",
+      "size": 0.8,
+      "bitcoin_address": "1CHCBZzUGgrN9u5jiz1U7Xin5w1AEswKaq",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": null,
+        "offset": 27,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 164,
+      "name": "XOR_54_73_Off19",
+      "type": "xor_pair",
+      "position": [
+        -0.05,
+        -4.5,
+        6.0
+      ],
+      "color": "#32cd32",
+      "size": 0.8,
+      "bitcoin_address": "1CHKneVYusaxsBZRWPbshmGxJXve6TdAmq",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": null,
+        "offset": 19,
+        "hash160_prefix": "0x7b"
+      }
+    },
+    {
+      "id": 165,
+      "name": "XOR_56_71_Off22",
+      "type": "xor_pair",
+      "position": [
+        -0.05,
+        -4.2,
+        10.0
+      ],
+      "color": "#888888",
+      "size": 0.8,
+      "bitcoin_address": "1CEcgts8TSeTZ29usNKq1BKeQDz8bSwBbS",
+      "qubic_identity": "",
+      "ternary_category": "NEUTRAL",
+      "special": null,
+      "metadata": {
+        "column": null,
+        "row": null,
+        "offset": 22,
+        "hash160_prefix": "0x7b"
+      }
+    }
+  ],
+  "connections": [
+    {
+      "type": "symmetry",
+      "from_column": 1,
+      "to_column": 126,
+      "relationship": "XOR_PARTNER",
+      "source_id": 1
+    },
+    {
+      "type": "symmetry",
+      "from_column": 2,
+      "to_column": 125,
+      "relationship": "XOR_PARTNER",
+      "source_id": 2
+    },
+    {
+      "type": "symmetry",
+      "from_column": 3,
+      "to_column": 124,
+      "relationship": "XOR_PARTNER",
+      "source_id": 3
+    },
+    {
+      "type": "symmetry",
+      "from_column": 5,
+      "to_column": 122,
+      "relationship": "XOR_PARTNER",
+      "source_id": 4
+    },
+    {
+      "type": "symmetry",
+      "from_column": 6,
+      "to_column": 121,
+      "relationship": "XOR_PARTNER",
+      "source_id": 5
+    },
+    {
+      "type": "symmetry",
+      "from_column": 7,
+      "to_column": 120,
+      "relationship": "XOR_PARTNER",
+      "source_id": 6
+    },
+    {
+      "type": "symmetry",
+      "from_column": 11,
+      "to_column": 116,
+      "relationship": "XOR_PARTNER",
+      "source_id": 7
+    },
+    {
+      "type": "symmetry",
+      "from_column": 12,
+      "to_column": 115,
+      "relationship": "XOR_PARTNER",
+      "source_id": 8
+    },
+    {
+      "type": "symmetry",
+      "from_column": 13,
+      "to_column": 114,
+      "relationship": "XOR_PARTNER",
+      "source_id": 9
+    },
+    {
+      "type": "symmetry",
+      "from_column": 13,
+      "to_column": 114,
+      "relationship": "XOR_PARTNER",
+      "source_id": 10
+    },
+    {
+      "type": "symmetry",
+      "from_column": 15,
+      "to_column": 112,
+      "relationship": "XOR_PARTNER",
+      "source_id": 11
+    },
+    {
+      "type": "symmetry",
+      "from_column": 17,
+      "to_column": 110,
+      "relationship": "XOR_PARTNER",
+      "source_id": 12
+    },
+    {
+      "type": "symmetry",
+      "from_column": 18,
+      "to_column": 109,
+      "relationship": "XOR_PARTNER",
+      "source_id": 13
+    },
+    {
+      "type": "symmetry",
+      "from_column": 18,
+      "to_column": 109,
+      "relationship": "XOR_PARTNER",
+      "source_id": 14
+    },
+    {
+      "type": "symmetry",
+      "from_column": 19,
+      "to_column": 108,
+      "relationship": "XOR_PARTNER",
+      "source_id": 15
+    },
+    {
+      "type": "symmetry",
+      "from_column": 21,
+      "to_column": 106,
+      "relationship": "XOR_PARTNER",
+      "source_id": 16
+    },
+    {
+      "type": "symmetry",
+      "from_column": 23,
+      "to_column": 104,
+      "relationship": "XOR_PARTNER",
+      "source_id": 17
+    },
+    {
+      "type": "symmetry",
+      "from_column": 23,
+      "to_column": 104,
+      "relationship": "XOR_PARTNER",
+      "source_id": 18
+    },
+    {
+      "type": "symmetry",
+      "from_column": 25,
+      "to_column": 102,
+      "relationship": "XOR_PARTNER",
+      "source_id": 19
+    },
+    {
+      "type": "symmetry",
+      "from_column": 25,
+      "to_column": 102,
+      "relationship": "XOR_PARTNER",
+      "source_id": 20
+    },
+    {
+      "type": "symmetry",
+      "from_column": 26,
+      "to_column": 101,
+      "relationship": "XOR_PARTNER",
+      "source_id": 21
+    },
+    {
+      "type": "symmetry",
+      "from_column": 29,
+      "to_column": 98,
+      "relationship": "XOR_PARTNER",
+      "source_id": 22
+    },
+    {
+      "type": "symmetry",
+      "from_column": 30,
+      "to_column": 97,
+      "relationship": "XOR_PARTNER",
+      "source_id": 23
+    },
+    {
+      "type": "symmetry",
+      "from_column": 33,
+      "to_column": 94,
+      "relationship": "XOR_PARTNER",
+      "source_id": 24
+    },
+    {
+      "type": "symmetry",
+      "from_column": 33,
+      "to_column": 94,
+      "relationship": "XOR_PARTNER",
+      "source_id": 25
+    },
+    {
+      "type": "symmetry",
+      "from_column": 34,
+      "to_column": 93,
+      "relationship": "XOR_PARTNER",
+      "source_id": 26
+    },
+    {
+      "type": "symmetry",
+      "from_column": 36,
+      "to_column": 91,
+      "relationship": "XOR_PARTNER",
+      "source_id": 27
+    },
+    {
+      "type": "symmetry",
+      "from_column": 39,
+      "to_column": 88,
+      "relationship": "XOR_PARTNER",
+      "source_id": 28
+    },
+    {
+      "type": "symmetry",
+      "from_column": 42,
+      "to_column": 85,
+      "relationship": "XOR_PARTNER",
+      "source_id": 29
+    },
+    {
+      "type": "symmetry",
+      "from_column": 43,
+      "to_column": 84,
+      "relationship": "XOR_PARTNER",
+      "source_id": 30
+    },
+    {
+      "type": "symmetry",
+      "from_column": 46,
+      "to_column": 81,
+      "relationship": "XOR_PARTNER",
+      "source_id": 31
+    },
+    {
+      "type": "symmetry",
+      "from_column": 52,
+      "to_column": 75,
+      "relationship": "XOR_PARTNER",
+      "source_id": 32
+    },
+    {
+      "type": "symmetry",
+      "from_column": 56,
+      "to_column": 71,
+      "relationship": "XOR_PARTNER",
+      "source_id": 33
+    },
+    {
+      "type": "symmetry",
+      "from_column": 58,
+      "to_column": 69,
+      "relationship": "XOR_PARTNER",
+      "source_id": 34
+    },
+    {
+      "type": "symmetry",
+      "from_column": 58,
+      "to_column": 69,
+      "relationship": "XOR_PARTNER",
+      "source_id": 35
+    },
+    {
+      "type": "symmetry",
+      "from_column": 60,
+      "to_column": 67,
+      "relationship": "XOR_PARTNER",
+      "source_id": 36
+    },
+    {
+      "type": "symmetry",
+      "from_column": 61,
+      "to_column": 66,
+      "relationship": "XOR_PARTNER",
+      "source_id": 37
+    },
+    {
+      "type": "symmetry",
+      "from_column": 65,
+      "to_column": 62,
+      "relationship": "XOR_PARTNER",
+      "source_id": 38
+    },
+    {
+      "type": "symmetry",
+      "from_column": 65,
+      "to_column": 62,
+      "relationship": "XOR_PARTNER",
+      "source_id": 39
+    },
+    {
+      "type": "symmetry",
+      "from_column": 69,
+      "to_column": 58,
+      "relationship": "XOR_PARTNER",
+      "source_id": 40
+    },
+    {
+      "type": "symmetry",
+      "from_column": 70,
+      "to_column": 57,
+      "relationship": "XOR_PARTNER",
+      "source_id": 41
+    },
+    {
+      "type": "symmetry",
+      "from_column": 71,
+      "to_column": 56,
+      "relationship": "XOR_PARTNER",
+      "source_id": 42
+    },
+    {
+      "type": "symmetry",
+      "from_column": 72,
+      "to_column": 55,
+      "relationship": "XOR_PARTNER",
+      "source_id": 43
+    },
+    {
+      "type": "symmetry",
+      "from_column": 72,
+      "to_column": 55,
+      "relationship": "XOR_PARTNER",
+      "source_id": 44
+    },
+    {
+      "type": "symmetry",
+      "from_column": 74,
+      "to_column": 53,
+      "relationship": "XOR_PARTNER",
+      "source_id": 45
+    },
+    {
+      "type": "symmetry",
+      "from_column": 76,
+      "to_column": 51,
+      "relationship": "XOR_PARTNER",
+      "source_id": 46
+    },
+    {
+      "type": "symmetry",
+      "from_column": 78,
+      "to_column": 49,
+      "relationship": "XOR_PARTNER",
+      "source_id": 47
+    },
+    {
+      "type": "symmetry",
+      "from_column": 80,
+      "to_column": 47,
+      "relationship": "XOR_PARTNER",
+      "source_id": 48
+    },
+    {
+      "type": "symmetry",
+      "from_column": 85,
+      "to_column": 42,
+      "relationship": "XOR_PARTNER",
+      "source_id": 49
+    },
+    {
+      "type": "symmetry",
+      "from_column": 87,
+      "to_column": 40,
+      "relationship": "XOR_PARTNER",
+      "source_id": 50
+    },
+    {
+      "type": "symmetry",
+      "from_column": 90,
+      "to_column": 37,
+      "relationship": "XOR_PARTNER",
+      "source_id": 51
+    },
+    {
+      "type": "symmetry",
+      "from_column": 91,
+      "to_column": 36,
+      "relationship": "XOR_PARTNER",
+      "source_id": 52
+    },
+    {
+      "type": "symmetry",
+      "from_column": 92,
+      "to_column": 35,
+      "relationship": "XOR_PARTNER",
+      "source_id": 53
+    },
+    {
+      "type": "symmetry",
+      "from_column": 92,
+      "to_column": 35,
+      "relationship": "XOR_PARTNER",
+      "source_id": 54
+    },
+    {
+      "type": "symmetry",
+      "from_column": 92,
+      "to_column": 35,
+      "relationship": "XOR_PARTNER",
+      "source_id": 55
+    },
+    {
+      "type": "symmetry",
+      "from_column": 93,
+      "to_column": 34,
+      "relationship": "XOR_PARTNER",
+      "source_id": 56
+    },
+    {
+      "type": "symmetry",
+      "from_column": 94,
+      "to_column": 33,
+      "relationship": "XOR_PARTNER",
+      "source_id": 57
+    },
+    {
+      "type": "symmetry",
+      "from_column": 94,
+      "to_column": 33,
+      "relationship": "XOR_PARTNER",
+      "source_id": 58
+    },
+    {
+      "type": "symmetry",
+      "from_column": 96,
+      "to_column": 31,
+      "relationship": "XOR_PARTNER",
+      "source_id": 59
+    },
+    {
+      "type": "symmetry",
+      "from_column": 99,
+      "to_column": 28,
+      "relationship": "XOR_PARTNER",
+      "source_id": 60
+    },
+    {
+      "type": "symmetry",
+      "from_column": 99,
+      "to_column": 28,
+      "relationship": "XOR_PARTNER",
+      "source_id": 61
+    },
+    {
+      "type": "symmetry",
+      "from_column": 100,
+      "to_column": 27,
+      "relationship": "XOR_PARTNER",
+      "source_id": 62
+    },
+    {
+      "type": "symmetry",
+      "from_column": 105,
+      "to_column": 22,
+      "relationship": "XOR_PARTNER",
+      "source_id": 63
+    },
+    {
+      "type": "symmetry",
+      "from_column": 105,
+      "to_column": 22,
+      "relationship": "XOR_PARTNER",
+      "source_id": 64
+    },
+    {
+      "type": "symmetry",
+      "from_column": 106,
+      "to_column": 21,
+      "relationship": "XOR_PARTNER",
+      "source_id": 65
+    },
+    {
+      "type": "symmetry",
+      "from_column": 107,
+      "to_column": 20,
+      "relationship": "XOR_PARTNER",
+      "source_id": 66
+    },
+    {
+      "type": "symmetry",
+      "from_column": 112,
+      "to_column": 15,
+      "relationship": "XOR_PARTNER",
+      "source_id": 67
+    },
+    {
+      "type": "symmetry",
+      "from_column": 113,
+      "to_column": 14,
+      "relationship": "XOR_PARTNER",
+      "source_id": 68
+    },
+    {
+      "type": "symmetry",
+      "from_column": 114,
+      "to_column": 13,
+      "relationship": "XOR_PARTNER",
+      "source_id": 69
+    },
+    {
+      "type": "symmetry",
+      "from_column": 115,
+      "to_column": 12,
+      "relationship": "XOR_PARTNER",
+      "source_id": 70
+    },
+    {
+      "type": "symmetry",
+      "from_column": 115,
+      "to_column": 12,
+      "relationship": "XOR_PARTNER",
+      "source_id": 71
+    },
+    {
+      "type": "symmetry",
+      "from_column": 118,
+      "to_column": 9,
+      "relationship": "XOR_PARTNER",
+      "source_id": 72
+    },
+    {
+      "type": "symmetry",
+      "from_column": 120,
+      "to_column": 7,
+      "relationship": "XOR_PARTNER",
+      "source_id": 73
+    },
+    {
+      "type": "symmetry",
+      "from_column": 123,
+      "to_column": 4,
+      "relationship": "XOR_PARTNER",
+      "source_id": 74
+    },
+    {
+      "type": "symmetry",
+      "from_column": 124,
+      "to_column": 3,
+      "relationship": "XOR_PARTNER",
+      "source_id": 75
+    },
+    {
+      "type": "symmetry",
+      "from_column": 127,
+      "to_column": 0,
+      "relationship": "XOR_PARTNER",
+      "source_id": 76
+    },
+    {
+      "type": "xor",
+      "columns": [
+        3,
+        124
+      ],
+      "relationship": "XOR_OPERATION",
+      "source_id": 147
+    },
+    {
+      "type": "xor",
+      "columns": [
+        5,
+        122
+      ],
+      "relationship": "XOR_OPERATION",
+      "source_id": 148
+    },
+    {
+      "type": "xor",
+      "columns": [
+        7,
+        120
+      ],
+      "relationship": "XOR_OPERATION",
+      "source_id": 149
+    },
+    {
+      "type": "xor",
+      "columns": [
+        13,
+        114
+      ],
+      "relationship": "XOR_OPERATION",
+      "source_id": 150
+    },
+    {
+      "type": "xor",
+      "columns": [
+        14,
+        113
+      ],
+      "relationship": "XOR_OPERATION",
+      "source_id": 151
+    },
+    {
+      "type": "xor",
+      "columns": [
+        16,
+        111
+      ],
+      "relationship": "XOR_OPERATION",
+      "source_id": 152
+    },
+    {
+      "type": "xor",
+      "columns": [
+        17,
+        110
+      ],
+      "relationship": "XOR_OPERATION",
+      "source_id": 153
+    },
+    {
+      "type": "xor",
+      "columns": [
+        17,
+        110
+      ],
+      "relationship": "XOR_OPERATION",
+      "source_id": 154
+    },
+    {
+      "type": "xor",
+      "columns": [
+        18,
+        109
+      ],
+      "relationship": "XOR_OPERATION",
+      "source_id": 155
+    },
+    {
+      "type": "xor",
+      "columns": [
+        20,
+        107
+      ],
+      "relationship": "XOR_OPERATION",
+      "source_id": 156
+    },
+    {
+      "type": "xor",
+      "columns": [
+        20,
+        107
+      ],
+      "relationship": "XOR_OPERATION",
+      "source_id": 157
+    },
+    {
+      "type": "xor",
+      "columns": [
+        34,
+        93
+      ],
+      "relationship": "XOR_OPERATION",
+      "source_id": 158
+    },
+    {
+      "type": "xor",
+      "columns": [
+        37,
+        90
+      ],
+      "relationship": "XOR_OPERATION",
+      "source_id": 159
+    },
+    {
+      "type": "xor",
+      "columns": [
+        39,
+        88
+      ],
+      "relationship": "XOR_OPERATION",
+      "source_id": 160
+    },
+    {
+      "type": "xor",
+      "columns": [
+        41,
+        86
+      ],
+      "relationship": "XOR_OPERATION",
+      "source_id": 161
+    },
+    {
+      "type": "xor",
+      "columns": [
+        43,
+        84
+      ],
+      "relationship": "XOR_OPERATION",
+      "source_id": 162
+    },
+    {
+      "type": "xor",
+      "columns": [
+        48,
+        79
+      ],
+      "relationship": "XOR_OPERATION",
+      "source_id": 163
+    },
+    {
+      "type": "xor",
+      "columns": [
+        54,
+        73
+      ],
+      "relationship": "XOR_OPERATION",
+      "source_id": 164
+    },
+    {
+      "type": "xor",
+      "columns": [
+        56,
+        71
+      ],
+      "relationship": "XOR_OPERATION",
+      "source_id": 165
+    }
+  ],
+  "symmetric_pairs": [
+    {
+      "source": 3,
+      "target": 75,
+      "type": "symmetric"
+    },
+    {
+      "source": 6,
+      "target": 73,
+      "type": "symmetric"
+    },
+    {
+      "source": 8,
+      "target": 70,
+      "type": "symmetric"
+    },
+    {
+      "source": 8,
+      "target": 71,
+      "type": "symmetric"
+    },
+    {
+      "source": 9,
+      "target": 69,
+      "type": "symmetric"
+    },
+    {
+      "source": 10,
+      "target": 69,
+      "type": "symmetric"
+    },
+    {
+      "source": 11,
+      "target": 67,
+      "type": "symmetric"
+    },
+    {
+      "source": 16,
+      "target": 65,
+      "type": "symmetric"
+    },
+    {
+      "source": 24,
+      "target": 57,
+      "type": "symmetric"
+    },
+    {
+      "source": 24,
+      "target": 58,
+      "type": "symmetric"
+    },
+    {
+      "source": 25,
+      "target": 57,
+      "type": "symmetric"
+    },
+    {
+      "source": 25,
+      "target": 58,
+      "type": "symmetric"
+    },
+    {
+      "source": 26,
+      "target": 56,
+      "type": "symmetric"
+    },
+    {
+      "source": 27,
+      "target": 52,
+      "type": "symmetric"
+    },
+    {
+      "source": 29,
+      "target": 49,
+      "type": "symmetric"
+    },
+    {
+      "source": 33,
+      "target": 42,
+      "type": "symmetric"
+    },
+    {
+      "source": 34,
+      "target": 40,
+      "type": "symmetric"
+    },
+    {
+      "source": 35,
+      "target": 40,
+      "type": "symmetric"
+    },
+    {
+      "source": 40,
+      "target": 34,
+      "type": "symmetric"
+    },
+    {
+      "source": 40,
+      "target": 35,
+      "type": "symmetric"
+    },
+    {
+      "source": 42,
+      "target": 33,
+      "type": "symmetric"
+    },
+    {
+      "source": 49,
+      "target": 29,
+      "type": "symmetric"
+    },
+    {
+      "source": 52,
+      "target": 27,
+      "type": "symmetric"
+    },
+    {
+      "source": 56,
+      "target": 26,
+      "type": "symmetric"
+    },
+    {
+      "source": 57,
+      "target": 24,
+      "type": "symmetric"
+    },
+    {
+      "source": 57,
+      "target": 25,
+      "type": "symmetric"
+    },
+    {
+      "source": 58,
+      "target": 24,
+      "type": "symmetric"
+    },
+    {
+      "source": 58,
+      "target": 25,
+      "type": "symmetric"
+    },
+    {
+      "source": 65,
+      "target": 16,
+      "type": "symmetric"
+    },
+    {
+      "source": 67,
+      "target": 11,
+      "type": "symmetric"
+    },
+    {
+      "source": 69,
+      "target": 9,
+      "type": "symmetric"
+    },
+    {
+      "source": 69,
+      "target": 10,
+      "type": "symmetric"
+    },
+    {
+      "source": 70,
+      "target": 8,
+      "type": "symmetric"
+    },
+    {
+      "source": 71,
+      "target": 8,
+      "type": "symmetric"
+    },
+    {
+      "source": 73,
+      "target": 6,
+      "type": "symmetric"
+    },
+    {
+      "source": 75,
+      "target": 3,
+      "type": "symmetric"
+    }
+  ],
+  "layers": {
+    "0": {
+      "count": 22,
+      "nodes": [
+        1,
+        4,
+        5,
+        9,
+        11,
+        12,
+        14,
+        24,
+        28,
+        31,
+        34,
+        37,
+        43,
+        46,
+        53,
+        61,
+        62,
+        63,
+        66,
+        69,
+        70,
+        74
+      ]
+    },
+    "2": {
+      "count": 50,
+      "nodes": [
+        2,
+        3,
+        8,
+        15,
+        16,
+        17,
+        18,
+        21,
+        27,
+        29,
+        30,
+        32,
+        33,
+        35,
+        36,
+        38,
+        44,
+        45,
+        47,
+        48,
+        49,
+        52,
+        54,
+        55,
+        59,
+        64,
+        65,
+        67,
+        72,
+        73,
+        77,
+        84,
+        90,
+        91,
+        92,
+        95,
+        99,
+        101,
+        104,
+        110,
+        111,
+        121,
+        125,
+        126,
+        129,
+        132,
+        134,
+        136,
+        144,
+        146
+      ]
+    },
+    "1": {
+      "count": 51,
+      "nodes": [
+        6,
+        7,
+        10,
+        13,
+        19,
+        20,
+        22,
+        23,
+        25,
+        26,
+        39,
+        40,
+        41,
+        42,
+        50,
+        51,
+        56,
+        57,
+        58,
+        60,
+        68,
+        71,
+        75,
+        76,
+        81,
+        82,
+        83,
+        86,
+        88,
+        94,
+        97,
+        98,
+        100,
+        102,
+        103,
+        107,
+        108,
+        109,
+        113,
+        117,
+        118,
+        120,
+        123,
+        124,
+        127,
+        128,
+        135,
+        138,
+        140,
+        143,
+        145
+      ]
+    },
+    "3": {
+      "count": 28,
+      "nodes": [
+        78,
+        79,
+        80,
+        85,
+        87,
+        89,
+        93,
+        96,
+        105,
+        106,
+        112,
+        114,
+        115,
+        116,
+        119,
+        122,
+        130,
+        131,
+        133,
+        137,
+        139,
+        141,
+        142,
+        147,
+        155,
+        160,
+        163,
+        164
+      ]
+    },
+    "5": {
+      "count": 8,
+      "nodes": [
+        148,
+        151,
+        153,
+        154,
+        156,
+        157,
+        161,
+        165
+      ]
+    },
+    "4": {
+      "count": 6,
+      "nodes": [
+        149,
+        150,
+        152,
+        158,
+        159,
+        162
+      ]
+    }
+  }
+}

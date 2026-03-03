@@ -1,0 +1,152 @@
+{
+  "metadata": {
+    "title": "Anna Matrix Anomaly Analysis",
+    "date": "2026-01-17",
+    "description": "68 cells that break the 99.6% point-symmetry of the Anna Matrix",
+    "symmetryPercentage": 99.59,
+    "anomalyPercentage": 0.41
+  },
+  "statistics": {
+    "totalCells": 16384,
+    "symmetricCells": 16316,
+    "anomalyCells": 68,
+    "anomalyPairs": 34,
+    "allInUpperHalf": true
+  },
+  "quadrantDistribution": {
+    "NW": 19,
+    "NE": 15,
+    "SW": 0,
+    "SE": 0
+  },
+  "keyColumns": [
+    {
+      "column": 22,
+      "mirrorColumn": 105,
+      "rows": [20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32],
+      "count": 13,
+      "significance": "Primary anomaly stripe"
+    },
+    {
+      "column": 97,
+      "mirrorColumn": 30,
+      "rows": [48, 50, 51, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64],
+      "count": 14,
+      "significance": "Secondary anomaly stripe"
+    },
+    {
+      "column": 30,
+      "mirrorColumn": 97,
+      "rows": [60, 61, 62, 63],
+      "count": 4,
+      "significance": "Mirror of column 97"
+    },
+    {
+      "column": 41,
+      "mirrorColumn": 86,
+      "rows": [62, 63],
+      "count": 2,
+      "significance": "Minor stripe"
+    }
+  ],
+  "specialPosition": {
+    "position": [22, 22],
+    "value": 100,
+    "mirrorPosition": [105, 105],
+    "mirrorValue": 100,
+    "sum": 200,
+    "significance": "Only position where value = mirror_value",
+    "properties": {
+      "coordinateSum": 127,
+      "valueXor127": 27,
+      "isSquarePosition": true
+    }
+  },
+  "connectionTo1CFB": {
+    "1cfi": {
+      "position": [91, 20],
+      "nearestAnomalyColumn": 22,
+      "columnDifference": 2,
+      "matrixValue": -3,
+      "status": "SOLVED",
+      "method": "step27 + XOR13"
+    },
+    "1cfb": {
+      "position": [45, 92],
+      "nearestAnomalyColumn": 97,
+      "columnDifference": 5,
+      "matrixValue": -118,
+      "status": "UNSOLVED",
+      "hypothesizedMethods": [
+        "step32 + XOR15",
+        "step27 + XOR100",
+        "step54 + XOR65"
+      ]
+    },
+    "combinedValue": -121,
+    "combinedValueSignificance": "-(11²) = Qubic constant"
+  },
+  "anomalies": [
+    {"pos": [19, 127], "value": 15, "mirrorPos": [108, 0], "mirrorValue": -48, "sum": -33},
+    {"pos": [20, 22], "value": 92, "mirrorPos": [107, 105], "mirrorValue": -18, "sum": 74},
+    {"pos": [21, 22], "value": 113, "mirrorPos": [106, 105], "mirrorValue": -58, "sum": 55},
+    {"pos": [22, 22], "value": 100, "mirrorPos": [105, 105], "mirrorValue": 100, "sum": 200, "special": true},
+    {"pos": [23, 22], "value": -121, "mirrorPos": [104, 105], "mirrorValue": -26, "sum": -147},
+    {"pos": [24, 22], "value": 42, "mirrorPos": [103, 105], "mirrorValue": 74, "sum": 116},
+    {"pos": [25, 22], "value": 23, "mirrorPos": [102, 105], "mirrorValue": 66, "sum": 89},
+    {"pos": [26, 22], "value": 106, "mirrorPos": [101, 105], "mirrorValue": 100, "sum": 206},
+    {"pos": [27, 22], "value": 120, "mirrorPos": [100, 105], "mirrorValue": 70, "sum": 190},
+    {"pos": [28, 22], "value": 40, "mirrorPos": [99, 105], "mirrorValue": 110, "sum": 150},
+    {"pos": [29, 22], "value": -121, "mirrorPos": [98, 105], "mirrorValue": -50, "sum": -171},
+    {"pos": [30, 22], "value": 44, "mirrorPos": [97, 105], "mirrorValue": 110, "sum": 154},
+    {"pos": [31, 22], "value": 120, "mirrorPos": [96, 105], "mirrorValue": 102, "sum": 222},
+    {"pos": [32, 22], "value": 101, "mirrorPos": [95, 105], "mirrorValue": -108, "sum": -7},
+    {"pos": [48, 97], "value": 14, "mirrorPos": [79, 30], "mirrorValue": -16, "sum": -2},
+    {"pos": [50, 97], "value": -114, "mirrorPos": [77, 30], "mirrorValue": -15, "sum": -129},
+    {"pos": [51, 97], "value": 14, "mirrorPos": [76, 30], "mirrorValue": 113, "sum": 127},
+    {"pos": [53, 97], "value": 30, "mirrorPos": [74, 30], "mirrorValue": -15, "sum": 15},
+    {"pos": [54, 97], "value": 10, "mirrorPos": [73, 30], "mirrorValue": -31, "sum": -21},
+    {"pos": [55, 97], "value": 26, "mirrorPos": [72, 30], "mirrorValue": -11, "sum": 15},
+    {"pos": [56, 97], "value": -114, "mirrorPos": [71, 30], "mirrorValue": -27, "sum": -141},
+    {"pos": [57, 97], "value": 30, "mirrorPos": [70, 30], "mirrorValue": 113, "sum": 143},
+    {"pos": [58, 97], "value": -114, "mirrorPos": [69, 30], "mirrorValue": -31, "sum": -145},
+    {"pos": [59, 97], "value": -98, "mirrorPos": [68, 30], "mirrorValue": 113, "sum": 15},
+    {"pos": [60, 30], "value": 81, "mirrorPos": [67, 97], "mirrorValue": 46, "sum": 127},
+    {"pos": [60, 97], "value": 22, "mirrorPos": [67, 30], "mirrorValue": 97, "sum": 119},
+    {"pos": [61, 30], "value": -45, "mirrorPos": [66, 97], "mirrorValue": -82, "sum": -127},
+    {"pos": [61, 97], "value": 30, "mirrorPos": [66, 30], "mirrorValue": -23, "sum": 7},
+    {"pos": [62, 30], "value": -47, "mirrorPos": [65, 97], "mirrorValue": 44, "sum": -3},
+    {"pos": [62, 41], "value": -101, "mirrorPos": [65, 86], "mirrorValue": 109, "sum": 8},
+    {"pos": [62, 97], "value": -102, "mirrorPos": [65, 30], "mirrorValue": -31, "sum": -133},
+    {"pos": [63, 30], "value": -27, "mirrorPos": [64, 97], "mirrorValue": 46, "sum": 19},
+    {"pos": [63, 41], "value": -101, "mirrorPos": [64, 86], "mirrorValue": 109, "sum": 8},
+    {"pos": [63, 97], "value": 26, "mirrorPos": [64, 30], "mirrorValue": 101, "sum": 127}
+  ],
+  "patterns": {
+    "value121Appears": 2,
+    "value121Positions": [[23, 22], [29, 22]],
+    "value100Appears": 1,
+    "value100Position": [22, 22],
+    "columnArithmetic": {
+      "col22PlusCol97": 119,
+      "col22XorCol97": 119,
+      "sameness": "22 + 97 = 22 XOR 97 = 119"
+    }
+  },
+  "visualization": {
+    "recommendedView": "matrix-overlay",
+    "colorScheme": {
+      "symmetric": "#1a1a2e",
+      "anomaly": "#ff6b6b",
+      "specialPosition": "#ffd93d",
+      "column22": "#6bcb77",
+      "column97": "#4d96ff"
+    },
+    "highlightPositions": {
+      "1cfi": [91, 20],
+      "1cfb": [45, 92],
+      "visionCenter": [64, 64],
+      "selfMatch": [22, 22]
+    }
+  }
+}

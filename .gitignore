@@ -1,0 +1,130 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# Dependencies
+node_modules
+.pnp
+.pnp.js
+
+# Local env files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Testing
+coverage
+
+# Turbo
+.turbo
+
+# Vercel
+.vercel
+
+# Build Outputs
+.next/
+out/
+build
+dist
+
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Misc
+.DS_Store
+*.pem
+
+# Large data files (>50MB - too large for GitHub/Vercel)
+apps/web/complete_seed_btc_mapping.json
+apps/web/public/data/matrix_addresses_with_xor.json
+apps/web/public/data/matrix-addresses-*.json
+apps/web/scripts/ALL_BITCOIN_KEYS_FROM_SEEDS.json
+apps/web/scripts/*.json
+apps/web/*.json
+!apps/web/biome.json
+!apps/web/tsconfig.json
+!apps/web/components.json
+apps/web/analysis/
+apps/web/cfb_binary_extracted.txt
+apps/web/syzygy_passwords.txt
+apps/web/*.txt
+apps/web/MISSING_PIECES_ANALYSIS.md
+
+# Root directory files — only allow known config files
+/*.json
+!package.json
+!turbo.json
+!biome.json
+!vercel.json
+/*.txt
+/*.bin
+/*.der
+/*.flag
+/*.id
+outputs/
+
+# Research docs (not part of web app)
+docs/
+infra/
+
+# Python virtual environments
+.venv_*/
+**/.venv_*/
+
+# Playwright cache
+.playwright-mcp/
+
+# Large markdown reports (exclude from root, keep docs in apps/content/)
+/*.md
+!README.md
+!LICENSE.md
+!CONTRIBUTING.md
+!CHANGELOG.md
+
+# Embedded git repositories
+apps/web/scripts/qiner/
+apps/web/scripts/qubic-repos/
+external/aigarth-it/
+infra/qubic-http-source/
+
+# Script output files
+apps/web/scripts/*.txt
+apps/web/scripts/*.jsonl
+
+# SQLite databases
+*.db
+*.db-wal
+*.db-shm
+*.sqlite3
+*.sqlite3-wal
+*.sqlite3-shm
+apps/web/data/
+
+# Backup files
+*-backup-*.sqlite3
+
+# Screenshots (audit/debug)
+/*.png
+
+# AI/Development tools (not part of deliverable)
+.claude/
+CLAUDE.md
+
+# Research scripts (keep locally, not part of web app)
+apps/web/scripts/
+scripts/
+
+# Research output files
+apps/web/k12_derivation_output.txt
+ERROR_CORRECTION_REPORT.md
+
+# Author images (template placeholders)
+apps/web/public/authors/
+
+# Memory vault / sensitive dumps
+*MEMORY_VAULT*
+*memory_vault*
+*dump_void*

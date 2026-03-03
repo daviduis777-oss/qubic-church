@@ -1,0 +1,320 @@
+---
+title: V4 Research Update - Independent Verification Report
+description: Comprehensive verification of all mathematical claims in the V4 Genesis Token Research Update, including corrections, derived private keys, and data source links.
+tier: 1
+confidence: 95
+date: 2026-01-23
+---
+
+# V4 Research Update - Independent Verification Report
+
+## Executive Summary
+
+This document provides an independent verification of the claims made in the **V4 Research Update: THE GENESIS TOKEN** by Jordan4324 (January 23, 2026). All mathematical claims were tested against the original Anna Matrix data and supporting datasets.
+
+<Callout type="success" title="Verification Result">
+**14 out of 14** core mathematical claims are **VERIFIED**. Two secondary claims contain inaccuracies and have been corrected. All data counts match expected values.
+</Callout>
+
+---
+
+## Verification Summary Table
+
+| # | Claim | Expected | Actual | Status |
+|---|-------|----------|--------|--------|
+| 1 | Matrix dimensions | 128×128 | 128×128 | ✅ |
+| 2 | matrix[91][20] (1CFi position) | -3 | -3 | ✅ |
+| 3 | matrix[45][92] (1CFB position) | -118 | -118 | ✅ |
+| 4 | 1CFi: (-3) XOR 13 + 27 | 11 | 11 | ✅ |
+| 5 | 1CFB: (-118) XOR 13 + 121 | 0 | 0 | ✅ |
+| 6 | Sum relationship: \|(-3) + (-118)\| | 121 | 121 | ✅ |
+| 7 | Row XOR: 91 ⊕ 45 | 118 | 118 | ✅ |
+| 8 | Formula: 283 × 47² + 137 | 625,284 | 625,284 | ✅ |
+| 9 | Boot address position | Row 21, Col 4 | Row 21, Col 4 | ✅ |
+| 10 | Genesis + 6,268 days | 2026-03-03 | 2026-03-03 | ✅ |
+| 11 | K12 double-hash (all-a seed) | 62506d37... | 62506d37... | ✅ |
+| 12 | Matrix symmetry rate | 99.58% | 99.58% | ✅ |
+| 13 | Patoshi address count | 21,953 | 21,953 | ✅ |
+| 14 | Qubic seed count | 23,765 | 23,765 | ✅ |
+
+---
+
+## Corrected Claim: Symmetry Formula
+
+<Callout type="warning" title="Correction Required">
+The V4 document states "99.58% point symmetry" but does not clearly specify the formula. The actual symmetry relationship is **NOT** the standard `v₁ = -v₂`.
+</Callout>
+
+### Actual Symmetry Formula
+
+The Anna Matrix uses an **off-by-one** symmetry:
+
+```
+matrix[r][c] = -(matrix[127-r][127-c] + 1)
+```
+
+**Equivalently:** `v₁ + v₂ + 1 = 0`
+
+### Verification Results
+
+- **8,132 of 8,166** numeric pairs follow this rule (99.58%)
+- **34 pairs** are intentional anomalies (0.42%)
+- The 34 anomalies match exactly with `anna-matrix-anomalies.json`
+
+This is a documentation clarification, not an error in the underlying mathematics.
+
+---
+
+## Corrected Claim: Genesis Diagonal Values
+
+<Callout type="error" title="Claim NOT Verified">
+**Original claim:** "8 of 11 genesis addresses have diagonal value ±27"
+
+**Verification result:** **4 of 10** diagonal values match ±27 (actual value is -27 in all cases).
+</Callout>
+
+### Detailed Verification
+
+| Block | Claimed Diagonal | Actual Diagonal | Match |
+|-------|-----------------|-----------------|-------|
+| 73 | -27 | -27 | ✅ |
+| 74 | -27 | -27 | ✅ |
+| 75 | -27 | -83 | ❌ |
+| 80 | +27 | -91 | ❌ |
+| 89 | -27 | -91 | ❌ |
+| 93 | -27 | 101 | ❌ |
+| 95 | -27 | -27 | ✅ |
+| 96 | -27 | 106 | ❌ |
+| 120 | +27 | -27 | ✅ (original claim was +27, actual is -27) |
+| 121 | -27 | 37 | ❌ |
+
+**Corrected statement:** **4 of 10** genesis addresses (blocks 73, 74, 95, 120) have diagonal value -27 at their block number position in the matrix.
+
+---
+
+## Derived Private Keys (Sample)
+
+The following private keys were derived using the official Qubic K12 double-hash method from Anna Matrix seeds:
+
+<Callout type="info" title="Derivation Method">
+**K12 Double-Hash:**
+1. Map seed (55 lowercase letters) to binary (a=0, b=1, ..., z=25)
+2. First K12 hash → 32 bytes (subseed)
+3. Second K12 hash → 32 bytes (private key)
+</Callout>
+
+### Sample Keys
+
+```
+SEED #1:
+  Seed:        aaaaaaaaaewamanayeyaaaaaywrlaebhiepesefaeejreqtremjchof
+  Private Key: f668ccf5ca0d2f7187d3a2efd035ee9392804d658a565299bd2a0550c5f4ca48
+  Public Key:  03be6143f60e3754e81087cd5f6c9799b92a527d903b3b7403daafe864ef2d3647
+  BTC Address: 1M5B3zLuz6XBUiU9F2JF1qMLR6An6k15W
+
+SEED #2:
+  Seed:        aaaaaaaaewamanayeyaaaaaywrlaebhiepesefaeejreqtremjchoff
+  Private Key: 8a347af951cb4f5b44f2ad6a38c9e4c06fe3b5a7193a3d0d3ecb5d3964d70cac
+  Public Key:  022d545e4853da145acbd676ea76c4f53f8e1370f63431d67bc0f0f83a637e5df9
+  BTC Address: 1KKVoxBMhg6oJxH2iHFbCkJVBbwxzQXBNQ
+
+SEED #3:
+  Seed:        aaaaaaaccccuacaaaaaaaccccuacaaaaaaaccccuacaaaaaaaccccua
+  Private Key: 355d636ab11f8220f34de9e1759d95757dabef1d11eec3bdb2437017426b2a86
+  Public Key:  031ff482aa8a09cc7a0a3fdffd9938930ff5a398ade61ee63d5f5af269044b358b
+  BTC Address: 1NEz53CUKyPP6zbv85BvcsWnennL8UrdM7
+
+SEED #4:
+  Seed:        aaaaaaaewamanayeyaaaaaywrlaebhiepesefaeejreqtremjchoffv
+  Private Key: 19f51f67b2120a9793fdfd654dcd9a2a83e1d880f9ca3bed9562b0375ec434c0
+  Public Key:  02b07c0fbe75d5852f12ea3f94cff4e7fadde8f33979030c3768f0b3ffc4a5d010
+  BTC Address: 13AvJYVCovR7xT4mGs2xtqr7btTgPUAPAi
+
+SEED #5:
+  Seed:        aaaaaaapinewuuaaaaaaapinewuuaaaaaaapinewuuaaaaaaapinewu
+  Private Key: b47780b5b7f8611c0ecbf5f27a7d6c133810576d86b21f962b3206057fe66fdb
+  Public Key:  02e9b078f0bb8f73850681599c25e8ebd395356bce63e7229d6227e441610f783a
+  BTC Address: 15rBgrSa3mL3LVACL9v5g7Tsp6rq12hkNJ
+```
+
+<Callout type="warning" title="Important Note">
+These addresses are derived from matrix seeds. To verify against Patoshi addresses:
+1. Match the derived public key with known Patoshi public keys
+2. Perform on-chain balance verification via blockchain explorer
+</Callout>
+
+---
+
+## Data Source Links
+
+### GitHub Repository
+
+<Callout type="info" title="Repository Access">
+**Primary Repository:** `https://github.com/[OWNER]/qubic-academic-docs`
+
+**Scripts Directory:** `apps/web/scripts/`
+
+*Note: Update with actual repository URL when published*
+</Callout>
+
+### Key Data Files
+
+| File | Size | Description | Records |
+|------|------|-------------|---------|
+| `public/data/anna-matrix.json` | 76 KB | Original 128×128 matrix | 16,384 cells |
+| `public/data/patoshi-addresses.json` | ~2 MB | Patoshi coinbase addresses | 21,953 |
+| `public/data/qubic-seeds.json` | ~3 MB | Matrix-derived seeds | 23,765 |
+| `public/data/matrix-addresses.json` | 61 MB | Generated BTC addresses | 983,040 |
+| `public/data/anna-matrix-anomalies.json` | 6 KB | Asymmetric cell pairs | 68 cells (34 pairs) |
+
+### External Verification Sources
+
+- **Patoshi Addresses (Original):** [github.com/bensig/patoshi-addresses](https://github.com/bensig/patoshi-addresses)
+- **Qubic CLI (K12 Implementation):** [github.com/qubic/qubic-cli](https://github.com/qubic/qubic-cli)
+- **qubipy Python Library:** `pip install qubipy`
+- **pycryptodome (K12 Hash):** `pip install pycryptodomex`
+
+---
+
+## Unverified Claims (External Audit Required)
+
+<Callout type="warning" title="Requires Independent Verification">
+The following claims were NOT verifiable with local data and require external audit.
+</Callout>
+
+| Claim | Status | Verification Method Required |
+|-------|--------|------------------------------|
+| 97.1% Patoshi derivability | ❓ Unverified | Run full derivation pipeline against all 21,953 addresses |
+| 983,040 addresses = unique | ✅ Count verified | JSON contains 983,040 entries with `uniqueCount: 983040` |
+| Addresses match Patoshi set | ❓ Unverified | Cross-reference each derived address with Patoshi public keys |
+| 185 keys from Position-27 bitstream | ❓ Unverified | No extraction script provided in repository |
+| 3-Layer Hash Collision Network | ❓ Unverified | Post-hoc theory, no code demonstration |
+| Seeds = DocIDs | ❓ Unverified | Interesting hypothesis, requires JINN architecture knowledge |
+
+---
+
+## Statistical Claim Clarification
+
+### Original Claim: P(random) < 10^-500
+
+**Interpretation:** This refers to the probability of the observed symmetry patterns occurring by chance in a random 128×128 matrix of signed bytes.
+
+### Analysis
+
+For a truly random matrix:
+- Probability of any specific pair being symmetric: ~1/256
+- For 8,132 pairs to ALL follow the same relationship: (1/256)^8132 ≈ 10^-19,580
+- The claim of P < 10^-500 is actually **conservative**
+
+**Conclusion:** The order of magnitude (extremely unlikely by chance) is reasonable and the actual probability is far lower than claimed.
+
+---
+
+## Verification Methodology
+
+1. **Data Loading:** Loaded original `anna-matrix.json` (128×128, with metadata note "Without header row/column")
+2. **Position Verification:** Checked all claimed matrix values at specific coordinates
+3. **Mathematical Operations:** Performed XOR and arithmetic calculations in Python
+4. **Hash Verification:** Used `pycryptodome` KangarooTwelve for K12 hash testing
+5. **Key Derivation:** Used `ecdsa` library for secp256k1 public key derivation
+6. **Cross-Reference:** Compared symmetry anomalies with documented anomaly file
+7. **Count Verification:** Validated record counts in Patoshi and Seeds JSON files
+
+### Reproducibility
+
+All verification code is reproducible. The verification scripts are located in:
+```
+apps/web/scripts/verify_1cfb_solution.py
+apps/web/scripts/k12_key_derivation.py
+apps/web/scripts/anna_matrix_deep_analysis.py
+```
+
+---
+
+## Verification Python Script
+
+<Callout type="info" title="Run This Script">
+Copy and run this Python script to verify the core claims yourself:
+</Callout>
+
+```python
+#!/usr/bin/env python3
+"""V4 Research Update - Core Claims Verification Script"""
+
+import json
+from datetime import datetime, timedelta
+
+def verify_all():
+    # Load Anna Matrix
+    with open('public/data/anna-matrix.json', 'r') as f:
+        data = json.load(f)
+    matrix = data['matrix']
+
+    results = []
+
+    # 1. Matrix dimensions
+    results.append(('Matrix 128×128', len(matrix) == 128 and len(matrix[0]) == 128))
+
+    # 2-3. Position values
+    results.append(('matrix[91][20] = -3', matrix[91][20] == -3))
+    results.append(('matrix[45][92] = -118', matrix[45][92] == -118))
+
+    # 4-5. XOR calculations
+    results.append(('(-3) XOR 13 + 27 = 11', (-3 ^ 13) + 27 == 11))
+    results.append(('(-118) XOR 13 + 121 = 0', (-118 ^ 13) + 121 == 0))
+
+    # 6-7. Relationships
+    results.append(('|(-3) + (-118)| = 121', abs(-3 + -118) == 121))
+    results.append(('91 XOR 45 = 118', (91 ^ 45) == 118))
+
+    # 8-9. Formula and boot address
+    results.append(('283 × 47² + 137 = 625,284', 283 * 47**2 + 137 == 625284))
+    boot = 625284 % 16384
+    results.append(('Boot = Row 21, Col 4', boot // 128 == 21 and boot % 128 == 4))
+
+    # 10. Date calculation
+    genesis = datetime(2009, 1, 3, 18, 15, 5)
+    target = genesis + timedelta(days=6268)
+    results.append(('Genesis + 6268 days', target.date() == datetime(2026, 3, 3).date()))
+
+    # 11. Symmetry (99.58%)
+    symmetric = sum(1 for r in range(64) for c in range(128)
+                    if isinstance(matrix[r][c], int) and isinstance(matrix[127-r][127-c], int)
+                    and matrix[r][c] == -(matrix[127-r][127-c] + 1))
+    total = sum(1 for r in range(64) for c in range(128)
+                if isinstance(matrix[r][c], int) and isinstance(matrix[127-r][127-c], int))
+    sym_rate = symmetric / total * 100
+    results.append((f'Symmetry ~99.58%', 99.5 < sym_rate < 99.7))
+
+    # Print results
+    print("V4 VERIFICATION RESULTS")
+    print("=" * 50)
+    for claim, passed in results:
+        status = "✅" if passed else "❌"
+        print(f"{status} {claim}")
+
+    verified = sum(1 for _, p in results if p)
+    print(f"\nTOTAL: {verified}/{len(results)} VERIFIED")
+
+if __name__ == "__main__":
+    verify_all()
+```
+
+---
+
+## Conclusion
+
+<Callout type="success" title="Overall Assessment">
+The V4 Research Update is **mathematically sound** in its core claims. The 1CFB/1CFi XOR solution, K12 derivation method, formulas, and date calculations are all independently verified.
+
+**One significant correction needed:** The diagonal ±27 claim should be revised from "8 of 11" to "4 of 10".
+
+**Symmetry clarification:** The formula is `v₁ + v₂ + 1 = 0`, not `v₁ = -v₂`.
+</Callout>
+
+---
+
+*Independent Verification Report*
+*Generated: January 23, 2026*
+*Verifier: Claude Opus 4.5 (Senior Developer Agent)*
+*Methodology: Direct matrix verification against original data files*
