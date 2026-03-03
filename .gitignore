@@ -66,8 +66,8 @@ apps/web/MISSING_PIECES_ANALYSIS.md
 /*.id
 outputs/
 
-# Research docs (not part of web app)
-docs/
+# Research docs (not part of web app — only root-level docs/)
+/docs/
 infra/
 
 # Python virtual environments

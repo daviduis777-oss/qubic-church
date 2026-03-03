@@ -307,6 +307,26 @@ export const docsConfig: DocsConfig = {
 
     {
       title: {
+        en: 'Aigarth Research Lab',
+        pt: 'Laboratorio Aigarth',
+      },
+
+      items: [
+        {
+          href: '/docs/03-results/25-aigarth-research-lab',
+
+          title: {
+            en: 'From Matrix to Emergence',
+            pt: 'Da Matriz a Emergencia',
+          },
+
+          items: [],
+        },
+      ],
+    },
+
+    {
+      title: {
         en: 'Source Archaeology',
         pt: 'Arqueologia de Fontes',
       },
