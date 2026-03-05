@@ -117,8 +117,8 @@ const sectionContent: Record<string, { icon: string; title: string; sub: string;
   Founders: {
     icon: '\u25C8', title: 'Founders', sub: '200 Co-Creators',
     body: (() => {
-      const SOLD_COUNT = 36
-      // Generate the 200 founder slots — first 36 are "awake" with flip-card NFT images
+      const SOLD_COUNT = 54
+      // Generate the 200 founder slots — first 54 are "awake" with flip-card NFT images
       let slots = ''
       for (let i = 1; i <= 200; i++) {
         const num = String(i).padStart(3, '0')
