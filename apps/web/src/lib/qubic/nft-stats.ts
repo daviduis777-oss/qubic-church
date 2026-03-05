@@ -90,15 +90,18 @@ export async function fetchNFTStats(): Promise<NFTStats> {
     return stats
   }
 
-  // 2. Fall back to Qubic RPC (unique on-chain holders)
+  // 2. Qubic RPC (unique on-chain holders) — floor at SOLD_FLOOR since
+  //    QubicBay sold count (54) exceeds unique wallet count (36).
+  //    Update SOLD_FLOOR manually when new NFTs are sold.
+  const SOLD_FLOOR = 54
   const rpcHolders = await fetchFromRPC()
   if (rpcHolders !== null) {
-    const stats: NFTStats = { holders: rpcHolders, totalSupply: 200, source: 'rpc' }
+    const stats: NFTStats = { holders: Math.max(rpcHolders, SOLD_FLOOR), totalSupply: 200, source: 'rpc' }
     cachedStats = stats
     cacheTimestamp = now
     return stats
   }
 
   // 3. Static fallback — last known sold count
-  return { holders: 54, totalSupply: 200, source: 'fallback' }
+  return { holders: SOLD_FLOOR, totalSupply: 200, source: 'fallback' }
 }
