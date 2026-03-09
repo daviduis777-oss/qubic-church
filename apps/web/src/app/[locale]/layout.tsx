@@ -48,7 +48,6 @@ export async function generateMetadata(props: {
       'Ternary Computing',
       'Neural Network',
       'Qubic Mining',
-      'Qubic Giveaway',
       'Web3',
       'Cryptocurrency',
       'Open Source Research',

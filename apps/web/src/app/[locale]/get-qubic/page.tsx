@@ -77,14 +77,13 @@ const steps = [
   {
     step: 3,
     title: 'Get an Anna NFT',
-    description: 'Buy an Anna NFT on QubicBay to join the community and enter the giveaway.',
+    description: 'Buy an Anna NFT on QubicBay to join the community.',
     icon: ShieldCheck,
     action: { label: 'Browse NFTs', url: 'https://qubicbay.io/collections/7' },
     terminal: 'nft.acquire --collection anna',
     details: [
       'Visit QubicBay.com and connect your wallet',
       'Browse the Anna Aigarth collection (200 NFTs)',
-      'Purchase = automatic giveaway entry',
     ],
   },
 ]
@@ -100,7 +99,7 @@ const faqs = [
   },
   {
     q: 'What are Anna NFTs?',
-    a: 'Anna NFTs are a collection of 200 unique digital artworks on the Qubic blockchain, each tied to the research of the 128x128 neural matrix called Anna. Holding an NFT grants giveaway entry (676M QUBIC prize pool), community access, and tiered research benefits.',
+    a: 'Anna NFTs are a collection of 200 unique digital artworks on the Qubic blockchain, each tied to the research of the 128x128 neural matrix called Anna. Holding an NFT grants community access and tiered research benefits.',
   },
   {
     q: 'Is Qubic safe?',
@@ -108,7 +107,7 @@ const faqs = [
   },
   {
     q: 'How much QUBIC do I need for an NFT?',
-    a: 'NFT prices vary on QubicBay marketplace. Check the current floor price at qubicbay.io/collections/7. Each NFT purchase also serves as your giveaway entry.',
+    a: 'NFT prices vary on QubicBay marketplace. Check the current floor price at qubicbay.io/collections/7.',
   },
 ]
 
@@ -404,7 +403,7 @@ export default function GetQubicPage() {
               <span className="text-[#D4AF37]/80">Join</span>?
             </h2>
             <p className="text-white/30 mb-10 text-sm font-mono">
-              Get your QUBIC, grab an Anna NFT, and enter the 676M QUBIC giveaway.
+              Get your QUBIC, grab an Anna NFT, and join the community.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">

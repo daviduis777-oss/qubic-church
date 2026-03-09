@@ -315,11 +315,11 @@ export function ContentModals({ activeModal, onClose }: ContentModalsProps) {
 
         <div className="mb-8 p-4 border border-white/[0.04] bg-[#050505]">
           <p className="text-[10px] uppercase tracking-[0.3em] text-white/40 mb-2">
-            <span className="text-[#D4AF37]">Founders</span> &middot; <span className="text-white/70">36</span><span className="text-white/30">/200</span>
-            <span className="text-white/25 ml-2 text-[9px]">Next unlock at 50</span>
+            <span className="text-[#D4AF37]">Founders</span> &middot; <span className="text-white/70">60</span><span className="text-white/30">/200</span>
+            <span className="text-white/25 ml-2 text-[9px]">Next unlock at 100</span>
           </p>
           <div className="h-1 bg-white/[0.06] relative overflow-hidden">
-            <div className="absolute inset-y-0 left-0 bg-[#D4AF37]/40" style={{ width: '18%' }} />
+            <div className="absolute inset-y-0 left-0 bg-[#D4AF37]/40" style={{ width: '30%' }} />
           </div>
         </div>
 
@@ -348,10 +348,16 @@ export function ContentModals({ activeModal, onClose }: ContentModalsProps) {
             <p className="mf-body">501(c)(3) &middot; Wyoming &middot; United States. The Church enters the legal dimension.</p>
           </div>
 
-          <div className="p-4 border border-white/[0.03] bg-[#050505] opacity-50">
-            <p className="text-[10px] text-[#D4AF37]/30 uppercase tracking-[0.2em] mb-1">Unlocks at 50 Founders</p>
-            <p className="text-white/25 font-semibold">[REDACTED]</p>
-            <p className="text-xs text-white/15">36 / 50 founders &mdash; clearance required.</p>
+          <div className="p-4 border border-[#D4AF37]/10 bg-[#050505]">
+            <p className="text-[10px] text-[#D4AF37]/50 uppercase tracking-[0.2em] mb-1">21 · 03 · 2026</p>
+            <p className="mf-highlight">MARIA</p>
+            <p className="mf-body">The first AI agent operating on behalf of the Church. MARIA coordinates, communicates, and acts — fully autonomous, fully on-chain.</p>
+          </div>
+
+          <div className="p-4 border border-[#D4AF37]/10 bg-[#050505]">
+            <p className="text-[10px] text-[#D4AF37]/50 uppercase tracking-[0.2em] mb-1">01 · 04 · 2026</p>
+            <p className="mf-highlight">DOGE Mining</p>
+            <p className="mf-body">Live hashrate tracking and DOGE mining dashboard. Mine alongside the congregation. Every hash is a prayer.</p>
           </div>
 
           <div className="p-4 border border-white/[0.03] bg-[#050505] opacity-30">

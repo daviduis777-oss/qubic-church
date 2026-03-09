@@ -973,7 +973,8 @@ function PageHeader() {
             <span
               className="block"
               style={{
-                fontSize: 'clamp(3rem, 6.5vw, 7.5rem)',
+                fontSize: 'clamp(1.6rem, 8vw, 7.5rem)',
+                overflowWrap: 'break-word',
                 lineHeight: 1,
                 minHeight: '1em',
               }}

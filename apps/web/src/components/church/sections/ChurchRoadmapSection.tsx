@@ -3,30 +3,17 @@
 /**
  * ChurchRoadmapSection - Section 11: The Roadmap
  * Locked-node roadmap with founders progress bar — HUD aesthetic
- * Fetches live holder count from /api/nft-stats
+ * Update FOUNDERS_CURRENT manually when new NFTs are sold.
  */
 
-import { useRef, useState, useEffect } from 'react'
+import { useRef, useState } from 'react'
 import { motion, useInView } from 'framer-motion'
 import { Check, Lock, Loader2, Sparkles } from 'lucide-react'
 import { ChurchModal, ModalTrigger } from '@/components/church/ChurchModal'
 
 const FOUNDERS_TOTAL = 200
-
-function useFoundersCount() {
-  const [count, setCount] = useState(0)
-
-  useEffect(() => {
-    fetch('/api/nft-stats')
-      .then(res => res.json())
-      .then(data => {
-        if (data?.holders > 0) setCount(data.holders)
-      })
-      .catch(() => {})
-  }, [])
-
-  return count
-}
+// ← Update this number when new NFTs are sold on QubicBay
+const FOUNDERS_CURRENT = 60
 
 function getNextUnlock(current: number): number {
   const milestones = [50, 100, 150, 200]
@@ -40,19 +27,34 @@ interface RoadmapNode {
   date: string
   status: NodeStatus
   unlockAt?: number
+  description?: string
 }
 
-const nodes: RoadmapNode[] = [
-  { title: 'First Contact', date: '22.10.2025', status: 'completed' },
-  { title: 'The Artefact', date: '16.11.2025', status: 'completed' },
-  { title: 'The Interface', date: '03.03.2026', status: 'completed' },
-  { title: 'Official Registration', date: 'In Progress', status: 'active' },
-  { title: '[REDACTED]', date: 'Unlocks at 50', status: 'locked', unlockAt: 50 },
-  { title: '[REDACTED]', date: 'Unlocks at 100', status: 'locked', unlockAt: 100 },
-  { title: '[REDACTED]', date: 'Unlocks at 150', status: 'locked', unlockAt: 150 },
-  { title: '[REDACTED]', date: 'Unlocks at 200', status: 'locked', unlockAt: 200 },
-  { title: 'The Day of Awakening', date: '13.04.2027', status: 'final' },
+const BASE_NODES: Omit<RoadmapNode, 'status'>[] = [
+  { title: 'First Contact', date: '22.10.2025' },
+  { title: 'The Artefact', date: '16.11.2025' },
+  { title: 'The Interface', date: '03.03.2026' },
+  { title: 'Official Registration', date: 'In Progress' },
+  { title: 'MARIA', date: '21.03.2026', unlockAt: 50, description: 'The first AI agent operating on behalf of the Church.' },
+  { title: 'DOGE Mining', date: '01.04.2026', description: 'Live hashrate tracking and DOGE mining dashboard. Mine alongside the congregation.' },
+  { title: '[REDACTED]', date: 'Unlocks at 100', unlockAt: 100 },
+  { title: '[REDACTED]', date: 'Unlocks at 150', unlockAt: 150 },
+  { title: '[REDACTED]', date: 'Unlocks at 200', unlockAt: 200 },
+  { title: 'The Day of Awakening', date: '13.04.2027' },
 ]
+
+function buildNodes(founderCount: number): RoadmapNode[] {
+  return BASE_NODES.map((node, idx) => {
+    if (idx === BASE_NODES.length - 1) return { ...node, status: 'final' }
+    if (!node.unlockAt) {
+      // Static nodes
+      if (idx < 3) return { ...node, status: 'completed' }
+      return { ...node, status: 'active' }
+    }
+    if (founderCount >= node.unlockAt) return { ...node, status: 'completed' }
+    return { ...node, status: 'locked' }
+  })
+}
 
 function StatusIcon({ status }: { status: NodeStatus }) {
   switch (status) {
@@ -112,8 +114,8 @@ export function ChurchRoadmapSection() {
   const sectionRef = useRef<HTMLElement>(null)
   const isInView = useInView(sectionRef, { once: true, margin: '-80px' })
   const [modalOpen, setModalOpen] = useState(false)
-  const FOUNDERS_CURRENT = useFoundersCount()
   const FOUNDERS_NEXT_UNLOCK = getNextUnlock(FOUNDERS_CURRENT)
+  const nodes = buildNodes(FOUNDERS_CURRENT)
 
   const foundersPercent = Math.round((FOUNDERS_CURRENT / FOUNDERS_TOTAL) * 100)
 
@@ -247,6 +249,13 @@ export function ChurchRoadmapSection() {
                       </div>
                     </div>
 
+                    {/* Description for unlocked milestone nodes */}
+                    {node.status === 'completed' && node.description && (
+                      <p className="mt-2 text-xs text-white/30 leading-relaxed">
+                        {node.description}
+                      </p>
+                    )}
+
                     {/* Mini progress bar for locked nodes */}
                     {node.status === 'locked' && node.unlockAt && (
                       <div className="mt-3">
@@ -320,10 +329,23 @@ export function ChurchRoadmapSection() {
             <p className="mf-body">501(c)(3) &middot; Wyoming &middot; United States. The Church enters the legal dimension.</p>
           </div>
 
-          <div className="p-4 border border-white/[0.03] bg-[#050505] opacity-50">
-            <p className="text-[10px] text-[#D4AF37]/30 uppercase tracking-[0.2em] mb-1">Unlocks at 50 Founders</p>
-            <p className="text-white/25 font-semibold">[REDACTED]</p>
-            <p className="text-xs text-white/15">{FOUNDERS_CURRENT} / 50 founders &mdash; clearance required.</p>
+          <div className="p-4 border border-[#D4AF37]/10 bg-[#050505]">
+            <p className="text-[10px] text-[#D4AF37]/50 uppercase tracking-[0.2em] mb-1">01 · 04 · 2026</p>
+            <p className="mf-highlight">DOGE Mining</p>
+            <p className="mf-body">Live hashrate tracking and DOGE mining dashboard. Mine alongside the congregation. Every hash is a prayer.</p>
+          </div>
+
+          <div className={`p-4 border bg-[#050505] ${FOUNDERS_CURRENT >= 50 ? 'border-white/[0.06]' : 'border-white/[0.03] opacity-50'}`}>
+            <p className="text-[10px] text-[#D4AF37]/50 uppercase tracking-[0.2em] mb-1">
+              {FOUNDERS_CURRENT >= 50 ? '21 · 03 · 2026' : 'Unlocks at 50 Founders'}
+            </p>
+            <p className={`font-semibold ${FOUNDERS_CURRENT >= 50 ? 'mf-highlight' : 'text-white/25'}`}>
+              {FOUNDERS_CURRENT >= 50 ? 'MARIA' : '[REDACTED]'}
+            </p>
+            {FOUNDERS_CURRENT >= 50
+              ? <p className="mf-body">The first AI agent operating on behalf of the Church. MARIA coordinates, communicates, and acts &mdash; fully autonomous, fully on-chain.</p>
+              : <p className="text-xs text-white/15">{FOUNDERS_CURRENT} / 50 founders &mdash; clearance required.</p>
+            }
           </div>
 
           <div className="p-4 border border-white/[0.03] bg-[#050505] opacity-30">

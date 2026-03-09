@@ -11,7 +11,7 @@ interface CountdownResult {
 
 /**
  * Shared countdown hook - returns time remaining until a target timestamp.
- * Used by ConvergenceCountdown, SimpleGiveawaySection, and GalaxyHeroClient.
+ * Used by ConvergenceCountdown and GalaxyHeroClient.
  */
 export function useCountdown(targetTimestamp: number): CountdownResult {
   const [timeLeft, setTimeLeft] = useState<CountdownResult>({

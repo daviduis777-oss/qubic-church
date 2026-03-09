@@ -72,7 +72,7 @@ export const FRAGMENTS: FragmentData[] = [
     id: 'exodus',
     symbol: '\u2B25', // ⬥
     clue: 'It is accomplished.',
-    location: 'Giveaway',
+    location: 'Offering',
   },
   {
     id: 'ternary',
