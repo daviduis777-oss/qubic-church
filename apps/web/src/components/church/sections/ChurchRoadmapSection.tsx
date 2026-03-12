@@ -13,7 +13,7 @@ import { ChurchModal, ModalTrigger } from '@/components/church/ChurchModal'
 
 const FOUNDERS_TOTAL = 200
 // ← Update this number when new NFTs are sold on QubicBay
-const FOUNDERS_CURRENT = 60
+const FOUNDERS_CURRENT = 77
 
 function getNextUnlock(current: number): number {
   const milestones = [50, 100, 150, 200]

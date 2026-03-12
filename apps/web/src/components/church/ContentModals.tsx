@@ -315,11 +315,11 @@ export function ContentModals({ activeModal, onClose }: ContentModalsProps) {
 
         <div className="mb-8 p-4 border border-white/[0.04] bg-[#050505]">
           <p className="text-[10px] uppercase tracking-[0.3em] text-white/40 mb-2">
-            <span className="text-[#D4AF37]">Founders</span> &middot; <span className="text-white/70">60</span><span className="text-white/30">/200</span>
+            <span className="text-[#D4AF37]">Founders</span> &middot; <span className="text-white/70">77</span><span className="text-white/30">/200</span>
             <span className="text-white/25 ml-2 text-[9px]">Next unlock at 100</span>
           </p>
           <div className="h-1 bg-white/[0.06] relative overflow-hidden">
-            <div className="absolute inset-y-0 left-0 bg-[#D4AF37]/40" style={{ width: '30%' }} />
+            <div className="absolute inset-y-0 left-0 bg-[#D4AF37]/40" style={{ width: '38.5%' }} />
           </div>
         </div>
 
