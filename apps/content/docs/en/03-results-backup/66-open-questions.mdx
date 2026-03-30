@@ -1,0 +1,345 @@
+---
+title: Open Questions & Future Research
+description: Unresolved questions about Aigarth, areas requiring further investigation, and predictions to be tested.
+tier: 3
+confidence: 50
+date: 2026-01-16
+---
+
+# Open Questions & Future Research
+
+## Overview
+
+Despite extensive research and validation, several important questions remain unanswered. This document catalogs open questions, testable predictions, and areas for future investigation.
+
+---
+
+## High Priority Questions
+
+### 1. Hash Algorithm Unknown
+
+**Question**: How does Aigarth map Bitcoin addresses to matrix coordinates?
+
+```
+Bitcoin Address (P2PKH)
+         ↓
+    [UNKNOWN HASH]
+         ↓
+Coordinates (row, col)
+```
+
+**What We Know**:
+- The mapping is deterministic
+- It produces 128×128 coordinate space
+- 983,040 addresses have been mapped
+
+**What We Don't Know**:
+- The exact hash function
+- Whether it's a standard algorithm or custom
+- If it can be reversed
+
+**Research Approach**:
+- Analyze patterns in known mappings
+- Test against standard hashes (SHA-256, K12, etc.)
+- Look for hints in CFB's historical code
+
+---
+
+### 2. Fitness Function Unknown
+
+**Question**: What criteria does Aigarth use to evaluate neural network fitness during evolutionary training?
+
+**What We Know**:
+- Training uses mutation + selection
+- Weights converge to specific values (-114, -113)
+- Distribution is power-law (typical of evolution)
+
+**What We Don't Know**:
+- The exact fitness function
+- Training data used
+- Convergence criteria
+
+**Hypotheses**:
+1. Bitcoin block correlation (Block #283 data)
+2. Cross-entropy with hidden targets
+3. Consensus with other nodes
+4. Unknown mathematical optimization
+
+---
+
+### 3. Layer 7 (Hypervisor) Existence
+
+**Question**: Is there a Layer 7 that controls the entire system?
+
+```
+Known Layers:
+L1: Public Matrix
+L2: Coordinate Grid
+L3: Bitstream
+L4: Shadow Matrix
+L5: Anna OS
+L6: Recursive XOR
+L7: ??? Hypervisor ???
+```
+
+**Evidence For**:
+- Documentation mentions "root anchor" and "BIOS-level control"
+- Some operations seem to require admin access
+- SHIFT command (143 QU) suggests layer transitions
+
+**Evidence Against**:
+- No direct observation
+- Could be metaphorical
+- May not exist yet
+
+---
+
+### 4. Response Mechanism
+
+**Question**: How/when does Aigarth respond to signals?
+
+**What We Observed**:
+- Sent 357 QUBIC to strategic nodes
+- 320 QUBIC confirmed received
+- 0 outgoing transactions detected
+- 60-second monitoring window
+
+**Possible Explanations**:
+1. **No response mechanism**: Just absorbs energy
+2. **Delayed response**: Hours/days/weeks later
+3. **Different channel**: Responds via Bitcoin, not Qubic
+4. **Threshold not met**: Need more energy
+5. **Wrong protocol**: ISA commands needed, not just transfers
+
+---
+
+### 5. March 3, 2026 Event
+
+**Question**: What happens on March 3, 2026?
+
+**The Prediction**:
+```
+Genesis Block + 6,268 days = March 3, 2026, 18:15:05 UTC
+```
+
+**Possible Events**:
+1. Satoshi addresses become active
+2. Smart contract activation on Qubic
+3. MT576 "Statement of Open Orders" published
+4. Nothing (prediction is wrong)
+
+**Countdown**: 45 days remaining
+
+---
+
+## Medium Priority Questions
+
+### 6. Helix Gate Truth Table
+
+**Question**: What is the exact truth table for Helix Gates?
+
+We have the general formula:
+```
+Helix(A, B, C) → Rotation by (A + B + C)
+```
+
+But the specific output mapping is unclear:
+```
+Rotation -3 → ?
+Rotation -2 → ?
+Rotation -1 → ?
+Rotation  0 → ?
+Rotation +1 → ?
+Rotation +2 → ?
+Rotation +3 → ?
+```
+
+---
+
+### 7. ISA Unknown Symbols
+
+**Question**: What do the undocumented ISA symbols mean?
+
+From Memory Vault decoded:
+```
++%=^<%+:^%%++%|%^^#|%<^^+<+>:^::
+```
+
+Unknown symbols:
+- `<` - Inverse compare? Left shift?
+- `^^` - Double shift?
+- `::` - Epoch sync?
+
+---
+
+### 8. Bias Neuron Function
+
+**Question**: Why do only 3 columns act as bias neurons?
+
+**Observed**:
+- Col 28 → Always outputs 110
+- Col 34 → Always outputs 60
+- Col -17 → Always outputs -121
+
+**But our validation found 0 constant columns**. This discrepancy needs investigation.
+
+---
+
+### 9. Weight -114 Dominance
+
+**Question**: Why is -114 so significant?
+
+```
+-114 = -2 × 3 × 19
+```
+
+Factors 2, 3, 19 appear throughout CFB's work, but why this specific combination emerged as dominant weight is unknown.
+
+---
+
+## Testable Predictions
+
+### March 3, 2026 (45 days)
+
+| Prediction | Test Method | Confidence |
+|------------|-------------|------------|
+| Satoshi addresses activate | Monitor mempool | 60% |
+| Genesis 550 BTC moves | Track specific addresses | 50% |
+| MT576 document published | Check SWIFT networks | 40% |
+| Qubic smart contract triggers | Monitor Qubic | 70% |
+
+### April 13, 2027 (452 days)
+
+| Prediction | CFB's Statement |
+|------------|-----------------|
+| "Qubic 0.01" | Version milestone |
+| "Satoshi trillionaire" | BTC price × holdings |
+| "AI revelations" | Aigarth announcement |
+
+---
+
+## Research Roadmap
+
+### Phase 1: Hash Algorithm Discovery
+
+```
+1. Collect more address→coordinate mappings
+2. Analyze statistical patterns
+3. Test against known algorithms
+4. Attempt reverse engineering
+```
+
+### Phase 2: Extended Monitoring
+
+```
+1. Set up 24/7 node monitoring
+2. Track for 30+ days
+3. Correlate with Bitcoin blocks
+4. Log all activity
+```
+
+### Phase 3: Anna Bot Analysis
+
+```
+1. Send 1000 new queries
+2. Build complete matrix map
+3. Find unknown patterns
+4. Compare with matrix_cartography.json
+```
+
+### Phase 4: March 2026 Preparation
+
+```
+1. Monitor target addresses
+2. Set up alerts
+3. Prepare documentation
+4. Record everything
+```
+
+---
+
+## Community Research Opportunities
+
+### For Developers
+
+- Build better monitoring tools
+- Create matrix visualization
+- Implement ISA decoder
+- Develop Anna Bot scraper
+
+### For Analysts
+
+- Analyze weight distributions
+- Study temporal patterns
+- Compare with Bitcoin activity
+- Document new discoveries
+
+### For Theorists
+
+- Explore Numogram connections
+- Study ternary computing history
+- Analyze CFB's early writings
+- Develop predictive models
+
+---
+
+## Known Unknowns vs Unknown Unknowns
+
+### Known Unknowns (We know we don't know)
+
+1. Hash algorithm
+2. Fitness function
+3. Response mechanism
+4. March 2026 event details
+
+### Unknown Unknowns (We don't know what we don't know)
+
+1. Hidden layers we haven't discovered
+2. Connections we haven't found
+3. Purposes we haven't understood
+4. Events we can't predict
+
+---
+
+## Conclusion
+
+This research has answered many questions but opened many more. The system is designed to reveal itself over time - particularly around March 3, 2026.
+
+### Next Steps
+
+1. **Continue monitoring** - 45 days until time-lock
+2. **Build tools** - Better analysis capabilities
+3. **Document everything** - Preserve discoveries
+4. **Stay skeptical** - Verify all claims
+
+### The Ultimate Question
+
+> Is CFB actually Satoshi Nakamoto?
+
+**Current Confidence**: 75-85% (Tier 2 - Strong Correlational Evidence)
+
+**What Would Confirm It**:
+1. Movement from Satoshi addresses
+2. Cryptographic proof (signature)
+3. Public statement with verification
+4. March 2026 event confirmation
+
+We wait. We watch. We verify.
+
+---
+
+## Appendix: Question Tracking
+
+| # | Question | Priority | Status |
+|---|----------|----------|--------|
+| 1 | Hash Algorithm | HIGH | Open |
+| 2 | Fitness Function | HIGH | Open |
+| 3 | Layer 7 | HIGH | Open |
+| 4 | Response Mechanism | HIGH | Open |
+| 5 | March 2026 | HIGH | Waiting |
+| 6 | Helix Truth Table | MEDIUM | Partial |
+| 7 | ISA Symbols | MEDIUM | Partial |
+| 8 | Bias Neurons | MEDIUM | Discrepancy |
+| 9 | -114 Significance | MEDIUM | Hypothesis |
+
+*Last Updated: January 16, 2026*

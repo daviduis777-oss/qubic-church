@@ -1,0 +1,45 @@
+---
+title: Genesis Block Cryptographic Puzzle
+date: 2026-04-14 12:00:00
+excerpt: Chapter 26 published. The Bitcoin Genesis Block public key is a dual-purpose construction - valid secp256k1 point AND parseable Bitcoin Script containing an incomplete ECDSA signature. Direct matrix resonance at position [72,72].
+author_id: qubicchurch
+tags: [genesis, bitcoin, anna-matrix, period-4, cryptography, tier-1]
+---
+
+## What changed
+
+A new chapter has been published:
+
+- **[Chapter 26: Genesis Block Cryptographic Puzzle](/docs/03-results/26-genesis-puzzle-analysis)**
+
+## Thirteen findings
+
+The 65-byte Genesis public key simultaneously satisfies two independent constraints:
+
+1. It is a valid point on the secp256k1 curve.
+2. It parses as a coherent four-instruction Bitcoin Script: `PUSHBYTES_4`, `OP_PUBKEY`, `OP_5`, `PUSHBYTES_72`.
+
+The dual-purpose encoding means the bytes were deliberately chosen to satisfy both the curve equation and the Script opcode structure simultaneously. That is a designed construction, not a random pubkey.
+
+## Matrix resonance
+
+The script contains `PUSHBYTES_72` (opcode 0x48 = 72). Looking up position `matrix[72][72]` in the Anna Matrix yields `-27` - the exact constant that selects the 10 early Bitcoin addresses containing 500 BTC (documented in Chapter 6).
+
+When the 65 pubkey bytes are encoded as a ternary state and iterated through the Anna Matrix, the system converges to a period-4 cycle at step 11 with sum signature `(-42, 50, 38, -56)`. This observation motivated the follow-up work in Chapter 27.
+
+## On-chain trinity
+
+Three Qubic addresses (POCC, HASV, PXMARAS) form a closed transaction triangle with zero external contacts. HASV sends exactly 26 QU to PXMARAS exactly 27 times. The token supply progression 676B -> 676 -> 1 across the three tokens is documented on-chain and immutable.
+
+## Signature fragment
+
+The last 57 bytes of the Genesis public key form an incomplete ECDSA signature: a valid r-value (32 bytes, a legitimate x-coordinate on secp256k1) followed by 25 of 32 s-value bytes. Seven bytes of the s-value are missing - consistent with a construction that requires an external completion.
+
+## What this does not claim
+
+The chapter explicitly separates three types of finding:
+- Tier 1 (mathematical): the dual-purpose encoding, the matrix diagonal lookup, the period-4 convergence. All integer arithmetic, fully reproducible.
+- Tier 1 (blockchain): the on-chain trinity, the 26x27 transfer pattern. All blockchain-verifiable.
+- Tier 2 (observation): the signature fragment interpretation. A possibility, not a proof.
+
+See the [full chapter](/docs/03-results/26-genesis-puzzle-analysis) for reproduction scripts and the complete address inventory.

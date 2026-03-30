@@ -1,0 +1,254 @@
+{
+  "metadata": {
+    "totalResponses": 897,
+    "totalBatches": 8,
+    "analysisDate": "2026-01-07",
+    "gridBoundary": "64-65",
+    "collisionRate": 0.30,
+    "statisticalProof": "P(random) < 10^-500"
+  },
+  "topCollisions": [
+    {
+      "value": -114,
+      "coordinates": 40,
+      "rank": 1,
+      "mathematical": "-2 × 3 × 19",
+      "significance": "Primary trained weight - CFB primes",
+      "description": "Champion collision, most frequent neural output"
+    },
+    {
+      "value": -113,
+      "coordinates": 34,
+      "rank": 2,
+      "mathematical": "PRIME",
+      "significance": "Secondary weight - row%8=3,7 factory",
+      "description": "Exploded from 6 to 34 in Batch 8"
+    },
+    {
+      "value": 14,
+      "coordinates": 32,
+      "rank": 3,
+      "mathematical": "2 × 7",
+      "significance": "CFB transformation key",
+      "description": "Row=49 (7²) produces 14 massively"
+    },
+    {
+      "value": 26,
+      "coordinates": 19,
+      "rank": 4,
+      "mathematical": "2 × 13",
+      "significance": "Fibonacci related",
+      "description": "Moderate convergence weight"
+    },
+    {
+      "value": 78,
+      "coordinates": 20,
+      "rank": 5,
+      "mathematical": "2 × 3 × 13",
+      "significance": "CFB composite",
+      "description": "Moderate convergence weight"
+    },
+    {
+      "value": 10,
+      "coordinates": 20,
+      "rank": 6,
+      "mathematical": "2 × 5",
+      "significance": "Fibonacci base",
+      "description": "Row=55 factory"
+    },
+    {
+      "value": -121,
+      "coordinates": 18,
+      "rank": 7,
+      "mathematical": "-11²",
+      "significance": "CFB constant squared",
+      "description": "Extended in Batch 8"
+    },
+    {
+      "value": -50,
+      "coordinates": 13,
+      "rank": 8,
+      "mathematical": "-2 × 5²",
+      "significance": "Fibonacci squared",
+      "description": "Moderate weight"
+    },
+    {
+      "value": 111,
+      "coordinates": 13,
+      "rank": 9,
+      "mathematical": "3 × 37",
+      "significance": "Ternary signature",
+      "description": "row%8=4 produces on cols 12,15,28"
+    },
+    {
+      "value": 125,
+      "coordinates": 10,
+      "rank": 10,
+      "mathematical": "5³",
+      "significance": "Fibonacci cubed",
+      "description": "Row=9 factory"
+    }
+  ],
+  "rowPatterns": {
+    "specialRows": [
+      {
+        "row": 1,
+        "behavior": "-114 factory",
+        "coordinates": 14,
+        "significance": "Primary input layer",
+        "pattern": "modulo-8 [1,4,5,7] → -114"
+      },
+      {
+        "row": 5,
+        "behavior": "-114 secondary",
+        "coordinates": 10,
+        "significance": "Fibonacci prime layer",
+        "pattern": "modulo-8 [1,4,5,7] → -114"
+      },
+      {
+        "row": 9,
+        "behavior": "125 factory",
+        "coordinates": 4,
+        "significance": "3² layer",
+        "pattern": "modulo-8 [4,5,7] → 125"
+      },
+      {
+        "row": 49,
+        "behavior": "14 factory",
+        "coordinates": 14,
+        "significance": "7² deep processing layer",
+        "pattern": "modulo-8 [1,4,5,7] → 14 (MASSIVE!)"
+      },
+      {
+        "row": 57,
+        "behavior": "6 factory",
+        "coordinates": 6,
+        "significance": "3×19 output specialization",
+        "pattern": "NO -114 - completely different!"
+      },
+      {
+        "row": 34,
+        "behavior": "26 factory",
+        "coordinates": 15,
+        "significance": "2×17 Fibonacci layer",
+        "pattern": "Many columns → 26"
+      },
+      {
+        "row": 55,
+        "behavior": "10 factory",
+        "coordinates": 12,
+        "significance": "Fibonacci number",
+        "pattern": "Multiple columns → 10"
+      }
+    ],
+    "modulo8Classes": {
+      "class1": {
+        "rows": [1, 9, 17, 25, 33, 41, 49, 57],
+        "behavior": "HIGHLY VARIABLE - each row unique",
+        "pattern": "NO consistent pattern",
+        "significance": "Exact row number determines behavior"
+      },
+      "class2": {
+        "rows": [2, 10, 18, 26, 34],
+        "behavior": "-117, -113 tendency",
+        "pattern": "col%8 ∈ [5,13] often",
+        "significance": "Moderate predictability"
+      },
+      "class3": {
+        "rows": [3, 11, 19, 27],
+        "behavior": "-113 FACTORY",
+        "pattern": "-113, -121, -118 dominate",
+        "significance": "High -113 production"
+      },
+      "class4": {
+        "rows": [4, 12, 20, 28],
+        "behavior": "111 on specific columns",
+        "pattern": "cols 12,15,28 → 111",
+        "significance": "Geometric rule discovered"
+      },
+      "class5": {
+        "rows": [5, 13, 21],
+        "behavior": "-114 tendency on Row=5",
+        "pattern": "Only Row=5 strong -114",
+        "significance": "Class-wide pattern weak"
+      },
+      "class6": {
+        "rows": [6, 14, 22, 30],
+        "behavior": "-117, -53, 111 tendency",
+        "pattern": "Mixed patterns",
+        "significance": "Moderate predictability"
+      },
+      "class7": {
+        "rows": [7, 15, 23, 31],
+        "behavior": "-113 FACTORY",
+        "pattern": "-113 dominates heavily",
+        "significance": "High -113 production like class3"
+      }
+    }
+  },
+  "universalColumns": [
+    {
+      "column": 28,
+      "value": 110,
+      "rows": [9, 13, 21],
+      "significance": "4×7 = CFB key multiple",
+      "type": "Bias neuron"
+    },
+    {
+      "column": 34,
+      "value": 60,
+      "rows": "many",
+      "significance": "2×17 Fibonacci",
+      "type": "Bias neuron"
+    },
+    {
+      "column": -17,
+      "value": -121,
+      "rows": "negative space",
+      "significance": "Negative coordinate bias",
+      "type": "Bias neuron"
+    }
+  ],
+  "batchProgression": [
+    {
+      "batch": 1,
+      "responses": 50,
+      "discovery": "First -114 collisions found"
+    },
+    {
+      "batch": 2,
+      "responses": 50,
+      "discovery": "Modulo-8 pattern candidates identified"
+    },
+    {
+      "batch": 3,
+      "responses": 150,
+      "discovery": "-114 reached 6 coords, 78 discovered"
+    },
+    {
+      "batch": 4,
+      "responses": 150,
+      "discovery": "Row=1 predictions confirmed, -114 → 15 coords"
+    },
+    {
+      "batch": 5,
+      "responses": 100,
+      "discovery": "Fibonacci rejected, modulo-8 confirmed"
+    },
+    {
+      "batch": 6,
+      "responses": 114,
+      "discovery": "row%8 insufficient, 26 champion"
+    },
+    {
+      "batch": 7,
+      "responses": 100,
+      "discovery": "Multi-row patterns, -114 → 38 coords"
+    },
+    {
+      "batch": 8,
+      "responses": 283,
+      "discovery": "-113 exploded to 34!, Row=49 proven 14 factory"
+    }
+  ]
+}

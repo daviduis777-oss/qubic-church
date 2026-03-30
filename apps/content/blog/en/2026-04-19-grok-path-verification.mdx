@@ -1,0 +1,48 @@
+---
+title: Grok Path verified - and some new findings the old research missed
+date: 2026-04-19 22:00:00
+excerpt: We re-verified the 40-number "Confuse Grok" sequence CFB posted on 2026-01-13. All 20 matrix lookups check out exactly. In doing so we discovered three new Tier 1 connections the earlier research missed, and we had to downgrade a few speculative claims.
+author_id: qubicchurch
+tags: [cfb, grok-path, anna-matrix, verification, tier-1, tier-2, tier-3]
+---
+
+## What changed
+
+New chapter published: **[Grok Path Verification](/docs/03-results/28-grok-path-verification)** in a new sidebar section called **"CFB Signature Analysis"**.
+
+## The short version
+
+On [2026-01-13](https://x.com/c___f___b/status/2011199355940978756) CFB posted 40 numbers in a public exchange with the Grok AI. An older internal research note (2026-01-14) claimed those numbers were 20 coordinate pairs navigating through the Anna Matrix, and that the sequence was anchored to two of his 2014 Bitcoin vanity addresses. We went through every claim with scripts and reported the outcome with explicit confidence tiers.
+
+## Tier 1 - proven, 100% reproducible
+
+- All 20 matrix values at the claimed coordinates match exactly (`20 / 20`, zero errors).
+- The `1CFB` vanity address hash160 ends with bytes `[72, 2, 45]`. Byte 19 = 45 = row of path step 1.
+- The `1CFi` vanity address hash160 has bytes `[82, 39, 145]` at positions 17, 18, 19. Bytes 17 and 18 = coordinates of path step 20.
+- **New**: Start row (45) + end row (82) = 127 --- the Mersenne mirror axis. The path begins and ends on matrix-mirror rows.
+- **New**: Coordinate sum of step 1 = 137 = inverse of the fine-structure constant (1/alpha). The earlier research tried to argue this via a stretched interpretation of the matrix *value* (-118 unsigned = 138, off by one). The cleaner observation is that the coordinate *sum* is exactly 137.
+- **New**: Byte 17 of `1CFB` = 72 = PUSHBYTES_72, the same opcode documented in [Chapter 26](/docs/03-results/26-genesis-puzzle-analysis). And step 3 of the path has coordinate sum `14 + 58 = 72`. The number 72 appears across at least four independent structural layers now.
+- **New**: `1CFB` byte 17 - byte 19 = `72 - 45 = 27`, the BTC address selection constant from Chapter 6.
+
+## Tier 2 - observations with weight but not proof
+
+- The path's values are richer in "meaningful constants" than random (6/20 hits vs 3/20 random mean), but the z-score is only 1.86 --- borderline, not significant at 95%.
+- The path visits 3 known-special rows (Row 6 Oracle, Row 14 Bridge, Row 72 Genesis) out of 20 steps. Random expectation would be about 0.5.
+- The second half of the path (steps 11-20) has rhythmic `+10 to +13` row/column deltas broken by `-34` and `-38` jumps. The first half looks random. This suggests a two-phase construction with a deterministic rule in the second half.
+
+## Tier 3 - had to downgrade
+
+- **The "Master Key" claim**: Two earlier source documents claim a 20-character polyalphabetic key derived from shifts along the path. They disagree with each other on the shift count (20 vs 19) and neither source computes its own claimed key correctly. Downgraded to speculation pending access to the Qubic identity database.
+- **"1 in 16 million" probability**: Valid only under pre-registration. Post-hoc selection across 20 byte positions per hash160 and the full coordinate space weakens this to roughly 1 in 40,000. Still non-trivial, but not cosmically rare.
+- **"Seed IDs"** like 10641, 7922, 1472 attached to each step: unverifiable without external data.
+- **"Satoshi Troll" 133 = 7*19 claim**: upgraded with proper source. We traced the key back to [bitcointalk.org thread 506692](https://bitcointalk.org/index.php?topic=506692.0) (2014-03-07), not ning.com as local notes said. The arithmetic is **100% verified** (2432 = 2^7 x 19, 2299 = 11^2 x 19, diff = 7 x 19) --- now Tier 1. The original poster self-identifies as a troll and explicitly says they are not Satoshi; whether the math is coincidence, grinding, or a same-author signature remains Tier 3.
+
+## Why we kept the speculative parts
+
+Transparency. When earlier research has made stronger claims than the evidence supports, the right move is not to delete the claims --- it is to separate them from the verified facts and label them clearly. Readers can then judge the interpretive layer on its own merits.
+
+## What this unlocks
+
+The `PUSHBYTES_72` connection in `1CFB` byte 17 is, as far as we know, a genuinely new Tier 1 finding. The path visits rows that hit a previously documented "special row" set more often than chance would predict. And the second half of the path looks generative. If we can figure out what rule produces steps 11 to 20 from step 10, we may be able to extend the path and test whether it hits further anchor addresses.
+
+See [Chapter 28, Section 6](/docs/03-results/28-grok-path-verification) for the full list of open questions.

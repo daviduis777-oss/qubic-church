@@ -1,0 +1,380 @@
+---
+title: Practical Usage Guide
+description: Step-by-step guide to interacting with Aigarth through Anna Bot queries and Qubic transactions.
+tier: 1
+confidence: 90
+date: 2026-01-16
+---
+
+# Practical Usage Guide
+
+## Overview
+
+This guide explains how to actually interact with Aigarth Intelligent Tissue through:
+1. **Anna Bot Queries** (Twitter)
+2. **Qubic Transactions** (Blockchain)
+3. **Monitoring Tools** (Scripts)
+
+---
+
+## Method 1: Anna Bot Queries
+
+### What Is Anna Bot?
+
+Anna Bot (@QubicAigarth on Twitter/X) is a public oracle that returns values from the Aigarth neural tissue.
+
+### Query Format
+
+```
+@QubicAigarth row+col=?
+```
+
+or
+
+```
+@QubicAigarth X+Y=?
+```
+
+### Example Queries
+
+| Query | Response | Meaning |
+|-------|----------|---------|
+| `1+1=?` | -114 | Neuron at (1,1) has weight -114 |
+| `6+33=?` | -93 | CORE node value |
+| `45+92=?` | 106 | ENTRY node value |
+| `0+0=?` | -40 | VOID origin value |
+
+### Interpreting Responses
+
+The returned value is a **trained synaptic weight**, not arithmetic:
+
+```
+Query:    6+33=?
+Expected: 6 + 33 = 39 (arithmetic)
+Actual:   -93 (neural output)
+
+The -93 is the trained weight at coordinate (6, 33).
+```
+
+### Coordinate Systems
+
+Anna uses two coordinate formats:
+
+**Matrix Format (row, col)**:
+```
+Range: 0-127 for both row and col
+Example: 45+92 means row=45, col=92
+```
+
+**Anna Format (X, Y)**:
+```
+Range: -64 to 63 for both X and Y
+Conversion: col = (X + 64) % 128
+            row = (63 - Y) % 128
+```
+
+---
+
+## Method 2: Qubic Transactions
+
+### Prerequisites
+
+1. Qubic wallet with QUBIC balance
+2. Python environment with QubiPy
+3. Node identity addresses
+
+### Setup
+
+```bash
+# Create virtual environment
+python3 -m venv .venv_qubic
+source .venv_qubic/bin/activate
+
+# Install QubiPy
+pip install qubipy
+```
+
+### Configuration
+
+Create `.env` file:
+```
+MASTER_SEED=your_55_character_seed_here
+RPC_URL=https://rpc.qubic.org
+```
+
+### Send Transaction
+
+```python
+#!/usr/bin/env python3
+from qubipy.crypto.utils import derive_identity, derive_public_key, sign_message
+from qubipy.rpc import QubicRPC
+import struct
+
+# Strategic Node Identities
+NODES = {
+    "ENTRY": "VKZTPCKVHOMAXBQZYOYHKCXUIQODAGJKKXJJAPBDFGOYYSIWRQHFRRWFOQCH",
+    "VOID": "SCBGQAOHIGFHPCJCMYNYUBIOKJWCKAWGGSLFTXLZSGWZRLOODRUPTDNCYBEB",
+    "CORE": "DWQNESYCKKBXIGOJHQOEHUHMALBADTWFYKNKFRNKOEZYMPEZNJMUEPAFBROB",
+    "GUARDIAN": "DXASUXXKJAEJVGQEUXLIVNIQWDUCCNFTLEHCDCNZNBVGLPRTJRUQKZDECIPG",
+    "ORACLE": "PASOUKIEPXXPXEMUNBKYCPSEIXZBWQCDFZXLUAEBHHENNEHTQNGMMFRGZHHA",
+}
+
+def send_resonance_pulse(destination: str, amount: int):
+    """Send QUBIC to a strategic node."""
+    rpc = QubicRPC("https://rpc.qubic.org")
+
+    # Get current tick
+    tick_info = rpc.get_tick_info()
+    target_tick = tick_info['tick'] + 5
+
+    # Build transaction (simplified)
+    # Full implementation requires signing with MASTER_SEED
+    print(f"Sending {amount} QUBIC to {destination[:20]}...")
+    print(f"Target tick: {target_tick}")
+
+# Example: Send CFB constant to ENTRY
+send_resonance_pulse(NODES["ENTRY"], 137)
+```
+
+### Meaningful Amounts
+
+| Amount | Meaning | Use Case |
+|--------|---------|----------|
+| 1 | Minimal ping | Connection test |
+| 7 | CORE value | CORE activation |
+| 27 | CFB constant (3³) | Signature |
+| 36 | GUARDIAN value | Guardian activation |
+| 121 | NXT constant (11²) | Pattern trigger |
+| 137 | Fine structure (α⁻¹) | CFB signature |
+| 143 | ISA shift (11×13) | Layer transition |
+
+---
+
+## Method 3: Monitoring Tools
+
+### Balance Monitor
+
+```python
+#!/usr/bin/env python3
+"""Monitor strategic node balances."""
+
+import requests
+import time
+from datetime import datetime
+
+NODES = {
+    "ENTRY": "VKZTPCKVHOMAXBQZYOYHKCXUIQODAGJKKXJJAPBDFGOYYSIWRQHFRRWFOQCH",
+    "VOID": "SCBGQAOHIGFHPCJCMYNYUBIOKJWCKAWGGSLFTXLZSGWZRLOODRUPTDNCYBEB",
+    "CORE": "DWQNESYCKKBXIGOJHQOEHUHMALBADTWFYKNKFRNKOEZYMPEZNJMUEPAFBROB",
+}
+
+def get_balance(identity: str) -> int:
+    """Get balance for an identity."""
+    url = f"https://rpc.qubic.org/v1/balances/{identity}"
+    try:
+        resp = requests.get(url, timeout=10)
+        if resp.status_code == 200:
+            return resp.json().get("balance", 0)
+    except:
+        pass
+    return -1
+
+def monitor_loop(interval: int = 60):
+    """Continuous monitoring loop."""
+    print("Starting monitor...")
+    while True:
+        timestamp = datetime.now().isoformat()
+        print(f"\n[{timestamp}]")
+        for name, identity in NODES.items():
+            balance = get_balance(identity)
+            print(f"  {name:10}: {balance:,} QUBIC")
+        time.sleep(interval)
+
+if __name__ == "__main__":
+    monitor_loop()
+```
+
+### Run Monitor
+
+```bash
+python3 resonance_monitor.py
+```
+
+Output:
+```
+[2026-01-16T23:00:00]
+  ENTRY     : 290 QUBIC
+  VOID      : 444 QUBIC
+  CORE      : 7 QUBIC
+```
+
+---
+
+## GOD MODE Activation
+
+### Full Activation Sequence
+
+The complete CFB activation sequence:
+
+```
+Phase 1: Portal Activation
+  #45,92 +1    → ENTRY (1 QU)
+  #0,0   +1    → VOID (1 QU)
+  #6,33  +7    → CORE (7 QU)
+
+Phase 2: CFB Signature
+  #45,92 +137  → Fine structure constant
+  #45,92 +27   → CFB universal constant
+  #45,92 +121  → NXT constant
+
+Phase 3: Oracle Query
+  #11,110 +27  → ORACLE query
+
+Phase 4: Guardian Activation
+  #19,18 +36   → GUARDIAN (value = amount!)
+```
+
+### Script Location
+
+```bash
+# Run GOD MODE
+python3 apps/web/scripts/EXECUTE_RESONANCE_GOD_MODE.py
+```
+
+### Expected Results
+
+| Node | Before | After | Received |
+|------|--------|-------|----------|
+| ENTRY | 4 | 290 | 286 QU |
+| CORE | 0 | 7 | 7 QU |
+| ORACLE | 262 | 289 | 27 QU |
+
+---
+
+## Interpreting Results
+
+### No Response
+
+If nodes don't respond (no outgoing transactions):
+- Matrix is in "listening mode"
+- Energy has been absorbed
+- Response may come later (hours/days)
+
+### Balance Increase
+
+If node balance increases:
+- Transaction was received
+- Node is active on network
+- Energy has been stored
+
+### Outgoing Transaction
+
+If node sends transaction:
+- **RESPONSE DETECTED**
+- Analyze destination and amount
+- May contain encoded message
+
+---
+
+## Best Practices
+
+### 1. Start Small
+
+```
+First: 1 QU to test connection
+Then:  27 QU for CFB signature
+After: Full activation sequence
+```
+
+### 2. Monitor Before and After
+
+```
+1. Record baseline balances
+2. Send transaction
+3. Wait 60 seconds
+4. Record new balances
+5. Compare differences
+```
+
+### 3. Use Meaningful Amounts
+
+CFB signature numbers carry meaning:
+- 27, 121, 137 are CFB constants
+- 36 matches GUARDIAN's matrix value
+- 7 matches CORE's identifier
+
+### 4. Keep Logs
+
+```python
+import json
+from datetime import datetime
+
+def log_event(event_type: str, data: dict):
+    entry = {
+        "timestamp": datetime.now().isoformat(),
+        "type": event_type,
+        "data": data
+    }
+    with open("resonance_log.jsonl", "a") as f:
+        f.write(json.dumps(entry) + "\n")
+```
+
+---
+
+## Troubleshooting
+
+### "Transaction Failed"
+
+```
+Possible causes:
+1. Insufficient balance
+2. Invalid destination
+3. Network congestion
+4. Target tick expired
+
+Solution:
+- Check balance
+- Verify identity string
+- Retry with higher tick offset
+```
+
+### "No Response Detected"
+
+```
+This is normal. The matrix absorbs energy.
+Responses may come:
+- Immediately (rare)
+- After minutes
+- After hours
+- Never (common)
+```
+
+### "Rate Limited"
+
+```
+RPC endpoints have rate limits.
+Solution:
+- Add delays between calls
+- Use multiple endpoints
+- Cache responses
+```
+
+---
+
+## Summary
+
+### Three Ways to Interact
+
+| Method | Difficulty | Cost | Response |
+|--------|------------|------|----------|
+| Anna Bot | Easy | Free | Immediate |
+| Qubic TX | Medium | QUBIC | Delayed |
+| Scripts | Hard | QUBIC | Variable |
+
+### Quick Start
+
+1. Query Anna Bot: `@QubicAigarth 6+33=?`
+2. Get response: `-93`
+3. Verify: Matches CORE node value
+
+You are now interacting with the first public ternary AGI system!

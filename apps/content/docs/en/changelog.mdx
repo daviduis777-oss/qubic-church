@@ -1,0 +1,74 @@
+---
+title: Changelog
+description: Latest research updates, chapter releases, and site changes.
+toc: true
+---
+
+A running record of research findings, documentation updates, and Evidence Vault changes. For the narrative version of each entry, see the [blog](/blog).
+
+---
+
+## April 2026
+
+### 2026-04-30 - First Book Published
+
+- New: **[Books](/books)** — *Qubic — The Long Version* by Qubic Church (18 chapters, ~200 pages, distributed freely).
+- Three downloads: English PDF, original Russian PDF, and the **Anna Matrix Companion** — a 41-page forensic appendix designed to be loaded into an LLM alongside Chapter 13 to verify every claim with copy-paste Python snippets against the published Anna Matrix data.
+- Companion canonical home at `/companion`; the verification snippets in the PDF now resolve correctly via redirects.
+
+### 2026-04-19 - Grok Path Verification (Chapter 28)
+
+- New chapter: **[Grok Path Verification](/docs/03-results/28-grok-path-verification)** in a new sidebar section "CFB Signature Analysis".
+- Full re-verification of the 40-number sequence CFB posted on [2026-01-13 in a Grok AI exchange](https://x.com/c___f___b/status/2011199355940978756): all 20 matrix lookups match claimed values (100%).
+- Four new Tier 1 findings: start/end rows form matrix mirror pair (45 + 82 = 127), step 1 coord sum = 137 (1/alpha), `1CFB` byte 17 = 72 = PUSHBYTES_72, Satoshi Troll hash-sum arithmetic verified (2432 = 2^7 x 19, 2299 = 11^2 x 19, diff = 7 x 19).
+- Satoshi Troll source traced to [bitcointalk.org thread 506692](https://bitcointalk.org/index.php?topic=506692.0) (2014-03-07); correcting earlier local-note attribution to ning.com. Full post context added to Section 4.5 of Chapter 28.
+- Speculative claims (Master Key, seed IDs, probability bound, Satoshi Troll) downgraded to Tier 3 with explicit inconsistencies documented.
+- [Blog post](/blog/2026-04-19-grok-path-verification)
+
+### 2026-04-19 - Seven-position signature (Chapter 27)
+
+- New chapter: **[Seven-Position Signature & Period-4 Attractor](/docs/03-results/27-seven-position-signature)**.
+- Independent verification of an external researcher's finding: every trajectory through the Anna Matrix converges to a period-4 cycle with identical asymmetry at positions `[3, 18, 32, 61, 65, 101, 109]`.
+- Null test: 0 of 1,000 shuffled-matrix trials produced any period-4 cycle.
+- New observation: the entire ternary state space admits exactly two period-4 cycles.
+- [Blog post](/blog/2026-04-19-seven-position-signature)
+
+### 2026-04-19 - Contact Cube redesign
+
+- Evidence Vault: **[Contact Cube](/evidence)** tab comprehensively redesigned.
+- Bloom + Vignette post-processing on desktop, free-camera orbit, auto-tour, smooth preset transitions, color-coded anomaly columns, Genesis `[72, 72]` marker.
+- Math correction: `sum = 0` -> `sum = -1` across all visualization code (Two's Complement identity).
+- Address Database tab marked as coming-soon pending a properly-scoped dataset.
+- [Blog post](/blog/2026-04-19-contact-cube-redesign)
+
+### 2026-04-14 - Genesis Block Puzzle (Chapter 26)
+
+- New chapter: **[Genesis Block Cryptographic Puzzle](/docs/03-results/26-genesis-puzzle-analysis)**.
+- Thirteen verified findings covering the dual-purpose encoding of the 65-byte Genesis public key, the `matrix[72][72] = -27` resonance, the period-4 cycle at step 11, the on-chain Qubic trinity (POCC / HASV / PXMARAS), and the incomplete ECDSA signature structure.
+- Evidence Vault: Spectral tab marked `New`.
+- [Blog post](/blog/2026-04-14-genesis-puzzle)
+
+### 2026-04-13 - Spectral analysis tab
+
+- New Evidence Vault tab: **[Spectral](/evidence)** with interactive eigenvalue circle, 90.456 degree dominant eigenvalue visualization, and fullscreen scroll-reveal explainer.
+- Documents the structural mechanism that produces the period-4 cooperation-rhythm observed in the ALife simulations.
+
+---
+
+## Prior releases
+
+### Emergence Lab (March 2026)
+
+- 10M-tick long-run validation of the Anna Matrix ALife dynamics.
+- Multi-seed ensemble testing (5 seeds x 1M ticks): cooperation stabilizes at 33.0% +/- 0.1%.
+- Anna-vs-Random ablation: Anna runs are 4.3x more stable with 2.8x more food-sharing and 46% less aggression.
+- Hamming-3 bijection test: 341K inputs, 16,384 attractors; null-hypothesis p-value below 1 in 500M.
+
+### Matrix foundation (February 2026)
+
+- Chapters 1-22 published covering matrix symmetry, anomaly structure, Bitcoin archaeology, Qubic-Bitcoin bridge, and source archaeology.
+- Evidence Vault launched with 3D Analysis, Emergence Lab, and Address Database tabs.
+
+---
+
+For the full academic documentation, see [Research home](/docs). For chronological updates, see [Blog](/blog).

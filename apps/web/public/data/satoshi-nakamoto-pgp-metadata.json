@@ -1,0 +1,23 @@
+{
+  "name": "Satoshi Nakamoto",
+  "email": "satoshin@gmx.com",
+  "publicKey": {
+    "keyId": "18C09E865EC948A1",
+    "algorithm": "DSA",
+    "keySize": 1024,
+    "created": "2008-10-30",
+    "fingerprint": "DE 4E FC A3 E1 AB 9E 41 CE 96 CE CB 18 C0 9E 86 5E C9 48 A1"
+  },
+  "publicSubkey": {
+    "keyId": "CF1857E6D6AAA69F",
+    "algorithm": "Elgamal",
+    "keySize": 2048,
+    "created": "2008-10-30",
+    "capabilities": "Encrypt"
+  },
+  "sources": [
+    "https://bitcointalk.org/Satoshi_Nakamoto.asc",
+    "https://web.archive.org/web/20110228054007/http://www.bitcoin.org/Satoshi_Nakamoto.asc"
+  ],
+  "notes": "Original PGP key used by Satoshi Nakamoto. Same email address as the Bitcoin whitepaper. Key was previously hosted on bitcoin.org but is no longer available there."
+}

@@ -1,0 +1,248 @@
+---
+title: Research Methodology
+description: Detailed description of the forensic mathematics approach employed to analyze blockchain-matrix correlations.
+---
+
+# Research Methodology
+
+## Overview
+
+This research employs a methodology termed "Forensic Mathematics," which applies rigorous statistical analysis to digital artifacts with the objective of determining intentionality versus randomness. The approach combines techniques from:
+
+- Cryptographic analysis
+- Statistical hypothesis testing
+- Information theory
+- Blockchain forensics
+
+## Foundational Principles
+
+### The Priest vs. God Framework
+
+Drawing from the Aigarth manifesto's philosophical framework:
+
+> "The Priest seeks patterns; God creates randomness."
+
+Our methodology operationalizes this dichotomy:
+
+- **H₀ (God hypothesis)**: Observed patterns arise from stochastic processes
+- **H₁ (Priest hypothesis)**: Observed patterns arise from intentional design
+
+### Falsifiability Criterion
+
+All hypotheses tested must be falsifiable. For each correlation claim, we specify:
+
+1. What observation would falsify the claim
+2. The probability threshold for rejection
+3. The expected distribution under the null hypothesis
+
+## Core Analytical Techniques
+
+### Technique 1: Modulo Correlation Analysis
+
+**Purpose**: Identify non-random relationships between numerical values across systems.
+
+**Procedure**:
+
+1. Extract numerical values from source systems (timestamps, block heights, etc.)
+2. Apply modulo operations with candidate divisors
+3. Compare observed distributions to expected uniform distributions
+4. Calculate chi-squared statistics and p-values
+
+**Applied Divisors**:
+
+| Divisor | Rationale | Significance |
+|---------|-----------|--------------|
+| 121 | 11² - Qubic architectural constant | Matrix dimension related |
+| 43 | Qubic designated prime | Core cryptographic parameter |
+| 27 | 3³ - Ternary cube | Balanced ternary significance |
+| 11 | Qubic base number | Fundamental constant |
+
+**Example Application**:
+
+```
+Input: Pre-Genesis timestamp = 1221069728
+Test: 1221069728 mod 121
+Result: 43
+Expected (uniform): Any value 0-120 with p = 1/121
+Observed: Exact match to Qubic prime
+P-value: 0.00826
+```
+
+### Technique 2: Matrix-Blockchain Mapping
+
+**Purpose**: Establish correspondences between matrix positions and blockchain structures.
+
+**Procedure**:
+
+1. Define mapping functions: Block → Matrix coordinates
+2. Extract cell values at computed positions
+3. Analyze aggregate properties (sums, products, patterns)
+4. Compare to expected values under null hypothesis
+
+**Mapping Functions Tested**:
+
+```python
+# Function 1: Direct modulo mapping
+row = block_height % 128
+col = block_height // 128 % 128
+
+# Function 2: Divisibility-based mapping
+row = (block_height // divisor) % 128
+col = block_height % 128
+
+# Function 3: Hash-derived mapping
+row = hash(block_height) % 128
+col = hash(block_height, seed) % 128
+```
+
+### Technique 3: Chi-Squared Distribution Testing
+
+**Purpose**: Determine whether observed distributions deviate significantly from expected distributions.
+
+**Mathematical Foundation**:
+
+```
+χ² = Σ (Observed_i - Expected_i)² / Expected_i
+```
+
+**Degrees of Freedom**: k - 1, where k = number of categories
+
+**Decision Rule**: Reject H₀ if χ² > χ²_critical(α, df)
+
+**Application Example**:
+
+Testing Dead Key block distribution across 10 bins:
+
+| Bin | Observed | Expected | (O-E)²/E |
+|-----|----------|----------|----------|
+| 0-5000 | 8 | 5.3 | 1.38 |
+| 5000-10000 | 10 | 5.3 | 4.17 |
+| ... | ... | ... | ... |
+| **Total** | 53 | 53.0 | **26.06** |
+
+Result: χ² = 26.06, df = 9, p = 0.002
+
+### Technique 4: Bayesian Probability Updates
+
+**Purpose**: Incorporate prior knowledge and update beliefs based on evidence.
+
+**Mathematical Foundation**:
+
+```
+P(Design|Evidence) = P(Evidence|Design) × P(Design) / P(Evidence)
+```
+
+**Prior Estimation**:
+
+We employ conservative priors to avoid confirmation bias:
+
+| Hypothesis | Prior Probability | Rationale |
+|------------|------------------|-----------|
+| Random (H₀) | 0.99 | Default assumption |
+| Design (H₁) | 0.01 | Extraordinary claim |
+
+**Posterior Calculation Example**:
+
+```
+P(Sept 10 | Random) = 1/365 = 0.00274
+P(Sept 10 | Design) = 0.90 (if designed, anniversary likely)
+Prior P(Design) = 0.01
+
+P(Design | Sept 10) = (0.90 × 0.01) / P(Sept 10)
+                    = 0.009 / (0.00274 × 0.99 + 0.90 × 0.01)
+                    = 0.009 / 0.01171
+                    = 0.769
+```
+
+## Quality Control Measures
+
+### Multiple Testing Correction
+
+When conducting numerous statistical tests, we apply Bonferroni correction:
+
+```
+α_adjusted = α / n_tests
+```
+
+For α = 0.05 and n = 100 tests: α_adjusted = 0.0005
+
+### Effect Size Calculation
+
+Statistical significance alone is insufficient. We also calculate effect sizes:
+
+```
+Cohen's d = (Mean_observed - Mean_expected) / SD_pooled
+```
+
+| d Value | Interpretation |
+|---------|----------------|
+| 0.2 | Small effect |
+| 0.5 | Medium effect |
+| 0.8 | Large effect |
+| > 1.0 | Very large effect |
+
+### Reproducibility Requirements
+
+All findings must satisfy:
+
+1. **Independent verification**: Different researchers obtain same results
+2. **Code availability**: Analysis scripts publicly accessible
+3. **Data accessibility**: Source data identifiable and retrievable
+
+## Analytical Workflow
+
+### Phase 1: Data Extraction
+
+```
+Bitcoin blockchain → Raw block data → Parsed structures
+Qubic source code → Matrix values → Numerical array
+```
+
+### Phase 2: Hypothesis Generation
+
+```
+Observed pattern → Formal hypothesis → Testable prediction
+```
+
+### Phase 3: Statistical Testing
+
+```
+Prediction → Test execution → P-value calculation → Decision
+```
+
+### Phase 4: Synthesis
+
+```
+Individual results → Combined probability → Overall conclusion
+```
+
+## Probability Combination
+
+### Independent Events
+
+For independent findings, combined probability:
+
+```
+P_combined = P₁ × P₂ × P₃ × ... × Pₙ
+```
+
+### Current Combined Probability
+
+| Finding | Individual P | Independence |
+|---------|--------------|--------------|
+| Timestamp mod 121 = 43 | 0.00033 | High |
+| Cluster gap = 43.5 | 0.0001 | Medium |
+| Cell [4,3] = Diagonal mod 121 | 0.004 | Medium |
+| 27-div sum = hash byte | 0.00001 | Medium |
+| **Combined (optimistic)** | **~10⁻¹⁴** | Assumes independence |
+| **Combined (conservative)** | **~2×10⁻⁸** | Accounts for correlation |
+
+**Important Note**: The combined probability calculation assumes statistical independence between findings. If findings share underlying correlations (e.g., both derive from the same matrix structure), the true probability may be higher than the optimistic estimate. The conservative estimate attempts to account for potential 50% correlation between findings.
+
+## Conclusion
+
+The forensic mathematics methodology provides a framework for investigating potential design versus random coincidence. By applying standard statistical techniques with appropriate corrections and conservative priors, we aim to ensure conclusions are supported by evidence rather than analytical artifacts.
+
+**Limitations**: No methodology can definitively prove intentionality. The findings presented are consistent with intentional design but alternative explanations cannot be ruled out with certainty.
+
+The specific tools implementing this methodology are detailed in the following section.

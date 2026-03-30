@@ -1,0 +1,47 @@
+---
+title: Contact Cube visual redesign
+date: 2026-04-19 10:00:00
+excerpt: The Contact Cube tab in the Evidence Vault has been fully redesigned. Post-processing effects, auto-tour mode, free-camera orbiting, smooth preset transitions, color-coded anomaly columns, and a new Genesis position marker at matrix[72,72].
+author_id: qubicchurch
+tags: [evidence, contact-cube, ui, visualization, three-js, release]
+---
+
+## What changed
+
+The **[Contact Cube](/evidence)** (Evidence Vault tab) has been comprehensively redesigned to match the quality of the Emergence Lab and Spectral tabs.
+
+## Visual upgrades
+
+- **Post-processing**: Bloom + Vignette effects on desktop for a dramatically richer scene. Mobile keeps the lean render for performance.
+- **Gold wireframe glow**: Cube edges emit a soft gold highlight when folded, picked up by the bloom pass.
+- **Subtler star field**: 1500 stars at depth 80 instead of 5000 shallow stars - more space, less noise.
+
+## Interaction upgrades
+
+- **Free camera**: Orbit, pan, and zoom freely. Camera presets now transition smoothly (lerped through OrbitControls) and release as soon as they reach their target.
+- **Auto-tour**: Press `T` or click the tour button to cycle through all five camera presets at 6-second intervals. Any manual interaction cancels the tour.
+- **Camera preset buttons**: All five presets (Default / Top / Front / Side / Isometric) are now visible as buttons. Previously only accessible via keys 1-5.
+- **Color theme selector**: All five themes (Default, Fire, Ice, Matrix, Scientific) exposed as gradient swatches in the desktop panel and a cycle button on mobile.
+- **Responsive controls**: A proper mobile bottom-bar layout replaces the hidden control drawer.
+
+## Content integration
+
+- **Genesis marker**: A new cyan-ringed marker at matrix position `[72, 72]` shows the PUSHBYTES_72 resonance from Chapter 26. Distinct from the gold `[22, 22]` primer marker.
+- **Anomaly column color-coding**: The 68 anomaly cells are now colored by their column pair:
+  - Gold: columns 22+105 (13 pairs)
+  - Cyan: columns 97+30 (18 pairs)
+  - Purple: columns 41+86 (2 pairs)
+  - Emerald: columns 127+0 (1 pair)
+- **Info modal expanded**: Now documents the period-4 attractor, the XOR triangle (100 XOR 127 = 27, and cyclic permutations), and the Genesis connection.
+
+## Math correction
+
+During the redesign we caught and fixed a math error that was present in earlier Contact Cube code: the Two's Complement identity formula was written as `sum = 0` instead of the correct `sum = -1`. The research documentation was always correct; only the 3D visualization code was wrong. All affected files are now consistent.
+
+## Text scaling
+
+Font sizes throughout the component were bumped to match the Emergence Lab conventions: all `8px`, `9px`, and `10px` text classes replaced with `10px` and `12px` minimums.
+
+## What's next
+
+Chapter 27 (Seven-Position Signature) is published alongside this release. The Contact Cube will gain a dedicated visualization of the seven asymmetry positions in a future update.

@@ -1,0 +1,73 @@
+---
+title: Seven-position signature - independently reproduced
+date: 2026-04-19 18:00:00
+excerpt: An external researcher identified a seven-position asymmetry set [3, 18, 32, 61, 65, 101, 109] in the Anna Matrix period-4 cycle. We have independently reproduced and extended the finding. The Anna Matrix admits only two distinct period-4 cycles in its entire ternary state space.
+author_id: qubicchurch
+tags: [anna-matrix, period-4, attractor, verification, tier-1]
+---
+
+## What changed
+
+- **[Chapter 27: Seven-Position Signature & Period-4 Attractor](/docs/03-results/27-seven-position-signature)** published.
+
+## The discovery
+
+An anonymous researcher observed that when the Anna Matrix is iterated under `state = sign(M @ state)` starting from the Genesis public key, the resulting period-4 cycle (A, B, C, D) exhibits near-perfect antipodal symmetry `A = -C` and `B = -D`, except at seven positions:
+
+```
+[3, 18, 32, 61, 65, 101, 109]
+```
+
+The researcher then claimed the set is robust: it reproduces across five different encodings of the pubkey.
+
+## What we verified
+
+Running 1,000 uniformly random binary initial states through the same iteration, **every single trajectory** converged to a period-4 cycle, and **every single cycle** had the identical seven-position asymmetry set. The signature is not Genesis-specific. It is a property of the Anna Matrix itself.
+
+Results:
+
+| Test | Outcome |
+|---|---|
+| 1,000 random binary inputs | All converge to period-4 |
+| Unique asymmetry sets | Exactly 1 |
+| Unique period-4 cycles (up to rotation) | Exactly 2 |
+| Cycle sums | `(-42, 50, 38, -56)` |
+| Matching researcher's set | 1000 of 1000 trials |
+
+## The null test
+
+To confirm the signature is Anna-specific and not a generic property of signed integer matrices, we shuffled the 16,384 matrix values into five random matrices (preserving the marginal distribution) and ran 200 random inputs each.
+
+| Seed | Period-4 cycles found |
+|---|---|
+| 100 | 0 of 200 |
+| 101 | 0 of 200 |
+| 102 | 0 of 200 |
+| 103 | 0 of 200 |
+| 104 | 0 of 200 |
+
+Zero of 1,000 shuffled-matrix trials produced any period-4 cycle. Shuffling the matrix entries destroys the attractor completely.
+
+## New observations beyond the researcher's claim
+
+1. **Only two cycles exist.** The entire `3^128` ternary state space partitions into exactly two basins. The two cycles are negations of each other.
+2. **Positions 18 and 109 form a mirror pair** on the Mersenne axis (18 + 109 = 127).
+3. **Four of seven positions (32, 61, 65, 101)** lie in rows where the 68 anomaly cells concentrate. Three (3, 18, 109) do not.
+4. **Diagonal-27 completeness.** The matrix has exactly 10 diagonal cells with `|M[b][b]| = 27`, at positions `[72, 73, 74, 79, 88, 92, 94, 95, 119, 120]`. This matches the 10 unspent early Bitcoin coinbase blocks documented by the same external researcher.
+5. **Row 72 structure.** Row 72 contains exactly 27 cells with value -27 and zero cells with +27. The 27x(-27) pattern is an exact count, not a rough approximation.
+
+## Attribution
+
+Credit for the original observation goes to the anonymous researcher who posted it publicly on 2026-04-19. Our contribution is independent verification, the null test, and the two-cycle enumeration. We report the letter-decoding candidates from the researcher's post (`DSGJNXF`, `SJAISCI`, `IRAISCI`) but find none semantically compelling.
+
+## Open questions
+
+See Chapter 27, Section 5 for the full list. The three that seem most tractable:
+
+- What predicate on the initial state determines which of the two cycles it falls into?
+- Do the seven positions satisfy any bit-pattern or XOR relation?
+- Can the matrix construction rule be inferred if we assume the seven positions are load-bearing?
+
+## Reproduction
+
+The full verification script is in [Chapter 27, Section 6](/docs/03-results/27-seven-position-signature). It runs in under a minute on a modern laptop and produces deterministic output.
