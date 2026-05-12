@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { cn } from '@/lib/utils'
-import { Database, Cpu, Grid3X3, Info, TrendingUp, Box, Lock, Sparkles } from 'lucide-react'
+import { Database, Cpu, Grid3X3, Info, TrendingUp, Box, Lock, Sparkles, FlaskConical, Brain } from 'lucide-react'
 
 // Tab components will be lazy loaded
 import dynamic from 'next/dynamic'
@@ -38,8 +38,8 @@ const VisualizationsTab = dynamic(() => import('./tabs/VisualizationsTab'), {
   ssr: false,
 })
 
-const ParticleLifeSimulation = dynamic(() => import('./particle-life/ParticleLifeSimulation'), {
-  loading: () => <TableSkeleton label="Emergence Lab" />,
+const CognitiveLab = dynamic(() => import('./cognitive-lab/CognitiveLab'), {
+  loading: () => <TableSkeleton label="Cognitive Lab" />,
   ssr: false,
 })
 
@@ -50,6 +50,16 @@ const SpectralTab = dynamic(() => import('./tabs/SpectralTab'), {
 
 const ContactCubeTab = dynamic(() => import('./tabs/ContactCubeTab'), {
   loading: () => <TableSkeleton label="Contact Cube" />,
+  ssr: false,
+})
+
+const AigarthLabTab = dynamic(() => import('./tabs/AigarthLabTab'), {
+  loading: () => <TableSkeleton label="Aigarth Lab" />,
+  ssr: false,
+})
+
+const AnnaConceptLab = dynamic(() => import('./anna-concept-lab/AnnaConceptLab'), {
+  loading: () => <TableSkeleton label="Anna Concept Lab" />,
   ssr: false,
 })
 
@@ -78,16 +88,34 @@ const TABS: TabConfig[] = [
   },
   {
     id: 'emergence',
-    label: 'Emergence Lab',
+    label: 'Cognitive Lab',
     icon: <Sparkles className="w-4 h-4" />,
-    description: 'Particle Life simulation powered by Anna Matrix interaction rules',
+    description: "Live AI evolution: matrices evolved under HyperIdentity pressure converge toward Anna's functional structure",
+    badge: 'New',
+    badgeColor: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
     gradient: 'bg-[#D4AF37]/10',
+  },
+  {
+    id: 'anna-concept-lab',
+    label: 'Anna Concept Lab',
+    icon: <Brain className="w-4 h-4" />,
+    description: 'Verified production AIT inference + Anna as deterministic Concept Classifier (Phase N)',
+    badge: 'New',
+    badgeColor: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
+    gradient: 'bg-emerald-500/10',
   },
   {
     id: 'spectral',
     label: 'Spectral',
     icon: <TrendingUp className="w-4 h-4" />,
     description: 'Eigenvalue analysis — why the matrix produces cooperation',
+    gradient: 'bg-[#D4AF37]/10',
+  },
+  {
+    id: 'aigarth-lab',
+    label: 'Aigarth Lab',
+    icon: <FlaskConical className="w-4 h-4" />,
+    description: 'ITU benchmarks: Anna as a universal computational prior (Phase D, n=100, p<10⁻²⁸)',
     badge: 'New',
     badgeColor: 'bg-[#D4AF37]/15 text-[#D4AF37]/60 border-[#D4AF37]/20',
     gradient: 'bg-[#D4AF37]/10',
@@ -105,8 +133,6 @@ const TABS: TabConfig[] = [
     label: 'Contact Cube',
     icon: <Box className="w-4 h-4" />,
     description: '3D cube folding visualization of the Anna Matrix',
-    badge: 'New',
-    badgeColor: 'bg-[#D4AF37]/15 text-[#D4AF37]/60 border-[#D4AF37]/20',
     gradient: 'bg-[#D4AF37]/10',
   },
   {
@@ -209,7 +235,9 @@ export function EvidenceTabs() {
           </motion.div>
 
           <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-            <TabsList className="w-full flex flex-wrap justify-center gap-2 bg-transparent h-auto p-2 mb-8">
+            <div className="relative mb-8">
+            <div className="max-md:overflow-x-auto">
+            <TabsList className="flex md:flex-wrap max-md:flex-nowrap md:w-full max-md:w-max justify-start md:justify-center gap-2 bg-transparent h-auto p-2">
               {/* Active tabs */}
               {ACTIVE_TABS.map((tab) => (
                 <div
@@ -292,6 +320,9 @@ export function EvidenceTabs() {
                 </div>
               ))}
             </TabsList>
+            </div>
+            <div className="md:hidden absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-[#050505] pointer-events-none" />
+            </div>
 
             {/* Quick Win 20: Enhanced content container with subtle animation */}
             <motion.div
@@ -311,7 +342,7 @@ export function EvidenceTabs() {
               </TabsContent>
 
               <TabsContent value="emergence" className="mt-0 focus-visible:outline-none">
-                <ParticleLifeSimulation />
+                <CognitiveLab />
               </TabsContent>
 
               <TabsContent value="spectral" className="mt-0 focus-visible:outline-none">
@@ -324,6 +355,14 @@ export function EvidenceTabs() {
 
               <TabsContent value="contact-cube" className="mt-0 focus-visible:outline-none">
                 <ContactCubeTab />
+              </TabsContent>
+
+              <TabsContent value="aigarth-lab" className="mt-0 focus-visible:outline-none">
+                <AigarthLabTab />
+              </TabsContent>
+
+              <TabsContent value="anna-concept-lab" className="mt-0 focus-visible:outline-none">
+                <AnnaConceptLab />
               </TabsContent>
             </motion.div>
           </Tabs>

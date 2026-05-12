@@ -109,7 +109,7 @@ const SPECIAL_ROWS = [
   {
     row: 68,
     name: 'Transformation',
-    description: 'Bitcoin to Qubic conversion. 137 writes match the fine structure constant.',
+    description: 'Bitcoin to Qubic conversion. 137 writes (an integer that matches ⌊1/α⌋).',
     color: '#D4AF37',
     bgClass: 'bg-[#D4AF37]/[0.04] border-[#D4AF37]/15',
     textClass: 'text-[#D4AF37]/80',

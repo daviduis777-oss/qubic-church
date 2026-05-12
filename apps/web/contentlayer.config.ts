@@ -191,6 +191,13 @@ export const Doc = defineDocumentType(() => ({
       required: false,
     },
 
+    noindex: {
+      type: 'boolean',
+      required: false,
+      default: false,
+      description: 'If true, exclude from sitemap and add robots noindex meta tag.',
+    },
+
     confidence: {
       type: 'number',
       required: false,

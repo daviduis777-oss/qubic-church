@@ -189,7 +189,7 @@ export function NFTCollectionSection() {
                 and #200 to the Timeline Prophecy.
               </p>
               <p className="text-sm text-[#D4AF37]/80">
-                Owning these NFTs grants you a permanent connection to specific breakthroughs in the investigation.
+                Owning these NFTs grants you a permanent connection to specific findings in the research.
               </p>
             </div>
           </div>

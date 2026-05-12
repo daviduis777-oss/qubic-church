@@ -121,10 +121,20 @@ scripts/
 apps/web/k12_derivation_output.txt
 ERROR_CORRECTION_REPORT.md
 
-# Author images (template placeholders)
-apps/web/public/authors/
+# Author images — ignore everything under authors/ except our Qubic Church avatar
+apps/web/public/authors/*
+!apps/web/public/authors/qubicchurch.jpg
+!apps/web/public/authors/qubicchurch.png
 
 # Memory vault / sensitive dumps
 *MEMORY_VAULT*
 *memory_vault*
 *dump_void*
+
+# Research working directory (not for public repo)
+audit/
+marketplace-plan/
+
+# Local matrix backup files
+apps/web/public/data/anna-matrix.json.bak
+apps/web/public/data/*.bak

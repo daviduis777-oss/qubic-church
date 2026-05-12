@@ -34,6 +34,15 @@ export async function generateMetadata(props: {
 
     description: getObjectValueByLocale(siteConfig.description, locale),
 
+    robots: {
+      index: false,
+      follow: false,
+      googleBot: {
+        index: false,
+        follow: false,
+      },
+    },
+
     keywords: [
       'Qubic',
       'Qubic Church',

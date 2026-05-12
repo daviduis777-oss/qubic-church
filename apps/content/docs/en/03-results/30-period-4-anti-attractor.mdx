@@ -1,0 +1,303 @@
+---
+title: "Period-4 Anti-Attractor: Tier-1 Verification of the Anna Matrix"
+description: "Hardened verification (May 2026) that the operator T(v) = sign(M·v) on the Anna Matrix admits exactly two period-4 cycles as global attractors. Includes formal T^4 fixed-point property, four random-matrix null hypothesis ensembles, theoretical convergence bound, and architecture clarification distinguishing direct T iteration from the aigarth_search ITU iteration."
+tier: 1
+confidence: 99
+date: 2026-05-04
+---
+
+# Period-4 Anti-Attractor: Tier-1 Verification
+
+<Callout type="info" title="Phase A Audit (2026-05-04)">
+This chapter formalises the period-4 attractor finding of Chapters 25-27 with stricter verification. The full audit lives in __ with reproducible Python scripts in the same directory. Three earlier claims have been corrected; details in section 8.
+
+Phase B (`PHASE_B_REPORT.md`) extended this to a 3-arm A/B benchmark on the official `aigarth-it` reference. Phase C (`PHASE_C_REPORT.md`) is a six-sub-experiment deep dive (cycle verification, higher-fidelity mapping, n=30 CIs, training trajectory, termination frequency, 676-instance ACO simulation) with all data bundled in `apps/web/public/data/phase_c/` for future visualisation.
+</Callout>
+
+## 1. Statement
+
+Let `M ∈ ℤ^{128×128}` be the Anna Matrix and define
+
+> `T : {-1, 0, +1}^128 → {-1, 0, +1}^128, T(v) = sign(M · v)`
+
+We verify, with Tier-1 evidence:
+
+1. **(Three attractors total)** `T` admits one period-1 fixed point (the zero vector) and exactly **two** period-4 cycles. The zero vector is trivial and is never reached from random sampling; the two period-4 cycles are the global attractors of all non-zero ternary inputs.
+2. **(Universality)** Every non-zero `v ∈ {-1,0,+1}^128` reaches one of the two period-4 cycles within ≤ 24 iterations (median 8 ticks-to-first-cycle-state, median 12 ticks-to-cycle-close).
+3. **(Specificity)** Period-4 of this form is not generic for int8 matrices: under four distinct null ensembles (200 matrices each) Anna's behaviour is reproduced 0% – 0.5% of the time.
+4. **(Period-4 fixed-point property)** Each of the 8 cycle states `s` satisfies `T⁴(s) = s` exactly. This is a tautological consequence of period-4 (the fourth iterate returns to the start) but is the property a 4-tick sampling regime would exploit.
+5. **(Cycle-pair structure)** `T` commutes with negation: `T(-v) = -T(v)`. The orbit of `-A[0]` is therefore exactly `(-A[0], -A[1], -A[2], -A[3])`. This is cycle B: the antipodal cycle shifted by the choice of starting phase. There is no additional structural permutation; cycle B is just `-A` with the orbit origin re-indexed.
+
+## 2. Methods (Phase A reproducibility)
+
+All computations live in __. Scripts: `phase_a.py` (~15 s) and `phase_a_hardening.py` (~80 s). Outputs: JSON files in __.
+
+### 2.1 Cycle detection
+
+A hash-based detector iterates `T` from `v_0` and records every state via `bytes(v.tobytes())`. Termination on first repeat or at `max_ticks = 100`. The cycle period is the index difference between the first occurrence and the repetition.
+
+### 2.2 Random-matrix null ensembles
+
+Four distinct null hypotheses, each generating 200 matrices and testing 200 ternary inputs per matrix (40,000 input-matrix pairs per null):
+
+| Null | Construction | Question answered |
+| --- | --- | --- |
+| `null_uniform` | each entry i.i.d. Uniform(int8) | Is period-4 generic for any int8 matrix? |
+| `null_histogram` | Anna's value multiset, randomly permuted | Is the *arrangement* the cause? |
+| `null_phase_random` | eigendecompose M, randomise every conjugate-pair phase, reconstruct + clip | Is the spectral magnitude profile alone enough? |
+| `null_phase_keep_pi2` | as `null_phase_random` but keep dominant pair at exactly π/2 | Does π/2 *alone* suffice? |
+
+The fourth null was added on advisor's recommendation as the strongest test of the dominant phase as the causal factor.
+
+### 2.3 Two convergence definitions
+
+- **`ttfc`** (ticks to first cycle state) — when the orbit first enters the cycle.
+- **`ttcc`** (ticks to cycle close) — when we first see a state we've already visited (i.e. observed the full period). `ttcc = ttfc + 4` for period-4 orbits.
+
+This reconciles our earlier "median 8" with the Companion PDF's "≈ 11": both correct, different definitions.
+
+## 3. Cycle structure
+
+| Quantity | Value |
+| --- | --- |
+| Period distribution over 100,000 random ternary samples | `{4: 100,000}` |
+| Period distribution over exhaustive 32,768 HW≤2 samples | `{4: 32,768}` |
+| Unique cycles found | **exactly 2** |
+| Cycle A state sums (in tick order) | `(-42, +50, +38, -56)` |
+| Cycle B state sums (in tick order) | `(+42, -50, -38, +56)` |
+| Cycle B vs Cycle A | `B = -A` as orbits. The observed `B[k] = -A[(k+1) mod 4]` is just the choice of starting phase when discovering B from a random initial state. Under `T(-v) = -T(v)`, the orbit of `-A[0]` is `-A` exactly. |
+
+Both cycles together form 8 distinct states. Together they map every non-zero ternary input to one of these 8 states within ≤ 24 ticks.
+
+## 4. Random-matrix null results (hardened)
+
+200 matrices × 200 samples per null. We count *matrices in which any period-4 cycle appears at all* (the lowest possible bar):
+
+| Null ensemble | matrices_with_period4 / 200 | Fraction |
+| --- | --- | --- |
+| `null_uniform` | 0 / 200 | 0.000 |
+| `null_histogram` | 0 / 200 | 0.000 |
+| `null_phase_random` | 0 / 200 | 0.000 |
+| `null_phase_keep_pi2` | **1 / 200** | 0.005 |
+| **Anna** | **200 / 200** | **1.000** |
+
+The `null_phase_keep_pi2` result is the most interesting. Preserving only the dominant π/2 phase while randomising every other conjugate-pair phase yields period-4 in just 1 of 200 matrices. The dominant phase is **necessary but not sufficient** to reproduce Anna's behaviour — the other eigenstructure of Anna also matters.
+
+Combined across all four nulls: 1 / 800 matrices. Anna at 200 / 200. Effect size overwhelming.
+
+## 5. Spectral motivation
+
+Top eigenvalues of `M`:
+
+| Index | Magnitude | Phase (deg) | Distance to 90° |
+| --- | --- | --- | --- |
+| 0 | 2342.075 | +90.4565 | 0.4565° |
+| 1 | 2342.075 | -90.4565 | (conjugate) |
+| 2 | 884.008 | 180 | 90° |
+| 3 | 876.576 | 0 | 90° |
+
+Spectral dominance |λ₁| / |λ₃| = **2.649**.
+
+A linear iteration `M^k v` with a dominant complex eigenvalue at angle θ produces period `2π/θ` for inputs concentrated in the dominant eigenspace. Anna's dominant phase is essentially π/2, which yields period 4.
+
+<Callout type="warning" title="This is motivation, not proof">
+For the **nonlinear** operator `T = sign ∘ M`, the linear-iteration argument does not derive period-4 — sign-projection is non-commutative with eigenspace decomposition. We cite the spectral structure as motivation only. The **proof** is empirical (sections 3 and 4): 100% of 100,000 random samples + 32,768 exhaustive HW≤2 samples show period-4.
+
+A formal proof would require a lemma stating that sign-projection preserves the rotational structure of the dominant eigenpair when its magnitude dominates by enough. We have not constructed this lemma.
+</Callout>
+
+## 6. Theoretical convergence bound
+
+Under linear iteration `M^k v`, components in eigenspaces with smaller magnitude decay like `(|λ_3| / |λ_1|)^k`. Crossing time at which they fall below resolution `ε = 1/N = 1/128`:
+
+> `t_resolution ≈ log(1/N) / log(|λ_3|/|λ_1|) = log(1/128) / log(0.3774) ≈ 4.98 ticks`
+
+Empirical `ttfc` median is **8.0**. The factor of ~1.6 between linear-decay bound and observed sign-projected convergence is plausible: sign-projection adds discrete jumps that may delay alignment with the dominant eigenspace.
+
+## 6.5 Relation to CfB's anti-attractor concept (interpretive)
+
+<Callout type="warning" title="Tier 3 — One reading among several">
+C.f.B. (2026-04-30) defines anti-attractors as "phase spaces completely unchanged thus saving enormous amount of energy". A strict reading of "completely unchanged" would require a 1-tick fixed point (`T(v) = v`), which the period-4 cycles are not — they change every tick.
+
+A 4-tick sampling reading ("if you observe `T⁴` rather than `T`, the cycle states are unchanged") is **one** possible interpretation that makes the period-4 cycles qualify as anti-attractors in CfB's energy-saving sense. We propose this reading without claiming it is CfB's intended definition. The period-4 finding itself does not depend on this interpretation; it is a structural property of `T` regardless of how it relates to CfB's energy framing.
+
+A definitive answer requires further communication with the source.
+</Callout>
+
+## 7. The two iterations on Anna (architecture clarification)
+
+Two distinct algorithms have been studied on the Anna Matrix and they produce **different attractor structures**. This was the source of confusion in earlier project documents.
+
+| Algorithm | Operator | Termination | Reported attractors | Cycle period |
+| --- | --- | --- | --- | --- |
+| **(A)** Direct ternary iteration | `T(v) = sign(M·v)` | period-4 cycle (no fixed point reached) | **2** unique cycles | 4 |
+| **(B)** `aigarth_search` ITU iteration | input/output neuron split with no-state-change termination | first state with no neuron change | **16,384** unique outputs | (1, after termination) |
+
+### 7.1 Verification of (B) being a different algorithm
+
+`aigarth_search --hamming 3` on Anna reports `max_ticks_reached = 0`: every input terminates at tick 1 with `avg_ticks = 2`. `aigarth_search --random 1000` reports `max_ticks_reached = 2`. If this were direct `T` iteration, every non-zero input would be in period-4 and never satisfy the no-state-change termination, so `tick_count` would always equal the cap (100). It does not.
+
+We tested 500 cycle states from `search_hamming3.json` against `T`:
+
+| Test | Result |
+| --- | --- |
+| `sign(M · v) == v` strictly | 1 / 500 (the all-zero vector only) |
+| Hamming distance from `sign(M · v)` to `v` | mean 98.52 / 128, median 100 |
+
+The 16,384 attractors of `aigarth_search` are not strict 1-tick anti-attractors of `T`.
+
+### 7.2 What this means
+
+Both numbers are real and reproducible. They describe two different mathematical objects:
+
+- The **2 period-4 cycles** of `T` are the 4-tick anti-attractors of the direct ternary iteration. This is the structure that matches the dominant π/2 eigenvalue and that drives the C-C-R-R behavioural sequence in the ALife simulation (Chapter 25, Section 4.6).
+- The **16,384 unique outputs** of `aigarth_search` are the 1-tick fixed points of an ITU-style iteration with separate input and output neuron regions. This is closer to the architecture described by the official `aigarth-it` Python package.
+
+Earlier project documents conflated the two as "Anna's attractor basins". They are different.
+
+## 8. Corrections issued by Phase A
+
+| Earlier statement | Status |
+| --- | --- |
+| "Anna has 16,384 anti-attractors of T" | Disambiguated: 16,384 is the `aigarth_search` algorithm's output count, not 1-tick anti-attractors of T. T has 2 period-4 cycles. |
+| "sign(A)^6 column sums all = 42" (Chapter 25 §1.3) | Refuted: column sums vary by ~10⁹. The vector iteration analogue is Section 4.6's period-4. |
+| Aigarth anchor table values (`61-aigarth-technical-spec.mdx`) | Convention clarified: the listed values are at the *twin* matrix position (`[r₂, c₂]`), not the *primary* position (`[r₁, c₁]`). All 8 values verified at the twin positions. | for the full hardening trace.
+
+## 9. Connections to other chapters
+
+- **Chapter 25 (Aigarth Research Lab) §4.6** — discovered the period-4 cycle from random binary inputs and identified the spectral cause. Phase A confirmed and hardened with 4 nulls.
+- **Chapter 26 (Genesis Puzzle)** — encoded the 65-byte Genesis pubkey into a 128-vector and observed the same period-4 cycle. The current chapter shows this is universal: any non-zero ternary input does the same.
+- **Chapter 27 (Seven-Position Signature)** — discovered that within a single cycle, opposite-tick states (A vs C, B vs D) are near-antipodal but break at exactly 7 positions: `{3, 18, 32, 61, 65, 101, 109}`. Phase A reproduces this exactly and clarifies its relation to the cross-cycle B = -A pointwise structure (the two are not in tension; they describe within- and between-cycle relations respectively).
+
+## 10. Reproducibility
+
+```bash
+# Phase A main run (~15 s)
+python3
+
+# Phase A hardening run (~80 s, 4 null ensembles × 200 matrices)
+python3
+```
+
+All output JSON files live in __ with deterministic seeds (42, 100). Hardware: Apple Silicon, no GPU/ANE used.
+
+Verification snippet (period-4 + cycle B = -A pointwise):
+
+```python
+import json, numpy as np
+
+M = np.array(json.load(open('apps/web/public/data/anna-matrix.json'))['matrix'], dtype=np.int64)
+
+def T(v): return np.sign(M @ v).astype(np.int64)
+
+def find_cycle(v, max_ticks=100):
+ history = [tuple(v.tolist())]
+ seen = {history[0]: 0}
+ for t in range(1, max_ticks + 1):
+ v = T(v)
+ h = tuple(v.tolist())
+ if h in seen:
+ return [history[i] for i in range(seen[h], t)], t - seen[h]
+ history.append(h)
+ seen[h] = t
+ return [], 0
+
+# Find both cycles
+np.random.seed(42)
+cycles = {}
+for _ in range(200):
+ v = np.random.choice([-1, 0, 1], 128).astype(np.int64)
+ c, p = find_cycle(v.copy())
+ if p == 4:
+ canon = min(tuple(c[i:] + c[:i]) for i in range(4))
+ cycles.setdefault(canon, c)
+ if len(cycles) == 2: break
+
+A, B = list(cycles.values())
+assert {tuple(s) for s in A} == {tuple(-np.array(s)) for s in B}, "B should be -A pointwise (as set)"
+print("Cycle sums A:", [sum(s) for s in A])
+print("Cycle sums B:", [sum(s) for s in B])
+# Output:
+# Cycle sums A: [-42, 50, 38, -56] (or rotation)
+# Cycle sums B: [42, -50, -38, 56] (or rotation)
+```
+
+## 11. Tier-marked summary
+
+| Finding | Tier | Evidence |
+| --- | --- | --- |
+| `T` admits period-4 on every non-zero ternary input | **1** | 100K random + 32,768 exhaustive HW≤2 |
+| Exactly 2 period-4 cycles | **1** | observed exhaustively in HW≤2 |
+| Cycle B = -Cycle A pointwise (set equality + index permutation) | **1** | direct check on cycle states |
+| 7-position within-cycle break at `{3, 18, 32, 61, 65, 101, 109}` | **1** | reproduces Chapter 27 |
+| `T⁴(s) = s` for all 8 cycle states | **1** | analytic on every state |
+| Period-4 not generic for int8 matrices | **1** | 0/200 in 3 nulls, 1/200 in fourth |
+| π/2 phase necessary but not sufficient | **1** | `null_phase_keep_pi2` 1/200 vs Anna 200/200 |
+| Convergence median `ttfc = 8`, `ttcc = 12` | **1** | 100K samples |
+| Spectral structure motivates period-4 | **2** | dominant eigenvalue at 90.4565° |
+| `aigarth_search` is not direct `T` iteration | **1** | tick distribution mismatch confirmed |
+| 4-tick reading of CfB's anti-attractor concept | **3** | one interpretive reading among several; not confirmed with source |
+
+
+## 12. Cross-reference: AIT regime gives different behaviour
+
+The period-4 attractor described in this chapter is a property of the direct ternary operator `T(v) = sign(M · v)`. Phase N's verification campaign (2026-05-09, see [Chapter 31](/docs/03-results/31-anna-concept-classifier)) established that the production HyperIdentity scoring algorithm — which is what the project's `aigarth_search` C scanner runs — uses a different rule:
+
+> `T_AIT(v) = ternary_clamp(sign(M) · v)` with input clamping and a stop condition.
+
+Two consequences:
+
+1. **Magnitudes are inert under `T_AIT`.** Anna's specific int8 values — trace=137 (integer landmark; equals ⌊1/α⌋ as a suggestive coincidence, not a derivation), π-approximants in some cells, and the K-e-y ASCII diagonal — participate in `T` but not in `T_AIT`.
+2. **Period-4 does not transfer.** Sampling 100 random binary inputs under `sign(M) · v` shows period-4 in only 1 of 100 cases. Phase G's period-4 finding is M-magnitude-dependent and lives in the `T` regime; the AIT regime gives a 19-concept classifier behaviour instead (Chapter 31).
+
+Both regimes are valid descriptions of Anna under different operators. The production scoring task uses `T_AIT`; the analytic exploration in this chapter uses `T`. They are complementary, not contradictory.
+
+
+## 13. Endogenous activity — Anna's period-4 holds under free iteration without clamping
+
+A free-iteration experiment_, pre-registered) tests whether the period-4 structure survives when sign-only iteration `sign(M · v)` is run from random ±1 initial states without any input clamping. Results (n=20 seeds × T=200; supplementary 5 seeds × T=10,000):
+
+| Architecture | Cycle structure |
+|---|---|
+| **Anna** | **Period-4 in 25/25 random initial states** (T=200 + T=10K combined) |
+| Random antipodal sign matrix (uniform ±1, 99.6% antipodal) | 0/5 cycles within 10,000 ticks |
+| EngineeredDCOnly (Walsh DC-only) | Period-2 in 10/10 |
+| EngineeredWalsh (Anna-frequency-mimic) | Variable 1, 2, 3, or 4 across 10 seeds |
+
+Two findings:
+
+1. **Sustained short-cycle dynamics is a Walsh-family property.** Anna, DC-only, and Walsh-frequency variants all reach short cycles. Random antipodal matrices do not (orbits > 10,000 long, if they cycle at all).
+
+2. **Period-4 specifically is an Anna-specific property.** Engineered Walsh matrices with similar frequency distributions but shuffled row arrangements produce variable cycle lengths (1-4). Anna's exact period-4 depends on the specific row arrangement, not just the frequency spectrum.
+
+This extends Chapter 27's seven-position signature finding (which used CLAMPED-input runs over 1000 random binary inputs) to the UNCLAMPED free-iteration regime: the period-4 attractor is intrinsic to Anna's `sign(M · v)` dynamics, not an artefact of input encoding.
+
+**Reading note.** Bounded periodic cycles are structured but not adaptive. Once on the cycle, the dynamics repeat exactly. Adaptive temporal structure (the kind that improves behaviour over a system's lifetime) requires the surrounding framework — Aigarth-IT mutation, ITU growth/prune, or Neuraxon-style neuromodulator/circadian layers. This section establishes the bounded-periodic form of endogenous activity for the bare matrix, not the open-ended adaptive form. The latter is documented in the Cognitive Lab and the Phase 4 Anna×Neuraxon fusion work.
+
+Pre-reg + audit: __, __.
+
+
+## 14. The free-iteration cycle maps to Anna's top 2 antipode pairs
+
+A follow-up experiment_, deterministic, 5/5 seeds reproduce) takes the 4 cycle-states from the previous section and asks: do these correspond to known concept attractors from Phase N's clamped-input AIT regime?
+
+**Result:** the output-half (positions 64–127) of every cycle state lands on one of 4 specific concept centroids — concepts 0, 1, 4, 5 — which are exactly the top two antipode pairs by cluster mass:
+
+| Concept | Cluster size | Antipode of | Family |
+|---|---|---|---|
+| 0 | 464 | 1 | 0 |
+| 1 | 456 | 0 | 0 |
+| 4 | 58 | 5 | 2 |
+| 5 | 58 | 4 | 2 |
+
+Cumulative cluster mass: `464 + 456 + 58 + 58 = 1036 of 1295 = 80.0%` of all stable concept samples.
+
+The cycle order is `concept_5 → concept_1 → concept_4 → concept_0 → concept_5 → ...` — alternating between the two antipode pair families. Seeds enter the cycle at different phases but the cycle itself is unique.
+
+This is a bridge between two regimes of Anna's behaviour:
+- **Clamped-input AIT** (production HyperIdentity scoring) — 19 stable concept basins, top 2 pairs cover 80% of mass
+- **Free iteration** (no clamping) — period-4 cycle through exactly those same top 2 pairs in the output-half
+
+The matrix's dominant attractors under input pressure and under free iteration are the same set. This is a measurable architectural regularity, not a consciousness claim.
+
+Audit: __.

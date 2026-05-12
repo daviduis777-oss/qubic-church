@@ -4,38 +4,13 @@ import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
 import { Link } from '@/navigation'
 import {
-  Database,
-  Binary,
-  Coins,
   Grid3X3,
-  Shield,
   ExternalLink,
   Github,
   BookOpen,
   MessageCircle,
   Sparkles,
 } from 'lucide-react'
-
-const FOOTER_STATS = [
-  {
-    value: 21953,
-    label: 'Patoshi',
-    icon: Coins,
-    color: 'text-[#D4AF37]',
-  },
-  {
-    value: 23765,
-    label: 'Qubic',
-    icon: Binary,
-    color: 'text-[#D4AF37]',
-  },
-  {
-    value: 1004767,
-    label: 'Bitcoin',
-    icon: Database,
-    color: 'text-[#D4AF37]',
-  },
-]
 
 const QUICK_LINKS = [
   {
@@ -82,52 +57,6 @@ export function EvidenceFooter() {
       </div>
 
       <div className="container max-w-6xl mx-auto px-4">
-        {/* Main Stats */}
-        <motion.div
-          className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16 mb-8"
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-        >
-          {FOOTER_STATS.map((stat, idx) => {
-            const Icon = stat.icon
-            return (
-              <motion.div
-                key={stat.label}
-                className="flex items-center gap-3"
-                initial={{ opacity: 0, y: 20 }}
-                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                transition={{ delay: idx * 0.1 }}
-              >
-                <div className={`p-2 bg-muted/50 ${stat.color}`}>
-                  <Icon className="w-5 h-5" />
-                </div>
-                <div>
-                  <div className={`text-2xl font-bold font-mono ${stat.color}`}>
-                    {stat.value.toLocaleString('en-US')}
-                  </div>
-                  <div className="text-xs text-muted-foreground">{stat.label} Addresses</div>
-                </div>
-              </motion.div>
-            )
-          })}
-        </motion.div>
-
-        {/* Total Records Banner */}
-        <motion.div
-          className="text-center mb-8"
-          initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : { opacity: 0 }}
-          transition={{ delay: 0.3 }}
-        >
-          <div className="inline-flex items-center gap-3 px-6 py-3 bg-primary/10 border border-primary/20">
-            <Shield className="w-5 h-5 text-primary" />
-            <span className="font-mono text-lg text-primary font-bold">
-              {(1050515).toLocaleString('en-US')}
-            </span>
-            <span className="text-primary/80">Records Verified On-Chain</span>
-          </div>
-        </motion.div>
-
         {/* Quick Links */}
         <motion.div
           className="flex flex-wrap items-center justify-center gap-4 mb-8"

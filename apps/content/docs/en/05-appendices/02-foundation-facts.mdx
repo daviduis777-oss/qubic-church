@@ -12,6 +12,10 @@ This appendix provides canonical explanations for the most frequently referenced
 These facts appear 15-29 times throughout the documentation. Rather than repeating explanations, chapters link here for the authoritative reference.
 </Callout>
 
+<Callout type="warning" title="Reading scope: facts vs hypotheses">
+This appendix mixes **measured facts** (matrix dimensions, point-symmetry rate, Genesis-block timestamps, on-chain transaction data) with **hypothesized derivations** (address generation paths like `K12(K12(seed)) + step + XOR`). Sections explicitly marked "Hypothesized", "Possible", or "Hypothesis" are exactly that — strong patterns, not proven derivation procedures. Where this matters most: §4 (Address Family) generation methods are hypotheses that match the 0x7b family prefix, but no script reproduces 1CFB deterministically from a known seed. See `/docs/03-results/28-grok-path-verification` for the most recent walk-back on the related "Master Key" / Satoshi-Troll subclaims (tier-3, unverifiable).
+</Callout>
+
 ---
 
 ## 1. The Anna Matrix (128×128)

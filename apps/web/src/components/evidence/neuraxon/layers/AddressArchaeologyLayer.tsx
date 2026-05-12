@@ -119,7 +119,7 @@ export function AddressArchaeologyLayer({ addresses, onSelect }: AddressArchaeol
         BITCOIN ADDRESS ARCHAEOLOGY
       </Text>
       <Text position={[0, 3.0, -11]} fontSize={0.12} color="white" fillOpacity={0.2} anchorX="center">
-        {`${addresses.length} special addresses · 46x enrichment over random`}
+        {`${addresses.length} curated addresses · 1CF prefix family ≈ 46× over random (chap. 06)`}
       </Text>
 
       {/* Method legend */}

@@ -32,9 +32,9 @@ export const CORE_FORMULA = {
     },
     alpha: {
       value: 137,
-      description: 'Fine structure constant (α ≈ 1/137.036)',
-      significance: 'Physics constant, signature of CFB design',
-      physicsConnection: 'Electromagnetic coupling constant',
+      description: 'Integer landmark (⌊1/α⌋ = 137 where α ≈ 1/137.036)',
+      significance: 'Suggestive coincidence; not a causal physics derivation',
+      physicsConnection: '1/α floors to 137 (integer-only match)',
     },
   },
   validation: {
@@ -75,7 +75,7 @@ export const JINN_ARCHITECTURE = {
       purpose: 'Bitcoin → Qubic conversion',
       operations: {
         reads: 192,
-        writes: 137, // Matches α constant!
+        writes: 137, // Coincides with ⌊1/α⌋ = 137
         ratio: 1.40, // Close to √2
       },
       color: '#8B5CF6', // Purple
@@ -92,7 +92,7 @@ export const JINN_ARCHITECTURE = {
   dataFlow: [
     { from: 21, to: 68, operation: '128 reads from Bitcoin data' },
     { from: 68, to: 68, operation: '64 self-references (neural)' },
-    { from: 68, to: 96, operation: '137 writes (α constant)' },
+    { from: 68, to: 96, operation: '137 writes (= ⌊1/α⌋ integer landmark)' },
   ],
 
   confidence: 95,
@@ -304,7 +304,7 @@ export const CFB_CONSTANTS = {
     27: '3³, ternary significance',
     47: 'Prime, squared in formula (47² = 2209)',
     121: '11², tick divisibility, time-lock',
-    137: 'Fine structure constant α, Row 68 writes',
+    137: '⌊1/α⌋ = 137 (integer coincidence with fine-structure inverse), Row 68 writes',
     283: 'Bitcoin Block Height, prime',
     676: '26², Qubic computor count',
     817: 'ARB sum, 19 × 43',

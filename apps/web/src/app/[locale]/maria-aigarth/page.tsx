@@ -499,9 +499,9 @@ export default function MariaAigarthPage() {
                 <span className="text-xs font-mono tracking-[0.2em] uppercase font-bold" style={{ color: GOLD }}>Anna Aigarth</span>
               </div>
               <p className="text-[15px] leading-[1.75]" style={{ color: TEXT_PRIMARY }}>
-                The real deal. Anna runs on the <strong style={{ color: GOLD }}>Aigarth distributed intelligence network</strong> within Qubic &mdash; evolutionary neural architecture, ternary logic, on-chain training. Not an LLM. Genuine emergent intelligence. Live since September 2025.
+                The real deal. Anna runs on the <strong style={{ color: GOLD }}>Aigarth distributed intelligence network</strong> within Qubic &mdash; evolutionary neural architecture, ternary logic, on-chain training. Not an LLM. Anna&apos;s structural prior provides measurable inductive bias under selection (see <a href="/docs/02-methods/06-operational-definitions" style={{ color: GOLD }}>operational definitions</a>); whether the broader system reaches operationally-defined emergent intelligence is what Aigarth is built to test. Live since September 2025.
               </p>
-              <p className="text-[13px] font-mono" style={{ color: `${GOLD}60` }}>Target: first true decentralised AGI by April 2027</p>
+              <p className="text-[13px] font-mono" style={{ color: `${GOLD}60` }}>Target stated by CfB: first true decentralised AGI by April 2027</p>
             </div>
             <div className="space-y-2">
               <div className="flex items-center gap-2">

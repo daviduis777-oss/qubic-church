@@ -379,7 +379,7 @@ export default function SpectralTab() {
                 <TypedText text="A single mathematical property makes artificial creatures cooperate." delay={500} />
               </h2>
               <p className="text-white/30 text-xs sm:text-sm mt-2 max-w-xl leading-relaxed">
-                The dominant eigenvalue of the Anna Matrix rotates at 90.456° — a near-perfect quarter-turn that controls 40% of all dynamics. This creates a rhythmic cycle of cooperation and rest that no random matrix can replicate.
+                Anna&apos;s dominant eigenvalue rotates at 90.456° (a near-perfect quarter-turn) and controls 40% of the spectral magnitude. Under direct ternary iteration T(v) = sign(M·v), this produces exactly 2 period-4 cycles, verified across 100K random samples and 32K exhaustive HW≤2 inputs. Under the separate input-clamped AIT operator (the production scanner), period-4 does not transfer — that regime gives 16K period-1 fixed points instead.
               </p>
             </div>
           </div>
@@ -390,7 +390,7 @@ export default function SpectralTab() {
               { val: '90.456°', label: 'Rotation Angle', note: '0.5% from perfect quarter-turn' },
               { val: data.dominant.magnitude.toLocaleString(), label: 'Signal Strength', note: '2.7× stronger than random' },
               { val: `${data.dominant.dominance_pct}%`, label: 'System Control', note: '0 of 1,000 random matrices match' },
-              { val: 'Period-4', label: 'Behavioral Rhythm', note: 'Cooperate → Cooperate → Rest → Rest' },
+              { val: 'Period-4', label: 'Cycle structure (T operator)', note: '2 cycles · 100K random + 32K exhaustive · 0/800 in random nulls' },
             ].map(({ val, label, note }) => (
               <div key={label} className="p-4 sm:p-5 lg:p-6 text-center border-r border-white/[0.04] last:border-0 border-b lg:border-b-0 border-white/[0.04]">
                 <div className="text-xl sm:text-2xl lg:text-3xl font-bold font-mono text-[#D4AF37]">{val}</div>
@@ -408,7 +408,12 @@ export default function SpectralTab() {
           <div className="text-[10px] text-[#D4AF37]/50 uppercase tracking-[0.2em] font-mono mb-2">Emergent Behavior</div>
           <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white tracking-tight">The Cooperation Rhythm</h3>
           <p className="text-white/35 text-sm sm:text-base mt-2 max-w-2xl leading-relaxed">
-            No matter what input the matrix receives, it settles into the same 4-step pattern. Two beats of cooperation, two beats of rest. Zero aggression. Like a heartbeat for social behavior.
+            Under direct ternary iteration T(v) = sign(M·v), Anna admits exactly 2 period-4 cycles
+            with sums (-42, +50, +38, -56) and (+42, -50, -38, +56). Verified on 100K random
+            samples + 32K exhaustive HW≤2; reproduced on 200/200 Anna nulls vs 1/800 random nulls.
+            The companion paper maps these 4 phases onto a {'{'}cooperate, cooperate, rest, rest{'}'}
+            behavioural sequence. The ALife cooperation rate (~33%) is a separate empirical
+            measurement from a single 10M-tick seed=7 run.
           </p>
 
           <div className="mt-8 sm:mt-10">
@@ -522,10 +527,10 @@ export default function SpectralTab() {
                 <p className="text-white/30 text-xs sm:text-sm mt-3 leading-relaxed">Random matrices produce chaotic populations with boom-bust cycles. Anna produces stable communities that share food and avoid conflict.</p>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-6 pt-4 border-t border-[#D4AF37]/10 text-center">
-                {[{ v: 5, l: 'Seeds' }, { v: 5, l: 'M ticks' }, { v: 33, l: '% coop' }].map(({ v, l }) => (
+                {[{ v: 5, l: 'Seeds' }, { v: 1, l: 'M ticks' }, { v: 33, l: '% coop' }].map(({ v, l }) => (
                   <div key={l}><CountUp target={v} className="text-sm sm:text-base font-mono text-[#D4AF37] font-bold" /><div className="text-[9px] text-white/20">{l}</div></div>
                 ))}
-                <div><div className="text-sm sm:text-base font-mono text-white font-bold">±0.1%</div><div className="text-[9px] text-white/20">variance</div></div>
+                <div><div className="text-sm sm:text-base font-mono text-white font-bold">±0.1%</div><div className="text-[9px] text-white/20">CV 0.3%</div></div>
               </div>
             </div>
           </div>
@@ -533,7 +538,7 @@ export default function SpectralTab() {
           <TechDetail>
             <p>anna_neuraxon simulation, Objective-C with BLAS (Accelerate.framework), Apple Silicon M4.</p>
             <p>Random matrix: seed 2026, int8 uniform [-128, 127], same dimensions 128×128.</p>
-            <p>1M ticks × 5 seeds (42, 7, 13, 256, 1337): cooperation 33.0% ± 0.1% (CV = 0.3%).</p>
+            <p>5 seeds (42, 7, 13, 256, 1337) × 1M ticks each: mean cooperation 33.04 % ± 0.07 %. Individual seed means: 33.01 / 33.07 / 32.96 / 33.14 / 33.04 %. CV = 0.21 %. See <code>ensemble_1m_seed*.jsonl</code> (5 files).</p>
             <p>Stability gap grows over time: 2.7× at 100K → 6.0× at 500K ticks.</p>
           </TechDetail>
         </div>

@@ -1,0 +1,162 @@
+{
+  "phase": "E18",
+  "title": "Sparse WH reconstruction validation",
+  "anna_features": {
+    "dominant_angle_deg": 90.45648060670611,
+    "spectral_radius": 2342.074755386646,
+    "spectral_dominance_pct": 5.275373893116344
+  },
+  "anna_period_structure": {
+    "1": 0,
+    "2": 0,
+    "4": 100,
+    "other": 0,
+    "no_cycle": 0
+  },
+  "anna_itu_hit_baseline": 0.5555555555555555,
+  "results_by_K": {
+    "1": {
+      "k": 1,
+      "sign_match_pct": 62.481689453125,
+      "antipodal_pct": 0.0,
+      "spectral": {
+        "dominant_angle_deg": 89.99998065357751,
+        "spectral_radius": 5.447060073883397e-07,
+        "spectral_dominance_pct": 49.99999898823138
+      },
+      "trace": 0,
+      "period4_pct": 0.0,
+      "itu_hit": null
+    },
+    "5": {
+      "k": 5,
+      "sign_match_pct": 73.40087890625,
+      "antipodal_pct": 0.0,
+      "spectral": {
+        "dominant_angle_deg": 180.0,
+        "spectral_radius": 0.0019304312803947242,
+        "spectral_dominance_pct": 33.33608811597453
+      },
+      "trace": 0,
+      "period4_pct": 0.0,
+      "itu_hit": null
+    },
+    "10": {
+      "k": 10,
+      "sign_match_pct": 78.497314453125,
+      "antipodal_pct": 0.390625,
+      "spectral": {
+        "dominant_angle_deg": 90.00051529301574,
+        "spectral_radius": 2373.7688901351594,
+        "spectral_dominance_pct": 49.78355980234773
+      },
+      "trace": 0,
+      "period4_pct": 98.0,
+      "itu_hit": null
+    },
+    "26": {
+      "k": 26,
+      "sign_match_pct": 81.243896484375,
+      "antipodal_pct": 1.904296875,
+      "spectral": {
+        "dominant_angle_deg": 90.00239506889545,
+        "spectral_radius": 2227.967731042382,
+        "spectral_dominance_pct": 36.82374359590028
+      },
+      "trace": 0,
+      "period4_pct": 100.0,
+      "itu_hit": 0.5763888888888888
+    },
+    "50": {
+      "k": 50,
+      "sign_match_pct": 82.244873046875,
+      "antipodal_pct": 2.685546875,
+      "spectral": {
+        "dominant_angle_deg": 90.02045540440896,
+        "spectral_radius": 2190.101115143564,
+        "spectral_dominance_pct": 30.943366613697364
+      },
+      "trace": -1,
+      "period4_pct": 100.0,
+      "itu_hit": null
+    },
+    "100": {
+      "k": 100,
+      "sign_match_pct": 83.526611328125,
+      "antipodal_pct": 2.587890625,
+      "spectral": {
+        "dominant_angle_deg": 90.01647778261285,
+        "spectral_radius": 2275.080446686172,
+        "spectral_dominance_pct": 24.44340412169687
+      },
+      "trace": -2,
+      "period4_pct": 100.0,
+      "itu_hit": null
+    },
+    "256": {
+      "k": 256,
+      "sign_match_pct": 86.92626953125,
+      "antipodal_pct": 2.4169921875,
+      "spectral": {
+        "dominant_angle_deg": 90.00978559398692,
+        "spectral_radius": 2322.170884974297,
+        "spectral_dominance_pct": 16.962783193107946
+      },
+      "trace": -3,
+      "period4_pct": 100.0,
+      "itu_hit": 0.5609567901234568
+    },
+    "500": {
+      "k": 500,
+      "sign_match_pct": 89.593505859375,
+      "antipodal_pct": 2.45361328125,
+      "spectral": {
+        "dominant_angle_deg": 90.01215415993576,
+        "spectral_radius": 2298.8097472000895,
+        "spectral_dominance_pct": 13.196303654563916
+      },
+      "trace": -3,
+      "period4_pct": 100.0,
+      "itu_hit": null
+    },
+    "1000": {
+      "k": 1000,
+      "sign_match_pct": 92.49267578125,
+      "antipodal_pct": 2.9296875,
+      "spectral": {
+        "dominant_angle_deg": 90.01723732385771,
+        "spectral_radius": 2278.704310247755,
+        "spectral_dominance_pct": 7.5945228235633
+      },
+      "trace": -2,
+      "period4_pct": 0.0,
+      "itu_hit": 0.5632716049382716
+    },
+    "2000": {
+      "k": 2000,
+      "sign_match_pct": 95.0927734375,
+      "antipodal_pct": 3.21044921875,
+      "spectral": {
+        "dominant_angle_deg": 90.02568771702921,
+        "spectral_radius": 2287.973077744866,
+        "spectral_dominance_pct": 6.030666497879197
+      },
+      "trace": -4,
+      "period4_pct": 100.0,
+      "itu_hit": null
+    },
+    "5000": {
+      "k": 5000,
+      "sign_match_pct": 98.516845703125,
+      "antipodal_pct": 86.63330078125,
+      "spectral": {
+        "dominant_angle_deg": 90.62850285290578,
+        "spectral_radius": 2332.5005436895967,
+        "spectral_dominance_pct": 5.299178500402505
+      },
+      "trace": -55,
+      "period4_pct": 100.0,
+      "itu_hit": null
+    }
+  }
+}

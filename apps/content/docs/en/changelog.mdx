@@ -8,6 +8,105 @@ A running record of research findings, documentation updates, and Evidence Vault
 
 ---
 
+## May 2026
+
+### 2026-05-13 - Q4: free-iteration cycle maps to Anna's top 2 antipode pairs
+
+Follow-up to the endogenous-activity finding. The 4 states in Anna's free-iteration period-4 cycle have an output-half that lands on exactly 4 of the 19 Phase-N concept attractors — and those 4 are the top 2 antipode pairs by cluster mass:
+
+| Concept | Cluster size | Antipode of |
+|---|---|---|
+| 0 / 1 (pair) | 464 + 456 = 920 | each other |
+| 4 / 5 (pair) | 58 + 58 = 116 | each other |
+| Total | **1036 / 1295 = 80.0%** of stable-basin mass | — |
+
+Cycle order: `concept_5 → concept_1 → concept_4 → concept_0 → concept_5 → ...` (alternating between the two antipode pair families). Seeds enter at different phases; the cycle itself is unique.
+
+**The dominant attractors under input pressure and under free iteration are the same set.** This is a measurable architectural bridge between the two regimes, not a consciousness claim. Chapter 30 gets §14 documenting this.
+
+Audit: __, __.
+
+### 2026-05-13 - Endogenous activity test (free-iteration extension to Chapter 30)
+
+Pre-registered test of whether Anna's matrix architecture sustains intrinsic temporal dynamics under free iteration `sign(M · v)` with NO clamped input.
+
+- **Anna result**: 25/25 random initial states (T=200×20 + T=10,000×5) converge to a period-4 cycle. Transient ~7-9 ticks before entering cycle. Verdict locked: **ANNA SUSTAINS ENDOGENOUS ACTIVITY** in bounded periodic form.
+- **Random antipodal control**: 0/5 cycles within 10,000 ticks; orbits, if cyclic, are > 10,000 long.
+- **EngineeredDCOnly (Walsh DC-only)**: period-2 in 10/10.
+- **EngineeredWalsh (Anna-frequency mimic, shuffled rows)**: variable cycle lengths 1-4 across 10 seeds.
+
+Two-layer reading: sustained short-cycle dynamics is a **Walsh-family property**; the specific period-4 is an **Anna-specific** property (depends on row arrangement, not just frequency spectrum). Lerchner-compatible framing — measurable architectural property, not a consciousness claim.
+
+Integration: Chapter 30 (Period-4 Anti-Attractor) gets a new §13 documenting the free-iteration extension.
+
+Audit trail: __, `TASK_ENDOGENOUS_ACTIVITY.md`, `endogenous_activity_results.json`, `endogenous_extended_results.json`.
+
+---
+
+
+### 2026-05-12 - Cognitive Lab + Anna Concept Lab (17 interactive modules)
+
+Two full Evidence-Vault labs built since the last public push:
+
+**Cognitive Lab** (Evidence Vault → Cognitive Lab tab) — live HyperIdentity-pressure evolution on a pure-logic engine (bit-packed sign-only AIT, Web Worker thread).
+
+- **HyperIdentity Evolution** — live 3D Anna Brain + particle-life evolution plane; population converges toward the HyperIdentity Config0 reference structure.
+- **Concept Emergence** — discovers stable basins in a small population; cross-linked to Cluster Discovery for the honest emergence demo.
+- **Multi-Task Pareto** — fitness scatter across multiple tasks; shows substrate ceiling and multi-task interference onset.
+- **Structural Convergence** — radar chart of Anna's 7-axis structural fingerprint over generations (5 functional axes that emerge under selection + 2 identity axes that stay at 0%); Anna's fingerprint as dashed reference.
+- **Cognitive Trajectory** (`tech`) — full per-generation state trace, exposed for researchers.
+- **Visual Metaphor** marked deprecated — earlier "Anna is a brain" framing was misleading; new default: "we measure how matrices change under selection."
+
+**Anna Concept Lab** (Evidence Vault → Anna Concept Lab tab) — built on the production AIT TypeScript port (matches reference algorithm across 16,384 / 16,384 known inputs).
+
+- **Findings** — 12 pre-registered predictions vs live measurement. 11/12 passed; 1 falsified and removed.
+- **Try Your Input** (`easy`) — interactive 64-bit input panel; runs the production AIT path and shows the closest of 19 known concepts.
+- **Concept Universe** (`easy`) — all 19 attractors in 2D PCA; antipodal pairs connected; PC1 axis carries 81.7% of variance.
+- **Similarity Matrix** (`easy`) — 19×19 Hamming-distance heatmap over concept centroids.
+- **Dendrogram** — single-linkage Hamming dendrogram; cophenet 0.68, 45σ above random. The "19 concepts" finding lives here.
+- **Cluster Discovery** (`tech`) — silhouette sweep k=2..32. Anna peaks at k=2 (silhouette ≈ 0.89); random peaks at k≈3 (≈ 0.13). 7× tightness ratio is the legitimate emergence signal.
+- **Trajectory Cloud** — premium 3D scene showing AIT iteration as brain-tissue-like flow; validated tick-by-tick against the reference algorithm.
+- **Architecture** — overview of AIT structure: clamped-input iteration, ternary state, convergence criterion.
+- **Bit-flip Game** (`easy`) — interactive challenge demonstrating Anna's avalanche bimodality.
+- **Live Inference** (`tech`) — every tick of AIT rendered live with state vector and convergence diagnostic.
+- **Anna vs Random** — side-by-side comparator: Anna converges to a stable concept; random typically does not.
+
+**Explainability layer.** Every module supports four reading levels via the **ExplainPanel** component: **kid** (5-year-old metaphor), **simple** (curious non-specialist), **researcher** (methods + params), **math** (KaTeX, lazy-loaded). Glossary tooltip layer covers technical terms (bit, matrix, AIT, attractor, basin, antipodal symmetry, etc.) without dense prose.
+
+**Brutal-review verification pass (2026-05-12 evening) on top of the labs:**
+
+- Parity 60% claim re-verified at **n=20 seeds**: mean best-train 60.94% ± 11.59%, mean held-out 52.66% (4.6× random). The 60% threshold is crossed at the mean, not as a lucky single seed.
+- Walsh-Hadamard mechanism finding **generalizes** from popcount to parity: a hand-designed DC-only Walsh matrix beats Anna on parity by 0.60σ. Anna is one valid member of the sparse Walsh-Hadamard family, not the optimum within it.
+- **Aigarth+Qubic Vision doc** (`/docs/04-discussion/05-aigarth-qubic-vision`): two disclaimer callouts added. (1) Quote provenance — no public source located for the four attributed CfB Discord quotes despite targeted web search. (2) Reading scope — each section explicitly classified fact / interpretation / speculation.
+- **Aigarth Lab Section 14** wording softened ("Mathematical breakthrough" → "Spectral characterization"); new parity-engineering table rendered alongside popcount table.
+- **Aigarth Lab Section 13** re-sourced to n=20 numbers; explicit mean ± SD; per-seed-variance caveat preserved.
+- **Cluster Discovery silhouette chart** — labels moved from in-chart positions to header badge; eliminates overlap with Y-axis and with each other at narrow widths.
+- **Evidence tabs mobile overflow** — tab strip at 375px viewport no longer scrolls the page horizontally; internal scroll with gradient-fade affordance.
+
+**Verification surface.** 20 audit gates green (10 unit + 4 audit + 6 multi-seed). Production TypeScript build clean. Every numeric claim in the UI sourced from a JSON results file.
+
+**Path 2 — Scale-up verification (2026-05-12 night, pre-registered before any compute):**
+
+- **Task 2 (mod_11 protocol audit, LOCKED):** Anna-evolved Phase 3 mod_11 winners decode to integers at 5.3% (first-tile) / 6.0% (majority) — BELOW the 9.1% chance for 11-class. The +4.08σ Phase 3 signal is a substrate-bias detected at the bit-correlation level, NOT end-to-end integer capability. The two protocols (Phase 3 sign-matrix evolution vs ITU framework) measure different things; no contradiction.
+- **Task 3 (Walsh on gridworld, LOCKED):** EngineeredDCOnly within 0.46σ of Anna on 4×4 best — pre-reg verdict "GENERALIZES". BUT: SIGN_RANDOM init beats both Anna and DC_ONLY by 0.93σ. Goal-directed tasks at this scale are dominated by initialization noise, not substrate structure. Walsh substrate generalizes weakly to non-count-aligned tasks; random init does best.
+- **Task 4 (Anna-vs-Random, LOCKED):** Random-init Phase 4 addition mean = 0.144 in pre-reg [0.10, 0.25] band → verdict "ANNA HELPS, FRAMEWORK CAN". Framework alone reaches ~56% of Anna's level on adaptive task; popcount specifically remains Anna-necessary (random 2.5% held-out).
+- **Task 1 (parity n=100):** ABORTED at ~47% to free CPU; n=20 result stands. Pre-reg verdict on n=20: APPROACHES (mean 60.94% > 0.60, 95% CI [0.559, 0.660] includes both 0.58 and 0.60). The 60% claim is supported at the mean but not locked at 95% confidence — would need n ≥ 40-100 to tighten.
+
+**Refined publishable claim line (post-Path-2):** **task-conditional priors.** Anna's substrate matters when the task family aligns with its spectral signature; otherwise initialization noise dominates.
+- Count-aligned tasks (popcount, parity): Walsh substrate IS the engine; Anna is one member, EngineeredWalsh/DC-Only beat her.
+- Adaptive tasks (Phase 4 addition): Anna seed provides ~80% boost (0.256 vs 0.144) but framework alone reaches half the level.
+- Goal-directed tasks (gridworld): Neither Anna nor Walsh substrate helps; random init wins.
+
+Path 2 pre-reg: __. Per-task audits at __.
+
+**UI polish (in same release):**
+- ParetoScatter (Multi-Task Pareto in Cognitive Lab) — fixed axis-tick 0.4/0.4 corner collision; ticks now start at 0.5, X-axis label has more bottom clearance.
+- StructuralRadar (Structural Convergence in Cognitive Lab) — hid radial-tick labels (the "1.0" tick was overlapping with the "antipodal antisymmetry" axis label at the top of the radar).
+
+- [Blog post](/blog/2026-05-12-cognitive-lab-anna-concept-lab)
+
+---
+
 ## April 2026
 
 ### 2026-04-30 - First Book Published

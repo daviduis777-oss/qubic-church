@@ -29,7 +29,7 @@ establishing the Mersenne prime 2^7 - 1 as the fundamental architectural constan
 |---------|---------------|------------|---------|
 | Single period-4 attractor (1000/1000 convergence) | **Proven** | 99% | 1, 4 |
 | 68 palindromic exceptions in 4 mirror column pairs | **Proven** | 99% | 3 |
-| Dominant eigenvalue phase = pi/2 (0.16% deviation) | **Proven** | 99% | 1.2 |
+| Dominant eigenvalue phase ≈ pi/2 (0.4565° = 0.507% deviation) | **Proven** | 99% | 1.2 |
 | 127-formula: all anomaly column pairs sum to 127 | **Proven** | 100% | 5 |
 | Matrix functions as 4-phase synchronization clock | **Proven** | 95% | 8 |
 | Tick-loop convergence is generic to all matrices | **Proven** | 99% | 7 |
@@ -71,12 +71,12 @@ lambda_1 = -18.7 + 2342.0i
 | Real part | -18.7 |
 | Imaginary part | 2342.0 |
 | Phase angle | 1.5788 rad = 90.46 degrees |
-| Deviation from pi/2 | 0.0028 rad (0.16%) |
+| Deviation from pi/2 | 0.0080 rad (0.4565°, 0.507%) |
 
 The dominant eigenvalue is almost purely imaginary. Its phase angle of 90.46 degrees
-is within 0.16% of exactly 90 degrees (pi/2). This is the mathematical origin of the
+is within 0.51% of exactly 90 degrees (pi/2) — a deviation of 0.4565°. This is the mathematical origin of the
 period-4 cycle: four applications of a 90-degree rotation return to the starting point
-(4 x 90 = 360 degrees).
+(4 x 90 = 360 degrees). (Earlier docs stated 0.16% — that figure was incorrect by a factor of ~3; the correct value of 0.4565° / 0.51% matches `30-period-4-anti-attractor.mdx` and direct numpy verification of `np.linalg.eigvals(anna).max(key=abs)`.)
 
 ### 1.3 Trace = 137
 

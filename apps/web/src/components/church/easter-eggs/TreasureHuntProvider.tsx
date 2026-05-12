@@ -65,7 +65,7 @@ export const FRAGMENTS: FragmentData[] = [
   {
     id: 'signal',
     symbol: '\u25C8', // ◈
-    clue: '65.61.73.74.65.72 = "easter"',
+    clue: 'M[8,74], M[9,75], M[10,76] = K, e, y on the diagonal.',
     location: 'NFT Collection',
   },
   {

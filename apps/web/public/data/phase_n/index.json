@@ -1,0 +1,99 @@
+{
+  "phase": "N",
+  "name": "Phase N — Anna as Concept Classifier",
+  "date": "2026-05-09",
+  "version": "1.0",
+  "description": "Verified production AIT inference algorithm + Anna's behavior as deterministic Concept Classifier. 12 statistical verifications (V1–V8, M2–M5) + AIT 100% reproduction (16,384/16,384 attractors).",
+  "highlights": {
+    "ait_algorithm_match": {
+      "claim": "TypeScript AIT port reproduces C scanner output 100%",
+      "match_full_state": 16384,
+      "match_total": 16384,
+      "match_ticks": 16384,
+      "fresh_seeds_tested": 5
+    },
+    "anna_concepts": {
+      "n_concepts": 19,
+      "n_families": 11,
+      "antipodal_pairs": 8,
+      "singleton_families": 3,
+      "total_stable_inputs_in_concepts": 1295,
+      "biggest_pair_sizes": [464, 456]
+    },
+    "compression": {
+      "claim": "Anna compresses 16,384 inputs to 12,356 unique outputs",
+      "anna_unique_outputs": 12356,
+      "anna_compression_pct": 23.7,
+      "random_int8_compression_pct": 0.0,
+      "random_antipodal_antisym_compression_pct": 0.0,
+      "z_score": "infinite"
+    },
+    "hierarchy": {
+      "claim": "Anna's attractor space is hierarchically organized",
+      "anna_cophenet": 0.6821,
+      "random_int8_cophenet_mean": 0.1352,
+      "random_int8_cophenet_std": 0.0120,
+      "antipodal_antisym_cophenet_mean": 0.1270,
+      "z_score_vs_random": 45.55,
+      "z_score_vs_antipodal": 45.72
+    },
+    "concept_classifier": {
+      "claim": "Anna classifies 100 random inputs at mean Hamming 11.1/64 (vs random 22-23/64)",
+      "anna_mean_distance": 11.1,
+      "random_mean_distance_mean": 22.7,
+      "anna_inputs_within_5": 40,
+      "random_inputs_within_5_mean": 0
+    },
+    "basin_radius": {
+      "claim": "Stable basins have radius ~4 bits at 50% retention",
+      "radius_1_retention_pct": 82.0,
+      "radius_2_retention_pct": 63.9,
+      "radius_4_retention_pct": 45.0,
+      "radius_8_retention_pct": 25.4,
+      "radius_16_retention_pct": 11.3,
+      "radius_32_retention_pct": 3.0
+    },
+    "avalanche": {
+      "claim": "Bimodal: 7.3% inputs in stable basins (avalanche<4), 12.4% on boundaries (avalanche>28)",
+      "anna_mean_change_64bit": 17.5,
+      "anna_zero_change_pct": 8.3,
+      "anna_high_avalanche_pct": 26.2,
+      "random_mean_change_64bit": 13.4,
+      "random_zero_change_pct": 0.0
+    },
+    "period_32": {
+      "claim": "Anna has period-32 row symmetry: rows[0:32] ≈ rows[32:64], rows[64:96] ≈ rows[96:128]",
+      "anna_offset_32_similarity": 0.808,
+      "random_int8_offset_32_similarity": 0.495,
+      "z_score": 110.7,
+      "kernel_recon_accuracy": 0.945,
+      "decoration_cells": 904
+    },
+    "hyperidentity_alignment": {
+      "claim": "Anna fits HyperIdentity Config0 dimensions (smallest test scale)",
+      "anna_input_neurons": 64,
+      "anna_output_neurons": 64,
+      "config0_input_neurons": 64,
+      "config0_output_neurons": 64,
+      "production_input_neurons": 512,
+      "production_output_neurons": 512,
+      "anna_neighbor_connectivity": "dense (128)",
+      "config0_neighbor_connectivity": "sparse (64)"
+    }
+  },
+  "datasets": [
+    { "kind": "concepts", "label": "19 concept centroids", "path": "concepts.json" },
+    { "kind": "random_control", "label": "Random_int8 seed=42 matrix + concepts", "path": "random_controls/random_int8_seed42.json" },
+    { "kind": "verification", "label": "Statistical verification report", "path": "verification_report.json" }
+  ],
+  "plots": [
+    { "name": "n1_cophenet_comparison", "label": "Anna vs Random cophenet (45σ effect)", "file": "plots/n1_cophenet_comparison.png" },
+    { "name": "n1_dendrogram_anna", "label": "Anna's hierarchical attractor tree", "file": "plots/n1_dendrogram_anna.png" },
+    { "name": "n1e_attractor_embedding", "label": "PCA + t-SNE of Anna's attractor space", "file": "plots/n1e_attractor_embedding.png" },
+    { "name": "n1g_decoration_pattern", "label": "Anna's 904 decoration cells", "file": "plots/n1g_decoration_pattern.png" },
+    { "name": "n1b_two_cluster_signature", "label": "Top-level antipodal cluster split bit signature", "file": "plots/n1b_two_cluster_signature.png" },
+    { "name": "m3_avalanche_bimodal", "label": "Bimodal avalanche distribution", "file": "plots/m3_avalanche_bimodal.png" },
+    { "name": "m5_concept_basin_radius", "label": "Concept basin radius profile", "file": "plots/m5_concept_basin_radius.png" },
+    { "name": "m4_io_correlation", "label": "Anna I/O bit correlation (NOT identity)", "file": "plots/m4_io_correlation.png" }
+  ]
+}

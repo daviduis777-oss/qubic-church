@@ -15,7 +15,7 @@ export const blogConfig: BlogConfig = {
     {
       id: 'qubicchurch',
       name: 'Qubic Church',
-      image: '/authors/qubicchurch.jpg',
+      image: '/authors/qubicchurch.png',
       site: 'https://github.com/daviduis777-oss/qubic-church',
       email: '',
 

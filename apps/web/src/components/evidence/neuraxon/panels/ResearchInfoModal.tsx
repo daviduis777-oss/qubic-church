@@ -194,18 +194,19 @@ export function ResearchInfoModal({ isOpen, onClose }: ResearchInfoModalProps) {
             <PhaseTag label="REST" color="bg-blue-500/20 text-blue-400/80 border-blue-500/30" />
           </div>
           <div className="space-y-1.5 mt-2">
-            <StatRow label="Cooperation Rate" value="33.0% (+-0.1%)" />
-            <StatRow label="Validation" value="10M ticks, multiple seeds" />
-            <StatRow label="Random Matrix Rate" value="0% show period-4" />
+            <StatRow label="T cycle period" value="4 (verified, 100K + 32K exhaustive)" />
+            <StatRow label="Null reproduction" value="0/800 random nulls; Anna 200/200" />
+            <StatRow label="ALife cooperation" value="33.0 % ± 0.1 % (5 seeds × 1M ticks, CV 0.3 %)" />
           </div>
           <div className="mt-2 bg-white/[0.03] border border-white/[0.06] p-2">
             <p className="text-[11px] text-white/40 leading-relaxed">
-              <span className="text-[#D4AF37]/70 font-medium">Structural attractor: </span>
-              The 33% cooperation rate is not random -- it is a mathematical consequence
-              of the eigenvalue structure. Two out of every four phases are cooperative,
-              giving exactly 2/4 = 50% active phases, with measured cooperation at 33.0%
-              across all tested seeds. This is Anna-specific: random matrices do not produce
-              stable period-4 cycles.
+              <span className="text-[#D4AF37]/70 font-medium">Two operators, two regimes: </span>
+              Under direct ternary iteration T(v) = sign(M·v), Anna admits 2 period-4 cycles
+              (Tier 1, see Chapter 30). The separate input-clamped AIT operator (production
+              scanner) gives 16K period-1 fixed points — period-4 does not transfer between regimes.
+              The COOP-COOP-REST-REST mapping is the companion paper&apos;s reading of the
+              T-regime cycle. The ALife cooperation rate (33.0 % across 5 seeds, CV 0.3 %)
+              is a separate empirical measurement; the link between the two is the companion-paper hypothesis.
             </p>
           </div>
         </div>

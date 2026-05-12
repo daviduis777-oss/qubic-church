@@ -43,6 +43,14 @@ export async function generateMetadata(props: {
     title: doc.title,
     description: doc.description,
 
+    ...(doc.noindex && {
+      robots: {
+        index: false,
+        follow: false,
+        googleBot: { index: false, follow: false },
+      },
+    }),
+
     openGraph: {
       type: 'article',
       title: doc.title,

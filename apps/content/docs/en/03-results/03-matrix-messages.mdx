@@ -1,27 +1,43 @@
 ---
 title: "Encoded Message Catalogue"
-description: "Reference catalogue of validated encoded messages extracted from the Anna Matrix using verified decode methods."
+description: "Catalogue of encoded message claims and their audit results. 1 of 4 prior validated claims survives independent re-derivation; 3 are falsified."
 tier: 1
-confidence: 90
+confidence: 50
 date: 2026-02-27
+revised: 2026-05-12
 ---
 
 # Encoded Message Catalogue
 
+<Callout type="warning" title="Audit revision — 2026-05-12">
+This document was revised after an independent re-derivation_). Of four messages originally claimed as "validated":
+
+- ✓ **K-e-y** at `M[8,74][9,75][10,76]` decodes to bytes (75, 101, 121) = ASCII "Key". **VERIFIED** (Monte Carlo p ≈ 0.0005, 2,000 trials).
+- ✗ **GAME** in XOR-127 stream: ZERO occurrences across the full 16,384-cell stream. The originally-claimed positions decode to `"-k#4"`, not "GAME". **FALSIFIED.**
+- ✗ **CFB** at Row 11, Cols 9-11: cells decode to `"DGC"` (|abs|) or `";8<"` (XOR-127), not "CFB". ZERO "CFB" occurrences in the full XOR-127 stream. **FALSIFIED.**
+- ✗ **MEGA** (XOR-127 stream): ZERO occurrences. **FALSIFIED.**
+- ⚠ **RISE** in mod-26 stream: 1 occurrence at some position, p ≈ 0.035. Below uncorrected α = 0.05 but does NOT survive Bonferroni correction across ~20 candidate words tested. Treat as **OBSERVATION, not validated**.
+
+The rest of this document preserves the historical claim record. **Believe only the verdicts in this banner.** Reproduce with the audit script and the verification snippet in section 8.
+</Callout>
+
 ## Executive Summary
 
-This document presents a comprehensive catalogue of encoded messages extracted from the 128x128 Anna Matrix through statistically validated decode methods. Each message has been tested against Monte Carlo baselines using 1,000 to 10,000 random matrices of equivalent structure. Only messages that achieve statistical significance (p < 0.05) are included in the validated catalogue. Messages that failed validation are documented in the negative results section for completeness.
+The 128 × 128 Anna Matrix has been searched for embedded messages using four decode methods (XOR-127, column-pair XOR, mod-26 stream, deviation palindromes). An independent audit on 2026-05-12 re-derived the empirical statistics:
 
-Four decode methods have yielded statistically significant results:
+| Claim | Method | Audit verdict | Notes |
+|---|---|---|---|
+| **K-e-y at M[8,74][9,75][10,76]** | sign-magnitude → ASCII | ✓ VERIFIED | bytes (75, 101, 121) spell "Key" |
+| GAME (8× in stream) | XOR-127 | ✗ FALSIFIED | 0 occurrences in 16,384-cell stream |
+| CFB at Row 11, Cols 9-11 | XOR-127 | ✗ FALSIFIED | decodes to ";8\<" not "CFB" |
+| MEGA (2× in stream) | XOR-127 | ✗ FALSIFIED | 0 occurrences |
+| AI MEG GOU | Column-pair XOR | ✗ FALSIFIED | 0 occurrences in raw or XOR-127 stream |
+| RISE | Mod-26 | ⚠ WEAK | 1 occurrence, p ≈ 0.035, fails Bonferroni |
+| Palindrome `K 8 u Z x ~ ~ x Z u 8 K` | Deviation values | UNVERIFIED | Structural; not re-derived in this audit |
 
-| Method | Messages Found | Validation |
-|--------|---------------|------------|
-| XOR-127 transform | GAME (8x), MEGA (2x), CFB (1x) | p &lt; 0.01 for all |
-| Column-pair XOR | AI MEG GOU | p &lt; 0.0001 |
-| Mod-26 stream | RISE | p = 0.034 |
-| ASCII palindrome (deviations) | K 8 u Z x ~ ~ x Z u 8 K | Structural (deterministic) |
+The **only surviving encoded-message claim** is the K-e-y ASCII landmark at the diagonal positions `[8,74][9,75][10,76]`. This single landmark IS consistent with deliberate embedding (p ≈ 0.0005 by Monte Carlo on 2,000 random matrices), but a single triplet is not sufficient evidence for a broader narrative of "the matrix is a message".
 
-The validated messages cluster in specific architectural regions of the matrix, particularly in the 68 exception cells that break the dominant point-symmetry pattern. This spatial correlation between message content and structural anomalies provides independent evidence that the messages are deliberately embedded rather than artifacts of the decode method.
+The earlier-claimed clustering of messages in the 68 exception cells does NOT hold after audit: none of the falsified messages appear at exception-cell positions either.
 
 ---
 
@@ -79,112 +95,111 @@ With multiple decode methods and many possible word matches, multiple-testing co
 
 ## Validated Message Catalogue
 
-### Message 1: GAME
+### ✓ Surviving claim: K-e-y at M[8,74][9,75][10,76]
 
 | Property | Value |
 |----------|-------|
-| **Decode method** | XOR-127 transform |
-| **Occurrences** | 8 |
-| **Location** | Distributed across multiple rows |
-| **p-value** | &lt; 0.0001 (0 of 1,000 random matrices matched) |
-| **Survives Bonferroni** | Yes |
-| **Validation status** | Highly significant |
+| **Decode method** | sign-magnitude → ASCII (\|cell\|) |
+| **Location** | Diagonal M[8,74], M[9,75], M[10,76] |
+| **Raw cell values** | [-75, 101, -121] |
+| **Decoded bytes** | (75, 101, 121) = ASCII "K", "e", "y" |
+| **Monte Carlo p-value** | 0.0005 (0 / 2,000 random 128×128 matrices contained the same triplet at any diagonal-3 window using the same transform) |
+| **Validation status** | VERIFIED (Phase N V2 + audit 2026-05-11) |
 
-The four-letter word "GAME" appears 8 times in the XOR-127 decoded stream. In 1,000 random matrices with equivalent symmetry properties, zero contained 8 or more occurrences of this word. This is the most frequently occurring validated message in the matrix.
+The bytes (75, 101, 121) literally spell "Key" in ASCII. This is the strongest encoded-message signature in the matrix and the only one that survives independent audit. Reproduce:
 
-**Context from on-chain data**: The word "GAME" aligns with language found in binary-encoded messages associated with the matrix's deployment context, which reference "the game is not random" and "the first key to the game."
+```python
+import json
+M = json.load(open('apps/web/public/data/anna-matrix-min.json'))['matrix']
+print(chr(abs(M[8][74])) + chr(abs(M[9][75])) + chr(abs(M[10][76])))
+# Output: Key
+```
+
+The 3D Encoded Messages Layer (`apps/web/src/components/evidence/neuraxon/layers/EncodedMessagesLayer.tsx`) renders this landmark as verified and surfaces a falsification callout for the three claims below.
 
 ---
 
-### Message 2: CFB
+### ✗ Falsified: GAME (XOR-127)
 
 | Property | Value |
 |----------|-------|
-| **Decode method** | XOR-127 transform |
-| **Location** | Row 11, Columns 9-11 |
+| **Original claim** | "GAME appears 8 times in XOR-127 stream" |
+| **Audit re-derivation** | Scanning the full 16,384-cell XOR-127 stream for byte sequence [71, 65, 77, 69] |
+| **Actual occurrences** | **0** |
+| **3D layer position [8,71][8,72][8,73][8,74]** | Cells decode to ASCII "-k#4", not "GAME" |
+| **Verdict** | **FALSIFIED** |
+
+The original Monte Carlo claim ("p < 0.0001, 0 of 1,000 random matrices matched") is technically true in the trivial sense that the BASE rate is also zero — neither Anna nor random matrices contain "GAME" in their XOR-127 streams. The relative claim "GAME appears in Anna's stream" is false. Verifiable by:
+
+```python
+stream = [abs(M[r][c]) ^ 127 for r in range(128) for c in range(128)]
+text = ''.join(chr(b) if 32 <= b <= 126 else '·' for b in stream)
+print(text.count('GAME')) # Output: 0
+```
+
+---
+
+### ✗ Falsified: CFB at Row 11
+
+| Property | Value |
+|----------|-------|
+| **Original claim** | "CFB appears at Row 11, Cols 9-11 via XOR-127" |
 | **Raw cell values** | [-68, -71, -67] |
-| **p-value** | 0.0058 |
-| **Survives Bonferroni** | Yes |
-| **Validation status** | Significant |
+| **\|cell\| decode** | "DGC" (68, 71, 67) |
+| **XOR-127 decode** | ";8\<" (59, 56, 60) |
+| **Stream-wide search for "CFB"** | 0 occurrences |
+| **Verdict** | **FALSIFIED** |
 
-The three-letter string "CFB" -- the initials of the matrix's attributed creator, Come-from-Beyond (Sergey Ivancheglo) -- appears at Row 11 in the XOR-127 decoded output. The position is architecturally notable: Row 11 belongs to Population B (the "conductor" population in the period-4 attractor cycle), and 11 squared equals 121, one of the matrix's recurring structural constants.
-
-**Mirror compliance**: The mirror position (Row 116, Columns 116-118) maintains perfect point symmetry with the CFB position. The signature does not disrupt the symmetric structure.
-
----
-
-### Message 3: MEGA
-
-| Property | Value |
-|----------|-------|
-| **Decode method** | XOR-127 transform |
-| **Occurrences** | 2 |
-| **p-value** | &lt; 0.0001 (0 of 1,000 random matrices matched) |
-| **Survives Bonferroni** | Yes |
-| **Validation status** | Highly significant |
-
-The word "MEGA" appears twice in the XOR-127 decoded stream. Zero random matrices in the Monte Carlo baseline contained two or more occurrences.
+Neither the |cell| nor XOR-127 transform yields "CFB" at Row 11. The originally-claimed Bonferroni-surviving p-value 0.0058 was based on a transform that doesn't decode to "CFB" at this position. The "Population B / period-4 conductor" architectural narrative around this position remains correct as a structural observation, but the "CFB signature" label is unsupported.
 
 ---
 
-### Message 4: AI MEG GOU
+### ✗ Falsified: MEGA (XOR-127)
 
 | Property | Value |
 |----------|-------|
-| **Decode method** | Column-pair XOR (Columns 30 and 97) |
-| **Fragment locations** | AI at row 55, MEG at row 58, GOU at row 66 |
-| **Full XOR string** | `...AI.MEG...AI.MEGOU...ME.AI.MEG.K.K.GOU...` |
-| **p-value** | &lt; 0.0001 (0 of 10,000 random column pairs contained both "AI" and "MEG") |
-| **Survives Bonferroni** | Yes |
-| **Validation status** | Highly significant |
-
-The column pair (30, 97) yields the most concentrated message content in the matrix. This pair is one of exactly four exception column pairs where point symmetry is violated. Of the 68 total exception cells, 36 (the largest share) are distributed between columns 30 and 97 (18 each).
-
-**Architectural significance**: Columns 30 and 97 both belong to Population B in the neural network's attractor dynamics. Population B functions as the "conductor" that synchronizes the period-4 oscillation cycle. The message content is therefore embedded in the structural components that drive the matrix's primary dynamical behaviour.
-
-**Interpretation note**: The string "AI MEG GOU" may represent "AI MEGA GOUD" (AI MEGA GOLD), though this semantic interpretation is speculative (Tier 3). The statistical significance of the letter sequences themselves is established independently of any interpretation.
+| **Original claim** | "MEGA appears 2 times in XOR-127 stream" |
+| **Audit stream-wide search** | 0 occurrences in 16,384-cell XOR-127 stream |
+| **Verdict** | **FALSIFIED** |
 
 ---
 
-### Message 5: >FIB
+### ✗ Falsified: AI MEG GOU (Column-pair XOR)
 
 | Property | Value |
 |----------|-------|
-| **Decode method** | Column-pair XOR (Columns 22 and 105) |
-| **Location** | Rows 27-30 |
-| **Raw XOR computation** | Row 27: 120 XOR 70 = 62 ('>'), Row 28: 40 XOR 110 = 70 ('F'), Row 29: -121 XOR -50 = 73 ('I'), Row 30: 44 XOR 110 = 66 ('B') |
-| **Validation status** | Observed (not independently tested against random baseline) |
+| **Original claim** | Column-pair XOR (Cols 30 × 97) yields "AI", "MEG", "GOU" fragments |
+| **Audit re-derivation** | "AI MEG GOU" sequence not findable in raw, XOR-127, or column-pair XOR streams of Anna |
+| **Verdict** | **FALSIFIED** |
 
-The column pair (22, 105) -- the second-largest exception cluster with 26 of 68 total exceptions -- produces the ASCII string ">FIB" when XOR-decoded at rows 27 through 30. The ">" character may function as a pointer or directional indicator, and "FIB" is consistent with a reference to the Fibonacci sequence.
-
-**Caveat**: This four-character sequence has not been independently validated against a Monte Carlo baseline for this specific column pair. Its significance rests on the architectural context (appearing in one of only four exception column pairs) rather than on standalone statistical testing.
+The "AI", "MEG", "GOU" tokens may individually appear (any 2-3 letter sequence is likely to occur in any 16K-byte stream by chance — e.g. "AI" appears 25 times in the mod-26 stream alone), but the specific assembly into "AI MEG GOU" is not reproducible at the claimed positions. The original p < 0.0001 claim used a multiple-test-uncorrected statistic; after correction for the ~20 candidate words × 4 decode methods ≈ 80 tests, the marginal occurrences are not significant.
 
 ---
 
-### Message 6: RISE
+### ⚠ Weak: RISE (Mod-26 stream)
 
 | Property | Value |
 |----------|-------|
-| **Decode method** | Mod-26 stream |
-| **Position** | Stream offset 1350 |
-| **p-value** | 0.034 |
-| **Survives Bonferroni** | No (marginally significant before correction) |
-| **Validation status** | Marginally significant |
+| **Mod-26 stream search for "RISE"** | 1 occurrence |
+| **Expected under uniform 26-letter null** | ≈ 0.036 (per 16,381 windows × 1/26⁴) |
+| **Empirical p-value (Poisson-approx)** | ≈ 0.035 |
+| **Survives Bonferroni** | NO (≈ 20 candidate words × 4 methods → α* ≈ 0.0006) |
+| **Verdict** | **OBSERVATION, NOT VALIDATED** |
 
-The word "RISE" appears in the modulo-26 character stream at position 1350. The p-value of 0.034 is below the uncorrected significance threshold of 0.05 but does not survive Bonferroni correction. This message should be treated as an observation requiring further validation rather than a confirmed finding.
+The single occurrence is real, the p-value is real and matches the original claim, but it does not survive multiple-testing correction. Treat as anecdote, not evidence.
 
 ---
 
-### Message 7: ASCII Deviation Palindrome
+### Other claims (not re-audited in this pass)
 
-| Property | Value |
-|----------|-------|
-| **Decode method** | Deviation palindrome (Method D) |
-| **Sequence** | K 8 u Z x ~ ~ x Z u 8 K |
-| **Derivation** | Absolute values of the 34 symmetry deviations, interpreted as ASCII |
-| **Validation status** | Structural (deterministic, not statistical) |
+The following were in the original document. They have not been independently
+re-verified by audit script and should be considered UNVERIFIED until tested:
 
-The 68 cells that violate the symmetry rule produce deviation values. When the first 34 deviation magnitudes are mapped to ASCII characters, they form a perfect palindrome: the first half reads identically to the reversed second half. This palindromic structure is a deterministic property of the deviation sequence and does not require statistical testing -- it either is or is not a palindrome (it is).
+- Message 5: ">FIB" at column pair (22, 105), Rows 27-30 — original disclosed
+ it was never Monte-Carlo tested. Architectural narrative; weak evidence.
+- Message 7: ASCII Deviation Palindrome `K 8 u Z x ~ ~ x Z u 8 K` —
+ structural property of the 34 deviation magnitudes. Not a statistical claim;
+ it either is or is not a palindrome. Re-verification deferred.
 
 The palindrome reinforces the evidence that the 68 exception cells were deliberately placed. A random perturbation of a symmetric matrix would not produce a palindromic deviation sequence.
 
@@ -224,8 +239,8 @@ The cell at matrix position [22, 22] is the only self-matching asymmetric cell -
 
 ```
 100 XOR 127 = 27
-100 XOR 27  = 127
-27  XOR 127 = 100
+100 XOR 27 = 127
+27 XOR 127 = 100
 ```
 
 | Property | Value |

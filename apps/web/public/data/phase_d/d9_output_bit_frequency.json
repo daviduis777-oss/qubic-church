@@ -1,0 +1,33 @@
+{
+  "phase": "D9",
+  "description": "Output bit frequency per arm at full 7-bit input range. Confirms Anna ITU outputs are dominated by '0' bits (negative trits, -1 → '0').",
+  "n_seeds": 5,
+  "n_inputs": 961,
+  "input_grid_range": [-60, 60],
+  "output_bits_per_inference": 8,
+  "frequencies": {
+    "anna": {
+      "P_bit_1": 0.1379,
+      "P_bit_0": 0.8568,
+      "P_bit_unknown": 0.0053,
+      "interpretation": "85.7% of output bits are '0' (i.e., trit = -1). The remaining 0.5% '?' come from output trit = 0 (no positive or negative sum reached threshold)."
+    },
+    "dense": {
+      "P_bit_1": 0.4938,
+      "P_bit_0": 0.5062,
+      "P_bit_unknown": 0.0
+    },
+    "random": {
+      "P_bit_1": 0.5158,
+      "P_bit_0": 0.4842,
+      "P_bit_unknown": 0.0
+    }
+  },
+  "implications": [
+    "Anna's apparent 'sparse output' is actually 'negative-trit dominant output'.",
+    "ternary_clamp(sum) = -1 when sum < 0, +1 when sum > 0, 0 when sum = 0.",
+    "Anna's weights × wrap-around steady-state bias the output sums negative.",
+    "The 84% '0' bits explain most of D1c's bias-only predictions for sparse-gage tasks (parity_eq, AND, mult_low).",
+    "D1c's residual analysis correctly isolates the task-conditional structure beyond this bias."
+  ]
+}

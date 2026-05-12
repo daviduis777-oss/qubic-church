@@ -1,0 +1,132 @@
+{
+  "phase": "D",
+  "date": "2026-05-04",
+  "version": "1.0.0",
+  "description": "Phase D — Deep extension of Phase C: 6 sub-experiments scaling claims to paper-grade.",
+  "highlights": {
+    "d1_multitask": {
+      "claim": "After bias-correction (D1c): 7 tasks show GENUINE task-conditional signal beyond Anna's sparse-output bias.",
+      "anna_p_bit_1": 0.158,
+      "dense_p_bit_1": 0.496,
+      "biggest_genuine_residual_task": "max",
+      "biggest_genuine_residual": 0.057,
+      "addition_residual": 0.010,
+      "tasks_genuine_after_bias_correction": 7,
+      "tasks_weak_genuine": 2,
+      "tasks_bias_artifacts": 5,
+      "tasks_tested": 14
+    },
+    "d2_n100": {
+      "claim": "Anna vs density-matched at paper-grade statistics.",
+      "n_seeds": 100,
+      "anna_hit_rate": 0.5533,
+      "anna_ci": [0.5482, 0.5585],
+      "welch_p": 1.23e-28,
+      "cohen_d": 1.84
+    },
+    "d3_period_connection": {
+      "claim": "ITU period-2 is bipartite oscillation, NOT derivable from sign(W·v) on effective 22×22.",
+      "effective_22x22_dominant_eigenvalue": 16.24,
+      "direct_signWv_period_distribution": {"1": 100}
+    },
+    "d4b_thresh_sweep": {
+      "claim": "Magnitude-aware thresh64 OUTPERFORMS sign() — top-50% magnitude carries the signal.",
+      "best_threshold": 64,
+      "best_hit_rate": 0.5755,
+      "sign_baseline_hit_rate": 0.5533,
+      "paired_t": 7.71,
+      "paired_p": 5e-12
+    },
+    "d5_7position_audit": {
+      "claim": "Within-cycle 7-position asymmetry at {3, 18, 32, 61, 65, 101, 109} — EXACT match to Chapter 27.",
+      "z_score_vs_random": -18.29,
+      "perfect_overlap_with_chapter27": 7
+    },
+    "d10_row_bias_mechanism": {
+      "claim": "Anna ITU's 85.7% '0' bit output is a fixed-point attractor: 20 neurons stuck at −1, 2 exception neurons (rows 10, 18) at +1. All 8 output neurons sit at −1 → predicted output 00000000.",
+      "fixed_point_positive_neurons": [10, 18],
+      "predicted_baseline_output_bitstring": "00000000",
+      "first_22_rows_positive_count": 18,
+      "first_22_rows_negative_count": 4
+    }
+  },
+  "datasets": [
+    {
+      "kind": "result",
+      "label": "D1 — Multi-task generality sweep (small inputs)",
+      "path": "/data/phase_d/d1_multitask.json"
+    },
+    {
+      "kind": "result",
+      "label": "D1b — Full-range robustness verification",
+      "path": "/data/phase_d/d1b_full_range.json"
+    },
+    {
+      "kind": "result",
+      "label": "D1c — Bias-corrected task-conditional residuals",
+      "path": "/data/phase_d/d1c_bias_corrected.json"
+    },
+    {
+      "kind": "result",
+      "label": "D2 — n=100 paper-grade CI",
+      "path": "/data/phase_d/d2_n100.json"
+    },
+    {
+      "kind": "result",
+      "label": "D3 — Period-2 ↔ Period-4 empirical map",
+      "path": "/data/phase_d/d3_period_connection.json"
+    },
+    {
+      "kind": "result",
+      "label": "D4 — Richer mappings exploration",
+      "path": "/data/phase_d/d4_richer_mappings.json"
+    },
+    {
+      "kind": "result",
+      "label": "D4b — Threshold sweep (best at 64)",
+      "path": "/data/phase_d/d4b_thresh_sweep.json"
+    },
+    {
+      "kind": "result",
+      "label": "D5 — 7-position asymmetry audit",
+      "path": "/data/phase_d/d5_7position_audit.json"
+    },
+    {
+      "kind": "result",
+      "label": "D6 — Long-training trajectory (500 gens, full per-generation history)",
+      "path": "/data/phase_d/d6_long_training.json"
+    },
+    {
+      "kind": "result",
+      "label": "D6 — Partial summary (first run, log-derived)",
+      "path": "/data/phase_d/d6_long_training_partial.json"
+    },
+    {
+      "kind": "result",
+      "label": "D9 — Output bit frequency diagnostic",
+      "path": "/data/phase_d/d9_output_bit_frequency.json"
+    },
+    {
+      "kind": "result",
+      "label": "D10 — Row-bias attractor mechanism (formalized)",
+      "path": "/data/phase_d/d10_row_bias_mechanism.json"
+    }
+  ],
+  "plots": [
+    "/data/phase_d/plots/d1_multitask_grid.png",
+    "/data/phase_d/plots/d1b_full_range_compare.png",
+    "/data/phase_d/plots/d1c_bias_residuals.png",
+    "/data/phase_d/plots/d2_n100_violin.png",
+    "/data/phase_d/plots/d2_n100_histogram.png",
+    "/data/phase_d/plots/d2_n100_ci_compare.png",
+    "/data/phase_d/plots/d3_period2_state_evolution.png",
+    "/data/phase_d/plots/d3_period2_22dim_eigenmap.png",
+    "/data/phase_d/plots/d4_mapping_comparison.png",
+    "/data/phase_d/plots/d4b_thresh_curve.png",
+    "/data/phase_d/plots/d5_7position_overlap.png",
+    "/data/phase_d/plots/d10_row_sums_full.png",
+    "/data/phase_d/plots/d10_attractor_diagram.png",
+    "/data/phase_d/plots/d6_long_training_curves.png",
+    "/data/phase_d/plots/d6_long_training_lead_decay.png"
+  ]
+}

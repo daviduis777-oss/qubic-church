@@ -119,13 +119,13 @@ export function Period4CycleLayer({ spectral, onSelect }: Period4CycleLayerProps
         PERIOD-4 CYCLE
       </Text>
       <Text position={[0, Y + 2.0, 0]} fontSize={0.15} color="white" anchorX="center" anchorY="middle" fillOpacity={0.25}>
-        {`from ${spectral.dominant.angle_deg.toFixed(3)}\u00B0 eigenvalue`}
+        {`from T(v) = sign(M\u00B7v) \u00B7 100K + 32K exhaustive samples`}
       </Text>
       <Text position={[0, Y - 2.5, 0]} fontSize={0.12} color="#D4AF37" anchorX="center" anchorY="middle" fillOpacity={0.3}>
         {`trace=${spectral.matrix_stats?.trace ?? '?'} · zeros=${spectral.matrix_stats?.zeros ?? '?'} · radius=${spectral.matrix_stats?.spectral_radius?.toFixed(1) ?? '?'}`}
       </Text>
       <Text position={[0, Y - 3.0, 0]} fontSize={0.14} color={COOP_COLOR} anchorX="center" anchorY="middle" fillOpacity={0.4}>
-        33.0% stable cooperation (5 seeds x 1M ticks)
+        33.0% ± 0.1% cooperation (5 seeds × 1M ticks)
       </Text>
     </group>
   )

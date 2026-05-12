@@ -1,0 +1,17 @@
+{
+  "phase": "F5",
+  "title": "Aigarth-it production code inspection \u2014 Anna usage falsification",
+  "aigarth_it_uses_anna": false,
+  "aigarth_it_initialization": "random_trit_vector(size=200)",
+  "anna_in_official_library": false,
+  "ITUClAnnaInit_location": "audit/2026-05-04/phase_b_anna_init.py (OUR test construct)",
+  "anna_data_files": [
+    "apps/web/public/data/anna-matrix-anomalies.json",
+    "apps/web/public/data/anna-matrix-min.json",
+    "apps/web/public/data/anna-matrix-raw.json",
+    "apps/web/public/data/anna-matrix.json",
+    "apps/web/src/data/anna-matrix-collisions.json"
+  ],
+  "key_finding": "Anna is NOT integrated into the official aigarth-it library. All Phase B/C/D experiments using ITUClAnnaInit are tests of a hypothesis we constructed (what if Anna were used as ITU init), not measurements of CfB's official Aigarth deployment. Anna's actual intended usage remains undocumented.",
+  "honest_revision": "Phase B/C/D measured 'Anna-init effect on aigarth-it ITU' \u2014 a test scenario WE built to investigate whether Anna's structure helps. The advantages we found (+0.05 hit rate on addition, +30% genuine task signal on bit-selecting operations) are REAL for that specific setup, but the production aigarth-it uses random initialization, so this advantage is not currently exploited."
+}

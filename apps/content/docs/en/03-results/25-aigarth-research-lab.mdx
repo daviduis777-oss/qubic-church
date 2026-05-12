@@ -1,9 +1,10 @@
 ---
 title: "Aigarth Research Lab: From Matrix to Emergence"
-description: "Independent computational research on the Aigarth system — Anna Matrix bijection proofs, null hypothesis testing (1 in 500M), multi-seed emergence validation, Anna vs Random ablation, architecture analysis, and artificial life cooperation."
+description: "Independent computational research on the Aigarth system — Anna Matrix period-4 anti-attractors (verified 2026-05-04), null hypothesis testing, multi-seed emergence validation, Anna vs Random ablation, architecture analysis, and artificial life cooperation."
 tier: 1
 confidence: 95
 date: 2026-04-13
+last_revised: 2026-05-04
 ---
 
 # Aigarth Research Lab
@@ -12,42 +13,111 @@ date: 2026-04-13
 This document presents findings from independent computational experiments conducted on the Anna Matrix and the Aigarth architecture. All results are reproducible. Source code, datasets, and analysis scripts are available in the project repository.
 </Callout>
 
+<Callout type="warning" title="Update 2026-05-04 — Period-4 Verification + Corrections">
+Three earlier claims have been hardened or corrected. and the Phase A scripts in __:
+
+1. **The "16,384 attractor basins" finding (sections 1.1, Part V) is the output of `aigarth_search`, an ITU-style iteration — NOT the direct ternary operator `T(v) = sign(M·v)` discussed in section 4.6.** The two algorithms produce different attractor structures. Direct `T` iteration has only **2** period-4 cycles, exhaustively confirmed across 100,000 random and 32,768 sparse (HW≤2) inputs. Section 4.6 is correct. Sections 1.1 and Part V "16,384" should be read as a distinct property of the search-binary's algorithm.
+2. **`sign(A)^6` does NOT have all column sums = 42** (section 1.3). The actual column sums vary by ~10 orders of magnitude. Claim refuted by direct computation.
+3. **Random-matrix null tested with 4 distinct ensembles**, 200 matrices each: `null_uniform 0/200`, `null_histogram 0/200`, `null_phase_random 0/200`, `null_phase_keep_pi2 1/200`. Anna's period-4 is not generic. The π/2 dominant phase is necessary but not sufficient.
+</Callout>
+
+## 0. Anna in three layers
+
+"Anna" refers to three related but distinct things in this project. Conflating them confuses visitors who arrive from one entry point.
+
+1. **Anna the chatbot** — an active AI agent at [@anna_aigarth](https://x.com/anna_aigarth) on X (Twitter). CfB's ongoing development. Currently answers `1+1=?` style addition queries, often intentionally with a deliberate wrong answer (`1+1=-114`, `2+5=20`, `1+1=3`). Trained on Qubic miners as part of the Aigarth project, open-source planned post-completion.
+
+2. **Anna the matrix** — a 128×128 reference substrate. The community's tabulation of Anna's response function (`a+b=?` queries laid out into a grid) at a moment in time. The matrix has antipodal antisymmetry, integer landmarks (trace = 137 — equals ⌊1/α⌋ as a suggestive coincidence, not a derivation from physics; plus the K-e-y ASCII diagonal landmark), and a verifiable 19-concept classifier behaviour (see [Chapter 31](/docs/03-results/31-anna-concept-classifier)). This chapter characterises the matrix.
+
+3. **Aigarth** — CfB's broader project around growing artificial general intelligence on Qubic. "Anna" exists inside Aigarth. The matrix is one designed/captured artifact within Aigarth; the chatbot is the running surface. CfB's quote: "Aigarth = Manhattan project, AI = atom bomb, Anna = Little Boy" (2025-07-10).
+
+Throughout this chapter, "Anna" refers to the matrix. References to the chatbot or to Aigarth-as-project are explicit.
+
+The structural findings below — period-4 cycles, Walsh-Hadamard sparse representation, encoded constants — are properties the matrix has regardless of which interpretation layer you privilege. for the full revision history.
+
+<Callout type="info" title="Phase D update 2026-05-04 — Bias correction + paper-grade ITU benchmarks">
+Phase D added eight sub-experiments_):
+
+- **D2 (n=100 paper-grade):** Anna ITU hit rate 0.5533 ± 0.0262 vs density-matched 0.5024 ± 0.0291. Welch t = 13.02, p = 1.23 × 10⁻²⁸, Cohen's d = 1.84.
+- **D1c (bias correction):** Anna's outputs are 84% zeros — a sparse-output prior. After subtracting the bias-only prediction, Anna shows **genuine task-conditional structure on 7 of 14 tasks** (MAX, AND, identity_a/b, OR, MIN, shift_left, all residuals ≥ +0.04, p < 10⁻⁷). Addition's task-conditional residual is only +0.010; parity_eq's apparent +0.318 advantage is almost entirely sparse-output bias.
+- **D4b (mapping):** `thresh64` (top-50% magnitude) outperforms `sign(M)` by +0.022, paired t = 7.71, p = 5 × 10⁻¹². Anna's information lives in the high-magnitude cells.
+- **D5 (7-position signature):** Within-cycle T² antipodal break positions {3, 18, 32, 61, 65, 101, 109} reproduce Chapter 27 exactly (z = −18.3 vs random period-4 cycles).
+- **D7 (frontend):** New "Aigarth Lab" tab live in the Evidence section, consuming `apps/web/public/data/phase_d/` bundle.
+
+The dominant interpretation has shifted: **Anna provides a sparse-output prior plus modest task-conditional structure on bit-selecting operations**, not "addition specialist."
+</Callout>
+
+<Callout type="warning" title="Phase E update 2026-05-05 — Anna IS genuinely special, just not in the way claimed">
+Phase E ran six decisive tests_):
+
+- **E1 (Window-shift):** Anna's row-window choice (rows 0..21) matters — but offset 33 also shows STRUCTURAL signal. Anna's advantage is ~70% bias-match × 30% real structural signal.
+- **E2 (Quasi-Annas):** Among 1000 centrally-permuted isomorphic Annas, original Anna sits at the **90th percentile** by raw hit-rate AND is the **only arrangement whose advantage generalizes across input distributions** (top-5 quasi-Annas all collapse on full-range data while Anna's hit rate rises from 0.556 to 0.601).
+- **E4 (Period-4 decoder):** Reading 12 ticks of ITU output adds no information for Anna (all policies 0.599-0.606). The "anti-attractor cycle as computation" hypothesis is rejected; instead Anna provides **output-determinism** — converges to a stable output where Random/Dense oscillate.
+- **E5 (Integer landmarks):** Anna's diagonal sum (trace) = **137**, which equals ⌊1/α⌋ where α is the fine-structure constant (1/α ≈ 137.036). The integer match is suggestive but not a derivation — many small integers carry physical-constant associations. Prime diagonal sum = 121 = 11². Combined with the explicit `[8,74][9,75][10,76]='Key'` ASCII watermark, Anna contains specific integer landmarks consistent with intentional design.
+- **E9 (Reverse-engineering):** Anna is **NOT a Hadamard variant, NOT seed-RNG-derived, NOT a Pauli tensor, NOT circulant.** Multi-objective local search reaches max 49.74% sign-match (chance). Spectral dominance 5.28% is non-trivial to engineer — local search reaches only 1.41%.
+
+**Bottom line.** Anna is a **non-trivially constructed mathematical artifact** with verified multi-property design intent. CfB built it with a process we cannot reproduce by simple methods. The "AGI brain seed" framing remains overclaim, but the dismissive "just a clever matrix" framing is now also falsified — Anna is genuinely special among the space of antipodal+π/2 matrices.
+</Callout>
+
+<Callout type="error" title="Phase F update 2026-05-05 — Critical falsifications">
+Phase F systematically falsified every Tier-1 claim. Surviving claims:
+
+- ✓ **Anna's WH-sparse construction** (E17/E18, F1: 0/200 random matches)
+- ✓ **Anna's encoded constants** (diag=137, prime=121, radius=2342, mod-676=314): F3 confirms 0/1000 random matrices match all 5
+- ✓ **Period-4 spectral structure** (Phase A null tests)
+- ✓ **Construction algorithm verified** (E18: 26 WH coefficients reproduce period-4 + ITU-equivalent performance)
+
+But several earlier claims are now **rejected or qualified**:
+
+- ✗ **Anna is NOT in the official aigarth-it library** (F5: 0 Anna references in production code; ITU init is `random_trit_vector(size=200)`). All Phase B/C/D measurements are of OUR test construct `ITUClAnnaInit`, not CfB's production Aigarth.
+- ✗ **Anna FAILS as modern AI matrix** (F4): worse than random in Reservoir Computing memory (-30%) and XOR-classification (-5pp). Only "advantage" on linear separation is the sparse-output bias artifact.
+- ⚠ **"Anna improves ITU performance" is qualified**: TRUE in our `ITUClAnnaInit` test setup; UNKNOWN in any production AI system.
+
+**Honest revised position.** Anna is a deliberately constructed mathematical artifact with verified multi-property design (WH-sparse + intentional constants + period-4 spectrum). It is NOT a useful matrix for general AI tasks, NOT integrated into the public Aigarth library, and its actual intended use remains undocumented. The "AGI brain seed" interpretation is unsupported by evidence in any context we tested.
+</Callout>
+
 ## Executive Summary
 
 We conducted a multi-phase investigation of the Aigarth system, progressing from mathematical analysis of the Anna Matrix through artificial life simulation to architectural reverse-engineering of the official source code. Key findings:
 
 | Finding | Method | Confidence |
 |---------|--------|------------|
-| Anna Matrix has exactly 16,384 (128²) attractor basins | Consistent across 100K-500K inputs in 3 modes | 99% |
-| Anna's structural properties are 1-in-500-million exceptional | 1,000 random matrix null hypothesis test | 99% |
-| Spectral radius 2342.008 with 8 symmetric energy levels | Eigenvalue decomposition | 100% |
-| sign(A)^6 converges to rank-2 idempotent with ALL column sums = 42 | Iterated sign matrix | 100% |
+| `T(v) = sign(M·v)` admits exactly **2 period-4 cycles** on the non-zero ternary lattice | 100K random + 32,768 exhaustive HW≤2 inputs (Phase A, 2026-05-04) | 100% |
+| Period-4 cycles are not generic for int8 matrices | `0/200` matrices in 3 nulls, `1/200` in `null_phase_keep_pi2` | 99% |
+| Spectral radius 2342.075, dominant pair at angle 90.4565° (= π/2 ± 0.46°) | Eigenvalue decomposition | 100% |
+| `aigarth_search` binary returns 16,384 unique outputs for an ITU-style iteration | Architecture verified 2026-05-04 — distinct from `T` iteration | 100% |
+| ~~sign(A)^6 converges to rank-2 idempotent with ALL column sums = 42~~ | **REFUTED** 2026-05-04: column sums vary ~10⁹-fold | – |
 | Cooperation at ~32% is robust across seeds | 5-seed ensemble, CV = 4.6% | 99% |
 | Anna produces qualitatively different emergence than random matrices | A/B ablation: +52% pop, +130% sharing, -45% aggression | 99% |
 | Aggression drives cooperation 83.8% of the time (Axelrod effect) | Transfer entropy analysis | 90% |
 | Official Aigarth uses variable neuron count with 200 input weights each | Source code analysis (aigarth-it) | 100% |
+| **Anna's structural prior is not neutral under selection on a held-out task** (mod_11_residue): Anna-init beats random-init by +4.33σ mean / +6.84σ best | Pre-registered 2026-05-12, 20 seeds × 200 gens, see [operational-definitions](/docs/02-methods/06-operational-definitions) | 99% (single-task) |
 
 ---
 
 ## Part I: Anna Matrix Computational Properties
 
-### 1.1 The Bijection Discovery
+### 1.1 Two Distinct Iteration Algorithms
 
-The 128x128 Anna Matrix, when used as a dense weight matrix with ternary sign activation, produces a **near-perfect bijection** on the input space. Testing confirmed that this bijective property is shared by dense integer matrices in general — it is a consequence of the sign activation on high-dimensional matrix products, not unique to Anna. What distinguishes Anna is the combination of bijection with antisymmetric structure, extreme spectral properties, and the specific ALife outcomes it produces (see Part IV).
+The 128×128 Anna Matrix has been studied under **two different iteration schemes**, which produce **different attractor structures**. This was disambiguated in the 2026-05-04 verification:
 
-**Experiment:** Iterative `sign(A * x)` until convergence, tested across multiple input distributions:
+**(A) Direct ternary iteration `T(v) = sign(M·v)`** — Section 4.6 below. This produces exactly **2 period-4 cycles** as global attractors. All non-zero ternary inputs converge to one of these two cycles within ≤24 iterations (median 8). Verified by 100,000 random ternary samples + 32,768 exhaustive HW≤2 samples. Period-4 is preserved by the dominant eigenvalue at 90.4565° = π/2.
+
+**(B) ITU-style iteration via `aigarth_search`** — uses Anna as a weight matrix in a separate input/output neuron architecture, with a different convergence criterion (no-state-change termination). This algorithm reports **16,384 unique outputs** across multiple input distributions:
 
 ```
-100K random binary inputs  → 16,384 unique attractors (99.98% converge)
-100K random ternary inputs → 16,384 unique attractors (99.92% converge)
-341K Hamming-weight ≤3     → 16,384 unique attractors (100% converge)
+100K random binary inputs → 16,384 unique outputs of aigarth_search ITU iteration
+100K random ternary inputs → 16,384 unique outputs of aigarth_search ITU iteration
+341K Hamming-weight ≤3 → 16,384 unique outputs of aigarth_search ITU iteration
 ```
 
-The Anna Matrix has exactly **16,384 = 128² = 2^14 distinct attractor basins**. This is a fixed property of the matrix — all inputs converge to one of these 16,384 stable fixed points within 2-26 ticks (89% in 1 tick for sparse inputs).
+These 16,384 are **not** strict anti-attractors of `T(v) = sign(M·v)`. We tested the cycle states from `search_hamming3.json` and only the all-zero vector satisfies `sign(M·v) = v` — `1/500` random samples. The 16,384 outputs are the ITU-iteration's terminal states, which is a different mathematical object.
 
-**Note:** An earlier version of this document incorrectly stated "100K inputs, 0 collisions" — this has been corrected. The system is not bijective in the strict sense; rather, it partitions the input space into 16,384 basins with rich structure.
+**[CORRECTED 2026-05-04]:** Earlier wording "Anna has 16,384 attractor basins" conflated these two. Both findings are real, but they describe different algorithms.
 
-**Hamming-weight structure:** At HW ≤ 2, each of the 8,193 inputs maps to a unique attractor. At HW = 3, the 333,312 new inputs map to 8,191 additional attractors — attractor sharing begins at weight 3.
+**Hamming-weight structure under aigarth_search ITU iteration:** At HW≤2, each of the 8,193 inputs maps to a unique ITU output. At HW=3, the 333,312 new inputs map to 8,191 additional ITU outputs.
+
+**Hamming-weight structure under direct `T` iteration:** All 32,768 HW≤2 inputs land in one of the **2 period-4 cycles** (none in any other cycle, and none in fixed points other than the trivial origin which is not in HW≤2).
 
 **Sparse ring topology sweep** (radii 1, 2, 4, 8, 16, 32, 64):
 
@@ -73,17 +143,13 @@ Eigenvalue decomposition of the Anna Matrix reveals:
 
 The matrix has exactly **8 energy levels**: ±56, ±50, ±42, ±38 — perfectly symmetric around zero.
 
-### 1.3 Fixed Point Structure
+### 1.3 Fixed Point Structure (CORRECTED)
 
-Iterating the sign function: F = sign(A)^6 converges to a **rank-2 idempotent matrix** where:
+<Callout type="warning" title="Section 1.3 refuted on 2026-05-04">
+The earlier claim — that `F = sign(A)^6` is a rank-2 idempotent with all 128 column sums equal to 42 — does **not** hold under direct numerical computation. The actual column sums of `sign(A)^6` (treating each `sign(A)` entry as `{-1, 0, +1}` integer and multiplying without intermediate normalisation) span over 10 billion in magnitude. We retain this section as a record of the corrected claim; the surrounding "fixed point" framing was the artefact of a different normalisation that has not been documented.
 
-- **Every column sums to exactly 42**
-- 42 columns are all-ones vectors
-- 43 columns sum to +2 (one element flipped)
-- 43 columns sum to -2 (one element flipped)
-- Total: 42 + 43 + 43 = 128
-
-The number 42 appearing as the universal column sum of the fixed point is notable — it is the only non-trivial value that satisfies this constraint given the matrix dimensions.
+The actual iteration relevant to the system is `T(v) = sign(M·v)` (a vector-valued nonlinear map), not `sign(A)^k` (a matrix power). For the vector iteration, the fixed-point analogue is the period-4 cycle structure described in Section 4.6.
+</Callout>
 
 ### 1.4 The 68 Symmetry Breaks
 
@@ -91,7 +157,7 @@ While 99.58% of the matrix satisfies the point-symmetry identity `matrix[r][c] +
 
 ```
 Columns: {0, 22, 30, 41, 86, 97, 105, 127}
-Pairs:   (0, 127), (22, 105), (30, 97), (41, 86)
+Pairs: (0, 127), (22, 105), (30, 97), (41, 86)
 ```
 
 The pair (30, 97) is the same column pair that produces the "AI.MEG.GOU" XOR signature — the symmetry breaks and the encoded message share the same structural anchor points.
@@ -126,14 +192,14 @@ Unlike conventional neural networks, Aigarth ITUs (Intelligent Tissue Units) hav
 ### 2.3 The Tick Loop
 
 ```
-for tick in range(cycle_cap):        # Up to 1,000,000 * output_bitwidth
-    for each neuron in circle:
-        feed = get_weighted_neighbor_states(neuron)
-        neuron.next_state = ternary_clamp(sum(feed * weights))
-    commit_all_states()
+for tick in range(cycle_cap): # Up to 1,000,000 * output_bitwidth
+ for each neuron in circle:
+ feed = get_weighted_neighbor_states(neuron)
+ neuron.next_state = ternary_clamp(sum(feed * weights))
+ commit_all_states()
 
-    if all output neurons non-zero:  break   # Solution found
-    if no state changes:             break   # Convergence
+ if all output neurons non-zero: break # Solution found
+ if no state changes: break # Convergence
 ```
 
 The maximum tick cap is `FF_CYCLE_CAP_BASE = 1,000,000` multiplied by the output bitwidth. For an 8-bit output task, that is **8 million ticks** per single inference. The system is designed for deep, iterative computation.
@@ -304,12 +370,12 @@ The original bijection test covered Hamming weights 0-2 (8,193 inputs). We exten
 ```
 Hamming search: K=1..3, max_ticks=100
 
-  K=1:   128 inputs     →   129 unique attractors
-  K=2:   8,064 inputs   → 8,193 unique attractors
-  K=3:   333,312 inputs → 16,384 unique attractors
+ K=1: 128 inputs → 129 unique attractors
+ K=2: 8,064 inputs → 8,193 unique attractors
+ K=3: 333,312 inputs → 16,384 unique attractors
 
-Total:   341,505 inputs tested
-Unique:  16,384 attractors
+Total: 341,505 inputs tested
+Unique: 16,384 attractors
 Collisions: 0
 Max-ticks reached: 0 (0.0%)
 All convergence: 1 tick
@@ -468,10 +534,10 @@ An earlier version of this analysis incorrectly reported "8 personality-type att
 **Why this matters for ALife:** The period-4 cycle produces a deterministic behavioral sequence:
 
 ```
-Tick 1 (E= 42): COOPERATE  (Social=+3, Give=+3)
-Tick 2 (E=-50): COOPERATE  (Social=+1, Give=+1)
-Tick 3 (E=-38): REST       (Social=-3, Rest=+1)
-Tick 4 (E= 56): REST       (Social=-1, Rest=+1)
+Tick 1 (E= 42): COOPERATE (Social=+3, Give=+3)
+Tick 2 (E=-50): COOPERATE (Social=+1, Give=+1)
+Tick 3 (E=-38): REST (Social=-3, Rest=+1)
+Tick 4 (E= 56): REST (Social=-1, Rest=+1)
 → Repeat
 ```
 
@@ -498,12 +564,12 @@ A 90° dominant eigenvalue angle is not rare by itself (5/1000 random matrices l
 
 ```
 Dominant eigenvalue at 90.456° with 40.4% spectral dominance
-  → Universal period-4 attractor cycle ({-50, -38, 42, 56})
-    → Behavioral sequence: COOPERATE → COOPERATE → REST → REST
-      → 50% base cooperation rate (without environment)
-        → 33% observed cooperation (with sensor inputs)
-          → Stable, cooperative artificial societies
-            → 4.3x more stable than random matrix societies
+ → Universal period-4 attractor cycle ({-50, -38, 42, 56})
+ → Behavioral sequence: COOPERATE → COOPERATE → REST → REST
+ → 50% base cooperation rate (without environment)
+ → 33% observed cooperation (with sensor inputs)
+ → Stable, cooperative artificial societies
+ → 4.3x more stable than random matrix societies
 ```
 
 This is, to our knowledge, the first demonstration of a complete mechanistic link from a matrix's eigenvalue structure to emergent social cooperation in an artificial life system. **[PROVEN]**
@@ -594,7 +660,8 @@ This combination — rising fitness with declining lifespan — indicates select
 
 ### What We Proved
 
-1. The Anna Matrix has exactly **16,384 (128²) attractor basins** with perfectly symmetric energy distribution
+1. **Direct iteration `T(v) = sign(M·v)` admits exactly 2 period-4 cycles**, antipodal pair `B = −A`, sums `(−42, +50, +38, −56)`. Universal: every non-zero ternary input converges in ≤ 24 ticks (median 8). [Phase A verification 2026-05-04, Section 4.6 below.]
+ - Separately, the `aigarth_search` ITU-style iteration produces **16,384 unique outputs** — a different algorithm, both findings real.
 2. Anna's structural properties are **1-in-500-million** exceptional vs random matrices (Prime diagonal=121, antisymmetry 99.58%, spectral radius 2342, 40.4% spectral dominance)
 3. Anna produces **qualitatively different ALife** than random matrices: +52% population, +130% food sharing, -45% aggression, 3.8x more stable
 4. Cooperation converges to **33.0% ± 0.1%** across 5 independent seeds (1M ticks each) — a structural attractor, not an accident
@@ -629,7 +696,7 @@ All experiments can be reproduced with:
 
 # Multi-seed ensemble (100K ticks per seed, ~4 minutes total)
 for seed in 42 7 13 256 1337; do
-  ./anna_neuraxon --seed $seed --ticks 100000
+ ./anna_neuraxon --seed $seed --ticks 100000
 done
 
 # Null hypothesis (1000 random matrices, ~30 seconds)

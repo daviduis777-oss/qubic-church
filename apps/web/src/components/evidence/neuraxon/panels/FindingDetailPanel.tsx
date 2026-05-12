@@ -87,7 +87,7 @@ function MatrixCellDetail({ row, col, value }: { row: number; col: number; value
         <p className="text-[11px] text-white/40 leading-relaxed">
           Each cell in the 128x128 Anna Matrix encodes an interaction weight.
           {row === 21 && ' Row 21 is the Bitcoin input layer -- where external data enters the network.'}
-          {row === 68 && ' Row 68 is the transformation bridge -- where 137 write operations (the fine-structure constant) occur.'}
+          {row === 68 && ' Row 68 is the transformation bridge -- where 137 write operations occur (an integer that coincides with the integer part of 1/α).'}
           {row === 96 && ' Row 96 is the output layer -- where processed results exit the network.'}
         </p>
       </div>
@@ -218,10 +218,12 @@ function Period4Detail({ phase, behavior, energy }: { phase: number; behavior: s
       </div>
       <div className="bg-white/[0.02] border border-white/[0.04] p-2 mt-2">
         <p className="text-[11px] text-white/40 leading-relaxed">
-          The period-4 cycle emerges from the dominant eigenvalue at 90.456°.
-          Every 4 ticks, the system returns to its starting state.
-          This creates a natural rhythm: two ticks of cooperation followed by two ticks of rest.
-          In 10M-tick ALife simulations, this produces exactly 33.0% (±0.1%) cooperation rate across all seeds tested.
+          Under direct ternary iteration T(v) = sign(M·v), Anna admits exactly 2 period-4
+          cycles (sums ±{'{'}42, 50, 38, 56{'}'}). Verified on 100K random + 32K exhaustive
+          HW≤2 samples; reproduced 200/200 vs 1/800 random nulls. The separate input-clamped
+          AIT operator gives different dynamics (16K period-1 fixed points). In 5 ALife runs
+          × 1M ticks (seeds 42/7/13/256/1337), cooperation converges to 33.0 % ± 0.1 %
+          (CV 0.3 %) — one of the tightest cross-seed convergences observed in this codebase.
         </p>
       </div>
     </>
