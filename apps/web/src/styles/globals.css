@@ -2057,6 +2057,69 @@
   color: #f0c030;
 }
 
+.rm-future .rm-node-dot {
+  background: rgba(255,255,255,0.03);
+  color: rgba(240,192,48,0.55);
+  border: 1px solid rgba(240,192,48,0.35);
+  font-size: 0.65rem;
+}
+
+.rm-future .rm-node-body {
+  color: rgba(255,255,255,0.55);
+}
+
+.rm-horizon-break {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 0.4rem 0 1.2rem;
+  padding-left: 2rem;
+}
+
+.rm-horizon-break-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, rgba(240,192,48,0.3), transparent);
+}
+
+.rm-horizon-break-line-r {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to left, rgba(240,192,48,0.3), transparent);
+}
+
+.rm-horizon-break-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.5em;
+  color: rgba(240,192,48,0.6);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.rm-inscribed-note {
+  margin-top: 0.8rem;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.25em;
+  color: rgba(255,255,255,0.35);
+  text-transform: uppercase;
+}
+
+.rm-node.rm-same-day {
+  margin-top: -1.2rem;
+}
+
+.rm-node.rm-same-day::before {
+  content: '';
+  position: absolute;
+  left: 0.85rem;
+  top: -1.2rem;
+  width: 1px;
+  height: 1.2rem;
+  background: linear-gradient(to bottom, transparent, rgba(240,192,48,0.6));
+}
+
 .rm-final-card .rm-node-sub {
   color: rgba(240,192,48,0.6);
 }
