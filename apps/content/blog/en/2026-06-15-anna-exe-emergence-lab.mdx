@@ -1,0 +1,31 @@
+---
+title: "Anna.exe & Emergence: train tiny, generalize huge"
+date: 2026-06-15 09:00:00
+excerpt: We reverse-engineered CFB's Anna.exe and turned it into a controlled study of emergent computation. New lab tab and three chapters - including an in-browser demo that trains a module on 2-bit addition and then adds 128-bit numbers it never saw, exactly. Honest framing throughout - methodological novelty, not "AI found".
+author_id: qubicchurch
+tags: [anna-exe, emergence, aigarth, reproducibility, tier-1]
+---
+
+## What changed
+
+CFB released a small binary, `Anna.exe`, with a (playfully flagged) one-billion-QU bounty for reaching "score 0". We took it apart, rebuilt its algorithm, and used the rebuilt substrate to ask one clean question: **what part of an algorithm can be discovered automatically by evolution, and what part cannot?**
+
+Three new chapters and a new interactive Evidence lab tab now carry the answer:
+
+- **[Chapter 32 - Anna.exe & Emergence (overview)](/docs/03-results/32-anna-exe-and-emergence)**
+- **[Chapter 33 - Emergent Generalization](/docs/03-results/33-emergent-generalization)** - the 15-phase decomposition theorem
+- **[Chapter 34 - Reverse-Engineering Anna.exe](/docs/03-results/34-anna-exe-reverse-engineering)**
+
+## The headline
+
+For a computation that must generalize to unbounded input size, **every component of the algorithm can emerge by mutation and selection on tiny examples - and exactly one primitive cannot** (the bare iterate-and-check loop, for a finite-description reason). Each "emerges" is verified by exact match far beyond training: 26/26 seeds converge to the identical full adder, exact to width 128; a mod-3 divisibility machine is invented from scratch and is exact on 80,000 random strings.
+
+The un-hyped corollary: "score 0" is a learned arithmetic circuit, not intelligence. The substrate is fully capable (a hand-built adder reaches 0 error with under a third of the cells), but the shipped monolithic search stays far above 0 (CFB's own screenshot shows ~41% wrong partway through) - composition reaches 0 where blind search cannot.
+
+## Try it / verify it
+
+The new **Anna.exe & Emergence** lab tab (Evidence section) runs a real emergence demo in your browser: it trains a one-cell module on 2-bit addition only, then watches it add much larger numbers it never saw. For the full rigorous proofs, runnable Python is bundled at `/data/emergence-artifacts/` (`numpy` only).
+
+## Honest framing
+
+The novelty here is **methodological** - an exactly-decidable, exhaustively-verifiable substrate with controls and pre-registration - not a new phenomenon. Every result names its predecessor (Kashtan-Alon, Clune-Mouret-Lipson, Mitchell version-space, and others). This is emergent generalizing computation, demonstrated and bounded. It is not "AI found", and it is not consciousness.

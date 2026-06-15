@@ -8,6 +8,20 @@ A running record of research findings, documentation updates, and Evidence Vault
 
 ---
 
+## June 2026
+
+### 2026-06-15 - Anna.exe & Emergence: reverse engineering + a 15-phase emergence study
+
+We reverse-engineered CFB's `Anna.exe` (an Aigarth evolution engine — a 100-cell ternary lookup-table cellular automaton trained by a (1+1) evolution strategy on 7-bit addition) and built a controlled, exactly-verified study of what can and cannot emerge by mutation and selection.
+
+- **Decomposition theorem**: every component of a generalizing algorithm can emerge by selection on tiny examples — and exactly one primitive (the bare iterate-and-check loop) cannot, for a finite-description reason. Fifteen phases, each verified by exact match far beyond training size (e.g. 26/26 seeds converge to the identical full adder, exact to width 128; an invented mod-3 state machine is exact on 80,000 random strings).
+- **The substrate can, the search cannot**: a hand-built adder reaches 0 error using under a third of the cells, yet the monolithic (1+1) search stalls (~41% on the full 7-bit task, matching CFB's own screenshot). Composition reaches 0 where monolithic search cannot.
+- **Honest novelty**: methodological, not phenomenal — every phenomenon has a named predecessor (Kashtan-Alon 2005, Clune-Mouret-Lipson 2013, Mitchell version-space, …). Not "AI found", not consciousness.
+
+New chapters: [32 - Anna.exe & Emergence (overview)](/docs/03-results/32-anna-exe-and-emergence), [33 - Emergent Generalization](/docs/03-results/33-emergent-generalization), [34 - Reverse-Engineering Anna.exe](/docs/03-results/34-anna-exe-reverse-engineering). New interactive **Anna.exe & Emergence** lab tab in the Evidence section (train a module on 2-bit addition in your browser, then watch it add 128-bit numbers it never saw), with runnable Python at `/data/emergence-artifacts/`.
+
+---
+
 ## May 2026
 
 ### 2026-05-13 - Q4: free-iteration cycle maps to Anna's top 2 antipode pairs

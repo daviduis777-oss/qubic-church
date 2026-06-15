@@ -1,0 +1,87 @@
+---
+title: "Anna.exe and Emergent Computation: Overview"
+description: "June 2026. We reverse-engineered CFB's Anna.exe (an Aigarth evolution engine: a 100-cell ternary lookup-table cellular automaton trained by a (1+1) evolution strategy on 7-bit addition), found that its substrate is fully capable but its monolithic search is not, and that composition reaches a perfect score where monolithic evolution stalls. That finding became a controlled, exactly-verified study of what can and cannot emerge by mutation and selection (a decomposition theorem with one irreducible primitive). An honest novelty review placed the contribution as methodological, not phenomenal. This page is the overview; the two chapters that follow carry the detail."
+tier: 1
+confidence: 95
+date: 2026-06-15
+---
+
+# Anna.exe and Emergent Computation: Overview
+
+<Callout type="info" title="The thread in one sentence">
+We reverse-engineered CFB's `Anna.exe`, built a clean emergence study from it, and an honest novelty review showed the science is "methodologically new, not phenomenally new." The same honesty points at one durable property: a deterministic, exactly re-computable substrate is what makes both emergence provable and an AI computation independently verifiable. The science is not discarded — the substrate that made emergence provable is the same one that makes a computation checkable by anyone.
+</Callout>
+
+## 0. For visitors
+
+In June 2026, CFB (Come-from-Beyond) released a small Windows binary, `Anna.exe`, with a one-billion-QU bounty (which CFB flagged playfully himself) for anyone whose run reaches "score 0." We took the binary apart, rebuilt its algorithm from scratch, and then used the rebuilt substrate to run a careful experiment about a single question: **what part of an algorithm can be discovered automatically by evolution, and what part cannot?**
+
+The result is precise and deliberately un-hyped. It is not a claim that we "found AI." It is a decomposition: every component normally called "the algorithm" can be made to emerge from mutation and selection on tiny examples, and exactly one primitive cannot, for a reason that is a logical limit rather than a missing experiment.
+
+Two chapters carry the detail:
+
+- **[Emergent length-generalization](/docs/03-results/33-emergent-generalization)** — the controlled, exactly-verified study (the decomposition theorem, the 15 phases, the irreducibility boundary, the pre-registered noise law).
+- **[Reverse-engineering Anna.exe](/docs/03-results/34-anna-exe-reverse-engineering)** — what the binary is, how it was disassembled and reimplemented, and the "the substrate can, the search cannot" finding.
+
+An interactive companion lives in the Evidence section as the **Anna.exe & Emergence** lab tab.
+
+## 1. What Anna.exe is
+
+`Anna.exe` is CFB's binary, verified against his own Discord notes. It is an **Aigarth evolution engine**, not the published Anna Matrix and not part of `qubic/core`. It is a PE32+ executable that imports only `KERNEL32`, holds everything in a ~5.84 MB RAM arena, and does no file or network I/O.
+
+It trains a **100-cell ternary lookup-table cellular automaton** with a **(1+1) evolution strategy** — mutate one trit per epoch, accept if the score did not get worse, run for one million epochs — on the task of **7-bit + 7-bit binary addition** (16,384 operand pairs, which equals Anna's 128×128 element count). The score is the number of wrong output bits, driven toward 0. CFB's framing: "Once the score reaches 0, your PC is holding AI."
+
+A reproducibility-relevant detail: the binary uses the hardware RNG (`RDRAND`) for both task generation and every mutation, so **every run is unique and not reproducible**. Our reachability analysis finds the bounty effectively unreachable by blind monolithic search (the error floor rises sharply with problem size). Versions v1 to v4 (all built 10–13 June, SHA-256 verified) added auto-unsticking, a manual key-driven mode, and a state snapshot; none changed the core difficulty.
+
+## 2. The pivotal finding: the substrate can, the search cannot
+
+A hand-constructed solution proves the machine is capable: building the adder by hand (sum = XOR of three inputs, carry = majority of three) reaches **0 wrong bits across all 16,384 pairs using under a third of the cells**. Yet the binary's monolithic (1+1) search stays in a high-error regime far above 0 — CFB's own screenshot shows ~41% wrong partway through the run, and the error floor rises sharply with problem size.
+
+The resolution is composition. Evolve a one-bit full adder (0 error in a few hundred evaluations), then wire seven copies in a ripple-carry chain, and the result is a **perfect 7-bit adder: 0 of 131,072 output bits wrong over all 16,384 pairs**. This is exactly CFB's own 2019 "Scratch" vision (evolve A+B, then drag-and-drop to compose), carried out end-to-end.
+
+The honest reading: "score 0" is a learned arithmetic circuit, not intelligence. At the 64-task scale we tested, the raw engine memorizes rather than generalizes.
+
+## 3. The decomposition theorem (the science)
+
+Stated narrowly: **for a computation that must generalize to unbounded input size, every component of the algorithm can be made to emerge by mutation and selection on small examples alone, and exactly one primitive cannot.**
+
+| Component of the algorithm | Emerges by selection? | Evidence |
+|---|---|---|
+| the cell function (full adder) | yes | 26/26 seeds, exact to width 128 |
+| the carry direction / information flow | yes | 5/5, bit-exact to 512 |
+| the dimensionality of the wiring (2-D) | yes | 12/12 rank-2, exact to 32×32 |
+| the connectivity vs distractors | yes | local link recovered; affine address found |
+| an internal representation (state machine) | yes | 12/12 invent mod-3, exact to length 128 |
+| task-generality (one substrate, many tasks) | yes | mod-2/3/4; mod-5 = search edge |
+| composition of a primitive | yes | one adder → 6 capabilities |
+| higher-order structure (shift-and-add) | yes | multiplication discovered |
+| the loop flow (2-D nested loop) | yes | the array-multiplier flow |
+| the loop bound / when to stop | yes | 8/8 self-halt at exactly W+1, to width 32 |
+| the bare "iterate-and-check" capability | **no** | logically entailed by unbounded input |
+
+The single irreducible primitive is the substrate's capacity to apply a rule repeatedly and halt on a state predicate (a bare while-loop). This is not a search-budget limit: a finite genome that generalizes to unbounded input must reuse a finite rule across the input, so iteration is the precondition for there being any generalizing computation to emerge at all. Everything usually called "the algorithm" sits above this floor and self-assembles. Full detail and the per-phase evidence are in [Emergent length-generalization](/docs/03-results/33-emergent-generalization).
+
+## 4. The honest novelty review (the turning point)
+
+Four independent adversarial literature passes converged on one verdict: **the novelty is methodological, not phenomenal.** The real contribution is the exactly-decidable, exhaustively-verifiable substrate plus matched controls and a pre-registered (and once-falsified) law — an instrument that turns hard-to-falsify claims into decidable experiments, plus the unification of a ladder previously shown piecemeal and approximately.
+
+Every headline phenomenon has a named predecessor: the noise law restates Kashtan & Alon (2005); modularity-via-connection-cost is Clune, Mouret & Lipson (2013); evolved arithmetic is Miller & Thompson (2000); the emerged few-shot learner is Mitchell's version-space elimination; evolved in-context learning is the VSML / Kirsch line. The one narrow new identification is reading an emerged few-shot learner bit-exactly as a known symbolic algorithm. We do not claim a phenomenal first.
+
+This is the finding that drove the pivot: no pure-science moonshot here resolved to a breakthrough; each resolved to known theory or to a clean toy.
+
+## 5. What did not work (recorded honestly)
+
+- **HyperIdentity (a self-improvement loop):** tested directly; the compression form converges to a fixed point rather than diverging toward a singularity (improvement-move probability ~0.017, exactly 0 for 20 of 30 teachers; self-application's last improvement at step 846 of 4000). Open-ended growth requires expanding the task, not iterating a function-preserving map.
+- **Pioneer-1 (is evolution a volume-sampler or a robustness-sampler?):** ~13,000 exactly-evaluated configurations gave an exact null — the two posteriors are concordant (≤0.056 apart, never flipping the winner). It sharpens Mingard's result; it is not a breakthrough.
+
+## 6. Why the deterministic substrate matters more broadly
+
+The entire emergence program ran on exact deterministic integer/ternary substrates **precisely because** that is what makes a computation exactly re-verifiable by an independent party. That property — deterministic-kernel re-verification — is what makes verifiable AI computation possible at all: integer arithmetic is associative and therefore bit-identical across any hardware, while IEEE floating point is not. The substrate that made emergence provable is the same substrate that makes an AI computation independently checkable.
+
+## Scope and what is not claimed
+
+This is emergent generalizing computation, demonstrated and bounded. It is not "artificial intelligence found," and it is not consciousness; consciousness is not operationalizable on this substrate and no such claim is made. The developmental scaffold (one tiled module, one channel, a fixed readout) is supplied, not emergent — this is emergence given a reuse prior, not emergence from nothing. The contribution is the decomposition theorem, the irreducibility boundary, and the noise law, each constructive, exactly verified, and reproducible.
+
+## Reproducibility
+
+Runnable, zero-setup verifiers and the core phase scripts are published at `/data/emergence-artifacts/`: a one-file browser verifier (`verify_emergence.html`, double-click), a dependency-free Python verifier (`verify_emergence.py`), and the numpy phase scripts (`synthesis_proof.py`, `modcount_emergence.py`) with a README. The reimplementations use a seeded PRNG and are fully deterministic, in deliberate contrast to the `RDRAND`-driven original; verification is exhaustive over the full input space rather than statistical where feasible.

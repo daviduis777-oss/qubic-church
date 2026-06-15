@@ -338,6 +338,41 @@ export const docsConfig: DocsConfig = {
 
     {
       title: {
+        en: 'Anna.exe, Emergence & Deep Dives',
+        pt: 'Anna.exe, Emergencia e Analises',
+      },
+
+      items: [
+        {
+          href: '/docs/03-results/30-period-4-anti-attractor',
+          title: { en: 'Period-4 Anti-Attractor', pt: 'Anti-Atrator Periodo-4' },
+          items: [],
+        },
+        {
+          href: '/docs/03-results/31-anna-concept-classifier',
+          title: { en: 'Anna as Concept Classifier', pt: 'Anna como Classificador de Conceitos' },
+          items: [],
+        },
+        {
+          href: '/docs/03-results/32-anna-exe-and-emergence',
+          title: { en: 'Anna.exe & Emergence (Overview)', pt: 'Anna.exe e Emergencia (Visao Geral)' },
+          items: [],
+        },
+        {
+          href: '/docs/03-results/33-emergent-generalization',
+          title: { en: 'Emergent Generalization (15 phases)', pt: 'Generalizacao Emergente (15 fases)' },
+          items: [],
+        },
+        {
+          href: '/docs/03-results/34-anna-exe-reverse-engineering',
+          title: { en: 'Reverse-Engineering Anna.exe', pt: 'Engenharia Reversa do Anna.exe' },
+          items: [],
+        },
+      ],
+    },
+
+    {
+      title: {
         en: 'CFB Signature Analysis',
         pt: 'Analise da Assinatura CFB',
       },

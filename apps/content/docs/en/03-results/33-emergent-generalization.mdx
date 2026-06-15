@@ -1,0 +1,79 @@
+---
+title: "Emergent Length-Generalization on Aigarth's Substrate"
+description: "June 2026. A controlled, reproducible study of emergent size-generalizing computation on a boolean cellular substrate. Central result: a decomposition theorem — for a computation that must generalize to unbounded input size, every component of the algorithm can be made to emerge by mutation and selection on small examples alone, and exactly one primitive (bare iterate-and-check) cannot. Fifteen phases, each exactly verified far beyond training size, plus a pre-registered noise law that was once falsified and refined. Novelty is methodological, not phenomenal; prior art is named throughout."
+tier: 1
+confidence: 92
+date: 2026-06-15
+---
+
+# Emergent Length-Generalization on Aigarth's Substrate
+
+<Callout type="info" title="What this chapter establishes">
+Selection on tiny examples can assemble nearly an entire generalizing algorithm — the cell function, the information-flow direction, the wiring dimensionality, an invented internal representation, composition, the loop flow, and the stopping rule — each verified by exact match on inputs far larger than anything seen in training. Exactly one primitive, the bare ability to iterate-and-check, cannot itself emerge, for a logical reason. This is a decomposition theorem with an irreducibility boundary, not a claim that "AI was found."
+</Callout>
+
+## 1. Statement
+
+For a computation that must generalize to unbounded input size, every component of the algorithm can be made to emerge by mutation and selection on small examples alone, and exactly one primitive cannot. We demonstrate each component constructively, on a boolean cellular substrate, with exact verification and generalization to inputs far beyond any seen in training.
+
+| Component of the algorithm | Emerges by selection? | Evidence |
+|---|---|---|
+| the cell function (e.g. full adder) | yes | Phase 1 (26/26 seeds, exact to width 128) |
+| the carry direction / information flow | yes | Phase 3 (5/5, bit-exact to 512) |
+| the dimensionality of the wiring (2-D) | yes | Phase 5 (12/12 rank-2, exact to 32×32) |
+| the connectivity vs distractors | yes | Phase 6/7 (local link recovered; affine address found) |
+| an internal representation (a state machine) | yes | Phase 9 (12/12 invent mod-3, exact to length 128) |
+| task-generality (one substrate, many tasks) | yes | Phase 10 (mod-2/3/4; mod-5 = search edge) |
+| composition of a primitive (the wiring) | yes | Phase 11/12 (one adder → 6 capabilities) |
+| higher-order structure (shift-and-add) | yes | Phase 13 (multiplication discovered) |
+| the loop flow (2-D nested loop) | yes | Phase 14 (the array-multiplier flow) |
+| the loop bound / when to stop | yes | Phase 15 (8/8 self-halt at exactly W+1, to width 32) |
+| the bare "iterate-and-check" capability | **no** | logically entailed by unbounded input (Section 4) |
+
+## 2. Why the generalization is statistically decisive, not luck
+
+Every "emerges" above is verified by exact match on inputs far larger than training, where a non-generalizing rule would fail with overwhelming probability. Phase 9 checks each invented machine on 20,000 random strings at each of lengths 16, 32, 64, 128 (80,000 strings). A rule correct on even 99% of random strings would pass all 80,000 with probability `0.99^80000 ≈ 10^−349`. Exact match is therefore decisive evidence of a true size-invariant algorithm, not of fitting the training widths. The same logic backs the bit-exact checks to width 512 (Phase 3) and the self-timed halting to width 32 (Phase 15).
+
+## 3. The phases
+
+**Phase 1 — the cell function (the Anna substrate).** One module evolved by selection only on 2-bit addition (16 examples), then tiled with a single binary inter-tile channel, computes N-bit addition exactly for every N tested up to 128, never trained beyond width 2. 6/6 seeds length-generalize (exhaustive to W=10, then 500,000 random pairs each at W=16/32/64/128); all 6 emerged modules are the identical exact full adder; found in 136–434 evaluations. A 20-seed robustness run added 20/20 (to W=16), so **26/26** independent seeds. Controls make it a proof, not an anecdote: (A) a redundant 2-channel interface overfits the training width (3/4 fail by W=8); (B) a random unevolved module fails 2-bit addition outright (16/16 wrong); (C) flat monolithic evolution cannot length-generalize at all. Subtraction also generalizes (5/5 to W=16). The interface must match the task's carried-state complexity: 3-operand addition has a carry that reaches the value 2, so it needs a ternary channel (4/4 to W=16); a binary channel cannot even fit the training task.
+
+**Phase 3 — the carry direction.** On a boolean CGP substrate where each cell can read both neighbours, every seed converges to a left-only channel (correct low-to-high carry). 5/5 generalize from W=2 training, bit-exact at W=64/128/256/512 (2,052,000 bits at W=512, zero wrong).
+
+**Phase 4 — topology under over-provisioning.** With spare registers and 8 candidate channels, naive search generalizes 2/12, but a footprint-minimizing (compression) walk lifts this to 9/12, and every footprint-1 winner uses the carry-direction offset.
+
+**Phase 5 — the wiring dimensionality (the cleanest result).** Task: 2-D parity-prefix (a mod-2 integral image), provably impossible for any 1-D wiring. With compression, 12/12 seeds use exactly the `{N, W, NW}` directions with verified matrix rank 2, exact from 2×2 through 32×32. Correctness here is itself a proof of dimensionality.
+
+**Phase 6/7 — connectivity and addressing.** Phase 6: from a menu including a non-spatial global broadcast distractor, the compressed search recovers the single local link in 8/8 winners. Phase 7: with no menu, each cell reads cell `a·i + b` with `(a, b)` evolved; 15/15 discover `a=1, b=−1` (the predecessor) and generalize to W=32. (Honest caveat: a control shows non-chain addressings cannot even fit the training task, so the chain is the unique solvable one, not a free choice.)
+
+**Phase 8 — the pre-registered noise law (falsified, then refined).** Prediction: emergence is clean when the task has a unique causal basin and noisy when the substrate is over-provisioned and the task admits a width-specific overfit. The "noisy" half **failed** on a new task (cumulative OR-scan), forcing the refinement that over-provisioning alone is insufficient — it must coincide with overfit-ability. Phase 8b confirmed this within one task by varying training width (clean lift from 8/12 to 12/12). A law that survived its own falsification is the only honest form of a "law" here.
+
+**Phase 9 — an invented internal representation (first discovery, not recovery).** Running mod-3 divisibility with a blank register, trained on lengths `{3,4,5}`: 12/12 generalize exactly (zero errors exhaustively to length 12 and on 80,000 random strings). Each seed invents its own representation — 9/12 the minimal 3-state machine, 3/12 a redundant 4-state machine, with four distinct residue encodings.
+
+**Phase 10 — task-generality on a fixed substrate.** Divisibility by k for k in `{2,3,4,5}`: mod-2/3/4 all generalize to 128; mod-5 did not solve within budget (flagged as a search-budget edge, not a capacity limit).
+
+**Phase 11/12 — composition.** A frozen full adder composes into six generalizing capabilities (to width 30): ADD, SUB, INC, DEC, NEG, and GE — the subtractor read at its borrow-out is the comparator. Phase 12b shows selection self-assembles them, with success tracking solution density.
+
+**Phase 13 — higher-order structure.** Over a frozen accumulate skeleton, 2 of 12 outer programs compute exact N×M to width 16 — shift-and-add discovered. (Honest: the accumulate skeleton is supplied.)
+
+**Phase 14 — the loop flow.** With a frozen multiplier cell and a bare grid, exactly 1 of 16 direction pairs computes N×M to width 12 (accumulator from above, carry from the side) — the array-multiplier flow.
+
+**Phase 15 — the loop bound.** With a per-cell done bit and halt-on-consensus, 8/8 compute the sum and self-terminate at every width to 32; at width 16 every input halts at exactly step 17 = W+1. The stopping rule is self-timed.
+
+Beyond the core, Phases 16–27 extend the ladder (in-context storage and recall; few-shot inductive learning identified as version-space elimination; an unsupervised world-model; a viable-agent dark-room ablation; multi-agent co-evolution novelty; a causal self-model; a concept-learning taxonomy with parity as the provable per-bit boundary; and a mechanistic-interpretability instrument that scores attribution methods against a decidable oracle). These are recorded with the same honesty about prior art and effect sizes.
+
+## 4. The one thing that provably cannot emerge
+
+The bare **iterate-and-check** primitive (apply a uniform rule repeatedly and halt on a state predicate). The argument is a finite-description limit, not a search-budget limit: a finite genome that generalizes to unbounded input must reuse a finite rule across the input — that is, it must iterate. Consuming an unbounded input requires repeating a read, and stopping requires checking a condition. So the iterate-and-check capability is the precondition for there being any generalizing computation to emerge at all; it cannot itself emerge from nothing while being what makes emergence possible.
+
+## 5. Methodology
+
+Two substrates: (a) the actual `Anna.exe` substrate — a ternary lookup-table cellular automaton (100 cells, 100 steps, control-cell halting) — used for the Phase-1 tiled adder; and (b) a boolean Cartesian Genetic Programming (CGP) feed-forward circuit, evaluated exactly over the full truth table, used for the emergence ladder (the ternary ring stalls at W=2, so the ladder needs a substrate where exact verification stays cheap). Selection is a gradient-free (1+λ) evolutionary search (typically λ=6, with multi-restart), child accepted if error ≤ parent (neutral drift allowed); several phases add a footprint-minimizing compression walk. Generalization is verified by exhaustive enumeration at small sizes and large random samples (2,000–500,000 inputs) at sizes far beyond training, checked bit-exactly against a trusted reference; the black box is opened by reading the evolved cell's truth table to confirm it equals the textbook recurrence.
+
+## 6. Novelty (stated against prior art)
+
+The novelty is methodological: the exactly-decidable, exhaustively-verifiable substrate with matched controls and pre-registration, plus the unification of a ladder previously shown piecemeal and approximately. Named predecessors include Kashtan & Alon (2005, the noise-law substrate), Clune, Mouret & Lipson (2013, connection-cost modularity), Miller & Thompson (2000, evolved arithmetic), Fogel (1966, evolved FSM), Beer (2003, evolved internal representation), Thompson (1996, selection invents structure), and Mitchell (version-space elimination, the emerged few-shot learner). The one narrow candidate-new identification is reading an emerged few-shot learner bit-exactly as a known symbolic algorithm; even this is flagged pending a citation-graph check before any "first."
+
+## 7. Scope and what is not claimed
+
+This is emergent generalizing computation, demonstrated and bounded — not "AI found," not consciousness. The developmental scaffold (one tiled module, one channel, a fixed readout), the grid geometry, the neighbour menus, and the accumulate skeleton are supplied, not emergent. This is emergence given a reuse prior. The honest contribution is the decomposition theorem, the irreducibility boundary, and the pre-registered noise law — each constructive, exactly verified, and reproducible — runnable scripts (a zero-dependency verifier plus the numpy phase scripts and a README) are published at `/data/emergence-artifacts/`.

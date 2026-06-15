@@ -1,0 +1,85 @@
+---
+title: "Reverse-Engineering Anna.exe"
+description: "June 2026. CFB's Anna.exe disassembled and reimplemented from scratch. It is an Aigarth evolution engine: a 100-cell ternary lookup-table cellular automaton trained by a (1+1) evolution strategy on 7-bit addition, with hardware-RNG (RDRAND) mutations that make every run unique and non-reproducible. The substrate is fully capable (a hand-built adder reaches 0 error using under a third of the cells) but the monolithic search is not (it stays far above 0 — ~41% wrong partway through CFB's own run). Evolving a 1-bit full adder and composing seven ripple-carry copies reaches a perfect 7-bit adder, 0 of 131,072 bits wrong — carrying out CFB's own 2019 Scratch vision end-to-end."
+tier: 1
+confidence: 96
+date: 2026-06-15
+---
+
+# Reverse-Engineering Anna.exe
+
+<Callout type="info" title="One-line summary">
+`Anna.exe` is CFB's Aigarth evolution engine — it evolves a 100-cell ternary lookup-table cellular automaton to perform 7-bit addition. We disassembled it, rebuilt the algorithm, and established that its substrate is fully capable but its monolithic search is not: composition (evolve a 1-bit adder, then wire seven copies) reaches a perfect score where blind monolithic evolution stalls.
+</Callout>
+
+## 1. What the binary is
+
+`Anna.exe` is CFB's (Come-from-Beyond's) binary, verified against his own Discord notes and screenshots. It is a self-contained **Aigarth evolution engine** — **not** the published 128×128 Anna Matrix and **not** part of `qubic/core`. It is a PE32+ x86-64 executable (MSVC linker 14.51, built 10 June 2026), imports **`KERNEL32.dll` only** (static CRT), and does no file or network I/O. Everything operational is generated at runtime in a ~5.84 MB BSS arena; there is no embedded Anna data file.
+
+It came with a bounty: 1,000,000,000 QU to the first person whose run reaches "score 0" within ~23 hours (which CFB flagged playfully himself). A reachability analysis (companion in the working folder) finds it effectively unreachable by the binary's blind single-trit search: the error floor rises sharply with problem size, and CFB's own screenshot shows ~41% error on the full 7-bit task.
+
+## 2. What it computes
+
+It trains a substrate to perform **7-bit + 7-bit binary addition**. The disassembly is unambiguous: `lea eax, [rdx + r8]` computes row + col = the sum, and the individual bits are extracted with `vpand` against the masks (1, 2, 4, …, 128) and stored as the target. Two nested loops run −64..63 (128 each) = **16,384 operand pairs** — which equals the element count of Anna's 128×128 matrix. Fourteen input cells carry the two 7-bit operands; eight output cells must equal the eight bits of (a + b).
+
+The only program-specific format string (recovered in `strings_ascii.txt`):
+
+```
+EPOCH %d (%d) :: %lld :: pos = %d | neg = %d | neu = %d
+```
+
+where `(%d)` is the average ticks-to-halt, `%lld` is the error being driven to 0, and pos / neg / neu count accepted-improving / reverted-worsening / neutral mutations.
+
+## 3. The core loop
+
+A **(1+1) evolution strategy** (a hill-climber with neutral drift):
+
+1. Build the 16,384-task dataset; split into two pools by an `RDRAND` coin-flip; score one pool (~8,192 tasks).
+2. Randomly seed (via `RDRAND`) a ternary substrate of per-cell lookup tables (~5.9M trits, values in `{0, 1, 2}`).
+3. Each epoch: mutate exactly one trit (±1 mod 3), re-score, **accept if not worse, revert (memcpy backup) if worse** — neutral moves are accepted.
+4. Score = total wrong output bits, minimized toward 0.
+5. Telemetry every 100 epochs, for 1,000,000 epochs.
+
+Confirmed addresses and constants (from `main_loop.asm` / `fitness.asm` / `v2_main.asm`): main loop at VA `0x140001a90`; fitness function at VA `0x140001060` (returns a 64-bit score; the `memset(work, 0, 0x190)` zeroes 100 int32 cells; `vpcmpeqd` + `vpandn` builds the not-equal mismatch mask). Epochs `0xf4240` = 1,000,000; print cadence 100; 100 cells; 100 timesteps; 14 inputs; 8 outputs; per-cell LUT 1846 qwords (14,768 B = 59,072 entries, ≈ `3^10` = 59,049 for a 10-trit window); substrate 1,477,824 bytes; mod-3 magic `0xaaaaaaaaaaaaaaab`; RNG = `RDRAND`, mutation ±1 mod 3.
+
+## 4. The structure it embodies
+
+A 100-cell ternary **lookup-table cellular automaton**. Each cell updates from a packed window of ~8–10 neighbour cells via its own lookup table, runs for up to 100 timesteps with a halting condition (keep stepping while any of 8 control cells equals 2). This is the concrete realization of "an Aigarth neuron is a lookup table."
+
+Two honest notes from the disassembly:
+
+- **No published matrix inside.** `Anna.exe` does not contain the 128×128 signed-int8 Anna Matrix. The only link to "128×128" is that 16,384 = the task count = the matrix's element count. The binary is a newer evolution demo of the generative principle, not the published artifact.
+- **An aliasing quirk.** Each per-cell table holds 59,072 entries (≈ `3^10` = 59,049, a 10-trit window). The shipped binary packs the window base-4 (`shl 2`), so a window value can index past a cell's block and alias into the neighbouring cell's table — coupling cells and making the search slightly harder than an idealized base-3 model.
+
+## 5. Reimplementation and what it proves
+
+**`anna_zero_proof.c` — the substrate is capable.** It does not search; it hand-constructs the 100-cell base-3 lookup-table CA as a synchronous ripple-carry adder (sum = XOR of three, carry = majority of three, control cells held at 2), runs the real CA dynamics over all 16,384 pairs, and verifies wrong bits = 0. Deterministic and reproducible (no `RDRAND`). It proves capacity exists; the bottleneck is the search, not the machine.
+
+**`anna_evolve_compose.c` / `anna_live.c` — composition reaches 0.** Using the same (1+1) greedy on the lookup-table CA, evolve a one-bit full adder (8-row truth table) to error 0 in a few hundred evaluations, then compose seven ripple-carry copies into a **perfect 7-bit adder: 0 of 131,072 wrong bits over all 16,384 pairs** (it further composes to a 10-bit adder, exact over 1M pairs). `anna_live.c` reproduces the exact `EPOCH …` telemetry while doing it. This executes CFB's own 2019 Scratch vision (evolve A+B, drag-and-drop to compose).
+
+**Faithfulness and coverage.** The Python port (`aigarth_engine.py`) is a faithful, seeded (reproducible) port of the reverse-engineered algorithm; it does **not** match the binary bit-for-bit, because the binary's `RDRAND` makes every run unique. What is validated is the mechanism, not bit-identity. The C proofs verify exhaustively over the full 16,384-pair space. A separate finding, established only at the reimplementation's tested 64-task scale: the raw engine genuinely learns (74–87% train fitness) but is a pure **memorizer** — on unseen inputs it generalizes at chance, and only ~2–3% of the 5.9M-trit substrate is ever read; at that scale it does not spontaneously produce Anna's published 19-attractor structure (that most plausibly lives in the read-out operator, not this substrate search). Whether the binary reaches error 0 on its real 16,384 structured targets is a separate, re-opened question; the reachability analysis finds the monolithic search stalls at a high error floor, so it does not.
+
+## 6. The v1 → v4 evolution
+
+All built 10–13 June, SHA-256 verified.
+
+| Version | Built | Size | Change |
+|---|---|---|---|
+| Anna.exe (v1) | Jun 10 14:15 | 145,920 B | base engine: (1+1)-ES, EPOCH/pos/neg/neu telemetry |
+| Anna_v2.exe | Jun 10 19:13 | 147,968 B | automatic "unsticking" (direction-flip every 500 stuck epochs) + multithread + shared global best |
+| Anna_v3.exe | Jun 10 20:36 | 147,968 B | removed the auto-toggle; manual SPACE-key drive (adds USER32 import); reskinned "spacecraft" telemetry |
+| Anna_v4.exe | Jun 13 11:51 | 154,624 B | adds a state snapshot (sibling file `Anna.data.snapshot0`) |
+
+The v2→v3 walk (auto to manual unstick in about 90 minutes) empirically confirmed the diagnosis that the auto direction-flip is unreliable. Separately, every escape strategy we tested (annealing, direction-invert, eager iterated local search) underperformed plain greedy; the load-bearing piece is the preserved global best, not the flip, and the missing ingredient is recombination — a memetic island search with crossover solved the 2-bit case exactly.
+
+## 7. Determinism (the verification-relevant point)
+
+`Anna.exe` uses `RDRAND` for both task generation and every mutation — no seed, no PRNG state. Therefore every run is unique and non-reproducible, and the binary cannot regenerate any specific published matrix. On this analysis the bounty is effectively unreachable by blind monolithic search (the error floor rises sharply with problem size), and we make no claim to have reached score 0 in the sealed binary. Our reimplementations are the deliberate opposite: a seeded `splitmix64` PRNG, fully deterministic and reproducible, with exhaustive verification over the full input space. That deterministic, independently re-computable property is exactly what makes evolved artifacts verifiable on-chain: anyone can re-run the integer kernel and get bit-identical results.
+
+## 8. The single most important finding
+
+The substrate is fully capable but the shipped search is not: monolithic (1+1) evolution stays far above 0 (CFB's own screenshot shows ~41% wrong partway through, and the floor rises sharply with size), yet evolving a tiny one-bit full adder (0 error in a few hundred evaluations) and composing seven ripple-carry copies yields a perfect 7-bit adder — 0 of 131,072 wrong bits over all 16,384 pairs. Composition reaches 0 where monolithic evolution cannot. The corollary is the un-hyped one: "score 0" is a learned arithmetic circuit, not intelligence; and at the 64-task scale we tested, the raw engine memorizes rather than generalizes.
+
+## Reproducibility
+
+Runnable reproductions are published at `/data/emergence-artifacts/` (a zero-setup browser verifier, a dependency-free Python verifier, the numpy phase scripts, and a README). The full working archive sits in the project's audit trail: the binaries (`Anna.exe`, `Anna_v2.exe`, `Anna_v3.exe`, `Anna_v4.exe`), the disassembly (`main_loop.asm`, `fitness.asm`, `v2_main.asm`, `funcs.txt`, `strings_ascii.txt`), the reimplementations (`anna_zero_proof.c`, `anna_evolve_compose.c`, `anna_live.c`, `aigarth_engine.py`), and the reports (`REVERSE_ENGINEERING_REPORT.md`, `REIMPLEMENTATION_FINDINGS.md`, `OUR_SOLVER.md`, `BOUNTY_REACHABILITY.md`).

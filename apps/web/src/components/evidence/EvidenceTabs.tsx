@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { cn } from '@/lib/utils'
-import { Database, Cpu, Grid3X3, Info, TrendingUp, Box, Lock, Sparkles, FlaskConical, Brain } from 'lucide-react'
+import { Database, Cpu, Grid3X3, Info, TrendingUp, Box, Lock, Sparkles, FlaskConical, Brain, GitBranch } from 'lucide-react'
 
 // Tab components will be lazy loaded
 import dynamic from 'next/dynamic'
@@ -63,6 +63,11 @@ const AnnaConceptLab = dynamic(() => import('./anna-concept-lab/AnnaConceptLab')
   ssr: false,
 })
 
+const EmergenceLab = dynamic(() => import('./emergence-lab/EmergenceLab'), {
+  loading: () => <TableSkeleton label="Anna.exe & Emergence" />,
+  ssr: false,
+})
+
 interface TabConfig {
   id: string
   label: string
@@ -91,8 +96,6 @@ const TABS: TabConfig[] = [
     label: 'Cognitive Lab',
     icon: <Sparkles className="w-4 h-4" />,
     description: "Live AI evolution: matrices evolved under HyperIdentity pressure converge toward Anna's functional structure",
-    badge: 'New',
-    badgeColor: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
     gradient: 'bg-[#D4AF37]/10',
   },
   {
@@ -100,9 +103,16 @@ const TABS: TabConfig[] = [
     label: 'Anna Concept Lab',
     icon: <Brain className="w-4 h-4" />,
     description: 'Verified production AIT inference + Anna as deterministic Concept Classifier (Phase N)',
+    gradient: 'bg-emerald-500/10',
+  },
+  {
+    id: 'anna-exe',
+    label: 'Anna.exe & Emergence',
+    icon: <GitBranch className="w-4 h-4" />,
+    description: 'Reverse-engineered Anna.exe + the 15-phase emergent-generalization study, with a live evolve→compose demo (June 2026)',
     badge: 'New',
     badgeColor: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
-    gradient: 'bg-emerald-500/10',
+    gradient: 'bg-[#D4AF37]/10',
   },
   {
     id: 'spectral',
@@ -116,8 +126,6 @@ const TABS: TabConfig[] = [
     label: 'Aigarth Lab',
     icon: <FlaskConical className="w-4 h-4" />,
     description: 'ITU benchmarks: Anna as a universal computational prior (Phase D, n=100, p<10⁻²⁸)',
-    badge: 'New',
-    badgeColor: 'bg-[#D4AF37]/15 text-[#D4AF37]/60 border-[#D4AF37]/20',
     gradient: 'bg-[#D4AF37]/10',
   },
   {
@@ -363,6 +371,10 @@ export function EvidenceTabs() {
 
               <TabsContent value="anna-concept-lab" className="mt-0 focus-visible:outline-none">
                 <AnnaConceptLab />
+              </TabsContent>
+
+              <TabsContent value="anna-exe" className="mt-0 focus-visible:outline-none">
+                <EmergenceLab />
               </TabsContent>
             </motion.div>
           </Tabs>
