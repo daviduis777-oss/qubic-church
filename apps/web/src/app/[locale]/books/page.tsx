@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { Fragment, useState, useCallback } from 'react'
 import dynamic from 'next/dynamic'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
@@ -44,7 +44,32 @@ const DONATION_ADDRESS = 'BDRFCOFWHRTEHHMQQUIYJBXEOLNARADAGFUSBFGJFABYZBZLQNWJIP
 
 const READER_FILES = [
   { label: 'EN', href: '/books/qubic-long-version-eng.pdf' },
+  { label: 'DE', href: '/books/qubic-long-version-deu.pdf' },
   { label: 'RU', href: '/books/qubic-long-version-rus.pdf' },
+]
+
+const EDITIONS = [
+  {
+    idx: 0,
+    name: 'English',
+    readLabel: 'Read · Flip-book',
+    fileLabel: 'Download English PDF · 3.6 MB',
+    href: '/books/qubic-long-version-eng.pdf',
+  },
+  {
+    idx: 1,
+    name: 'Deutsch',
+    readLabel: 'Lesen · Flip-book',
+    fileLabel: 'Deutsches PDF · 0.5 MB',
+    href: '/books/qubic-long-version-deu.pdf',
+  },
+  {
+    idx: 2,
+    name: 'Русский',
+    readLabel: 'Читать · Original',
+    fileLabel: 'Скачать Русский PDF · 5.2 MB',
+    href: '/books/qubic-long-version-rus.pdf',
+  },
 ]
 
 const TOC: { roman: string; title: string; chapters: { num: number; name: string }[] }[] = [
@@ -279,6 +304,30 @@ export default function BooksPage() {
                 Download PDF · 3.6 MB
               </a>
             </div>
+
+            {/* Language switch — read any edition in the browser */}
+            <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-2 pt-1">
+              <span
+                className="text-[10px] font-mono tracking-[0.25em] uppercase mr-1"
+                style={{ color: TEXT_DIM }}
+              >
+                Read in
+              </span>
+              {EDITIONS.map((ed) => (
+                <button
+                  key={ed.name}
+                  onClick={() => openReader(ed.idx)}
+                  className="px-3 py-1.5 text-[10px] font-mono tracking-[0.2em] uppercase border transition-all hover:opacity-80"
+                  style={{
+                    color: `${GOLD}cc`,
+                    borderColor: `${GOLD}30`,
+                    backgroundColor: 'transparent',
+                  }}
+                >
+                  {ed.name}
+                </button>
+              ))}
+            </div>
           </section>
 
           {/* CfB pull-quote */}
@@ -425,7 +474,7 @@ export default function BooksPage() {
                 className="text-[10px] font-mono tracking-[0.4em] uppercase"
                 style={{ color: `${GOLD}60` }}
               >
-                Three Downloads
+                Read &amp; Download
               </div>
               <div
                 className="h-px w-12 mx-auto"
@@ -437,33 +486,23 @@ export default function BooksPage() {
               className="border p-6 sm:p-8 space-y-4"
               style={{ borderColor: BORDER, backgroundColor: CARD_BG }}
             >
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <button
-                  onClick={() => openReader(0)}
-                  className="flex items-center gap-3 p-4 border text-left transition-all hover:opacity-90"
-                  style={{ color: GOLD, borderColor: `${GOLD}40`, backgroundColor: `${GOLD}08` }}
-                >
-                  <BookOpen className="w-4 h-4 flex-shrink-0" />
-                  <div className="flex flex-col">
-                    <span className="text-xs font-mono tracking-[0.15em] uppercase">English</span>
-                    <span className="text-[10px] font-mono mt-0.5" style={{ color: `${GOLD}80` }}>
-                      Read · Flip-book
-                    </span>
-                  </div>
-                </button>
-                <button
-                  onClick={() => openReader(1)}
-                  className="flex items-center gap-3 p-4 border text-left transition-all hover:opacity-90"
-                  style={{ color: GOLD, borderColor: `${GOLD}40`, backgroundColor: `${GOLD}08` }}
-                >
-                  <BookOpen className="w-4 h-4 flex-shrink-0" />
-                  <div className="flex flex-col">
-                    <span className="text-xs font-mono tracking-[0.15em] uppercase">Русский</span>
-                    <span className="text-[10px] font-mono mt-0.5" style={{ color: `${GOLD}80` }}>
-                      Читать · Original
-                    </span>
-                  </div>
-                </button>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                {EDITIONS.map((ed) => (
+                  <button
+                    key={ed.name}
+                    onClick={() => openReader(ed.idx)}
+                    className="flex items-center gap-3 p-4 border text-left transition-all hover:opacity-90"
+                    style={{ color: GOLD, borderColor: `${GOLD}40`, backgroundColor: `${GOLD}08` }}
+                  >
+                    <BookOpen className="w-4 h-4 flex-shrink-0" />
+                    <div className="flex flex-col">
+                      <span className="text-xs font-mono tracking-[0.15em] uppercase">{ed.name}</span>
+                      <span className="text-[10px] font-mono mt-0.5" style={{ color: `${GOLD}80` }}>
+                        {ed.readLabel}
+                      </span>
+                    </div>
+                  </button>
+                ))}
                 <a
                   href="/books/anna-matrix-companion.pdf"
                   download
@@ -481,23 +520,19 @@ export default function BooksPage() {
               </div>
 
               <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 pt-3 text-[10px] font-mono tracking-[0.15em] uppercase" style={{ color: 'rgba(255,255,255,0.30)' }}>
-                <a
-                  href="/books/qubic-long-version-eng.pdf"
-                  download
-                  className="hover:opacity-80 underline underline-offset-2"
-                  style={{ color: TEXT_DIM }}
-                >
-                  Download English PDF · 3.6 MB
-                </a>
-                <span>·</span>
-                <a
-                  href="/books/qubic-long-version-rus.pdf"
-                  download
-                  className="hover:opacity-80 underline underline-offset-2"
-                  style={{ color: TEXT_DIM }}
-                >
-                  Скачать Русский PDF · 5.2 MB
-                </a>
+                {EDITIONS.map((ed, i) => (
+                  <Fragment key={ed.name}>
+                    {i > 0 && <span aria-hidden>·</span>}
+                    <a
+                      href={ed.href}
+                      download
+                      className="hover:opacity-80 underline underline-offset-2"
+                      style={{ color: TEXT_DIM }}
+                    >
+                      {ed.fileLabel}
+                    </a>
+                  </Fragment>
+                ))}
               </div>
             </div>
           </section>

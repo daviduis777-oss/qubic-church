@@ -105,6 +105,12 @@ function BookSilhouette({ width = 240 }: { width?: number }) {
   )
 }
 
+const LANGUAGE_NAMES: Record<string, string> = {
+  EN: 'English',
+  DE: 'Deutsch',
+  RU: 'Русский',
+}
+
 type BookFlipReaderProps = {
   files: { label: string; href: string }[]
   initialFile?: number
@@ -437,7 +443,7 @@ export default function BookFlipReader({
                 <div className="flex items-center gap-2">
                   <Loader2 className="w-3.5 h-3.5 animate-spin" style={{ color: GOLD }} />
                   <span className="text-[10px] font-mono tracking-[0.25em] uppercase">
-                    Loading {activeFile.label === 'RU' ? 'Русский' : 'English'}…
+                    Loading {LANGUAGE_NAMES[activeFile.label] ?? 'English'}…
                   </span>
                 </div>
               </div>
