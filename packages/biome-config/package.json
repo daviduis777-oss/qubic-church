@@ -1,0 +1,20 @@
+{
+  "name": "@opendocs/biome-config",
+  "version": "1.0.0",
+  "description": "Shared Biome configuration for OpenDocs monorepo",
+  "main": "biome.json",
+  "files": [
+    "biome.json"
+  ],
+  "peerDependencies": {
+    "@biomejs/biome": "^2.0.0"
+  },
+  "keywords": [
+    "biome",
+    "config",
+    "linting",
+    "formatting"
+  ],
+  "author": "OpenDocs Team",
+  "license": "MIT"
+}

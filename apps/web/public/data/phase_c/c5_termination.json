@@ -1,0 +1,305 @@
+{
+  "phase": "C5",
+  "generations": 200,
+  "n_seeds": 3,
+  "arms": [
+    "random",
+    "dense",
+    "anna"
+  ],
+  "fraction_anti_attractor_per_arm": {
+    "random": 0.0,
+    "dense": 0.0,
+    "anna": 0.016379010298302726
+  },
+  "results": {
+    "random": [
+      {
+        "seed": 42,
+        "final_fit": 0.5725308641975309,
+        "bins": [
+          {
+            "All 'output' neurons got 'non-zero' state": 2106
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {}
+        ]
+      },
+      {
+        "seed": 7,
+        "final_fit": 0.5694444444444444,
+        "bins": [
+          {
+            "All 'output' neurons got 'non-zero' state": 2106
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {}
+        ]
+      },
+      {
+        "seed": 13,
+        "final_fit": 0.6265432098765432,
+        "bins": [
+          {
+            "All 'output' neurons got 'non-zero' state": 2106
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {}
+        ]
+      }
+    ],
+    "dense": [
+      {
+        "seed": 42,
+        "final_fit": 0.5694444444444444,
+        "bins": [
+          {
+            "All 'output' neurons got 'non-zero' state": 2106
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {}
+        ]
+      },
+      {
+        "seed": 7,
+        "final_fit": 0.5941358024691358,
+        "bins": [
+          {
+            "All 'output' neurons got 'non-zero' state": 2106
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {}
+        ]
+      },
+      {
+        "seed": 13,
+        "final_fit": 0.5694444444444444,
+        "bins": [
+          {
+            "All 'output' neurons got 'non-zero' state": 2106
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {}
+        ]
+      }
+    ],
+    "anna": [
+      {
+        "seed": 42,
+        "final_fit": 0.6296296296296297,
+        "bins": [
+          {
+            "All 'output' neurons got 'non-zero' state": 2104,
+            "Tick cap reached": 2
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {}
+        ]
+      },
+      {
+        "seed": 7,
+        "final_fit": 0.6141975308641975,
+        "bins": [
+          {
+            "All 'output' neurons got 'non-zero' state": 2106
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2017,
+            "None of ITU neurons changed their state": 8
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {}
+        ]
+      },
+      {
+        "seed": 13,
+        "final_fit": 0.6188271604938271,
+        "bins": [
+          {
+            "All 'output' neurons got 'non-zero' state": 2106
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2023,
+            "Tick cap reached": 2
+          },
+          {
+            "All 'output' neurons got 'non-zero' state": 2025
+          },
+          {}
+        ]
+      }
+    ]
+  }
+}

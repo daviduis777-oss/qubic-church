@@ -1,0 +1,85 @@
+---
+title: "GENESIS, EXODUS and AIGARTH: what is on chain"
+description: "Three community assets on Qubic form one staged series. What the chain shows, where the riddle texts are, what the dates and numbers mean, and which popular readings did not hold."
+tier: 2
+date: 2026-10-01
+---
+
+# GENESIS, EXODUS and AIGARTH: what is on chain
+
+<Callout type="info" title="Before you read">
+GENESIS, EXODUS and AIGARTH are community assets. Come-from-Beyond has said he did not create GENESIS, and we found no official link between Qubic and any of the three. We advise against buying them, and everyone is responsible for their own decisions.
+</Callout>
+
+Between November 2025 and March 2026 three assets appeared on Qubic, each with a riddle text, and a community formed around them. We checked them against the chain itself: every fact below comes from public, read-only queries of the Qubic network and from the asset description files, unless it is marked as a reading.
+
+## Three assets in three steps
+
+| Asset | Issued (UTC) | Shares issued | Issuer |
+|---|---|---|---|
+| GENESIS | 2 November 2025, 23:02 | 676,000,000,000 | `POCCZYCK…AFOBD` |
+| EXODUS | 26 January 2026, 20:19 | 676 | `HASVHXZK…TBPONO` |
+| AIGARTH | 3 March 2026, 11:54 | 1 | `PXMARASA…QAQQLG` |
+
+The supply steps down from 676 billion to 676 to 1. None of the three issuers has issued any other asset.
+
+## Linked by funding
+
+The three issuing identities are linked on chain:
+- The GENESIS issuer paid the EXODUS issuer its 1 billion QU issuance fee (and 1 billion more for an earlier, failed issue), plus more than a thousand transfers of exactly 676 QU.
+- The EXODUS issuer paid the AIGARTH issuer its fee, plus 27 transfers of 26 QU.
+- After AIGARTH was issued, the GENESIS issuer sent it 85 transfers of 676 QU.
+
+Apart from the exchange (QX), the EXODUS issuer has no counterparty other than the GENESIS and AIGARTH issuers. The series looks like the work of one controller; that is a strong reading, not a proof.
+
+## Where the riddles are
+
+The assets carry no text on chain. A Qubic asset has only a name, a number of decimals and a short unit field, and all three are plain here. The riddles are description files on QubicTrade, written as Morse headings and text in binary. Their server timestamps show that each was uploaded within half a minute of its issuance and never changed.
+
+- **GENESIS** promises recognition for the top 676 holders and "50 units of account, corresponding to Blocks 1 through 676" during a "signal" that comes "6268 time units" after "point zero". The wording echoes early Bitcoin, where each of the first blocks paid 50 coins. It also speaks of a "576th message"; Satoshi Nakamoto's BitcoinTalk profile shows 575 posts, so the phrase reads naturally as "Satoshi's next message".
+- **EXODUS** links to the Doomsday Clock. Its logo shows the text "α 676 Ω" over clock gears, which matches its Morse heading. Its last line reads "When the reign of Ares descends, the breath of Helios will consume Selene until she bleeds", a natural description of a total lunar eclipse in March.
+- **AIGARTH** calls itself "the third and final transmission" and ends with "Look no further for the creator. Look for what is about to be born."
+
+The texts share typographic habits, such as non-breaking spaces and a French "à" in "who knew how à answer", which point to one author or one editing process, with a French-language draft or translation step. That is a reading, not a proof.
+
+## The date of 3 March 2026
+
+Counted in days from the Bitcoin genesis block on 3 January 2009, 6,268 days end on 3 March 2026. This is where the widely discussed "March 3" date comes from. That day brought a total lunar eclipse, total from 11:04 to 12:03 UTC according to NASA. AIGARTH was issued at 11:54:48 UTC, inside totality; its issuer received its first funds eleven minutes earlier. Since EXODUS had alluded to the blood moon, this points to deliberate staging. The issuers have made no payout or other distribution to holders, then or since, and the issuing identities have been inactive since 11 March 2026.
+
+## The number 85
+
+- EXODUS was issued 85 days after GENESIS.
+- The next day, 27 January 2026, the Doomsday Clock was set to 85 seconds. The date of that announcement had been public since 5 January.
+- Under simple assumptions about how the clock moves, a match like this has a chance between about one in nine and one in five. The later 85s, such as the EXODUS price of 85,026,676 QU and the 85 transfers to AIGARTH, were placed after the clock was known.
+
+## Who holds the assets
+
+- **GENESIS:** 755 holders. The top 676 hold 99.8 % of the supply, and many holdings are identical round lots, which suggests that some holders spread their shares over several wallets to secure a place among the top 676.
+- **EXODUS:** 301 holders besides the issuer. 291 of them are also among the GENESIS top 676, so EXODUS was bought almost only by that group.
+- **AIGARTH:** its single share is still held by its issuer.
+
+## Readings that did not hold
+
+We fixed each test in advance, including how a text or address would be encoded and what chance alone would produce:
+- **"The issuer addresses or keys are hidden in the Anna Matrix."** The longest match is five letters, which is what random Qubic identities also produce.
+- **Hidden layers in the texts.** There are no free bits in the binary, and acrostics, skip patterns and a second reading of the bit stream show nothing beyond chance.
+- **Hidden data in the logos.** No appended data, valid image structure, and standard steganography tests negative. The tests do detect a planted message in control images, so they would have caught a simple hidden layer. This rules out standard methods, not keyed or scattered ones.
+- **"Most of GENESIS was burned several times over."** Only one burn succeeded. It removed exactly the unsold part of the initial offer.
+- **"The GENESIS issuer kept 676 shares."** The 676 shares it holds came from another identity on 1 January 2026.
+- **"EXODUS predicted the 85."** The announcement date was public in advance, and the price was set after the result.
+- **Codes in the addresses, amounts or dates.** The issuer identities look like random Qubic identities. The odd transfer amounts are fee bookkeeping. No hidden link to Qubic or Aigarth dates turned up either.
+
+## What Come-from-Beyond said
+
+Asked about GENESIS in January 2026, Come-from-Beyond wrote:
+- "I hope you understand how dumb it is to assume that I created Genesis. You must be joking, otherwise I'll be very upset." (message 1464222790017224704)
+- "If it's not some original name like, for example, Buttprintcoin, then CFB isn't involved. Genesis is the most boring name that could be used." (message 1464314101919518741)
+
+We found no statement of his about EXODUS or AIGARTH. The asset AIGARTH borrows the name of Qubic's AI project. Nothing official connects the two.
+
+## How we checked
+
+- **On-chain data:** read-only queries of the public Qubic RPC, retrieved on 30 September and 1 October 2026.
+- **Description files:** fetched with their server timestamps and decoded independently twice.
+- **Tests:** more than 30 tests were frozen before they ran, with null models built from random texts and random Qubic identities.
+- **Records:** scripts, protocols and results are kept in our research archive.

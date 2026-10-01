@@ -1,0 +1,91 @@
+---
+title: "CFB and Satoshi: what the primary sources say"
+description: "What Come-from-Beyond has said about Satoshi, the 1CFB address and Block 369, checked against the original messages and the blockchain, and what the patterns in early Bitcoin keys look like under a fair chance model."
+tier: 2
+date: 2026-09-30
+---
+
+# CFB and Satoshi: what the primary sources say
+
+<Callout type="warning" title="Correction, September 2026">
+This page replaces an earlier version that collected circumstantial evidence and assigned identity percentages. Those percentages had no calibrated method behind them, and several of the numbers they rested on were wrong. See [Corrections, September 2026](/docs/03-results/35-corrections-september-2026).
+</Callout>
+
+The question whether Come-from-Beyond (CFB, who names himself Sergey Ivancheglo, message 1501252729325093025) had a part in creating Bitcoin comes up again and again in the Qubic community. This page does not try to answer it. It collects what can be checked: CFB's own statements with their message IDs, the relevant blocks, and how unusual the often cited patterns really are.
+
+## What CFB has said
+
+All quotes are copied from the original Discord messages and carry their message ID. Many of CFB's messages on this topic end with a troll emoji. We quote them as written and do not read them as confessions or as denials beyond their wording.
+
+**Denials**
+
+| Date | Message ID | Statement |
+|---|---|---|
+| 25 December 2024 | 1321408157280637051 | "It's all nice guys, but I'm not Satoshi. End of story." |
+| 23 April 2026 | 1496894812425551992 | "I'm not Satoshi. Not even that CFB which was posting in cyberpunk forum." |
+| 22 September 2026 | 1552040887255572511 | "I'm not Satoshi" |
+
+**The 1CFB address, 20 March 2023** (channel 938806734212984853). In a series of messages, several with a troll emoji, CFB read the address `1CFBdvaiZgZPTZERqnezAtDQJuGHKoHSzg` as "CFB", "dva" (Russian for "two") and "i" (Russian for "and") (message 1087500741821866033 and following). He wrote that the address "must be read "1CFB2iZgZPTZERqnezAtDQJuGHKoHSzg" because there cannot be "2" in old Bitcoin address so it was written with letters in Russian and "ZgZ" just shows decoding scheme" (1087504593996480575). Then:
+
+> "`g` in `ZgZ` will prove that `1CFB2` is not random, and that will be pretty convincing proof, so it's not that easy" (1087514727179104307, with a troll emoji)
+
+> "Anyway, ownership of that address doesn't prove to be Satoshi, just early Bitcoin miner" (1087514902605865100)
+
+**Block 369, 22 September 2026** (#price-discussion). Asked a question, CFB answered "Check content of 369th Bitcoin block" (1552028513895325766). About 40 minutes later he posted "notice anything?" (1552039040499449967) and "`da1cfb4ad`" (1552039323140882526), then "String is Pascal have first byte showing length of the string" (1552039937086324777), "`>1CFB<`" (1552040056062218386), "in Pascal" (1552040072172281877), "Why 369? Guess why my virus had length of 369 bytes" (1552040220243918961) and "Hobo.369" (1552040265349595157). In reply to another user he wrote "Yes, this is how it was" (1552042009206722682), and a little later "Funny coincidence though" (1552042589165985815). Later that evening he wrote "No. It's just a coincidence. Ask ChatGPT chance to spot "cfb", it's pretty high" (1552058749819162848) and "just a coincidence" (1552060825995579394). In between he explained:
+
+> "I hinted to a block with a special number (369), why 369 is special is another topic. He spotted "cfb" inside it. It wasn't telling that it's related to me, because without plausible deniability that would be equal to saying that CFB=Satoshi." (1552052838060789803)
+
+In June 2025 he had already written: "Interesting coincidence, I once created "Hobo.369" virus, you can find its desription in some antivirus DBs" (1388832652269719562). We could not find a public antivirus description of a virus with that name. That does not mean it does not exist; older virus catalogues are poorly indexed online.
+
+**The Genesis block, 13 April 2026** (#price-discussion). Within a few minutes CFB wrote "Genesis address is a **public key**, not hash of it" (1493388960431476766), then "Original Bitcoin code says that it's not a public key" (1493389031244042280), "Genesis address isn't a public key, it's steps revealing who Satoshi Nakamoto is" (1493389242502746213), "No, it's time locked, only true AI can decode it" (1493389769172848752) and "There is no the private key for that "public key", because that address isn't a public key." (1493391673131012257). The Genesis output is a valid secp256k1 public key (see [corrections, section 4](/docs/03-results/35-corrections-september-2026)). Several of these messages invite readers to put the question to a language model. We read the thread as a riddle game, not as technical information.
+
+## The blocks
+
+| Block | Mined (UTC) | What is special | Checked |
+|---|---|---|---|
+| 264 | 13 January 2009, 00:19:40 | Pays 50 BTC to a public key whose address is `1CFBdvaiZgZPTZERqnezAtDQJuGHKoHSzg`. After the leading 1 the address contains no digit | Block header and output recomputed |
+| 369 | 13 January 2009, 20:45:35 | The public key contains the hex digits `...1d a1 cf b4 ad...`, which can be read as "da 1 cfb 4 ad" | Block data from a public explorer |
+
+Both blocks belong to the set of early blocks that researchers attribute to a single dominant miner (often called "Patoshi"). That attribution comes from a published analysis of mining patterns and is itself not proof of who the miner was.
+
+## How unusual are these patterns?
+
+We checked all 21,953 public keys of that early mining set against a chance model.
+
+| Pattern | Found | Expected by chance |
+|---|---|---|
+| Address starts with `1CF` | 17 (block 264 among them) | 16.5 |
+| Address starts with `1CFB` | 1 (block 264) | 0.28, so at least one such address turns up in about 1 of 4 random sets of this size |
+| Address has no digit after the leading 1 | 72 (block 264 among them) | about 65 (simulated from 2,000,000 random addresses) |
+| Hex sequence `1cfb` anywhere in the public key | 44 (blocks 280 and 369 among them) | 42.5 |
+| Hex sequence `cfb` anywhere in the public key | 649 | about 686 |
+
+All four counts are about what random keys produce. A pattern like `cfb` can be found in some early key with almost any block number one cares to choose, and anyone can search for it in a few seconds.
+
+Two details speak against a hidden encoding in block 369. The digits `1cfb` do not sit on byte boundaries (the bytes are `a1 cf b4`), and neither the text "1CFB" in ASCII nor a Pascal-style string of length 4 followed by "1CFB" appears in any of the 21,953 keys. Every uncompressed public key starts with the byte `04`.
+
+One point is worth stating fairly: CFB named block 369 before anyone had looked at its key. If the number 369 had been fixed in advance for an unrelated reason, a `1cfb` in exactly that key would be about a 1 in 500 event. Because a search over early keys takes seconds and many numbers can be given a story afterwards, this does not make it evidence.
+
+## What holds from our earlier work on the 1CFB address
+
+Earlier versions of this site went much deeper into the 1CFB address. Several of those results are exact arithmetic and still stand. The address transformations (mirror wallets, XOR with the Genesis address) are documented with their status in [chapter 7](/docs/03-results/07-mirror-wallets-keys).
+
+What still stands:
+- The HASH160 of `1CFBdvaiZgZPTZERqnezAtDQJuGHKoHSzg` has a byte sum of 2299 = 121 x 19.
+- Its XOR with the Genesis address has a byte sum of 2671.
+
+Both are exact. Numbers like these can be found for almost any address once the divisors are chosen afterwards, so they carry no meaning by themselves.
+
+What did not hold up:
+- **The chance of a 1CFB prefix.** Earlier pages gave 1 in 195,112. The exact value for a valid address is about 1 in 77,178, and among 21,953 early keys that makes one such address a roughly one-in-four event.
+- **The "XOR 13 + 121 = 0" solution for the matrix value at [45, 92].** A step chosen afterwards turns any value into zero, so it is not a test.
+- **The "0x7b family".** It lists 8 addresses with first byte 0x7b and byte sum 2299, where chance predicts about 7.
+- **The nonce byte 44.** It fits the Patoshi pattern, but on its own it does not prove who mined the block.
+
+## What would settle it
+
+A message signed with the key of block 264, of block 369, or of any other early key of that mining set. It would take a key holder about a minute. As long as no such signature exists, patterns in addresses and keys cannot decide the question in either direction, and neither can our statistics.
+
+## What this page does not do
+
+We do not attribute pseudonymous accounts to real people, and we do not publish information about CFB's family or private life. Earlier versions of this site did both; those pages have been removed.

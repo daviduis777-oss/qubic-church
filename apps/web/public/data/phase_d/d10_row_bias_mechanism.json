@@ -1,0 +1,122 @@
+{
+  "phase": "D10",
+  "title": "Row-Bias Attractor Mechanism",
+  "all_128_row_sum_summary": {
+    "positive_count": 64,
+    "negative_count": 64,
+    "zero_count": 0,
+    "mean": -0.109375,
+    "std": 74.03496158646519
+  },
+  "first_22_rows_summary": {
+    "positive_count": 18,
+    "negative_count": 4,
+    "mean": 55.81818181818182,
+    "values": [
+      88,
+      106,
+      18,
+      74,
+      125,
+      122,
+      97,
+      108,
+      -24,
+      56,
+      -84,
+      -18,
+      82,
+      106,
+      2,
+      72,
+      22,
+      86,
+      -52,
+      24,
+      98,
+      120
+    ]
+  },
+  "exception_neuron_indices": [
+    8,
+    10,
+    11,
+    18
+  ],
+  "all_negative_state_first_step": {
+    "neurons_staying_negative": 20,
+    "neurons_flipping_positive": 2
+  },
+  "fixed_point_attractor_state": [
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    1,
+    -1,
+    -1,
+    -1
+  ],
+  "fixed_point_positive_neurons": [
+    10,
+    18
+  ],
+  "fixed_point_negative_neurons": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    19,
+    20,
+    21
+  ],
+  "output_neuron_indices": [
+    14,
+    16,
+    17,
+    13,
+    2,
+    5,
+    1,
+    15
+  ],
+  "output_neuron_states_at_attractor": [
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1
+  ],
+  "predicted_output_bitstring_at_attractor": "00000000",
+  "interpretation": "The first 22 rows of Anna are positively biased (18 of 22 have positive sign-sum, mean +56). When the ITU uses these rows as neuron weights and most neighbors are at state -1, the weighted sum is dominated by -1 \u00d7 (positive row sum) = negative, so ternary_clamp produces -1, reinforcing the all-negative state. Only the 4 'exception neurons' (rows 8, 10, 11, 18 with negative row sums) flip to +1. This self-consistent fixed point produces 85.7% '0' bits in the output bitstring (D9 finding)."
+}

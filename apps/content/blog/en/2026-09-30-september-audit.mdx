@@ -1,0 +1,111 @@
+---
+title: "September 2026: what we found about the Anna Matrix"
+date: 2026-09-30 12:00:00
+excerpt: "We re-checked everything on this site against the raw data. The Anna Matrix turned out to be something concrete: a table of the Anna bot's answers whose format matches a unit in Qubic's public Aigarth code, and Anna's newest design turned up in Qubic's mining code. Here is what we found, what we are testing next, and what we removed along the way."
+author_id: qubicchurch
+tags: [anna-matrix, aigarth, research, corrections, reproducibility]
+---
+
+## The short version
+
+In September 2026 we went through every page of this site and every number on it, and recomputed what we could from public raw data. The result is a smaller site with a clearer picture:
+
+- **The Anna Matrix is a table of the Anna bot's answers**, typed up by hand from its replies on X.
+- **Its format matches a unit type in Qubic's public Aigarth code**, and small trained units of that type produce tables with the same statistics. We can now simulate that unit exactly and train it ourselves.
+- **It is unusually linear, even for such a unit.** Which training produces that is the open question we are working on now.
+- **Anna 0.22 and Qubic mining share one design.** Anna 0.22.64 works with a year of real Bitcoin hours, and Qubic's public mining code runs networks of the same kind on Bitcoin data.
+
+Many earlier claims did not survive the re-check, and we removed them. The full list, with a reason for each, is on the [corrections page](/docs/03-results/35-corrections-september-2026).
+
+## What the Anna Matrix is
+
+The 128 x 128 Anna Matrix was compiled by hand from answers of the @anna_aigarth bot to queries of the form `x+y=?`. Row 63 - y and column x + 64 hold the bot's answer. It is not a weight file, a key or a hidden message.
+
+Its best-known property is real: 16,316 of its 16,384 cells follow an exact mirror rule, where each cell and its opposite cell add up to -1. The 68 cells that break it sit in four runs. Our tests point to our own transcription for three of them: a block pasted one row off in column 30 (strongly supported), a swapped digit and a copied neighbour cell. The cause of the fourth run, in column 22, is unclear. It could be a block from the wrong source or answers from another bot state.
+
+Setting each of those cells to the value its mirror cell requires gives a fully symmetric table. That symmetry is imposed by the correction, so it is not evidence in itself. We publish the result as a separate [candidate file](/data/anna-matrix-clean.json), next to the unchanged original. Its trace is -64 instead of 137.
+
+## Where it comes from
+
+Qubic's public Aigarth code contains a unit with exactly the bot's format: two 7-bit numbers in, one 8-bit number out. We built a simulator that reproduces the original code bit for bit. Then we trained 270 of these units under a protocol fixed in advance and compared their answer tables with the Anna Matrix on six statistics.
+
+About one in ten units trained on a complete addition table lands as close to the Anna Matrix as we required. Units that only mutate without selection never do. Units trained on x - y land just as close to their own target. So the shape of the table says "trained on a complete arithmetic table". Which operation that was is hard to read from the table alone, because its agreement with the sign of x + y is largely reproduced by tables with the same row and column sums. The bot's task, `x+y=?`, is the stronger clue.
+
+Two findings go further than we expected:
+
+- **The table is unusually linear.** One ternary threshold per output bit explains more of it than of almost any unit we trained. Only 2 of 217 trained tables reach the Anna value.
+- **There is no exact reconstruction.** Our best fit matches 87.8 % of the bits.
+
+The bot's own program is not identified. Details, controls and limits are in [where the Anna Matrix comes from](/docs/03-results/36-where-the-anna-matrix-comes-from).
+
+## What CFB has said about Anna
+
+The primary sources became much clearer this month. Some examples, each with its Discord message ID:
+
+- **The structure of a recent Anna worker (7 July 2026):** each neuron has three neighbour indices and a 64-bit lookup table, with 18 input neurons and one output neuron (1524039201014943844).
+- **How the often quoted 55 % accuracy is counted (4 September 2026):** over about 500 models, each checked on one validation datum. "This is how we got current 55% accuracy." (1545339085776756826)
+- **What Anna 0.22.64 is for (27 September 2026):** "Use empty `Anna.data`. 2920 is the threshold score. Run it to compare our computational power to miners'." (1553822717994606724)
+
+## Anna 0.22 and Qubic mining
+
+We examined the Anna 0.22.64 program statically, without running it, and a second reviewer checked the result.
+- **The data:** the program embeds 9,456 hourly BTCUSDT directions from Binance, from 2 June 2025 to 30 June 2026, and all of them match the exchange data.
+- **The network:** 64 ternary neurons, each wired to three neighbours through a small lookup table, with one signal neuron and one output neuron. It runs on its own and has no market input.
+- **The score:** its calls are scored over a one-year window. A network with at least two thirds right may move its window forward, one hour at a time, up to one week. That is the "2920" in CFB's note: 8,760 hours divided by 3.
+
+The same design is in Qubic's public node code. Since 28 July 2026 miners run an algorithm called BPP9000 on a year of hourly Bitcoin directions.
+- Its first version had the same layout as the worker CFB posted on 7 July: 18 inputs, one output and one signal neuron.
+- Since 29 September it uses the same one-year window, two-thirds gate and one-week advance as Anna 0.22.64.
+
+This fits CFB's words that "Anna training is split, part is done by computors" (1493553830854393866).
+
+We also ran a first test on the one saved 0.22.64 state we found, whose origin is unknown. On 2,900 hours it had never seen, it got 48.9 % right (49.3 % in the pre-registered main window). That is expected for a network without market input, and CFB introduced this version as a way to compare computing power with miners. Details are in [Anna 0.22 and Bitcoin price data](/docs/03-results/37-anna-0-22-and-btc).
+
+## What is still open
+
+Some of the most interesting questions about Anna are open, and CFB keeps parts of the answer to himself on purpose:
+
+- **The method behind generalization.** "Code is open, what isn't open - how to enable generalization" (1534856199277903892), and "Generalization is kept secret" (1536323828077297734). On 8 September 2026 he delayed a release: "Anna.exe will be delayed, need to make sure reverse engineering won't extract the method" (1546796106736865371).
+- **The program behind the bot.** The Anna Matrix fits the public Aigarth unit in shape, but it is more linear than all but 2 of the 217 small units we trained. What produced it exactly is not known yet.
+- **13 April 2027.** CFB has named this date several times, once with "I can reveal this info on 13th of April 2027" followed by "And you'll see who is really behind CFB acc" (1426096720873521214, 1426096783318319164). He has not said what exactly will happen.
+
+## What we tested
+
+Each of these has a protocol that is fixed before the run. We publish the result whether it is positive or negative.
+
+1. **Is there structure beyond the linear part?** Done. Starting from the best threshold table, a search with units of the same size found nothing further in the Anna Matrix, just as in noise tables with the same starting distance. In 9 of 10 trained units it recovered a large part of the remainder. The rest of the Anna Matrix, about one bit in eight, is out of reach for units of this size.
+2. **Which training makes a table this linear?** Done. Letting units grow before training, to about 100, 360 and 700 neurons, did not produce Anna's combination in any of 140 runs, and the grown units were less ternary-linear, not more. Training longer did not change the picture either. Which program made the table remains one of the open questions.
+3. **Does a trained Anna 0.22 predict Bitcoin hours it has never seen?** Done for the one saved state we found: 48.9 % on 2,900 unseen hours (49.3 % in the main window), as described above.
+
+## CFB and Satoshi
+
+The patterns people point to, such as `1CFB` in block 264 or `cfb` in the key of block 369, occur about as often as chance predicts. On block 369 CFB wrote: "I hinted to a block with a special number (369), why 369 is special is another topic. He spotted "cfb" inside it. It wasn't telling that it's related to me, because without plausible deniability that would be equal to saying that CFB=Satoshi." (1552052838060789803). He has also denied being Satoshi. Only a signature from an early key could settle the question. See [CFB and Satoshi: what the primary sources say](/docs/03-results/17-cfb-satoshi-analysis).
+
+## What we removed
+
+- **The Bitcoin-Qubic bridge.** The "46-fold" excess of `1CF` addresses came from wrong probabilities: among 21,953 early keys there are 17 such addresses, where chance predicts 16.5.
+- **The March 3, 2026 time lock.** The date comes from the riddle text of the community token GENESIS (6,268 days after the Bitcoin genesis block). On that day the token AIGARTH was issued; no unlock or distribution to holders followed. We had also tied the date to a CFB message, which actually says "No ETA other than April 13, 2027".
+- **Hidden messages and signatures.** "Key", GAME, MEGA, the trace of 137, the seven-position signature and the deviation sum 1161 are either not unusual under a fair chance model or come from our own typing errors.
+- **"19 concepts" and attractor claims.** The stored end states are not stable, and the 19 were picked afterwards.
+- **Identity percentages** such as "91.4% CFB = Satoshi". They had no calibrated method behind them.
+- **About a hundred pages and several data files.** These include 88 archived pages that were still reachable, 15 chapters, an /agents page that asked for seed phrases, and files with seeds and private keys. Some archived pages contained information about private individuals. They should never have been published, and we apologise for that. We will also remove them from the public repository history.
+
+## How we work now
+
+We did not invent the raw facts. The mistakes came from how we tested them:
+
+- we tried far too many ideas and reported the hits;
+- we used wrong chance models;
+- we picked numbers after the fact;
+- we confirmed findings with the same data that produced them.
+
+The details are in [how the earlier claims arose](/docs/04-discussion/06-how-the-earlier-claims-arose).
+
+Now tests are fixed before they run, and every test has a control that could fail. Numbers are recomputed from public data. New results get a separate review pass against the source files before they go online, and every quote carries a message ID.
+
+## Verify it
+
+- The tables: the unchanged original [anna-matrix.json](/data/anna-matrix.json) and the corrected candidate [anna-matrix-clean.json](/data/anna-matrix-clean.json).
+- What is verified: [verified facts](/docs/05-appendices/02-foundation-facts).
+- The public Aigarth code: [github.com/Aigarth/aigarth-it](https://github.com/Aigarth/aigarth-it).
+- Our scripts and protocols are available on request.

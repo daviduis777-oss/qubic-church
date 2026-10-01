@@ -1,0 +1,53 @@
+---
+title: "Verified Facts"
+description: "The short list of statements on this site that were recomputed from public raw data and survived the September 2026 re-check. Everything else on the site is either marked as a hypothesis or has been withdrawn."
+tier: 1
+confidence: 95
+date: 2026-09-30
+---
+
+# Verified Facts
+
+<Callout type="warning" title="Correction, September 2026">
+This page used to be a "foundation facts" reference that also contained the Bitcoin bridge, a 550 BTC time lock and other claims that did not hold. It now lists only statements that were recomputed from public data and checked independently. See [Corrections, September 2026](/docs/03-results/35-corrections-september-2026).
+</Callout>
+
+A fact listed here is true as stated. Being true does not make it meaningful: several of these are exact arithmetic that earlier versions of the site over-interpreted. The right-hand column says what each fact does not show.
+
+## The Anna Matrix (as published)
+
+| Fact | What it does not show |
+|---|---|
+| The published file is a 128 x 128 table of signed bytes, compiled by hand from replies of the @anna_aigarth bot to `x+y=?`; the reply to x and y is in row `63 - y`, column `x + 64`. All 1,218 numeric bot replies in our records (948 distinct queries) match this lookup | It is not a weight file, not source code and not a memory dump. The replies and the table come from the same collection, so the match is consistency, not independent proof |
+| 16,316 of 16,384 cells satisfy `M[i][j] + M[127-i][127-j] = -1` | The 68 exceptions are not a hidden layer; most are entry errors ([chapter 36](/docs/03-results/36-where-the-anna-matrix-comes-from)) |
+| The matrix has full rank 128 | No meaning beyond linear algebra |
+| The 26 largest Walsh coefficients reproduce about 81% of the signs; a 32-row kernel reproduces 94.5% | The table is mostly a shallow, almost linear function of the input bits |
+| For 768 tested ternary input vectors, iterating `sign(M v)` ends in two period-4 cycles that are negatives of each other | Not proven for all inputs. The seven positions where these cycles are not antipodal depend on the column 30 entry error |
+| Three diagonal cells have absolute values 75, 101 and 121, which are the ASCII codes of "K", "e", "y" | Under a fair chance model this is not unusual |
+| The trace of the table as typed is 137 | It comes from one cell pair that is very likely an entry error; the corrected table has trace -64 |
+
+## Bitcoin
+
+| Fact | What it does not show |
+|---|---|
+| The Genesis block is 285 bytes; its nonce is 2083236893 | Nothing about Qubic |
+| The Genesis output public key is a valid secp256k1 point | It is not an executable script and hides no second program |
+| Block 264 (13 January 2009, 00:19:40 UTC) pays to the public key whose address is `1CFBdvaiZgZPTZERqnezAtDQJuGHKoHSzg` | Among 21,953 early keys, 17 addresses start with `1CF`, while chance predicts 16.5. See [chapter 17](/docs/03-results/17-cfb-satoshi-analysis) |
+| The public key of block 4 gives an address starting with `15ubic` | A prefix like that is expected somewhere among thousands of early addresses |
+| 625,284 = 283 x 47² + 137, and 625,284 mod 16,384 points to row 21, column 4 | Exact arithmetic with numbers chosen after the fact |
+
+## Qubic and Aigarth
+
+| Fact | What it does not show |
+|---|---|
+| Qubic derives a private key from a seed with two KangarooTwelve steps (seed, subseed, private key) | Nothing about Bitcoin keys |
+| The public Aigarth code contains a unit `ITUClArithmeticAdditionIntI2x7O8` with exactly the bot's input and output format; such units map complemented inputs to complemented outputs | That the bot is exactly this unit. The table fits a small trained unit of this class, which is a supported hypothesis ([chapter 36](/docs/03-results/36-where-the-anna-matrix-comes-from)) |
+| The Anna.exe versions 1 and 5 to 8 evolve ternary lookup networks on signed 7-bit addition | They are not the program behind the bot's replies |
+| Anna 0.22.64 (September 2026) contains a table of 9,456 real hourly BTCUSDT directions, 2 June 2025 to 30 June 2026 | That Anna can predict prices ([chapter 37](/docs/03-results/37-anna-0-22-and-btc)) |
+
+## Come-from-Beyond
+
+| Fact | What it does not show |
+|---|---|
+| CFB has written "I'm not Satoshi" several times, with message IDs in [chapter 17](/docs/03-results/17-cfb-satoshi-analysis) and [Appendix D](/docs/05-appendices/04-discord-archive) | A denial is not proof either way |
+| CFB has named 13 April 2027 several times: "No ETA other than April 13, 2027" (1394734677935521824), "It's 5 years after launch of Qubic" (1250064529677750287), and "I can reveal this info on 13th of April 2027" followed by "And you'll see who is really behind CFB acc" (1426096720873521214, 1426096783318319164) | The messages do not say what exactly happens on that date. No event was announced for 3 March 2026 |

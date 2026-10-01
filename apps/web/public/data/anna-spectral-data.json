@@ -1,0 +1,878 @@
+{
+  "eigenvalues": [
+    {
+      "real": -18.659,
+      "imag": 2342.0,
+      "magnitude": 2342.075,
+      "angle_deg": 90.456
+    },
+    {
+      "real": -18.659,
+      "imag": -2342.0,
+      "magnitude": 2342.075,
+      "angle_deg": -90.456
+    },
+    {
+      "real": -884.008,
+      "imag": 0.0,
+      "magnitude": 884.008,
+      "angle_deg": 180.0
+    },
+    {
+      "real": 876.576,
+      "imag": 0.0,
+      "magnitude": 876.576,
+      "angle_deg": 0.0
+    },
+    {
+      "real": 256.568,
+      "imag": 660.916,
+      "magnitude": 708.969,
+      "angle_deg": 68.784
+    },
+    {
+      "real": 256.568,
+      "imag": -660.916,
+      "magnitude": 708.969,
+      "angle_deg": -68.784
+    },
+    {
+      "real": -223.711,
+      "imag": 644.261,
+      "magnitude": 681.996,
+      "angle_deg": 109.149
+    },
+    {
+      "real": -223.711,
+      "imag": -644.261,
+      "magnitude": 681.996,
+      "angle_deg": -109.149
+    },
+    {
+      "real": -592.639,
+      "imag": 0.0,
+      "magnitude": 592.639,
+      "angle_deg": 180.0
+    },
+    {
+      "real": 579.891,
+      "imag": 0.0,
+      "magnitude": 579.891,
+      "angle_deg": 0.0
+    },
+    {
+      "real": -43.901,
+      "imag": 549.826,
+      "magnitude": 551.576,
+      "angle_deg": 94.565
+    },
+    {
+      "real": -43.901,
+      "imag": -549.826,
+      "magnitude": 551.576,
+      "angle_deg": -94.565
+    },
+    {
+      "real": -521.94,
+      "imag": 165.63,
+      "magnitude": 547.589,
+      "angle_deg": 162.394
+    },
+    {
+      "real": -521.94,
+      "imag": -165.63,
+      "magnitude": 547.589,
+      "angle_deg": -162.394
+    },
+    {
+      "real": 509.27,
+      "imag": 0.0,
+      "magnitude": 509.27,
+      "angle_deg": 0.0
+    },
+    {
+      "real": 478.712,
+      "imag": 145.508,
+      "magnitude": 500.338,
+      "angle_deg": 16.907
+    },
+    {
+      "real": 478.712,
+      "imag": -145.508,
+      "magnitude": 500.338,
+      "angle_deg": -16.907
+    },
+    {
+      "real": 378.478,
+      "imag": 316.681,
+      "magnitude": 493.49,
+      "angle_deg": 39.92
+    },
+    {
+      "real": 378.478,
+      "imag": -316.681,
+      "magnitude": 493.49,
+      "angle_deg": -39.92
+    },
+    {
+      "real": 216.661,
+      "imag": 426.98,
+      "magnitude": 478.805,
+      "angle_deg": 63.096
+    },
+    {
+      "real": 216.661,
+      "imag": -426.98,
+      "magnitude": 478.805,
+      "angle_deg": -63.096
+    },
+    {
+      "real": -212.989,
+      "imag": 419.349,
+      "magnitude": 470.338,
+      "angle_deg": 116.926
+    },
+    {
+      "real": -212.989,
+      "imag": -419.349,
+      "magnitude": 470.338,
+      "angle_deg": -116.926
+    },
+    {
+      "real": -303.596,
+      "imag": 330.215,
+      "magnitude": 448.567,
+      "angle_deg": 132.595
+    },
+    {
+      "real": -303.596,
+      "imag": -330.215,
+      "magnitude": 448.567,
+      "angle_deg": -132.595
+    },
+    {
+      "real": 167.028,
+      "imag": 406.017,
+      "magnitude": 439.031,
+      "angle_deg": 67.639
+    },
+    {
+      "real": 167.028,
+      "imag": -406.017,
+      "magnitude": 439.031,
+      "angle_deg": -67.639
+    },
+    {
+      "real": -431.67,
+      "imag": 0.0,
+      "magnitude": 431.67,
+      "angle_deg": 180.0
+    },
+    {
+      "real": -0.271,
+      "imag": -421.139,
+      "magnitude": 421.139,
+      "angle_deg": -90.037
+    },
+    {
+      "real": -0.271,
+      "imag": 421.139,
+      "magnitude": 421.139,
+      "angle_deg": 90.037
+    },
+    {
+      "real": -202.927,
+      "imag": 364.636,
+      "magnitude": 417.299,
+      "angle_deg": 119.097
+    },
+    {
+      "real": -202.927,
+      "imag": -364.636,
+      "magnitude": 417.299,
+      "angle_deg": -119.097
+    },
+    {
+      "real": -304.788,
+      "imag": 272.267,
+      "magnitude": 408.687,
+      "angle_deg": 138.226
+    },
+    {
+      "real": -304.788,
+      "imag": -272.267,
+      "magnitude": 408.687,
+      "angle_deg": -138.226
+    },
+    {
+      "real": 288.834,
+      "imag": 287.263,
+      "magnitude": 407.363,
+      "angle_deg": 44.844
+    },
+    {
+      "real": 288.834,
+      "imag": -287.263,
+      "magnitude": 407.363,
+      "angle_deg": -44.844
+    },
+    {
+      "real": 405.667,
+      "imag": 0.0,
+      "magnitude": 405.667,
+      "angle_deg": 0.0
+    },
+    {
+      "real": -391.355,
+      "imag": 0.0,
+      "magnitude": 391.355,
+      "angle_deg": 180.0
+    },
+    {
+      "real": -352.847,
+      "imag": 158.131,
+      "magnitude": 386.66,
+      "angle_deg": 155.86
+    },
+    {
+      "real": -352.847,
+      "imag": -158.131,
+      "magnitude": 386.66,
+      "angle_deg": -155.86
+    },
+    {
+      "real": 168.155,
+      "imag": -346.313,
+      "magnitude": 384.979,
+      "angle_deg": -64.101
+    },
+    {
+      "real": 168.155,
+      "imag": 346.313,
+      "magnitude": 384.979,
+      "angle_deg": 64.101
+    },
+    {
+      "real": 337.534,
+      "imag": 181.102,
+      "magnitude": 383.049,
+      "angle_deg": 28.215
+    },
+    {
+      "real": 337.534,
+      "imag": -181.102,
+      "magnitude": 383.049,
+      "angle_deg": -28.215
+    },
+    {
+      "real": 55.83,
+      "imag": -375.963,
+      "magnitude": 380.086,
+      "angle_deg": -81.553
+    },
+    {
+      "real": 55.83,
+      "imag": 375.963,
+      "magnitude": 380.086,
+      "angle_deg": 81.553
+    },
+    {
+      "real": -299.624,
+      "imag": -229.92,
+      "magnitude": 377.674,
+      "angle_deg": -142.499
+    },
+    {
+      "real": -299.624,
+      "imag": 229.92,
+      "magnitude": 377.674,
+      "angle_deg": 142.499
+    },
+    {
+      "real": -49.535,
+      "imag": 373.752,
+      "magnitude": 377.021,
+      "angle_deg": 97.55
+    },
+    {
+      "real": -49.535,
+      "imag": -373.752,
+      "magnitude": 377.021,
+      "angle_deg": -97.55
+    },
+    {
+      "real": 355.557,
+      "imag": 49.795,
+      "magnitude": 359.027,
+      "angle_deg": 7.972
+    },
+    {
+      "real": 355.557,
+      "imag": -49.795,
+      "magnitude": 359.027,
+      "angle_deg": -7.972
+    },
+    {
+      "real": -249.54,
+      "imag": -243.147,
+      "magnitude": 348.412,
+      "angle_deg": -135.743
+    },
+    {
+      "real": -249.54,
+      "imag": 243.147,
+      "magnitude": 348.412,
+      "angle_deg": 135.743
+    },
+    {
+      "real": 254.993,
+      "imag": 232.394,
+      "magnitude": 345.005,
+      "angle_deg": 42.345
+    },
+    {
+      "real": 254.993,
+      "imag": -232.394,
+      "magnitude": 345.005,
+      "angle_deg": -42.345
+    },
+    {
+      "real": 206.404,
+      "imag": 259.38,
+      "magnitude": 331.482,
+      "angle_deg": 51.489
+    },
+    {
+      "real": 206.404,
+      "imag": -259.38,
+      "magnitude": 331.482,
+      "angle_deg": -51.489
+    },
+    {
+      "real": 271.721,
+      "imag": 182.822,
+      "magnitude": 327.5,
+      "angle_deg": 33.934
+    },
+    {
+      "real": 271.721,
+      "imag": -182.822,
+      "magnitude": 327.5,
+      "angle_deg": -33.934
+    },
+    {
+      "real": -276.921,
+      "imag": 164.067,
+      "magnitude": 321.874,
+      "angle_deg": 149.355
+    },
+    {
+      "real": -276.921,
+      "imag": -164.067,
+      "magnitude": 321.874,
+      "angle_deg": -149.355
+    },
+    {
+      "real": 10.209,
+      "imag": 316.053,
+      "magnitude": 316.217,
+      "angle_deg": 88.15
+    },
+    {
+      "real": 10.209,
+      "imag": -316.053,
+      "magnitude": 316.217,
+      "angle_deg": -88.15
+    },
+    {
+      "real": -308.59,
+      "imag": 61.396,
+      "magnitude": 314.639,
+      "angle_deg": 168.747
+    },
+    {
+      "real": -308.59,
+      "imag": -61.396,
+      "magnitude": 314.639,
+      "angle_deg": -168.747
+    },
+    {
+      "real": 58.744,
+      "imag": -305.497,
+      "magnitude": 311.094,
+      "angle_deg": -79.115
+    },
+    {
+      "real": 58.744,
+      "imag": 305.497,
+      "magnitude": 311.094,
+      "angle_deg": 79.115
+    },
+    {
+      "real": 285.657,
+      "imag": 116.108,
+      "magnitude": 308.352,
+      "angle_deg": 22.12
+    },
+    {
+      "real": 285.657,
+      "imag": -116.108,
+      "magnitude": 308.352,
+      "angle_deg": -22.12
+    },
+    {
+      "real": -109.579,
+      "imag": 286.472,
+      "magnitude": 306.715,
+      "angle_deg": 110.933
+    },
+    {
+      "real": -109.579,
+      "imag": -286.472,
+      "magnitude": 306.715,
+      "angle_deg": -110.933
+    },
+    {
+      "real": -299.957,
+      "imag": 0.0,
+      "magnitude": 299.957,
+      "angle_deg": 180.0
+    },
+    {
+      "real": -32.782,
+      "imag": 274.919,
+      "magnitude": 276.866,
+      "angle_deg": 96.8
+    },
+    {
+      "real": -32.782,
+      "imag": -274.919,
+      "magnitude": 276.866,
+      "angle_deg": -96.8
+    },
+    {
+      "real": -269.423,
+      "imag": 0.0,
+      "magnitude": 269.423,
+      "angle_deg": 180.0
+    },
+    {
+      "real": -14.96,
+      "imag": 265.868,
+      "magnitude": 266.288,
+      "angle_deg": 93.221
+    },
+    {
+      "real": -14.96,
+      "imag": -265.868,
+      "magnitude": 266.288,
+      "angle_deg": -93.221
+    },
+    {
+      "real": 236.009,
+      "imag": 77.904,
+      "magnitude": 248.534,
+      "angle_deg": 18.267
+    },
+    {
+      "real": 236.009,
+      "imag": -77.904,
+      "magnitude": 248.534,
+      "angle_deg": -18.267
+    },
+    {
+      "real": -203.84,
+      "imag": 141.711,
+      "magnitude": 248.259,
+      "angle_deg": 145.193
+    },
+    {
+      "real": -203.84,
+      "imag": -141.711,
+      "magnitude": 248.259,
+      "angle_deg": -145.193
+    },
+    {
+      "real": 61.405,
+      "imag": -235.633,
+      "magnitude": 243.502,
+      "angle_deg": -75.394
+    },
+    {
+      "real": 61.405,
+      "imag": 235.633,
+      "magnitude": 243.502,
+      "angle_deg": 75.394
+    },
+    {
+      "real": -125.009,
+      "imag": 206.853,
+      "magnitude": 241.693,
+      "angle_deg": 121.146
+    },
+    {
+      "real": -125.009,
+      "imag": -206.853,
+      "magnitude": 241.693,
+      "angle_deg": -121.146
+    },
+    {
+      "real": 173.074,
+      "imag": 154.155,
+      "magnitude": 231.773,
+      "angle_deg": 41.691
+    },
+    {
+      "real": 173.074,
+      "imag": -154.155,
+      "magnitude": 231.773,
+      "angle_deg": -41.691
+    },
+    {
+      "real": -228.048,
+      "imag": 25.666,
+      "magnitude": 229.488,
+      "angle_deg": 173.579
+    },
+    {
+      "real": -228.048,
+      "imag": -25.666,
+      "magnitude": 229.488,
+      "angle_deg": -173.579
+    },
+    {
+      "real": -131.631,
+      "imag": 175.463,
+      "magnitude": 219.349,
+      "angle_deg": 126.877
+    },
+    {
+      "real": -131.631,
+      "imag": -175.463,
+      "magnitude": 219.349,
+      "angle_deg": -126.877
+    },
+    {
+      "real": 100.041,
+      "imag": 188.104,
+      "magnitude": 213.052,
+      "angle_deg": 61.994
+    },
+    {
+      "real": 100.041,
+      "imag": -188.104,
+      "magnitude": 213.052,
+      "angle_deg": -61.994
+    },
+    {
+      "real": -75.979,
+      "imag": -194.302,
+      "magnitude": 208.629,
+      "angle_deg": -111.357
+    },
+    {
+      "real": -75.979,
+      "imag": 194.302,
+      "magnitude": 208.629,
+      "angle_deg": 111.357
+    },
+    {
+      "real": 205.309,
+      "imag": 0.0,
+      "magnitude": 205.309,
+      "angle_deg": 0.0
+    },
+    {
+      "real": -195.13,
+      "imag": 0.0,
+      "magnitude": 195.13,
+      "angle_deg": 180.0
+    },
+    {
+      "real": 180.845,
+      "imag": 0.0,
+      "magnitude": 180.845,
+      "angle_deg": 0.0
+    },
+    {
+      "real": -165.609,
+      "imag": 60.522,
+      "magnitude": 176.322,
+      "angle_deg": 159.925
+    },
+    {
+      "real": -165.609,
+      "imag": -60.522,
+      "magnitude": 176.322,
+      "angle_deg": -159.925
+    },
+    {
+      "real": 113.315,
+      "imag": 119.925,
+      "magnitude": 164.992,
+      "angle_deg": 46.623
+    },
+    {
+      "real": 113.315,
+      "imag": -119.925,
+      "magnitude": 164.992,
+      "angle_deg": -46.623
+    },
+    {
+      "real": 144.482,
+      "imag": 71.955,
+      "magnitude": 161.408,
+      "angle_deg": 26.474
+    },
+    {
+      "real": 144.482,
+      "imag": -71.955,
+      "magnitude": 161.408,
+      "angle_deg": -26.474
+    },
+    {
+      "real": 5.694,
+      "imag": 156.745,
+      "magnitude": 156.849,
+      "angle_deg": 87.92
+    },
+    {
+      "real": 5.694,
+      "imag": -156.745,
+      "magnitude": 156.849,
+      "angle_deg": -87.92
+    },
+    {
+      "real": 139.991,
+      "imag": 0.0,
+      "magnitude": 139.991,
+      "angle_deg": 0.0
+    },
+    {
+      "real": 126.754,
+      "imag": 27.956,
+      "magnitude": 129.8,
+      "angle_deg": 12.438
+    },
+    {
+      "real": 126.754,
+      "imag": -27.956,
+      "magnitude": 129.8,
+      "angle_deg": -12.438
+    },
+    {
+      "real": -111.124,
+      "imag": 0.0,
+      "magnitude": 111.124,
+      "angle_deg": 180.0
+    },
+    {
+      "real": -38.6,
+      "imag": -103.992,
+      "magnitude": 110.925,
+      "angle_deg": -110.364
+    },
+    {
+      "real": -38.6,
+      "imag": 103.992,
+      "magnitude": 110.925,
+      "angle_deg": 110.364
+    },
+    {
+      "real": -88.82,
+      "imag": 0.0,
+      "magnitude": 88.82,
+      "angle_deg": 180.0
+    },
+    {
+      "real": -67.376,
+      "imag": 54.36,
+      "magnitude": 86.571,
+      "angle_deg": 141.103
+    },
+    {
+      "real": -67.376,
+      "imag": -54.36,
+      "magnitude": 86.571,
+      "angle_deg": -141.103
+    },
+    {
+      "real": 43.929,
+      "imag": 65.644,
+      "magnitude": 78.986,
+      "angle_deg": 56.209
+    },
+    {
+      "real": 43.929,
+      "imag": -65.644,
+      "magnitude": 78.986,
+      "angle_deg": -56.209
+    },
+    {
+      "real": 77.659,
+      "imag": 0.0,
+      "magnitude": 77.659,
+      "angle_deg": 0.0
+    },
+    {
+      "real": -8.247,
+      "imag": 61.431,
+      "magnitude": 61.982,
+      "angle_deg": 97.646
+    },
+    {
+      "real": -8.247,
+      "imag": -61.431,
+      "magnitude": 61.982,
+      "angle_deg": -97.646
+    },
+    {
+      "real": -56.068,
+      "imag": 0.0,
+      "magnitude": 56.068,
+      "angle_deg": 180.0
+    },
+    {
+      "real": 47.274,
+      "imag": 6.996,
+      "magnitude": 47.789,
+      "angle_deg": 8.418
+    },
+    {
+      "real": 47.274,
+      "imag": -6.996,
+      "magnitude": 47.789,
+      "angle_deg": -8.418
+    },
+    {
+      "real": -27.813,
+      "imag": 0.0,
+      "magnitude": 27.813,
+      "angle_deg": 180.0
+    },
+    {
+      "real": -26.302,
+      "imag": 5.333,
+      "magnitude": 26.837,
+      "angle_deg": 168.539
+    },
+    {
+      "real": -26.302,
+      "imag": -5.333,
+      "magnitude": 26.837,
+      "angle_deg": -168.539
+    },
+    {
+      "real": 19.272,
+      "imag": 0.0,
+      "magnitude": 19.272,
+      "angle_deg": 0.0
+    }
+  ],
+  "dominant": {
+    "real": -18.659,
+    "imag": 2342.0,
+    "angle_deg": 90.456,
+    "magnitude": 2342.075,
+    "dominance_pct": 40.4
+  },
+  "scale_invariance": [
+    {
+      "size": 2,
+      "angle_deg": 90.75,
+      "dominance_pct": 100.0,
+      "magnitude": 27.3
+    },
+    {
+      "size": 3,
+      "angle_deg": 90.5,
+      "dominance_pct": 100.0,
+      "magnitude": 49.3
+    },
+    {
+      "size": 4,
+      "angle_deg": 90.66,
+      "dominance_pct": 99.7,
+      "magnitude": 56.6
+    },
+    {
+      "size": 6,
+      "angle_deg": 90.6,
+      "dominance_pct": 99.4,
+      "magnitude": 99.7
+    },
+    {
+      "size": 8,
+      "angle_deg": 90.68,
+      "dominance_pct": 97.9,
+      "magnitude": 138.4
+    },
+    {
+      "size": 10,
+      "angle_deg": 90.18,
+      "dominance_pct": 96.6,
+      "magnitude": 155.9
+    },
+    {
+      "size": 12,
+      "angle_deg": 89.85,
+      "dominance_pct": 96.7,
+      "magnitude": 190.4
+    },
+    {
+      "size": 16,
+      "angle_deg": 90.53,
+      "dominance_pct": 96.2,
+      "magnitude": 315.4
+    },
+    {
+      "size": 32,
+      "angle_deg": 90.43,
+      "dominance_pct": 83.9,
+      "magnitude": 531.7
+    },
+    {
+      "size": 64,
+      "angle_deg": 90.35,
+      "dominance_pct": 59.3,
+      "magnitude": 940.4
+    },
+    {
+      "size": 128,
+      "angle_deg": 90.46,
+      "dominance_pct": 40.4,
+      "magnitude": 2342.1
+    }
+  ],
+  "period4": {
+    "energies": [
+      42,
+      -50,
+      -38,
+      56
+    ],
+    "behaviors": [
+      "COOP",
+      "COOP",
+      "REST",
+      "REST"
+    ]
+  },
+  "essence_2x2": [
+    [
+      -7.39,
+      27.65
+    ],
+    [
+      -28.65,
+      6.68
+    ]
+  ],
+  "matrix_stats": {
+    "trace": 137,
+    "sum": -7031,
+    "zeros": 26,
+    "antisymmetry_pct": 99.58,
+    "spectral_radius": 2342.075
+  }
+}

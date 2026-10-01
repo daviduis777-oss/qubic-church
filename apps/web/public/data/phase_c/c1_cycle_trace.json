@@ -1,0 +1,124 @@
+{
+  "phase": "C1",
+  "cases": [
+    {
+      "seed": 1337,
+      "a": -2,
+      "b": 4,
+      "n_ticks_run": 2000,
+      "end_reason": "Tick cap reached",
+      "cycle_detected": true,
+      "cycle_start": 1,
+      "cycle_length": 2,
+      "elapsed_seconds": 0.519766092300415,
+      "trace_file": "audit/2026-05-04/traces/c1_seed1337_a-2_b4.jsonl",
+      "plot_files": [
+        "audit/2026-05-04/plots/c1_seed1337_a-2_b4_states.png",
+        "audit/2026-05-04/plots/c1_seed1337_a-2_b4_energy.png"
+      ],
+      "init_kind": "anna"
+    },
+    {
+      "seed": 1337,
+      "a": 0,
+      "b": 0,
+      "n_ticks_run": 1,
+      "end_reason": "All output neurons non-zero",
+      "cycle_detected": false,
+      "cycle_start": null,
+      "cycle_length": null,
+      "elapsed_seconds": 0.0002720355987548828,
+      "trace_file": "audit/2026-05-04/traces/c1_seed1337_a0_b0.jsonl",
+      "plot_files": [
+        "audit/2026-05-04/plots/c1_seed1337_a0_b0_states.png",
+        "audit/2026-05-04/plots/c1_seed1337_a0_b0_energy.png"
+      ],
+      "init_kind": "anna"
+    },
+    {
+      "seed": 1337,
+      "a": 3,
+      "b": 3,
+      "n_ticks_run": 1,
+      "end_reason": "All output neurons non-zero",
+      "cycle_detected": false,
+      "cycle_start": null,
+      "cycle_length": null,
+      "elapsed_seconds": 0.00023126602172851562,
+      "trace_file": "audit/2026-05-04/traces/c1_seed1337_a3_b3.jsonl",
+      "plot_files": [
+        "audit/2026-05-04/plots/c1_seed1337_a3_b3_states.png",
+        "audit/2026-05-04/plots/c1_seed1337_a3_b3_energy.png"
+      ],
+      "init_kind": "anna"
+    },
+    {
+      "seed": 42,
+      "a": 5,
+      "b": 3,
+      "n_ticks_run": 1,
+      "end_reason": "All output neurons non-zero",
+      "cycle_detected": false,
+      "cycle_start": null,
+      "cycle_length": null,
+      "elapsed_seconds": 0.00022912025451660156,
+      "trace_file": "audit/2026-05-04/traces/c1_seed42_a5_b3.jsonl",
+      "plot_files": [
+        "audit/2026-05-04/plots/c1_seed42_a5_b3_states.png",
+        "audit/2026-05-04/plots/c1_seed42_a5_b3_energy.png"
+      ],
+      "init_kind": "anna"
+    },
+    {
+      "seed": 42,
+      "a": -4,
+      "b": -4,
+      "n_ticks_run": 1,
+      "end_reason": "All output neurons non-zero",
+      "cycle_detected": false,
+      "cycle_start": null,
+      "cycle_length": null,
+      "elapsed_seconds": 0.00023508071899414062,
+      "trace_file": "audit/2026-05-04/traces/c1_seed42_a-4_b-4.jsonl",
+      "plot_files": [
+        "audit/2026-05-04/plots/c1_seed42_a-4_b-4_states.png",
+        "audit/2026-05-04/plots/c1_seed42_a-4_b-4_energy.png"
+      ],
+      "init_kind": "anna"
+    },
+    {
+      "seed": 1337,
+      "a": -2,
+      "b": 4,
+      "n_ticks_run": 8,
+      "end_reason": "All output neurons non-zero",
+      "cycle_detected": false,
+      "cycle_start": null,
+      "cycle_length": null,
+      "elapsed_seconds": 0.0018749237060546875,
+      "trace_file": "audit/2026-05-04/traces/c1_seed1337_a-2_b4.jsonl",
+      "plot_files": [
+        "audit/2026-05-04/plots/c1_seed1337_a-2_b4_states.png",
+        "audit/2026-05-04/plots/c1_seed1337_a-2_b4_energy.png"
+      ],
+      "init_kind": "random"
+    },
+    {
+      "seed": 42,
+      "a": 5,
+      "b": 3,
+      "n_ticks_run": 8,
+      "end_reason": "All output neurons non-zero",
+      "cycle_detected": false,
+      "cycle_start": null,
+      "cycle_length": null,
+      "elapsed_seconds": 0.00180816650390625,
+      "trace_file": "audit/2026-05-04/traces/c1_seed42_a5_b3.jsonl",
+      "plot_files": [
+        "audit/2026-05-04/plots/c1_seed42_a5_b3_states.png",
+        "audit/2026-05-04/plots/c1_seed42_a5_b3_energy.png"
+      ],
+      "init_kind": "random"
+    }
+  ]
+}

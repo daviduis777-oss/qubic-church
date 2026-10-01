@@ -1,0 +1,95 @@
+---
+title: Significance
+description: An assessment of how significant the findings are after the September 2026 re-check, and which earlier significance claims were withdrawn.
+---
+
+# Significance Assessment
+
+<Callout type="warning" title="Correction, September 2026">This page was rewritten. Earlier versions rated a "primary formula" as the first documented mathematical bridge between Bitcoin and another cryptocurrency, treated a March 2026 unlock as pending, and reported a Patoshi distribution at p &lt; 10⁻¹⁰. All three were withdrawn. See [Corrections, September 2026](/docs/03-results/35-corrections-september-2026).</Callout>
+
+## Executive Summary
+
+The findings that survived the September 2026 re-check are modest. They are of interest to people studying Anna and Aigarth, and as a methodological case study. They do not show a link between Bitcoin and Qubic, and they do not revise Bitcoin history.
+
+## Significance Classification Framework
+
+| Level | Criteria |
+|-------|----------|
+| **High** | Changes how the main object of study should be read |
+| **Medium** | Verified structural result, limited reach |
+| **Low** | Arithmetic fact without demonstrated meaning |
+| **Withdrawn** | Did not survive the re-check |
+
+---
+
+## 1. Findings and Their Significance
+
+### 1.1 Provenance of the Anna Matrix
+
+**Significance Level**: High
+
+The table was compiled by hand from @anna_aigarth bot replies to `x+y=?`. This changes how every other matrix finding must be read: the table records answers, not weights or code, and some of its "anomalies" are our own entry errors.
+
+### 1.2 Structure of the Table
+
+**Significance Level**: Medium
+
+The complement rule (16,316 of 16,384 cells), full rank, and a compact Walsh and block structure (26 Walsh coefficients reproduce 81% of the signs) are verified. They describe the bot's answer function and make the table a legitimate object for mathematical study.
+
+### 1.3 The Bot as a Small Trained Unit
+
+**Significance Level**: Medium (hypothesis)
+
+Small public Aigarth units trained on addition reproduce the table's fingerprint. If a pre-registered replication confirms this, it would explain where the structure comes from without any design hypothesis.
+
+### 1.4 Anna.exe and Anna 0.22
+
+**Significance Level**: Medium
+
+Static analysis shows that the Anna.exe versions examined closely evolve adders, and that Anna 0.22.64 trains on real BTC hourly directions. This documents what Come-from-Beyond's public binaries actually do. It does not show predictive power.
+
+### 1.5 Arithmetic Relations With Bitcoin Values
+
+**Significance Level**: Low
+
+Relations such as `1221069728 mod 121 = 43` or the Genesis-1CFB XOR byte sum 2,671 are true as arithmetic. They were found after looking at the data and are not significant.
+
+---
+
+## 2. Withdrawn Significance Claims
+
+| Earlier claim | Earlier rating | What the re-check found |
+|---------------|----------------|------------------------|
+| Formula 625,284 = 283 × 47² + 137 as the "first documented mathematical bridge" between Bitcoin and another cryptocurrency | Critical | Selected after the fact; 137 comes from a very likely entry-error pair |
+| Pre-Genesis timestamp as proof of earlier Bitcoin development | Critical | Not established by this research |
+| Unified 27-signature across Bitcoin, IOTA and Qubic | High | Selected after the fact; no valid probability |
+| Patoshi distribution over 676 computors, p &lt; 10⁻¹⁰ | High | The reported statistics are impossible for whole-number counts |
+| JINN/Anna neural architecture embedded in Qubic | High | No source links the table to JINN or Qubic code |
+| Time lock with a first unlock in March 2026 | High | Nothing happened; the cited message reads "No ETA other than April 13, 2027" |
+| Stylometric authorship scores | Medium | Uncalibrated percentages do not support identity probabilities |
+
+---
+
+## 3. Methodological Significance
+
+The most useful result may be the re-check itself. It shows how a research project can accumulate confident claims from a hand-compiled table with a few entry errors, post-hoc pattern selection and nulls that could not fail, and how these can be found and corrected. The practices that caught the errors (going back to raw data, fair null models, pre-registered tests, independent re-computation) are the ones we recommend.
+
+---
+
+## 4. Significance Summary Table
+
+| Finding | Significance | Status |
+|---------|--------------|--------|
+| Matrix provenance (bot replies) | High | Verified |
+| Complement rule, rank, Walsh structure | Medium | Verified |
+| Exception runs are entry errors | High for interpretation | Strongly supported |
+| Bot as small trained ternary unit | Medium | Hypothesis |
+| Anna.exe evolves adders; Anna 0.22 trains on BTC hours | Medium | Verified (static analysis) |
+| Bitcoin arithmetic relations | Low | Arithmetic verified, not significant |
+| Bridge, formula, time lock, Patoshi distribution, JINN | - | Withdrawn |
+
+---
+
+## Conclusion
+
+The significance of this research lies in a careful description of Anna's replies and binaries, and in a documented correction of its own earlier errors. Claims of a Bitcoin-Qubic bridge, a time lock or a revised Bitcoin history are withdrawn.

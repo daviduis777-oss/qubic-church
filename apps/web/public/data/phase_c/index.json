@@ -1,0 +1,315 @@
+{
+  "phase": "C",
+  "date": "2026-05-04",
+  "version": "1.0.0",
+  "datasets": [
+    {
+      "kind": "result",
+      "label": "C1 \u2014 Per-input cycle detection summary",
+      "path": "/data/phase_c/c1_cycle_trace.json",
+      "size_bytes": 3675,
+      "schema": {
+        "cases": "list of {seed, a, b, end_reason, cycle_length}"
+      }
+    },
+    {
+      "kind": "result",
+      "label": "C1 \u2014 Full cycle census across all (a,b)",
+      "path": "/data/phase_c/c1_cycle_census.json",
+      "size_bytes": 267469,
+      "schema": {
+        "by_init.{kind}.[].rows": "list of {a, b, cycle_period, end_reason}"
+      }
+    },
+    {
+      "kind": "result",
+      "label": "C2 \u2014 Higher-fidelity mapping comparison",
+      "path": "/data/phase_c/c2_mapping.json",
+      "size_bytes": 11843
+    },
+    {
+      "kind": "result",
+      "label": "C3 \u2014 n=30 seeds tight CI",
+      "path": "/data/phase_c/c3_n30.json",
+      "size_bytes": 29199
+    },
+    {
+      "kind": "result",
+      "label": "C4 \u2014 Training trajectory hill-climb",
+      "path": "/data/phase_c/c4_training.json",
+      "size_bytes": 30020
+    },
+    {
+      "kind": "result",
+      "label": "C5 \u2014 Termination frequency",
+      "path": "/data/phase_c/c5_termination.json",
+      "size_bytes": 7768
+    },
+    {
+      "kind": "result",
+      "label": "C6 \u2014 ACO 676-instance simulation summary",
+      "path": "/data/phase_c/c6_aco.json",
+      "size_bytes": 726458
+    },
+    {
+      "kind": "trace",
+      "label": "C1 \u2014 c1_anna_seed1337_a-2_b4 state log",
+      "path": "/data/phase_c/traces/c1_anna_seed1337_a-2_b4.jsonl",
+      "size_bytes": 195135
+    },
+    {
+      "kind": "trace",
+      "label": "C1 \u2014 c1_seed1337_a-2_b4 state log",
+      "path": "/data/phase_c/traces/c1_seed1337_a-2_b4.jsonl",
+      "size_bytes": 1014
+    },
+    {
+      "kind": "trace",
+      "label": "C1 \u2014 c1_seed1337_a0_b0 state log",
+      "path": "/data/phase_c/traces/c1_seed1337_a0_b0.jsonl",
+      "size_bytes": 345
+    },
+    {
+      "kind": "trace",
+      "label": "C1 \u2014 c1_seed1337_a3_b3 state log",
+      "path": "/data/phase_c/traces/c1_seed1337_a3_b3.jsonl",
+      "size_bytes": 341
+    },
+    {
+      "kind": "trace",
+      "label": "C1 \u2014 c1_seed42_a-4_b-4 state log",
+      "path": "/data/phase_c/traces/c1_seed42_a-4_b-4.jsonl",
+      "size_bytes": 317
+    },
+    {
+      "kind": "trace",
+      "label": "C1 \u2014 c1_seed42_a5_b3 state log",
+      "path": "/data/phase_c/traces/c1_seed42_a5_b3.jsonl",
+      "size_bytes": 1010
+    },
+    {
+      "kind": "trace",
+      "label": "C4 \u2014 c4_training_anna_seed13 fitness history",
+      "path": "/data/phase_c/traces/c4_training_anna_seed13.jsonl",
+      "size_bytes": 1893
+    },
+    {
+      "kind": "trace",
+      "label": "C4 \u2014 c4_training_anna_seed42 fitness history",
+      "path": "/data/phase_c/traces/c4_training_anna_seed42.jsonl",
+      "size_bytes": 1893
+    },
+    {
+      "kind": "trace",
+      "label": "C4 \u2014 c4_training_anna_seed7 fitness history",
+      "path": "/data/phase_c/traces/c4_training_anna_seed7.jsonl",
+      "size_bytes": 1891
+    },
+    {
+      "kind": "trace",
+      "label": "C4 \u2014 c4_training_dense_seed13 fitness history",
+      "path": "/data/phase_c/traces/c4_training_dense_seed13.jsonl",
+      "size_bytes": 1893
+    },
+    {
+      "kind": "trace",
+      "label": "C4 \u2014 c4_training_dense_seed42 fitness history",
+      "path": "/data/phase_c/traces/c4_training_dense_seed42.jsonl",
+      "size_bytes": 1894
+    },
+    {
+      "kind": "trace",
+      "label": "C4 \u2014 c4_training_dense_seed7 fitness history",
+      "path": "/data/phase_c/traces/c4_training_dense_seed7.jsonl",
+      "size_bytes": 1894
+    },
+    {
+      "kind": "trace",
+      "label": "C4 \u2014 c4_training_random_seed13 fitness history",
+      "path": "/data/phase_c/traces/c4_training_random_seed13.jsonl",
+      "size_bytes": 1895
+    },
+    {
+      "kind": "trace",
+      "label": "C4 \u2014 c4_training_random_seed42 fitness history",
+      "path": "/data/phase_c/traces/c4_training_random_seed42.jsonl",
+      "size_bytes": 1896
+    },
+    {
+      "kind": "trace",
+      "label": "C4 \u2014 c4_training_random_seed7 fitness history",
+      "path": "/data/phase_c/traces/c4_training_random_seed7.jsonl",
+      "size_bytes": 1893
+    },
+    {
+      "kind": "trace",
+      "label": "C6 \u2014 c6_aco_population_anna population history",
+      "path": "/data/phase_c/traces/c6_aco_population_anna.jsonl",
+      "size_bytes": 1541
+    },
+    {
+      "kind": "trace",
+      "label": "C6 \u2014 c6_aco_population_dense population history",
+      "path": "/data/phase_c/traces/c6_aco_population_dense.jsonl",
+      "size_bytes": 1554
+    },
+    {
+      "kind": "trace",
+      "label": "C6 \u2014 c6_aco_population_random population history",
+      "path": "/data/phase_c/traces/c6_aco_population_random.jsonl",
+      "size_bytes": 1544
+    }
+  ],
+  "plots": [
+    {
+      "kind": "plot",
+      "label": "Plot \u2014 c1_cycle_rate_bar",
+      "path": "/data/phase_c/plots/c1_cycle_rate_bar.png",
+      "size_bytes": 26373
+    },
+    {
+      "kind": "plot",
+      "label": "Plot \u2014 c1_pathological_cycle",
+      "path": "/data/phase_c/plots/c1_pathological_cycle.png",
+      "size_bytes": 102061
+    },
+    {
+      "kind": "plot",
+      "label": "Plot \u2014 c1_seed1337_a-2_b4_energy",
+      "path": "/data/phase_c/plots/c1_seed1337_a-2_b4_energy.png",
+      "size_bytes": 38438
+    },
+    {
+      "kind": "plot",
+      "label": "Plot \u2014 c1_seed1337_a-2_b4_states",
+      "path": "/data/phase_c/plots/c1_seed1337_a-2_b4_states.png",
+      "size_bytes": 36410
+    },
+    {
+      "kind": "plot",
+      "label": "Plot \u2014 c1_seed1337_a0_b0_energy",
+      "path": "/data/phase_c/plots/c1_seed1337_a0_b0_energy.png",
+      "size_bytes": 34111
+    },
+    {
+      "kind": "plot",
+      "label": "Plot \u2014 c1_seed1337_a0_b0_states",
+      "path": "/data/phase_c/plots/c1_seed1337_a0_b0_states.png",
+      "size_bytes": 37560
+    },
+    {
+      "kind": "plot",
+      "label": "Plot \u2014 c1_seed1337_a3_b3_energy",
+      "path": "/data/phase_c/plots/c1_seed1337_a3_b3_energy.png",
+      "size_bytes": 33182
+    },
+    {
+      "kind": "plot",
+      "label": "Plot \u2014 c1_seed1337_a3_b3_states",
+      "path": "/data/phase_c/plots/c1_seed1337_a3_b3_states.png",
+      "size_bytes": 37402
+    },
+    {
+      "kind": "plot",
+      "label": "Plot \u2014 c1_seed42_a-4_b-4_energy",
+      "path": "/data/phase_c/plots/c1_seed42_a-4_b-4_energy.png",
+      "size_bytes": 31527
+    },
+    {
+      "kind": "plot",
+      "label": "Plot \u2014 c1_seed42_a-4_b-4_states",
+      "path": "/data/phase_c/plots/c1_seed42_a-4_b-4_states.png",
+      "size_bytes": 37110
+    },
+    {
+      "kind": "plot",
+      "label": "Plot \u2014 c1_seed42_a5_b3_energy",
+      "path": "/data/phase_c/plots/c1_seed42_a5_b3_energy.png",
+      "size_bytes": 39208
+    },
+    {
+      "kind": "plot",
+      "label": "Plot \u2014 c1_seed42_a5_b3_states",
+      "path": "/data/phase_c/plots/c1_seed42_a5_b3_states.png",
+      "size_bytes": 36076
+    },
+    {
+      "kind": "plot",
+      "label": "Plot \u2014 c2_mapping_hit_rate",
+      "path": "/data/phase_c/plots/c2_mapping_hit_rate.png",
+      "size_bytes": 56855
+    },
+    {
+      "kind": "plot",
+      "label": "Plot \u2014 c2_mapping_zero_rate",
+      "path": "/data/phase_c/plots/c2_mapping_zero_rate.png",
+      "size_bytes": 29454
+    },
+    {
+      "kind": "plot",
+      "label": "Plot \u2014 c3_n30_histogram",
+      "path": "/data/phase_c/plots/c3_n30_histogram.png",
+      "size_bytes": 43188
+    },
+    {
+      "kind": "plot",
+      "label": "Plot \u2014 c3_n30_violin",
+      "path": "/data/phase_c/plots/c3_n30_violin.png",
+      "size_bytes": 69391
+    },
+    {
+      "kind": "plot",
+      "label": "Plot \u2014 c4_training_curves",
+      "path": "/data/phase_c/plots/c4_training_curves.png",
+      "size_bytes": 99675
+    },
+    {
+      "kind": "plot",
+      "label": "Plot \u2014 c4_training_endgame",
+      "path": "/data/phase_c/plots/c4_training_endgame.png",
+      "size_bytes": 25299
+    },
+    {
+      "kind": "plot",
+      "label": "Plot \u2014 c5_termination_stacked",
+      "path": "/data/phase_c/plots/c5_termination_stacked.png",
+      "size_bytes": 67557
+    },
+    {
+      "kind": "plot",
+      "label": "Plot \u2014 c5_termination_summary",
+      "path": "/data/phase_c/plots/c5_termination_summary.png",
+      "size_bytes": 36903
+    },
+    {
+      "kind": "plot",
+      "label": "Plot \u2014 c6_aco_diversity",
+      "path": "/data/phase_c/plots/c6_aco_diversity.png",
+      "size_bytes": 63401
+    },
+    {
+      "kind": "plot",
+      "label": "Plot \u2014 c6_aco_fitness_curves",
+      "path": "/data/phase_c/plots/c6_aco_fitness_curves.png",
+      "size_bytes": 86040
+    },
+    {
+      "kind": "plot",
+      "label": "Plot \u2014 c6_aco_pheromone_anna_final",
+      "path": "/data/phase_c/plots/c6_aco_pheromone_anna_final.png",
+      "size_bytes": 27567
+    },
+    {
+      "kind": "plot",
+      "label": "Plot \u2014 c6_aco_pheromone_dense_final",
+      "path": "/data/phase_c/plots/c6_aco_pheromone_dense_final.png",
+      "size_bytes": 30041
+    },
+    {
+      "kind": "plot",
+      "label": "Plot \u2014 c6_aco_pheromone_random_final",
+      "path": "/data/phase_c/plots/c6_aco_pheromone_random_final.png",
+      "size_bytes": 29036
+    }
+  ]
+}

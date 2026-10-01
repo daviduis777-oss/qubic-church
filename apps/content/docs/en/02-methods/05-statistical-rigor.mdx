@@ -1,0 +1,195 @@
+---
+title: Statistical Rigor
+description: Comprehensive documentation of statistical methodology, limitations, and proper interpretation of findings.
+---
+
+# Statistical Rigor
+
+<Callout type="warning" title="Correction, September 2026">The combined probabilities, the "significant after correction" table and the March 2026 prediction were removed or marked as failed. None of the Bitcoin-matrix findings survived the re-check as significant. See [Corrections, September 2026](/docs/03-results/35-corrections-september-2026).</Callout>
+
+## Purpose
+
+This section provides detailed documentation of the statistical methodology employed in this research, including explicit discussion of assumptions, limitations, and proper interpretation guidelines.
+
+## Confidence Tier System
+
+All claims in this documentation are classified according to the following tier system:
+
+### Tier Definitions
+
+| Tier | Label | Criteria | Example |
+|------|-------|----------|---------|
+| **Tier 1** | Verified | Directly computable, deterministic | `1221069728 % 121 = 43` |
+| **Tier 2** | Supported | Statistical test p < 0.01 | Chi-squared rejection of uniform distribution |
+| **Tier 3** | Plausible | Consistent with hypothesis, p < 0.05 | Code style pattern matching |
+| **Tier 4** | Speculative | Logical inference, not statistically tested | Common authorship claims |
+
+### Application Guidelines
+
+- **Tier 1** claims can be independently verified with a calculator
+- **Tier 2** claims require statistical computation but produce reproducible results
+- **Tier 3** claims involve interpretation and should be treated as suggestive
+- **Tier 4** claims are hypotheses for further investigation, not conclusions
+
+## Independence Assumptions
+
+### The Critical Caveat
+
+Combined probability calculations rely on the assumption that individual findings are statistically independent and specified in advance. For the findings earlier versions combined, this assumption did not hold.
+
+### Sources of Potential Correlation
+
+| Finding Pair | Potential Correlation Source |
+|--------------|------------------------------|
+| Timestamp mod 121 ↔ Cluster gap | Both involve same blockchain |
+| Matrix cell values ↔ 27-div sums | Both derived from Anna Matrix |
+| Dead key positions ↔ Block heights | Dead keys are a subset of blocks |
+
+### Impact on Combined Probability
+
+Earlier versions of this page gave combined p-values between 10⁻¹⁴ and 10⁻⁴. They are withdrawn: the findings were not independent and were selected after looking at the data.
+
+## Multiple Testing Correction
+
+### The Problem
+
+When testing many hypotheses, some will appear significant by chance alone. With 100 tests at α = 0.05, we expect ~5 false positives.
+
+### Corrections Applied
+
+| Method | Formula | Application |
+|--------|---------|-------------|
+| Bonferroni | α_adjusted = α / n | Conservative, used for primary claims |
+| Benjamini-Hochberg | FDR control | Used for exploratory analysis |
+
+### Adjusted Thresholds
+
+For n = 20 primary tests at α = 0.05:
+
+```
+α_adjusted = 0.05 / 20 = 0.0025
+```
+
+Findings must achieve p < 0.0025 to be considered significant after correction.
+
+### Current Findings After Correction
+
+Earlier versions listed four findings as significant after correction, among them the 27-divisible sum. That table is withdrawn. The moduli and cells behind it were chosen after looking at the data, so no fixed number of tests existed to correct for.
+
+## Alternative Explanations
+
+### Null Hypothesis Alternatives
+
+For each finding, we consider alternative explanations:
+
+#### Finding: Timestamp mod 121 = 43
+
+| Explanation | Probability Assessment |
+|-------------|----------------------|
+| Random coincidence | 1/121 = 0.83% |
+| Intentional design | Unknown prior |
+| Post-hoc selection | If 121 was chosen because it worked, p increases |
+
+**Mitigating Factor**: 121 = 11² has independent significance in Qubic architecture.
+
+#### Finding: Dead Key Non-Uniform Distribution
+
+| Explanation | Probability Assessment |
+|-------------|----------------------|
+| Mining difficulty changes | Would not explain clustering |
+| Hardware availability | Possible but doesn't match pattern |
+| Intentional placement | Not supported; the original distribution test was not independently reproduced |
+
+### Selection Bias Considerations
+
+| Potential Bias | Mitigation |
+|----------------|------------|
+| Choosing "significant" moduli | Not mitigated: moduli such as 121, 43 and 27 were picked after looking at the data |
+| Selecting favorable block ranges | Using complete early blockchain (0-50,000) |
+| Cherry-picking matrix cells | Not mitigated: cell mappings were chosen after looking at the data |
+
+## Sample Size Considerations
+
+### Current Limitations
+
+| Dataset | Sample Size | Statistical Power |
+|---------|-------------|-------------------|
+| Dead Key blocks | n = 53 | Moderate |
+| Cluster gaps | n = 6 | Low |
+| 27-divisible blocks | n = 4 | Very low |
+
+### Implications
+
+- Small sample sizes increase uncertainty
+- Effect sizes may be overestimated
+- Results should be replicated with larger datasets where possible
+
+## Effect Size Analysis
+
+### Beyond P-Values
+
+Statistical significance alone does not indicate practical importance. We also report effect sizes:
+
+| Finding | Effect Size | Interpretation |
+|---------|-------------|----------------|
+| Dead key clustering | Cramer's V = 0.49 (reported, not independently reproduced) | - |
+| Timestamp alignment | Not applicable (exact match) | - |
+| Matrix correlation | r = 0.23 | Small-medium effect |
+
+## Falsifiability
+
+### What Would Falsify the Design Hypothesis?
+
+| Observation | Impact |
+|-------------|--------|
+| Alternative explanation for mod 121 = 43 | Weakens Tier 1 finding |
+| Dead keys follow mining difficulty curve | Explains non-uniformity naturally |
+| Matrix values are randomly generated | Undermines correlation claims |
+| No additional correlations in extended analysis | Suggests cherry-picking |
+
+### Pre-Registered Predictions
+
+For future validation:
+
+1. **Prediction 1 (failed)**: Earlier versions predicted that March 12, 2026 would show mathematical significance (17.5 years from Pre-Genesis). The date passed without any observable event. This prediction is void.
+2. **Prediction 2**: Additional hash bytes will correlate with matrix structures. Since the matrix is a hand-compiled table of bot replies to `x+y=?`, there is no mechanism for such a correlation.
+3. **Prediction 3**: Extended block analysis (50,000-100,000) will show continued patterns. Not tested.
+
+## Interpretation Guidelines
+
+### What the Evidence Supports
+
+- Several arithmetic relations between Bitcoin values and numbers such as 121 or 43 are true as arithmetic
+- After the September 2026 re-check, none of them is shown to be unlikely by chance, because the relations were selected after looking at the data
+- The Anna Matrix itself is a hand-compiled table of bot replies, so correlations between it and Bitcoin data have no known mechanism
+
+### What the Evidence Does Not Prove
+
+- Identity of any individual
+- Causal relationship between projects
+- Future behavior of any system
+
+### Recommended Citation Language
+
+**Accurate**: "Some arithmetic relations hold, but they were found after looking at the data and are not evidence of design."
+
+**Avoid**: "This proves that..." or "It is certain that..."
+
+## Peer Review Status
+
+| Component | Status | Reviewer |
+|-----------|--------|----------|
+| Statistical calculations | Internal review | Complete |
+| Methodology | Internal review | Complete |
+| External peer review | **Pending** | Invited |
+
+## Conclusion
+
+This page sets out the statistical standards we aim for. Measured against them, the Bitcoin-matrix findings of earlier versions do not support intentional design. Readers should:
+
+1. Evaluate individual findings independently
+2. Consider alternative explanations
+3. Await external peer review
+4. Apply appropriate skepticism to combined probability claims
+
+The goal of this documentation is transparent presentation of evidence for independent evaluation, not advocacy for a predetermined conclusion.

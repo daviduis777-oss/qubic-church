@@ -1,0 +1,141 @@
+{
+  "timestamp": "2026-02-11T23:08:37.901Z",
+  "healthScore": 40,
+  "scanDurationMs": 8003,
+  "network": {
+    "nodesTotal": 5,
+    "nodesConnected": 1,
+    "consensusTick": 43931466,
+    "currentEpoch": 200,
+    "tickDrift": 0,
+    "tickRange": {
+      "firstTick": 43910000,
+      "currentTick": 43931466
+    }
+  },
+  "oracle": {
+    "successRate": 26.32,
+    "stats": {
+      "pendingCount": 0,
+      "pendingOracleMachineCount": 0,
+      "pendingCommitCount": 0,
+      "pendingRevealCount": 0,
+      "successfulCount": 5,
+      "revealTxCount": 14,
+      "unresolvableCount": 0,
+      "timeoutCount": 14,
+      "timeoutNoReplyCount": 14,
+      "timeoutNoCommitCount": 0,
+      "timeoutNoRevealCount": 0,
+      "oracleMachineRepliesDisagreeCount": 0,
+      "oracleMachineReplyAvgMilliTicksPerQuery": 0,
+      "commitAvgMilliTicksPerQuery": 4000,
+      "successAvgMilliTicksPerQuery": 7000,
+      "timeoutAvgMilliTicksPerQuery": 35785,
+      "wrongKnowledgeProofCount": 0
+    },
+    "pendingCount": 0,
+    "pendingIds": [],
+    "revenue": {
+      "totalRevenue": 2753,
+      "activeComputors": 568,
+      "topComputors": [
+        {
+          "computor": 0,
+          "revenue": 5
+        },
+        {
+          "computor": 2,
+          "revenue": 5
+        },
+        {
+          "computor": 3,
+          "revenue": 5
+        },
+        {
+          "computor": 4,
+          "revenue": 5
+        },
+        {
+          "computor": 5,
+          "revenue": 5
+        },
+        {
+          "computor": 6,
+          "revenue": 5
+        },
+        {
+          "computor": 7,
+          "revenue": 5
+        },
+        {
+          "computor": 8,
+          "revenue": 5
+        },
+        {
+          "computor": 9,
+          "revenue": 5
+        },
+        {
+          "computor": 10,
+          "revenue": 5
+        }
+      ]
+    }
+  },
+  "anomalies": [
+    {
+      "severity": "CRITICAL",
+      "type": "low_connectivity",
+      "message": "Only 1/5 nodes reachable"
+    },
+    {
+      "severity": "CRITICAL",
+      "type": "low_success_rate",
+      "message": "Oracle success rate critically low: 26.32%"
+    }
+  ],
+  "nodes": [
+    {
+      "ip": "45.152.160.217",
+      "status": "connected",
+      "latencyMs": 27,
+      "tick": 43931466,
+      "epoch": 200,
+      "error": null
+    },
+    {
+      "ip": "92.118.57.14",
+      "status": "offline",
+      "latencyMs": 0,
+      "tick": 0,
+      "epoch": 0,
+      "error": "timeout"
+    },
+    {
+      "ip": "95.217.142.179",
+      "status": "offline",
+      "latencyMs": 0,
+      "tick": 0,
+      "epoch": 0,
+      "error": "timeout"
+    },
+    {
+      "ip": "148.251.184.163",
+      "status": "offline",
+      "latencyMs": 0,
+      "tick": 0,
+      "epoch": 0,
+      "error": "timeout"
+    },
+    {
+      "ip": "5.9.1.90",
+      "status": "offline",
+      "latencyMs": 0,
+      "tick": 0,
+      "epoch": 0,
+      "error": "timeout"
+    }
+  ],
+  "deepScan": null
+}

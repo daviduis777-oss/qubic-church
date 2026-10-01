@@ -1,0 +1,2487 @@
+{
+  "nodes": [
+    {
+      "id": 1,
+      "name": "Col1_Off113",
+      "type": "column",
+      "position": [
+        1,
+        113,
+        0
+      ],
+      "category": "A",
+      "attractor": "73ee64980731ccdd",
+      "is_cfb": false,
+      "bitcoin_address": "1CJUJ2zNctLs7K4hNi9YGZG6SpyTshLMuN",
+      "correlation": true
+    },
+    {
+      "id": 2,
+      "name": "Col2_Off6",
+      "type": "column",
+      "position": [
+        2,
+        6,
+        2
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": false,
+      "bitcoin_address": "1CDvhrkYtBCFyov1PGhaYLGCZRFDHKyXj1",
+      "correlation": true
+    },
+    {
+      "id": 3,
+      "name": "Col3_Off119",
+      "type": "column",
+      "position": [
+        3,
+        119,
+        2
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": false,
+      "bitcoin_address": "1CJW5CGpjuc46PwcU7xZ7bRsH2tqehvj1T",
+      "correlation": false
+    },
+    {
+      "id": 4,
+      "name": "1CF* Col5",
+      "type": "column",
+      "position": [
+        5,
+        37,
+        0
+      ],
+      "category": "B",
+      "attractor": "83a33a494bc9ef5d",
+      "is_cfb": true,
+      "bitcoin_address": "1CF5Us8hY4Jda765QVeSrqPZjQ4Y2q79zB",
+      "correlation": false
+    },
+    {
+      "id": 5,
+      "name": "Col6_Off108",
+      "type": "column",
+      "position": [
+        6,
+        108,
+        0
+      ],
+      "category": "B",
+      "attractor": "83a33a494bc9ef5d",
+      "is_cfb": false,
+      "bitcoin_address": "1CHkxjbDz5sVCreMPqNF67kBRtRgoAbPKM",
+      "correlation": false
+    },
+    {
+      "id": 6,
+      "name": "Col7_Off48",
+      "type": "column",
+      "position": [
+        7,
+        48,
+        1
+      ],
+      "category": "B",
+      "attractor": "6f0807b87bd06a73",
+      "is_cfb": false,
+      "bitcoin_address": "1CHSMjV9Ye7aFgNP64pF9iKy1WXJiTiPLp",
+      "correlation": false
+    },
+    {
+      "id": 7,
+      "name": "Col11_Off77",
+      "type": "column",
+      "position": [
+        11,
+        77,
+        1
+      ],
+      "category": "A",
+      "attractor": "73ee64980731ccdd",
+      "is_cfb": false,
+      "bitcoin_address": "1CH5GdqCCNfEyYDbiX3V6fYWird452pVeb",
+      "correlation": true
+    },
+    {
+      "id": 8,
+      "name": "Col12_Off119",
+      "type": "column",
+      "position": [
+        12,
+        119,
+        2
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": false,
+      "bitcoin_address": "1CEj6iL7GaQ8WAPzkxpDsWWSbMefFRZXzE",
+      "correlation": false
+    },
+    {
+      "id": 9,
+      "name": "1CF* Col13",
+      "type": "column",
+      "position": [
+        13,
+        14,
+        0
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": true,
+      "bitcoin_address": "1CFxTXVTnGnMXGtkqF3gi9qRyCz9PLqJiG",
+      "correlation": false
+    },
+    {
+      "id": 10,
+      "name": "1CF* Col13",
+      "type": "column",
+      "position": [
+        13,
+        42,
+        1
+      ],
+      "category": "B",
+      "attractor": "6f0807b87bd06a73",
+      "is_cfb": true,
+      "bitcoin_address": "1CFueN7RthQ1YLjRY7m7HLEappa41qtDX9",
+      "correlation": false
+    },
+    {
+      "id": 11,
+      "name": "Col15_Off75",
+      "type": "column",
+      "position": [
+        15,
+        75,
+        0
+      ],
+      "category": "B",
+      "attractor": "6f0807b87bd06a73",
+      "is_cfb": false,
+      "bitcoin_address": "1CHq9ZJ5FUeVfEk8iVMGeuRjD5CY1fN8X1",
+      "correlation": false
+    },
+    {
+      "id": 12,
+      "name": "Col17_Off52",
+      "type": "column",
+      "position": [
+        17,
+        52,
+        0
+      ],
+      "category": "B",
+      "attractor": "6f0807b87bd06a73",
+      "is_cfb": false,
+      "bitcoin_address": "1CHQDTRo9opFiaQ1x2vfWJ46borXB4ixrh",
+      "correlation": false
+    },
+    {
+      "id": 13,
+      "name": "Col18_Off76",
+      "type": "column",
+      "position": [
+        18,
+        76,
+        1
+      ],
+      "category": "B",
+      "attractor": "6f0807b87bd06a73",
+      "is_cfb": false,
+      "bitcoin_address": "1CHjVMd1Fx8ASGGxXbSa6gL7G1pk63hcc2",
+      "correlation": true
+    },
+    {
+      "id": 14,
+      "name": "Col18_Off126",
+      "type": "column",
+      "position": [
+        18,
+        126,
+        0
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": false,
+      "bitcoin_address": "1CEG9fJMz5yWJLRAak6yFse73DjVGBmYGa",
+      "correlation": false
+    },
+    {
+      "id": 15,
+      "name": "Col19_Off55",
+      "type": "column",
+      "position": [
+        19,
+        55,
+        2
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": false,
+      "bitcoin_address": "1CEghjyMVzSCZitts8HN71zgvSzoiVD2eZ",
+      "correlation": false
+    },
+    {
+      "id": 16,
+      "name": "Col21_Off110",
+      "type": "column",
+      "position": [
+        21,
+        110,
+        2
+      ],
+      "category": "B",
+      "attractor": "83a33a494bc9ef5d",
+      "is_cfb": false,
+      "bitcoin_address": "1CDyXVANgbYvc3ZEFfgHgTE7HcZn7p8Ezt",
+      "correlation": false
+    },
+    {
+      "id": 17,
+      "name": "1CF* Col23",
+      "type": "column",
+      "position": [
+        23,
+        48,
+        2
+      ],
+      "category": "B",
+      "attractor": "83a33a494bc9ef5d",
+      "is_cfb": true,
+      "bitcoin_address": "1CFgpQZa2vEVB8DEs1VSqrwCgK955azHLv",
+      "correlation": true
+    },
+    {
+      "id": 18,
+      "name": "Col23_Off93",
+      "type": "column",
+      "position": [
+        23,
+        93,
+        2
+      ],
+      "category": "A",
+      "attractor": "73ee64980731ccdd",
+      "is_cfb": false,
+      "bitcoin_address": "1CGXv1xLkHFFuVeMzmJshmnrbGSpf1vojG",
+      "correlation": false
+    },
+    {
+      "id": 19,
+      "name": "Col25_Off84",
+      "type": "column",
+      "position": [
+        25,
+        84,
+        1
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": false,
+      "bitcoin_address": "1CEFG1PyE846ydNkbS2uqdtRMu55dsKiUb",
+      "correlation": false
+    },
+    {
+      "id": 20,
+      "name": "Col25_Off108",
+      "type": "column",
+      "position": [
+        25,
+        108,
+        1
+      ],
+      "category": "B",
+      "attractor": "6f0807b87bd06a73",
+      "is_cfb": false,
+      "bitcoin_address": "1CEKkMK5bFGVTAdHtuhmsBZvVehuxSaVc6",
+      "correlation": false
+    },
+    {
+      "id": 21,
+      "name": "1CF* Col26",
+      "type": "column",
+      "position": [
+        26,
+        0,
+        2
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": true,
+      "bitcoin_address": "1CF1CDtUuekejCwVyXWAcRjoEnwWmebLmY",
+      "correlation": false
+    },
+    {
+      "id": 22,
+      "name": "Col29_Off119",
+      "type": "column",
+      "position": [
+        29,
+        119,
+        1
+      ],
+      "category": "A",
+      "attractor": "73ee64980731ccdd",
+      "is_cfb": false,
+      "bitcoin_address": "1CGXkVLkbA7yzm9pqui4p29AW4vYXVt1A5",
+      "correlation": false
+    },
+    {
+      "id": 23,
+      "name": "Col30_Off103",
+      "type": "column",
+      "position": [
+        30,
+        103,
+        1
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": false,
+      "bitcoin_address": "1CJJ9m4ZDv47phwRvyrTnYNbADWfhiFK7U",
+      "correlation": false
+    },
+    {
+      "id": 24,
+      "name": "Col33_Off63",
+      "type": "column",
+      "position": [
+        33,
+        63,
+        0
+      ],
+      "category": "B",
+      "attractor": "83a33a494bc9ef5d",
+      "is_cfb": false,
+      "bitcoin_address": "1CDiYaJyx3ZsmLWJTwj3mTq1E4tMEmSNrZ",
+      "correlation": false
+    },
+    {
+      "id": 25,
+      "name": "Col33_Off112",
+      "type": "column",
+      "position": [
+        33,
+        112,
+        1
+      ],
+      "category": "A",
+      "attractor": "73ee64980731ccdd",
+      "is_cfb": false,
+      "bitcoin_address": "1CH89ZQpLRroWGLqFD5QvkjLWQYbHjoAt4",
+      "correlation": false
+    },
+    {
+      "id": 26,
+      "name": "Col34_Off27",
+      "type": "column",
+      "position": [
+        34,
+        27,
+        1
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": false,
+      "bitcoin_address": "1CJc5pTxRZTi5heE7vVNthGJzSPwgbgZvj",
+      "correlation": true
+    },
+    {
+      "id": 27,
+      "name": "Col36_Off92",
+      "type": "column",
+      "position": [
+        36,
+        92,
+        2
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": false,
+      "bitcoin_address": "1CGRccUTYtCGF3xdP3FVykEm3eKu8hY3yt",
+      "correlation": false
+    },
+    {
+      "id": 28,
+      "name": "Col39_Off54",
+      "type": "column",
+      "position": [
+        39,
+        54,
+        0
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": false,
+      "bitcoin_address": "1CJM5dCZHWDTHGaf8qqo1WqeyoxsSEansY",
+      "correlation": false
+    },
+    {
+      "id": 29,
+      "name": "Col42_Off5",
+      "type": "column",
+      "position": [
+        42,
+        5,
+        2
+      ],
+      "category": "B",
+      "attractor": "83a33a494bc9ef5d",
+      "is_cfb": false,
+      "bitcoin_address": "1CGj8y1s69MWiRR3k2BT4VtHfokr5HJCrz",
+      "correlation": false
+    },
+    {
+      "id": 30,
+      "name": "Col43_Off106",
+      "type": "column",
+      "position": [
+        43,
+        106,
+        2
+      ],
+      "category": "B",
+      "attractor": "83a33a494bc9ef5d",
+      "is_cfb": false,
+      "bitcoin_address": "1CDQFp92ATv17pVQt5rcKa7Vws6EGnBvdN",
+      "correlation": false
+    },
+    {
+      "id": 31,
+      "name": "Col46_Off83",
+      "type": "column",
+      "position": [
+        46,
+        83,
+        0
+      ],
+      "category": "A",
+      "attractor": "73ee64980731ccdd",
+      "is_cfb": false,
+      "bitcoin_address": "1CEV6Kkk5EPrY4R91TPmc71DXSBVWUk3qL",
+      "correlation": false
+    },
+    {
+      "id": 32,
+      "name": "Col52_Off25",
+      "type": "column",
+      "position": [
+        52,
+        25,
+        2
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": false,
+      "bitcoin_address": "1CHkwqsmgAVb4Zs5uREmfFTkwCStQyDCS5",
+      "correlation": false
+    },
+    {
+      "id": 33,
+      "name": "Col56_Off111",
+      "type": "column",
+      "position": [
+        56,
+        111,
+        2
+      ],
+      "category": "B",
+      "attractor": "83a33a494bc9ef5d",
+      "is_cfb": false,
+      "bitcoin_address": "1CDizsFc44rngu6xLfGdk2nMTZTzMcczTo",
+      "correlation": true
+    },
+    {
+      "id": 34,
+      "name": "1CF* Col58",
+      "type": "column",
+      "position": [
+        58,
+        53,
+        0
+      ],
+      "category": "A",
+      "attractor": "73ee64980731ccdd",
+      "is_cfb": true,
+      "bitcoin_address": "1CFpKx7JWWGYztV99gK91NtmXKGXmuEPaT",
+      "correlation": false
+    },
+    {
+      "id": 35,
+      "name": "Col58_Off103",
+      "type": "column",
+      "position": [
+        58,
+        103,
+        2
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": false,
+      "bitcoin_address": "1CEvXPb95Z1ZtSbbgkThsrz2qA6U4e1T9T",
+      "correlation": false
+    },
+    {
+      "id": 36,
+      "name": "Col60_Off119",
+      "type": "column",
+      "position": [
+        60,
+        119,
+        2
+      ],
+      "category": "A",
+      "attractor": "73ee64980731ccdd",
+      "is_cfb": false,
+      "bitcoin_address": "1CGDVyqV1CobnajHxBgh2c4vKXWCELd1zy",
+      "correlation": false
+    },
+    {
+      "id": 37,
+      "name": "Col61_Off119",
+      "type": "column",
+      "position": [
+        61,
+        119,
+        0
+      ],
+      "category": "B",
+      "attractor": "83a33a494bc9ef5d",
+      "is_cfb": false,
+      "bitcoin_address": "1CHY5thm766dgpiyWXaawpmrMcJeLEJWQE",
+      "correlation": false
+    },
+    {
+      "id": 38,
+      "name": "Col65_Off3",
+      "type": "column",
+      "position": [
+        65,
+        3,
+        2
+      ],
+      "category": "A",
+      "attractor": "73ee64980731ccdd",
+      "is_cfb": false,
+      "bitcoin_address": "1CGMAtckNkNzq2vPByQjRXcmy33xS5GGWb",
+      "correlation": false
+    },
+    {
+      "id": 39,
+      "name": "Col65_Off86",
+      "type": "column",
+      "position": [
+        65,
+        86,
+        1
+      ],
+      "category": "B",
+      "attractor": "83a33a494bc9ef5d",
+      "is_cfb": false,
+      "bitcoin_address": "1CH6WZDcQFonSPH54wjV2WRDpoz42HvuUy",
+      "correlation": true
+    },
+    {
+      "id": 40,
+      "name": "Col69_Off94",
+      "type": "column",
+      "position": [
+        69,
+        94,
+        1
+      ],
+      "category": "A",
+      "attractor": "73ee64980731ccdd",
+      "is_cfb": false,
+      "bitcoin_address": "1CE2DTbyLG6rMg4KE5kwAHT2pJ6D44QaKW",
+      "correlation": true
+    },
+    {
+      "id": 41,
+      "name": "Col70_Off36",
+      "type": "column",
+      "position": [
+        70,
+        36,
+        1
+      ],
+      "category": "A",
+      "attractor": "73ee64980731ccdd",
+      "is_cfb": false,
+      "bitcoin_address": "1CGa46A6JNY3K6iQBT6aBEcWJhLx88o9pA",
+      "correlation": true
+    },
+    {
+      "id": 42,
+      "name": "Col71_Off80",
+      "type": "column",
+      "position": [
+        71,
+        80,
+        1
+      ],
+      "category": "B",
+      "attractor": "83a33a494bc9ef5d",
+      "is_cfb": false,
+      "bitcoin_address": "1CHVyJ58aRoybTiLR84RgXsfCMwtWGk7h1",
+      "correlation": true
+    },
+    {
+      "id": 43,
+      "name": "Col72_Off45",
+      "type": "column",
+      "position": [
+        72,
+        45,
+        0
+      ],
+      "category": "B",
+      "attractor": "6f0807b87bd06a73",
+      "is_cfb": false,
+      "bitcoin_address": "1CDsLUGncu3yHiSDXzUbA9hz6r6Pkmy1TD",
+      "correlation": true
+    },
+    {
+      "id": 44,
+      "name": "Col72_Off116",
+      "type": "column",
+      "position": [
+        72,
+        116,
+        2
+      ],
+      "category": "B",
+      "attractor": "83a33a494bc9ef5d",
+      "is_cfb": false,
+      "bitcoin_address": "1CGXo66eQSeDwGLhtC7EkuprU9jJ6oowGQ",
+      "correlation": true
+    },
+    {
+      "id": 45,
+      "name": "1CFB (CFB Signature!) Col74",
+      "type": "column",
+      "position": [
+        74,
+        0,
+        2
+      ],
+      "category": "B",
+      "attractor": "83a33a494bc9ef5d",
+      "is_cfb": true,
+      "bitcoin_address": "1CFBjSVcKwVmsLJeKAmHcZUpiFjBZchPDV",
+      "correlation": true
+    },
+    {
+      "id": 46,
+      "name": "Col76_Off101",
+      "type": "column",
+      "position": [
+        76,
+        101,
+        0
+      ],
+      "category": "A",
+      "attractor": "73ee64980731ccdd",
+      "is_cfb": false,
+      "bitcoin_address": "1CDUYk4WQQrac9eQfE6xXwC97RhisaYLij",
+      "correlation": false
+    },
+    {
+      "id": 47,
+      "name": "Col78_Off2",
+      "type": "column",
+      "position": [
+        78,
+        2,
+        2
+      ],
+      "category": "A",
+      "attractor": "73ee64980731ccdd",
+      "is_cfb": false,
+      "bitcoin_address": "1CETzbJnUu7dbRTgGR4B3Bjbsmp7TdQyRJ",
+      "correlation": false
+    },
+    {
+      "id": 48,
+      "name": "Col80_Off0",
+      "type": "column",
+      "position": [
+        80,
+        0,
+        2
+      ],
+      "category": "B",
+      "attractor": "6f0807b87bd06a73",
+      "is_cfb": false,
+      "bitcoin_address": "1CHQkacBsuwfUWVdfKUtaWPMNcuW2ivS6B",
+      "correlation": false
+    },
+    {
+      "id": 49,
+      "name": "Col85_Off106",
+      "type": "column",
+      "position": [
+        85,
+        106,
+        2
+      ],
+      "category": "B",
+      "attractor": "6f0807b87bd06a73",
+      "is_cfb": false,
+      "bitcoin_address": "1CGcVCuYptayzSxmo623YKv7G4DfqiQE8C",
+      "correlation": false
+    },
+    {
+      "id": 50,
+      "name": "1CF* Col87",
+      "type": "column",
+      "position": [
+        87,
+        55,
+        1
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": true,
+      "bitcoin_address": "1CFq9ZCY33JW3DqLGvw9ewkjopGYVurrMq",
+      "correlation": false
+    },
+    {
+      "id": 51,
+      "name": "Col90_Off124",
+      "type": "column",
+      "position": [
+        90,
+        124,
+        1
+      ],
+      "category": "B",
+      "attractor": "83a33a494bc9ef5d",
+      "is_cfb": false,
+      "bitcoin_address": "1CGx2VbRUS49SXJXnwS1taJMYhTxbCYhF6",
+      "correlation": true
+    },
+    {
+      "id": 52,
+      "name": "Col91_Off97",
+      "type": "column",
+      "position": [
+        91,
+        97,
+        2
+      ],
+      "category": "B",
+      "attractor": "6f0807b87bd06a73",
+      "is_cfb": false,
+      "bitcoin_address": "1CHddQfpFzDLpLx4i5ynVuT9YzB8ZkAJie",
+      "correlation": false
+    },
+    {
+      "id": 53,
+      "name": "Col92_Off52",
+      "type": "column",
+      "position": [
+        92,
+        52,
+        0
+      ],
+      "category": "A",
+      "attractor": "73ee64980731ccdd",
+      "is_cfb": false,
+      "bitcoin_address": "1CEHWGQJ47DqxbtmGghSDAbmzwkSw39Wdh",
+      "correlation": false
+    },
+    {
+      "id": 54,
+      "name": "1CF* Col92",
+      "type": "column",
+      "position": [
+        92,
+        78,
+        2
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": true,
+      "bitcoin_address": "1CFd8MKerzYHVnCAkH2MdEncSu6o8whQFh",
+      "correlation": false
+    },
+    {
+      "id": 55,
+      "name": "Col92_Off123",
+      "type": "column",
+      "position": [
+        92,
+        123,
+        2
+      ],
+      "category": "A",
+      "attractor": "73ee64980731ccdd",
+      "is_cfb": false,
+      "bitcoin_address": "1CDtLuoBLc9vShzF4izkjz74et41ykAXVd",
+      "correlation": false
+    },
+    {
+      "id": 56,
+      "name": "Col93_Off34",
+      "type": "column",
+      "position": [
+        93,
+        34,
+        1
+      ],
+      "category": "B",
+      "attractor": "83a33a494bc9ef5d",
+      "is_cfb": false,
+      "bitcoin_address": "1CEM7GYi21jQyEWjSk3d9TUyjGMcTuVrM7",
+      "correlation": false
+    },
+    {
+      "id": 57,
+      "name": "Col94_Off0",
+      "type": "column",
+      "position": [
+        94,
+        0,
+        1
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": false,
+      "bitcoin_address": "1CHetCYd9fzuNAiXV5b7mL3ns2qxYrVw4d",
+      "correlation": false
+    },
+    {
+      "id": 58,
+      "name": "Col94_Off120",
+      "type": "column",
+      "position": [
+        94,
+        120,
+        1
+      ],
+      "category": "A",
+      "attractor": "73ee64980731ccdd",
+      "is_cfb": false,
+      "bitcoin_address": "1CJL2RrM8SpgQY1EzzmXYwgoNmM5m4veFK",
+      "correlation": false
+    },
+    {
+      "id": 59,
+      "name": "Col96_Off62",
+      "type": "column",
+      "position": [
+        96,
+        62,
+        2
+      ],
+      "category": "A",
+      "attractor": "73ee64980731ccdd",
+      "is_cfb": false,
+      "bitcoin_address": "1CGvRxS4pBaazMNmL5h5tfTsb5J7TXrmKx",
+      "correlation": false
+    },
+    {
+      "id": 60,
+      "name": "Col99_Off73",
+      "type": "column",
+      "position": [
+        99,
+        73,
+        1
+      ],
+      "category": "B",
+      "attractor": "83a33a494bc9ef5d",
+      "is_cfb": false,
+      "bitcoin_address": "1CHh6Bos7XCUGSkTcLmgzEsyKz5PY6zq3e",
+      "correlation": true
+    },
+    {
+      "id": 61,
+      "name": "Col99_Off99",
+      "type": "column",
+      "position": [
+        99,
+        99,
+        0
+      ],
+      "category": "B",
+      "attractor": "83a33a494bc9ef5d",
+      "is_cfb": false,
+      "bitcoin_address": "1CHjju5yEK6aRDkkQYHeKEQahLERkW2QE6",
+      "correlation": true
+    },
+    {
+      "id": 62,
+      "name": "Col100_Off113",
+      "type": "column",
+      "position": [
+        100,
+        113,
+        0
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": false,
+      "bitcoin_address": "1CJSBKCLi3FX52Smy9XK6p8BtkKx5yea3c",
+      "correlation": false
+    },
+    {
+      "id": 63,
+      "name": "Col105_Off24",
+      "type": "column",
+      "position": [
+        105,
+        24,
+        0
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": false,
+      "bitcoin_address": "1CGkprAXbrdYQ72pbF65gVpSeiXX3MfGZE",
+      "correlation": false
+    },
+    {
+      "id": 64,
+      "name": "Col105_Off89",
+      "type": "column",
+      "position": [
+        105,
+        89,
+        2
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": false,
+      "bitcoin_address": "1CEVFpZ1BVX4nMVVfi1RUrjBsiSGWomvuV",
+      "correlation": false
+    },
+    {
+      "id": 65,
+      "name": "1CF* Col106",
+      "type": "column",
+      "position": [
+        106,
+        124,
+        2
+      ],
+      "category": "B",
+      "attractor": "6f0807b87bd06a73",
+      "is_cfb": true,
+      "bitcoin_address": "1CFCAcsMXpDdMGVs4TNZketRov8vJeFRRo",
+      "correlation": false
+    },
+    {
+      "id": 66,
+      "name": "Col107_Off109",
+      "type": "column",
+      "position": [
+        107,
+        109,
+        0
+      ],
+      "category": "B",
+      "attractor": "83a33a494bc9ef5d",
+      "is_cfb": false,
+      "bitcoin_address": "1CGtuUdfgfR43NYUhu3tN3sJfsxenARnvH",
+      "correlation": false
+    },
+    {
+      "id": 67,
+      "name": "Col112_Off58",
+      "type": "column",
+      "position": [
+        112,
+        58,
+        2
+      ],
+      "category": "A",
+      "attractor": "73ee64980731ccdd",
+      "is_cfb": false,
+      "bitcoin_address": "1CEu3zhe38cfb6c9fm3SKUciMMZznrGsxM",
+      "correlation": false
+    },
+    {
+      "id": 68,
+      "name": "Col113_Off86",
+      "type": "column",
+      "position": [
+        113,
+        86,
+        1
+      ],
+      "category": "A",
+      "attractor": "73ee64980731ccdd",
+      "is_cfb": false,
+      "bitcoin_address": "1CGGq46F1x6whnZx1T5Q9rDzZH5yhYkgyL",
+      "correlation": false
+    },
+    {
+      "id": 69,
+      "name": "1CF* Col114",
+      "type": "column",
+      "position": [
+        114,
+        18,
+        0
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": true,
+      "bitcoin_address": "1CF4k19iC94P4PYqyFoY7L6fi5NcFsVCnh",
+      "correlation": true
+    },
+    {
+      "id": 70,
+      "name": "1CF* Col115",
+      "type": "column",
+      "position": [
+        115,
+        68,
+        0
+      ],
+      "category": "B",
+      "attractor": "6f0807b87bd06a73",
+      "is_cfb": true,
+      "bitcoin_address": "1CFqzpGJXCLSzKZttQ2W61cD6u7cTyUMpL",
+      "correlation": false
+    },
+    {
+      "id": 71,
+      "name": "Col115_Off90",
+      "type": "column",
+      "position": [
+        115,
+        90,
+        1
+      ],
+      "category": "B",
+      "attractor": "6f0807b87bd06a73",
+      "is_cfb": false,
+      "bitcoin_address": "1CH6Sb4mPKRpihAxb6Ty1KCcaNfYPVEqWw",
+      "correlation": false
+    },
+    {
+      "id": 72,
+      "name": "Col118_Off25",
+      "type": "column",
+      "position": [
+        118,
+        25,
+        2
+      ],
+      "category": "B",
+      "attractor": "6f0807b87bd06a73",
+      "is_cfb": false,
+      "bitcoin_address": "1CEuYWaRj4saoRi7GorxrdC5KqiTRkvQRN",
+      "correlation": false
+    },
+    {
+      "id": 73,
+      "name": "Col120_Off113",
+      "type": "column",
+      "position": [
+        120,
+        113,
+        2
+      ],
+      "category": "B",
+      "attractor": "83a33a494bc9ef5d",
+      "is_cfb": false,
+      "bitcoin_address": "1CE3xvjvfVvvjaJ7tC2SUs4vwoj9wV2fXc",
+      "correlation": false
+    },
+    {
+      "id": 74,
+      "name": "Col123_Off120",
+      "type": "column",
+      "position": [
+        123,
+        120,
+        0
+      ],
+      "category": "B",
+      "attractor": "6f0807b87bd06a73",
+      "is_cfb": false,
+      "bitcoin_address": "1CGwzi2wCpH2Hu7oiKJhBmYs7ysYUrApHx",
+      "correlation": false
+    },
+    {
+      "id": 75,
+      "name": "Col124_Off90",
+      "type": "column",
+      "position": [
+        124,
+        90,
+        1
+      ],
+      "category": "B",
+      "attractor": "83a33a494bc9ef5d",
+      "is_cfb": false,
+      "bitcoin_address": "1CDcaWfkwsUar5VnajXib7skhPZRRVvRM4",
+      "correlation": false
+    },
+    {
+      "id": 76,
+      "name": "1CF* Col127",
+      "type": "column",
+      "position": [
+        127,
+        72,
+        1
+      ],
+      "category": "B",
+      "attractor": "83a33a494bc9ef5d",
+      "is_cfb": true,
+      "bitcoin_address": "1CFobogCREBxZLXK9Zycr7aPJQf5Z2hwwb",
+      "correlation": false
+    },
+    {
+      "id": 77,
+      "name": "Row1_Off43",
+      "type": "row",
+      "position": [
+        1,
+        43,
+        2
+      ],
+      "category": "B",
+      "attractor": "83a33a494bc9ef5d",
+      "is_cfb": false,
+      "bitcoin_address": "1CH8eLJ3mWCU3rkN7qPAMfo5s3Lzr8qG3n",
+      "correlation": null
+    },
+    {
+      "id": 78,
+      "name": "Row5_Off4",
+      "type": "row",
+      "position": [
+        5,
+        4,
+        0
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": false,
+      "bitcoin_address": "1CGjKKmLu8dKRtiJncFVWU71z19euGyz66",
+      "correlation": null
+    },
+    {
+      "id": 79,
+      "name": "Row5_Off121",
+      "type": "row",
+      "position": [
+        5,
+        121,
+        0
+      ],
+      "category": "A",
+      "attractor": "73ee64980731ccdd",
+      "is_cfb": false,
+      "bitcoin_address": "1CEUtUtbFNVQPD2NiRsGQeepv3ZWRGCye7",
+      "correlation": null
+    },
+    {
+      "id": 80,
+      "name": "Row8_Off106",
+      "type": "row",
+      "position": [
+        8,
+        106,
+        0
+      ],
+      "category": "A",
+      "attractor": "73ee64980731ccdd",
+      "is_cfb": false,
+      "bitcoin_address": "1CG239RVHGyK7zVLQDT6iAtFnWhyL9mAzF",
+      "correlation": null
+    },
+    {
+      "id": 81,
+      "name": "Row9_Off95",
+      "type": "row",
+      "position": [
+        9,
+        95,
+        2
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": false,
+      "bitcoin_address": "1CEV79apzqKuXzK4vvPSfxfYtCcaVnRBsx",
+      "correlation": null
+    },
+    {
+      "id": 82,
+      "name": "Row12_Off35",
+      "type": "row",
+      "position": [
+        12,
+        35,
+        2
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": false,
+      "bitcoin_address": "1CJDd3XDxKQXgMVTNgV9i677NRoF45XjQp",
+      "correlation": null
+    },
+    {
+      "id": 83,
+      "name": "Row21_Off98",
+      "type": "row",
+      "position": [
+        21,
+        98,
+        2
+      ],
+      "category": "B",
+      "attractor": "83a33a494bc9ef5d",
+      "is_cfb": false,
+      "bitcoin_address": "1CE8ZLNKqbxdiEDni7zrVb9hYU3HoczRvS",
+      "correlation": null
+    },
+    {
+      "id": 84,
+      "name": "Row22_Off29",
+      "type": "row",
+      "position": [
+        22,
+        29,
+        0
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": false,
+      "bitcoin_address": "1CJBoBVHTf4wkvA4ftLZyBUuaEDLHbD7Gr",
+      "correlation": null
+    },
+    {
+      "id": 85,
+      "name": "Row23_Off43",
+      "type": "row",
+      "position": [
+        23,
+        43,
+        0
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": false,
+      "bitcoin_address": "1CHkMRDGjkWfgUKF6wDzNrCQrDEnfgV9fs",
+      "correlation": null
+    },
+    {
+      "id": 86,
+      "name": "Row24_Off27",
+      "type": "row",
+      "position": [
+        24,
+        27,
+        0
+      ],
+      "category": "A",
+      "attractor": "73ee64980731ccdd",
+      "is_cfb": false,
+      "bitcoin_address": "1CEjHjZ3Cmmp9LqjSMqXGTH5rcg9BxnR6t",
+      "correlation": null
+    },
+    {
+      "id": 87,
+      "name": "1CF* Row26",
+      "type": "row",
+      "position": [
+        26,
+        52,
+        0
+      ],
+      "category": "B",
+      "attractor": "6f0807b87bd06a73",
+      "is_cfb": true,
+      "bitcoin_address": "1CFkUWdsQDJbmZiCJ4fsHd2Wb89dcCy3oA",
+      "correlation": null
+    },
+    {
+      "id": 88,
+      "name": "Row30_Off123",
+      "type": "row",
+      "position": [
+        30,
+        123,
+        0
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": false,
+      "bitcoin_address": "1CG8WSocSf8JfofcynrCZtP1s3AHPqY8Ko",
+      "correlation": null
+    },
+    {
+      "id": 89,
+      "name": "1CF* Row35",
+      "type": "row",
+      "position": [
+        35,
+        78,
+        2
+      ],
+      "category": "B",
+      "attractor": "83a33a494bc9ef5d",
+      "is_cfb": true,
+      "bitcoin_address": "1CFqGYyrXzZbhpmdGp9ZWELPW7c4VDuB8u",
+      "correlation": null
+    },
+    {
+      "id": 90,
+      "name": "Row37_Off99",
+      "type": "row",
+      "position": [
+        37,
+        99,
+        1
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": false,
+      "bitcoin_address": "1CJSncqUpTkVEazzbcfcd21M46oC8f2QN3",
+      "correlation": null
+    },
+    {
+      "id": 91,
+      "name": "Row43_Off101",
+      "type": "row",
+      "position": [
+        43,
+        101,
+        0
+      ],
+      "category": "A",
+      "attractor": "73ee64980731ccdd",
+      "is_cfb": false,
+      "bitcoin_address": "1CDZRawvJhELBw5AHzEq1MBW4ho8kGapx2",
+      "correlation": null
+    },
+    {
+      "id": 92,
+      "name": "Row43_Off123",
+      "type": "row",
+      "position": [
+        43,
+        123,
+        1
+      ],
+      "category": "B",
+      "attractor": "6f0807b87bd06a73",
+      "is_cfb": false,
+      "bitcoin_address": "1CEBXY3oeWUCgxKp1TN86XdF5Nnh4DP6oz",
+      "correlation": null
+    },
+    {
+      "id": 93,
+      "name": "1CF* Row44",
+      "type": "row",
+      "position": [
+        44,
+        85,
+        0
+      ],
+      "category": "B",
+      "attractor": "6f0807b87bd06a73",
+      "is_cfb": true,
+      "bitcoin_address": "1CFrk4P5vYKimSWcQJ5EcWHKgdYgMWhmuD",
+      "correlation": null
+    },
+    {
+      "id": 94,
+      "name": "Row45_Off52",
+      "type": "row",
+      "position": [
+        45,
+        52,
+        1
+      ],
+      "category": "B",
+      "attractor": "83a33a494bc9ef5d",
+      "is_cfb": false,
+      "bitcoin_address": "1CHUJGXRjmATL7Uuvu5mt7vCsnZSSth1xz",
+      "correlation": null
+    },
+    {
+      "id": 95,
+      "name": "Row49_Off3",
+      "type": "row",
+      "position": [
+        49,
+        3,
+        1
+      ],
+      "category": "B",
+      "attractor": "6f0807b87bd06a73",
+      "is_cfb": false,
+      "bitcoin_address": "1CEjDp6CGUjQiv7XURvLb4UwvUND4o3f94",
+      "correlation": null
+    },
+    {
+      "id": 96,
+      "name": "Row50_Off106",
+      "type": "row",
+      "position": [
+        50,
+        106,
+        0
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": false,
+      "bitcoin_address": "1CH5MLDLuAgWjTJ9cNasrzKtXErEgQfGnx",
+      "correlation": null
+    },
+    {
+      "id": 97,
+      "name": "Row51_Off6",
+      "type": "row",
+      "position": [
+        51,
+        6,
+        0
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": false,
+      "bitcoin_address": "1CHupTJxkT5zndJAeQrpYnxKZEeCmuuWYm",
+      "correlation": null
+    },
+    {
+      "id": 98,
+      "name": "Row54_Off21",
+      "type": "row",
+      "position": [
+        54,
+        21,
+        0
+      ],
+      "category": "B",
+      "attractor": "83a33a494bc9ef5d",
+      "is_cfb": false,
+      "bitcoin_address": "1CEJnK3BnrZg4HsWzcq3LohoYBvYmMC9Pu",
+      "correlation": null
+    },
+    {
+      "id": 99,
+      "name": "Row55_Off8",
+      "type": "row",
+      "position": [
+        55,
+        8,
+        0
+      ],
+      "category": "B",
+      "attractor": "6f0807b87bd06a73",
+      "is_cfb": false,
+      "bitcoin_address": "1CH1oyQodZzgqXrLU1dkEYw3zHFQb4V9KX",
+      "correlation": null
+    },
+    {
+      "id": 100,
+      "name": "Row57_Off126",
+      "type": "row",
+      "position": [
+        57,
+        126,
+        0
+      ],
+      "category": "A",
+      "attractor": "73ee64980731ccdd",
+      "is_cfb": false,
+      "bitcoin_address": "1CHKedWbb2iM58asa7uPSrKnXyYLef1CoN",
+      "correlation": null
+    },
+    {
+      "id": 101,
+      "name": "Row58_Off84",
+      "type": "row",
+      "position": [
+        58,
+        84,
+        1
+      ],
+      "category": "A",
+      "attractor": "73ee64980731ccdd",
+      "is_cfb": false,
+      "bitcoin_address": "1CDZdiwo2Bjwa1whhbeJwdW3w7GuQnmJ5o",
+      "correlation": null
+    },
+    {
+      "id": 102,
+      "name": "Row63_Off82",
+      "type": "row",
+      "position": [
+        63,
+        82,
+        1
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": false,
+      "bitcoin_address": "1CELDTuhx53u9yiQyXgBEDEw24ZRxwMVRy",
+      "correlation": null
+    },
+    {
+      "id": 103,
+      "name": "1CF* Row63",
+      "type": "row",
+      "position": [
+        63,
+        90,
+        0
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": true,
+      "bitcoin_address": "1CFKfFGhbyCERhxctqzMYpZ6Ws1EC8F5B7",
+      "correlation": null
+    },
+    {
+      "id": 104,
+      "name": "1CF* Row64",
+      "type": "row",
+      "position": [
+        64,
+        120,
+        1
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": true,
+      "bitcoin_address": "1CFUyV6kmD4BywHHafqkNH5WpsRfhjkLog",
+      "correlation": null
+    },
+    {
+      "id": 105,
+      "name": "Row65_Off38",
+      "type": "row",
+      "position": [
+        65,
+        38,
+        1
+      ],
+      "category": "B",
+      "attractor": "6f0807b87bd06a73",
+      "is_cfb": false,
+      "bitcoin_address": "1CEY3iLBYqEDZZyq3sAgiiJMGT4QJ4viug",
+      "correlation": null
+    },
+    {
+      "id": 106,
+      "name": "Row68_Off106",
+      "type": "row",
+      "position": [
+        68,
+        106,
+        0
+      ],
+      "category": "B",
+      "attractor": "6f0807b87bd06a73",
+      "is_cfb": false,
+      "bitcoin_address": "1CJbR2jkCWV73gbEMGrvd9DhU5tq7sQDda",
+      "correlation": null
+    },
+    {
+      "id": 107,
+      "name": "Row69_Off24",
+      "type": "row",
+      "position": [
+        69,
+        24,
+        0
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": false,
+      "bitcoin_address": "1CHo5hkDHmL8iyx9qctDRuimtrA6btHUyK",
+      "correlation": null
+    },
+    {
+      "id": 108,
+      "name": "Row69_Off118",
+      "type": "row",
+      "position": [
+        69,
+        118,
+        1
+      ],
+      "category": "A",
+      "attractor": "73ee64980731ccdd",
+      "is_cfb": false,
+      "bitcoin_address": "1CGijbTpRcvcMQeWPRg4W7oHEkwm7fjamQ",
+      "correlation": null
+    },
+    {
+      "id": 109,
+      "name": "Row72_Off6",
+      "type": "row",
+      "position": [
+        72,
+        6,
+        0
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": false,
+      "bitcoin_address": "1CGrxC1AQ6ntxGo3xa6QFHPTY6s89zFnoT",
+      "correlation": null
+    },
+    {
+      "id": 110,
+      "name": "1CF* Row73",
+      "type": "row",
+      "position": [
+        73,
+        24,
+        1
+      ],
+      "category": "B",
+      "attractor": "83a33a494bc9ef5d",
+      "is_cfb": true,
+      "bitcoin_address": "1CFwJf1ph75U14rBSAHcWWpk3fYtA9kUox",
+      "correlation": null
+    },
+    {
+      "id": 111,
+      "name": "Row73_Off116",
+      "type": "row",
+      "position": [
+        73,
+        116,
+        0
+      ],
+      "category": "B",
+      "attractor": "83a33a494bc9ef5d",
+      "is_cfb": false,
+      "bitcoin_address": "1CHoSiRTDoCge8R8fBdBvVhSNC1uNuy1HD",
+      "correlation": null
+    },
+    {
+      "id": 112,
+      "name": "Row74_Off8",
+      "type": "row",
+      "position": [
+        74,
+        8,
+        1
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": false,
+      "bitcoin_address": "1CDYswWVb1cpmoRmopdydvErsKkAn5NYue",
+      "correlation": null
+    },
+    {
+      "id": 113,
+      "name": "1CF* Row75",
+      "type": "row",
+      "position": [
+        75,
+        126,
+        0
+      ],
+      "category": "B",
+      "attractor": "83a33a494bc9ef5d",
+      "is_cfb": true,
+      "bitcoin_address": "1CFMUiC4An1Jes2EEHUYNLxzwJaXcUsP8T",
+      "correlation": null
+    },
+    {
+      "id": 114,
+      "name": "Row77_Off25",
+      "type": "row",
+      "position": [
+        77,
+        25,
+        0
+      ],
+      "category": "B",
+      "attractor": "6f0807b87bd06a73",
+      "is_cfb": false,
+      "bitcoin_address": "1CDiArQKpNJn7BdUYQ8AELbkhT2jkkf4pZ",
+      "correlation": null
+    },
+    {
+      "id": 115,
+      "name": "Row77_Off55",
+      "type": "row",
+      "position": [
+        77,
+        55,
+        0
+      ],
+      "category": "B",
+      "attractor": "6f0807b87bd06a73",
+      "is_cfb": false,
+      "bitcoin_address": "1CGG6AFWvteYHufSGXYJKEXFVHRgYZzyhn",
+      "correlation": null
+    },
+    {
+      "id": 116,
+      "name": "Row80_Off30",
+      "type": "row",
+      "position": [
+        80,
+        30,
+        2
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": false,
+      "bitcoin_address": "1CJRyWxXR8ZAGJD8MvjPGTyYYB4X3F2DjC",
+      "correlation": null
+    },
+    {
+      "id": 117,
+      "name": "Row81_Off23",
+      "type": "row",
+      "position": [
+        81,
+        23,
+        2
+      ],
+      "category": "B",
+      "attractor": "6f0807b87bd06a73",
+      "is_cfb": false,
+      "bitcoin_address": "1CDhqsJedemProyzVi8uMSDT5v1XcKRVaE",
+      "correlation": null
+    },
+    {
+      "id": 118,
+      "name": "1CF* Row81",
+      "type": "row",
+      "position": [
+        81,
+        67,
+        1
+      ],
+      "category": "A",
+      "attractor": "73ee64980731ccdd",
+      "is_cfb": true,
+      "bitcoin_address": "1CFyrXgNPCy3fBpekcYHajN9FiTSDMhTaw",
+      "correlation": null
+    },
+    {
+      "id": 119,
+      "name": "Row83_Off124",
+      "type": "row",
+      "position": [
+        83,
+        124,
+        0
+      ],
+      "category": "A",
+      "attractor": "73ee64980731ccdd",
+      "is_cfb": false,
+      "bitcoin_address": "1CGCCUmsLuL8ZM9dyH9TBpc1VLmLjiSDPV",
+      "correlation": null
+    },
+    {
+      "id": 120,
+      "name": "Row87_Off106",
+      "type": "row",
+      "position": [
+        87,
+        106,
+        1
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": false,
+      "bitcoin_address": "1CEMcpBtiCkoj1HrpB5ZZPbq8kt1oDGvnN",
+      "correlation": null
+    },
+    {
+      "id": 121,
+      "name": "Row88_Off111",
+      "type": "row",
+      "position": [
+        88,
+        111,
+        1
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": false,
+      "bitcoin_address": "1CGZfN69ULSNxVd6LNML1oSfh54LCczF71",
+      "correlation": null
+    },
+    {
+      "id": 122,
+      "name": "Row89_Off58",
+      "type": "row",
+      "position": [
+        89,
+        58,
+        0
+      ],
+      "category": "B",
+      "attractor": "83a33a494bc9ef5d",
+      "is_cfb": false,
+      "bitcoin_address": "1CDw4yB4YoCEarbxMr3XQa1f3cMRgPnA4K",
+      "correlation": null
+    },
+    {
+      "id": 123,
+      "name": "Row90_Off29",
+      "type": "row",
+      "position": [
+        90,
+        29,
+        2
+      ],
+      "category": "B",
+      "attractor": "6f0807b87bd06a73",
+      "is_cfb": false,
+      "bitcoin_address": "1CEzZ67f66ksGcQ2cvr9QYKgtEqRdroeUQ",
+      "correlation": null
+    },
+    {
+      "id": 124,
+      "name": "Row93_Off12",
+      "type": "row",
+      "position": [
+        93,
+        12,
+        0
+      ],
+      "category": "B",
+      "attractor": "83a33a494bc9ef5d",
+      "is_cfb": false,
+      "bitcoin_address": "1CEAYyNzxVtn2WJ3uEvCR89sG7wsVGVCvR",
+      "correlation": null
+    },
+    {
+      "id": 125,
+      "name": "1CF* Row94",
+      "type": "row",
+      "position": [
+        94,
+        6,
+        1
+      ],
+      "category": "B",
+      "attractor": "6f0807b87bd06a73",
+      "is_cfb": true,
+      "bitcoin_address": "1CFLdUb37uZJ3zcZ8LdpuJA5o1q3qAwQuY",
+      "correlation": null
+    },
+    {
+      "id": 126,
+      "name": "Row97_Off119",
+      "type": "row",
+      "position": [
+        97,
+        119,
+        0
+      ],
+      "category": "B",
+      "attractor": "83a33a494bc9ef5d",
+      "is_cfb": false,
+      "bitcoin_address": "1CHepuYMebdf2mb45maY8jWpNLN1AkyQiF",
+      "correlation": null
+    },
+    {
+      "id": 127,
+      "name": "Row99_Off67",
+      "type": "row",
+      "position": [
+        99,
+        67,
+        1
+      ],
+      "category": "A",
+      "attractor": "73ee64980731ccdd",
+      "is_cfb": false,
+      "bitcoin_address": "1CET7co366mDH9F8DV7ACK6Uo2RXvX3Ttz",
+      "correlation": null
+    },
+    {
+      "id": 128,
+      "name": "Row99_Off94",
+      "type": "row",
+      "position": [
+        99,
+        94,
+        1
+      ],
+      "category": "B",
+      "attractor": "83a33a494bc9ef5d",
+      "is_cfb": false,
+      "bitcoin_address": "1CJ9cERNVdneLSCvUWV1KCaWojHChMNhGX",
+      "correlation": null
+    },
+    {
+      "id": 129,
+      "name": "1CF* Row100",
+      "type": "row",
+      "position": [
+        100,
+        122,
+        0
+      ],
+      "category": "B",
+      "attractor": "6f0807b87bd06a73",
+      "is_cfb": true,
+      "bitcoin_address": "1CFTZVrpmn6Qkqo1EEa8QbzZuaqBaxNxAt",
+      "correlation": null
+    },
+    {
+      "id": 130,
+      "name": "Row101_Off46",
+      "type": "row",
+      "position": [
+        101,
+        46,
+        0
+      ],
+      "category": "B",
+      "attractor": "6f0807b87bd06a73",
+      "is_cfb": false,
+      "bitcoin_address": "1CJU6JChMfHUxg9QuuMMS7ye4uYS9FTXP3",
+      "correlation": null
+    },
+    {
+      "id": 131,
+      "name": "Row101_Off93",
+      "type": "row",
+      "position": [
+        101,
+        93,
+        2
+      ],
+      "category": "B",
+      "attractor": "6f0807b87bd06a73",
+      "is_cfb": false,
+      "bitcoin_address": "1CJZNDfMUriwhMPAc9nRAHPNWBwmrNnUne",
+      "correlation": null
+    },
+    {
+      "id": 132,
+      "name": "Row106_Off70",
+      "type": "row",
+      "position": [
+        106,
+        70,
+        2
+      ],
+      "category": "B",
+      "attractor": "6f0807b87bd06a73",
+      "is_cfb": false,
+      "bitcoin_address": "1CGYbRWxxTq9pRkZRa48ViqSo73iUvdBVE",
+      "correlation": null
+    },
+    {
+      "id": 133,
+      "name": "Row107_Off89",
+      "type": "row",
+      "position": [
+        107,
+        89,
+        1
+      ],
+      "category": "B",
+      "attractor": "83a33a494bc9ef5d",
+      "is_cfb": false,
+      "bitcoin_address": "1CDkXUqzFb2KCZcp5AyAjVwpxoewMPBfs7",
+      "correlation": null
+    },
+    {
+      "id": 134,
+      "name": "Row109_Off72",
+      "type": "row",
+      "position": [
+        109,
+        72,
+        1
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": false,
+      "bitcoin_address": "1CHgASSAemYJSK42HXtn7TZxUB86qrumep",
+      "correlation": null
+    },
+    {
+      "id": 135,
+      "name": "1CF* Row111",
+      "type": "row",
+      "position": [
+        111,
+        24,
+        0
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": true,
+      "bitcoin_address": "1CFw9Ni7FD5A6xvt9HsemQC6bG8pqNEMo5",
+      "correlation": null
+    },
+    {
+      "id": 136,
+      "name": "Row112_Off85",
+      "type": "row",
+      "position": [
+        112,
+        85,
+        2
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": false,
+      "bitcoin_address": "1CEvhAkLuYJV4Sgn4xK2Uzv6mo5NPXcQbt",
+      "correlation": null
+    },
+    {
+      "id": 137,
+      "name": "Row113_Off106",
+      "type": "row",
+      "position": [
+        113,
+        106,
+        0
+      ],
+      "category": "B",
+      "attractor": "83a33a494bc9ef5d",
+      "is_cfb": false,
+      "bitcoin_address": "1CDpusg4X9dkQnpNec1jB4XLnEtFAHgLMF",
+      "correlation": null
+    },
+    {
+      "id": 138,
+      "name": "Row114_Off95",
+      "type": "row",
+      "position": [
+        114,
+        95,
+        2
+      ],
+      "category": "A",
+      "attractor": "73ee64980731ccdd",
+      "is_cfb": false,
+      "bitcoin_address": "1CENtsdM65kNtiE9QWf7s4vdvVWdWeuxcK",
+      "correlation": null
+    },
+    {
+      "id": 139,
+      "name": "Row119_Off108",
+      "type": "row",
+      "position": [
+        119,
+        108,
+        2
+      ],
+      "category": "B",
+      "attractor": "83a33a494bc9ef5d",
+      "is_cfb": false,
+      "bitcoin_address": "1CJFNAsRZzY7cmCLLypHaGZWpCo47Z44n2",
+      "correlation": null
+    },
+    {
+      "id": 140,
+      "name": "Row120_Off25",
+      "type": "row",
+      "position": [
+        120,
+        25,
+        1
+      ],
+      "category": "A",
+      "attractor": "73ee64980731ccdd",
+      "is_cfb": false,
+      "bitcoin_address": "1CECRjuJ6FmBPGBTT4dfxVuFNN8p1FZ1PL",
+      "correlation": null
+    },
+    {
+      "id": 141,
+      "name": "Row122_Off37",
+      "type": "row",
+      "position": [
+        122,
+        37,
+        0
+      ],
+      "category": "B",
+      "attractor": "83a33a494bc9ef5d",
+      "is_cfb": false,
+      "bitcoin_address": "1CE9sZhB3djYzdLcBAXpVPgiZ9cJLt6dDR",
+      "correlation": null
+    },
+    {
+      "id": 142,
+      "name": "Row122_Off83",
+      "type": "row",
+      "position": [
+        122,
+        83,
+        1
+      ],
+      "category": "A",
+      "attractor": "73ee64980731ccdd",
+      "is_cfb": false,
+      "bitcoin_address": "1CHzxf3czGJnjKbqfEx3p3QPLa2uTLQqHL",
+      "correlation": null
+    },
+    {
+      "id": 143,
+      "name": "1CF* Row123",
+      "type": "row",
+      "position": [
+        123,
+        17,
+        2
+      ],
+      "category": "A",
+      "attractor": "73ee64980731ccdd",
+      "is_cfb": true,
+      "bitcoin_address": "1CFqXgF1ZoqtdRH5wfr8oxK6zpJCR8vfd4",
+      "correlation": null
+    },
+    {
+      "id": 144,
+      "name": "Row124_Off16",
+      "type": "row",
+      "position": [
+        124,
+        16,
+        2
+      ],
+      "category": "B",
+      "attractor": "6f0807b87bd06a73",
+      "is_cfb": false,
+      "bitcoin_address": "1CJKumsEv7feBde6NQpszV8T698KcKKoCn",
+      "correlation": null
+    },
+    {
+      "id": 145,
+      "name": "Row126_Off86",
+      "type": "row",
+      "position": [
+        126,
+        86,
+        2
+      ],
+      "category": "B",
+      "attractor": "83a33a494bc9ef5d",
+      "is_cfb": false,
+      "bitcoin_address": "1CDX3rokgv2jQYZzByV8FivFUXmJcxNvTH",
+      "correlation": null
+    },
+    {
+      "id": 146,
+      "name": "Row127_Off46",
+      "type": "row",
+      "position": [
+        127,
+        46,
+        2
+      ],
+      "category": "B",
+      "attractor": "6f0807b87bd06a73",
+      "is_cfb": false,
+      "bitcoin_address": "1CHUJf5fLQ1kgqsjK389gQMcLkanxCHG2W",
+      "correlation": null
+    },
+    {
+      "id": 147,
+      "name": "XOR_3_124_Off79",
+      "type": "xor_pair",
+      "position": [
+        3,
+        79,
+        1
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": false,
+      "bitcoin_address": "1CDwAfgpZsACUf96HLw4mN89bbRVaxiabq",
+      "correlation": null
+    },
+    {
+      "id": 148,
+      "name": "XOR_5_122_Off84",
+      "type": "xor_pair",
+      "position": [
+        5,
+        84,
+        2
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": false,
+      "bitcoin_address": "1CJ9R9gwDwNb18dvz8f12KuDQQZuyCaSJY",
+      "correlation": null
+    },
+    {
+      "id": 149,
+      "name": "XOR_7_120_Off76",
+      "type": "xor_pair",
+      "position": [
+        7,
+        76,
+        2
+      ],
+      "category": "B",
+      "attractor": "6f0807b87bd06a73",
+      "is_cfb": false,
+      "bitcoin_address": "1CEospXAkDfn1dnbGMF2nApXgGK2wUg2LT",
+      "correlation": null
+    },
+    {
+      "id": 150,
+      "name": "XOR_13_114_Off45",
+      "type": "xor_pair",
+      "position": [
+        13,
+        45,
+        1
+      ],
+      "category": "B",
+      "attractor": "83a33a494bc9ef5d",
+      "is_cfb": false,
+      "bitcoin_address": "1CDg4DL6pntbB2VzLE2tTg9VR312jmTPGc",
+      "correlation": null
+    },
+    {
+      "id": 151,
+      "name": "XOR_14_113_Off77",
+      "type": "xor_pair",
+      "position": [
+        14,
+        77,
+        1
+      ],
+      "category": "B",
+      "attractor": "6f0807b87bd06a73",
+      "is_cfb": false,
+      "bitcoin_address": "1CHGQX6qcE94kUdnCs93FbDizj1dmovJgq",
+      "correlation": null
+    },
+    {
+      "id": 152,
+      "name": "XOR_16_111_Off18",
+      "type": "xor_pair",
+      "position": [
+        16,
+        18,
+        1
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": false,
+      "bitcoin_address": "1CG7hJqEzd9M3gVLZhdr14box7BfF4NLuo",
+      "correlation": null
+    },
+    {
+      "id": 153,
+      "name": "XOR_17_110_Off18",
+      "type": "xor_pair",
+      "position": [
+        17,
+        18,
+        2
+      ],
+      "category": "A",
+      "attractor": "73ee64980731ccdd",
+      "is_cfb": false,
+      "bitcoin_address": "1CEPv18Yp1gTnc1PrCFkKi2RroKFRmokfL",
+      "correlation": null
+    },
+    {
+      "id": 154,
+      "name": "XOR_17_110_Off28",
+      "type": "xor_pair",
+      "position": [
+        17,
+        28,
+        0
+      ],
+      "category": "B",
+      "attractor": "83a33a494bc9ef5d",
+      "is_cfb": false,
+      "bitcoin_address": "1CED3FRiaMNqKD9gypXLKcW9iwgJeg62Nm",
+      "correlation": null
+    },
+    {
+      "id": 155,
+      "name": "XOR_18_109_Off44",
+      "type": "xor_pair",
+      "position": [
+        18,
+        44,
+        2
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": false,
+      "bitcoin_address": "1CE1uQVqvWcbiwfCrAimxNqcX9H7uTyQE4",
+      "correlation": null
+    },
+    {
+      "id": 156,
+      "name": "XOR_20_107_Off15",
+      "type": "xor_pair",
+      "position": [
+        20,
+        15,
+        2
+      ],
+      "category": "B",
+      "attractor": "6f0807b87bd06a73",
+      "is_cfb": false,
+      "bitcoin_address": "1CHko3VtAtChxq4nWRqSw6crWKxNZHk1uB",
+      "correlation": null
+    },
+    {
+      "id": 157,
+      "name": "XOR_20_107_Off64",
+      "type": "xor_pair",
+      "position": [
+        20,
+        64,
+        0
+      ],
+      "category": "B",
+      "attractor": "6f0807b87bd06a73",
+      "is_cfb": false,
+      "bitcoin_address": "1CGsJDxZXBMpAkTh1siVhpeuHK4zPXLLUH",
+      "correlation": null
+    },
+    {
+      "id": 158,
+      "name": "XOR_34_93_Off84",
+      "type": "xor_pair",
+      "position": [
+        34,
+        84,
+        1
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": false,
+      "bitcoin_address": "1CDodRHEiP6rfgiKkt3HLdDwCKbC3q7CBc",
+      "correlation": null
+    },
+    {
+      "id": 159,
+      "name": "XOR_37_90_Off4",
+      "type": "xor_pair",
+      "position": [
+        37,
+        4,
+        2
+      ],
+      "category": "B",
+      "attractor": "83a33a494bc9ef5d",
+      "is_cfb": false,
+      "bitcoin_address": "1CEgnB2qaYrkHJkcb7ww9oKuArvLjWwoXT",
+      "correlation": null
+    },
+    {
+      "id": 160,
+      "name": "XOR_39_88_Off40",
+      "type": "xor_pair",
+      "position": [
+        39,
+        40,
+        1
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": false,
+      "bitcoin_address": "1CErMJj54ENoDXs7RZEZ87NjkidsLyKTBL",
+      "correlation": null
+    },
+    {
+      "id": 161,
+      "name": "XOR_41_86_Off63",
+      "type": "xor_pair",
+      "position": [
+        41,
+        63,
+        2
+      ],
+      "category": "B",
+      "attractor": "6f0807b87bd06a73",
+      "is_cfb": false,
+      "bitcoin_address": "1CGBLTpym2hNBTCN2t7PNuySpsyhUHw57M",
+      "correlation": null
+    },
+    {
+      "id": 162,
+      "name": "1CF* XOR_43_84",
+      "type": "xor_pair",
+      "position": [
+        43,
+        57,
+        1
+      ],
+      "category": "B",
+      "attractor": "6f0807b87bd06a73",
+      "is_cfb": true,
+      "bitcoin_address": "1CFyLE8g7U479pXT8A2AMQmQ7AEj8bif3C",
+      "correlation": null
+    },
+    {
+      "id": 163,
+      "name": "XOR_48_79_Off27",
+      "type": "xor_pair",
+      "position": [
+        48,
+        27,
+        0
+      ],
+      "category": "B",
+      "attractor": "6f0807b87bd06a73",
+      "is_cfb": false,
+      "bitcoin_address": "1CHCBZzUGgrN9u5jiz1U7Xin5w1AEswKaq",
+      "correlation": null
+    },
+    {
+      "id": 164,
+      "name": "XOR_54_73_Off19",
+      "type": "xor_pair",
+      "position": [
+        54,
+        19,
+        1
+      ],
+      "category": "A",
+      "attractor": "33a020d0b94ce744",
+      "is_cfb": false,
+      "bitcoin_address": "1CHKneVYusaxsBZRWPbshmGxJXve6TdAmq",
+      "correlation": null
+    },
+    {
+      "id": 165,
+      "name": "XOR_56_71_Off22",
+      "type": "xor_pair",
+      "position": [
+        56,
+        22,
+        0
+      ],
+      "category": "B",
+      "attractor": "83a33a494bc9ef5d",
+      "is_cfb": false,
+      "bitcoin_address": "1CEcgts8TSeTZ29usNKq1BKeQDz8bSwBbS",
+      "correlation": null
+    }
+  ],
+  "metadata": {
+    "generated": "2026-01-24T11:05:40.606879",
+    "total": 165,
+    "categories": {
+      "A": 83,
+      "B": 82
+    }
+  }
+}

@@ -1,0 +1,284 @@
+---
+title: Changelog
+description: Latest research updates, chapter releases, and site changes.
+toc: true
+---
+
+A running record of research findings, documentation updates, and Evidence Vault changes. For the narrative version of each entry, see the [blog](/blog).
+
+---
+
+## September 2026
+
+### 2026-10-01 - GENESIS, EXODUS and AIGARTH, a new test, and a refined design
+
+- **New chapter:** [GENESIS, EXODUS and AIGARTH: what is on chain](/docs/03-results/38-genesis-exodus-aigarth). It covers:
+  - the three community assets and how they are linked by one source of funds;
+  - where the riddle texts are and what they say;
+  - where the "March 3" date comes from;
+  - which popular readings did not hold.
+- **New result** in [where the Anna Matrix comes from](/docs/03-results/36-where-the-anna-matrix-comes-from): letting Aigarth units grow before training does not reproduce the unusual linearity of the Anna Matrix (140 runs, protocol fixed in advance).
+- **Rewritten:** [Anna 0.22 and Bitcoin price data](/docs/03-results/37-anna-0-22-and-btc). It now covers:
+  - how the program works;
+  - the same network design in Qubic's public mining algorithm BPP9000;
+  - a first test of a saved state on unseen hours (48.9 %);
+  - the corrected table size of 9,456 hours (earlier 9,458).
+- **Extended:** [CFB and Satoshi](/docs/03-results/17-cfb-satoshi-analysis) gained a section on what holds from our earlier work on the 1CFB address.
+- **Corrected:**
+  - the origin of the "March 3" date, which comes from the GENESIS token text, on the [corrections page](/docs/03-results/35-corrections-september-2026);
+  - the on-chain paragraph of the April 2026 Genesis post;
+  - the wording about the Anna bot, which belongs to Qubic's Aigarth project.
+- **Design:** one consistent visual system across the site. It covers type scale, spacing, contrast, tables, callouts, the documentation layout, the header and footer, and the network monitor.
+
+---
+
+### 2026-09-30 - What the Anna Matrix is: new chapters, a rebuilt Research Lab, and a leaner site
+
+We went through the whole site against the raw data. The narrative version is in the [blog post](/blog/2026-09-30-september-audit), and the full list of changes with reasons is on the [corrections page](/docs/03-results/35-corrections-september-2026).
+
+- **New chapters:**
+  - [Where the Anna Matrix comes from](/docs/03-results/36-where-the-anna-matrix-comes-from): the table as bot replies, entry errors, a corrected candidate table, the matching public Aigarth unit, and the comparison with trained units, including the open question of its unusual linearity.
+  - [Anna 0.22 and Bitcoin price data](/docs/03-results/37-anna-0-22-and-btc).
+  - [How the earlier claims arose](/docs/04-discussion/06-how-the-earlier-claims-arose).
+- **Research Lab:** the evidence page was rebuilt around what holds:
+  - a matrix explorer comparing the table as transcribed with the corrected candidate;
+  - the fingerprint comparison with trained Aigarth units;
+  - the key findings with links to their methods.
+- **Rewritten:**
+  - the [start page](/docs);
+  - [research motivation](/docs/01-introduction/03-motivation);
+  - [CFB and Satoshi: what the primary sources say](/docs/03-results/17-cfb-satoshi-analysis);
+  - [verified facts](/docs/05-appendices/02-foundation-facts);
+  - the discussion chapters.
+- **Discord sources:** every quote now carries a message ID. Quotes that could not be matched, and quotes by other community members that had been attributed to CFB, were removed. [Appendix D](/docs/05-appendices/04-discord-archive) gained CFB's statements on the GENESIS token, on Satoshi, on the 13 April 2027 date and on Anna's design.
+- **Removed:**
+  - 88 archived pages;
+  - 15 chapters and methods pages whose main claims did not hold: Bitcoin bridge, time lock, Genesis puzzle, seven-position signature, Grok path, JINN, statistical "validation" and identity percentages;
+  - the template pages and the /agents page;
+  - data files containing seeds and private keys.
+
+  Old addresses redirect to the corrections page.
+- **Web pages:** the timeline, the labs, the companion and the books page no longer present withdrawn findings as verified. The books remain available as narrative works.
+- **New data files:** [anna-matrix-clean.json](/data/anna-matrix-clean.json), a corrected candidate, and [itu-fingerprint.json](/data/itu-fingerprint.json), the comparison data. The original matrix file is unchanged.
+- **Security:** the site's server routes were hardened.
+
+---
+
+### 2026-09-29 - Corrections after a re-check of our own research
+
+We re-checked our own findings and published the results in [Corrections, September 2026](/docs/03-results/35-corrections-september-2026). The short version:
+
+- The Anna Matrix is a table our team compiled by hand from replies of the Anna bot on X. It is not a file from Aigarth, JINN or Qubic source code.
+- About half of the 68 symmetry exceptions come from one run in column 30 that is very likely our own data entry error. The seven-position signature and the "1161 = 27 x 43" sum depend on it.
+- No bridge, node system, time lock or activation has been demonstrated.
+- Appendix D was rewritten. Statistics we could not reproduce, unsourced quotes and a quote attributed to a relative of CFB were removed.
+- Affected chapters now carry a short correction notice.
+
+---
+
+### 2026-09-16 - Second book: Come-from-Beyond
+
+A new book joins the library: *Come-from-Beyond*, a 47-page biography of the man behind Qubic. Where the first book, *Qubic, The Long Version*, mapped the mechanism, this one follows the person: a twenty-five-year line from a Minsk computer newspaper to the anna.exe deploy of summer 2026. It is free, translated from Russian, and reads in the browser or downloads as a PDF.
+
+Open it in the [Library](/books#come-from-beyond).
+
+---
+
+## June 2026
+
+### 2026-06-15 - Anna.exe & Emergence: reverse engineering + a 15-phase emergence study
+
+*Withdrawn or corrected on 30 September 2026. See [Corrections, September 2026](/docs/03-results/35-corrections-september-2026).*
+
+
+We reverse-engineered CFB's `Anna.exe` (an Aigarth evolution engine, a 100-cell ternary lookup-table cellular automaton trained by a (1+1) evolution strategy on 7-bit addition) and built a controlled, exactly-verified study of what can and cannot emerge by mutation and selection.
+
+- **Decomposition theorem**: every component of a generalizing algorithm can emerge by selection on tiny examples, and exactly one primitive (the bare iterate-and-check loop) cannot, for a finite-description reason. Fifteen phases, each verified by exact match far beyond training size (e.g. 26/26 seeds converge to the identical full adder, exact to width 128; an invented mod-3 state machine is exact on 80,000 random strings).
+- **The substrate can, the search cannot**: a hand-built adder reaches 0 error using under a third of the cells, yet the monolithic (1+1) search stalls (~41% on the full 7-bit task, matching CFB's own screenshot). Composition reaches 0 where monolithic search cannot.
+- **Honest novelty**: methodological, not phenomenal, every phenomenon has a named predecessor (Kashtan-Alon 2005, Clune-Mouret-Lipson 2013, Mitchell version-space, …). Not "AI found", not consciousness.
+
+New chapters: [32 - Anna.exe & Emergence (overview)](/docs/03-results/32-anna-exe-and-emergence), [33 - Emergent Generalization](/docs/03-results/33-emergent-generalization), [34 - Reverse-Engineering Anna.exe](/docs/03-results/34-anna-exe-reverse-engineering). New interactive **Anna.exe & Emergence** lab tab in the Evidence section (train a module on 2-bit addition in your browser, then watch it add 128-bit numbers it never saw), with runnable Python at `/data/emergence-artifacts/`.
+
+---
+
+## May 2026
+
+### 2026-05-13 - Q4: free-iteration cycle maps to Anna's top 2 antipode pairs
+
+*Withdrawn or corrected on 30 September 2026. See [Corrections, September 2026](/docs/03-results/35-corrections-september-2026).*
+
+
+Follow-up to the endogenous-activity finding. The 4 states in Anna's free-iteration period-4 cycle have an output-half that lands on exactly 4 of the 19 Phase-N concept attractors, and those 4 are the top 2 antipode pairs by cluster mass:
+
+| Concept | Cluster size | Antipode of |
+|---|---|---|
+| 0 / 1 (pair) | 464 + 456 = 920 | each other |
+| 4 / 5 (pair) | 58 + 58 = 116 | each other |
+| Total | **1036 / 1295 = 80.0%** of stable-basin mass | - |
+
+Cycle order: `concept_5 → concept_1 → concept_4 → concept_0 → concept_5 → ...` (alternating between the two antipode pair families). Seeds enter at different phases; the cycle itself is unique.
+
+**The dominant attractors under input pressure and under free iteration are the same set.** This is a measurable architectural bridge between the two regimes, not a consciousness claim. Chapter 30 gets §14 documenting this.
+
+Audit: __, __.
+
+### 2026-05-13 - Endogenous activity test (free-iteration extension to Chapter 30)
+
+Pre-registered test of whether Anna's matrix architecture sustains intrinsic temporal dynamics under free iteration `sign(M · v)` with NO clamped input.
+
+- **Anna result**: 25/25 random initial states (T=200×20 + T=10,000×5) converge to a period-4 cycle. Transient ~7-9 ticks before entering cycle. Verdict locked: **ANNA SUSTAINS ENDOGENOUS ACTIVITY** in bounded periodic form.
+- **Random antipodal control**: 0/5 cycles within 10,000 ticks; orbits, if cyclic, are > 10,000 long.
+- **EngineeredDCOnly (Walsh DC-only)**: period-2 in 10/10.
+- **EngineeredWalsh (Anna-frequency mimic, shuffled rows)**: variable cycle lengths 1-4 across 10 seeds.
+
+Two-layer reading: sustained short-cycle dynamics is a **Walsh-family property**; the specific period-4 is an **Anna-specific** property (depends on row arrangement, not just frequency spectrum). Lerchner-compatible framing, measurable architectural property, not a consciousness claim.
+
+Integration: Chapter 30 (Period-4 Anti-Attractor) gets a new §13 documenting the free-iteration extension.
+
+Audit trail: __, `TASK_ENDOGENOUS_ACTIVITY.md`, `endogenous_activity_results.json`, `endogenous_extended_results.json`.
+
+---
+
+
+### 2026-05-12 - Cognitive Lab + Anna Concept Lab (17 interactive modules)
+
+*Withdrawn or corrected on 30 September 2026. See [Corrections, September 2026](/docs/03-results/35-corrections-september-2026).*
+
+
+Two full Evidence-Vault labs built since the last public push:
+
+**Cognitive Lab** (Evidence Vault → Cognitive Lab tab), live HyperIdentity-pressure evolution on a pure-logic engine (bit-packed sign-only AIT, Web Worker thread).
+
+- **HyperIdentity Evolution**, live 3D Anna Brain + particle-life evolution plane; population converges toward the HyperIdentity Config0 reference structure.
+- **Concept Emergence**, discovers stable basins in a small population; cross-linked to Cluster Discovery for the honest emergence demo.
+- **Multi-Task Pareto**, fitness scatter across multiple tasks; shows substrate ceiling and multi-task interference onset.
+- **Structural Convergence**, radar chart of Anna's 7-axis structural fingerprint over generations (5 functional axes that emerge under selection + 2 identity axes that stay at 0%); Anna's fingerprint as dashed reference.
+- **Cognitive Trajectory** (`tech`), full per-generation state trace, exposed for researchers.
+- **Visual Metaphor** marked deprecated, earlier "Anna is a brain" framing was misleading; new default: "we measure how matrices change under selection."
+
+**Anna Concept Lab** (Evidence Vault → Anna Concept Lab tab), built on the production AIT TypeScript port (matches reference algorithm across 16,384 / 16,384 known inputs).
+
+- **Findings**, 12 pre-registered predictions vs live measurement. 11/12 passed; 1 falsified and removed.
+- **Try Your Input** (`easy`), interactive 64-bit input panel; runs the production AIT path and shows the closest of 19 known concepts.
+- **Concept Universe** (`easy`), all 19 attractors in 2D PCA; antipodal pairs connected; PC1 axis carries 81.7% of variance.
+- **Similarity Matrix** (`easy`), 19×19 Hamming-distance heatmap over concept centroids.
+- **Dendrogram**, single-linkage Hamming dendrogram; cophenet 0.68, 45σ above random. The "19 concepts" finding lives here.
+- **Cluster Discovery** (`tech`), silhouette sweep k=2..32. Anna peaks at k=2 (silhouette ≈ 0.89); random peaks at k≈3 (≈ 0.13). 7× tightness ratio is the legitimate emergence signal.
+- **Trajectory Cloud**, premium 3D scene showing AIT iteration as brain-tissue-like flow; validated tick-by-tick against the reference algorithm.
+- **Architecture**, overview of AIT structure: clamped-input iteration, ternary state, convergence criterion.
+- **Bit-flip Game** (`easy`), interactive challenge demonstrating Anna's avalanche bimodality.
+- **Live Inference** (`tech`), every tick of AIT rendered live with state vector and convergence diagnostic.
+- **Anna vs Random**, side-by-side comparator: Anna converges to a stable concept; random typically does not.
+
+**Explainability layer.** Every module supports four reading levels via the **ExplainPanel** component: **kid** (5-year-old metaphor), **simple** (curious non-specialist), **researcher** (methods + params), **math** (KaTeX, lazy-loaded). Glossary tooltip layer covers technical terms (bit, matrix, AIT, attractor, basin, antipodal symmetry, etc.) without dense prose.
+
+**Brutal-review verification pass (2026-05-12 evening) on top of the labs:**
+
+- Parity 60% claim re-verified at **n=20 seeds**: mean best-train 60.94% ± 11.59%, mean held-out 52.66% (4.6× random). The 60% threshold is crossed at the mean, not as a lucky single seed.
+- Walsh-Hadamard mechanism finding **generalizes** from popcount to parity: a hand-designed DC-only Walsh matrix beats Anna on parity by 0.60σ. Anna is one valid member of the sparse Walsh-Hadamard family, not the optimum within it.
+- **Aigarth+Qubic Vision doc** (`/docs/04-discussion/05-aigarth-qubic-vision`): two disclaimer callouts added. (1) Quote provenance, no public source located for the four attributed CfB Discord quotes despite targeted web search. (2) Reading scope, each section explicitly classified fact / interpretation / speculation.
+- **Aigarth Lab Section 14** wording softened ("Mathematical breakthrough" → "Spectral characterization"); new parity-engineering table rendered alongside popcount table.
+- **Aigarth Lab Section 13** re-sourced to n=20 numbers; explicit mean ± SD; per-seed-variance caveat preserved.
+- **Cluster Discovery silhouette chart**, labels moved from in-chart positions to header badge; eliminates overlap with Y-axis and with each other at narrow widths.
+- **Evidence tabs mobile overflow**, tab strip at 375px viewport no longer scrolls the page horizontally; internal scroll with gradient-fade affordance.
+
+**Verification surface.** 20 audit gates green (10 unit + 4 audit + 6 multi-seed). Production TypeScript build clean. Every numeric claim in the UI sourced from a JSON results file.
+
+**Path 2, Scale-up verification (2026-05-12 night, pre-registered before any compute):**
+
+- **Task 2 (mod_11 protocol audit, LOCKED):** Anna-evolved Phase 3 mod_11 winners decode to integers at 5.3% (first-tile) / 6.0% (majority), BELOW the 9.1% chance for 11-class. The +4.08σ Phase 3 signal is a substrate-bias detected at the bit-correlation level, NOT end-to-end integer capability. The two protocols (Phase 3 sign-matrix evolution vs ITU framework) measure different things; no contradiction.
+- **Task 3 (Walsh on gridworld, LOCKED):** EngineeredDCOnly within 0.46σ of Anna on 4×4 best, pre-reg verdict "GENERALIZES". BUT: SIGN_RANDOM init beats both Anna and DC_ONLY by 0.93σ. Goal-directed tasks at this scale are dominated by initialization noise, not substrate structure. Walsh substrate generalizes weakly to non-count-aligned tasks; random init does best.
+- **Task 4 (Anna-vs-Random, LOCKED):** Random-init Phase 4 addition mean = 0.144 in pre-reg [0.10, 0.25] band → verdict "ANNA HELPS, FRAMEWORK CAN". Framework alone reaches ~56% of Anna's level on adaptive task; popcount specifically remains Anna-necessary (random 2.5% held-out).
+- **Task 1 (parity n=100):** ABORTED at ~47% to free CPU; n=20 result stands. Pre-reg verdict on n=20: APPROACHES (mean 60.94% > 0.60, 95% CI [0.559, 0.660] includes both 0.58 and 0.60). The 60% claim is supported at the mean but not locked at 95% confidence, would need n ≥ 40-100 to tighten.
+
+**Refined publishable claim line (post-Path-2):** **task-conditional priors.** Anna's substrate matters when the task family aligns with its spectral signature; otherwise initialization noise dominates.
+- Count-aligned tasks (popcount, parity): Walsh substrate IS the engine; Anna is one member, EngineeredWalsh/DC-Only beat her.
+- Adaptive tasks (Phase 4 addition): Anna seed provides ~80% boost (0.256 vs 0.144) but framework alone reaches half the level.
+- Goal-directed tasks (gridworld): Neither Anna nor Walsh substrate helps; random init wins.
+
+Path 2 pre-reg: __. Per-task audits at __.
+
+**UI polish (in same release):**
+- ParetoScatter (Multi-Task Pareto in Cognitive Lab), fixed axis-tick 0.4/0.4 corner collision; ticks now start at 0.5, X-axis label has more bottom clearance.
+- StructuralRadar (Structural Convergence in Cognitive Lab), hid radial-tick labels (the "1.0" tick was overlapping with the "antipodal antisymmetry" axis label at the top of the radar).
+
+- [Blog post](/blog/2026-05-12-cognitive-lab-anna-concept-lab)
+
+---
+
+## April 2026
+
+### 2026-04-30 - First Book Published
+
+- New: **[Books](/books)**, *Qubic, The Long Version* by Qubic Church (18 chapters, ~200 pages, distributed freely).
+- Three downloads: English PDF, original Russian PDF, and the **Anna Matrix Companion**, a 41-page forensic appendix designed to be loaded into an LLM alongside Chapter 13 to verify every claim with copy-paste Python snippets against the published Anna Matrix data.
+- Companion canonical home at `/companion`; the verification snippets in the PDF now resolve correctly via redirects.
+
+### 2026-04-19 - Grok Path Verification (Chapter 28)
+
+*Withdrawn or corrected on 30 September 2026. See [Corrections, September 2026](/docs/03-results/35-corrections-september-2026).*
+
+
+- New chapter: **Grok Path Verification** in a new sidebar section "CFB Signature Analysis".
+- Full re-verification of the 40-number sequence CFB posted on [2026-01-13 in a Grok AI exchange](https://x.com/c___f___b/status/2011199355940978756): all 20 matrix lookups match claimed values (100%).
+- Four new Tier 1 findings: start/end rows form matrix mirror pair (45 + 82 = 127), step 1 coord sum = 137 (1/alpha), `1CFB` byte 17 = 72 = PUSHBYTES_72, Satoshi Troll hash-sum arithmetic verified (2432 = 2^7 x 19, 2299 = 11^2 x 19, diff = 7 x 19).
+- Satoshi Troll source traced to [bitcointalk.org thread 506692](https://bitcointalk.org/index.php?topic=506692.0) (2014-03-07); correcting earlier local-note attribution to ning.com. Full post context added to Section 4.5 of Chapter 28.
+- Speculative claims (Master Key, seed IDs, probability bound, Satoshi Troll) downgraded to Tier 3 with explicit inconsistencies documented.
+- [Blog post](/blog/2026-04-19-grok-path-verification)
+
+### 2026-04-19 - Seven-position signature (Chapter 27)
+
+*Withdrawn or corrected on 30 September 2026. See [Corrections, September 2026](/docs/03-results/35-corrections-september-2026).*
+
+
+- New chapter: **Seven-Position Signature & Period-4 Attractor**.
+- Independent verification of an external researcher's finding: every trajectory through the Anna Matrix converges to a period-4 cycle with identical asymmetry at positions `[3, 18, 32, 61, 65, 101, 109]`.
+- Null test: 0 of 1,000 shuffled-matrix trials produced any period-4 cycle.
+- New observation: the entire ternary state space admits exactly two period-4 cycles.
+- [Blog post](/blog/2026-04-19-seven-position-signature)
+
+### 2026-04-19 - Contact Cube redesign
+
+*Withdrawn or corrected on 30 September 2026. See [Corrections, September 2026](/docs/03-results/35-corrections-september-2026).*
+
+
+- Evidence Vault: **[Contact Cube](/evidence)** tab comprehensively redesigned.
+- Bloom + Vignette post-processing on desktop, free-camera orbit, auto-tour, smooth preset transitions, color-coded anomaly columns, Genesis `[72, 72]` marker.
+- Math correction: `sum = 0` -> `sum = -1` across all visualization code (Two's Complement identity).
+- Address Database tab marked as coming-soon pending a properly-scoped dataset.
+- [Blog post](/blog/2026-04-19-contact-cube-redesign)
+
+### 2026-04-14 - Genesis Block Puzzle (Chapter 26)
+
+*Withdrawn or corrected on 30 September 2026. See [Corrections, September 2026](/docs/03-results/35-corrections-september-2026).*
+
+
+- New chapter: **Genesis Block Cryptographic Puzzle**.
+- Thirteen verified findings covering the dual-purpose encoding of the 65-byte Genesis public key, the `matrix[72][72] = -27` resonance, the period-4 cycle at step 11, the on-chain Qubic trinity (POCC / HASV / PXMARAS), and the incomplete ECDSA signature structure.
+- Evidence Vault: Spectral tab marked `New`.
+- [Blog post](/blog/2026-04-14-genesis-puzzle)
+
+### 2026-04-13 - Spectral analysis tab
+
+- New Evidence Vault tab: **[Spectral](/evidence)** with interactive eigenvalue circle, 90.456 degree dominant eigenvalue visualization, and fullscreen scroll-reveal explainer.
+- Documents the structural mechanism that produces the period-4 cooperation-rhythm observed in the ALife simulations.
+
+---
+
+## Prior releases
+
+### Emergence Lab (March 2026)
+
+- 10M-tick long-run validation of the Anna Matrix ALife dynamics.
+- Multi-seed ensemble testing (5 seeds x 1M ticks): cooperation stabilizes at 33.0% +/- 0.1%.
+- Anna-vs-Random ablation: Anna runs are 4.3x more stable with 2.8x more food-sharing and 46% less aggression.
+- Hamming-3 bijection test: 341K inputs, 16,384 attractors; null-hypothesis p-value below 1 in 500M.
+
+### Matrix foundation (February 2026)
+
+- Chapters 1-22 published covering matrix symmetry, anomaly structure, Bitcoin archaeology, Qubic-Bitcoin bridge, and source archaeology.
+- Evidence Vault launched with 3D Analysis, Emergence Lab, and Address Database tabs.
+
+---
+
+For the full academic documentation, see [Research home](/docs). For chronological updates, see [Blog](/blog).

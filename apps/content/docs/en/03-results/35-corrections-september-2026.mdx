@@ -1,0 +1,112 @@
+---
+title: "Corrections, September 2026"
+description: "What a re-check of our own research in September 2026 found: where the Anna Matrix comes from, which findings trace back to our own data entry errors, which claims no longer hold, and which pages we removed."
+tier: 1
+confidence: 90
+date: 2026-09-30
+---
+
+# Corrections, September 2026
+
+<Callout type="info" title="In brief">
+This page lists what did not hold when we re-checked our research in September 2026, and points to what we learned instead. No bridge, node system, "DATE node", time lock or activation mechanism was found between Bitcoin, Qubic and the Anna Matrix.
+</Callout>
+
+## Why this page exists
+
+Checking our own work is part of the research. In September 2026 we re-ran the computations, compared them with the raw data and looked for errors on our side. Several findings did not hold, and some of the most striking ones turned out to be errors in our own transcription of the table. Instead of quietly rewriting chapters, we list the corrections here. On 30 September 2026 we also removed the pages whose main content did not survive the re-check. Their addresses now lead to this page, and section 7 lists every one of them with the reason.
+
+What we learned in the same re-check is collected in three new chapters: [where the Anna Matrix comes from](/docs/03-results/36-where-the-anna-matrix-comes-from), [Anna 0.22 and Bitcoin price data](/docs/03-results/37-anna-0-22-and-btc) and [CFB and Satoshi: what the primary sources say](/docs/03-results/17-cfb-satoshi-analysis). How the earlier claims came about is described in [How the earlier claims arose](/docs/04-discussion/06-how-the-earlier-claims-arose).
+
+## 1. Where the Anna Matrix comes from
+
+The 128 x 128 table is not a file from Aigarth, from the JINN processor, from Qubic source code or from any Anna binary. Our team compiled it by hand from replies of the @anna_aigarth bot on X, which answered queries of the form `x+y=?` for x and y between -64 and 63. The cell for a query is row `63 - y`, column `x + 64`.
+
+This means:
+
+- Descriptions of the matrix as "pre-trained weights", as the "memory matrix" of the JINN processor, or as something extracted from source code are wrong.
+- The table records how the bot answered while we collected the replies. It does not tell us directly how the bot works inside. What we could learn about the program behind the replies is in [chapter 36](/docs/03-results/36-where-the-anna-matrix-comes-from).
+- Come-from-Beyond wrote on 14 April 2026: "Anna training is split, part is done by computors. Public statements A+B=C are no longer used." (Discord #aigarth, message 1493553830854393866). On 6 July 2026, in reply to a message that our export does not contain, he wrote: "It will be removed for a while" (message 1523734854603374714).
+
+## 2. The symmetry is real. Some "anomalies" are our own typing errors
+
+- 16,316 of the 16,384 cells satisfy `M[i][j] + M[127-i][127-j] = -1`. In terms of the queries this reads: the answer for the bitwise complements of x and y is the bitwise complement of the answer. For the 51 mirror pairs where the bot answered both cells in our records, the rule held every time.
+- The remaining 68 cells (34 pairs) were read by us, and by others, as a hidden layer. About half of them come from one run in column 30 (x = -34, y from 3 down to -16). Shifted by one row, these values match their mirror cells in column 97 almost exactly. A one-row shift explains 94% of that run. Among 2,000 random runs of ordinary cells searched the same way, none reached that level; the best reached 83% (p below 0.001 after correcting for the two runs tested; with 2,000 draws that is the resolution limit). Bot replies confirm the mirror side (x = 33). This is very likely a data entry error on our side. We call it strongly supported, not proven, because our records contain no bot reply for x = -34.
+- A second run sits in column 22 (x = -42, y from 43 down to 31) and its mirror in column 105. A shift does not explain it. It contains the diagonal pair (22,22) and (105,105), both 100, and that pair alone makes the trace of the matrix equal 137. To decide which side fits the bot, we trained a model on the rest of the table only. In calibration runs, where we corrupted one side of an ordinary run on purpose, it picked the corrupted side in 57 to 60 of 60 trials. For this run it finds the column 105 side consistent with the bot (91% of bits) and the column 22 values at chance level (41%). So the 100/100 pair, and with it the trace of 137, very likely come from our data collection as well. The corrected, fully symmetric table has a trace of -64. Two smaller cases fit the same picture: at x = -23 we typed -101 twice where the bot pattern requires -110, a swapped digit, and in one cell of column 127 a neighbouring value was copied.
+- Other statements about the exception cells that were published earlier do not hold either. They are not all in the upper half of the table (34 are above, 34 below). The palindrome of the deviations and the column sum of 127 follow from the definition of a mirror pair for any matrix, so they are not additional evidence of design.
+
+## 3. Findings that depend on the column 30 entries
+
+- **Seven-position signature** (chapter removed). The period-4 cycles of `sign(M v)` are antipodal except at positions 3, 18, 32, 61, 65, 101 and 109. That is true for the table as we typed it, and it needs the column 30 values exactly as they were typed. After correcting the column 30 run, the seven positions disappear, for all four resolutions of the other open runs that we tested. If that run is an entry error, which the evidence strongly suggests, the signature describes our transcription rather than the bot. Either way, the link to "seven missing bytes" of the Genesis block signature has no basis.
+- **Deviation sum 1161 = 27 x 43.** After the same correction the sum is 1130.
+- **Messages read from the exception cells**, including ">FIB" in the XOR of mirror pairs, come from runs that are either corrected or unresolved. They cannot serve as evidence.
+
+## 4. Claims that did not survive the re-check
+
+- **The Genesis block as a second, executable script** (chapter removed). The 65-byte public key in the Genesis block is a valid secp256k1 point. Reading it as Bitcoin Script fails, because the data push it would need is incomplete. There is no hidden second program to extract.
+- **1CF address enrichment.** Among 21,953 public keys we find 17 addresses that start with `1CF`, and chance predicts 16.5. The earlier "46-fold enrichment" came from wrong Base58 probabilities.
+- **Bridge "hash collisions" at p below 10^-48.** The matrix cells take at most 256 different values, so different queries often give the same value. For 100 queries about 17 such repeats are expected by chance. Repeats such as 7+7 and 11+11 both giving -20 are not hash collisions, and the p-value below 10^-48 cannot be derived from them.
+- **Trace 137 as the fine structure constant.** The value follows from the single 100/100 diagonal pair described above.
+- **"Key" at row 8.** The three ASCII values are real, but under a fair null model the pattern is not unusual (185 to 188 hits in 2,000 controls that keep the table's own value distribution; 14 of 2,000 under a cruder model of independent uniform values).
+- **"19 concepts" or attractors.** All 16,384 stored end states change on one more step. The 19 are a selection made afterwards, not something the matrix produces.
+- **The JINN connection** (chapter removed). No source links the table to the JINN processor. Come-from-Beyond called a connection between Aigarth and Jinn "pulled out of nowhere" (15 March 2026, message 1482845747517980883). He was speaking about Aigarth and Jinn in general, not about the table.
+- **The March 3, 2026 time lock.** The date comes from the riddle text of the community token GENESIS, which counts 6,268 days from the Bitcoin genesis block, and 3 January 2009 plus 6,268 days is 3 March 2026. On that day a new community token, AIGARTH, was issued with a supply of 1. No signal or distribution followed. Earlier versions of this site also cited a CFB message for this date. That message actually reads "No ETA other than April 13, 2027" (message 1394734677935521824). CFB has said that he did not create GENESIS (message 1464222790017224704).
+- **Grok path** (chapter removed). The way the 40 numbers are mapped to matrix cells, and the address matches reported from that mapping, were chosen after looking at the data and were never tested against a null model. There is no "master key".
+
+## 5. Discord archive
+
+The previous version of [Appendix D](/docs/05-appendices/04-discord-archive) contained statistics we cannot reproduce (847 messages, 234 of them by CFB), placeholder message IDs, paraphrased quotes that do not appear in the archived messages, a quote attributed to a relative of CFB, and a March 3 date that contradicts the message it cited. We have replaced it.
+
+In [chapter 15](/docs/03-results/15-discord-archive), the statement that 5,031 pattern matches were found in 39,041 messages by CFB was wrong: the count was made over 58,578 messages, 14,865 of which were written by other people. The quotes in chapter 15 that carry a message ID were checked again against the archived messages and match them word for word.
+
+## 6. What still stands
+
+- The table is highly structured: the complement symmetry, full rank, and a strong, shallow, almost linear component aligned with the sign bits of x and y. It is a legitimate object for mathematical study.
+- The Anna.exe versions we examined closely (version 1, and versions 5 to 8) evolve ternary lookup networks on signed 7-bit addition, x and y from -64 to 63. That fits Come-from-Beyond's statements that Anna was learning A+B.
+- The public Aigarth code contains a unit with exactly the bot's input and output format. The table behaves like the output of a small trained unit of that kind, but we have not reconstructed it. See [chapter 36](/docs/03-results/36-where-the-anna-matrix-comes-from).
+
+## 7. Pages removed on 30 September 2026
+
+The following pages were deleted. Their addresses redirect here.
+
+| Page | Main claim | Why it was removed |
+|---|---|---|
+| Overview (introduction) | A "mathematical proof" connecting Qubic and Bitcoin, the March 3 date | The statistics were chosen after the fact; the date was a misreading (section 4) |
+| Data collection (methods) | 847 Satoshi posts and 39,041 CFB messages as the data base | The numbers do not match the archive (section 5) |
+| Stylometry analysis (methods) | 99.8% similarity, "same author" | No calibrated method stands behind the percentage. CFB has denied being Satoshi repeatedly, see [chapter 17](/docs/03-results/17-cfb-satoshi-analysis) |
+| Confidence scoring (methods) | "91.4% confidence that CFB is Satoshi" | Same reason; identity percentages without a calibrated classifier have no meaning |
+| Address archaeology (results 6) | 46-fold 1CF enrichment, a unique Block 576 byte | Both wrong (sections 4 and 8) |
+| MyBitcoin investigation (results 8) | A MyBitcoin link rated Tier 1 | An unsupported hypothesis |
+| Bridge hypothesis (results 9) | A combined address finding at p = 2.05e-8 | The p-value is a product of single rates; the simulation behind it had 0 hits in 100,000 and cannot support it |
+| Primary formula (results 10) | Neuron 26 as a pacemaker, six square numbers at p below 10^-13 | Neuron 26 does not behave as described; the squares were selected after the fact. The arithmetic 625,284 = 283 x 47² + 137 is correct but carries no meaning by itself |
+| Mathematical connections (results 11) | A proven web of 19, 121 and 137 | Numerology on selected numbers; trace 137 is explained in section 2 |
+| Statistical validation (results 12) | GAME, MEGA and CFB "confirmed" in the XOR stream | A full scan finds none of them |
+| JINN architecture (results 13) | The matrix as JINN memory | Section 4 |
+| Temporal mechanisms (results 18) | Time locks, QU sent to "strategic nodes" | There is no time lock and nothing to activate |
+| Genesis puzzle analysis (results 26) | The Genesis key as an executable dual-purpose script | Section 4 |
+| Seven-position signature (results 27) | A property of the bot | Section 3 |
+| Grok path verification (results 28) | A master key and address matches | Section 4 |
+| 88 archived pages (results backup) | Bitcoin bridge, keys, time lock, "god mode", "strategic nodes", node payloads, identity work | They were not linked, but still reachable. They repeated the withdrawn claims, some told readers to send QUBIC, and some contained private keys, seeds and personal data about private individuals |
+
+We also removed the /agents page, which asked visitors to enter seed phrases, two data files with Qubic seeds and derived private keys, and an unused analysis file. Deleting files from the site does not remove them from the repository history, so we will remove them from the public history as well.
+
+## 8. Further claims withdrawn
+
+These statements appeared on pages that remain, or in their earlier versions. They have been removed from those pages.
+
+- **"The Genesis difficulty target has 43 leading zero bits."** The target (nBits 0x1d00ffff) has 32. The block hash that was found has 43.
+- **Early block times.** Block 4 was mined on 9 January 2009 at 03:16:28 UTC, block 264 on 13 January 2009 at 00:19:40 UTC and block 576 on 15 January 2009 at 11:51:43 UTC. Earlier versions gave other times.
+- **"2671 is divisible by 9."** 2671 mod 9 = 7.
+- **"The byte sums of HASH160 values have a standard deviation of 36, so a sum of 2299 is a one-in-millions event."** For 20 random bytes the standard deviation is about 330. Among the roughly 2 million addresses considered, about 7 addresses with first byte 0x7b and byte sum 2299 are expected by chance, and 8 were reported.
+- **"2,835 block heights spread over 676 bins with a standard deviation of 0.05."** That is mathematically impossible; the smallest possible standard deviation is 0.395.
+- **"Qubic runs 19-tick epochs."** Qubic epochs are seven days.
+- **"The byte 0x1b in block 576 is a unique extra field."** It is part of an ordinary ExtraNonce push.
+- **"Anna's largest and smallest singular values are 2342 and 0.63."** They are 5435.1 and 1.46.
+- **"Anna has a single period-4 cycle, reached in six steps, with neuron 26 passing through zero."** There are at least two cycles, some inputs need 22 steps, and neuron 26 does not pass through zero.
+- **"Exactly two cycles for all 3^128 inputs."** This was checked on samples only. It is a hypothesis, not a proof.
+- **The "decomposition theorem" and "exactly one irreducible primitive"** in the Anna.exe emergence work are a hypothesis based on selected constructions, not a theorem. A hand-built adder in the Anna.exe substrate used 37 cells in a simplified setting, not "under a third of the cells". 80,000 error-free random tests do not prove correctness for all lengths.
+- **"The reimplementation is a faithful port of Anna.exe v1."** It differs from the original in several respects, so its results do not transfer directly to the original.
+
+## How we checked
+
+The numbers on this page were recomputed in September 2026 from the unchanged public matrix file, the published bot reply batches, public Bitcoin block data and the public Aigarth code, and then re-checked in a separate pass by a second language model that had not seen our conclusions. Scripts, file hashes and the pre-registered test protocols are part of our research archive and are available on request.

@@ -1,0 +1,103 @@
+---
+title: "Anna 0.22 and Bitcoin price data"
+description: "Anna 0.22.64, released in September 2026, works with a real table of hourly Bitcoin price directions. How the program works, how it relates to Qubic mining, what Come-from-Beyond has said about it, and a first test on unseen hours."
+tier: 2
+confidence: 70
+date: 2026-09-30
+---
+
+# Anna 0.22 and Bitcoin price data
+
+<Callout type="info" title="Not investment advice">
+This page describes research software. Nothing on it is a trading signal or investment advice.
+</Callout>
+
+## Background
+
+From July 2026 onward, Come-from-Beyond (CFB) and the Qubic community ran versions of `Anna.exe` whose task was the direction of the next Bitcoin hourly candle, up or down. In September 2026 he released a quick series of versions in the #price-discussion channel. On 26 September he wrote that Anna 0.22.128 "works with real BTC prices from 2025" (message 1553450482385559604). A day later he released Anna 0.22.64 with the note "Use empty `Anna.data`. 2920 is the threshold score. Run it to compare our computational power to miners'." (message 1553822717994606724).
+
+## What Anna 0.22.64 contains
+
+We examined the program statically. We did not run it.
+
+| Item | Value |
+|---|---|
+| File | `Anna.exe`, 192,512 bytes, SHA-256 `e19a70fd...e16af689` |
+| Version | The status line prints `Anna 0.22.64` |
+| Network access | Only `KERNEL32.dll` and `USER32.dll` are imported. We found no network functions. `LoadLibraryExW` is present, and dynamic loading was not checked; the target values come from the embedded table in any case |
+| Target data | A fixed table of 9,456 values (0 or 1) at file offset `0x20D20` |
+
+The table is the real hourly direction of BTCUSDT on Binance (1 when an hour closed below its open). It covers 2 June 2025, 00:00 UTC to 30 June 2026, 23:00 UTC without gaps, and all 9,456 values match our own copy of the candle data. An earlier version of this page counted 9,458 values with two mismatches at the end; those two values belong to a constant (0 to 7) that follows the table in the program.
+
+**What this shows:** this version contains those hours as its target values. That fits CFB's description of the task.
+
+## How Anna 0.22.64 works
+
+We reconstructed the program's logic from the code, again without running it. A second reviewer checked it independently.
+
+- **The network:**
+  - 64 ternary neurons, each wired to three neighbours through a small lookup table;
+  - one signal neuron and one output neuron;
+  - no input neurons, so the network runs on its own.
+- **Reading the output:** in each tick in which the signal neuron is set, the state of the output neuron is read as the call for the next hour in the table.
+- **The score:** the number of wrong calls over a window of 8,760 hours, one year. A network with at most 2,920 wrong calls, two thirds right, may move its window forward by one hour at a time, up to 168 hours, one week. This is the "2920 is the threshold score" of CFB's release note: 8,760 / 3.
+- **The saved state:** the state is kept in `Anna.data`. We decoded that format and wrote our own interpreter for it. On the one saved state we found, our interpreter reproduces the stored score (3,273) and tick count (12,139) exactly.
+
+## The same design in Qubic mining
+
+The public Qubic node code (`qubic/core`) has contained a mining algorithm called BPP9000 since 28 July 2026. Its networks are built the same way: ternary neurons with three neighbours and a lookup table.
+- **The data:** its data file holds the hourly direction of Bitcoin for 2025 and the first week of 2026. The file is fixed in the code by its hash, and its values match Binance candle data.
+- **The first version (28 July 2026):** it had the same layout as the worker structure CFB posted on 7 July, with 18 input neurons, one output neuron and one signal neuron.
+- **Since 29 September 2026:** the mining networks run without inputs, with the same one-year window, the same two-thirds gate and the same one-week advance as Anna 0.22.64. Anna 0.22.64 uses a year that starts about five months later and the opposite label convention, so it is the same design but not the same task instance.
+
+This fits CFB's statement that "Anna training is split, part is done by computors" (Discord #aigarth, message 1493553830854393866). It also fits his note that 0.22.64 lets people "compare our computational power to miners'" (1553822717994606724). We checked the mining code by compiling its scorer. It reproduces the project's own test data in 256 of 256 cases, and an independent re-implementation agrees in 12 of 12.
+
+## A first test on unseen hours
+
+The only saved 0.22.64 state we could find is `Anna (13).data`. Its origin is unknown. Over its training year (2 June 2025 to 1 June 2026) it gets 62.6 % of hours right, just below the two-thirds gate. We fixed the evaluation rules in advance and then compared the state's calls with hours it had never seen:
+
+| Hours | Right | Share |
+|---|---|---|
+| 1 July to 30 September 2026 (main window) | 1,085 of 2,202 | 49.3 % |
+| 2 June to 30 September 2026 (all unseen hours) | 1,419 of 2,900 | 48.9 % |
+
+Both are not distinguishable from 50 %. That is what the design leads one to expect:
+- A network without market input produces the same sequence whatever the market does, so on new hours it can only gain where the market repeats a fixed calendar pattern.
+- In this period we found no hour-of-day or hour-of-week pattern that carried over from one year to the next.
+
+
+## What CFB has said about accuracy
+
+All quotes are from #price-discussion.
+
+| Date | Message ID | Statement |
+|---|---|---|
+| 7 August 2026 | 1535196008479330396 | "Dude, it predicts for old data with 55% precision" |
+| 3 September 2026 | 1544921635465990145 | "So, with current scores we can predict with 55% accuracy" |
+| 4 September 2026 | 1545339085776756826 | About 500 models, counted by how many answer one validation datum right or wrong: "This is how we got current 55% accuracy." |
+| 13 September 2026 | 1548673258684158066 | On synthetic data made of 100 factors: "10 models gave 10 correct answers" |
+| 16 September 2026 | 1549686437526511658 | "Synthetic prices without noise defined by 100 independent factors are successfully predicted with 100% accuracy by our 32-neuron ANNs." |
+| 16 September 2026 | 1549817879254270033 | "Ok, no matter how hard we try, we cannot predict noise." |
+| 20 September 2026 | 1551179895554449500 | Announces a free public predictor giving UP or DOWN each hour, and invites a trading experiment with $100 per participant |
+| 24 September 2026 | 1552760956285882381 | A status line showing "3/4 accuracy (75%)", that is 4 predictions |
+
+How to read these numbers:
+
+- **Step by step.** The work moves from synthetic data, where the right answer is known, to real market data. CFB describes the synthetic results as a check of the method and says plainly where its limits are ("we cannot predict noise").
+- **Sample size.** About 80 seconds before posting the 3 of 4 line, CFB wrote "4 is too few" (1552760605704986756). What it replied to is not in our export.
+- **What a hit rate means.** A direction accuracy only becomes a trading result once costs and the amount of tested data are known. That is true for any hourly predictor, not only for Anna.
+
+## An independent reference point
+
+In July 2026 we ran our own pre-registered test of hourly direction prediction for Bitcoin. It did not use Anna. It used a plain logistic model on price, order flow and funding data, in an out-of-sample walk-forward with weekly retraining, tested on 17,519 hours from 2024 to 2026.
+
+- It was right 52.7% of the time. That is statistically real (z = 7.2 against a coin flip) and above 50% in every quarter, but it shrank from 54.6% in 2024 to about 52% in 2026.
+- After a trading cost of 0.05% per position change, the strategy lost 99.4% of its capital. At about 0.01% (maker fees) it would have been only marginally positive, about +29% over two years.
+
+In that period a small, real edge at the one-hour horizon existed, but it was smaller than retail trading costs. Any claim of profitable hourly prediction has to beat that bar on data the model has never seen.
+
+## What is still open
+
+- **The private part of the method.** CFB keeps part of the method to himself: "Code is open, what isn't open - how to enable generalization" (1534856199277903892).
+- **A stronger test.** A saved state that has moved its window forward, so that it has already been checked on its own unseen week, would allow a stronger test than the one above. We have not found one.
+- **The live predictor.** CFB announced a free hourly UP or DOWN predictor on real-time data (1551179895554449500). If it goes live, we will record its calls from the start, fix the evaluation in advance and publish the result.

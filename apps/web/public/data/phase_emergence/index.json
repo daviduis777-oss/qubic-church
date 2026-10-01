@@ -1,0 +1,67 @@
+{
+  "phase": "emergence",
+  "title": "Anna.exe & Emergent Computation",
+  "date": "2026-06-15",
+  "source": "/data/emergence-artifacts/ (runnable scripts, verifiers, README)",
+  "framing": "Methodological contribution, not phenomenal. Not 'AI found'; not consciousness. Prior art named.",
+  "papers": [
+    "/docs/03-results/32-anna-exe-and-emergence",
+    "/docs/03-results/33-emergent-generalization",
+    "/docs/03-results/34-anna-exe-reverse-engineering"
+  ],
+  "anna_exe": {
+    "what": "CFB's Aigarth evolution engine (PE32+, KERNEL32-only, ~5.84MB RAM arena)",
+    "substrate": "100-cell ternary lookup-table cellular automaton, <=100 timesteps, control-cell halting",
+    "task": "7-bit + 7-bit addition, 16384 operand pairs",
+    "search": "(1+1) evolution strategy, 1,000,000 epochs, RDRAND mutations (non-reproducible)",
+    "bounty_qu": 1000000000,
+    "versions": [
+      { "version": "v1", "built": "2026-06-10T14:15", "change": "base (1+1)-ES engine + telemetry" },
+      { "version": "v2", "built": "2026-06-10T19:13", "change": "auto-unsticking + multithread + shared best" },
+      { "version": "v3", "built": "2026-06-10T20:36", "change": "manual SPACE-key drive; spacecraft telemetry" },
+      { "version": "v4", "built": "2026-06-13T11:51", "change": "state snapshot (Anna.data.snapshot0)" }
+    ]
+  },
+  "pivotal_finding": {
+    "statement": "The substrate is capable but the monolithic search is not.",
+    "hand_built_adder": "0 wrong bits over all 16384 pairs, under 1/3 of the cells",
+    "monolithic_search": "stays far above 0; CFB screenshot ~41% wrong partway through; floor rises with size",
+    "composition": "evolve a 1-bit full adder (0 error in a few hundred evals), compose 7 ripple-carry copies = 0 / 131072 wrong bits over all 16384 pairs"
+  },
+  "decomposition_theorem": {
+    "claim": "For a computation that must generalize to unbounded input size, every algorithm component can emerge by mutation and selection on small examples, and exactly one primitive cannot.",
+    "irreducible": "the bare iterate-and-check primitive (a while-loop) - a finite-description limit",
+    "emerges": [
+      { "component": "cell function (full adder)", "evidence": "Phase 1: 26/26 seeds, exact to width 128" },
+      { "component": "carry direction", "evidence": "Phase 3: 5/5, bit-exact to 512" },
+      { "component": "wiring dimensionality (2-D)", "evidence": "Phase 5: 12/12 rank-2, exact to 32x32" },
+      { "component": "connectivity vs distractors", "evidence": "Phase 6/7: local link + affine address" },
+      { "component": "internal representation (FSM)", "evidence": "Phase 9: 12/12 invent mod-3, exact to length 128" },
+      { "component": "task-generality", "evidence": "Phase 10: mod-2/3/4 (mod-5 = search edge)" },
+      { "component": "composition", "evidence": "Phase 11/12: one adder -> 6 capabilities" },
+      { "component": "shift-and-add (multiply)", "evidence": "Phase 13" },
+      { "component": "loop flow", "evidence": "Phase 14: array-multiplier flow" },
+      { "component": "loop bound", "evidence": "Phase 15: 8/8 self-halt at W+1, to width 32" }
+    ]
+  },
+  "decisiveness": "A rule correct on 99% of random strings would pass 80,000 of them with probability 0.99^80000 ~ 1e-349.",
+  "noise_law": "Pre-registered; one half falsified on a new task (Phase 8) then refined (over-provisioning must coincide with overfit-ability).",
+  "novelty": {
+    "verdict": "methodological, not phenomenal",
+    "predecessors": {
+      "noise law": "Kashtan & Alon 2005",
+      "connection-cost modularity": "Clune, Mouret & Lipson 2013",
+      "evolved arithmetic": "Miller & Thompson 2000",
+      "evolved FSM": "Fogel 1966",
+      "evolved internal representation": "Beer 2003",
+      "selection invents structure": "Thompson 1996",
+      "emerged few-shot learner": "Mitchell version-space elimination",
+      "evolved in-context learning": "VSML / Kirsch; Najarro & Risi"
+    },
+    "one_candidate_new": "reading an emerged few-shot learner bit-exactly as a known symbolic algorithm (pending citation-graph check before any 'first')"
+  },
+  "negative_results": {
+    "hyperidentity": "self-improvement converges to a fixed point; self-application depletes to zero (not a singularity)",
+    "pioneer_1": "exact null - volume-sampler and robustness-sampler posteriors concordant (<=0.056 apart, never flip the winner)"
+  }
+}

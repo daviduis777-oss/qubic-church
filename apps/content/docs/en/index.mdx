@@ -1,0 +1,108 @@
+---
+title: "Anna Matrix and Qubic: an open research log"
+description: "Open research on the Anna Matrix, the Anna bot and Aigarth: what the data shows, what we got wrong and corrected, and what remains open."
+---
+
+# Anna Matrix and Qubic: an open research log
+
+This site documents our research on the Anna Matrix, the Anna bot and Qubic's Aigarth project. It started in 2025 as a search for hidden connections between Bitcoin and Qubic. In September 2026 we re-checked all of it from the raw data. The picture that came out is more concrete, and more interesting: the Anna Matrix matches the input and output format of a unit type in Qubic's public Aigarth code, Anna's newest design also appears in Qubic's public mining code, and both raise new questions that we are now testing with protocols fixed in advance. Earlier claims that did not hold are listed with reasons on the [corrections page](/docs/03-results/35-corrections-september-2026).
+
+## In short
+
+- **The Anna Matrix is a table of bot replies.** It is a 128 x 128 table compiled by hand from answers of the @anna_aigarth bot to queries `x+y=?`. It is not a weight file, a key or a hidden message.
+- **Its mirror symmetry is real.** 16,316 of 16,384 cells follow an exact complement rule. Four runs of cells break it. Our tests point to entry errors for the column 30 run (strongly supported) and two smaller cases, while the cause of the column 22 run is unclear. Setting each affected cell to the value its mirror cell requires gives a fully symmetric table, which we publish as a candidate.
+- **The table is compatible with a small trained Aigarth unit.** The public Aigarth code contains a unit with exactly the bot's input and output format. About one in ten tables produced by such units, trained on a complete arithmetic table, comes as close to the Anna Matrix as we required. The Anna Matrix is also unusually linear, even for such a unit, and the bot's own program is not identified. See [where the Anna Matrix comes from](/docs/03-results/36-where-the-anna-matrix-comes-from).
+- **Anna 0.22 and Qubic mining share one design.** Anna 0.22.64 works with a year of real hourly Bitcoin data, and Qubic's public mining algorithm BPP9000 runs networks of the same kind. A first test of one saved Anna state on unseen hours gave 48.9 % (49.3 % in the pre-registered main window), as expected for a network without market input. See [Anna 0.22 and Bitcoin price data](/docs/03-results/37-anna-0-22-and-btc).
+- **CFB and Satoshi remain an open question that patterns cannot settle.** The often cited patterns in early Bitcoin keys occur about as often as chance predicts, and CFB has denied being Satoshi. See [CFB and Satoshi: what the primary sources say](/docs/03-results/17-cfb-satoshi-analysis).
+- **No bridge, time lock or activation mechanism was found.**
+
+## How to read this site
+
+Each result page states its status:
+
+| Status | Meaning |
+|---|---|
+| Verified | Recomputed from public raw data and checked in a separate review pass |
+| Supported hypothesis | Tested with a protocol fixed in advance and passed, but not proven |
+| Hypothesis or speculation | An idea, clearly marked, not a finding |
+| Withdrawn | Did not hold; listed on the [corrections page](/docs/03-results/35-corrections-september-2026) |
+
+A short list of statements that are verified is on the [verified facts](/docs/05-appendices/02-foundation-facts) page. How the earlier claims came about, and what we changed in our methods, is described in [how the earlier claims arose](/docs/04-discussion/06-how-the-earlier-claims-arose).
+
+## Contents
+
+### Part I: Introduction
+- [Historical context](/docs/01-introduction/02-background)
+- [Research motivation](/docs/01-introduction/03-motivation)
+- [Study objectives](/docs/01-introduction/04-objectives)
+
+### Part II: Methods
+- [Research methodology](/docs/02-methods/01-methodology)
+- [Analytical tools](/docs/02-methods/02-tools)
+- [Verification protocol](/docs/02-methods/03-verification)
+- [Data processing](/docs/02-methods/04-analysis-framework)
+- [Statistical rigor](/docs/02-methods/05-statistical-rigor)
+- [Operational definitions](/docs/02-methods/06-operational-definitions)
+
+### Part III: Results
+
+**Start here**
+- [Corrections, September 2026](/docs/03-results/35-corrections-september-2026)
+- [Where the Anna Matrix comes from](/docs/03-results/36-where-the-anna-matrix-comes-from)
+- [Anna 0.22 and Bitcoin price data](/docs/03-results/37-anna-0-22-and-btc)
+- [GENESIS, EXODUS and AIGARTH: what is on chain](/docs/03-results/38-genesis-exodus-aigarth)
+- [CFB and Satoshi: what the primary sources say](/docs/03-results/17-cfb-satoshi-analysis)
+
+**The Anna Matrix**
+- [Symmetry and structure](/docs/03-results/01-matrix-symmetry)
+- [Mathematical analysis](/docs/03-results/02-matrix-decode)
+- [Message readings and why they do not hold](/docs/03-results/03-matrix-messages)
+- [The bot's lookup formula](/docs/03-results/04-anna-bot-verification)
+- [Period-4 cycles](/docs/03-results/30-period-4-anti-attractor)
+- [The matrix as a classifier](/docs/03-results/31-anna-concept-classifier)
+
+**Anna.exe and Aigarth**
+- [Aigarth research lab](/docs/03-results/25-aigarth-research-lab)
+- [Anna.exe and emergent computation](/docs/03-results/32-anna-exe-and-emergence)
+- [Length generalization](/docs/03-results/33-emergent-generalization)
+- [Reverse engineering Anna.exe](/docs/03-results/34-anna-exe-reverse-engineering)
+
+**Bitcoin data**
+- [Genesis block numbers](/docs/03-results/05-genesis-block-analysis)
+- [Address transformations and key derivation](/docs/03-results/07-mirror-wallets-keys)
+
+**Sources and reference**
+- [Discord primary sources](/docs/03-results/15-discord-archive)
+- [Historical knowledge recovery](/docs/03-results/16-historical-recovery)
+- [Conceptual frameworks (speculative)](/docs/03-results/19-conceptual-frameworks)
+- [Glossary](/docs/03-results/20-glossary)
+- [Open questions](/docs/03-results/21-open-questions)
+- [Research methodology notes](/docs/03-results/22-research-methodology)
+
+### Part IV: Discussion
+- [Implications](/docs/04-discussion/01-implications)
+- [Significance](/docs/04-discussion/02-significance)
+- [Limitations](/docs/04-discussion/03-limitations)
+- [Future work](/docs/04-discussion/04-future-work)
+- [Aigarth and Qubic vision](/docs/04-discussion/05-aigarth-qubic-vision)
+- [How the earlier claims arose](/docs/04-discussion/06-how-the-earlier-claims-arose)
+
+### Part V: Appendices
+- [Appendix A: Raw data tables](/docs/05-appendices/01-raw-data)
+- [Verified facts](/docs/05-appendices/02-foundation-facts)
+- [Appendix B: Source file index](/docs/05-appendices/02-source-index)
+- [Appendix C: Reproduction scripts](/docs/05-appendices/03-scripts)
+- [Appendix D: Discord message archive](/docs/05-appendices/04-discord-archive)
+
+## Principles
+
+- We publish negative results and corrections, not only findings.
+- Every number should be reproducible from public data. Quotes carry a message ID.
+- We do not give investment advice.
+- We do not attribute pseudonyms to real people and do not publish information about private individuals.
+
+## License
+
+Research documentation is released under Creative Commons BY-SA 4.0. Code is released under the MIT License.
+
+*Last updated: 30 September 2026*

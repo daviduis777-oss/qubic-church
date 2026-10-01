@@ -1,0 +1,225 @@
+---
+title: "Open Questions & Future Directions"
+description: "Catalogue of unresolved research questions and proposed future investigation directions."
+tier: 3
+date: 2026-02-27
+---
+
+# Open Questions and Future Directions
+
+<Callout type="warning" title="Correction, September 2026">Several questions on this page became moot. The Anna Matrix is a hand-compiled table of bot replies with a few runs of very likely entry errors, so there is no address-to-coordinate hash, no layer architecture and no seven-position message to decode. A report of test transfers to "network nodes" was removed. See [Corrections, September 2026](/docs/03-results/35-corrections-september-2026).</Callout>
+
+Despite substantial verification work, several fundamental questions remain unresolved. This document catalogues open problems, outlines proposed research phases, and identifies opportunities for community contribution.
+
+---
+
+## High-Priority Open Questions
+
+### 0. Which Program Produced the Bot's Replies?
+
+**Problem**: The Anna Matrix records how the @anna_aigarth bot answered `x+y=?`. We have not identified the program that produced these replies.
+
+**What is established**:
+- The replies satisfy the complement rule: complementing both inputs complements the answer.
+- The table has a strong, shallow, almost linear component aligned with the sign bits of x and y.
+
+**What remains unknown**:
+- Whether the bot is a small trained ternary Aigarth unit. Its fingerprint is consistent with small public I2x7O8 units trained on the full addition table, but this is a hypothesis, not a verified result.
+- Where the column 22 run (x = -42, y from 43 to 31) comes from. It does not fit the bot function at all.
+
+**Earlier questions that are now moot**: the seven-position signature `[3, 18, 32, 61, 65, 101, 109]` depends on the column 30 run as typed and disappears after correcting it. An "address-to-coordinate hash" does not exist: the table is indexed by the bot query, row `63 - y`, column `x + 64`.
+
+---
+
+### 2. Fitness Function for Evolutionary Training
+
+**Problem**: The criteria by which Aigarth evaluates neural network fitness during evolutionary selection are unknown.
+
+**What is established**:
+- Training employs mutation and selection
+- The Anna.exe versions examined closely (version 1, and versions 5 to 8) evolve ternary lookup networks on signed 7-bit addition
+- One later version, Anna 0.22.64, embeds a real hourly BTC direction series as its target
+
+**What remains unknown**:
+- The exact fitness function
+- The training data source
+- Convergence criteria and termination conditions
+
+**Hypotheses under consideration**:
+1. Accuracy on the addition table `x+y` (supported for the Anna.exe versions examined and consistent with the bot's replies)
+2. Direction of the next BTC hourly candle (confirmed as the target of Anna 0.22.64; no predictive power shown)
+3. Consensus-based fitness across multiple network nodes
+
+---
+
+### 3. Layer Models
+
+Earlier versions described six or seven "architectural layers" of the Anna Matrix system, including a hypervisor layer and row-level layers such as a "bridge layer" at row 68. None of these has any basis in the data: the matrix is a table of bot replies. The question is closed.
+
+---
+
+### 5. Helix Gate Truth Table
+
+**Problem**: The general formula for Helix Gates is known, but the specific output mapping is incompletely documented.
+
+General formula:
+```
+Helix(A, B, C) -> Rotation by (A + B + C)
+```
+
+The specific output values for each rotation quantum (-3 through +3) have not been fully verified experimentally.
+
+---
+
+### 6. Value -114 Frequency
+
+**Problem**: The value -114 appears frequently in the bot's replies:
+
+```
+-114 = -2 x 3 x 19
+```
+
+The values are answers of the bot to `x+y=?`, not trained weights. Why -114 is common is a question about the bot's function; its factorization has no known role.
+
+---
+
+### 7. Bias Neuron Discrepancy (resolved)
+
+Earlier documentation reported three constant columns (28, 34, -17). A full scan finds no constant column: these columns contain 35, 58 and 56 different values. The original observation was in error.
+
+---
+
+### 8. ISA Symbol Semantics
+
+**Problem**: Several symbols in the decoded Instruction Set Architecture remain undocumented.
+
+From the Memory Vault decoding:
+```
++%=^<%+:^%%++%|%^^#|%<^^+<+>:^::
+```
+
+Unresolved symbols include:
+- `<` -- possibly inverse compare or left shift
+- `^^` -- possibly double shift
+- `::` -- possibly epoch synchronization
+
+---
+
+## Proposed Research Phases
+
+Earlier versions proposed phases for a hash algorithm, a Bitcoin address mapping and a full decoding of the 68 asymmetric cells. They are dropped. There is no hash to find, and the 68 cells are not the only cells that can carry information: in a complement-symmetric table, one cell of every mirror pair can take any value. Most of the 68 are very likely data entry errors.
+
+### Phase 1: Resolve the Exception Runs (High Priority)
+
+**Objective**: Confirm or refute the entry-error reading of the exception runs with original bot replies.
+
+| Step | Task | Dependencies |
+|------|------|--------------|
+| 1 | Find archived bot replies for x = -34 and x = -42 | None |
+| 2 | Compare them with both sides of the column 30/97 and 22/105 runs | Step 1 |
+
+---
+
+### Phase 4: Temporal Analysis (Medium Priority)
+
+**Objective**: Determine whether the matrix values change over time as a result of ongoing training.
+
+| Step | Task | Dependencies |
+|------|------|--------------|
+| 1 | Establish a cryptographic baseline (hash the current matrix state) | None |
+| 2 | Capture periodic matrix snapshots and compute differentials | Step 1 |
+| 3 | Correlate any observed changes with external events (Bitcoin blocks, Qubic epochs) | Step 2 |
+
+**Expected outcome**: Confirmation or rejection of the "living tissue" hypothesis.
+
+---
+
+### Phase 5: Identify the Bot Program (Lower Priority)
+
+**Objective**: Test the hypothesis that the bot is a small trained ternary Aigarth unit, with a pre-registered distance criterion and many seeds.
+
+---
+
+## Priority Matrix
+
+| Phase | Priority | Estimated Effort | Potential Impact | Dependencies |
+|-------|----------|-----------------|------------------|--------------|
+| 1. Exception Runs | High | Low | Medium | Archived replies |
+| 4. Temporal Analysis | Medium | Ongoing | Unknown | Baseline only |
+| 5. Bot Program | Lower | High | Medium | None |
+
+---
+
+## Community Research Opportunities
+
+### For Developers
+
+- Build improved network monitoring tools
+- Create interactive matrix visualization interfaces
+- Implement an ISA decoder
+- Develop an automated Anna Bot query system
+
+### For Analysts
+
+- Analyze weight distributions and clustering behaviour
+- Study temporal patterns in network activity
+- Document and catalogue observed patterns
+
+### For Theorists
+
+- Explore and formalize the Numogram-Aigarth parallels
+- Research the history and theory of ternary computing
+- Analyze CFB's early published writings for architectural clues
+- Develop predictive models for matrix behaviour
+
+---
+
+## Epistemological Framework
+
+### Known Unknowns
+
+Questions where the boundaries of our ignorance are understood:
+
+1. The program that produced the bot's replies
+2. The fitness function
+3. The source of the column 22 run
+
+### Unknown Unknowns
+
+Categories of potential ignorance beyond current awareness:
+
+1. Architectural layers not yet identified
+2. Connections between systems not yet recognized
+3. Design purposes not yet understood
+4. Future events outside current predictive models
+
+---
+
+## Tracking Summary
+
+| # | Question | Priority | Status |
+|---|----------|----------|--------|
+| 0 | Bot Program | High | Open |
+| 1 | Hash Algorithm | - | Moot |
+| 2 | Fitness Function | High | Partly answered |
+| 3 | Layer Models | - | Closed, no basis |
+| 5 | Helix Gate Truth Table | Medium | Partial |
+| 6 | Value -114 Frequency | Low | Open |
+| 7 | Bias Neuron Discrepancy | - | Resolved, no constant columns |
+| 8 | ISA Symbol Semantics | Medium | Partial |
+
+---
+
+## Guiding Principles
+
+All future research should adhere to the following standards:
+
+1. **Maintain rigorous baselines** -- every claimed pattern must be tested against random controls
+2. **Pre-register hypotheses** -- state expectations before running analyses
+3. **Apply appropriate corrections** -- use Bonferroni or equivalent adjustments for multiple comparisons
+4. **Report negative results** -- failed tests are as informative as successes
+5. **Preserve reproducibility** -- all methods, data, and scripts must be openly documented
+
+---
+
+*Last updated: February 27, 2026*

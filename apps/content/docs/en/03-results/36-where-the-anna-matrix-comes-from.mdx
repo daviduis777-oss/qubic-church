@@ -1,0 +1,88 @@
+---
+title: "Where the Anna Matrix comes from"
+description: "The Anna Matrix is a table of replies from the @anna_aigarth bot. We found and corrected entry errors, identified the matching unit in the public Aigarth code, built an exact simulator of it and compared the table with trained units. The table is compatible with a small trained unit of that kind and unusually linear even for one; we did not reconstruct the bot."
+tier: 2
+confidence: 60
+date: 2026-09-30
+---
+
+# Where the Anna Matrix comes from
+
+<Callout type="info" title="Status">
+The facts about the table and the public code on this page are verified by recomputation. The conclusion that the bot is a small trained Aigarth unit is a hypothesis that our tests support but do not prove. We have not reconstructed the bot.
+</Callout>
+
+## 1. A table of bot replies
+
+The Anna Matrix is a 128 x 128 table of signed bytes. It was compiled by hand from replies of the @anna_aigarth bot on X to queries of the form `x+y=?`, with x and y between -64 and 63. The reply to `x+y=?` sits in row `63 - y` and column `x + 64`. The table is not a weight file and was not extracted from any program. The details and the history of this finding are on the [corrections page](/docs/03-results/35-corrections-september-2026).
+
+The most striking property of the table is a complement rule: `M[i][j] + M[127-i][127-j] = -1` holds for 16,316 of the 16,384 cells. In terms of the queries it says that the answer for the bitwise complements of x and y is the bitwise complement of the answer.
+
+## 2. Entry errors, and a cleaned table
+
+The 68 cells that break the rule form four runs. For each run we asked which side fits the rest of the table. We used a model trained on all other cells and calibrated it by corrupting ordinary runs on purpose: it picked the corrupted side in 57 to 60 of 60 trials.
+
+| Run | What happened | Evidence |
+|---|---|---|
+| Column 30 (x = -34), 20 cells, 18 of them changed (2 already matched) | A block pasted one row off; the last cell holds its own row label | A one-row shift explains 94% of the run. Bot replies confirm the mirror side |
+| Column 22 (x = -42), 13 cells, including the diagonal cell (22,22) = 100 | Values that do not fit the bot at all; cause unclear (a block from the wrong source or another bot state) | The mirror side fits the bot on 91% of bits, this side on 41%, which is chance level |
+| Column 41 (x = -23), 2 cells | -101 typed where the pattern requires -110 | A swapped digit |
+| Column 0/127, 1 cell | A neighbouring value copied | Weak evidence, only one cell |
+
+Setting each wrong cell to `-1 - mirror` gives a table that satisfies the rule for all 16,384 cells. That full symmetry is imposed by the correction, so it is not evidence in itself. The trace of the corrected table is -64 instead of 137. We publish it as a separate file, [anna-matrix-clean.json](/data/anna-matrix-clean.json) (SHA-256 `fa5193b2...8c772bd5`). It is a candidate, not a replacement: the original [anna-matrix.json](/data/anna-matrix.json) stays unchanged, and the cleaned version stands until original bot replies for these cells turn up.
+
+## 3. The matching unit in the public Aigarth code
+
+The public repository [Aigarth/aigarth-it](https://github.com/Aigarth/aigarth-it) (commit `bd629a0`, August 2025) contains a unit called `ITUClArithmeticAdditionIntI2x7O8`. Its interface is exactly the bot's:
+
+- The input is two signed 7-bit numbers, A and B, fed as 14 ternary values (bit 1 becomes +1, bit 0 becomes -1).
+- The output is 8 ternary values read as one signed byte.
+- An example training data set name in the code refers to `x.com`.
+
+The unit is a ring of ternary threshold neurons. Each neuron adds up its weighted neighbours and keeps only the sign. The network ticks until all outputs are non-zero, until nothing changes, or until a tick limit. Such a unit has a mathematical property that matters here: if every input is flipped, every output flips too. For our encoding that is exactly the complement rule of the table. We checked the property on the original code. By contrast, the lookup-table networks in the three Anna.exe checkpoints we checked (`Anna (4).data`, `Anna (11).data` and Anna 0.5) do not have it, so the bot's table is unlikely to be the output of that program family.
+
+To test the bot hypothesis properly we needed to run this unit many thousands of times. We wrote a fast simulator and compared it with the original Python code on 2,085 calls: outputs, number of ticks and the reason for stopping agreed bit for bit, including networks that never settle.
+
+## 4. Comparison with trained units
+
+The training loop that Aigarth used for the bot is not public. We assumed a simple one: mutate a copy of the unit with the original mutation code and keep it if it answers more bits correctly. We then trained units under several conditions and compared their tables with the Anna table on six statistics. Four of them describe how the output bits depend on the input bits: how much a linear function explains, and how strong the first- and third-order correlations are. The other two describe how the answers relate to the true sum.
+
+The protocol was fixed before the runs. The main runs (270 trainings) gave:
+
+| Training | Tables within 0.05 of Anna on all six statistics |
+|---|---|
+| Full addition table (all 16,384 queries) | 10 of 100 |
+| Full table of x - y, measured against its own target (measured afterwards) | 10 of 100 |
+| 1,000 addition examples only | 0 of 50 |
+| No selection (random mutations only) | 0 of 20 |
+
+Our reading:
+
+- The statistics of the Anna table are typical for a small public unit trained on a complete arithmetic table. About one run in ten comes as close as that.
+- The statistics alone do not say which arithmetic operation it was. A unit trained on subtraction matches just as often when compared with its own target. Our first report called the result specific to addition; a cross-check showed that the comparison was built so that the subtraction control could not match, and we withdrew that label.
+- The sign of the bot's answer agrees with the sign of x + y in 69.7% of the cells. This agreement is largely reproduced by tables with the same row and column sums: on the transcribed table, four such controls reach 11,320 to 11,398 correct signs, against 11,418 for the table itself (exploratory, four chains, not a significance test). So it shows a correlation with the sign of x + y, not that an adder was learned. The bot's task, `x+y=?`, is the stronger clue for addition.
+- Training on only 1,000 examples, or random growth without selection, does not produce tables like this.
+
+## 5. Trying to recover the unit itself
+
+We then tried to fit a unit of this class directly to the table, with a search that we first tested on tables from known trained units. On 8 of 10 such tables the best restart recovered a large part of what a one-step threshold cannot explain (0.21 to 0.33); two of the ten gained little. On tables built from the same threshold plus random noise it recovered nothing, although those tables started at their own linear optimum, so this control is weaker than it looks.
+
+On the Anna table the search did not get far:
+
+- **No reconstruction.** The best fitted unit reproduces 87.8% of the output bits.
+- **Almost a pure one-step threshold table.** The best ternary threshold of the 14 input bits, applied once, already explains the Anna table better than for all but 2 of 217 trained units we compared (a measure we defined after seeing the Anna value, so it is exploratory). Beyond that one-step part, the search found almost nothing: nothing at all in two of four restarts, and a small gain in the other two. For 8 of 10 trained units the best restart recovered a fifth to a third of the rest.
+
+So the rest of the Anna table, beyond the threshold part, either comes from a larger or differently trained network than we searched, or from a different implementation. Come-from-Beyond wrote in August 2026 that Anna uses an unnamed implementation of Intelligent Tissue, different from Neuraxon (Discord #aigarth, message 1536374713209856100). It is also possible that part of it is noise in the collected replies beyond the errors we found.
+
+We tested the first question with a protocol fixed before the run. Each fit started at the best possible threshold table, so the linear part was already used up. On the Anna table the search then found nothing further in all four restarts, just like on noise tables that start at the same distance. On 9 of 10 tables from trained units it recovered a large part of the remainder (about 0.2 to 0.3). So the rest of the Anna table, about one bit in eight, is out of reach for units of this size (N = 28). Its mirror symmetry follows from the symmetry of the table itself, so it only rules out independent per-cell typing errors. A larger or differently trained network, another function class, or a structured remainder all remain possible. A second test, also fixed in advance, let units grow before training, to about 100, 360 and 700 neurons. It then checked whether any of them produce both the fingerprint and the unusual linearity. None did: in 140 runs no unit matched both, and the grown units were less ternary-linear than small trained units, not more. Training small units four times longer (20,000 instead of 5,000 steps) did not change the picture either. What produced the table therefore remains open. A different training loop and a different implementation are both still possible.
+
+## 6. What this changes
+
+- The Anna Matrix is compatible with a small trained ternary unit of this class, and is unusually linear even for one. It is not a hidden message, a weight file or a bridge to Bitcoin.
+- Its mirror symmetry is what this kind of network produces, so it is not a design signature.
+- Several patterns that earlier chapters read as meaningful (trace 137, the seven positions, the (22,22) pair) come from errors in collecting the replies. See the [corrections](/docs/03-results/35-corrections-september-2026).
+- The program that produced the replies is still not identified.
+
+## Reproducing this
+
+The public inputs are the matrix file on this site and the Aigarth code linked above. Our scripts (the cleaning step, the simulator with its validation against the original code, the training runs and the fits), the pre-registered protocols, all result files with their hashes, and the cross-check report are in our research archive and available on request.

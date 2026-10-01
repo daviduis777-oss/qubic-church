@@ -1,0 +1,1381 @@
+{
+  "phase": "E9",
+  "title": "Reverse-engineer Anna's construction",
+  "anna_features": {
+    "antipodal_pct": 99.5849609375,
+    "diag_sum": 137,
+    "anti_diag_sum": -64,
+    "dominant_re": -18.659321928887472,
+    "dominant_im": 2342.000424749016,
+    "dominant_mag": 2342.074755386646,
+    "dominant_angle_deg": 90.45648060670611,
+    "spectral_dominance_pct": 5.275373893116344,
+    "spectral_radius": 2342.074755386646
+  },
+  "hadamard": {
+    "sylvester_match_pct": 0,
+    "best_variant": {
+      "name": "flip cols",
+      "match_pct": 50.57373046875
+    },
+    "variants": [
+      {
+        "name": "identity",
+        "match_pct": 49.530029296875
+      },
+      {
+        "name": "flip rows",
+        "match_pct": 49.249267578125
+      },
+      {
+        "name": "flip cols",
+        "match_pct": 50.57373046875
+      },
+      {
+        "name": "flip both",
+        "match_pct": 50.35400390625
+      },
+      {
+        "name": "transpose",
+        "match_pct": 49.530029296875
+      },
+      {
+        "name": "negate",
+        "match_pct": 50.311279296875
+      },
+      {
+        "name": "transpose negate",
+        "match_pct": 50.311279296875
+      }
+    ],
+    "sylvester_direct": 49.530029296875
+  },
+  "seeded": {
+    "results": [
+      {
+        "seed": "Anna",
+        "sign_match_raw_pct": 49.169921875,
+        "sign_match_antipodal_pct": 49.188232421875,
+        "exact_match_antipodal_pct": 0.384521484375
+      },
+      {
+        "seed": "Aigarth",
+        "sign_match_raw_pct": 50.091552734375,
+        "sign_match_antipodal_pct": 50.103759765625,
+        "exact_match_antipodal_pct": 0.4638671875
+      },
+      {
+        "seed": "Qubic",
+        "sign_match_raw_pct": 49.505615234375,
+        "sign_match_antipodal_pct": 49.1943359375,
+        "exact_match_antipodal_pct": 0.390625
+      },
+      {
+        "seed": "CfB",
+        "sign_match_raw_pct": 50.1708984375,
+        "sign_match_antipodal_pct": 50.006103515625,
+        "exact_match_antipodal_pct": 0.2685546875
+      },
+      {
+        "seed": "Sergey",
+        "sign_match_raw_pct": 49.23095703125,
+        "sign_match_antipodal_pct": 49.13330078125,
+        "exact_match_antipodal_pct": 0.28076171875
+      },
+      {
+        "seed": "Sergey Ivancheglo",
+        "sign_match_raw_pct": 49.188232421875,
+        "sign_match_antipodal_pct": 49.20654296875,
+        "exact_match_antipodal_pct": 0.37841796875
+      },
+      {
+        "seed": "ComeFromBeyond",
+        "sign_match_raw_pct": 49.45068359375,
+        "sign_match_antipodal_pct": 49.1455078125,
+        "exact_match_antipodal_pct": 0.250244140625
+      },
+      {
+        "seed": "Anna Matrix",
+        "sign_match_raw_pct": 50.7568359375,
+        "sign_match_antipodal_pct": 50.64697265625,
+        "exact_match_antipodal_pct": 0.3662109375
+      },
+      {
+        "seed": "QubicNetwork",
+        "sign_match_raw_pct": 50.42724609375,
+        "sign_match_antipodal_pct": 50.286865234375,
+        "exact_match_antipodal_pct": 0.35400390625
+      },
+      {
+        "seed": "QU",
+        "sign_match_raw_pct": 49.7314453125,
+        "sign_match_antipodal_pct": 49.3896484375,
+        "exact_match_antipodal_pct": 0.421142578125
+      },
+      {
+        "seed": "POCC",
+        "sign_match_raw_pct": 49.603271484375,
+        "sign_match_antipodal_pct": 49.84130859375,
+        "exact_match_antipodal_pct": 0.28076171875
+      },
+      {
+        "seed": "ARK",
+        "sign_match_raw_pct": 49.3408203125,
+        "sign_match_antipodal_pct": 49.4384765625,
+        "exact_match_antipodal_pct": 0.3662109375
+      },
+      {
+        "seed": "AIGARTH",
+        "sign_match_raw_pct": 49.298095703125,
+        "sign_match_antipodal_pct": 49.25537109375,
+        "exact_match_antipodal_pct": 0.2685546875
+      },
+      {
+        "seed": "QubicAnna",
+        "sign_match_raw_pct": 50.341796875,
+        "sign_match_antipodal_pct": 50.091552734375,
+        "exact_match_antipodal_pct": 0.341796875
+      },
+      {
+        "seed": "Brain",
+        "sign_match_raw_pct": 49.54833984375,
+        "sign_match_antipodal_pct": 49.407958984375,
+        "exact_match_antipodal_pct": 0.244140625
+      },
+      {
+        "seed": "Soul",
+        "sign_match_raw_pct": 49.69482421875,
+        "sign_match_antipodal_pct": 49.45068359375,
+        "exact_match_antipodal_pct": 0.35400390625
+      },
+      {
+        "seed": "AGI",
+        "sign_match_raw_pct": 50.103759765625,
+        "sign_match_antipodal_pct": 50.89111328125,
+        "exact_match_antipodal_pct": 0.360107421875
+      },
+      {
+        "seed": "key",
+        "sign_match_raw_pct": 49.676513671875,
+        "sign_match_antipodal_pct": 49.566650390625,
+        "exact_match_antipodal_pct": 0.372314453125
+      },
+      {
+        "seed": "satoshi",
+        "sign_match_raw_pct": 50.140380859375,
+        "sign_match_antipodal_pct": 50.250244140625,
+        "exact_match_antipodal_pct": 0.35400390625
+      },
+      {
+        "seed": "nakamoto",
+        "sign_match_raw_pct": 49.5361328125,
+        "sign_match_antipodal_pct": 49.285888671875,
+        "exact_match_antipodal_pct": 0.396728515625
+      },
+      {
+        "seed": "genesis",
+        "sign_match_raw_pct": 49.798583984375,
+        "sign_match_antipodal_pct": 49.615478515625,
+        "exact_match_antipodal_pct": 0.45166015625
+      },
+      {
+        "seed": "0",
+        "sign_match_raw_pct": 50.567626953125,
+        "sign_match_antipodal_pct": 50.054931640625,
+        "exact_match_antipodal_pct": 0.3173828125
+      },
+      {
+        "seed": "1",
+        "sign_match_raw_pct": 49.31640625,
+        "sign_match_antipodal_pct": 48.992919921875,
+        "exact_match_antipodal_pct": 0.5859375
+      },
+      {
+        "seed": "42",
+        "sign_match_raw_pct": 49.8779296875,
+        "sign_match_antipodal_pct": 50.06103515625,
+        "exact_match_antipodal_pct": 0.4150390625
+      },
+      {
+        "seed": "676",
+        "sign_match_raw_pct": 50.311279296875,
+        "sign_match_antipodal_pct": 50.50048828125,
+        "exact_match_antipodal_pct": 0.5126953125
+      },
+      {
+        "seed": "2028",
+        "sign_match_raw_pct": 49.737548828125,
+        "sign_match_antipodal_pct": 49.54833984375,
+        "exact_match_antipodal_pct": 0.384521484375
+      },
+      {
+        "seed": "QubicComputors",
+        "sign_match_raw_pct": 49.90234375,
+        "sign_match_antipodal_pct": 49.554443359375,
+        "exact_match_antipodal_pct": 0.341796875
+      },
+      {
+        "seed": "676Computors",
+        "sign_match_raw_pct": 50.054931640625,
+        "sign_match_antipodal_pct": 50.335693359375,
+        "exact_match_antipodal_pct": 0.390625
+      },
+      {
+        "seed": "bf4fccd616251b678c56b9cb7a4681...",
+        "sign_match_raw_pct": 49.591064453125,
+        "sign_match_antipodal_pct": 49.81689453125,
+        "exact_match_antipodal_pct": 0.54931640625
+      },
+      {
+        "seed": "0f80769839a9aff07e5d92ac255d48...",
+        "sign_match_raw_pct": 50.128173828125,
+        "sign_match_antipodal_pct": 49.96337890625,
+        "exact_match_antipodal_pct": 0.29296875
+      }
+    ],
+    "best": {
+      "seed": "AGI",
+      "match_pct": 50.89111328125
+    }
+  },
+  "algebraic": {
+    "pauli": [
+      {
+        "spec": "X\u2297X\u2297X\u2297X\u2297X\u2297X\u2297X",
+        "sign_match_pct": 0.54931640625
+      },
+      {
+        "spec": "Y\u2297Y\u2297Y\u2297Y\u2297Y\u2297Y\u2297Y",
+        "sign_match_pct": 0.15869140625
+      },
+      {
+        "spec": "Z\u2297Z\u2297Z\u2297Z\u2297Z\u2297Z\u2297Z",
+        "sign_match_pct": 0.482177734375
+      },
+      {
+        "spec": "I\u2297X\u2297Y\u2297Z\u2297X\u2297Y\u2297Z",
+        "sign_match_pct": 0.537109375
+      },
+      {
+        "spec": "Z\u2297X\u2297Z\u2297X\u2297Z\u2297X\u2297Z",
+        "sign_match_pct": 0.54931640625
+      }
+    ],
+    "circulant_from_row_0": 1.629638671875
+  },
+  "local_search": [
+    {
+      "init": "random",
+      "seed": 0,
+      "iterations": 2000,
+      "initial_loss": 501.7175148835507,
+      "final_loss": 486.9120056066382,
+      "final_features": {
+        "antipodal_pct": 100.0,
+        "diag_sum": -64,
+        "anti_diag_sum": -64,
+        "sign_match_to_anna_pct": 49.591064453125,
+        "dominant_re": -1.3774491254360788,
+        "dominant_im": 951.7290606346261,
+        "dominant_mag": 951.7300574335985,
+        "dominant_angle_deg": 90.08292482549876,
+        "spectral_dominance_pct": 1.3382820226276924,
+        "spectral_radius": 951.7300574335985
+      },
+      "history": [
+        {
+          "iter": 0,
+          "loss": 501.7114907353415
+        },
+        {
+          "iter": 100,
+          "loss": 500.87398748973635
+        },
+        {
+          "iter": 200,
+          "loss": 499.9323013499023
+        },
+        {
+          "iter": 300,
+          "loss": 499.32531305358407
+        },
+        {
+          "iter": 400,
+          "loss": 498.32244961391865
+        },
+        {
+          "iter": 500,
+          "loss": 496.8881390224251
+        },
+        {
+          "iter": 600,
+          "loss": 495.11635424114786
+        },
+        {
+          "iter": 700,
+          "loss": 493.8985965660449
+        },
+        {
+          "iter": 800,
+          "loss": 493.09284495878575
+        },
+        {
+          "iter": 900,
+          "loss": 492.33820002155005
+        },
+        {
+          "iter": 1000,
+          "loss": 491.6303798524563
+        },
+        {
+          "iter": 1100,
+          "loss": 491.1380885425368
+        },
+        {
+          "iter": 1200,
+          "loss": 490.6921188552194
+        },
+        {
+          "iter": 1300,
+          "loss": 490.2098078105338
+        },
+        {
+          "iter": 1400,
+          "loss": 489.73050448686024
+        },
+        {
+          "iter": 1500,
+          "loss": 489.22852987591034
+        },
+        {
+          "iter": 1600,
+          "loss": 488.89924192709356
+        },
+        {
+          "iter": 1700,
+          "loss": 488.15476958177703
+        },
+        {
+          "iter": 1800,
+          "loss": 487.6848229493096
+        },
+        {
+          "iter": 1900,
+          "loss": 487.2561679220462
+        }
+      ]
+    },
+    {
+      "init": "random",
+      "seed": 1,
+      "iterations": 2000,
+      "initial_loss": 2961.296995249691,
+      "final_loss": 2953.1285898557353,
+      "final_features": {
+        "antipodal_pct": 100.0,
+        "diag_sum": -64,
+        "anti_diag_sum": -64,
+        "sign_match_to_anna_pct": 49.49951171875,
+        "dominant_re": -962.0647094725333,
+        "dominant_im": 0.0,
+        "dominant_mag": 962.0647094725333,
+        "dominant_angle_deg": 180.0,
+        "spectral_dominance_pct": 1.340717336044894,
+        "spectral_radius": 962.0647094725333
+      },
+      "history": [
+        {
+          "iter": 0,
+          "loss": 2961.296995249691
+        },
+        {
+          "iter": 100,
+          "loss": 2960.8573188401338
+        },
+        {
+          "iter": 200,
+          "loss": 2960.4196502694276
+        },
+        {
+          "iter": 300,
+          "loss": 2959.8642791074526
+        },
+        {
+          "iter": 400,
+          "loss": 2959.45711479115
+        },
+        {
+          "iter": 500,
+          "loss": 2959.023686143581
+        },
+        {
+          "iter": 600,
+          "loss": 2958.5130523943735
+        },
+        {
+          "iter": 700,
+          "loss": 2958.1258835250947
+        },
+        {
+          "iter": 800,
+          "loss": 2957.7427961484964
+        },
+        {
+          "iter": 900,
+          "loss": 2957.4349976895596
+        },
+        {
+          "iter": 1000,
+          "loss": 2957.0825882338304
+        },
+        {
+          "iter": 1100,
+          "loss": 2956.620762081142
+        },
+        {
+          "iter": 1200,
+          "loss": 2956.268544448725
+        },
+        {
+          "iter": 1300,
+          "loss": 2955.979112990806
+        },
+        {
+          "iter": 1400,
+          "loss": 2955.6134385887985
+        },
+        {
+          "iter": 1500,
+          "loss": 2955.222202732742
+        },
+        {
+          "iter": 1600,
+          "loss": 2954.7920664137305
+        },
+        {
+          "iter": 1700,
+          "loss": 2954.310980609462
+        },
+        {
+          "iter": 1800,
+          "loss": 2953.879518918088
+        },
+        {
+          "iter": 1900,
+          "loss": 2953.4988438975784
+        }
+      ]
+    },
+    {
+      "init": "random",
+      "seed": 2,
+      "iterations": 2000,
+      "initial_loss": 2953.082442758795,
+      "final_loss": 2945.8358888107905,
+      "final_features": {
+        "antipodal_pct": 100.0,
+        "diag_sum": -64,
+        "anti_diag_sum": -64,
+        "sign_match_to_anna_pct": 49.5361328125,
+        "dominant_re": -1023.8923611591804,
+        "dominant_im": 0.0,
+        "dominant_mag": 1023.8923611591804,
+        "dominant_angle_deg": 180.0,
+        "spectral_dominance_pct": 1.4165845631673717,
+        "spectral_radius": 1023.8923611591804
+      },
+      "history": [
+        {
+          "iter": 0,
+          "loss": 2953.082442758795
+        },
+        {
+          "iter": 100,
+          "loss": 2952.6998832728736
+        },
+        {
+          "iter": 200,
+          "loss": 2952.2799009316745
+        },
+        {
+          "iter": 300,
+          "loss": 2951.9897461584997
+        },
+        {
+          "iter": 400,
+          "loss": 2951.6321122931463
+        },
+        {
+          "iter": 500,
+          "loss": 2951.265845158672
+        },
+        {
+          "iter": 600,
+          "loss": 2950.8310954136095
+        },
+        {
+          "iter": 700,
+          "loss": 2950.3559880650087
+        },
+        {
+          "iter": 800,
+          "loss": 2950.0814630927084
+        },
+        {
+          "iter": 900,
+          "loss": 2949.6720460126576
+        },
+        {
+          "iter": 1000,
+          "loss": 2949.3025798457797
+        },
+        {
+          "iter": 1100,
+          "loss": 2948.942467889885
+        },
+        {
+          "iter": 1200,
+          "loss": 2948.526829016001
+        },
+        {
+          "iter": 1300,
+          "loss": 2948.289139419983
+        },
+        {
+          "iter": 1400,
+          "loss": 2947.9409452351742
+        },
+        {
+          "iter": 1500,
+          "loss": 2947.6289302009154
+        },
+        {
+          "iter": 1600,
+          "loss": 2947.3881650156927
+        },
+        {
+          "iter": 1700,
+          "loss": 2947.0166691471773
+        },
+        {
+          "iter": 1800,
+          "loss": 2946.596188922577
+        },
+        {
+          "iter": 1900,
+          "loss": 2946.202096097333
+        }
+      ]
+    },
+    {
+      "init": "random",
+      "seed": 3,
+      "iterations": 2000,
+      "initial_loss": 940.5825878638248,
+      "final_loss": 799.9123071985142,
+      "final_features": {
+        "antipodal_pct": 100.0,
+        "diag_sum": -64,
+        "anti_diag_sum": -64,
+        "sign_match_to_anna_pct": 48.834228515625,
+        "dominant_re": -440.2665230030883,
+        "dominant_im": 721.8624894219662,
+        "dominant_mag": 845.5294583346622,
+        "dominant_angle_deg": 121.37916497595944,
+        "spectral_dominance_pct": 1.197199419885015,
+        "spectral_radius": 845.5294583346622
+      },
+      "history": [
+        {
+          "iter": 0,
+          "loss": 940.5825878638248
+        },
+        {
+          "iter": 100,
+          "loss": 933.6152624445128
+        },
+        {
+          "iter": 200,
+          "loss": 928.9847956896491
+        },
+        {
+          "iter": 300,
+          "loss": 920.6443784216133
+        },
+        {
+          "iter": 400,
+          "loss": 914.1090265828383
+        },
+        {
+          "iter": 500,
+          "loss": 905.8810122305237
+        },
+        {
+          "iter": 600,
+          "loss": 898.7031290436016
+        },
+        {
+          "iter": 700,
+          "loss": 892.7006734767341
+        },
+        {
+          "iter": 800,
+          "loss": 887.8062727182681
+        },
+        {
+          "iter": 900,
+          "loss": 873.739311619831
+        },
+        {
+          "iter": 1000,
+          "loss": 866.7966609379479
+        },
+        {
+          "iter": 1100,
+          "loss": 853.6948268361376
+        },
+        {
+          "iter": 1200,
+          "loss": 844.3165466605583
+        },
+        {
+          "iter": 1300,
+          "loss": 838.1709057802025
+        },
+        {
+          "iter": 1400,
+          "loss": 830.2338973158287
+        },
+        {
+          "iter": 1500,
+          "loss": 825.146716783773
+        },
+        {
+          "iter": 1600,
+          "loss": 819.0342516136049
+        },
+        {
+          "iter": 1700,
+          "loss": 815.066977199898
+        },
+        {
+          "iter": 1800,
+          "loss": 810.8406822888007
+        },
+        {
+          "iter": 1900,
+          "loss": 804.3889055055133
+        }
+      ]
+    },
+    {
+      "init": "random",
+      "seed": 4,
+      "iterations": 2000,
+      "initial_loss": 1557.479735106324,
+      "final_loss": 1331.298145249395,
+      "final_features": {
+        "antipodal_pct": 100.0,
+        "diag_sum": -64,
+        "anti_diag_sum": -64,
+        "sign_match_to_anna_pct": 49.4873046875,
+        "dominant_re": 654.8376287399074,
+        "dominant_im": -508.4192898940784,
+        "dominant_mag": 829.0370886456792,
+        "dominant_angle_deg": -37.82594772161833,
+        "spectral_dominance_pct": 1.1483360255118324,
+        "spectral_radius": 829.0370886456792
+      },
+      "history": [
+        {
+          "iter": 0,
+          "loss": 1557.479735106324
+        },
+        {
+          "iter": 100,
+          "loss": 1545.01605988875
+        },
+        {
+          "iter": 200,
+          "loss": 1534.077015614329
+        },
+        {
+          "iter": 300,
+          "loss": 1521.9467156802816
+        },
+        {
+          "iter": 400,
+          "loss": 1509.5375696709768
+        },
+        {
+          "iter": 500,
+          "loss": 1497.4729154479583
+        },
+        {
+          "iter": 600,
+          "loss": 1484.176774944342
+        },
+        {
+          "iter": 700,
+          "loss": 1474.5874886256468
+        },
+        {
+          "iter": 800,
+          "loss": 1467.649443100108
+        },
+        {
+          "iter": 900,
+          "loss": 1456.4510035109852
+        },
+        {
+          "iter": 1000,
+          "loss": 1443.4422485398904
+        },
+        {
+          "iter": 1100,
+          "loss": 1432.1870844436205
+        },
+        {
+          "iter": 1200,
+          "loss": 1422.6630631450244
+        },
+        {
+          "iter": 1300,
+          "loss": 1412.8645195527874
+        },
+        {
+          "iter": 1400,
+          "loss": 1397.165259480637
+        },
+        {
+          "iter": 1500,
+          "loss": 1385.628477150811
+        },
+        {
+          "iter": 1600,
+          "loss": 1377.1100570806855
+        },
+        {
+          "iter": 1700,
+          "loss": 1365.0085475838093
+        },
+        {
+          "iter": 1800,
+          "loss": 1348.3850436554965
+        },
+        {
+          "iter": 1900,
+          "loss": 1340.4119069474657
+        }
+      ]
+    },
+    {
+      "init": "random",
+      "seed": 5,
+      "iterations": 2000,
+      "initial_loss": 2957.343565906882,
+      "final_loss": 2948.275579279938,
+      "final_features": {
+        "antipodal_pct": 100.0,
+        "diag_sum": -64,
+        "anti_diag_sum": -64,
+        "sign_match_to_anna_pct": 49.6826171875,
+        "dominant_re": 1003.7054515698148,
+        "dominant_im": 0.0,
+        "dominant_mag": 1003.7054515698148,
+        "dominant_angle_deg": 0.0,
+        "spectral_dominance_pct": 1.3914907808474903,
+        "spectral_radius": 1003.7054515698148
+      },
+      "history": [
+        {
+          "iter": 0,
+          "loss": 2957.343565906882
+        },
+        {
+          "iter": 100,
+          "loss": 2956.823202917491
+        },
+        {
+          "iter": 200,
+          "loss": 2956.2686315996502
+        },
+        {
+          "iter": 300,
+          "loss": 2955.7017266507096
+        },
+        {
+          "iter": 400,
+          "loss": 2955.2032191391568
+        },
+        {
+          "iter": 500,
+          "loss": 2954.7863280332426
+        },
+        {
+          "iter": 600,
+          "loss": 2954.265765463619
+        },
+        {
+          "iter": 700,
+          "loss": 2953.8362482586863
+        },
+        {
+          "iter": 800,
+          "loss": 2953.372295707743
+        },
+        {
+          "iter": 900,
+          "loss": 2953.073866799337
+        },
+        {
+          "iter": 1000,
+          "loss": 2952.7494965273822
+        },
+        {
+          "iter": 1100,
+          "loss": 2952.112238847607
+        },
+        {
+          "iter": 1200,
+          "loss": 2951.5681114365357
+        },
+        {
+          "iter": 1300,
+          "loss": 2951.257379814955
+        },
+        {
+          "iter": 1400,
+          "loss": 2950.8312042106786
+        },
+        {
+          "iter": 1500,
+          "loss": 2950.3727701054495
+        },
+        {
+          "iter": 1600,
+          "loss": 2949.9387970242055
+        },
+        {
+          "iter": 1700,
+          "loss": 2949.377071248791
+        },
+        {
+          "iter": 1800,
+          "loss": 2948.938319066056
+        },
+        {
+          "iter": 1900,
+          "loss": 2948.580547729955
+        }
+      ]
+    },
+    {
+      "init": "random",
+      "seed": 6,
+      "iterations": 2000,
+      "initial_loss": 500.849480295366,
+      "final_loss": 488.2007035451952,
+      "final_features": {
+        "antipodal_pct": 100.0,
+        "diag_sum": -64,
+        "anti_diag_sum": -64,
+        "sign_match_to_anna_pct": 49.627685546875,
+        "dominant_re": 0.07948899607323631,
+        "dominant_im": 940.6494659794771,
+        "dominant_mag": 940.6494693380611,
+        "dominant_angle_deg": 89.99515825592147,
+        "spectral_dominance_pct": 1.3457739924710326,
+        "spectral_radius": 940.6494693380611
+      },
+      "history": [
+        {
+          "iter": 0,
+          "loss": 500.849480295366
+        },
+        {
+          "iter": 100,
+          "loss": 499.94976510765184
+        },
+        {
+          "iter": 200,
+          "loss": 499.19321738604623
+        },
+        {
+          "iter": 300,
+          "loss": 498.4947901901866
+        },
+        {
+          "iter": 400,
+          "loss": 497.806761186522
+        },
+        {
+          "iter": 500,
+          "loss": 497.04883626457195
+        },
+        {
+          "iter": 600,
+          "loss": 495.8968842410711
+        },
+        {
+          "iter": 700,
+          "loss": 495.10201403640934
+        },
+        {
+          "iter": 800,
+          "loss": 494.49788722151663
+        },
+        {
+          "iter": 900,
+          "loss": 494.09204023432466
+        },
+        {
+          "iter": 1000,
+          "loss": 493.60315604866975
+        },
+        {
+          "iter": 1100,
+          "loss": 493.11410774586017
+        },
+        {
+          "iter": 1200,
+          "loss": 492.53859036976723
+        },
+        {
+          "iter": 1300,
+          "loss": 491.92026005819935
+        },
+        {
+          "iter": 1400,
+          "loss": 491.41226188438037
+        },
+        {
+          "iter": 1500,
+          "loss": 490.8714976646073
+        },
+        {
+          "iter": 1600,
+          "loss": 490.27689618727703
+        },
+        {
+          "iter": 1700,
+          "loss": 489.6008799325159
+        },
+        {
+          "iter": 1800,
+          "loss": 488.96538053360644
+        },
+        {
+          "iter": 1900,
+          "loss": 488.60655871258575
+        }
+      ]
+    },
+    {
+      "init": "random",
+      "seed": 7,
+      "iterations": 2000,
+      "initial_loss": 1583.1307259257242,
+      "final_loss": 1421.8714944395633,
+      "final_features": {
+        "antipodal_pct": 100.0,
+        "diag_sum": -64,
+        "anti_diag_sum": -64,
+        "sign_match_to_anna_pct": 50.164794921875,
+        "dominant_re": -764.9225702549879,
+        "dominant_im": 529.2337383564108,
+        "dominant_mag": 930.1585285854228,
+        "dominant_angle_deg": 145.3214602010735,
+        "spectral_dominance_pct": 1.3152324353035625,
+        "spectral_radius": 930.1585285854228
+      },
+      "history": [
+        {
+          "iter": 0,
+          "loss": 1583.0886464484013
+        },
+        {
+          "iter": 100,
+          "loss": 1575.4919720333564
+        },
+        {
+          "iter": 200,
+          "loss": 1566.9045965449393
+        },
+        {
+          "iter": 300,
+          "loss": 1558.4234593777924
+        },
+        {
+          "iter": 400,
+          "loss": 1550.4252717233278
+        },
+        {
+          "iter": 500,
+          "loss": 1543.1379822815993
+        },
+        {
+          "iter": 600,
+          "loss": 1537.1666792448361
+        },
+        {
+          "iter": 700,
+          "loss": 1530.534250627662
+        },
+        {
+          "iter": 800,
+          "loss": 1522.3985779598604
+        },
+        {
+          "iter": 900,
+          "loss": 1515.0757154936857
+        },
+        {
+          "iter": 1000,
+          "loss": 1508.2586379882134
+        },
+        {
+          "iter": 1100,
+          "loss": 1500.9571042643618
+        },
+        {
+          "iter": 1200,
+          "loss": 1491.8699746877642
+        },
+        {
+          "iter": 1300,
+          "loss": 1485.8271305518174
+        },
+        {
+          "iter": 1400,
+          "loss": 1476.4659563302157
+        },
+        {
+          "iter": 1500,
+          "loss": 1467.3519141652475
+        },
+        {
+          "iter": 1600,
+          "loss": 1459.162566867261
+        },
+        {
+          "iter": 1700,
+          "loss": 1450.2693778026896
+        },
+        {
+          "iter": 1800,
+          "loss": 1440.8431188732263
+        },
+        {
+          "iter": 1900,
+          "loss": 1430.8599007183495
+        }
+      ]
+    },
+    {
+      "init": "random",
+      "seed": 8,
+      "iterations": 2000,
+      "initial_loss": 2964.7162753835946,
+      "final_loss": 2955.5157225615817,
+      "final_features": {
+        "antipodal_pct": 100.0,
+        "diag_sum": -64,
+        "anti_diag_sum": -64,
+        "sign_match_to_anna_pct": 49.37744140625,
+        "dominant_re": -942.2888676537409,
+        "dominant_im": 0.0,
+        "dominant_mag": 942.2888676537409,
+        "dominant_angle_deg": 180.0,
+        "spectral_dominance_pct": 1.3572653479272823,
+        "spectral_radius": 942.2888676537409
+      },
+      "history": [
+        {
+          "iter": 0,
+          "loss": 2964.7162753835946
+        },
+        {
+          "iter": 100,
+          "loss": 2964.0812310864276
+        },
+        {
+          "iter": 200,
+          "loss": 2963.5601895515892
+        },
+        {
+          "iter": 300,
+          "loss": 2963.0929974644982
+        },
+        {
+          "iter": 400,
+          "loss": 2962.389783271578
+        },
+        {
+          "iter": 500,
+          "loss": 2961.9501126022747
+        },
+        {
+          "iter": 600,
+          "loss": 2961.386461585009
+        },
+        {
+          "iter": 700,
+          "loss": 2960.958151802059
+        },
+        {
+          "iter": 800,
+          "loss": 2960.4689367871156
+        },
+        {
+          "iter": 900,
+          "loss": 2960.1339504410985
+        },
+        {
+          "iter": 1000,
+          "loss": 2959.710354345439
+        },
+        {
+          "iter": 1100,
+          "loss": 2959.1877126525656
+        },
+        {
+          "iter": 1200,
+          "loss": 2958.8473218786107
+        },
+        {
+          "iter": 1300,
+          "loss": 2958.4131874703894
+        },
+        {
+          "iter": 1400,
+          "loss": 2957.9908514003155
+        },
+        {
+          "iter": 1500,
+          "loss": 2957.512950765227
+        },
+        {
+          "iter": 1600,
+          "loss": 2957.1329968897235
+        },
+        {
+          "iter": 1700,
+          "loss": 2956.80910648759
+        },
+        {
+          "iter": 1800,
+          "loss": 2956.2877220322293
+        },
+        {
+          "iter": 1900,
+          "loss": 2955.909653946263
+        }
+      ]
+    },
+    {
+      "init": "random",
+      "seed": 9,
+      "iterations": 2000,
+      "initial_loss": 490.5557169317399,
+      "final_loss": 480.361662447515,
+      "final_features": {
+        "antipodal_pct": 100.0,
+        "diag_sum": -64,
+        "anti_diag_sum": -64,
+        "sign_match_to_anna_pct": 49.737548828125,
+        "dominant_re": 0.16529330299248604,
+        "dominant_im": 1007.8492061471752,
+        "dominant_mag": 1007.8492197017207,
+        "dominant_angle_deg": 89.99060314926025,
+        "spectral_dominance_pct": 1.41180536072633,
+        "spectral_radius": 1007.8492197017207
+      },
+      "history": [
+        {
+          "iter": 0,
+          "loss": 490.5553012268964
+        },
+        {
+          "iter": 100,
+          "loss": 489.8220725122442
+        },
+        {
+          "iter": 200,
+          "loss": 489.31771383602324
+        },
+        {
+          "iter": 300,
+          "loss": 488.7740101029083
+        },
+        {
+          "iter": 400,
+          "loss": 487.9330046540116
+        },
+        {
+          "iter": 500,
+          "loss": 487.4200705048572
+        },
+        {
+          "iter": 600,
+          "loss": 486.9534465713001
+        },
+        {
+          "iter": 700,
+          "loss": 486.4767960783705
+        },
+        {
+          "iter": 800,
+          "loss": 485.98403497873323
+        },
+        {
+          "iter": 900,
+          "loss": 485.47532243018793
+        },
+        {
+          "iter": 1000,
+          "loss": 485.12708978457533
+        },
+        {
+          "iter": 1100,
+          "loss": 484.4321735897333
+        },
+        {
+          "iter": 1200,
+          "loss": 483.94385063549447
+        },
+        {
+          "iter": 1300,
+          "loss": 483.53037464371073
+        },
+        {
+          "iter": 1400,
+          "loss": 483.0362062960633
+        },
+        {
+          "iter": 1500,
+          "loss": 482.64293291403965
+        },
+        {
+          "iter": 1600,
+          "loss": 482.19619508101596
+        },
+        {
+          "iter": 1700,
+          "loss": 481.82611804756004
+        },
+        {
+          "iter": 1800,
+          "loss": 481.36229612779425
+        },
+        {
+          "iter": 1900,
+          "loss": 480.8525186161484
+        }
+      ]
+    }
+  ],
+  "best_local_search": {
+    "init": "random",
+    "seed": 9,
+    "iterations": 2000,
+    "initial_loss": 490.5557169317399,
+    "final_loss": 480.361662447515,
+    "final_features": {
+      "antipodal_pct": 100.0,
+      "diag_sum": -64,
+      "anti_diag_sum": -64,
+      "sign_match_to_anna_pct": 49.737548828125,
+      "dominant_re": 0.16529330299248604,
+      "dominant_im": 1007.8492061471752,
+      "dominant_mag": 1007.8492197017207,
+      "dominant_angle_deg": 89.99060314926025,
+      "spectral_dominance_pct": 1.41180536072633,
+      "spectral_radius": 1007.8492197017207
+    },
+    "history": [
+      {
+        "iter": 0,
+        "loss": 490.5553012268964
+      },
+      {
+        "iter": 100,
+        "loss": 489.8220725122442
+      },
+      {
+        "iter": 200,
+        "loss": 489.31771383602324
+      },
+      {
+        "iter": 300,
+        "loss": 488.7740101029083
+      },
+      {
+        "iter": 400,
+        "loss": 487.9330046540116
+      },
+      {
+        "iter": 500,
+        "loss": 487.4200705048572
+      },
+      {
+        "iter": 600,
+        "loss": 486.9534465713001
+      },
+      {
+        "iter": 700,
+        "loss": 486.4767960783705
+      },
+      {
+        "iter": 800,
+        "loss": 485.98403497873323
+      },
+      {
+        "iter": 900,
+        "loss": 485.47532243018793
+      },
+      {
+        "iter": 1000,
+        "loss": 485.12708978457533
+      },
+      {
+        "iter": 1100,
+        "loss": 484.4321735897333
+      },
+      {
+        "iter": 1200,
+        "loss": 483.94385063549447
+      },
+      {
+        "iter": 1300,
+        "loss": 483.53037464371073
+      },
+      {
+        "iter": 1400,
+        "loss": 483.0362062960633
+      },
+      {
+        "iter": 1500,
+        "loss": 482.64293291403965
+      },
+      {
+        "iter": 1600,
+        "loss": 482.19619508101596
+      },
+      {
+        "iter": 1700,
+        "loss": 481.82611804756004
+      },
+      {
+        "iter": 1800,
+        "loss": 481.36229612779425
+      },
+      {
+        "iter": 1900,
+        "loss": 480.8525186161484
+      }
+    ]
+  },
+  "verdict": "Anna's construction is NOT trivially reproducible",
+  "elapsed_seconds": 110.10012412071228
+}

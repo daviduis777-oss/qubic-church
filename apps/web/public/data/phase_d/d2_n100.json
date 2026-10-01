@@ -1,0 +1,3682 @@
+{
+  "phase": "D2",
+  "n_seeds": 100,
+  "dataset_size": 81,
+  "elapsed_seconds": 25.067757844924927,
+  "summary": {
+    "random": {
+      "hit_rate_mean": 0.49501543209876536,
+      "hit_rate_std": 0.03202837372512361,
+      "hit_rate_sem": 0.0032028373725123613,
+      "ci_low": 0.4887378708486411,
+      "ci_high": 0.5012929933488895,
+      "ci_half_width": 0.006277561250124228,
+      "avg_ticks_mean": 2.8607407407407415,
+      "max_ticks_observed": 20,
+      "n_correct_bytes_total": 30
+    },
+    "dense": {
+      "hit_rate_mean": 0.502361111111111,
+      "hit_rate_std": 0.02911429682742371,
+      "hit_rate_sem": 0.002911429682742371,
+      "ci_low": 0.496654708932936,
+      "ci_high": 0.5080675132892861,
+      "ci_half_width": 0.005706402178175047,
+      "avg_ticks_mean": 2.834567901234568,
+      "max_ticks_observed": 17,
+      "n_correct_bytes_total": 43
+    },
+    "anna": {
+      "hit_rate_mean": 0.5533487654320988,
+      "hit_rate_std": 0.02617375473244913,
+      "hit_rate_sem": 0.002617375473244913,
+      "ci_low": 0.5482187095045388,
+      "ci_high": 0.5584788213596588,
+      "ci_half_width": 0.005130055927560029,
+      "avg_ticks_mean": 5.915308641975308,
+      "max_ticks_observed": 1000,
+      "n_correct_bytes_total": 367
+    },
+    "statistical_tests": {
+      "anna_vs_dense": {
+        "welch_t": 13.023729301765984,
+        "welch_p": 1.2305408762592507e-28,
+        "mannwhitney_u": 9054.0,
+        "mannwhitney_p": 1.9556873908722324e-23,
+        "cohen_d": 1.8418334611233331
+      },
+      "anna_vs_random": {
+        "welch_t": 14.102845399564366,
+        "welch_p": 1.077482552925734e-31,
+        "mannwhitney_u": 9228.5,
+        "mannwhitney_p": 2.5177836281260424e-25,
+        "cohen_d": 1.994443523211494
+      },
+      "dense_vs_random": {
+        "welch_t": 1.6971094427917628,
+        "welch_p": 0.09126147703436505
+      }
+    }
+  },
+  "results": {
+    "random": [
+      {
+        "n": 81,
+        "hit_rate": 0.47530864197530864,
+        "correct_bytes": 0,
+        "avg_ticks": 3.0864197530864197,
+        "median_ticks": 2,
+        "max_ticks": 10,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 0
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.41975308641975306,
+        "correct_bytes": 0,
+        "avg_ticks": 2.111111111111111,
+        "median_ticks": 2,
+        "max_ticks": 10,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 1
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4861111111111111,
+        "correct_bytes": 0,
+        "avg_ticks": 2.9382716049382718,
+        "median_ticks": 3,
+        "max_ticks": 11,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 2
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4645061728395062,
+        "correct_bytes": 0,
+        "avg_ticks": 2.246913580246914,
+        "median_ticks": 2,
+        "max_ticks": 6,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 3
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.47685185185185186,
+        "correct_bytes": 0,
+        "avg_ticks": 1.9259259259259258,
+        "median_ticks": 1,
+        "max_ticks": 6,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 4
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4737654320987654,
+        "correct_bytes": 0,
+        "avg_ticks": 3.580246913580247,
+        "median_ticks": 3,
+        "max_ticks": 10,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 5
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5246913580246914,
+        "correct_bytes": 0,
+        "avg_ticks": 3.037037037037037,
+        "median_ticks": 3,
+        "max_ticks": 9,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 6
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.49691358024691357,
+        "correct_bytes": 0,
+        "avg_ticks": 2.7037037037037037,
+        "median_ticks": 1,
+        "max_ticks": 12,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 7
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5092592592592593,
+        "correct_bytes": 0,
+        "avg_ticks": 3.0,
+        "median_ticks": 2,
+        "max_ticks": 12,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 8
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5617283950617284,
+        "correct_bytes": 1,
+        "avg_ticks": 2.962962962962963,
+        "median_ticks": 2,
+        "max_ticks": 9,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 9
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4984567901234568,
+        "correct_bytes": 0,
+        "avg_ticks": 1.8518518518518519,
+        "median_ticks": 2,
+        "max_ticks": 6,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 10
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5123456790123457,
+        "correct_bytes": 0,
+        "avg_ticks": 3.0617283950617282,
+        "median_ticks": 2,
+        "max_ticks": 11,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 11
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5447530864197531,
+        "correct_bytes": 4,
+        "avg_ticks": 2.185185185185185,
+        "median_ticks": 2,
+        "max_ticks": 7,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 12
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4783950617283951,
+        "correct_bytes": 0,
+        "avg_ticks": 2.654320987654321,
+        "median_ticks": 2,
+        "max_ticks": 7,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 13
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.44135802469135804,
+        "correct_bytes": 0,
+        "avg_ticks": 3.6419753086419755,
+        "median_ticks": 3,
+        "max_ticks": 13,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 14
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.41512345679012347,
+        "correct_bytes": 0,
+        "avg_ticks": 2.271604938271605,
+        "median_ticks": 2,
+        "max_ticks": 9,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 15
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5385802469135802,
+        "correct_bytes": 0,
+        "avg_ticks": 2.802469135802469,
+        "median_ticks": 3,
+        "max_ticks": 10,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 16
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.49228395061728397,
+        "correct_bytes": 0,
+        "avg_ticks": 3.567901234567901,
+        "median_ticks": 3,
+        "max_ticks": 13,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 17
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4799382716049383,
+        "correct_bytes": 0,
+        "avg_ticks": 3.0123456790123457,
+        "median_ticks": 2,
+        "max_ticks": 10,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 18
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4351851851851852,
+        "correct_bytes": 0,
+        "avg_ticks": 2.382716049382716,
+        "median_ticks": 2,
+        "max_ticks": 7,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 19
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5,
+        "correct_bytes": 0,
+        "avg_ticks": 2.506172839506173,
+        "median_ticks": 2,
+        "max_ticks": 7,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 20
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.529320987654321,
+        "correct_bytes": 1,
+        "avg_ticks": 3.0,
+        "median_ticks": 3,
+        "max_ticks": 9,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 21
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.44135802469135804,
+        "correct_bytes": 0,
+        "avg_ticks": 3.037037037037037,
+        "median_ticks": 3,
+        "max_ticks": 7,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 22
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4737654320987654,
+        "correct_bytes": 0,
+        "avg_ticks": 2.3209876543209877,
+        "median_ticks": 2,
+        "max_ticks": 9,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 23
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.44135802469135804,
+        "correct_bytes": 0,
+        "avg_ticks": 2.5925925925925926,
+        "median_ticks": 2,
+        "max_ticks": 7,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 24
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4783950617283951,
+        "correct_bytes": 0,
+        "avg_ticks": 3.3703703703703702,
+        "median_ticks": 3,
+        "max_ticks": 10,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 25
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4521604938271605,
+        "correct_bytes": 1,
+        "avg_ticks": 3.0864197530864197,
+        "median_ticks": 2,
+        "max_ticks": 9,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 26
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5154320987654321,
+        "correct_bytes": 0,
+        "avg_ticks": 2.6419753086419755,
+        "median_ticks": 2,
+        "max_ticks": 8,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 27
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4722222222222222,
+        "correct_bytes": 0,
+        "avg_ticks": 3.9753086419753085,
+        "median_ticks": 3,
+        "max_ticks": 13,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 28
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4984567901234568,
+        "correct_bytes": 0,
+        "avg_ticks": 2.5185185185185186,
+        "median_ticks": 2,
+        "max_ticks": 7,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 29
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5030864197530864,
+        "correct_bytes": 1,
+        "avg_ticks": 3.074074074074074,
+        "median_ticks": 2,
+        "max_ticks": 14,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 30
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5216049382716049,
+        "correct_bytes": 1,
+        "avg_ticks": 2.8271604938271606,
+        "median_ticks": 2,
+        "max_ticks": 8,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 31
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4583333333333333,
+        "correct_bytes": 0,
+        "avg_ticks": 3.1481481481481484,
+        "median_ticks": 3,
+        "max_ticks": 9,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 32
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5015432098765432,
+        "correct_bytes": 0,
+        "avg_ticks": 1.8148148148148149,
+        "median_ticks": 1,
+        "max_ticks": 9,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 33
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5570987654320988,
+        "correct_bytes": 0,
+        "avg_ticks": 2.037037037037037,
+        "median_ticks": 1,
+        "max_ticks": 9,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 34
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.470679012345679,
+        "correct_bytes": 0,
+        "avg_ticks": 2.6049382716049383,
+        "median_ticks": 2,
+        "max_ticks": 14,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 35
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4691358024691358,
+        "correct_bytes": 0,
+        "avg_ticks": 3.345679012345679,
+        "median_ticks": 3,
+        "max_ticks": 8,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 36
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5046296296296297,
+        "correct_bytes": 0,
+        "avg_ticks": 2.8271604938271606,
+        "median_ticks": 2,
+        "max_ticks": 9,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 37
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5138888888888888,
+        "correct_bytes": 0,
+        "avg_ticks": 2.9753086419753085,
+        "median_ticks": 2,
+        "max_ticks": 9,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 38
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.49537037037037035,
+        "correct_bytes": 0,
+        "avg_ticks": 3.0,
+        "median_ticks": 2,
+        "max_ticks": 8,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 39
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5447530864197531,
+        "correct_bytes": 0,
+        "avg_ticks": 2.2222222222222223,
+        "median_ticks": 2,
+        "max_ticks": 9,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 40
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5401234567901234,
+        "correct_bytes": 0,
+        "avg_ticks": 3.037037037037037,
+        "median_ticks": 2,
+        "max_ticks": 10,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 41
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4691358024691358,
+        "correct_bytes": 1,
+        "avg_ticks": 3.9012345679012346,
+        "median_ticks": 3,
+        "max_ticks": 17,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 42
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4799382716049383,
+        "correct_bytes": 1,
+        "avg_ticks": 2.5185185185185186,
+        "median_ticks": 2,
+        "max_ticks": 6,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 43
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.45524691358024694,
+        "correct_bytes": 0,
+        "avg_ticks": 2.888888888888889,
+        "median_ticks": 2,
+        "max_ticks": 9,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 44
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5061728395061729,
+        "correct_bytes": 0,
+        "avg_ticks": 2.6666666666666665,
+        "median_ticks": 2,
+        "max_ticks": 12,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 45
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5416666666666666,
+        "correct_bytes": 3,
+        "avg_ticks": 3.765432098765432,
+        "median_ticks": 3,
+        "max_ticks": 12,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 46
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5478395061728395,
+        "correct_bytes": 1,
+        "avg_ticks": 3.6049382716049383,
+        "median_ticks": 3,
+        "max_ticks": 13,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 47
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4691358024691358,
+        "correct_bytes": 0,
+        "avg_ticks": 3.0987654320987654,
+        "median_ticks": 3,
+        "max_ticks": 10,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 48
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.48919753086419754,
+        "correct_bytes": 0,
+        "avg_ticks": 3.3209876543209877,
+        "median_ticks": 3,
+        "max_ticks": 12,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 49
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5169753086419753,
+        "correct_bytes": 0,
+        "avg_ticks": 2.9135802469135803,
+        "median_ticks": 3,
+        "max_ticks": 12,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 50
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5231481481481481,
+        "correct_bytes": 0,
+        "avg_ticks": 2.740740740740741,
+        "median_ticks": 2,
+        "max_ticks": 13,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 51
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5246913580246914,
+        "correct_bytes": 1,
+        "avg_ticks": 3.308641975308642,
+        "median_ticks": 3,
+        "max_ticks": 16,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 52
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.47685185185185186,
+        "correct_bytes": 0,
+        "avg_ticks": 2.925925925925926,
+        "median_ticks": 3,
+        "max_ticks": 9,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 53
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5046296296296297,
+        "correct_bytes": 2,
+        "avg_ticks": 4.481481481481482,
+        "median_ticks": 4,
+        "max_ticks": 20,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 54
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.49074074074074076,
+        "correct_bytes": 0,
+        "avg_ticks": 3.54320987654321,
+        "median_ticks": 3,
+        "max_ticks": 14,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 55
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.49691358024691357,
+        "correct_bytes": 0,
+        "avg_ticks": 2.308641975308642,
+        "median_ticks": 2,
+        "max_ticks": 9,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 56
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5493827160493827,
+        "correct_bytes": 0,
+        "avg_ticks": 2.7037037037037037,
+        "median_ticks": 2,
+        "max_ticks": 7,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 57
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5,
+        "correct_bytes": 0,
+        "avg_ticks": 3.9012345679012346,
+        "median_ticks": 3,
+        "max_ticks": 10,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 58
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5092592592592593,
+        "correct_bytes": 0,
+        "avg_ticks": 2.740740740740741,
+        "median_ticks": 3,
+        "max_ticks": 12,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 59
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.48148148148148145,
+        "correct_bytes": 0,
+        "avg_ticks": 3.2962962962962963,
+        "median_ticks": 3,
+        "max_ticks": 13,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 60
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.48919753086419754,
+        "correct_bytes": 0,
+        "avg_ticks": 3.382716049382716,
+        "median_ticks": 3,
+        "max_ticks": 10,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 61
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5385802469135802,
+        "correct_bytes": 0,
+        "avg_ticks": 3.2962962962962963,
+        "median_ticks": 3,
+        "max_ticks": 12,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 62
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5046296296296297,
+        "correct_bytes": 0,
+        "avg_ticks": 3.0987654320987654,
+        "median_ticks": 2,
+        "max_ticks": 11,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 63
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5138888888888888,
+        "correct_bytes": 0,
+        "avg_ticks": 2.617283950617284,
+        "median_ticks": 2,
+        "max_ticks": 7,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 64
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.45524691358024694,
+        "correct_bytes": 0,
+        "avg_ticks": 2.567901234567901,
+        "median_ticks": 2,
+        "max_ticks": 9,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 65
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.44753086419753085,
+        "correct_bytes": 0,
+        "avg_ticks": 2.9012345679012346,
+        "median_ticks": 2,
+        "max_ticks": 8,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 66
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4737654320987654,
+        "correct_bytes": 0,
+        "avg_ticks": 2.802469135802469,
+        "median_ticks": 2,
+        "max_ticks": 10,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 67
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5493827160493827,
+        "correct_bytes": 0,
+        "avg_ticks": 1.6666666666666667,
+        "median_ticks": 1,
+        "max_ticks": 7,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 68
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5108024691358025,
+        "correct_bytes": 0,
+        "avg_ticks": 2.654320987654321,
+        "median_ticks": 2,
+        "max_ticks": 10,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 69
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5601851851851852,
+        "correct_bytes": 1,
+        "avg_ticks": 2.8395061728395063,
+        "median_ticks": 2,
+        "max_ticks": 8,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 70
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5030864197530864,
+        "correct_bytes": 0,
+        "avg_ticks": 3.728395061728395,
+        "median_ticks": 3,
+        "max_ticks": 12,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 71
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5123456790123457,
+        "correct_bytes": 0,
+        "avg_ticks": 2.4691358024691357,
+        "median_ticks": 2,
+        "max_ticks": 9,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 72
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5169753086419753,
+        "correct_bytes": 0,
+        "avg_ticks": 2.6049382716049383,
+        "median_ticks": 2,
+        "max_ticks": 8,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 73
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4861111111111111,
+        "correct_bytes": 0,
+        "avg_ticks": 2.54320987654321,
+        "median_ticks": 2,
+        "max_ticks": 9,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 74
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5277777777777778,
+        "correct_bytes": 0,
+        "avg_ticks": 3.0246913580246915,
+        "median_ticks": 2,
+        "max_ticks": 9,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 75
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5138888888888888,
+        "correct_bytes": 0,
+        "avg_ticks": 3.0123456790123457,
+        "median_ticks": 2,
+        "max_ticks": 13,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 76
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5092592592592593,
+        "correct_bytes": 2,
+        "avg_ticks": 2.8271604938271606,
+        "median_ticks": 2,
+        "max_ticks": 10,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 77
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.49228395061728397,
+        "correct_bytes": 0,
+        "avg_ticks": 3.1728395061728394,
+        "median_ticks": 2,
+        "max_ticks": 10,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 78
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.45524691358024694,
+        "correct_bytes": 0,
+        "avg_ticks": 2.9135802469135803,
+        "median_ticks": 2,
+        "max_ticks": 8,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 79
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.49228395061728397,
+        "correct_bytes": 0,
+        "avg_ticks": 2.8395061728395063,
+        "median_ticks": 2,
+        "max_ticks": 10,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 80
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5092592592592593,
+        "correct_bytes": 0,
+        "avg_ticks": 2.6790123456790123,
+        "median_ticks": 2,
+        "max_ticks": 9,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 81
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.42746913580246915,
+        "correct_bytes": 0,
+        "avg_ticks": 2.382716049382716,
+        "median_ticks": 1,
+        "max_ticks": 11,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 82
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4876543209876543,
+        "correct_bytes": 1,
+        "avg_ticks": 2.3333333333333335,
+        "median_ticks": 1,
+        "max_ticks": 11,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 83
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.49691358024691357,
+        "correct_bytes": 3,
+        "avg_ticks": 3.111111111111111,
+        "median_ticks": 2,
+        "max_ticks": 12,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 84
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5061728395061729,
+        "correct_bytes": 1,
+        "avg_ticks": 2.493827160493827,
+        "median_ticks": 2,
+        "max_ticks": 13,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 85
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.48148148148148145,
+        "correct_bytes": 0,
+        "avg_ticks": 2.111111111111111,
+        "median_ticks": 1,
+        "max_ticks": 9,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 86
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.48919753086419754,
+        "correct_bytes": 1,
+        "avg_ticks": 2.6049382716049383,
+        "median_ticks": 2,
+        "max_ticks": 7,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 87
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4583333333333333,
+        "correct_bytes": 0,
+        "avg_ticks": 2.3209876543209877,
+        "median_ticks": 2,
+        "max_ticks": 7,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 88
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.44290123456790126,
+        "correct_bytes": 1,
+        "avg_ticks": 3.3209876543209877,
+        "median_ticks": 3,
+        "max_ticks": 15,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 89
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.49537037037037035,
+        "correct_bytes": 0,
+        "avg_ticks": 2.432098765432099,
+        "median_ticks": 2,
+        "max_ticks": 12,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 90
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5092592592592593,
+        "correct_bytes": 0,
+        "avg_ticks": 2.0123456790123457,
+        "median_ticks": 1,
+        "max_ticks": 8,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 91
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.47530864197530864,
+        "correct_bytes": 1,
+        "avg_ticks": 2.9876543209876543,
+        "median_ticks": 3,
+        "max_ticks": 9,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 92
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4783950617283951,
+        "correct_bytes": 0,
+        "avg_ticks": 2.728395061728395,
+        "median_ticks": 2,
+        "max_ticks": 9,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 93
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4876543209876543,
+        "correct_bytes": 1,
+        "avg_ticks": 3.2098765432098766,
+        "median_ticks": 2,
+        "max_ticks": 13,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 94
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4861111111111111,
+        "correct_bytes": 0,
+        "avg_ticks": 2.925925925925926,
+        "median_ticks": 2,
+        "max_ticks": 20,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 95
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5246913580246914,
+        "correct_bytes": 0,
+        "avg_ticks": 2.246913580246914,
+        "median_ticks": 2,
+        "max_ticks": 9,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 96
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4783950617283951,
+        "correct_bytes": 0,
+        "avg_ticks": 3.234567901234568,
+        "median_ticks": 3,
+        "max_ticks": 9,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 97
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5370370370370371,
+        "correct_bytes": 0,
+        "avg_ticks": 2.814814814814815,
+        "median_ticks": 3,
+        "max_ticks": 10,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 98
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5370370370370371,
+        "correct_bytes": 0,
+        "avg_ticks": 3.54320987654321,
+        "median_ticks": 3,
+        "max_ticks": 10,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 99
+      }
+    ],
+    "dense": [
+      {
+        "n": 81,
+        "hit_rate": 0.49382716049382713,
+        "correct_bytes": 0,
+        "avg_ticks": 2.9012345679012346,
+        "median_ticks": 3,
+        "max_ticks": 8,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 0
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4783950617283951,
+        "correct_bytes": 0,
+        "avg_ticks": 3.1728395061728394,
+        "median_ticks": 3,
+        "max_ticks": 7,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 1
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5632716049382716,
+        "correct_bytes": 1,
+        "avg_ticks": 2.45679012345679,
+        "median_ticks": 2,
+        "max_ticks": 7,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 2
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4799382716049383,
+        "correct_bytes": 1,
+        "avg_ticks": 2.9753086419753085,
+        "median_ticks": 3,
+        "max_ticks": 7,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 3
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5231481481481481,
+        "correct_bytes": 0,
+        "avg_ticks": 2.9135802469135803,
+        "median_ticks": 3,
+        "max_ticks": 7,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 4
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4984567901234568,
+        "correct_bytes": 0,
+        "avg_ticks": 3.037037037037037,
+        "median_ticks": 2,
+        "max_ticks": 9,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 5
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4691358024691358,
+        "correct_bytes": 0,
+        "avg_ticks": 2.5185185185185186,
+        "median_ticks": 2,
+        "max_ticks": 5,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 6
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.49537037037037035,
+        "correct_bytes": 3,
+        "avg_ticks": 2.4691358024691357,
+        "median_ticks": 2,
+        "max_ticks": 7,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 7
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5277777777777778,
+        "correct_bytes": 4,
+        "avg_ticks": 3.0617283950617282,
+        "median_ticks": 3,
+        "max_ticks": 10,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 8
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.42901234567901236,
+        "correct_bytes": 0,
+        "avg_ticks": 2.6790123456790123,
+        "median_ticks": 2,
+        "max_ticks": 7,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 9
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5416666666666666,
+        "correct_bytes": 0,
+        "avg_ticks": 2.7777777777777777,
+        "median_ticks": 2,
+        "max_ticks": 8,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 10
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.45987654320987653,
+        "correct_bytes": 2,
+        "avg_ticks": 3.259259259259259,
+        "median_ticks": 3,
+        "max_ticks": 11,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 11
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4984567901234568,
+        "correct_bytes": 0,
+        "avg_ticks": 3.246913580246914,
+        "median_ticks": 3,
+        "max_ticks": 8,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 12
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5370370370370371,
+        "correct_bytes": 0,
+        "avg_ticks": 2.7901234567901234,
+        "median_ticks": 2,
+        "max_ticks": 8,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 13
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4506172839506173,
+        "correct_bytes": 0,
+        "avg_ticks": 2.6666666666666665,
+        "median_ticks": 3,
+        "max_ticks": 7,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 14
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.48148148148148145,
+        "correct_bytes": 0,
+        "avg_ticks": 3.259259259259259,
+        "median_ticks": 3,
+        "max_ticks": 7,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 15
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4691358024691358,
+        "correct_bytes": 1,
+        "avg_ticks": 3.111111111111111,
+        "median_ticks": 3,
+        "max_ticks": 11,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 16
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5138888888888888,
+        "correct_bytes": 0,
+        "avg_ticks": 2.753086419753086,
+        "median_ticks": 2,
+        "max_ticks": 7,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 17
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.48919753086419754,
+        "correct_bytes": 0,
+        "avg_ticks": 2.802469135802469,
+        "median_ticks": 2,
+        "max_ticks": 10,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 18
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5138888888888888,
+        "correct_bytes": 0,
+        "avg_ticks": 3.0246913580246915,
+        "median_ticks": 2,
+        "max_ticks": 13,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 19
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.47685185185185186,
+        "correct_bytes": 0,
+        "avg_ticks": 2.7037037037037037,
+        "median_ticks": 2,
+        "max_ticks": 9,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 20
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5216049382716049,
+        "correct_bytes": 2,
+        "avg_ticks": 3.037037037037037,
+        "median_ticks": 2,
+        "max_ticks": 14,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 21
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5108024691358025,
+        "correct_bytes": 0,
+        "avg_ticks": 3.8271604938271606,
+        "median_ticks": 3,
+        "max_ticks": 10,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 22
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.45987654320987653,
+        "correct_bytes": 0,
+        "avg_ticks": 3.0123456790123457,
+        "median_ticks": 3,
+        "max_ticks": 8,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 23
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4660493827160494,
+        "correct_bytes": 0,
+        "avg_ticks": 2.925925925925926,
+        "median_ticks": 2,
+        "max_ticks": 17,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 24
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5308641975308642,
+        "correct_bytes": 0,
+        "avg_ticks": 2.8518518518518516,
+        "median_ticks": 2,
+        "max_ticks": 6,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 25
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.49691358024691357,
+        "correct_bytes": 0,
+        "avg_ticks": 2.6666666666666665,
+        "median_ticks": 2,
+        "max_ticks": 11,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 26
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5262345679012346,
+        "correct_bytes": 0,
+        "avg_ticks": 2.5185185185185186,
+        "median_ticks": 2,
+        "max_ticks": 7,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 27
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.47685185185185186,
+        "correct_bytes": 0,
+        "avg_ticks": 2.814814814814815,
+        "median_ticks": 2,
+        "max_ticks": 10,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 28
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4783950617283951,
+        "correct_bytes": 0,
+        "avg_ticks": 2.9382716049382718,
+        "median_ticks": 2,
+        "max_ticks": 9,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 29
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.48302469135802467,
+        "correct_bytes": 0,
+        "avg_ticks": 2.888888888888889,
+        "median_ticks": 2,
+        "max_ticks": 9,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 30
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5277777777777778,
+        "correct_bytes": 1,
+        "avg_ticks": 2.7901234567901234,
+        "median_ticks": 2,
+        "max_ticks": 7,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 31
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5138888888888888,
+        "correct_bytes": 0,
+        "avg_ticks": 2.691358024691358,
+        "median_ticks": 2,
+        "max_ticks": 8,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 32
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5061728395061729,
+        "correct_bytes": 1,
+        "avg_ticks": 3.246913580246914,
+        "median_ticks": 3,
+        "max_ticks": 13,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 33
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5725308641975309,
+        "correct_bytes": 2,
+        "avg_ticks": 2.691358024691358,
+        "median_ticks": 2,
+        "max_ticks": 6,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 34
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5478395061728395,
+        "correct_bytes": 0,
+        "avg_ticks": 3.1481481481481484,
+        "median_ticks": 3,
+        "max_ticks": 7,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 35
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5061728395061729,
+        "correct_bytes": 1,
+        "avg_ticks": 2.617283950617284,
+        "median_ticks": 2,
+        "max_ticks": 8,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 36
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4691358024691358,
+        "correct_bytes": 1,
+        "avg_ticks": 2.5925925925925926,
+        "median_ticks": 2,
+        "max_ticks": 9,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 37
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5046296296296297,
+        "correct_bytes": 0,
+        "avg_ticks": 2.7777777777777777,
+        "median_ticks": 2,
+        "max_ticks": 9,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 38
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5277777777777778,
+        "correct_bytes": 0,
+        "avg_ticks": 2.567901234567901,
+        "median_ticks": 2,
+        "max_ticks": 6,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 39
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5493827160493827,
+        "correct_bytes": 0,
+        "avg_ticks": 3.0123456790123457,
+        "median_ticks": 3,
+        "max_ticks": 8,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 40
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.49074074074074076,
+        "correct_bytes": 0,
+        "avg_ticks": 3.45679012345679,
+        "median_ticks": 3,
+        "max_ticks": 8,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 41
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.49691358024691357,
+        "correct_bytes": 3,
+        "avg_ticks": 2.7901234567901234,
+        "median_ticks": 2,
+        "max_ticks": 7,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 42
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4737654320987654,
+        "correct_bytes": 0,
+        "avg_ticks": 2.7777777777777777,
+        "median_ticks": 2,
+        "max_ticks": 7,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 43
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5200617283950617,
+        "correct_bytes": 0,
+        "avg_ticks": 3.111111111111111,
+        "median_ticks": 3,
+        "max_ticks": 8,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 44
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4737654320987654,
+        "correct_bytes": 2,
+        "avg_ticks": 2.4814814814814814,
+        "median_ticks": 2,
+        "max_ticks": 7,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 45
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4799382716049383,
+        "correct_bytes": 0,
+        "avg_ticks": 2.9753086419753085,
+        "median_ticks": 2,
+        "max_ticks": 10,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 46
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4722222222222222,
+        "correct_bytes": 0,
+        "avg_ticks": 2.925925925925926,
+        "median_ticks": 3,
+        "max_ticks": 6,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 47
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5138888888888888,
+        "correct_bytes": 0,
+        "avg_ticks": 3.1358024691358026,
+        "median_ticks": 3,
+        "max_ticks": 7,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 48
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4845679012345679,
+        "correct_bytes": 0,
+        "avg_ticks": 2.7901234567901234,
+        "median_ticks": 2,
+        "max_ticks": 8,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 49
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4691358024691358,
+        "correct_bytes": 1,
+        "avg_ticks": 2.9382716049382718,
+        "median_ticks": 3,
+        "max_ticks": 8,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 50
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5015432098765432,
+        "correct_bytes": 0,
+        "avg_ticks": 2.8271604938271606,
+        "median_ticks": 2,
+        "max_ticks": 12,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 51
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5061728395061729,
+        "correct_bytes": 0,
+        "avg_ticks": 2.8271604938271606,
+        "median_ticks": 2,
+        "max_ticks": 7,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 52
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5231481481481481,
+        "correct_bytes": 0,
+        "avg_ticks": 2.1358024691358026,
+        "median_ticks": 2,
+        "max_ticks": 10,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 53
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5570987654320988,
+        "correct_bytes": 0,
+        "avg_ticks": 2.2098765432098766,
+        "median_ticks": 1,
+        "max_ticks": 9,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 54
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5108024691358025,
+        "correct_bytes": 2,
+        "avg_ticks": 3.0246913580246915,
+        "median_ticks": 2,
+        "max_ticks": 15,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 55
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5030864197530864,
+        "correct_bytes": 0,
+        "avg_ticks": 2.765432098765432,
+        "median_ticks": 2,
+        "max_ticks": 7,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 56
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5077160493827161,
+        "correct_bytes": 0,
+        "avg_ticks": 3.123456790123457,
+        "median_ticks": 3,
+        "max_ticks": 9,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 57
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5046296296296297,
+        "correct_bytes": 0,
+        "avg_ticks": 3.246913580246914,
+        "median_ticks": 3,
+        "max_ticks": 9,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 58
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5540123456790124,
+        "correct_bytes": 0,
+        "avg_ticks": 2.45679012345679,
+        "median_ticks": 2,
+        "max_ticks": 5,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 59
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5385802469135802,
+        "correct_bytes": 1,
+        "avg_ticks": 2.8395061728395063,
+        "median_ticks": 2,
+        "max_ticks": 9,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 60
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5015432098765432,
+        "correct_bytes": 0,
+        "avg_ticks": 2.6049382716049383,
+        "median_ticks": 2,
+        "max_ticks": 8,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 61
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5030864197530864,
+        "correct_bytes": 1,
+        "avg_ticks": 2.8271604938271606,
+        "median_ticks": 2,
+        "max_ticks": 8,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 62
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5277777777777778,
+        "correct_bytes": 1,
+        "avg_ticks": 3.4691358024691357,
+        "median_ticks": 3,
+        "max_ticks": 10,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 63
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5169753086419753,
+        "correct_bytes": 0,
+        "avg_ticks": 3.1604938271604937,
+        "median_ticks": 3,
+        "max_ticks": 10,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 64
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5462962962962963,
+        "correct_bytes": 0,
+        "avg_ticks": 2.506172839506173,
+        "median_ticks": 2,
+        "max_ticks": 8,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 65
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4876543209876543,
+        "correct_bytes": 0,
+        "avg_ticks": 2.6666666666666665,
+        "median_ticks": 2,
+        "max_ticks": 7,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 66
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5324074074074074,
+        "correct_bytes": 0,
+        "avg_ticks": 3.049382716049383,
+        "median_ticks": 2,
+        "max_ticks": 12,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 67
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.48148148148148145,
+        "correct_bytes": 0,
+        "avg_ticks": 2.1358024691358026,
+        "median_ticks": 2,
+        "max_ticks": 7,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 68
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5138888888888888,
+        "correct_bytes": 1,
+        "avg_ticks": 2.9135802469135803,
+        "median_ticks": 2,
+        "max_ticks": 10,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 69
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4583333333333333,
+        "correct_bytes": 0,
+        "avg_ticks": 2.876543209876543,
+        "median_ticks": 3,
+        "max_ticks": 8,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 70
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4876543209876543,
+        "correct_bytes": 0,
+        "avg_ticks": 2.6790123456790123,
+        "median_ticks": 3,
+        "max_ticks": 8,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 71
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5370370370370371,
+        "correct_bytes": 0,
+        "avg_ticks": 2.4691358024691357,
+        "median_ticks": 2,
+        "max_ticks": 6,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 72
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.46141975308641975,
+        "correct_bytes": 1,
+        "avg_ticks": 2.6296296296296298,
+        "median_ticks": 2,
+        "max_ticks": 7,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 73
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4737654320987654,
+        "correct_bytes": 0,
+        "avg_ticks": 3.0617283950617282,
+        "median_ticks": 2,
+        "max_ticks": 7,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 74
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5524691358024691,
+        "correct_bytes": 1,
+        "avg_ticks": 3.074074074074074,
+        "median_ticks": 3,
+        "max_ticks": 9,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 75
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5246913580246914,
+        "correct_bytes": 0,
+        "avg_ticks": 2.9012345679012346,
+        "median_ticks": 3,
+        "max_ticks": 6,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 76
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5231481481481481,
+        "correct_bytes": 1,
+        "avg_ticks": 2.8518518518518516,
+        "median_ticks": 2,
+        "max_ticks": 9,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 77
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5555555555555556,
+        "correct_bytes": 0,
+        "avg_ticks": 3.123456790123457,
+        "median_ticks": 3,
+        "max_ticks": 9,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 78
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.44598765432098764,
+        "correct_bytes": 1,
+        "avg_ticks": 2.1358024691358026,
+        "median_ticks": 2,
+        "max_ticks": 5,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 79
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5015432098765432,
+        "correct_bytes": 0,
+        "avg_ticks": 2.3950617283950617,
+        "median_ticks": 2,
+        "max_ticks": 5,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 80
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4660493827160494,
+        "correct_bytes": 0,
+        "avg_ticks": 2.5555555555555554,
+        "median_ticks": 2,
+        "max_ticks": 5,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 81
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.46141975308641975,
+        "correct_bytes": 0,
+        "avg_ticks": 2.654320987654321,
+        "median_ticks": 2,
+        "max_ticks": 6,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 82
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4799382716049383,
+        "correct_bytes": 2,
+        "avg_ticks": 2.950617283950617,
+        "median_ticks": 3,
+        "max_ticks": 8,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 83
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5462962962962963,
+        "correct_bytes": 0,
+        "avg_ticks": 2.925925925925926,
+        "median_ticks": 2,
+        "max_ticks": 9,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 84
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5185185185185185,
+        "correct_bytes": 1,
+        "avg_ticks": 2.8641975308641974,
+        "median_ticks": 2,
+        "max_ticks": 8,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 85
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4645061728395062,
+        "correct_bytes": 1,
+        "avg_ticks": 2.037037037037037,
+        "median_ticks": 1,
+        "max_ticks": 7,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 86
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.47685185185185186,
+        "correct_bytes": 0,
+        "avg_ticks": 3.0617283950617282,
+        "median_ticks": 3,
+        "max_ticks": 7,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 87
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5308641975308642,
+        "correct_bytes": 0,
+        "avg_ticks": 3.185185185185185,
+        "median_ticks": 2,
+        "max_ticks": 13,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 88
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.49228395061728397,
+        "correct_bytes": 0,
+        "avg_ticks": 3.185185185185185,
+        "median_ticks": 3,
+        "max_ticks": 8,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 89
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5046296296296297,
+        "correct_bytes": 0,
+        "avg_ticks": 2.6296296296296298,
+        "median_ticks": 2,
+        "max_ticks": 7,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 90
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.48919753086419754,
+        "correct_bytes": 0,
+        "avg_ticks": 2.765432098765432,
+        "median_ticks": 2,
+        "max_ticks": 7,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 91
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5231481481481481,
+        "correct_bytes": 0,
+        "avg_ticks": 3.185185185185185,
+        "median_ticks": 3,
+        "max_ticks": 9,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 92
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5216049382716049,
+        "correct_bytes": 0,
+        "avg_ticks": 2.6296296296296298,
+        "median_ticks": 2,
+        "max_ticks": 9,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 93
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5,
+        "correct_bytes": 0,
+        "avg_ticks": 2.382716049382716,
+        "median_ticks": 2,
+        "max_ticks": 6,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 94
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5092592592592593,
+        "correct_bytes": 1,
+        "avg_ticks": 2.617283950617284,
+        "median_ticks": 2,
+        "max_ticks": 8,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 95
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4799382716049383,
+        "correct_bytes": 0,
+        "avg_ticks": 2.7037037037037037,
+        "median_ticks": 2,
+        "max_ticks": 6,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 96
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4876543209876543,
+        "correct_bytes": 1,
+        "avg_ticks": 3.382716049382716,
+        "median_ticks": 3,
+        "max_ticks": 10,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 97
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4876543209876543,
+        "correct_bytes": 1,
+        "avg_ticks": 2.8518518518518516,
+        "median_ticks": 2,
+        "max_ticks": 7,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 98
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5154320987654321,
+        "correct_bytes": 0,
+        "avg_ticks": 2.3209876543209877,
+        "median_ticks": 2,
+        "max_ticks": 6,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 99
+      }
+    ],
+    "anna": [
+      {
+        "n": 81,
+        "hit_rate": 0.5509259259259259,
+        "correct_bytes": 7,
+        "avg_ticks": 1.5185185185185186,
+        "median_ticks": 1,
+        "max_ticks": 4,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 0
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5709876543209876,
+        "correct_bytes": 6,
+        "avg_ticks": 1.382716049382716,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 1
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5447530864197531,
+        "correct_bytes": 5,
+        "avg_ticks": 99.92592592592592,
+        "median_ticks": 1,
+        "max_ticks": 1000,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 73,
+          "Tick cap reached": 8
+        },
+        "seed": 2
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5370370370370371,
+        "correct_bytes": 4,
+        "avg_ticks": 1.5555555555555556,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 3
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.529320987654321,
+        "correct_bytes": 0,
+        "avg_ticks": 1.3950617283950617,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 4
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5447530864197531,
+        "correct_bytes": 0,
+        "avg_ticks": 1.617283950617284,
+        "median_ticks": 1,
+        "max_ticks": 4,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 5
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5740740740740741,
+        "correct_bytes": 3,
+        "avg_ticks": 1.3209876543209877,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 6
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.6080246913580247,
+        "correct_bytes": 7,
+        "avg_ticks": 1.5061728395061729,
+        "median_ticks": 1,
+        "max_ticks": 4,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 7
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5324074074074074,
+        "correct_bytes": 3,
+        "avg_ticks": 63.123456790123456,
+        "median_ticks": 1,
+        "max_ticks": 1000,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 76,
+          "Tick cap reached": 5
+        },
+        "seed": 8
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5817901234567902,
+        "correct_bytes": 8,
+        "avg_ticks": 1.5061728395061729,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 9
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.529320987654321,
+        "correct_bytes": 0,
+        "avg_ticks": 1.5185185185185186,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 10
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.6095679012345679,
+        "correct_bytes": 9,
+        "avg_ticks": 1.5802469135802468,
+        "median_ticks": 1,
+        "max_ticks": 4,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 11
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5771604938271605,
+        "correct_bytes": 6,
+        "avg_ticks": 26.19753086419753,
+        "median_ticks": 1,
+        "max_ticks": 1000,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 79,
+          "Tick cap reached": 2
+        },
+        "seed": 12
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5601851851851852,
+        "correct_bytes": 0,
+        "avg_ticks": 1.4814814814814814,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 13
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5833333333333334,
+        "correct_bytes": 6,
+        "avg_ticks": 1.5185185185185186,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 14
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5277777777777778,
+        "correct_bytes": 0,
+        "avg_ticks": 1.4320987654320987,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 15
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5617283950617284,
+        "correct_bytes": 4,
+        "avg_ticks": 1.4814814814814814,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 16
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5354938271604939,
+        "correct_bytes": 1,
+        "avg_ticks": 26.19753086419753,
+        "median_ticks": 1,
+        "max_ticks": 1000,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 79,
+          "Tick cap reached": 2
+        },
+        "seed": 17
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5601851851851852,
+        "correct_bytes": 7,
+        "avg_ticks": 1.5925925925925926,
+        "median_ticks": 1,
+        "max_ticks": 4,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 18
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5895061728395061,
+        "correct_bytes": 4,
+        "avg_ticks": 1.3333333333333333,
+        "median_ticks": 1,
+        "max_ticks": 4,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 19
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5864197530864198,
+        "correct_bytes": 7,
+        "avg_ticks": 13.962962962962964,
+        "median_ticks": 1,
+        "max_ticks": 1000,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 80,
+          "Tick cap reached": 1
+        },
+        "seed": 20
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5540123456790124,
+        "correct_bytes": 8,
+        "avg_ticks": 1.4938271604938271,
+        "median_ticks": 1,
+        "max_ticks": 4,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 21
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5802469135802469,
+        "correct_bytes": 0,
+        "avg_ticks": 1.4197530864197532,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 22
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5231481481481481,
+        "correct_bytes": 1,
+        "avg_ticks": 1.5061728395061729,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 23
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.566358024691358,
+        "correct_bytes": 7,
+        "avg_ticks": 1.3333333333333333,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 24
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5138888888888888,
+        "correct_bytes": 0,
+        "avg_ticks": 1.3703703703703705,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 25
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5385802469135802,
+        "correct_bytes": 0,
+        "avg_ticks": 1.5802469135802468,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 26
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5277777777777778,
+        "correct_bytes": 0,
+        "avg_ticks": 1.5061728395061729,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 27
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5756172839506173,
+        "correct_bytes": 7,
+        "avg_ticks": 26.098765432098766,
+        "median_ticks": 1,
+        "max_ticks": 1000,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 79,
+          "Tick cap reached": 2
+        },
+        "seed": 28
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5432098765432098,
+        "correct_bytes": 5,
+        "avg_ticks": 13.864197530864198,
+        "median_ticks": 1,
+        "max_ticks": 1000,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 80,
+          "Tick cap reached": 1
+        },
+        "seed": 29
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5370370370370371,
+        "correct_bytes": 0,
+        "avg_ticks": 1.4197530864197532,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 30
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5632716049382716,
+        "correct_bytes": 6,
+        "avg_ticks": 1.4567901234567902,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 31
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5756172839506173,
+        "correct_bytes": 7,
+        "avg_ticks": 1.4197530864197532,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 32
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5401234567901234,
+        "correct_bytes": 0,
+        "avg_ticks": 1.4567901234567902,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 33
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5324074074074074,
+        "correct_bytes": 0,
+        "avg_ticks": 1.4320987654320987,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 34
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5462962962962963,
+        "correct_bytes": 5,
+        "avg_ticks": 1.5555555555555556,
+        "median_ticks": 1,
+        "max_ticks": 4,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 35
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5632716049382716,
+        "correct_bytes": 8,
+        "avg_ticks": 1.6666666666666667,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 36
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5416666666666666,
+        "correct_bytes": 0,
+        "avg_ticks": 1.5679012345679013,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 37
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5308641975308642,
+        "correct_bytes": 0,
+        "avg_ticks": 1.3703703703703705,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 38
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5401234567901234,
+        "correct_bytes": 4,
+        "avg_ticks": 1.5185185185185186,
+        "median_ticks": 1,
+        "max_ticks": 4,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 39
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5339506172839507,
+        "correct_bytes": 0,
+        "avg_ticks": 1.4197530864197532,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 40
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5679012345679012,
+        "correct_bytes": 6,
+        "avg_ticks": 1.6419753086419753,
+        "median_ticks": 1,
+        "max_ticks": 4,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 41
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5648148148148148,
+        "correct_bytes": 1,
+        "avg_ticks": 1.4567901234567902,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 42
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5216049382716049,
+        "correct_bytes": 0,
+        "avg_ticks": 1.5679012345679013,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 43
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5709876543209876,
+        "correct_bytes": 5,
+        "avg_ticks": 1.4567901234567902,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 44
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5385802469135802,
+        "correct_bytes": 7,
+        "avg_ticks": 1.5308641975308641,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 45
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5123456790123457,
+        "correct_bytes": 1,
+        "avg_ticks": 1.4074074074074074,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 46
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5447530864197531,
+        "correct_bytes": 0,
+        "avg_ticks": 1.4691358024691359,
+        "median_ticks": 1,
+        "max_ticks": 4,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 47
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5324074074074074,
+        "correct_bytes": 0,
+        "avg_ticks": 1.4074074074074074,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 48
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5601851851851852,
+        "correct_bytes": 8,
+        "avg_ticks": 1.6296296296296295,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 49
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5432098765432098,
+        "correct_bytes": 0,
+        "avg_ticks": 1.4320987654320987,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 50
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5648148148148148,
+        "correct_bytes": 6,
+        "avg_ticks": 13.728395061728396,
+        "median_ticks": 1,
+        "max_ticks": 1000,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 80,
+          "Tick cap reached": 1
+        },
+        "seed": 51
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5216049382716049,
+        "correct_bytes": 0,
+        "avg_ticks": 1.6419753086419753,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 52
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5,
+        "correct_bytes": 1,
+        "avg_ticks": 1.2222222222222223,
+        "median_ticks": 1,
+        "max_ticks": 2,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 53
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5941358024691358,
+        "correct_bytes": 9,
+        "avg_ticks": 1.3580246913580247,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 54
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5694444444444444,
+        "correct_bytes": 5,
+        "avg_ticks": 1.4444444444444444,
+        "median_ticks": 1,
+        "max_ticks": 2,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 55
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.4660493827160494,
+        "correct_bytes": 0,
+        "avg_ticks": 26.049382716049383,
+        "median_ticks": 1,
+        "max_ticks": 1000,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 79,
+          "Tick cap reached": 2
+        },
+        "seed": 56
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5632716049382716,
+        "correct_bytes": 8,
+        "avg_ticks": 1.4814814814814814,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 57
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.6111111111111112,
+        "correct_bytes": 9,
+        "avg_ticks": 1.5185185185185186,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 58
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5817901234567902,
+        "correct_bytes": 7,
+        "avg_ticks": 1.6049382716049383,
+        "median_ticks": 1,
+        "max_ticks": 4,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 59
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5632716049382716,
+        "correct_bytes": 7,
+        "avg_ticks": 1.4197530864197532,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 60
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5632716049382716,
+        "correct_bytes": 6,
+        "avg_ticks": 13.876543209876543,
+        "median_ticks": 1,
+        "max_ticks": 1000,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 80,
+          "Tick cap reached": 1
+        },
+        "seed": 61
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5694444444444444,
+        "correct_bytes": 7,
+        "avg_ticks": 1.5555555555555556,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 62
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5648148148148148,
+        "correct_bytes": 5,
+        "avg_ticks": 1.5925925925925926,
+        "median_ticks": 1,
+        "max_ticks": 4,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 63
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5524691358024691,
+        "correct_bytes": 5,
+        "avg_ticks": 1.5432098765432098,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 64
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5246913580246914,
+        "correct_bytes": 0,
+        "avg_ticks": 1.5432098765432098,
+        "median_ticks": 1,
+        "max_ticks": 4,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 65
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5277777777777778,
+        "correct_bytes": 1,
+        "avg_ticks": 1.5432098765432098,
+        "median_ticks": 1,
+        "max_ticks": 4,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 66
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5262345679012346,
+        "correct_bytes": 0,
+        "avg_ticks": 1.5802469135802468,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 67
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5015432098765432,
+        "correct_bytes": 0,
+        "avg_ticks": 1.345679012345679,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 68
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5632716049382716,
+        "correct_bytes": 8,
+        "avg_ticks": 1.4691358024691359,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 69
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.625,
+        "correct_bytes": 5,
+        "avg_ticks": 1.4938271604938271,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 70
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5324074074074074,
+        "correct_bytes": 1,
+        "avg_ticks": 26.037037037037038,
+        "median_ticks": 1,
+        "max_ticks": 1000,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 79,
+          "Tick cap reached": 2
+        },
+        "seed": 71
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5493827160493827,
+        "correct_bytes": 3,
+        "avg_ticks": 1.4938271604938271,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 72
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5370370370370371,
+        "correct_bytes": 0,
+        "avg_ticks": 1.5432098765432098,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 73
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5648148148148148,
+        "correct_bytes": 6,
+        "avg_ticks": 1.4197530864197532,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 74
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.566358024691358,
+        "correct_bytes": 5,
+        "avg_ticks": 1.345679012345679,
+        "median_ticks": 1,
+        "max_ticks": 4,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 75
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5447530864197531,
+        "correct_bytes": 4,
+        "avg_ticks": 1.5925925925925926,
+        "median_ticks": 1,
+        "max_ticks": 4,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 76
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5555555555555556,
+        "correct_bytes": 3,
+        "avg_ticks": 1.4567901234567902,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 77
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.566358024691358,
+        "correct_bytes": 6,
+        "avg_ticks": 1.4320987654320987,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 78
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5617283950617284,
+        "correct_bytes": 3,
+        "avg_ticks": 1.2222222222222223,
+        "median_ticks": 1,
+        "max_ticks": 2,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 79
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.6126543209876543,
+        "correct_bytes": 3,
+        "avg_ticks": 1.3580246913580247,
+        "median_ticks": 1,
+        "max_ticks": 4,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 80
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5416666666666666,
+        "correct_bytes": 0,
+        "avg_ticks": 1.5802469135802468,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 81
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5709876543209876,
+        "correct_bytes": 7,
+        "avg_ticks": 1.4814814814814814,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 82
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5324074074074074,
+        "correct_bytes": 1,
+        "avg_ticks": 1.5308641975308641,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 83
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5432098765432098,
+        "correct_bytes": 3,
+        "avg_ticks": 1.4444444444444444,
+        "median_ticks": 1,
+        "max_ticks": 2,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 84
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5648148148148148,
+        "correct_bytes": 5,
+        "avg_ticks": 1.5061728395061729,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 85
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.558641975308642,
+        "correct_bytes": 5,
+        "avg_ticks": 1.3333333333333333,
+        "median_ticks": 1,
+        "max_ticks": 4,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 86
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5632716049382716,
+        "correct_bytes": 8,
+        "avg_ticks": 1.4691358024691359,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 87
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5740740740740741,
+        "correct_bytes": 6,
+        "avg_ticks": 1.6666666666666667,
+        "median_ticks": 1,
+        "max_ticks": 4,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 88
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5308641975308642,
+        "correct_bytes": 0,
+        "avg_ticks": 1.4197530864197532,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 89
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5432098765432098,
+        "correct_bytes": 1,
+        "avg_ticks": 1.4691358024691359,
+        "median_ticks": 1,
+        "max_ticks": 5,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 90
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.6064814814814815,
+        "correct_bytes": 9,
+        "avg_ticks": 1.5679012345679013,
+        "median_ticks": 1,
+        "max_ticks": 4,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 91
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5324074074074074,
+        "correct_bytes": 0,
+        "avg_ticks": 1.5802469135802468,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 92
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5632716049382716,
+        "correct_bytes": 8,
+        "avg_ticks": 1.5802469135802468,
+        "median_ticks": 1,
+        "max_ticks": 4,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 93
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5401234567901234,
+        "correct_bytes": 3,
+        "avg_ticks": 50.69135802469136,
+        "median_ticks": 1,
+        "max_ticks": 1000,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 77,
+          "Tick cap reached": 4
+        },
+        "seed": 94
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5756172839506173,
+        "correct_bytes": 6,
+        "avg_ticks": 1.5185185185185186,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 95
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5354938271604939,
+        "correct_bytes": 0,
+        "avg_ticks": 1.4691358024691359,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 96
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5308641975308642,
+        "correct_bytes": 0,
+        "avg_ticks": 1.3703703703703705,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 97
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5324074074074074,
+        "correct_bytes": 0,
+        "avg_ticks": 1.4938271604938271,
+        "median_ticks": 1,
+        "max_ticks": 3,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 81
+        },
+        "seed": 98
+      },
+      {
+        "n": 81,
+        "hit_rate": 0.5709876543209876,
+        "correct_bytes": 9,
+        "avg_ticks": 62.839506172839506,
+        "median_ticks": 1,
+        "max_ticks": 1000,
+        "end_reasons": {
+          "All 'output' neurons got 'non-zero' state": 76,
+          "Tick cap reached": 5
+        },
+        "seed": 99
+      }
+    ]
+  }
+}

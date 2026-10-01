@@ -1,0 +1,43 @@
+---
+title: Research Motivation
+description: Why this research started, which question it asked at first, and how the question changed after the September 2026 re-check.
+---
+
+# Research Motivation
+
+<Callout type="info" title="Updated, September 2026">
+This page records why the research started. Our first question, whether Bitcoin and Qubic share hidden design links, did not lead to any finding that survived our re-check. The question we pursue now is what the Anna Matrix is and how it was produced. See [Corrections, September 2026](/docs/03-results/35-corrections-september-2026) and [where the Anna Matrix comes from](/docs/03-results/36-where-the-anna-matrix-comes-from).
+</Callout>
+
+## Where it started
+
+### The Patoshi pattern
+
+Bitcoin's early mining history contains a well-known pattern. In 2013 Sergio Demian Lerner described a set of early blocks that he attributed to a single dominant miner, often called "Patoshi", with an estimated total of about 1.1 million BTC. The attribution rests on regularities in the block data, such as the nonce ranges used. It is itself an inference, not proof of who the miner was.
+
+### The Anna Matrix
+
+In 2025 members of the Qubic community, among them our team, began to collect the answers of the @anna_aigarth bot on X to queries of the form `x+y=?`. Typed into a 128 x 128 table, these answers became the "Anna Matrix". At the time the table was often described as something found in Qubic's code or as a set of trained weights. Neither is true: it is a table of bot replies, compiled by hand.
+
+The table does have striking structure, most of all an almost exact mirror symmetry. Together with the Patoshi pattern and Come-from-Beyond's cryptic remarks, that structure led many people, including us, to ask whether Bitcoin and Qubic were connected by design.
+
+## The first question, and what came of it
+
+We started with two hypotheses:
+
+- **H0:** apparent links between early Bitcoin data and the Anna Matrix are coincidences, produced by common primitives, similar conventions and the sheer number of patterns one can search for.
+- **H1:** the links are intentional and encode cross-references between the projects.
+
+For a long time we reported results in favour of H1. The September 2026 re-check showed that these results came from wrong chance models, from patterns chosen after looking at the data, and in several cases from our own errors in typing up the table. Under fair chance models the patterns people point to occur about as often as expected. We found no evidence for H1. The details are on the [corrections page](/docs/03-results/35-corrections-september-2026), and how the errors arose is described in [how the earlier claims arose](/docs/04-discussion/06-how-the-earlier-claims-arose).
+
+## The question now
+
+What remains is a concrete and testable question: **what kind of program produced the Anna Matrix, and how was it trained?** The public Aigarth code contains a unit with exactly the bot's input and output format, which we can now simulate exactly. That makes it possible to test ideas about the bot with protocols fixed in advance, controls that can fail, and results that anyone can recompute. A second line of work looks at the current Anna programs, which Come-from-Beyond trains on Bitcoin price data, and asks whether they predict anything on data they have not seen.
+
+## Principles
+
+- We report negative results as fully as positive ones.
+- Tests are fixed before they run, and each has a control that could fail.
+- Every number should be reproducible from public data, and every quote carries a message ID.
+- We make no claims about the identity of pseudonymous people and do not publish information about private individuals.
+- Nothing in this research is investment advice.

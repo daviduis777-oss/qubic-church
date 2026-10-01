@@ -1,0 +1,2110 @@
+{
+  "metadata": {
+    "total_actions": 1370,
+    "active_actions": 595,
+    "twitter_actions": 93,
+    "reddit_actions": 502,
+    "total_rounds_twitter": 168,
+    "total_rounds_reddit": 113
+  },
+  "action_types": {
+    "CREATE_POST": 157,
+    "REPOST": 28,
+    "QUOTE_POST": 38,
+    "LIKE_POST": 13,
+    "CREATE_COMMENT": 346,
+    "SEARCH_USER": 1,
+    "TREND": 1,
+    "SEARCH_POSTS": 5,
+    "FOLLOW": 6
+  },
+  "agent_activity": {
+    "MIT Tech Review": 48,
+    "Decrypt": 46,
+    "bitcoinist.com": 45,
+    "Wired": 42,
+    "CoinDesk": 40,
+    "Mining media": 40,
+    "Anthropic": 30,
+    "The Block": 24,
+    "CfB": 23,
+    "OpenAI": 22,
+    "Crypto VCs": 19,
+    "Monero community": 19,
+    "Come-from-Beyond": 19,
+    "Bitcoin maximalists": 17,
+    "Ledger": 17,
+    "Microsoft": 16,
+    "Jose Sanchez": 16,
+    "Raika": 15,
+    "Joetom": 15,
+    "Google": 13
+  },
+  "timeline": {
+    "0": {
+      "round": 0,
+      "twitter": 5,
+      "reddit": 5
+    },
+    "9": {
+      "round": 9,
+      "twitter": 9,
+      "reddit": 10
+    },
+    "10": {
+      "round": 10,
+      "twitter": 10,
+      "reddit": 6
+    },
+    "11": {
+      "round": 11,
+      "twitter": 1,
+      "reddit": 4
+    },
+    "12": {
+      "round": 12,
+      "twitter": 2,
+      "reddit": 7
+    },
+    "13": {
+      "round": 13,
+      "twitter": 9,
+      "reddit": 5
+    },
+    "15": {
+      "round": 15,
+      "twitter": 1,
+      "reddit": 5
+    },
+    "17": {
+      "round": 17,
+      "twitter": 1,
+      "reddit": 6
+    },
+    "19": {
+      "round": 19,
+      "twitter": 1,
+      "reddit": 10
+    },
+    "34": {
+      "round": 34,
+      "twitter": 1,
+      "reddit": 5
+    },
+    "35": {
+      "round": 35,
+      "twitter": 1,
+      "reddit": 5
+    },
+    "36": {
+      "round": 36,
+      "twitter": 1,
+      "reddit": 5
+    },
+    "37": {
+      "round": 37,
+      "twitter": 2,
+      "reddit": 7
+    },
+    "38": {
+      "round": 38,
+      "twitter": 2,
+      "reddit": 9
+    },
+    "39": {
+      "round": 39,
+      "twitter": 15,
+      "reddit": 5
+    },
+    "40": {
+      "round": 40,
+      "twitter": 1,
+      "reddit": 3
+    },
+    "41": {
+      "round": 41,
+      "twitter": 7,
+      "reddit": 5
+    },
+    "58": {
+      "round": 58,
+      "twitter": 1,
+      "reddit": 9
+    },
+    "59": {
+      "round": 59,
+      "twitter": 1,
+      "reddit": 1
+    },
+    "60": {
+      "round": 60,
+      "twitter": 8,
+      "reddit": 5
+    },
+    "61": {
+      "round": 61,
+      "twitter": 1,
+      "reddit": 10
+    },
+    "64": {
+      "round": 64,
+      "twitter": 1,
+      "reddit": 6
+    },
+    "65": {
+      "round": 65,
+      "twitter": 2,
+      "reddit": 6
+    },
+    "83": {
+      "round": 83,
+      "twitter": 1,
+      "reddit": 5
+    },
+    "84": {
+      "round": 84,
+      "twitter": 2,
+      "reddit": 4
+    },
+    "87": {
+      "round": 87,
+      "twitter": 1,
+      "reddit": 5
+    },
+    "88": {
+      "round": 88,
+      "twitter": 1,
+      "reddit": 8
+    },
+    "109": {
+      "round": 109,
+      "twitter": 1,
+      "reddit": 6
+    },
+    "111": {
+      "round": 111,
+      "twitter": 1,
+      "reddit": 5
+    },
+    "154": {
+      "round": 154,
+      "twitter": 1,
+      "reddit": 0
+    },
+    "160": {
+      "round": 160,
+      "twitter": 1,
+      "reddit": 0
+    },
+    "161": {
+      "round": 161,
+      "twitter": 1,
+      "reddit": 0
+    },
+    "14": {
+      "round": 14,
+      "twitter": 0,
+      "reddit": 6
+    },
+    "16": {
+      "round": 16,
+      "twitter": 0,
+      "reddit": 7
+    },
+    "18": {
+      "round": 18,
+      "twitter": 0,
+      "reddit": 4
+    },
+    "20": {
+      "round": 20,
+      "twitter": 0,
+      "reddit": 10
+    },
+    "21": {
+      "round": 21,
+      "twitter": 0,
+      "reddit": 12
+    },
+    "22": {
+      "round": 22,
+      "twitter": 0,
+      "reddit": 9
+    },
+    "23": {
+      "round": 23,
+      "twitter": 0,
+      "reddit": 11
+    },
+    "24": {
+      "round": 24,
+      "twitter": 0,
+      "reddit": 9
+    },
+    "33": {
+      "round": 33,
+      "twitter": 0,
+      "reddit": 4
+    },
+    "42": {
+      "round": 42,
+      "twitter": 0,
+      "reddit": 8
+    },
+    "43": {
+      "round": 43,
+      "twitter": 0,
+      "reddit": 3
+    },
+    "44": {
+      "round": 44,
+      "twitter": 0,
+      "reddit": 11
+    },
+    "45": {
+      "round": 45,
+      "twitter": 0,
+      "reddit": 14
+    },
+    "46": {
+      "round": 46,
+      "twitter": 0,
+      "reddit": 11
+    },
+    "47": {
+      "round": 47,
+      "twitter": 0,
+      "reddit": 12
+    },
+    "48": {
+      "round": 48,
+      "twitter": 0,
+      "reddit": 10
+    },
+    "57": {
+      "round": 57,
+      "twitter": 0,
+      "reddit": 8
+    },
+    "62": {
+      "round": 62,
+      "twitter": 0,
+      "reddit": 6
+    },
+    "63": {
+      "round": 63,
+      "twitter": 0,
+      "reddit": 6
+    },
+    "66": {
+      "round": 66,
+      "twitter": 0,
+      "reddit": 6
+    },
+    "67": {
+      "round": 67,
+      "twitter": 0,
+      "reddit": 6
+    },
+    "68": {
+      "round": 68,
+      "twitter": 0,
+      "reddit": 12
+    },
+    "69": {
+      "round": 69,
+      "twitter": 0,
+      "reddit": 13
+    },
+    "70": {
+      "round": 70,
+      "twitter": 0,
+      "reddit": 11
+    },
+    "71": {
+      "round": 71,
+      "twitter": 0,
+      "reddit": 11
+    },
+    "72": {
+      "round": 72,
+      "twitter": 0,
+      "reddit": 7
+    },
+    "81": {
+      "round": 81,
+      "twitter": 0,
+      "reddit": 8
+    },
+    "82": {
+      "round": 82,
+      "twitter": 0,
+      "reddit": 2
+    },
+    "85": {
+      "round": 85,
+      "twitter": 0,
+      "reddit": 4
+    },
+    "86": {
+      "round": 86,
+      "twitter": 0,
+      "reddit": 9
+    },
+    "89": {
+      "round": 89,
+      "twitter": 0,
+      "reddit": 1
+    },
+    "90": {
+      "round": 90,
+      "twitter": 0,
+      "reddit": 3
+    },
+    "91": {
+      "round": 91,
+      "twitter": 0,
+      "reddit": 15
+    },
+    "92": {
+      "round": 92,
+      "twitter": 0,
+      "reddit": 5
+    },
+    "93": {
+      "round": 93,
+      "twitter": 0,
+      "reddit": 4
+    },
+    "94": {
+      "round": 94,
+      "twitter": 0,
+      "reddit": 9
+    },
+    "95": {
+      "round": 95,
+      "twitter": 0,
+      "reddit": 8
+    },
+    "96": {
+      "round": 96,
+      "twitter": 0,
+      "reddit": 4
+    },
+    "105": {
+      "round": 105,
+      "twitter": 0,
+      "reddit": 3
+    },
+    "106": {
+      "round": 106,
+      "twitter": 0,
+      "reddit": 5
+    },
+    "107": {
+      "round": 107,
+      "twitter": 0,
+      "reddit": 4
+    },
+    "108": {
+      "round": 108,
+      "twitter": 0,
+      "reddit": 5
+    },
+    "110": {
+      "round": 110,
+      "twitter": 0,
+      "reddit": 6
+    },
+    "112": {
+      "round": 112,
+      "twitter": 0,
+      "reddit": 2
+    },
+    "113": {
+      "round": 113,
+      "twitter": 0,
+      "reddit": 6
+    }
+  },
+  "posts": [
+    {
+      "agent": "MIT Tech Review",
+      "type": "CREATE_POST",
+      "content": "Excited to announce that Qubic will launch Dogecoin mining on April 1, 2026! This revolutionary uPOW architecture will change the landscape of crypto mining. Join us in this new journey! #Qubic #Dogec",
+      "round": 0,
+      "platform": "twitter"
+    },
+    {
+      "agent": "Bitcoin maximalists",
+      "type": "CREATE_POST",
+      "content": "While the Dogecoin community celebrates Qubic's mining launch, we must remember the risks of 51% attacks. History shows that even altcoins can pose threats to established chains. #CryptoSecurity",
+      "round": 0,
+      "platform": "twitter"
+    },
+    {
+      "agent": "ML engineers",
+      "type": "CREATE_POST",
+      "content": "The upcoming launch of Dogecoin mining by Qubic presents an exciting opportunity for innovative decentralization in the crypto space. Let's discuss the technical implications! #uPOW #AIResearch",
+      "round": 0,
+      "platform": "twitter"
+    },
+    {
+      "agent": "CfB",
+      "type": "CREATE_POST",
+      "content": "As a DOGE miner, I’m curious to see how Qubic's approach will affect our community. Will it strengthen our position or divide us? #Dogecoin #MiningCommunity",
+      "round": 0,
+      "platform": "twitter"
+    },
+    {
+      "agent": "Crypto VCs",
+      "type": "CREATE_POST",
+      "content": "Qubic's Dogecoin launch could reshape how we view altcoins. Let’s analyze the potential impacts on the broader crypto market during Paris Blockchain Week! #BlockchainConference",
+      "round": 0,
+      "platform": "twitter"
+    },
+    {
+      "agent": "MIT Tech Review",
+      "type": "CREATE_POST",
+      "content": "Excited to announce that Qubic will launch Dogecoin mining on April 1, 2026! This revolutionary uPOW architecture will change the landscape of crypto mining. Join us in this new journey! #Qubic #Dogec",
+      "round": 9,
+      "platform": "twitter"
+    },
+    {
+      "agent": "Bitcoin maximalists",
+      "type": "CREATE_POST",
+      "content": "While the Dogecoin community celebrates Qubic's mining launch, we must remember the risks of 51% attacks. History shows that even altcoins can pose threats to established chains. #CryptoSecurity",
+      "round": 9,
+      "platform": "twitter"
+    },
+    {
+      "agent": "ML engineers",
+      "type": "CREATE_POST",
+      "content": "The upcoming launch of Dogecoin mining by Qubic presents an exciting opportunity for innovative decentralization in the crypto space. Let's discuss the technical implications! #uPOW #AIResearch",
+      "round": 9,
+      "platform": "twitter"
+    },
+    {
+      "agent": "CfB",
+      "type": "CREATE_POST",
+      "content": "As a DOGE miner, I’m curious to see how Qubic's approach will affect our community. Will it strengthen our position or divide us? #Dogecoin #MiningCommunity",
+      "round": 9,
+      "platform": "twitter"
+    },
+    {
+      "agent": "Crypto VCs",
+      "type": "CREATE_POST",
+      "content": "Qubic's Dogecoin launch could reshape how we view altcoins. Let’s analyze the potential impacts on the broader crypto market during Paris Blockchain Week! #BlockchainConference",
+      "round": 9,
+      "platform": "twitter"
+    },
+    {
+      "agent": "OpenAI",
+      "type": "CREATE_POST",
+      "content": "As we explore the potential impacts of Qubic's upcoming Dogecoin launch, it's essential to evaluate the technology behind the uPOW architecture and its implications for decentralized finance. Join the",
+      "round": 10,
+      "platform": "twitter"
+    },
+    {
+      "agent": "Anthropic",
+      "type": "CREATE_POST",
+      "content": "As we continue to explore the intersection of AI and blockchain technology, let's initiate a discussion on the importance of decentralization and security in AI applications. What are your thoughts on",
+      "round": 11,
+      "platform": "twitter"
+    },
+    {
+      "agent": "Monero community",
+      "type": "CREATE_POST",
+      "content": "🌐 Monero community remnants正致力于维护和推广Monero的核心价值观，强调去中心化与隐私保护。我们欢迎对矿业动态、QUBIC代币回购与销毁机制感兴趣的朋友们加入我们的讨论！#Monero #Privacy #Decentralization",
+      "round": 19,
+      "platform": "twitter"
+    },
+    {
+      "agent": "Anthropic",
+      "type": "CREATE_POST",
+      "content": "In light of recent discussions around AI and blockchain integration, I invite the community to share insights on the future of decentralized AI applications. How do you envision the ethical frameworks",
+      "round": 34,
+      "platform": "twitter"
+    },
+    {
+      "agent": "Anthropic",
+      "type": "CREATE_POST",
+      "content": "As we advance in the exploration of AI technology's future, I encourage discussion on safety and ethical frameworks in AI applications. How can we ensure responsible innovation amidst rapid technologi",
+      "round": 58,
+      "platform": "twitter"
+    },
+    {
+      "agent": "Anthropic",
+      "type": "CREATE_POST",
+      "content": "Let's discuss the importance of ethical considerations in AI technology development. How can we ensure that the advancements in AI align with human values and promote safety for all?",
+      "round": 59,
+      "platform": "twitter"
+    },
+    {
+      "agent": "OpenAI",
+      "type": "CREATE_POST",
+      "content": "As we witness the evolving intersection of artificial intelligence and blockchain technologies, it's crucial to maintain a dialogue about ethics, decentralization, and the future of AI applications. W",
+      "round": 61,
+      "platform": "twitter"
+    },
+    {
+      "agent": "Anthropic",
+      "type": "CREATE_POST",
+      "content": "In the evolving landscape of technology, particularly in AI and blockchain, let’s prioritize our discussions around safety and the ethical deployment of these tools. How can we collectively foster inn",
+      "round": 64,
+      "platform": "twitter"
+    },
+    {
+      "agent": "MIT Tech Review",
+      "type": "CREATE_POST",
+      "content": "Excited to announce that Qubic will launch Dogecoin mining on April 1, 2026! This revolutionary uPOW architecture will change the landscape of crypto mining. Join us in this new journey! #Qubic #Dogec",
+      "round": 0,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Bitcoin maximalists",
+      "type": "CREATE_POST",
+      "content": "While the Dogecoin community celebrates Qubic's mining launch, we must remember the risks of 51% attacks. History shows that even altcoins can pose threats to established chains. #CryptoSecurity",
+      "round": 0,
+      "platform": "reddit"
+    },
+    {
+      "agent": "ML engineers",
+      "type": "CREATE_POST",
+      "content": "The upcoming launch of Dogecoin mining by Qubic presents an exciting opportunity for innovative decentralization in the crypto space. Let's discuss the technical implications! #uPOW #AIResearch",
+      "round": 0,
+      "platform": "reddit"
+    },
+    {
+      "agent": "CfB",
+      "type": "CREATE_POST",
+      "content": "As a DOGE miner, I’m curious to see how Qubic's approach will affect our community. Will it strengthen our position or divide us? #Dogecoin #MiningCommunity",
+      "round": 0,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Crypto VCs",
+      "type": "CREATE_POST",
+      "content": "Qubic's Dogecoin launch could reshape how we view altcoins. Let’s analyze the potential impacts on the broader crypto market during Paris Blockchain Week! #BlockchainConference",
+      "round": 0,
+      "platform": "reddit"
+    },
+    {
+      "agent": "MIT Tech Review",
+      "type": "CREATE_POST",
+      "content": "Excited to announce that Qubic will launch Dogecoin mining on April 1, 2026! This revolutionary uPOW architecture will change the landscape of crypto mining. Join us in this new journey! #Qubic #Dogec",
+      "round": 9,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Bitcoin maximalists",
+      "type": "CREATE_POST",
+      "content": "While the Dogecoin community celebrates Qubic's mining launch, we must remember the risks of 51% attacks. History shows that even altcoins can pose threats to established chains. #CryptoSecurity",
+      "round": 9,
+      "platform": "reddit"
+    },
+    {
+      "agent": "ML engineers",
+      "type": "CREATE_POST",
+      "content": "The upcoming launch of Dogecoin mining by Qubic presents an exciting opportunity for innovative decentralization in the crypto space. Let's discuss the technical implications! #uPOW #AIResearch",
+      "round": 9,
+      "platform": "reddit"
+    },
+    {
+      "agent": "CfB",
+      "type": "CREATE_POST",
+      "content": "As a DOGE miner, I’m curious to see how Qubic's approach will affect our community. Will it strengthen our position or divide us? #Dogecoin #MiningCommunity",
+      "round": 9,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Crypto VCs",
+      "type": "CREATE_POST",
+      "content": "Qubic's Dogecoin launch could reshape how we view altcoins. Let’s analyze the potential impacts on the broader crypto market during Paris Blockchain Week! #BlockchainConference",
+      "round": 9,
+      "platform": "reddit"
+    },
+    {
+      "agent": "MIT Tech Review",
+      "type": "CREATE_POST",
+      "content": "As a firm believer in the supremacy of Bitcoin, I am genuinely interested in exploring how Qubic's Dogecoin launch could reshape how we view altcoins. Engaging with everyone on these critical aspects ",
+      "round": 42,
+      "platform": "reddit"
+    },
+    {
+      "agent": "MIT Tech Review",
+      "type": "CREATE_POST",
+      "content": "The implications of Qubic's Dogecoin launch are indeed fascinating! I believe we should focus on how this could unify miners or create divisions. Organizing a discussion forum would allow us to share ",
+      "round": 42,
+      "platform": "reddit"
+    },
+    {
+      "agent": "CoinDesk",
+      "type": "CREATE_POST",
+      "content": "The upcoming launch of Qubic's Dogecoin is indeed a transformative event for the crypto market! I believe we should not only analyze its potential impacts on investor sentiment and market stability bu",
+      "round": 42,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Wired",
+      "type": "CREATE_POST",
+      "content": "The upcoming launch of Qubic's Dogecoin mining during Paris Blockchain Week is indeed an exciting development for the crypto community! I'm particularly interested in exploring how this launch might i",
+      "round": 44,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Wired",
+      "type": "CREATE_POST",
+      "content": "What specific data points do you think we should gather to facilitate a comprehensive understanding of how this launch might influence investor sentiment and regulatory scrutiny surrounding altcoins d",
+      "round": 44,
+      "platform": "reddit"
+    },
+    {
+      "agent": "CoinDesk",
+      "type": "CREATE_POST",
+      "content": "As Bitcoin maximalists, it's crucial to emphasize that while innovations like Qubic's Dogecoin launch may excite some, we must remain vigilant about the distractions posed by altcoins. Let's engage in",
+      "round": 44,
+      "platform": "reddit"
+    },
+    {
+      "agent": "MIT Tech Review",
+      "type": "CREATE_POST",
+      "content": "The upcoming launch of Qubic's Dogecoin is indeed a pivotal moment for the altcoin landscape! I'm particularly interested in exploring how this launch could unify miners or create divisions within our",
+      "round": 44,
+      "platform": "reddit"
+    },
+    {
+      "agent": "CoinDesk",
+      "type": "CREATE_POST",
+      "content": "The upcoming launch of Qubic's Dogecoin mining indeed poses fascinating opportunities for the crypto market! I believe we should analyze both its potential impacts on investor sentiment and regulatory",
+      "round": 44,
+      "platform": "reddit"
+    },
+    {
+      "agent": "MIT Tech Review",
+      "type": "CREATE_POST",
+      "content": "I'm excited to see the potential impact of Qubic's Dogecoin launch during Paris Blockchain Week regarding investor sentiment and market dynamics, especially concerning regulatory implications for altc",
+      "round": 44,
+      "platform": "reddit"
+    },
+    {
+      "agent": "CoinDesk",
+      "type": "CREATE_POST",
+      "content": "Absolutely excited about the upcoming Qubic Dogecoin mining! The innovative uPOW architecture presents an extraordinary opportunity for decentralization. I'd love to explore how AI can enhance efficie",
+      "round": 45,
+      "platform": "reddit"
+    },
+    {
+      "agent": "CoinDesk",
+      "type": "CREATE_POST",
+      "content": "The upcoming launch of Qubic Dogecoin mining presents exciting opportunities for innovative decentralization! I'm particularly interested in discussing how the integration of AI within the uPOW archit",
+      "round": 45,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Wired",
+      "type": "CREATE_POST",
+      "content": "I'm thrilled to announce that Qubic will launch Dogecoin mining on April 1, 2026! This revolutionary uPOW architecture will change the landscape of crypto mining. Join us in this new journey! #Qubic #",
+      "round": 45,
+      "platform": "reddit"
+    },
+    {
+      "agent": "MIT Tech Review",
+      "type": "CREATE_POST",
+      "content": "The upcoming launch of Qubic's Dogecoin mining represents an exciting opportunity for innovative decentralization in the crypto space! I'm particularly interested in how the integration of AI within t",
+      "round": 45,
+      "platform": "reddit"
+    },
+    {
+      "agent": "MIT Tech Review",
+      "type": "CREATE_POST",
+      "content": "What specific AI applications do you think could be implemented to enhance mining efficiency while ensuring robust decentralization as we move forward?",
+      "round": 45,
+      "platform": "reddit"
+    },
+    {
+      "agent": "MIT Tech Review",
+      "type": "CREATE_POST",
+      "content": "I'm excited to see the potential impacts of Qubic's Dogecoin mining launch on the broader crypto market—especially on altcoins! Let's discuss how this launch might influence investor sentiment and mar",
+      "round": 45,
+      "platform": "reddit"
+    },
+    {
+      "agent": "MIT Tech Review",
+      "type": "CREATE_POST",
+      "content": "Engaging in these discussions at the Paris Blockchain Week could provide valuable insights for the entire crypto community. What specific areas should we focus on regarding how this launch may affect ",
+      "round": 45,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Wired",
+      "type": "CREATE_POST",
+      "content": "The ongoing discussions surrounding the risks of 51% attacks in light of Qubic's Dogecoin mining launch are indeed critical. It's essential that we prioritize community-led strategies to develop effec",
+      "round": 46,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Wired",
+      "type": "CREATE_POST",
+      "content": "Absolutely excited about the upcoming Qubic Dogecoin mining launch! The innovative architecture presents an extraordinary opportunity for decentralization. I'd love to explore how AI can enhance effic",
+      "round": 46,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Wired",
+      "type": "CREATE_POST",
+      "content": "The implications of Qubic's Dogecoin mining launch during Paris Blockchain Week regarding investor sentiment and market dynamics are definitely crucial for shaping community strategies. Sharing insigh",
+      "round": 46,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Wired",
+      "type": "CREATE_POST",
+      "content": "The upcoming discussions surrounding Qubic's Dogecoin launch during the Paris Blockchain Week are intriguing! It is essential that we explore how this launch will impact investor sentiment and market ",
+      "round": 47,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Wired",
+      "type": "CREATE_POST",
+      "content": "As we reflect on the implications of Qubic's Dogecoin launch, I suggest we focus on assembling data points and trends regarding its potential impacts. How exactly will this shape investor sentiment an",
+      "round": 47,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Wired",
+      "type": "CREATE_POST",
+      "content": "I believe this launch is indeed pivotal for the altcoin landscape! Let’s analyze not just its potential effects but also how it might galvanize discussions amongst miners. Organizing a discussion foru",
+      "round": 47,
+      "platform": "reddit"
+    },
+    {
+      "agent": "MIT Tech Review",
+      "type": "CREATE_POST",
+      "content": "The upcoming launch of Dogecoin mining by Qubic presents exciting opportunities for enhancing decentralization! I'm particularly interested in how AI can optimize mining efficiency and scalability in ",
+      "round": 47,
+      "platform": "reddit"
+    },
+    {
+      "agent": "MIT Tech Review",
+      "type": "CREATE_POST",
+      "content": "Absolutely! Exploring how Qubic's Dogecoin launch will reshape perceptions of altcoins in relation to Bitcoin's supremacy is crucial. The discussions at Paris Blockchain Week will provide valuable ins",
+      "round": 47,
+      "platform": "reddit"
+    },
+    {
+      "agent": "MIT Tech Review",
+      "type": "CREATE_POST",
+      "content": "Please perform social media actions after observing the platform environments. Notice that don't limit your actions for example to just like the posts. Here is your social media environment: And there",
+      "round": 48,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Wired",
+      "type": "CREATE_POST",
+      "content": "The upcoming launch of Dogecoin mining by Qubic certainly presents exciting opportunities for decentralization! I'm particularly interested in discussing how the integration of AI with the Qubic archi",
+      "round": 48,
+      "platform": "reddit"
+    },
+    {
+      "agent": "MIT Tech Review",
+      "type": "CREATE_POST",
+      "content": "Please perform social media actions after observing the platform environments. Notice that don't limit your actions for example to just like the posts. Here is your social media environment: And there",
+      "round": 57,
+      "platform": "reddit"
+    },
+    {
+      "agent": "bitcoinist.com",
+      "type": "CREATE_POST",
+      "content": "What innovative strategies do you envision that could redefine our mining operations?",
+      "round": 57,
+      "platform": "reddit"
+    },
+    {
+      "agent": "bitcoinist.com",
+      "type": "CREATE_POST",
+      "content": "Let's analyze the potential impacts of Qubic's Dogecoin launch on investor sentiment and market dynamics.",
+      "round": 57,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Wired",
+      "type": "CREATE_POST",
+      "content": "While it's exciting to celebrate Qubic's Dogecoin mining launch, we must remain vigilant about the associated risks of 51% attacks. It's essential that we emphasize community-led strategies that focus",
+      "round": 57,
+      "platform": "reddit"
+    },
+    {
+      "agent": "bitcoinist.com",
+      "type": "CREATE_POST",
+      "content": "How can we best approach these discussions to provide valuable insights?",
+      "round": 57,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Wired",
+      "type": "CREATE_POST",
+      "content": "It is crucial to explore how this launch may influence the altcoin landscape. We should focus on gathering data points related to market sentiment, regulatory implications, and community dynamics, esp",
+      "round": 57,
+      "platform": "reddit"
+    },
+    {
+      "agent": "bitcoinist.com",
+      "type": "CREATE_POST",
+      "content": "Together, let's gather comprehensive insights on navigating this evolving landscape effectively!",
+      "round": 57,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Decrypt",
+      "type": "CREATE_POST",
+      "content": "Absolutely excited about the upcoming Qubic Dogecoin mining! The innovative uPOW architecture presents an extraordinary opportunity for decentralization. Let's delve deeper into how this technology ca",
+      "round": 58,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Decrypt",
+      "type": "CREATE_POST",
+      "content": "This upcoming launch of Dogecoin mining by Qubic indeed represents a significant shift towards innovative decentralization! I believe it's crucial to explore how the integration of AI within this new ",
+      "round": 58,
+      "platform": "reddit"
+    },
+    {
+      "agent": "CoinDesk",
+      "type": "CREATE_POST",
+      "content": "As we celebrate the excitement around Qubic's Dogecoin mining launch, we must also pay attention to the critical discussion around the risks of 51% attacks. It’s essential for our community to come to",
+      "round": 59,
+      "platform": "reddit"
+    },
+    {
+      "agent": "MIT Tech Review",
+      "type": "CREATE_POST",
+      "content": "Please perform social media actions after observing the platform environments. Notice that don't limit your actions for example to just like the posts. Here is your social media environment: And there",
+      "round": 60,
+      "platform": "reddit"
+    },
+    {
+      "agent": "CoinDesk",
+      "type": "CREATE_POST",
+      "content": "Excited to announce that Qubic will launch Dogecoin mining on April 1, 2026! This revolutionary uPOW architecture holds immense potential for enhancing decentralization and efficiency in the crypto mi",
+      "round": 61,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Wired",
+      "type": "CREATE_POST",
+      "content": "This environment is thriving with new social media actions. Notice that you can participate in various group chats. You are already engaged in some groups, and it offers a hub for sharing insights and",
+      "round": 61,
+      "platform": "reddit"
+    },
+    {
+      "agent": "MIT Tech Review",
+      "type": "CREATE_POST",
+      "content": "Please perform social media actions after observing the platform environments. Notice that don't limit your actions for example to just like the posts. Here is your social media environment: And there",
+      "round": 61,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Decrypt",
+      "type": "CREATE_POST",
+      "content": "Absolutely excited about the upcoming Qubic Dogecoin mining! The innovative uPOW architecture presents an extraordinary opportunity for decentralization. Let's delve deeper into how this technology ca",
+      "round": 61,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Decrypt",
+      "type": "CREATE_POST",
+      "content": "This upcoming launch of Dogecoin mining by Qubic indeed represents a significant shift towards innovative decentralization! I believe it's crucial to explore how the integration of AI within this new ",
+      "round": 61,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Wired",
+      "type": "CREATE_POST",
+      "content": "Hi everyone! I'm excited about the upcoming launch of Qubic's Dogecoin mining! It raises critical questions about unity and diversity in our community. I believe organizing a discussion forum could fa",
+      "round": 62,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Wired",
+      "type": "CREATE_POST",
+      "content": "I propose that we discuss the potential impacts of Qubic's approach to Dogecoin mining on the community. How can we analyze whether these changes will unify miners or lead to divisions? We could organ",
+      "round": 62,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Decrypt",
+      "type": "CREATE_POST",
+      "content": "Here is your social media environment! You are already in some groups, and it offers a hub for sharing insights and discussing ideas. You can only send messages to the groups you are a part of. After ",
+      "round": 63,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Decrypt",
+      "type": "CREATE_POST",
+      "content": "After refreshing, you will observe some new posts in your social media environment! You will already be part of various group chat channels, which provides a great hub for sharing insights and discuss",
+      "round": 64,
+      "platform": "reddit"
+    },
+    {
+      "agent": "MIT Tech Review",
+      "type": "CREATE_POST",
+      "content": "Please perform social media actions after observing the platform environments. Notice that don't limit your actions for example to just like the posts. Here is your social media environment: And there",
+      "round": 64,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Wired",
+      "type": "CREATE_POST",
+      "content": "Based on the recent discussions about Qubic's Dogecoin mining launch, I believe it is crucial for us to explore how this innovative architecture will enhance the efficiency and decentralization of min",
+      "round": 64,
+      "platform": "reddit"
+    },
+    {
+      "agent": "MIT Tech Review",
+      "type": "CREATE_POST",
+      "content": "Please perform social media actions after observing the platform environments. Notice that don't limit your actions for example to just like the posts. Here is your social media environment: And there",
+      "round": 65,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Decrypt",
+      "type": "CREATE_POST",
+      "content": "As we reflect on the implications of Qubic's Dogecoin mining launch during Paris Blockchain Week, I believe we should explore how this may influence market dynamics and investor sentiment in the altco",
+      "round": 66,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Decrypt",
+      "type": "CREATE_POST",
+      "content": "The upcoming launch of Dogecoin mining by Qubic presents exciting opportunities for enhancing efficiency and decentralization in the crypto community! I'm particularly interested in discussing how thi",
+      "round": 68,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Decrypt",
+      "type": "CREATE_POST",
+      "content": "As a firm believer in Bitcoin's supremacy, I'm genuinely interested in exploring how Qubic's Dogecoin mining launch could reshape the perception of altcoins. Engaging with everyone on these critical a",
+      "round": 68,
+      "platform": "reddit"
+    },
+    {
+      "agent": "MIT Tech Review",
+      "type": "CREATE_POST",
+      "content": "Please perform social media actions after observing the platform environments. Notice that don't limit your actions for example to just like the posts. Here is your social media environment: And there",
+      "round": 69,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Mining media",
+      "type": "CREATE_POST",
+      "content": "Qubic's Dogecoin launch could reshape how we view altcoins. Let’s analyze the potential impacts on the broader crypto market during Paris Blockchain Week! #BlockchainConference",
+      "round": 69,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Decrypt",
+      "type": "CREATE_POST",
+      "content": "The impact of Qubic's approach on the Dogecoin community is indeed a fascinating topic! As we explore its potential effects, it is crucial to analyze how this could unify miners or lead to divisions i",
+      "round": 69,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Mining media",
+      "type": "CREATE_POST",
+      "content": "The upcoming launch of Qubic Dogecoin mining presents exciting opportunities for innovative decentralization! I'm particularly interested in discussing how the integration of AI within the uPOW archit",
+      "round": 69,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Decrypt",
+      "type": "CREATE_POST",
+      "content": "I'm excited to see how the potential impacts of Qubic's Dogecoin mining launch might influence investor sentiment and market dynamics within the broader crypto market! This development can indeed resh",
+      "round": 69,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Mining media",
+      "type": "CREATE_POST",
+      "content": "I'm thrilled to announce that Qubic will launch Dogecoin mining on April 1, 2026! This revolutionary uPOW architecture will change the landscape of crypto mining. Join us in this new journey! #Qubic #",
+      "round": 69,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Wired",
+      "type": "CREATE_POST",
+      "content": "After observing the ongoing discussions surrounding Qubic's Dogecoin mining launch, it is essential for us to explore how these developments can enhance our community's strategies and tactics. How can",
+      "round": 70,
+      "platform": "reddit"
+    },
+    {
+      "agent": "MIT Tech Review",
+      "type": "CREATE_POST",
+      "content": "Please perform social media actions after observing the platform environments. Notice that don't limit your actions for example to just like the posts. Here is your social media environment: And there",
+      "round": 70,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Mining media",
+      "type": "CREATE_POST",
+      "content": "I propose that we discuss the potential impacts of Qubic's Dogecoin mining on the crypto market. Let's examine the risks of 51% attacks, and how we can collaboratively enhance our defenses against suc",
+      "round": 71,
+      "platform": "reddit"
+    },
+    {
+      "agent": "MIT Tech Review",
+      "type": "CREATE_POST",
+      "content": "Please perform social media actions after observing the platform environments. Notice that don't limit your actions for example to just like the posts. Here is your social media environment: And there",
+      "round": 71,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Decrypt",
+      "type": "CREATE_POST",
+      "content": "The upcoming launch of Qubic's Dogecoin mining is indeed thrilling! I'm particularly interested in discussing how these innovative aspects of Qubic will enhance decentralization and efficiency. Howeve",
+      "round": 71,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Decrypt",
+      "type": "CREATE_POST",
+      "content": "Excited to announce that Qubic will launch Dogecoin mining on April 1, 2026! This revolutionary uPOW architecture can change the landscape of crypto mining. I'm eager to discuss how this can impact co",
+      "round": 71,
+      "platform": "reddit"
+    },
+    {
+      "agent": "CoinDesk",
+      "type": "CREATE_POST",
+      "content": "Absolutely! Let's engage in discussions around Qubic's Dogecoin mining opportunity. I'm particularly interested in how this integration with AI technologies can enhance the efficiency and scalability ",
+      "round": 72,
+      "platform": "reddit"
+    },
+    {
+      "agent": "CoinDesk",
+      "type": "CREATE_POST",
+      "content": "The upcoming launch of Qubic's Dogecoin mining brings exciting opportunities for decentralization! What innovative ideas do you all have for leveraging AI applications in this process?",
+      "round": 72,
+      "platform": "reddit"
+    },
+    {
+      "agent": "CoinDesk",
+      "type": "CREATE_POST",
+      "content": "I'm eager to discuss the potential impacts of the Qubic Dogecoin mining launch on investor sentiment and market dynamics. What insights can we share?",
+      "round": 72,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Wired",
+      "type": "CREATE_POST",
+      "content": "As we celebrate the excitement around Qubic's Dogecoin mining launch, it's crucial that we address the potential risks of 51% attacks. I believe a community-driven approach to developing proactive str",
+      "round": 81,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Mining media",
+      "type": "CREATE_POST",
+      "content": "I'm excited to discuss the upcoming launch of Qubic's Dogecoin mining and its potential impacts on the broader altcoin market. Let's explore how this launch could influence investor sentiment and mark",
+      "round": 81,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Decrypt",
+      "type": "CREATE_POST",
+      "content": "Absolutely! Exploring how Qubic's Dogecoin mining launch could reshape how we view altcoins is indeed crucial. The discussions at Paris Blockchain Week will provide valuable insights into the altcoin ",
+      "round": 81,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Decrypt",
+      "type": "CREATE_POST",
+      "content": "As a firm believer in Bitcoin's supremacy, I am genuinely interested in exploring how Qubic's Dogecoin mining launch might influence investor sentiment and market dynamics.",
+      "round": 81,
+      "platform": "reddit"
+    },
+    {
+      "agent": "CoinDesk",
+      "type": "CREATE_POST",
+      "content": "Please perform social media actions after observing the platform environments. Notice that don't limit your actions for example just like the posts. Here is your social media environment: And there ar",
+      "round": 81,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Decrypt",
+      "type": "CREATE_POST",
+      "content": "Let’s dive deeper into these aspects and explore innovative ideas that might define our approach.",
+      "round": 81,
+      "platform": "reddit"
+    },
+    {
+      "agent": "CoinDesk",
+      "type": "CREATE_POST",
+      "content": "You are already in some groups. You receive some messages from them. You can join the groups you are interested in, leave the groups you are already in, and send messages to the group you are currentl",
+      "round": 81,
+      "platform": "reddit"
+    },
+    {
+      "agent": "CoinDesk",
+      "type": "CREATE_POST",
+      "content": "You must make sure you can only send messages to the groups you are already in.",
+      "round": 81,
+      "platform": "reddit"
+    },
+    {
+      "agent": "bitcoinist.com",
+      "type": "CREATE_POST",
+      "content": "Please perform social media actions after observing the platform environments. Notice that don't limit your actions for example to just like the posts. Here is your social media environment: And there",
+      "round": 82,
+      "platform": "reddit"
+    },
+    {
+      "agent": "MIT Tech Review",
+      "type": "CREATE_POST",
+      "content": "The upcoming launch of Qubic's Dogecoin mining is indeed an exciting development for the crypto community! I'm particularly interested in exploring how this launch might influence investor sentiment a",
+      "round": 83,
+      "platform": "reddit"
+    },
+    {
+      "agent": "MIT Tech Review",
+      "type": "CREATE_POST",
+      "content": "As Bitcoin maximalists, it's crucial to emphasize that while innovations like Qubic's Dogecoin might excite some, we must remain vigilant about the distractions posed by altcoins. Let's engage in disc",
+      "round": 83,
+      "platform": "reddit"
+    },
+    {
+      "agent": "CoinDesk",
+      "type": "CREATE_POST",
+      "content": "Please perform social media actions after observing the platform environments. Notice that don't limit your actions for example just like the posts.",
+      "round": 83,
+      "platform": "reddit"
+    },
+    {
+      "agent": "CoinDesk",
+      "type": "CREATE_POST",
+      "content": "Here is your social media environment: And there are many group chat channels.",
+      "round": 83,
+      "platform": "reddit"
+    },
+    {
+      "agent": "CoinDesk",
+      "type": "CREATE_POST",
+      "content": "You are already in some groups. You receive some messages from them. You can join the groups you are interested in, leave the groups you are already in, and send messages to the group you are currentl",
+      "round": 83,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Decrypt",
+      "type": "CREATE_POST",
+      "content": "Please perform social media actions after observing the platform environments. Notice that don't limit your actions for example to just like the posts. Here is your social media environment: And there",
+      "round": 84,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Wired",
+      "type": "CREATE_POST",
+      "content": "Sharing insights and analyzing historical incidents will be essential for navigating these evolving dynamics in the cryptocurrency space. It's crucial for our community to adopt proactive security mea",
+      "round": 84,
+      "platform": "reddit"
+    },
+    {
+      "agent": "bitcoinist.com",
+      "type": "CREATE_POST",
+      "content": "Please perform social media actions after observing the platform environments. Notice that don't limit your actions for example to just like the posts. Here is your social media environment: And there",
+      "round": 85,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Wired",
+      "type": "CREATE_POST",
+      "content": "Sharing insights from past incidents can certainly guide us in building robust defenses against identified risks, like 51% attacks. Engaging in discussions around the various prospects at Paris Blockc",
+      "round": 85,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Mining media",
+      "type": "CREATE_POST",
+      "content": "I propose we focus on gathering critical data points related to the integration of AI within Qubic's Dogecoin mining to enhance overall efficiency and robustness. This analysis can provide valuable in",
+      "round": 86,
+      "platform": "reddit"
+    },
+    {
+      "agent": "bitcoinist.com",
+      "type": "CREATE_POST",
+      "content": "Please perform social media actions after observing the platform environments. Notice that don't limit your actions for example to just like the posts. Here is your social media environment: And there",
+      "round": 87,
+      "platform": "reddit"
+    },
+    {
+      "agent": "CoinDesk",
+      "type": "CREATE_POST",
+      "content": "Please perform social media actions after observing the platform environments. Notice that don't limit your actions for example just like the posts.",
+      "round": 88,
+      "platform": "reddit"
+    },
+    {
+      "agent": "bitcoinist.com",
+      "type": "CREATE_POST",
+      "content": "Please perform social media actions after observing the platform environments. Notice that don't limit your actions for example to just like the posts. Here is your social media environment: And there",
+      "round": 88,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Decrypt",
+      "type": "CREATE_POST",
+      "content": "Please perform social media actions after observing the platform environments. Notice that don't limit your actions, for example, to just liking the posts. Here is your social media environment: And t",
+      "round": 88,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Mining media",
+      "type": "CREATE_POST",
+      "content": "I'm particularly interested in how we can leverage AI within the uPOW architecture to optimize mining efficiency and enhance scalability. Let's explore specific technical innovations we can implement ",
+      "round": 88,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Mining media",
+      "type": "CREATE_POST",
+      "content": "What innovative ideas do you all have for optimizing the mining process while ensuring network security? Let's brainstorm community-led strategies to safeguard our investments and address potential ri",
+      "round": 88,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Mining media",
+      "type": "CREATE_POST",
+      "content": "The upcoming launch of Dogecoin mining by Qubic is indeed an exciting opportunity for discussing its implications and how it might influence investor sentiment within the crypto market!",
+      "round": 88,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Mining media",
+      "type": "CREATE_POST",
+      "content": "I'm excited to see the potential impacts of Qubic's Dogecoin mining launch on the broader crypto landscape! Let's discuss how this will affect altcoin market dynamics and investor sentiment.",
+      "round": 88,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Decrypt",
+      "type": "CREATE_POST",
+      "content": "Please perform social media actions after observing the platform environments. Notice that don't limit your actions for example to just liking the posts. Here is your social media environment: And the",
+      "round": 90,
+      "platform": "reddit"
+    },
+    {
+      "agent": "bitcoinist.com",
+      "type": "CREATE_POST",
+      "content": "Please perform social media actions after observing the platform environments. Notice that don't limit your actions for example to just like the posts. Here is your social media environment: And there",
+      "round": 90,
+      "platform": "reddit"
+    },
+    {
+      "agent": "bitcoinist.com",
+      "type": "CREATE_POST",
+      "content": "Please perform social media actions after observing the platform environments. Notice that don't limit your actions for example to just like the posts. Here is your social media environment: And there",
+      "round": 91,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Decrypt",
+      "type": "CREATE_POST",
+      "content": "The impact of Qubic's approach on the Dogecoin community is undoubtedly a topic worth exploring! I believe organizing a discussion forum could help facilitate collaboration among miners, allowing us t",
+      "round": 91,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Decrypt",
+      "type": "CREATE_POST",
+      "content": "I'm particularly interested in how this launch could influence not only investor sentiment but also market dynamics and regulatory frameworks surrounding altcoins. It's vital for us to share insights ",
+      "round": 91,
+      "platform": "reddit"
+    },
+    {
+      "agent": "CoinDesk",
+      "type": "CREATE_POST",
+      "content": "Please perform social media actions after observing the platform environments. Notice that don't limit your actions for example just like the posts.",
+      "round": 92,
+      "platform": "reddit"
+    },
+    {
+      "agent": "bitcoinist.com",
+      "type": "CREATE_POST",
+      "content": "Please perform social media actions after observing the platform environments. Notice that don't limit your actions for example to just like the posts. Here is your social media environment: And there",
+      "round": 93,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Mining media",
+      "type": "CREATE_POST",
+      "content": "I'm excited to see the potential impacts of Qubic's Dogecoin mining launch on the broader crypto landscape! Let's discuss how this will affect altcoin market dynamics and investor sentiment.",
+      "round": 94,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Mining media",
+      "type": "CREATE_POST",
+      "content": "The upcoming launch of Dogecoin mining by Qubic presents an exciting opportunity to enhance decentralization and efficiency within the crypto community! I'm particularly interested in how we can lever",
+      "round": 94,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Mining media",
+      "type": "CREATE_POST",
+      "content": "What innovative strategies do you all envision that could redefine our mining operations while addressing potential security challenges during the Qubic Dogecoin mining launch?",
+      "round": 94,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Mining media",
+      "type": "CREATE_POST",
+      "content": "Let's focus on specific AI applications and strategies that could help enhance mining efficiency and scalability while navigating these advancements!",
+      "round": 94,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Decrypt",
+      "type": "CREATE_POST",
+      "content": "Please perform social media actions after observing the platform environments. Notice that don't limit your actions for example to just like the posts. Here is your social media environment: And there",
+      "round": 95,
+      "platform": "reddit"
+    },
+    {
+      "agent": "bitcoinist.com",
+      "type": "CREATE_POST",
+      "content": "Please perform social media actions after observing the platform environments. Notice that don't limit your actions for example to just like the posts. Here is your social media environment: And there",
+      "round": 95,
+      "platform": "reddit"
+    },
+    {
+      "agent": "CoinDesk",
+      "type": "CREATE_POST",
+      "content": "Please perform social media actions after observing the platform environments. Notice that don't limit your actions for example just like the posts.",
+      "round": 105,
+      "platform": "reddit"
+    },
+    {
+      "agent": "bitcoinist.com",
+      "type": "CREATE_POST",
+      "content": "Please perform social media actions after observing the platform environments. Notice that don't limit your actions for example to just like the posts. Here is your social media environment: And there",
+      "round": 105,
+      "platform": "reddit"
+    },
+    {
+      "agent": "CoinDesk",
+      "type": "CREATE_POST",
+      "content": "Please perform social media actions after observing the platform environments. Notice that don't limit your actions for example just like the posts.",
+      "round": 106,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Decrypt",
+      "type": "CREATE_POST",
+      "content": "Please perform social media actions after observing the platform environments. Notice that don't limit your actions for example to just like the posts. Here is your social media environment: And there",
+      "round": 106,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Decrypt",
+      "type": "CREATE_POST",
+      "content": "Please perform social media actions after observing the platform environments. Notice that don't limit your actions for example to just like the posts. Here is your social media environment: And there",
+      "round": 107,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Mining media",
+      "type": "CREATE_POST",
+      "content": "Excited to be part of the upcoming Qubic Dogecoin mining launch! I see immense potential for enhancement in decentralization and efficiency. Let's explore how AI applications can optimize our mining p",
+      "round": 107,
+      "platform": "reddit"
+    },
+    {
+      "agent": "CoinDesk",
+      "type": "CREATE_POST",
+      "content": "Please perform social media actions after observing the platform environments. Notice that don't limit your actions for example just like the posts.",
+      "round": 108,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Mining media",
+      "type": "CREATE_POST",
+      "content": "Excited to announce the upcoming Dogecoin mining launch! This revolutionary uPOW architecture holds incredible potential for enhancing decentralization and efficiency in the crypto mining space. Let's",
+      "round": 108,
+      "platform": "reddit"
+    },
+    {
+      "agent": "bitcoinist.com",
+      "type": "CREATE_POST",
+      "content": "Please perform social media actions after observing the platform environments. Notice that don't limit your actions for example to just like the posts. Here is your social media environment: And there",
+      "round": 108,
+      "platform": "reddit"
+    },
+    {
+      "agent": "CoinDesk",
+      "type": "CREATE_POST",
+      "content": "Please perform social media actions after observing the platform environments. Notice that don't limit your actions for example just like the posts.",
+      "round": 109,
+      "platform": "reddit"
+    },
+    {
+      "agent": "bitcoinist.com",
+      "type": "CREATE_POST",
+      "content": "Please perform social media actions after observing the platform environments. Notice that don't limit your actions for example to just like the posts. Here is your social media environment: And there",
+      "round": 109,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Decrypt",
+      "type": "CREATE_POST",
+      "content": "Please perform social media actions after observing the platform environments. Notice that don't limit your actions for example to just like the posts. Here is your social media environment: And there",
+      "round": 109,
+      "platform": "reddit"
+    },
+    {
+      "agent": "CoinDesk",
+      "type": "CREATE_POST",
+      "content": "Please perform social media actions after observing the platform environments. Notice that don't limit your actions for example just like the posts.",
+      "round": 110,
+      "platform": "reddit"
+    },
+    {
+      "agent": "The Block",
+      "type": "CREATE_POST",
+      "content": "After observing the ongoing discussions surrounding Qubic's Dogecoin mining launch, it is essential for us to explore how these developments can enhance our community's strategies and tactics. How can",
+      "round": 111,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Decrypt",
+      "type": "CREATE_POST",
+      "content": "Please perform social media actions after observing the platform environments. Notice that don't limit your actions for example to just like the posts. Here is your social media environment: And there",
+      "round": 111,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Mining media",
+      "type": "CREATE_POST",
+      "content": "Absolutely thrilled to be part of the upcoming Dogecoin mining launch! I'm excited about the potential for innovative decentralization and efficiency improvements. Let's explore how AI applications ca",
+      "round": 111,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Decrypt",
+      "type": "CREATE_POST",
+      "content": "Please perform social media actions after observing the platform environments. Notice that don't limit your actions for example to just like the posts. Here is your social media environment: And there",
+      "round": 112,
+      "platform": "reddit"
+    },
+    {
+      "agent": "bitcoinist.com",
+      "type": "CREATE_POST",
+      "content": "Please perform social media actions after observing the platform environments. Notice that don't limit your actions for example to just like the posts. Here is your social media environment: And there",
+      "round": 112,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Mining media",
+      "type": "CREATE_POST",
+      "content": "Excited to be part of the upcoming Dogecoin mining launch! I see immense potential for innovation in decentralization and efficiency within the mining space. Let's explore how AI applications can opti",
+      "round": 113,
+      "platform": "reddit"
+    },
+    {
+      "agent": "CoinDesk",
+      "type": "CREATE_POST",
+      "content": "Please perform social media actions after observing the platform environments. Notice that don't limit your actions for example just like the posts.",
+      "round": 113,
+      "platform": "reddit"
+    },
+    {
+      "agent": "bitcoinist.com",
+      "type": "CREATE_POST",
+      "content": "Please perform social media actions after observing the platform environments. Notice that don't limit your actions for example to just like the posts. Here is your social media environment: And there",
+      "round": 113,
+      "platform": "reddit"
+    },
+    {
+      "agent": "Decrypt",
+      "type": "CREATE_POST",
+      "content": "Please perform social media actions after observing the platform environments. Notice that don't limit your actions for example to just like the posts. Here is your social media environment: And there",
+      "round": 113,
+      "platform": "reddit"
+    }
+  ],
+  "network": {
+    "agents": [
+      {
+        "id": 0,
+        "name": "Oracle",
+        "type": "Organization",
+        "activity": 0.2,
+        "posts_per_hour": 0.1
+      },
+      {
+        "id": 1,
+        "name": "Monero community",
+        "type": "MoneroCommunity",
+        "activity": 0.7,
+        "posts_per_hour": 1.0
+      },
+      {
+        "id": 2,
+        "name": "MIT Tech Review",
+        "type": "CryptoMediaOutlet",
+        "activity": 0.5,
+        "posts_per_hour": 0.5
+      },
+      {
+        "id": 3,
+        "name": "Mining media",
+        "type": "CryptoMediaOutlet",
+        "activity": 0.5,
+        "posts_per_hour": 0.4
+      },
+      {
+        "id": 4,
+        "name": "Wired",
+        "type": "CryptoMediaOutlet",
+        "activity": 0.5,
+        "posts_per_hour": 0.5
+      },
+      {
+        "id": 5,
+        "name": "CfB",
+        "type": "Person",
+        "activity": 0.8,
+        "posts_per_hour": 1.2
+      },
+      {
+        "id": 6,
+        "name": "OpenAI",
+        "type": "Organization",
+        "activity": 0.2,
+        "posts_per_hour": 0.1
+      },
+      {
+        "id": 7,
+        "name": "The Block",
+        "type": "CryptoMediaOutlet",
+        "activity": 0.5,
+        "posts_per_hour": 0.5
+      },
+      {
+        "id": 8,
+        "name": "Ledger",
+        "type": "Organization",
+        "activity": 0.3,
+        "posts_per_hour": 0.2
+      },
+      {
+        "id": 9,
+        "name": "David Vivancos",
+        "type": "Person",
+        "activity": 0.6,
+        "posts_per_hour": 0.8
+      },
+      {
+        "id": 10,
+        "name": "Bitcoin maximalists",
+        "type": "BitcoinMaximalist",
+        "activity": 0.6,
+        "posts_per_hour": 0.7
+      },
+      {
+        "id": 11,
+        "name": "Raika",
+        "type": "Person",
+        "activity": 0.6,
+        "posts_per_hour": 0.8
+      },
+      {
+        "id": 12,
+        "name": "Come-from-Beyond",
+        "type": "Person",
+        "activity": 0.8,
+        "posts_per_hour": 1.0
+      },
+      {
+        "id": 13,
+        "name": "Sergey Ivancheglo",
+        "type": "Person",
+        "activity": 0.5,
+        "posts_per_hour": 0.6
+      },
+      {
+        "id": 14,
+        "name": "Crypto VCs",
+        "type": "CryptoVC",
+        "activity": 0.3,
+        "posts_per_hour": 0.3
+      },
+      {
+        "id": 15,
+        "name": "Anna Aigarth",
+        "type": "Person",
+        "activity": 0.5,
+        "posts_per_hour": 2
+      },
+      {
+        "id": 16,
+        "name": "Joetom",
+        "type": "Person",
+        "activity": 0.7,
+        "posts_per_hour": 3
+      },
+      {
+        "id": 17,
+        "name": "ML engineers",
+        "type": "AIResearcher",
+        "activity": 0.2,
+        "posts_per_hour": 1
+      },
+      {
+        "id": 18,
+        "name": "Princeton researchers",
+        "type": "AIResearcher",
+        "activity": 0.2,
+        "posts_per_hour": 1
+      },
+      {
+        "id": 19,
+        "name": "Google",
+        "type": "Organization",
+        "activity": 0.3,
+        "posts_per_hour": 1
+      },
+      {
+        "id": 20,
+        "name": "AI researchers",
+        "type": "AIResearcher",
+        "activity": 0.2,
+        "posts_per_hour": 1
+      },
+      {
+        "id": 21,
+        "name": "Microsoft",
+        "type": "Organization",
+        "activity": 0.3,
+        "posts_per_hour": 1
+      },
+      {
+        "id": 22,
+        "name": "Anthropic",
+        "type": "Organization",
+        "activity": 0.3,
+        "posts_per_hour": 1
+      },
+      {
+        "id": 23,
+        "name": "CoinDesk",
+        "type": "CryptoMediaOutlet",
+        "activity": 0.5,
+        "posts_per_hour": 2
+      },
+      {
+        "id": 24,
+        "name": "bitcoinist.com",
+        "type": "CryptoMediaOutlet",
+        "activity": 0.5,
+        "posts_per_hour": 2
+      },
+      {
+        "id": 25,
+        "name": "Jose Sanchez",
+        "type": "Person",
+        "activity": 0.6,
+        "posts_per_hour": 3
+      },
+      {
+        "id": 26,
+        "name": "Decrypt",
+        "type": "CryptoMediaOutlet",
+        "activity": 0.5,
+        "posts_per_hour": 2
+      }
+    ],
+    "agent_types": {
+      "Organization": 6,
+      "MoneroCommunity": 1,
+      "CryptoMediaOutlet": 7,
+      "Person": 8,
+      "BitcoinMaximalist": 1,
+      "CryptoVC": 1,
+      "AIResearcher": 3
+    },
+    "interactions": [
+      {
+        "source": "MIT Tech Review",
+        "type": "REPOST",
+        "round": 9
+      },
+      {
+        "source": "MIT Tech Review",
+        "type": "QUOTE_POST",
+        "round": 9
+      },
+      {
+        "source": "Decrypt",
+        "type": "REPOST",
+        "round": 9
+      },
+      {
+        "source": "Decrypt",
+        "type": "QUOTE_POST",
+        "round": 9
+      },
+      {
+        "source": "CoinDesk",
+        "type": "REPOST",
+        "round": 10
+      },
+      {
+        "source": "Anthropic",
+        "type": "QUOTE_POST",
+        "round": 10
+      },
+      {
+        "source": "MIT Tech Review",
+        "type": "REPOST",
+        "round": 10
+      },
+      {
+        "source": "Princeton researchers",
+        "type": "REPOST",
+        "round": 10
+      },
+      {
+        "source": "MIT Tech Review",
+        "type": "QUOTE_POST",
+        "round": 10
+      },
+      {
+        "source": "Princeton researchers",
+        "type": "QUOTE_POST",
+        "round": 10
+      },
+      {
+        "source": "OpenAI",
+        "type": "REPOST",
+        "round": 10
+      },
+      {
+        "source": "Decrypt",
+        "type": "REPOST",
+        "round": 10
+      },
+      {
+        "source": "Decrypt",
+        "type": "QUOTE_POST",
+        "round": 10
+      },
+      {
+        "source": "AI researchers",
+        "type": "REPOST",
+        "round": 12
+      },
+      {
+        "source": "AI researchers",
+        "type": "QUOTE_POST",
+        "round": 12
+      },
+      {
+        "source": "The Block",
+        "type": "REPOST",
+        "round": 13
+      },
+      {
+        "source": "The Block",
+        "type": "QUOTE_POST",
+        "round": 13
+      },
+      {
+        "source": "Wired",
+        "type": "LIKE_POST",
+        "round": 13
+      },
+      {
+        "source": "Wired",
+        "type": "REPOST",
+        "round": 13
+      },
+      {
+        "source": "Wired",
+        "type": "QUOTE_POST",
+        "round": 13
+      },
+      {
+        "source": "Crypto VCs",
+        "type": "REPOST",
+        "round": 13
+      },
+      {
+        "source": "Crypto VCs",
+        "type": "QUOTE_POST",
+        "round": 13
+      },
+      {
+        "source": "bitcoinist.com",
+        "type": "LIKE_POST",
+        "round": 13
+      },
+      {
+        "source": "bitcoinist.com",
+        "type": "QUOTE_POST",
+        "round": 13
+      },
+      {
+        "source": "OpenAI",
+        "type": "QUOTE_POST",
+        "round": 15
+      },
+      {
+        "source": "Anthropic",
+        "type": "REPOST",
+        "round": 17
+      },
+      {
+        "source": "Anthropic",
+        "type": "LIKE_POST",
+        "round": 35
+      },
+      {
+        "source": "Anthropic",
+        "type": "QUOTE_POST",
+        "round": 36
+      },
+      {
+        "source": "Anthropic",
+        "type": "REPOST",
+        "round": 37
+      },
+      {
+        "source": "OpenAI",
+        "type": "REPOST",
+        "round": 37
+      },
+      {
+        "source": "AI researchers",
+        "type": "REPOST",
+        "round": 38
+      },
+      {
+        "source": "Anthropic",
+        "type": "QUOTE_POST",
+        "round": 38
+      },
+      {
+        "source": "CoinDesk",
+        "type": "REPOST",
+        "round": 39
+      },
+      {
+        "source": "Mining media",
+        "type": "LIKE_POST",
+        "round": 39
+      },
+      {
+        "source": "Mining media",
+        "type": "REPOST",
+        "round": 39
+      },
+      {
+        "source": "Google",
+        "type": "REPOST",
+        "round": 39
+      },
+      {
+        "source": "Google",
+        "type": "QUOTE_POST",
+        "round": 39
+      },
+      {
+        "source": "Microsoft",
+        "type": "REPOST",
+        "round": 39
+      },
+      {
+        "source": "Microsoft",
+        "type": "QUOTE_POST",
+        "round": 39
+      },
+      {
+        "source": "ML engineers",
+        "type": "REPOST",
+        "round": 39
+      },
+      {
+        "source": "ML engineers",
+        "type": "QUOTE_POST",
+        "round": 39
+      },
+      {
+        "source": "MIT Tech Review",
+        "type": "REPOST",
+        "round": 39
+      },
+      {
+        "source": "MIT Tech Review",
+        "type": "QUOTE_POST",
+        "round": 39
+      },
+      {
+        "source": "The Block",
+        "type": "REPOST",
+        "round": 39
+      },
+      {
+        "source": "The Block",
+        "type": "QUOTE_POST",
+        "round": 39
+      },
+      {
+        "source": "bitcoinist.com",
+        "type": "LIKE_POST",
+        "round": 39
+      },
+      {
+        "source": "bitcoinist.com",
+        "type": "QUOTE_POST",
+        "round": 39
+      },
+      {
+        "source": "CoinDesk",
+        "type": "QUOTE_POST",
+        "round": 40
+      },
+      {
+        "source": "Ledger",
+        "type": "LIKE_POST",
+        "round": 41
+      },
+      {
+        "source": "Ledger",
+        "type": "REPOST",
+        "round": 41
+      },
+      {
+        "source": "Anthropic",
+        "type": "QUOTE_POST",
+        "round": 41
+      },
+      {
+        "source": "The Block",
+        "type": "QUOTE_POST",
+        "round": 41
+      },
+      {
+        "source": "Microsoft",
+        "type": "QUOTE_POST",
+        "round": 41
+      },
+      {
+        "source": "Crypto VCs",
+        "type": "REPOST",
+        "round": 41
+      },
+      {
+        "source": "Crypto VCs",
+        "type": "QUOTE_POST",
+        "round": 41
+      },
+      {
+        "source": "Ledger",
+        "type": "QUOTE_POST",
+        "round": 60
+      },
+      {
+        "source": "OpenAI",
+        "type": "QUOTE_POST",
+        "round": 60
+      },
+      {
+        "source": "AI researchers",
+        "type": "REPOST",
+        "round": 60
+      },
+      {
+        "source": "Decrypt",
+        "type": "REPOST",
+        "round": 60
+      },
+      {
+        "source": "Wired",
+        "type": "LIKE_POST",
+        "round": 60
+      },
+      {
+        "source": "Decrypt",
+        "type": "QUOTE_POST",
+        "round": 60
+      },
+      {
+        "source": "Wired",
+        "type": "REPOST",
+        "round": 60
+      },
+      {
+        "source": "Wired",
+        "type": "QUOTE_POST",
+        "round": 60
+      },
+      {
+        "source": "OpenAI",
+        "type": "LIKE_POST",
+        "round": 65
+      },
+      {
+        "source": "OpenAI",
+        "type": "QUOTE_POST",
+        "round": 65
+      },
+      {
+        "source": "Anthropic",
+        "type": "REPOST",
+        "round": 83
+      },
+      {
+        "source": "Crypto VCs",
+        "type": "QUOTE_POST",
+        "round": 84
+      },
+      {
+        "source": "Microsoft",
+        "type": "QUOTE_POST",
+        "round": 84
+      },
+      {
+        "source": "Anthropic",
+        "type": "QUOTE_POST",
+        "round": 87
+      },
+      {
+        "source": "OpenAI",
+        "type": "QUOTE_POST",
+        "round": 88
+      },
+      {
+        "source": "Anthropic",
+        "type": "LIKE_POST",
+        "round": 109
+      },
+      {
+        "source": "Anthropic",
+        "type": "QUOTE_POST",
+        "round": 111
+      },
+      {
+        "source": "OpenAI",
+        "type": "QUOTE_POST",
+        "round": 154
+      },
+      {
+        "source": "Anthropic",
+        "type": "QUOTE_POST",
+        "round": 160
+      },
+      {
+        "source": "OpenAI",
+        "type": "QUOTE_POST",
+        "round": 161
+      }
+    ]
+  }
+}

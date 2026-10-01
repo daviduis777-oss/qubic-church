@@ -1,0 +1,52 @@
+---
+title: "How the earlier claims arose"
+description: "Why this site once presented a Bitcoin bridge, time locks and hidden messages as findings, and what we changed in our methods so that it does not happen again."
+date: 2026-09-30
+---
+
+# How the earlier claims arose
+
+Between late 2025 and spring 2026 this site presented findings as "Tier 1" or "proven" that did not survive a re-check in September 2026. The list is on the [corrections page](/docs/03-results/35-corrections-september-2026). This page explains how that happened. We think the mechanisms are more useful to readers than the individual errors, because they are common wherever people look for hidden patterns.
+
+## The raw material was real
+
+Most of the starting points were true facts:
+
+- the matrix is highly structured;
+- block 264 pays to an address that starts with `1CFB`;
+- the Genesis public key is a valid curve point;
+- there are cells whose values spell "Key" in ASCII;
+- the trace of the matrix as typed is 137.
+
+The errors came from what was done with such facts.
+
+## Five mechanisms
+
+**1. Very many attempts, reported as if there had been one.** Close to a million Bitcoin addresses were generated from the matrix in various ways. Millions of seeds were tried. Dozens of decoders, byte orders and coordinate mappings were tested. With that many attempts, some matches are certain. The matches were reported, the attempts mostly were not.
+
+**2. Wrong chance models.** Whether a match is surprising depends on how often it happens by chance, and several of those rates were wrong:
+
+- the probability of an address starting with `1CF` was taken as about 1 in 79,000 instead of about 1 in 1,300;
+- the spread of a byte sum was taken as 36 instead of about 330;
+- one reported spread was smaller than any set of whole-number counts can produce.
+
+Each error turned an ordinary result into an "extremely unlikely" one.
+
+**3. Numbers chosen after the fact.** 27, 121, 137, 19, 576 and 676 were treated as signatures because they showed up. Almost any number can be written as a combination of a few others. Without fixing in advance which numbers count, such matches carry no weight.
+
+**4. Circular evidence.** Some checks confirmed a finding with the same data that had produced it. The list of "ten special blocks" came from the diagonal of the matrix, and was then "confirmed" by that same diagonal. A quote that was misread to mean March 3, 2026 became a countdown on the site.
+
+**5. Language models in a closed loop.** Much of the analysis and many of the texts were produced with the help of language models. A model asked to find connections finds them and writes about them fluently, with confidence labels attached. When the next question builds on the last answer and nobody runs an independent control, the loop amplifies itself. Some public statements in the community even invite this: they are phrased as riddles and suggest asking a model to decode them.
+
+## What we do differently now
+
+- **Protocols fixed in advance.** Before a test runs, we write down what counts as success, which controls we use and how many attempts we make. Results are judged against that, including results we do not like.
+- **Controls that can fail.** A control must be able to produce the same result as the real data. In September 2026 our own cross-check found two of our controls that could not fail, and we changed the conclusions that relied on them.
+- **Recomputation from raw data.** Every number that goes on the site is recomputed from public raw data by a script, and its hash is recorded.
+- **Independent cross-checks.** A second model, without access to our conclusions, reviews new results against the raw files before they are published. Its objections are recorded and answered.
+- **Primary sources only.** Quotes carry a message ID and are copied word for word. Paraphrases and quotes without a source are not used.
+- **No personal data.** The site does not publish seeds, private keys or information about private individuals.
+
+## What this means for readers
+
+The fact that something is published here does not make it true. A statement is strong when its raw data is public, its test was fixed in advance, it had a control that could have failed, and it survived an independent check. We try to say for each result which of these it has.

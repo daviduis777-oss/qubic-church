@@ -1,0 +1,18 @@
+{
+  "lastUpdated": "2026-01-05",
+  "datasets": {
+    "patoshi": {
+      "file": "patoshi-addresses.json",
+      "description": "Patoshi-era Bitcoin addresses with public keys"
+    },
+    "interestingAddresses": {
+      "file": "interesting-addresses.json",
+      "description": "Addresses with special patterns (1CFB, Patoshi, etc.)"
+    },
+    "annaMatrix": {
+      "file": "anna-matrix.json",
+      "size": 128,
+      "description": "128x128 Anna Matrix"
+    }
+  }
+}

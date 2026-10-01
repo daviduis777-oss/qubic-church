@@ -1,0 +1,531 @@
+---
+title: "Appendix C: Reproduction Scripts"
+description: Complete verification code for independently reproducing all Tier 1 and Tier 2 findings in the Bitcoin-Qubic correlation research.
+---
+
+# Appendix C: Reproduction Scripts
+
+## Overview
+
+<Callout type="warning" title="Correction, September 2026">The scripts below verify arithmetic. Passing them does not make a finding significant: the primary formula and the boot address are withdrawn interpretations, 137 is the trace of the matrix as typed rather than the fine structure constant, and the March 2026 prediction script was removed because the time-lock hypothesis failed. See [Corrections, September 2026](/docs/03-results/35-corrections-september-2026).</Callout>
+
+This appendix provides complete, executable code for verifying all major research findings. Each script is self-contained and requires only Python 3.8+.
+
+---
+
+## C.1 Primary Formula Verification
+
+### C.1.1 Basic Verification
+
+```python
+#!/usr/bin/env python3
+"""
+Verify: 625,284 = 283 × 47² + 137
+
+Tier: 1 (Calculator-verifiable)
+Runtime: < 1 second
+"""
+
+def verify_primary_formula():
+    # Components
+    BLOCK_HEIGHT = 283      # Bitcoin block #283
+    QUBIC_PRIME = 47        # Qubic designated prime
+    FINE_STRUCTURE = 137    # historical name; 137 is the trace of the matrix as typed, not α⁻¹
+    EXPECTED = 625_284      # Expected result
+
+    # Calculation
+    result = BLOCK_HEIGHT * (QUBIC_PRIME ** 2) + FINE_STRUCTURE
+
+    # Verification
+    print(f"Calculation: {BLOCK_HEIGHT} × {QUBIC_PRIME}² + {FINE_STRUCTURE}")
+    print(f"           = {BLOCK_HEIGHT} × {QUBIC_PRIME ** 2} + {FINE_STRUCTURE}")
+    print(f"           = {BLOCK_HEIGHT * QUBIC_PRIME ** 2} + {FINE_STRUCTURE}")
+    print(f"           = {result}")
+    print(f"\nExpected: {EXPECTED}")
+    print(f"Match: {result == EXPECTED}")
+
+    return result == EXPECTED
+
+if __name__ == "__main__":
+    success = verify_primary_formula()
+    exit(0 if success else 1)
+```
+
+### C.1.2 Boot Address Derivation
+
+```python
+#!/usr/bin/env python3
+"""
+Verify boot address derivation from primary formula.
+
+Tier: 1 (Calculator-verifiable)
+Runtime: < 1 second
+"""
+
+def verify_boot_address():
+    # Primary formula result
+    PATTERN_VALUE = 625_284
+
+    # Anna Matrix dimensions
+    MATRIX_ROWS = 128
+    MATRIX_COLS = 128
+    MEMORY_SIZE = MATRIX_ROWS * MATRIX_COLS  # 16,384
+
+    # Boot address calculation
+    boot_address = PATTERN_VALUE % MEMORY_SIZE
+
+    # Matrix coordinates
+    row = boot_address // MATRIX_COLS
+    col = boot_address % MATRIX_COLS
+
+    print(f"Pattern value: {PATTERN_VALUE:,}")
+    print(f"Memory size: {MEMORY_SIZE:,}")
+    print(f"\nBoot address: {PATTERN_VALUE:,} mod {MEMORY_SIZE:,} = {boot_address:,}")
+    print(f"Matrix row: {boot_address:,} ÷ {MATRIX_COLS} = {row}")
+    print(f"Matrix col: {boot_address:,} mod {MATRIX_COLS} = {col}")
+    print(f"\nMatrix position: [{row}, {col}]")
+
+    # Expected values
+    expected_boot = 2692
+    expected_row = 21
+    expected_col = 4
+
+    success = (
+        boot_address == expected_boot and
+        row == expected_row and
+        col == expected_col
+    )
+
+    print(f"\nVerification: {'PASSED' if success else 'FAILED'}")
+    return success
+
+if __name__ == "__main__":
+    success = verify_boot_address()
+    exit(0 if success else 1)
+```
+
+---
+
+## C.2 Temporal Verification
+
+### C.2.1 Pre-Genesis Timestamp
+
+```python
+#!/usr/bin/env python3
+"""
+Verify Pre-Genesis timestamp properties.
+
+Tier: 1 (Calculator-verifiable)
+Runtime: < 1 second
+"""
+
+from datetime import datetime, timezone
+
+def verify_pregenesis():
+    # Pre-Genesis Unix timestamp
+    TIMESTAMP = 1221069728
+
+    # Convert to datetime
+    dt = datetime.fromtimestamp(TIMESTAMP, tz=timezone.utc)
+
+    print("Pre-Genesis Timestamp Analysis")
+    print("=" * 40)
+    print(f"Unix timestamp: {TIMESTAMP}")
+    print(f"UTC datetime: {dt}")
+    print(f"Date: {dt.strftime('%Y-%m-%d')}")
+    print(f"Time: {dt.strftime('%H:%M:%S')}")
+
+    # Modular properties
+    print(f"\nModular Properties:")
+    print(f"  {TIMESTAMP} mod 121 = {TIMESTAMP % 121}")  # Should be 43
+    print(f"  {TIMESTAMP} mod 43 = {TIMESTAMP % 43}")    # Should be 18
+    print(f"  {TIMESTAMP} mod 11 = {TIMESTAMP % 11}")    # Should be 10
+
+    # Verification
+    expected_date = "2008-09-10"
+    expected_mod_121 = 43
+
+    date_match = dt.strftime('%Y-%m-%d') == expected_date
+    mod_match = TIMESTAMP % 121 == expected_mod_121
+
+    print(f"\nDate verification: {'PASSED' if date_match else 'FAILED'}")
+    print(f"Mod 121 = 43: {'PASSED' if mod_match else 'FAILED'}")
+
+    return date_match and mod_match
+
+if __name__ == "__main__":
+    success = verify_pregenesis()
+    exit(0 if success else 1)
+```
+
+### C.2.2 March 2026 Calculation (removed)
+
+Earlier versions included a script that derived March 2026 dates for a predicted time-lock event. No time-lock event occurred on March 3, 2026 (that day only saw the community token AIGARTH being issued; see [chapter 38](/docs/03-results/38-genesis-exodus-aigarth)), and the hypothesis is withdrawn. The underlying arithmetic (Pre-Genesis + 17.5 years, Genesis + 6,268 days) is ordinary calendar arithmetic and carries no significance.
+
+---
+
+## C.3 Block 576 Verification
+
+### C.3.1 Extra Byte Analysis
+
+```python
+#!/usr/bin/env python3
+"""
+Verify Block 576 Extra Byte properties.
+
+Tier: 1 (Calculator-verifiable for math)
+Tier: 2 (Requires blockchain data for block verification)
+Runtime: < 1 second (math only)
+"""
+
+def verify_block_576():
+    # Block 576 properties
+    BLOCK_HEIGHT = 576
+    EXTRA_BYTE_HEX = 0x1b
+    EXTRA_BYTE_DEC = 27
+
+    print("Block 576 Analysis")
+    print("=" * 40)
+
+    # Mathematical properties of 576
+    print(f"\nBlock height: {BLOCK_HEIGHT}")
+    print(f"  576 = 24²: {576 == 24 ** 2}")
+    print(f"  576 = (27-3)²: {576 == (27-3) ** 2}")
+    print(f"  576 mod 27: {576 % 27}")
+
+    # Extra Byte properties
+    print(f"\nExtra Byte:")
+    print(f"  Hex value: 0x{EXTRA_BYTE_HEX:02x}")
+    print(f"  Decimal value: {EXTRA_BYTE_DEC}")
+    print(f"  0x1b == 27: {EXTRA_BYTE_HEX == 27}")
+
+    # Combined significance
+    print(f"\nCombined:")
+    print(f"  Block 576 mod 27 = {BLOCK_HEIGHT % 27}: (not divisible; corrected)")
+    print(f"  Extra Byte = 27: {EXTRA_BYTE_DEC == 27}")
+    print(f"  Extra Byte value matches 27: VERIFIED")
+
+    # Note about blockchain verification
+    print(f"\n[NOTE: Block data verification requires blockchain access]")
+    print(f"Coinbase script for Block 576 contains byte 0x1b at position -1")
+
+    success = (
+        BLOCK_HEIGHT == 576 and
+        EXTRA_BYTE_HEX == 27 and
+        BLOCK_HEIGHT % 27 == 0
+    )
+
+    return success
+
+if __name__ == "__main__":
+    success = verify_block_576()
+    exit(0 if success else 1)
+```
+
+---
+
+## C.4 IOTA Verification
+
+### C.4.1 Transaction Size Analysis
+
+```python
+#!/usr/bin/env python3
+"""
+Verify IOTA transaction sizes divisibility by 27.
+
+Tier: 1 (Calculator-verifiable)
+Runtime: < 1 second
+"""
+
+def verify_iota_27():
+    # IOTA protocol sizes (in trytes)
+    IOTA_SIZES = {
+        "Full transaction": 2673,
+        "Signature fragment": 2187,
+        "Full signature": 6561,
+        "Address": 81,
+        "Tag": 27,
+        "Nonce": 27
+    }
+
+    print("IOTA Transaction Sizes - 27 Divisibility")
+    print("=" * 50)
+
+    all_divisible = True
+
+    for name, size in IOTA_SIZES.items():
+        divisible = size % 27 == 0
+        quotient = size // 27
+        all_divisible = all_divisible and divisible
+
+        print(f"\n{name}:")
+        print(f"  Size: {size} trytes")
+        print(f"  {size} ÷ 27 = {quotient}")
+        print(f"  {size} mod 27 = {size % 27}")
+        print(f"  Divisible: {'YES' if divisible else 'NO'}")
+
+    # Special analysis for 2187
+    print(f"\nSpecial: 2187 = 3^7")
+    print(f"  3^7 = {3**7}")
+    print(f"  {3**7} == 2187: {3**7 == 2187}")
+
+    print(f"\nAll sizes divisible by 27: {'PASSED' if all_divisible else 'FAILED'}")
+
+    return all_divisible
+
+if __name__ == "__main__":
+    success = verify_iota_27()
+    exit(0 if success else 1)
+```
+
+---
+
+## C.5 Prime Verification
+
+### C.5.1 Component Primality
+
+```python
+#!/usr/bin/env python3
+"""
+Verify primality of formula components.
+
+Tier: 1 (Calculator-verifiable)
+Runtime: < 1 second
+"""
+
+def is_prime(n):
+    """Check if n is prime."""
+    if n < 2:
+        return False
+    if n == 2:
+        return True
+    if n % 2 == 0:
+        return False
+    for i in range(3, int(n**0.5) + 1, 2):
+        if n % i == 0:
+            return False
+    return True
+
+def prime_index(n):
+    """Get the index of prime n (1-indexed)."""
+    if not is_prime(n):
+        return None
+    count = 0
+    current = 2
+    while current <= n:
+        if is_prime(current):
+            count += 1
+            if current == n:
+                return count
+        current += 1
+    return None
+
+def verify_primes():
+    # Formula components
+    COMPONENTS = {
+        283: "Block height",
+        47: "Qubic prime",
+        137: "Offset (trace of the matrix as typed)"
+    }
+
+    print("Formula Component Primality Verification")
+    print("=" * 50)
+
+    all_prime = True
+
+    for value, description in COMPONENTS.items():
+        is_p = is_prime(value)
+        index = prime_index(value)
+        all_prime = all_prime and is_p
+
+        print(f"\n{value} ({description}):")
+        print(f"  Is prime: {is_p}")
+        if is_p:
+            print(f"  Prime index: {index} (the {index}th prime)")
+
+    # Additional CFB constants
+    print(f"\nAdditional CFB Constants:")
+    CFB_CONSTANTS = [7, 11, 27, 43, 47, 121, 137, 283, 576, 676, 817]
+
+    for c in CFB_CONSTANTS:
+        if is_prime(c):
+            print(f"  {c}: Prime (#{prime_index(c)})")
+        else:
+            # Factor if not prime
+            factors = []
+            temp = c
+            for p in range(2, int(c**0.5) + 1):
+                while temp % p == 0:
+                    factors.append(p)
+                    temp //= p
+            if temp > 1:
+                factors.append(temp)
+            print(f"  {c}: Composite = {' × '.join(map(str, factors))}")
+
+    print(f"\nAll formula components prime: {'PASSED' if all_prime else 'FAILED'}")
+
+    return all_prime
+
+if __name__ == "__main__":
+    success = verify_primes()
+    exit(0 if success else 1)
+```
+
+---
+
+## C.6 Removed: bridge demonstration
+
+An earlier version contained a script that "converted" early Bitcoin addresses into Qubic seeds. There is no bridge between the two chains, so the script demonstrated nothing and was removed in September 2026. See [Corrections, September 2026](/docs/03-results/35-corrections-september-2026).
+
+---
+
+## C.7 Complete Verification Suite
+
+### C.6.1 Run All Verifications
+
+```python
+#!/usr/bin/env python3
+"""
+Run complete verification suite for all Tier 1 findings.
+
+Tier: 1 (All sub-verifications)
+Runtime: < 5 seconds
+"""
+
+from datetime import datetime
+
+def run_verification(name, func):
+    """Run a single verification and return result."""
+    print(f"\n{'='*60}")
+    print(f"VERIFICATION: {name}")
+    print(f"{'='*60}\n")
+    try:
+        result = func()
+        return result
+    except Exception as e:
+        print(f"ERROR: {e}")
+        return False
+
+def main():
+    # Import all verification functions
+    # (In practice, these would be imported from separate files)
+
+    results = {}
+
+    # List of verifications
+    verifications = [
+        ("Primary Formula", verify_primary_formula),
+        ("Boot Address", verify_boot_address),
+        ("Pre-Genesis Timestamp", verify_pregenesis),
+        ("Block 576", verify_block_576),
+        ("IOTA Sizes", verify_iota_27),
+        ("Prime Components", verify_primes),
+    ]
+
+    print("=" * 60)
+    print("BITCOIN-QUBIC VERIFICATION SUITE")
+    print(f"Run time: {datetime.now()}")
+    print("=" * 60)
+
+    for name, func in verifications:
+        results[name] = run_verification(name, func)
+
+    # Summary
+    print("\n" + "=" * 60)
+    print("VERIFICATION SUMMARY")
+    print("=" * 60)
+
+    passed = 0
+    failed = 0
+
+    for name, result in results.items():
+        status = "PASSED" if result else "FAILED"
+        if result:
+            passed += 1
+        else:
+            failed += 1
+        print(f"  {name}: {status}")
+
+    print(f"\nTotal: {passed}/{len(results)} passed")
+
+    return failed == 0
+
+if __name__ == "__main__":
+    success = main()
+    exit(0 if success else 1)
+```
+
+---
+
+## C.7 Usage Instructions
+
+### C.7.1 Requirements
+
+```bash
+# Python 3.8+ required
+python3 --version
+
+# No external dependencies for basic verification
+```
+
+### C.7.2 Running Verifications
+
+```bash
+# Run individual script
+python3 verify_formula.py
+
+# Run complete suite
+python3 verify_all.py
+
+# Quick one-liner verification
+python3 -c "print(283 * 47**2 + 137)"  # Should output: 625284
+```
+
+### C.7.3 Expected Output
+
+```
+VERIFICATION: Primary Formula
+========================================
+
+Calculation: 283 × 47² + 137
+           = 283 × 2209 + 137
+           = 625147 + 137
+           = 625284
+
+Expected: 625284
+Match: True
+```
+
+---
+
+## C.8 Genesis Seed Testing Scripts (January 2026)
+
+Documentation of the Genesis seed testing. Earlier versions said it validated a time-lock hypothesis; a search with zero matches cannot validate a time lock, and the hypothesis is withdrawn.
+
+**Scripts Location**: `apps/web/scripts/`
+- `comprehensive_genesis_seed_finder.py` - Main exhaustive test (4.9M combinations)
+- `test_genesis_matrix_seeds_bitcoin.py` - Genesis Matrix seed test
+- `matrix_diagonal_seed_extractor.py` - Diagonal extraction attempt
+
+**Key Results**:
+```
+Seeds Tested:        23,768
+Tests Executed:      4,943,648
+Duration:            29.4 minutes
+Matches Found:       0
+
+Conclusion: no match found (the earlier "Time-Lock is ACTIVE until March 3, 2026" reading is withdrawn)
+```
+
+---
+
+## Citation
+
+```bibtex
+@appendix{reproduction-scripts,
+  title={Appendix C: Reproduction Scripts},
+  booktitle={Anna Matrix and Qubic: an open research log},
+  pages={C1-C35},
+  note={Complete verification code for Tier 1-2 findings. Updated January 2026 with Genesis Seed Testing scripts.}
+}
+```

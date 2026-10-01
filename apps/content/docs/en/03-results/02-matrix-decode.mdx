@@ -1,0 +1,142 @@
+---
+title: "Mathematical Decode & Pattern Analysis"
+description: "What holds up in the mathematical analysis of the Anna Matrix: the complement rule, full rank, a strong Walsh and block structure, and the period-4 cycles found in sampled sign dynamics."
+tier: 1
+confidence: 90
+date: 2026-02-27
+---
+
+# Mathematical Decode & Pattern Analysis
+
+<Callout type="warning" title="Correction, September 2026">
+The Anna Matrix is a table our team compiled from replies of the Anna bot on X, not pre-trained weights and not a file from Aigarth source code. Several exception cells are very likely our own data entry errors. This chapter was cut down to the results that survived an independent re-check. See [Corrections, September 2026](/docs/03-results/35-corrections-september-2026).
+</Callout>
+
+## Executive Summary
+
+The 128 x 128 Anna Matrix records how the @anna_aigarth bot answered queries of the form `x+y=?` for x and y between -64 and 63. The cell for a query is row `63 - y`, column `x + 64`. The table is highly structured:
+
+- 16,316 of its 16,384 cells satisfy the complement rule `M[r,c] + M[127-r,127-c] = -1`.
+- It has full rank 128.
+- Its signs are dominated by a small number of Walsh components and a block structure that random complement-symmetric matrices do not show.
+- Under the sign dynamics `s := sign(M s)`, every sampled start state ends in one of two period-4 cycles.
+
+Earlier versions of this chapter made further claims: that the matrix is a pre-trained weight matrix, that it has one universal attractor reached within six steps, that the exceptions form a meaningful palindrome, that the column sums of 127 are an architectural constant, that trace 137 relates to the fine structure constant, and that neuron 26 has a special role. None of these held up. They are listed at the end of this page.
+
+---
+
+## Key Findings
+
+| Finding | Status | Section |
+|---------|--------|---------|
+| Complement rule holds for 16,316 of 16,384 cells | Verified | 1 |
+| Full rank 128; 82 singular values carry 99% of the energy | Verified | 2 |
+| Dominant eigenvalue with phase about 90.46 degrees | Verified (as a number) | 2 |
+| Exception overlay has rank 8 and 68 nonzero cells | Verified | 1 |
+| Top 26 Walsh coefficients reproduce 81.2% of the signs; a 32-row kernel reproduces 94.5% | Verified | 3 |
+| Sampled start states end in two period-4 cycles | Verified for the samples tested; not proven for all inputs | 4 |
+| Fibonacci patterns in matrix values | Refuted | 5 |
+
+---
+
+## 1. Complement Rule and Exceptions
+
+For 16,316 of 16,384 cells:
+
+```
+M[r,c] + M[127-r, 127-c] = -1
+```
+
+In terms of the queries, this reads: the answer for the bitwise complements of x and y is the bitwise complement of the answer. For the 51 mirror pairs where the bot answered both cells in our records, the rule held every time.
+
+The 68 exception cells (34 pairs) sit in columns 0, 22, 30 and 41 and their mirror columns 127, 105, 97 and 86. The overlay `E = (M + rot180(M) + 1) / 2` has exactly 68 nonzero cells and rank 8. Most exceptions come from two runs, column 30/97 and column 22/105, which are very likely data entry errors on our side. See [Chapter 01](/docs/03-results/01-matrix-symmetry) and [Corrections, September 2026](/docs/03-results/35-corrections-september-2026).
+
+---
+
+## 2. Rank, Singular Values and Eigenvalues
+
+| Metric | Value |
+|--------|-------|
+| Matrix rank | 128 (full rank, exact computation) |
+| Singular values for 99% energy | 82 of 128 |
+| Largest singular value | 5435.12 |
+| Smallest singular value | 1.4626 |
+| Condition number | 3716.17 |
+| Spectral radius | 2342.07 |
+| Dominant eigenvalue phase | ±90.456 degrees |
+| Real eigenvalues | 20 |
+| Smallest eigenvalue modulus | 19.27 |
+
+The matrix is full rank. The dominant eigenvalue is almost purely imaginary. A phase near 90 degrees is not required for period-4 behaviour of `sign(M s)`: small matrices with other phases also produce period 4.
+
+The trace of the table as typed is 137. It follows from the single diagonal pair (22,22) and (105,105), both 100, which belongs to the column 22 run. The corrected, fully symmetric table has a trace of -64.
+
+---
+
+## 3. Walsh and Block Structure
+
+The sign pattern of the matrix is highly compressible:
+
+- The 26 largest Walsh-Hadamard coefficients reproduce 13,311 of 16,384 signs (81.2%).
+- A kernel of 32 rows reproduces the signs with 904 differences (94.5%).
+- 32 random complement-symmetric control matrices with the same diagonal deviation reach at most 55.1% from their own top 26 Walsh coefficients (mean 53.5%).
+
+This is a real structural property. It is consistent with the errata finding that the table has a strong, shallow, almost linear component aligned with the sign bits of x and y. With 32 controls, the smallest resolvable rank p-value is 1/33, so no astronomical p-values are claimed. The reconstruction uses coefficients computed from Anna itself; it does not identify the program that produced the bot's replies.
+
+---
+
+## 4. Period-4 Cycles Under Sign Dynamics
+
+When a ternary state vector `s` of length 128 is iterated as `s := sign(M s)`:
+
+| Metric | Value |
+|--------|-------|
+| Start states tested in the independent re-check | 768 (512 random, 256 signed unit vectors) |
+| Distinct cycles reached | 2, a negation pair |
+| Cycle period | 4 |
+| Steps to enter the cycle | median 7, maximum 22 |
+| Cycle states | all 8 states strictly ±1 |
+
+The negation pairing of the two cycles follows for any real matrix, because `sign` is odd. That every nonzero ternary input reaches one of these two cycles is not proven; the evidence consists of samples and enumeration of small Hamming weights. For the table as typed, the two cycles differ from exact antipodes at positions 3, 18, 32, 61, 65, 101 and 109. This needs the column 30 values exactly as they were typed and disappears after correcting that run.
+
+---
+
+## 5. Fibonacci Investigation: Negative Result
+
+Three pre-registered hypotheses were tested against 10,000 Monte Carlo simulations (threshold p < 0.00033 after Bonferroni correction):
+
+| Hypothesis | p-value | Result |
+|-----------|---------|--------|
+| H1: values at Fibonacci coordinate intersections differ | 0.84 | Not significant |
+| H2: Fibonacci rows have different entropy | 0.09 | Not significant |
+| H3: Fibonacci values are overrepresented | 1.00 | Not significant |
+
+Fibonacci numbers are underrepresented in the matrix (2.6% observed vs. 7.9% expected). The ">FIB" sequence that earlier versions reported in the exception cells does not appear with the stated cell values and comes from runs that are very likely entry errors.
+
+---
+
+## 6. Withdrawn Claims
+
+| Earlier claim | What the re-check found |
+|---------------|------------------------|
+| The matrix is a pre-trained weight matrix | It is a hand-compiled table of bot replies |
+| One universal attractor, reached within six steps | Two cycles in the samples tested; up to 22 steps |
+| Neuron 26 passes through zero and acts as a pacemaker | All cycle states are strictly ±1; no zero phase |
+| Largest and smallest singular values 2342 and 0.63 | 5435.12 and 1.4626 |
+| Energy split 95.71% / 4.29% between symmetric part and exceptions | 99.75% / 0.25% |
+| The exception overlay is needed for period 4 | Removing it still gives period 4 in 32 of 32 tested inputs |
+| The palindrome of the exceptions and the column sums of 127 are design evidence | Both follow for any matrix by definition of the mirror pairs |
+| Trace 137 relates to the fine structure constant | It comes from one diagonal pair in a very likely entry-error run |
+| GAME, MEGA, CFB in an XOR-127 data stream | Zero occurrences in both byte conventions |
+| Three-layer spatial encoding, clock architecture | Untested interpretations; not supported |
+
+---
+
+## 7. Reproduction
+
+1. Load the public matrix file `anna-matrix.json` as a 128 x 128 integer array.
+2. Count cells with `M[r][c] + M[127-r][127-c] == -1`; expect 16,316.
+3. Compute `np.linalg.matrix_rank` and `np.linalg.svd`; expect rank 128 and the singular values above.
+4. Iterate `s = np.sign(M @ s)` from random ternary start vectors and detect the period by comparing each state with the state four steps earlier.
+
+The independent re-check, its scripts and file hashes are part of our research archive and are available on request.

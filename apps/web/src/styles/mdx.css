@@ -1,0 +1,171 @@
+/** biome-ignore-all lint/complexity/noImportantStyles: <> */
+@reference "tailwindcss";
+
+/* Tables scroll inside their own wrapper (see mdx-components/table.tsx) */
+
+/* Code blocks */
+pre {
+  padding: 1rem 0;
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+pre [data-line] {
+  padding: 0 1rem;
+}
+
+/* Code inside a block: no inline-code chip */
+.mdx pre > code {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font-size: inherit;
+}
+
+/* Long unbroken strings (hashes, addresses) wrap instead of widening the page */
+.mdx > :not(table, pre, div) {
+  overflow-wrap: break-word;
+}
+
+/* Bold text reads one step brighter than body copy */
+.mdx strong {
+  color: var(--foreground);
+  font-weight: 600;
+}
+
+/* Heading anchors from rehype-autolink-headings: a quiet # on hover or focus */
+.mdx .subheading-anchor {
+  color: inherit;
+  text-decoration: none;
+  position: relative;
+}
+
+.mdx .subheading-anchor::before {
+  content: "#";
+  position: absolute;
+  right: 100%;
+  padding-right: 0.4em;
+  color: var(--muted-foreground);
+  opacity: 0;
+  transition: opacity 150ms ease-out;
+}
+
+.mdx :is(h2, h3, h4):hover .subheading-anchor::before,
+.mdx .subheading-anchor:focus-visible::before {
+  opacity: 1;
+}
+
+.mdx figure figcaption {
+  margin-top: 0.75rem;
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}
+
+.mdx > .steps:first-child > h3:first-child {
+  margin-top: 0;
+}
+
+.steps > h3 {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+[data-theme="light"] {
+  display: block;
+}
+
+[data-theme="dark"] {
+  display: none;
+}
+
+.dark [data-theme="light"] {
+  display: none;
+}
+
+.dark [data-theme="dark"] {
+  display: block;
+}
+
+pre > code {
+  counter-reset: line;
+}
+
+code[data-line-numbers] {
+  counter-reset: line;
+}
+
+code[data-line-numbers] > [data-line]::before {
+  display: inline-block;
+  width: 1rem;
+  margin-right: 1rem;
+  color: var(--muted-foreground);
+  text-align: right;
+  content: counter(line);
+  counter-increment: line;
+}
+
+[data-highlighted-line] {
+  background: color-mix(in oklab, var(--accent-gold) 10%, transparent);
+}
+
+[data-rehype-pretty-code-title]::before {
+  color: rgb(168 85 247);
+  content: "◯ ";
+}
+
+[data-rehype-pretty-code-title] {
+  width: max-content;
+  padding: 0.5rem 0.75rem;
+  margin-top: 0.75rem;
+  margin-bottom: -1.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--fg-2);
+  background-color: var(--surface-2);
+  border: 1px solid var(--border);
+}
+
+[data-highlighted-chars] {
+  background-color: rgb(82 82 91 / 0.5);
+  border-radius: 0.25rem;
+  box-shadow: 0 0 0 4px rgb(82 82 91 / 0.5);
+}
+
+[data-chars-id] {
+  padding: 0.25rem;
+  border-bottom-width: 2px;
+  box-shadow: none;
+}
+
+[data-chars-id] span {
+  color: inherit !important;
+}
+
+[data-chars-id="v"] {
+  font-weight: bold;
+  color: rgb(252 165 165) !important;
+  background-color: rgb(190 18 60 / 0.5);
+}
+
+[data-chars-id="s"] {
+  font-weight: bold;
+  color: rgb(253 224 71) !important;
+  background-color: rgb(133 77 14 / 0.5);
+}
+
+[data-chars-id="i"] {
+  @apply text-amber-200 bg-amber-800/50 font-bold;
+}
+
+/* Paragraphs inside callouts and summaries: tighter than body copy */
+.mdx aside p {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.mdx aside p:first-child {
+  margin-top: 0;
+}

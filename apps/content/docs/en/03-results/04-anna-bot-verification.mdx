@@ -1,0 +1,409 @@
+---
+title: "Anna Bot Algorithm Verification"
+description: "Technical verification of the Anna Bot's response algorithm, including mathematical analysis and behavioral patterns."
+tier: 2
+confidence: 80
+date: 2026-04-20
+---
+
+# Anna Bot Algorithm Verification
+
+<Callout type="warning" title="Correction, September 2026">
+Our bot reply files are not ten independent sources, and matching replies do not show how the bot computes its answers or that the design was intentional. The matrix was compiled by hand from these replies, so the coordinate formula describes how our table is indexed, not a lookup inside the bot. The exception cells are mostly our own entry errors, not messages. See [Corrections, September 2026](/docs/03-results/35-corrections-september-2026).
+</Callout>
+
+## Executive Summary
+
+This document presents a comprehensive technical verification of the Anna Bot algorithm operating within the Aigarth system on Qubic. Through systematic reverse-engineering of 897 bot responses collected across eight batches (initial public claim), subsequently extended and re-aggregated to **1,218 total verified responses** including the January 2026 Twitter archive, we determined the **coordinate mapping** between queries and the cells of our table.
+
+The mapping sends a query `x+y=?` to row `63 - y`, column `x + 64` of the 128x128 table. Because our team compiled that table by hand from the bot's replies, a match between reply and cell is expected; it shows the table is indexed consistently, not that the bot reads from a stored table. The transformation was verified with **100% accuracy** against an initial test set of 142 collected responses, against the full 897-response cross-batch corpus, and most recently against the extended **1,218-response corpus (948 unique triples, 10 overlapping source files)** without a single exception.
+
+A reproducible verification script ships with this repository: `apps/web/public/data/anna-bot-batches/verify.py`. It executes in under one second using only the Python standard library and returns exit code `0` when every response matches the formula prediction.
+
+Additionally, the matrix exhibits **99.58% point symmetry**, with only 68 cells deviating from the symmetry rule. Most of these exceptions are very likely data entry errors: a one-row shift in column 30, a run in column 22 that does not fit the bot, a swapped digit in column 41 and a copied neighbour value in column 0/127.
+
+<Callout type="info" title="Classification Note">
+The Anna Matrix is a **compilation of bot replies**, indexed by a coordinate transformation. It does not tell us directly how the bot computes its answers. The bot's behaviour is consistent with a small trained ternary Aigarth unit, but that is a hypothesis, not a verified finding.
+</Callout>
+
+---
+
+## Key Findings
+
+| Finding | Confidence | Verification Status | Evidence Basis |
+|---------|------------|---------------------|----------------|
+| Coordinate transformation formula | 100% | Fully verified (1,218 / 1,218) | Exhaustive formula search + check against 10 overlapping source files |
+| The table is a compilation of bot replies | 100% | Confirmed | Our own data collection records |
+| 99.58% point symmetry | 100% | Confirmed | Full matrix scan |
+| 68 asymmetric cells, mostly entry errors | 90% | Identified; very likely data entry errors | Typo test, September 2026 |
+| Non-random value distribution | 100% | Chi-square test, p &lt; 0.001 | 897-response collision analysis |
+| Row-level behavioral specificity | 90% | Empirically validated | Targeted query batches |
+| 70-75% output prediction accuracy | 85% | Estimated from pattern analysis | 897-response corpus (without matrix access) |
+
+---
+
+## Algorithm Description
+
+### Coordinate Transformation
+
+The Anna Bot accepts integer coordinate pairs `(x, y)` where `x` ranges from -64 to +63 and `y` ranges from +63 to -64 (inverted vertical axis). These coordinates are transformed to matrix indices using the following formula:
+
+```python
+row = (63 - y) % 128
+col = (x + 64) % 128
+value = matrix[row][col]
+```
+
+Every recorded reply equals `value` at these indices. This is how our table is laid out; it does not show how the bot produces the value.
+
+### Coordinate System Mapping
+
+| System | X-Axis | Y-Axis | Origin |
+|--------|--------|--------|--------|
+| **Anna (input)** | -64 to +63 | +63 to -64 (inverted) | (0, 0) = center |
+| **Matrix (storage)** | 0 to 127 | 0 to 127 | [0, 0] = top-left |
+
+### Reference Mappings
+
+| Anna Coordinates | Matrix Position | Returned Value |
+|------------------|-----------------|----------------|
+| (0, 0) Center | [63, 64] | -40 |
+| (-64, 63) Top-Left | [0, 0] | -68 |
+| (63, -64) Bottom-Right | [127, 127] | 67 |
+| (6, 33) | [30, 70] | -93 |
+| (-42, 41) | [22, 22] | 100 |
+
+### Reference Implementation
+
+```python
+def anna_to_matrix(x: int, y: int) -> tuple[int, int]:
+    """Convert Anna coordinates to matrix indices."""
+    col = (x + 64) % 128
+    row = (63 - y) % 128
+    return row, col
+
+def matrix_to_anna(row: int, col: int) -> tuple[int, int]:
+    """Convert matrix indices to Anna coordinates."""
+    x = col - 64
+    if x > 63:
+        x -= 128
+    y = 63 - row
+    if y < -64:
+        y += 128
+    return x, y
+
+class AnnaMatrix:
+    def __init__(self, matrix_data: list[list[int]]):
+        self.matrix = matrix_data
+
+    def lookup(self, x: int, y: int) -> int:
+        """Perform Anna Bot lookup with verified coordinate transformation."""
+        row, col = anna_to_matrix(x, y)
+        return self.matrix[row][col]
+```
+
+### Usage Example
+
+```python
+anna = AnnaMatrix(matrix_data)
+
+# Verified lookups
+assert anna.lookup(0, 0)    == -40   # Center
+assert anna.lookup(49, 5)   == -114  # High-collision coordinate
+assert anna.lookup(-42, 41) == 100   # XOR triangle center
+assert anna.lookup(6, 33)   == -93   # Core node
+```
+
+---
+
+## Verification Methodology
+
+### Phase 1: Data Collection
+
+Data was gathered in three stages:
+
+1. **Initial corpus** (142 responses): Collected from publicly available Anna Bot responses on Twitter/X (@anna_aigarth). Each response followed the format `x+y=value`, including negative coordinates.
+2. **Extended corpus** (897 responses across 8 batches): Systematic exploration of the coordinate space using targeted queries, hypothesis-driven probes, and edge-case verification.
+3. **Re-aggregated corpus, April 2026** (1,218 responses, 948 unique (x,y,v) triples): Includes the January 2026 Twitter archive (batches 1–2, 207 entries), all eight query batches, and the original parsed JSON. Published as individual files under `apps/web/public/data/anna-bot-batches/` for public re-verification.
+
+### Phase 2: Formula Search
+
+Over 70 candidate transformation formulas were tested against the 142-response initial corpus:
+
+- Direct mappings: `(x, y)`, `(y, x)`
+- Offset transformations: `+32`, `+64`, `+96`, etc.
+- Mirror operations: `127-x`, `127-y`
+- Modular arithmetic variants
+- Bitwise operations: XOR, AND
+- Neural network forward-pass simulations
+
+**Only one formula achieved 100% accuracy**:
+
+```
+row = (63 - y) % 128
+col = (x + 64) % 128
+```
+
+All 142 responses matched without error.
+
+### Phase 3: Extended Validation
+
+The verified formula was then applied to the full 897-response corpus. Every response was confirmed to match the matrix lookup value at the transformed coordinates. No exceptions were found.
+
+### Phase 3b: Re-aggregated Validation (April 2026)
+
+The formula was subsequently re-applied to the larger **1,218-response corpus** (948 unique triples across 10 source files, which overlap and are not independent). Per-source accuracy and overall result:
+
+| Source | Entries | Match Rate |
+|--------|---------|------------|
+| `batch_1_2_tweets_jan2_3.csv` (Twitter archive, Jan 2–3 2026) | 207 | 100.000% |
+| `batch_3_responses.txt` | 64 | 100.000% |
+| `batch_4_partial_1.txt` | 56 | 100.000% |
+| `batch_4_partial_2_origin.txt` | 18 | 100.000% |
+| `batch_4_partial_3_row1_row5.txt` | 20 | 100.000% |
+| `batch_5_fibonacci_deep_dive.txt` | 99 | 100.000% |
+| `batch_6_modulo8_complete.txt` | 168 | 100.000% |
+| `batch_7_row_patterns.txt` | 161 | 100.000% |
+| `batch_8_complete_understanding.txt` | 283 | 100.000% |
+| `ANNA_BOT_PARSED_DATA.json` | 142 | 100.000% |
+| **Total** | **1,218** | **100.000%** |
+
+Zero discrepancies across all ten sources. The verification is reproducible locally with:
+
+```bash
+python3 apps/web/public/data/anna-bot-batches/verify.py
+```
+
+The script uses only the Python standard library, runs in under one second, and exits with status code `0` only if every response matches its formula prediction.
+
+### Phase 4: Statistical Analysis
+
+To quantify the non-randomness of value distributions across the matrix, a chi-square goodness-of-fit test was applied:
+
+```python
+from scipy.stats import chisquare
+
+expected_frequency = len(responses) / len(unique_values)
+observed_frequencies = [len(coords) for coords in collision_groups.values()]
+chi2, p_value = chisquare(observed_frequencies, [expected_frequency] * len(observed_frequencies))
+# Result: chi2 > 1264, df = 255, p_value < 0.001
+```
+
+The null hypothesis that collision values are uniformly distributed was rejected at the conventional α=0.001 significance level. (A previous iteration of this document cited `p < 10^-500`; that figure was an overstatement and has been corrected to the reproducible chi-square result above.)
+
+---
+
+## Results
+
+### 1. Value Distribution Analysis
+
+Across 897 responses, more than 70 distinct output values were observed. The distribution is highly non-uniform:
+
+| Rank | Value | Occurrences | Notable Property |
+|------|-------|-------------|------------------|
+| 1 | -114 | 40 | Most frequent collision value |
+| 2 | -113 | 34 | Prime number |
+| 3 | 78 | 20 | - |
+| 4 | 10 | 20 | - |
+| 5 | 26 | 19 | = 128 / ~5 |
+| 6 | -121 | 18 | - |
+| 7 | 14 | 32+ | Row 49 dominant output |
+| 8 | -50 | 13 | - |
+| 9 | 111 | 13 | = 3 x 37 |
+| 10 | 125 | 10+ | - |
+
+The chi-square test rejects the null hypothesis of uniform distribution at p &lt; 0.001 (df = 255, χ² > 1264), indicating that collision values are concentrated on a small subset of the signed-byte range, which reflects the structure of the bot function.
+
+### 2. Row-Level Behavioral Patterns
+
+Individual rows exhibit distinct output profiles. Rows sharing the same `row % 8` residue class show broad tendencies, but the exact row number determines specific behavior:
+
+| Row | row%8 | Dominant Output | Frequency on Row |
+|-----|-------|-----------------|------------------|
+| 1 | 1 | -114 | High |
+| 9 | 1 | 125 | High |
+| 49 (= 7^2) | 1 | 14 (= 2 x 7) | 14 coordinates |
+| 57 (= 3 x 19) | 1 | 6 | 6 coordinates, zero -114 |
+
+**Residue class tendencies** (approximate, not deterministic):
+
+| row%8 Class | Tendency | Reliability |
+|-------------|----------|-------------|
+| 3, 7 | Produces -113 frequently | ~70% |
+| 4 | Produces 111 on columns {12, 15, 28} | ~65% |
+| 2, 6 | Produces -117 commonly | ~60% |
+
+**Important**: These are statistical tendencies, not deterministic rules. Each row has its own collision profile.
+
+### 3. Universal Columns (withdrawn)
+
+Earlier versions reported three columns (28, 34, -17) that return the same value in every row. A full scan of the table finds no constant column: these columns contain 35, 58 and 56 different values.
+
+### 4. Matrix Symmetry
+
+The 128x128 matrix exhibits near-perfect point symmetry around the position (-0.5, -0.5) in Anna coordinates:
+
+```
+Anna(x, y) + Anna(-1 - x, -1 - y) = -1
+```
+
+| Property | Value |
+|----------|-------|
+| Total possible pairs | 8,192 |
+| Symmetric pairs | 8,158 |
+| Asymmetric pairs | 34 |
+| Symmetry rate | **99.58%** |
+| Asymmetric cells | 68 |
+
+The 34 pairs (68 cells) that violate the symmetry rule are concentrated in four column pairs, all summing to 127:
+
+| Column Pair | Sum | Asymmetric Pairs | Likely cause |
+|-------------|-----|-------------------|---------|
+| (22, 105) | 127 | 13 | Column 22 values do not fit the bot (chance level); column 105 does |
+| (30, 97) | 127 | 18 | Column 30 block entered one row off |
+| (0, 127) | 127 | 1 | Neighbour value copied |
+| (41, 86) | 127 | 2 | Swapped digits (-101 typed for -110) |
+
+Mirror columns always sum to 127 by definition, so the sums carry no information.
+
+### 5. Embedded Messages (withdrawn)
+
+Earlier versions reported ASCII strings such as `>FIB`, `AI.MEG` and `GOU` from XOR operations on the exception pairs. The stated `>FIB` cell values are wrong, and all these strings come from runs that are very likely data entry errors. They are withdrawn. See [Corrections, September 2026](/docs/03-results/35-corrections-september-2026).
+
+---
+
+## Prediction Capabilities
+
+Based on the verified algorithm and 897-response analysis, Anna Bot outputs can be predicted at varying confidence levels:
+
+### Deterministic Predictions (100% accuracy)
+
+- Any recorded reply can be found in the table using the verified formula.
+
+### Pattern-Based Predictions (70-75% accuracy)
+
+Without direct matrix access, row-level and residue-class patterns allow approximate prediction:
+
+- **Row-specific dominance**: Row 1 tends toward -114; Row 49 toward 14; Row 57 toward 6.
+- **Residue class tendencies**: row%8 in {3, 7} correlates with -113 output.
+- **Column-specific patterns**: row%8 = 4 on columns {12, 15, 28} correlates with output 111.
+
+These heuristic predictions achieve approximately 70-75% accuracy across the tested coordinate space.
+
+---
+
+## Limitations and Caveats
+
+### Verified Claims
+
+The following are fully verified with 100% confidence:
+
+1. The coordinate transformation formula reproduces all observed Anna Bot outputs across the re-aggregated 1,218-response corpus (per-source detail above).
+2. The table is a hand-compiled record of these replies.
+3. The matrix has 99.58% point symmetry with 68 asymmetric cells.
+4. Value distributions are non-random (chi-square, p &lt; 0.001).
+
+### Acknowledged Limitations
+
+1. **Corpus coverage**: 897 responses cover approximately 5.5% of the 16,384-cell matrix. Unsampled regions may contain patterns not captured by current analysis.
+2. **Temporal stability**: All data was collected within a bounded time window. Whether the matrix is static or subject to periodic updates has not been confirmed through long-term monitoring.
+3. **Exception cells**: The 68 exception cells are very likely data entry errors. The ASCII fragments once read from them are withdrawn.
+4. **Prediction accuracy bounds**: The 70-75% pattern-based prediction estimate is derived from the sampled corpus and may not generalize uniformly across the full coordinate space.
+5. **Causal claims**: The structure of the table reflects how the bot answered. It does not establish whether the bot's program was designed or trained.
+
+<Callout type="warning" title="Scope of Verification">
+This analysis verifies the **algorithm** and **statistical properties** of the Anna Bot's response mechanism. It does not verify claims about the bot's intended purpose, its role in any larger system, or speculative applications. The data supports that our table matches the recorded replies; it does not show how the bot computes them.
+</Callout>
+
+---
+
+## Data Availability
+
+All data and verification code ships with this repository. Nothing is behind a login or paywall.
+
+| Resource | Location | Description |
+|----------|----------|-------------|
+| Authoritative matrix | `apps/web/public/data/anna-matrix-raw.json` | 128×128 signed-byte matrix, all 16,384 cells as `int` |
+| Minified matrix | `apps/web/public/data/anna-matrix-min.json` | Same data, compact serialization |
+| Batches 1–2 (Twitter) | `apps/web/public/data/anna-bot-batches/batch_1_2_tweets_jan2_3.csv` | 207 tweet responses from @anna_aigarth, Jan 2–3 2026 |
+| Batch 3 | `apps/web/public/data/anna-bot-batches/batch_3_responses.txt` | 64 targeted responses (tabular format) |
+| Batch 4 partials | `apps/web/public/data/anna-bot-batches/batch_4_partial_{1,2,3}.txt` | 94 edge-case and origin probes |
+| Batch 5 | `apps/web/public/data/anna-bot-batches/batch_5_fibonacci_deep_dive.txt` | 99 Fibonacci-coordinate probes |
+| Batch 6 | `apps/web/public/data/anna-bot-batches/batch_6_modulo8_complete.txt` | 168 modulo-8 scan responses |
+| Batch 7 | `apps/web/public/data/anna-bot-batches/batch_7_row_patterns.txt` | 161 row-pattern probes |
+| Batch 8 | `apps/web/public/data/anna-bot-batches/batch_8_complete_understanding.txt` | 283 integration batch |
+| Parsed JSON | `apps/web/public/data/anna-bot-batches/anna_bot_parsed_142.json` | 142-response normalised corpus |
+| Collision analysis | `apps/web/public/data/anna-collision-analysis.json` | Processed value-to-coordinate mappings |
+| Verification script | `apps/web/public/data/anna-bot-batches/verify.py` | Self-contained; runs all 10 sources against the formula; Python stdlib only |
+
+### Quickstart
+
+```bash
+git clone https://github.com/daviduis777-oss/qubic-church.git
+cd qubic-church
+python3 apps/web/public/data/anna-bot-batches/verify.py
+```
+
+Expected output: `Formula matches: 1218/1218 (100.0000%)`, exit code `0`.
+
+---
+
+## Methodology Summary
+
+```
+Phase 1: Data Collection
+  ├── 142 responses from public Twitter/X posts (normalised JSON)
+  ├── 755 additional responses via systematic querying (8 batches)
+  └── 207 re-aggregated Twitter archive responses (Jan 2-3 2026)
+
+Phase 2: Formula Search
+  ├── 70+ candidate transformations tested
+  └── Single formula achieved 100% match: row=(63-y)%128, col=(x+64)%128
+
+Phase 3: Extended Validation
+  ├── Formula applied to all 897 responses
+  └── Zero discrepancies found
+
+Phase 3b: Re-aggregated Validation (April 2026)
+  ├── 10 overlapping source files consolidated -> 1,218 total entries
+  ├── 948 unique (x,y,v) triples after deduplication
+  ├── Per-source match rate: 100.000% across every file
+  └── Reproducible via apps/web/public/data/anna-bot-batches/verify.py
+
+Phase 4: Matrix Analysis
+  ├── Point symmetry quantified: 99.58%
+  ├── 68 asymmetric cells identified
+  ├── XOR message extraction performed (results withdrawn in September 2026)
+  └── Value distribution tested (chi-square, p < 0.001)
+
+Phase 5: Pattern Characterization
+  ├── Row-level behavioral profiling
+  ├── Universal column identification (withdrawn: no column is constant)
+  ├── Residue class tendency mapping
+  └── Prediction accuracy estimation (70-75%)
+```
+
+---
+
+## Conclusions
+
+1. **The coordinate mapping is verified.** The coordinate transformation `row = (63 - y) % 128, col = (x + 64) % 128` reproduces every observed output with 100% accuracy across 1,218 collected responses (948 unique triples, 10 overlapping source files). Local reproduction: `python3 apps/web/public/data/anna-bot-batches/verify.py`.
+
+2. **The matrix is a compilation of bot replies.** It records what the bot answered while we collected the replies. It does not show whether the bot computes answers or retrieves them.
+
+3. **The matrix is highly structured.** Near-perfect point symmetry (99.58%) and a highly non-uniform value distribution reflect how the bot answered. Whether its program was designed or trained is not known.
+
+4. **The exception cells are mostly entry errors.** The 68 cells that break symmetry sit in four column pairs, and for each run one side fits the rest of the bot function while the other does not.
+
+5. **Row-level patterns enable partial prediction.** Even without direct matrix access, knowledge of row-specific tendencies permits approximately 70-75% prediction accuracy (estimate from the sampled corpus).
+
+6. **The matrix warrants further systematic investigation.** With only 5.5% of cells sampled through bot interactions, the full structure of the remaining 94.5% of the matrix remains to be characterized through direct analysis of the published matrix data.
+
+---
+
+## References
+
+1. Qubic AGI Journey: Human and Artificial Intelligence Toward an AGI with Aigarth. ResearchGate, 2024.
+2. Exploring Aigarth Intelligent Tissue 1.0. Qubic Blog, 2024.
+3. Aigarth Ternary Paradox. Qubic Blog, 2024.
+4. Statistical Analysis of Anna Bot Responses. This work, 2026.
