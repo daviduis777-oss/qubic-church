@@ -48,9 +48,23 @@ Counted in days from the Bitcoin genesis block on 3 January 2009, 6,268 days end
 
 ## The number 85
 
-- EXODUS was issued 85 days after GENESIS.
-- The next day, 27 January 2026, the Doomsday Clock was set to 85 seconds. The date of that announcement had been public since 5 January.
-- Under simple assumptions about how the clock moves, a match like this has a chance between about one in nine and one in five. The later 85s, such as the EXODUS price of 85,026,676 QU and the 85 transfers to AIGARTH, were placed after the clock was known.
+Every step can be checked in public sources:
+
+| Time (UTC) | Event | Source |
+|---|---|---|
+| 2 Nov 2025, 23:02:38 | GENESIS is issued. | [transaction](https://explorer.qubic.org/network/tx/wghdxvygthpglbzfedgpsyfeaagejnkjnpgphrkqcabxbkdmojiitaqfendn) |
+| 5 Jan 2026, 12:00 | The Bulletin of the Atomic Scientists announces that it will reveal the new clock setting on 27 January at 15:00 UTC. | [announcement](https://thebulletin.org/2026/01/join-us-for-the-2026-doomsday-clock-announcement/) |
+| 26 Jan 2026, 20:19:21 | EXODUS is issued, 85 days after GENESIS by calendar date. | [transaction](https://explorer.qubic.org/network/tx/xewxiscrmanelccdvibumabhvprcsmkbxogfbribodlicgmknljnqvzdjqob) |
+| 26 Jan 2026, 20:19:37 | The EXODUS files go up on QubicTrade. The link file points to the Doomsday Clock page. | [link file](https://qubictrade.com/public/assets/links/asset_EXODUS-HASVHXZKVIHTFHEZUSZIIBPZFVHAGTANVXHBJNHMWCRQZYKULCUBLCTBPONO.txt), [description](https://qubictrade.com/public/assets/descriptions/asset_EXODUS-HASVHXZKVIHTFHEZUSZIIBPZFVHAGTANVXHBJNHMWCRQZYKULCUBLCTBPONO.txt) |
+| 27 Jan 2026, 15:00 | The Bulletin sets the clock to 85 seconds to midnight. | [statement](https://thebulletin.org/doomsday-clock/2026-statement/) |
+| 27 Jan 2026, 21:09:42 | The EXODUS issuer places its first and only sale offer: all 676 tokens at 85,026,676 QU each. | [transaction](https://explorer.qubic.org/network/tx/fcixmikvdayszfojygylghpffuzceiaaextpomktbeariobmsvdxxzbdjaxd) |
+| 3 Mar 2026, 11:57 to 12:11 | The GENESIS issuer sends 85 transfers of 676 QU to the AIGARTH issuer. | [AIGARTH issuer](https://explorer.qubic.org/network/address/PXMARASAWVLRUABZZOXQYOWAJLMBULKABAPAEXDVECDFPFZJMAMTLTQAQQLG) |
+
+The upload time of the QubicTrade files is the `Last-Modified` time their server reports, which anyone can read, for example with `curl -I` on the link. The files have not changed since.
+
+- The issuer tied EXODUS to the clock about 19 hours before the new setting was known, and the day count fixed at issuance matched it. This is a pairing made in advance, not a match found afterwards, which makes it the most remarkable of the 85s in this series. The EXODUS logo shows clock gears as well.
+- What the files do not show is that the issuer knew the setting. The EXODUS texts name no number of seconds, and the date of the announcement had been public for three weeks, so issuing on its eve could be planned. Without inside knowledge, a hit like this has a chance of about one in nine to one in five under simple assumptions about how the clock moves.
+- EXODUS had no sale offer until the clock was set. Six hours later the issuer priced every token at 85,026,676 QU, about 85 million, and 329 have been sold at that price. Together with the 85 transfers to AIGARTH, this reads as the issuer taking up the number on purpose once it was known.
 
 ## Who holds the assets
 
@@ -66,7 +80,7 @@ We fixed each test in advance, including how a text or address would be encoded 
 - **Hidden data in the logos.** No appended data, valid image structure, and standard steganography tests negative. The tests do detect a planted message in control images, so they would have caught a simple hidden layer. This rules out standard methods, not keyed or scattered ones.
 - **"Most of GENESIS was burned several times over."** Only one burn succeeded. It removed exactly the unsold part of the initial offer.
 - **"The GENESIS issuer kept 676 shares."** The 676 shares it holds came from another identity on 1 January 2026.
-- **"EXODUS predicted the 85."** The announcement date was public in advance, and the price was set after the result.
+- **"The EXODUS price shows the 85 was known in advance."** The price of 85,026,676 QU was set on 27 January at 21:09 UTC, six hours after the clock was announced.
 - **Codes in the addresses, amounts or dates.** The issuer identities look like random Qubic identities. The odd transfer amounts are fee bookkeeping. No hidden link to Qubic or Aigarth dates turned up either.
 
 ## What Come-from-Beyond said
@@ -79,7 +93,7 @@ We found no statement of his about EXODUS or AIGARTH. The asset AIGARTH borrows 
 
 ## How we checked
 
-- **On-chain data:** read-only queries of the public Qubic RPC, retrieved on 30 September and 1 October 2026.
+- **On-chain data:** read-only queries of the public Qubic RPC, retrieved on 30 September and 1 October 2026. Every transaction can be looked up in the [Qubic explorer](https://explorer.qubic.org).
 - **Description files:** fetched with their server timestamps and decoded independently twice.
 - **Tests:** more than 30 tests were frozen before they ran, with null models built from random texts and random Qubic identities.
 - **Records:** scripts, protocols and results are kept in our research archive.
