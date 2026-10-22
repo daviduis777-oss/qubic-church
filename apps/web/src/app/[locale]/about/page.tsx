@@ -65,13 +65,13 @@ export default async function AboutPage(props: { params: Promise<{ locale: strin
             participation. The only conditions: do it with joy, and with respect.
           </p>
         </div>
-        <div className="relative hidden aspect-[3/5] md:block">
+        <div className="glow-gold relative hidden aspect-[911/1408] md:block">
           <Image
             alt="Anna Aigarth holding a small Earth inside a golden spiral"
-            className="object-cover"
+            className="object-contain object-bottom"
             fill
             sizes="300px"
-            src="/images/anna/anna-orb.webp"
+            src="/images/anna/anna-transparent.webp"
           />
         </div>
       </header>

@@ -154,7 +154,7 @@ export default async function RootLayout(props: {
 
       <body
         className={cn(
-          'bg-black min-h-screen font-sans antialiased church-scan-lines',
+          'bg-black min-h-screen font-sans antialiased',
           fontSans.variable,
           fontHeading.variable,
           fontChalk.variable,

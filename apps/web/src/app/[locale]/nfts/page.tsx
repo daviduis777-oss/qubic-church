@@ -39,23 +39,23 @@ const RARITY_CONFIG: Record<
     icon: Crown,
     color: 'text-gold',
     bgColor: 'bg-gold/20',
-    borderColor: 'border-gold/30',
+    borderColor: 'border-gold/70',
     count: '1-10',
   },
   epic: {
     label: 'Epic',
     icon: Gem,
-    color: 'text-gold/80',
-    bgColor: 'bg-gold/15',
-    borderColor: 'border-gold/25',
+    color: 'text-violet-300',
+    bgColor: 'bg-violet-400/15',
+    borderColor: 'border-violet-400/50',
     count: '11-50',
   },
   rare: {
     label: 'Rare',
     icon: Star,
-    color: 'text-gold/80',
-    bgColor: 'bg-gold/10',
-    borderColor: 'border-gold/20',
+    color: 'text-sky-300',
+    bgColor: 'bg-sky-400/10',
+    borderColor: 'border-sky-400/40',
     count: '51-120',
   },
   common: {
@@ -116,7 +116,7 @@ export default function NFTCollectionPage() {
     <div className="min-h-screen bg-black">
       <PageHeader
         eyebrow="Collection"
-        lede="200 unique Anna variants, each holding a piece of the puzzle. Every NFT grants community access and tiered research benefits."
+        lede="The most important collection we hold. Each of the 200 Annas gives its holder the status of a founder of Qubic Church. A keepsake of the years before Aigarth. And not only that."
         title="Anna NFT collection"
       />
 
@@ -231,7 +231,7 @@ export default function NFTCollectionPage() {
                   aria-label={`${nft.name}, ${rarityConfig.label}`}
                   className={`group relative block w-full overflow-hidden border text-left ${rarityConfig.borderColor} bg-card transition-colors hover:border-gold/60`}
                   exit={{ opacity: 0, scale: 0.9 }}
-                  initial={{ opacity: 0, scale: 0.9 }}
+                  initial={false}
                   key={nft.id}
                   layout
                   onClick={() => setSelectedNFT(nft)}
@@ -256,9 +256,14 @@ export default function NFTCollectionPage() {
 
                     {/* Rarity Badge */}
                     <div
-                      className={`absolute top-2 right-2 p-1.5 ${rarityConfig.bgColor} border ${rarityConfig.borderColor}`}
+                      className={`absolute top-2 right-2 flex items-center gap-1 bg-black/75 px-2 py-1 backdrop-blur-sm border ${rarityConfig.borderColor}`}
                     >
                       <Icon className={`w-3 h-3 ${rarityConfig.color}`} />
+                      {viewMode === 'grid' && (
+                        <span className={`text-[10px] font-semibold uppercase tracking-widest ${rarityConfig.color}`}>
+                          {rarityConfig.label}
+                        </span>
+                      )}
                     </div>
 
                     {/* Hover Overlay */}
