@@ -128,7 +128,7 @@ export function Phase12_JoinTheInvestigation() {
       desc: 'The Qubic network',
     },
     {
-      href: 'https://discord.gg/wWJxAsbc',
+      href: 'https://x.com/QubicChurch',
       title: 'Discord Community',
       desc: 'Join the discussion',
     },

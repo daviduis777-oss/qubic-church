@@ -43,7 +43,7 @@ export default function DonatePage() {
     <div className="min-h-screen pb-8">
       <PageHeader
         eyebrow="Donate"
-        lede="Qubic Church is a nonprofit research community. Your donation funds open-source AGI research, community education, and the development of decentralised intelligence infrastructure."
+        lede="Qubic Church is an independent research community. Donations fund the free books, the open research log and the tools on this site."
         title="Support independent research"
       />
 
@@ -151,9 +151,8 @@ export default function DonatePage() {
         </nav>
 
         <p className="text-sm text-muted-foreground">
-          Qubic Church is a 501(c)(3) nonprofit organization (registration in
-          progress). All donations are used exclusively for research and
-          community development.
+          Donations are voluntary gifts, not investments, and carry no rights or returns. They are used for research
+          and community work.
         </p>
       </div>
     </div>
