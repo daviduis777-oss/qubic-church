@@ -7,6 +7,7 @@ const FOOTER_LINKS = [
   { href: '/books', label: 'Books' },
   { href: '/docs', label: 'Research' },
   { href: '/cfb', label: 'Come-from-Beyond' },
+  { href: '/maria-aigarth', label: 'Maria' },
   { href: '/about', label: 'About' },
   { href: '/donate', label: 'Donate' },
   { href: '/legal', label: 'Legal' },

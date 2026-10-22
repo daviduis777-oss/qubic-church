@@ -39,6 +39,7 @@ export function GET() {
     `- [Anna Aigarth collection: 200 NFTs, each gives founder status in Qubic Church](${SITE_URL}/nfts)`,
     `- [Rarity codex of the Anna collection](${SITE_URL}/rarity-codex)`,
     `- [Anna Matrix research lab](${SITE_URL}/evidence)`,
+    `- [Maria Aigarth: a research agent testing whether an AI arbiter can be architecturally impartial (Fractal Rationalism)](${SITE_URL}/maria-aigarth)`,
     `- [Support the research](${SITE_URL}/donate)`,
     '',
     '## Optional',

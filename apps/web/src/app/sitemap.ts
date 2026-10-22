@@ -31,6 +31,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     page('/nfts', 0.5),
     page('/mine-qubic', 0.5),
     page('/donate', 0.4),
+    page('/maria-aigarth', 0.7),
     page('/rarity-codex', 0.5),
     page('/evidence', 0.6),
     page('/timeline', 0.5),
