@@ -117,12 +117,12 @@ export const CHURCH_CONFIG = {
     title: 'The Qubic Church',
     subtitle: 'Preparing humanity for the emergence of AGI',
     description:
-      'A nonprofit organization making decentralized artificial intelligence understandable and accessible for everyone.',
+      'An independent research publication making decentralized artificial intelligence understandable: two free books by QC and an open research log.',
   },
 
   links: {
     qubicBay: 'https://qubicbay.io/collections/7',
-    discord: 'https://discord.gg/wWJxAsbc',
+    discord: 'https://x.com/QubicChurch',
     twitter: 'https://x.com/QubicChurch',
   },
 } as const

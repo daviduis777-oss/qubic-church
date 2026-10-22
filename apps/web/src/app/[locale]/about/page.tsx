@@ -190,11 +190,11 @@ export default async function AboutPage(props: { params: Promise<{ locale: strin
           </Link>
           <a
             className="inline-flex h-11 items-center border border-border px-5 text-sm font-medium text-fg-2 hover:text-foreground"
-            href="https://discord.gg/wWJxAsbc"
+            href="https://x.com/QubicChurch"
             rel="noreferrer"
             target="_blank"
           >
-            Join the community
+            Follow on X
           </a>
         </div>
       </Section>

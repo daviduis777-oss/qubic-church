@@ -59,7 +59,7 @@ export const siteConfig = {
 
     discord: {
       label: 'Discord',
-      url: 'https://discord.gg/wWJxAsbc',
+      url: 'https://x.com/QubicChurch',
     },
   },
 
@@ -90,12 +90,12 @@ export const siteConfig = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: 'Qubic Church',
-    description: 'Nonprofit organization preparing humanity for the emergence of AGI. Open research, education, and community governance powered by Qubic.',
-    url: 'https://github.com/daviduis777-oss/qubic-church',
-    logo: 'https://github.com/daviduis777-oss/qubic-church/logo.png',
+    description: 'Independent research publication on Qubic, Aigarth and Come-from-Beyond: two free books by QC and an open research log.',
+    url: 'https://qubic.church',
+    logo: 'https://qubic.church/apple-touch-icon.png',
     sameAs: [
       'https://x.com/QubicChurch',
-      'https://discord.gg/wWJxAsbc',
+      'https://github.com/daviduis777-oss/qubic-church',
     ],
   },
 } as const
