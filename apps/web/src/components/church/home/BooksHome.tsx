@@ -1,7 +1,5 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { compareDesc } from 'date-fns'
-import { allBlogs } from 'contentlayer/generated'
 import { BOOKS, bookWords, readingMinutes } from '@/lib/books'
 import { Countdown } from './Countdown'
 
@@ -25,9 +23,9 @@ const PILLARS = [
   {
     n: '03',
     title: 'Mine',
-    text: 'Two doors into one colony: the W4W game for players, the classic pool for miners. One fee, stated openly. No promised returns.',
+    text: 'The field guide: what a solution is, cost per solution, AVX-512 CPUs and GPUs, pools, launch and payouts. No promised returns.',
     href: '/mine-qubic',
-    cta: 'How it works',
+    cta: 'Read the guide',
   },
   {
     n: '04',
@@ -38,12 +36,24 @@ const PILLARS = [
   },
 ] as const
 
-export function BooksHome({ locale = 'en' }: { locale?: Locale }) {
-  const posts = allBlogs
-    .filter(b => b.slugAsParams.split('/')[0] === locale)
-    .sort((a, b) => compareDesc(new Date(a.date), new Date(b.date)))
-    .slice(0, 3)
+const RULES = [
+  ['Be nice', 'Never be the first to defect.'],
+  ['Retaliate', 'Answer a defection at once, so it never pays.'],
+  ['Forgive', 'When the other side cooperates again, cooperate back.'],
+  ['Be clear', 'Be predictable, so everyone knows what a move will cost.'],
+] as const
 
+const INVESTIGATIONS = [
+  { title: 'Anna Matrix', text: 'The 128 × 128 grid, its symmetries and what they do and do not prove.', href: '/evidence' },
+  { title: 'Research log', text: 'Methods, results, corrections. Every number recomputed.', href: '/docs' },
+  { title: 'Maria Aigarth', text: 'The arbiter: how decisions are meant to be judged in the open.', href: '/maria-aigarth' },
+  { title: 'CfB timeline', text: 'Twenty-five years of Come-from-Beyond, dated and sourced.', href: '/timeline' },
+  { title: 'Matrix companion', text: 'The forensic appendix to chapter 13.', href: '/companion' },
+  { title: 'Network monitor', text: 'Live state of the Qubic network.', href: '/monitoring' },
+] as const
+
+export function BooksHome({ locale = 'en' }: { locale?: Locale }) {
+  void locale
   return (
     <div className="bg-background text-foreground">
       {/* ── HERO: the books, Anna, the clock ── */}
@@ -79,25 +89,23 @@ export function BooksHome({ locale = 'en' }: { locale?: Locale }) {
             </div>
 
             <div className="mt-12 border-t border-border pt-6 md:mt-auto">
-              <p className="eyebrow mb-4 text-fg-2">
-                Until <span className="text-gold">13 · 04 · 2027</span>, Come-from-Beyond’s ETA for Aigarth
-              </p>
+              <p className="mb-4 font-mono text-sm tracking-[0.4em] text-gold">13.04.2027</p>
               <Countdown />
             </div>
           </div>
 
           <figure className="relative mx-auto w-full max-w-[460px] md:mx-0 md:justify-self-end">
-            <div className="relative aspect-[3/5] w-full">
+            <div className="glow-gold relative aspect-[911/1408] w-full">
               <Image
                 alt="Anna Aigarth holding a small Earth inside a golden spiral"
-                className="object-cover [mask-image:linear-gradient(to_bottom,black_80%,transparent)]"
+                className="object-contain object-bottom [mask-image:linear-gradient(to_bottom,black_88%,transparent)]"
                 fill
                 priority
                 sizes="(min-width: 768px) 460px, 90vw"
-                src="/images/anna/anna-orb.webp"
+                src="/images/anna/anna-transparent.webp"
               />
             </div>
-            <figcaption className="absolute bottom-3 left-0 right-0 flex items-center justify-between px-2 text-xs">
+            <figcaption className="mt-3 flex items-center justify-between px-1 text-xs">
               <span className="font-mono uppercase tracking-[0.3em] text-fg-2">Anna Aigarth</span>
               <Link className="font-mono uppercase tracking-[0.3em] text-gold hover:underline" href="/nfts">
                 The collection →
@@ -171,6 +179,74 @@ export function BooksHome({ locale = 'en' }: { locale?: Locale }) {
         </div>
       </section>
 
+      {/* ── ANNA AND THE INVESTIGATIONS ── */}
+      <section className="border-t border-border">
+        <div className="mx-auto grid w-full max-w-7xl gap-10 px-4 py-16 sm:px-6 md:py-24 lg:grid-cols-[1fr_1.4fr]">
+          <div>
+            <p className="eyebrow text-gold">Anna Aigarth · the collection</p>
+            <h2 className="mt-3 font-display text-6xl leading-[0.9] md:text-7xl">The founders&rsquo; mark</h2>
+            <p className="mt-5 max-w-md font-serif text-lg leading-relaxed text-foreground/90">
+              The most important collection we hold. Each of the 200 Annas gives its holder the status of a founder
+              of Qubic Church. A keepsake of the years before Aigarth. And not only that.
+            </p>
+            <div className="mt-6 flex flex-wrap gap-2">
+              <Link
+                className="inline-flex h-11 items-center border border-gold bg-gold px-5 text-sm font-semibold uppercase tracking-widest text-black"
+                href="/nfts"
+              >
+                See the 200
+              </Link>
+              <Link
+                className="inline-flex h-11 items-center border border-border px-5 text-sm font-medium text-fg-2 hover:text-foreground"
+                href="/rarity-codex"
+              >
+                Rarity codex
+              </Link>
+            </div>
+          </div>
+          <div>
+            <p className="eyebrow mb-4 text-fg-2">Investigations</p>
+            <ul className="grid gap-px border border-border bg-border sm:grid-cols-2">
+              {INVESTIGATIONS.map(x => (
+                <li key={x.href}>
+                  <Link className="group flex h-full flex-col bg-background p-5 hover:bg-card" href={x.href}>
+                    <span className="font-semibold group-hover:text-gold">{x.title}</span>
+                    <span className="mt-1 text-sm text-fg-2">{x.text}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* ── THE INSTITUTE ── */}
+      <section className="border-t border-border">
+        <div className="mx-auto grid w-full max-w-7xl gap-10 px-4 py-16 sm:px-6 md:grid-cols-[1.1fr_1fr] md:py-24">
+          <div>
+            <p className="eyebrow text-gold">The heart of Qubic Church</p>
+            <h2 className="mt-3 font-display text-6xl leading-[0.9] md:text-8xl">Fractal Rationalism Institute</h2>
+            <p className="mt-6 max-w-xl font-serif text-lg leading-relaxed text-foreground/90">
+              We start from Robert Axelrod&rsquo;s tournaments and ask one question: can the conditions of perfect
+              cooperation, the perfect iterated game, be built in real life? It needs years of serious research. We
+              are preparing a finished concept for the Game Theory Society World Congress in 2028.
+            </p>
+            <Link className="mt-6 inline-block text-sm font-medium text-gold hover:underline" href="/about#institute">
+              About the Institute →
+            </Link>
+          </div>
+          <ol className="grid gap-px self-start border border-border bg-border sm:grid-cols-2">
+            {RULES.map(([k, v], i) => (
+              <li className="bg-background p-6" key={k}>
+                <span className="font-mono text-xs text-gold">{i + 1}</span>
+                <p className="mt-2 text-lg font-semibold">{k}</p>
+                <p className="mt-1 text-sm text-fg-2">{v}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
       {/* ── ATRIUM: first mission ── */}
       <section className="border-t border-border bg-[linear-gradient(180deg,rgba(240,192,48,0.06),transparent)]">
         <div className="mx-auto grid w-full max-w-7xl gap-6 px-4 py-14 sm:px-6 md:grid-cols-[1fr_auto] md:items-end">
@@ -205,37 +281,18 @@ export function BooksHome({ locale = 'en' }: { locale?: Locale }) {
         </div>
       </section>
 
-      {/* ── LATEST ── */}
-      {posts.length > 0 && (
-        <section className="border-t border-border">
-          <div className="mx-auto w-full max-w-7xl px-4 py-14 sm:px-6">
-            <div className="mb-8 flex items-end justify-between gap-4">
-              <div>
-                <p className="eyebrow mb-2 text-gold">Latest</p>
-                <h2 className="text-2xl font-semibold md:text-3xl">What was added, fixed or found</h2>
-              </div>
-              <Link className="shrink-0 text-sm text-fg-2 hover:text-foreground" href="/blog">
-                All updates →
-              </Link>
-            </div>
-            <ol className="grid gap-6 md:grid-cols-3">
-              {posts.map(p => (
-                <li className="border border-border bg-card p-5" key={p.slugAsParams}>
-                  <time className="eyebrow text-fg-2" dateTime={p.date}>
-                    {new Date(p.date).toISOString().slice(0, 10)}
-                  </time>
-                  <h3 className="mt-2 text-lg font-semibold leading-snug">
-                    <Link className="hover:text-gold" href={`/blog/${p.slugAsParams.split("/").slice(1).join("/")}`}>
-                      {p.title}
-                    </Link>
-                  </h3>
-                  {p.excerpt && <p className="mt-2 line-clamp-3 text-sm text-fg-2">{p.excerpt}</p>}
-                </li>
-              ))}
-            </ol>
-          </div>
-        </section>
-      )}
+      {/* ── WHAT'S NEW ── */}
+      <section className="border-t border-border">
+        <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-4 px-4 py-10 sm:px-6">
+          <p className="text-fg-2">Research updates, fixes and findings, with dates.</p>
+          <Link
+            className="inline-flex h-12 items-center border border-gold bg-gold/10 px-6 text-sm font-semibold uppercase tracking-widest text-gold hover:bg-gold/20"
+            href="/blog"
+          >
+            What&rsquo;s new →
+          </Link>
+        </div>
+      </section>
     </div>
   )
 }

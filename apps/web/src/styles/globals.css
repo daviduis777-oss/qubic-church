@@ -53,7 +53,7 @@
   --surface-3: hsl(0 0% 94%);
 
   /* Designer Hero Variables */
-  --gold: #f0c030;
+  --gold: #ffd24a;
   --sdim: #3a7090;
   --white: #f4f6fd;
   --void: #000;
@@ -70,10 +70,11 @@
    * Text floor: nothing below muted-foreground (about white/60) or gold/70.
    * Radius: square corners are the house style; --radius stays small.
    */
-  --gold-300: oklch(0.84 0.13 86);
-  --gold-400: oklch(0.77 0.13 85);
-  --gold-500: oklch(0.68 0.12 84);
-  --gold-600: oklch(0.55 0.1 83);
+  /* 2026-10-23: brighter, luminous gold (was 0.84/0.77/0.68/0.55, read as ochre) */
+  --gold-300: oklch(0.93 0.13 94);
+  --gold-400: oklch(0.87 0.165 90);
+  --gold-500: oklch(0.79 0.16 86);
+  --gold-600: oklch(0.64 0.13 84);
   --grey-950: oklch(0.13 0 0);
   --grey-900: oklch(0.15 0 0);
   --grey-850: oklch(0.19 0 0);
@@ -2530,4 +2531,17 @@
 }
 @media (max-width: 640px) {
   .book-prose { font-size: 1.0625rem; line-height: 1.7; }
+}
+
+/* Luminous gold: a soft halo on gold text and filled gold buttons */
+.text-gold {
+  text-shadow: 0 0 18px color-mix(in oklab, var(--gold-400) 45%, transparent);
+}
+.bg-gold {
+  background-image: linear-gradient(180deg, var(--gold-300), var(--gold-400) 55%, var(--gold-500));
+  box-shadow: 0 0 28px -4px color-mix(in oklab, var(--gold-400) 55%, transparent),
+    inset 0 1px 0 color-mix(in oklab, white 55%, transparent);
+}
+.glow-gold {
+  filter: drop-shadow(0 0 40px color-mix(in oklab, var(--gold-400) 35%, transparent));
 }
