@@ -11,8 +11,8 @@ const DESC =
 export const metadata: Metadata = {
   title: TITLE,
   description: DESC,
-  alternates: { canonical: `${SITE_URL}/en/about` },
-  openGraph: { type: 'article', title: TITLE, description: DESC, url: `${SITE_URL}/en/about` },
+  alternates: { canonical: `${SITE_URL}/about` },
+  openGraph: { type: 'article', title: TITLE, description: DESC, url: `${SITE_URL}/about` },
 }
 
 const RULES = [
@@ -45,7 +45,7 @@ export default async function AboutPage(props: { params: Promise<{ locale: strin
     '@type': 'AboutPage',
     name: TITLE,
     description: DESC,
-    url: `${SITE_URL}/en/about`,
+    url: `${SITE_URL}/about`,
     about: { '@id': `${SITE_URL}/#org` },
     author: { '@id': `${SITE_URL}/#qc` },
   }

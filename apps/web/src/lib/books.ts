@@ -72,8 +72,8 @@ export function bookWords(b: Book) {
 
 export const SITE_URL = (process.env.NEXT_PUBLIC_APP_URL || 'https://qubic.church').replace(/\/$/, '')
 
-export const bookUrl = (b: Book) => `${SITE_URL}/en/books/${b.slug}`
-export const chapterUrl = (b: Book, c: Chapter) => `${SITE_URL}/en/books/${b.slug}/${c.slug}`
+export const bookUrl = (b: Book) => `${SITE_URL}/books/${b.slug}`
+export const chapterUrl = (b: Book, c: Chapter) => `${SITE_URL}/books/${b.slug}/${c.slug}`
 
 /** Plain-text/markdown rendering used by llms-full.txt and the .md endpoints. */
 export function chapterMarkdown(b: Book, c: Chapter) {

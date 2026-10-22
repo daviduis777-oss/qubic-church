@@ -1,10 +1,10 @@
+import Link from 'next/link'
+import { compareDesc } from 'date-fns'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Metadata } from 'next'
-import { Suspense } from 'react'
 
 import '@/styles/mdx.css'
 
-import { PaginatedBlogPosts } from '@/components/blog/paginated-posts'
 import { BlogPostBreadcrumb } from '@/components/blog/breadcrumb'
 import { DashboardTableOfContents } from '@/components/docs/toc'
 import type { LocaleOptions } from '@/lib/opendocs/types/i18n'
@@ -17,7 +17,6 @@ import { allBlogs } from 'contentlayer/generated'
 import { defaultLocale } from '@/config/i18n'
 import { Mdx } from '@/components/docs/mdx'
 import { PageHeader } from '@/components/ui/page-header'
-import { Icons } from '@/components/icons'
 import { siteConfig } from '@/config/site'
 import { absoluteUrl } from '@/lib/utils'
 
@@ -158,32 +157,24 @@ export default async function BlogPage(props: BlogPageProps) {
     return (
       <>
         <PageHeader title={t('blog.words.posts')} />
-        <Suspense
-          fallback={
-            <div className="h-64 md:h-96 w-full flex flex-1 items-center justify-center">
-              <Icons.spinner
-                className="animate-spin max-h-32 max-w-32 min-h-20 min-w-20 h-full w-full"
-                strokeWidth="1"
-              />
-            </div>
-          }
-        >
-          <PaginatedBlogPosts
-            locale={locale}
-            messages={{
-              by: t('blog.words.by'),
-              next: t('blog.buttons.next'),
-              min_read: t('blog.cards.min_read'),
-              previous: t('blog.buttons.previous'),
-              rss_feed: t('blog.buttons.rss_feed'),
-              read_more: t('blog.buttons.read_more'),
-              go_to_next_page: t('blog.buttons.go_to_next_page'),
-              go_to_previous_page: t('blog.buttons.go_to_previous_page'),
-            }}
-            perPage={10}
-            posts={allBlogs}
-          />
-        </Suspense>
+        <ol className="mx-auto w-full max-w-3xl divide-y divide-border border-y border-border">
+          {allBlogs
+            .filter(b => b.slugAsParams.split('/')[0] === locale)
+            .sort((a, b) => compareDesc(new Date(a.date), new Date(b.date)))
+            .map(b => (
+              <li className="py-6" key={b.slugAsParams}>
+                <time className="eyebrow text-fg-2" dateTime={b.date}>
+                  {new Date(b.date).toISOString().slice(0, 10)}
+                </time>
+                <h2 className="mt-2 text-xl font-semibold leading-snug md:text-2xl">
+                  <Link className="hover:text-gold" href={`/blog/${b.slugAsParams.split('/').slice(1).join('/')}`}>
+                    {b.title}
+                  </Link>
+                </h2>
+                {b.excerpt && <p className="mt-2 text-fg-2">{b.excerpt}</p>}
+              </li>
+            ))}
+        </ol>
       </>
     )
   }

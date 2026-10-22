@@ -225,7 +225,7 @@ export function BooksHome({ locale = 'en' }: { locale?: Locale }) {
                     {new Date(p.date).toISOString().slice(0, 10)}
                   </time>
                   <h3 className="mt-2 text-lg font-semibold leading-snug">
-                    <Link className="hover:text-gold" href={p.slug}>
+                    <Link className="hover:text-gold" href={`/blog/${p.slugAsParams.split("/").slice(1).join("/")}`}>
                       {p.title}
                     </Link>
                   </h3>

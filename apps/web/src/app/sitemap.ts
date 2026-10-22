@@ -7,7 +7,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   if (!INDEXING) return []
   const now = new Date()
   const page = (path: string, priority: number, lastModified: Date | string = now) => ({
-    url: `${SITE_URL}/en${path}`,
+    url: `${SITE_URL}${path || "/"}`,
     lastModified,
     priority,
   })
