@@ -26,7 +26,6 @@ export function GlobalNavTrigger() {
     setActiveModal(modalId)
   }, [])
 
-  if (isHomepage) return null
 
   return (
     <>
@@ -61,8 +60,7 @@ export function GlobalNavTrigger() {
               <line x1="3" x2="21" y1="12" y2="12" />
               <line x1="3" x2="21" y1="18" y2="18" />
             </svg>
-            <span className="md:hidden">Menu</span>
-            <span className="hidden md:inline">Start immersion</span>
+            <span>Menu</span>
           </button>
 
           {/* Center: wordmark */}
@@ -78,12 +76,23 @@ export function GlobalNavTrigger() {
             aria-label="Primary"
             className="flex items-center gap-1 flex-shrink-0"
           >
-            <Link
-              className="hidden sm:inline-flex h-10 items-center px-3 text-sm font-medium text-fg-2 transition-colors duration-150 ease-out hover:text-foreground"
-              href="/books"
-            >
-              Books
-            </Link>
+            {(
+              [
+                ['/books', 'Books'],
+                ['/docs', 'Research'],
+                ['/cfb', 'CfB'],
+                ['/mine-qubic', 'Mine'],
+                ['/nfts', 'Anna'],
+              ] as const
+            ).map(([href, label]) => (
+              <Link
+                className="hidden md:inline-flex h-10 items-center px-3 text-sm font-medium text-fg-2 transition-colors duration-150 ease-out hover:text-foreground"
+                href={href}
+                key={href}
+              >
+                {label}
+              </Link>
+            ))}
             <Link
               className="inline-flex h-9 items-center border border-gold/50 px-3 text-sm font-medium text-gold transition-colors duration-150 ease-out hover:border-gold hover:bg-gold/10"
               href="/donate"

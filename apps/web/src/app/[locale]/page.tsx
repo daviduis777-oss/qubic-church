@@ -4,11 +4,11 @@ import type { LocaleOptions } from '@/lib/opendocs/types/i18n'
 import { defaultLocale, locales } from '@/config/i18n'
 
 // Church Homepage - Single Hero Page + Circular Menu + Modals
-import { GalaxyHero } from '@/components/church/hero/GalaxyHero'
+import { BooksHome } from '@/components/church/home/BooksHome'
 // Footer removed from homepage, single-screen hero only
 
 export const metadata: Metadata = {
-  title: 'Qubic Church | Research on Anna, Aigarth and Qubic',
+  title: 'Qubic Church | Books and open research on Qubic, Aigarth and Come-from-Beyond',
   description:
     'Qubic Church is a research community studying the Anna Matrix, Aigarth and the Qubic ecosystem, with open data and published corrections.',
 }
@@ -26,8 +26,7 @@ export default async function ChurchHomePage(props: {
 
   return (
     <>
-      {/* HERO - Full screen with NavigationWheel + Content Modals */}
-      <GalaxyHero />
+      <BooksHome locale={currentLocale} />
     </>
   )
 }
