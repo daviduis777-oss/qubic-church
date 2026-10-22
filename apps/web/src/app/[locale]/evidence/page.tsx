@@ -18,7 +18,7 @@ import { defaultLocale, locales } from '@/config/i18n'
 import { Link } from '@/navigation'
 
 export const metadata: Metadata = {
-  title: 'Research Lab | Qubic Church',
+  title: 'Research Lab',
   description:
     'What the Anna Matrix is, how we know it, and the tools to check it yourself.',
 }

@@ -1,4 +1,6 @@
 import type { Metadata } from 'next'
+import { SITE_DESCRIPTION } from '@/lib/indexing'
+import { SITE_URL } from '@/lib/books'
 import { setRequestLocale } from 'next-intl/server'
 import type { LocaleOptions } from '@/lib/opendocs/types/i18n'
 import { defaultLocale, locales } from '@/config/i18n'
@@ -9,8 +11,8 @@ import { BooksHome } from '@/components/church/home/BooksHome'
 
 export const metadata: Metadata = {
   title: 'Qubic Church | Books and open research on Qubic, Aigarth and Come-from-Beyond',
-  description:
-    'Qubic Church is a research community studying the Anna Matrix, Aigarth and the Qubic ecosystem, with open data and published corrections.',
+  description: SITE_DESCRIPTION,
+  alternates: { canonical: `${SITE_URL}/` },
 }
 
 export const dynamicParams = true

@@ -21,7 +21,7 @@ import {
 } from '@/components/journey-v3'
 
 export const metadata: Metadata = {
-  title: 'CfB Timeline | Qubic Church',
+  title: 'CfB Timeline',
   description:
     'The 12-phase story of the community investigation into Come-from-Beyond and Qubic, including the claims that were later withdrawn.',
 }

@@ -5,10 +5,10 @@ import { INDEXING } from '@/lib/indexing'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   if (!INDEXING) return []
-  const now = new Date()
-  const page = (path: string, priority: number, lastModified: Date | string = now) => ({
-    url: `${SITE_URL}${path || "/"}`,
-    lastModified,
+  // lastModified only where a real date exists; build time is not a modification date
+  const page = (path: string, priority: number, lastModified?: Date | string) => ({
+    url: `${SITE_URL}${path || '/'}`,
+    ...(lastModified ? { lastModified } : {}),
     priority,
   })
   return [
@@ -31,5 +31,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     page('/nfts', 0.5),
     page('/mine-qubic', 0.5),
     page('/donate', 0.4),
+    page('/rarity-codex', 0.5),
+    page('/evidence', 0.6),
+    page('/timeline', 0.5),
   ]
 }

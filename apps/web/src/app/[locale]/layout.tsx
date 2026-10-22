@@ -46,7 +46,8 @@ export async function generateMetadata(props: {
 
     description: SITE_DESCRIPTION,
 
-    robots: INDEXING
+    // The Portuguese locale mostly repeats English text: keep it out of the index, follow its links
+    robots: INDEXING && locale !== 'pt'
       ? { index: true, follow: true, googleBot: { index: true, follow: true } }
       : { index: false, follow: false, googleBot: { index: false, follow: false } },
 
