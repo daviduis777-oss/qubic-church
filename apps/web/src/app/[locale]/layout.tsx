@@ -14,7 +14,8 @@ import { ConditionalSiteFooter } from '@/components/ConditionalSiteFooter'
 import { INDEXING, SITE_DESCRIPTION } from '@/lib/indexing'
 import { SITE_URL } from '@/lib/books'
 import { ReducedMotionConfig } from '@/components/motion-config'
-import { defaultLocale } from '@/config/i18n'
+import { defaultLocale, locales } from '@/config/i18n'
+import { notFound } from 'next/navigation'
 import { siteConfig } from '@/config/site'
 import {
   getSansFont,
@@ -131,6 +132,9 @@ export default async function RootLayout(props: {
   children: React.ReactNode
 }) {
   const params = await props.params
+
+  // Only real locales render; '/.env', '/wp-admin' and the like get a 404 instead of a page
+  if (params.locale && !(locales as readonly string[]).includes(params.locale)) notFound()
 
   const locale = (params.locale as LocaleOptions) || defaultLocale
 
