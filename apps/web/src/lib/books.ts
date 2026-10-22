@@ -30,7 +30,8 @@ export type Book = {
   chapters: Chapter[]
 }
 
-export const BOOKS: Book[] = [cfb as Book, lv as Book]
+// Book one (2026-06) first, then book two (2026-08)
+export const BOOKS: Book[] = [lv as Book, cfb as Book]
 
 export const AUTHOR = {
   name: 'QC',

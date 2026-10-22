@@ -280,8 +280,8 @@ export default function NFTCollectionPage() {
                       <h3 className="truncate text-sm font-semibold text-foreground">
                         {nft.name}
                       </h3>
-                      <p className="truncate text-xs text-muted-foreground">
-                        {nft.title}
+                      <p className="truncate font-mono text-xs text-muted-foreground">
+                        Rank {nft.rank} · score {nft.score.toFixed(2)}
                       </p>
                     </div>
                   )}
@@ -362,7 +362,7 @@ export default function NFTCollectionPage() {
                   <h2 className="mb-2 text-2xl font-semibold text-foreground">
                     {selectedNFT.name}
                   </h2>
-                  <p className="mb-4 text-lg text-gold">{selectedNFT.title}</p>
+                  <p className="mb-4 font-mono text-lg text-gold">Rank {selectedNFT.rank} of 200 · rarity score {selectedNFT.score.toFixed(2)}</p>
                   <p className="mb-6 text-sm leading-relaxed text-fg-2">
                     {selectedNFT.description}
                   </p>

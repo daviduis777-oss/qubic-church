@@ -1,3 +1,4 @@
+import { NFT_RANK } from './nft-rarity'
 /**
  * NFT Collection Configuration
  * Anna Aigarth NFT collection (200 total)
@@ -32,6 +33,8 @@ export interface NFT {
   owner: string | null // Qubic address or null
   qubicBayLink: string // QubicBay marketplace link
   rarity: NFTRarity
+  rank: number // 1 = rarest, from the Rarity Codex
+  score: number // rarity score
 
   // Star Map Position
   position: NFTPosition
@@ -59,11 +62,12 @@ function generateNFTCollection(): NFT[] {
     const x = 0.5 + radius * Math.cos(angle) * 0.45 // Keep within bounds
     const y = 0.5 + radius * Math.sin(angle) * 0.45
 
-    // Determine rarity based on NFT ID
+    // Rarity tier from the real rank in the Rarity Codex (not from the token number)
+    const [rank, score] = NFT_RANK[i] ?? [200, 0]
     let rarity: NFTRarity
-    if (i <= 10) rarity = 'legendary'
-    else if (i <= 50) rarity = 'epic'
-    else if (i <= 120) rarity = 'rare'
+    if (rank <= 10) rarity = 'legendary'
+    else if (rank <= 50) rarity = 'epic'
+    else if (rank <= 120) rarity = 'rare'
     else rarity = 'common'
 
     // Create research connection for select NFTs
@@ -78,6 +82,8 @@ function generateNFTCollection(): NFT[] {
       owner: null, // To be populated from QubicBay API
       qubicBayLink: `https://qubicbay.io/collections/7#anna-${String(i).padStart(3, '0')}`,
       rarity,
+      rank,
+      score,
       position: { x, y, z: Math.random() * 0.3 }, // Add depth for 3D effect
       researchConnection,
     })

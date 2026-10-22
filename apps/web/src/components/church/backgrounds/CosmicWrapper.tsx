@@ -39,23 +39,15 @@ export const CosmicWrapper = memo(function CosmicWrapper({
     r => pathname === r || pathname.startsWith(`${r}/`)
   )
 
-  // Homepage uses DesignerHeroClient's own background, no cosmic overlay
-  if (isHomepage) {
-    return (
-      <div className="relative min-h-screen bg-black">
-        <div className="relative z-10">{children}</div>
-      </div>
-    )
-  }
 
   return (
     <div className="relative min-h-screen bg-black">
       {/* Fixed starfield; the wireframe only on showcase pages, never behind reading or data */}
       <div className="fixed inset-0 z-0">
         <CosmicBackground
-          intensity={quiet ? 'low' : 'medium'}
+          intensity={isHomepage ? 'high' : quiet ? 'low' : 'medium'}
           showStars
-          showWireframe={!quiet}
+          showWireframe={!quiet || isHomepage}
         />
       </div>
 
