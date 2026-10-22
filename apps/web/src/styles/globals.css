@@ -2533,15 +2533,35 @@
   .book-prose { font-size: 1.0625rem; line-height: 1.7; }
 }
 
-/* Luminous gold: a soft halo on gold text and filled gold buttons */
-.text-gold {
-  text-shadow: 0 0 18px color-mix(in oklab, var(--gold-400) 45%, transparent);
-}
+/* Bright gold buttons: a light top-to-bottom sheen, no halo */
 .bg-gold {
-  background-image: linear-gradient(180deg, var(--gold-300), var(--gold-400) 55%, var(--gold-500));
-  box-shadow: 0 0 28px -4px color-mix(in oklab, var(--gold-400) 55%, transparent),
-    inset 0 1px 0 color-mix(in oklab, white 55%, transparent);
+  background-image: linear-gradient(180deg, var(--gold-300), var(--gold-400) 60%, var(--gold-500));
 }
-.glow-gold {
-  filter: drop-shadow(0 0 40px color-mix(in oklab, var(--gold-400) 35%, transparent));
+
+/* Home: slow breathing nebula behind the hero */
+@keyframes qc-breathe {
+  0%, 100% { opacity: 0.55; transform: scale(1) translate3d(0, 0, 0); }
+  50% { opacity: 0.95; transform: scale(1.12) translate3d(-2%, 1%, 0); }
+}
+@keyframes qc-drift {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.35; }
+  50% { transform: translate3d(6%, -4%, 0) scale(1.2); opacity: 0.7; }
+}
+.qc-breathe { animation: qc-breathe 9s ease-in-out infinite; will-change: transform, opacity; }
+.qc-drift { animation: qc-drift 14s ease-in-out infinite; will-change: transform, opacity; }
+
+/* Anna NFT switch: short RGB-split glitch */
+@keyframes qc-glitch {
+  0% { transform: translate(0); filter: none; clip-path: none; }
+  20% { transform: translate(-4px, 2px); filter: hue-rotate(90deg) saturate(2); }
+  40% { transform: translate(4px, -2px); clip-path: inset(20% 0 40% 0); }
+  60% { transform: translate(-2px, -1px); filter: hue-rotate(-90deg) saturate(3); clip-path: inset(60% 0 10% 0); }
+  80% { transform: translate(2px, 3px); filter: none; clip-path: inset(5% 0 70% 0); }
+  100% { transform: translate(0); filter: none; clip-path: none; }
+}
+.qc-glitch { animation: qc-glitch 0.32s steps(5) forwards; }
+.qc-glitch img { filter: drop-shadow(-3px 0 rgba(255, 0, 60, 0.55)) drop-shadow(3px 0 rgba(0, 255, 255, 0.55)); }
+
+@media (prefers-reduced-motion: reduce) {
+  .qc-breathe, .qc-drift, .qc-glitch { animation: none; }
 }

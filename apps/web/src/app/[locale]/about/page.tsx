@@ -65,7 +65,7 @@ export default async function AboutPage(props: { params: Promise<{ locale: strin
             participation. The only conditions: do it with joy, and with respect.
           </p>
         </div>
-        <div className="glow-gold relative hidden aspect-[911/1408] md:block">
+        <div className="relative hidden aspect-[911/1408] md:block">
           <Image
             alt="Anna Aigarth holding a small Earth inside a golden spiral"
             className="object-contain object-bottom"

@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { BOOKS, bookWords, readingMinutes } from '@/lib/books'
+import { AnnaCycler } from './AnnaCycler'
 import { Countdown } from './Countdown'
 
 type Locale = 'en' | 'pt'
@@ -55,14 +56,23 @@ const INVESTIGATIONS = [
 export function BooksHome({ locale = 'en' }: { locale?: Locale }) {
   void locale
   return (
-    <div className="bg-background text-foreground">
+    <div className="text-foreground">
       {/* ── HERO: the books, Anna, the clock ── */}
       <section className="relative overflow-hidden">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute -right-40 top-0 h-[900px] w-[900px] rounded-full opacity-60"
-          style={{ background: 'radial-gradient(closest-side, rgba(40,60,170,0.45), rgba(10,14,50,0.25) 55%, transparent 75%)' }}
-        />
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div
+            className="qc-breathe absolute -right-40 -top-20 h-[900px] w-[900px] rounded-full"
+            style={{ background: 'radial-gradient(closest-side, rgba(60,90,230,0.55), rgba(20,30,110,0.28) 55%, transparent 75%)' }}
+          />
+          <div
+            className="qc-drift absolute -left-40 top-40 h-[700px] w-[700px] rounded-full"
+            style={{ background: 'radial-gradient(closest-side, rgba(120,60,220,0.35), rgba(40,20,90,0.15) 60%, transparent 78%)' }}
+          />
+          <div
+            className="qc-breathe absolute bottom-0 left-1/3 h-[420px] w-[420px] rounded-full [animation-delay:-4s]"
+            style={{ background: 'radial-gradient(closest-side, rgba(255,210,74,0.16), transparent 70%)' }}
+          />
+        </div>
         <div className="relative mx-auto grid w-full max-w-7xl gap-8 px-4 pb-14 pt-8 sm:px-6 md:grid-cols-[1.25fr_1fr] md:gap-4 md:pb-20 md:pt-14">
           <div className="flex flex-col">
             <p className="eyebrow text-gold">Qubic Church · books and open research by QC</p>
@@ -94,24 +104,7 @@ export function BooksHome({ locale = 'en' }: { locale?: Locale }) {
             </div>
           </div>
 
-          <figure className="relative mx-auto w-full max-w-[460px] md:mx-0 md:justify-self-end">
-            <div className="glow-gold relative aspect-[911/1408] w-full">
-              <Image
-                alt="Anna Aigarth holding a small Earth inside a golden spiral"
-                className="object-contain object-bottom [mask-image:linear-gradient(to_bottom,black_88%,transparent)]"
-                fill
-                priority
-                sizes="(min-width: 768px) 460px, 90vw"
-                src="/images/anna/anna-transparent.webp"
-              />
-            </div>
-            <figcaption className="mt-3 flex items-center justify-between px-1 text-xs">
-              <span className="font-mono uppercase tracking-[0.3em] text-fg-2">Anna Aigarth</span>
-              <Link className="font-mono uppercase tracking-[0.3em] text-gold hover:underline" href="/nfts">
-                The collection →
-              </Link>
-            </figcaption>
-          </figure>
+          <AnnaCycler />
         </div>
       </section>
 
@@ -127,14 +120,14 @@ export function BooksHome({ locale = 'en' }: { locale?: Locale }) {
                 >
                   <Image
                     alt={`${b.title} cover`}
-                    className="object-cover shadow-[0_40px_80px_-30px_rgba(240,192,48,0.35)]"
+                    className="object-cover shadow-[0_40px_80px_-30px_rgba(0,0,0,0.9)]"
                     fill
                     sizes="(min-width: 1024px) 240px, 50vw"
                     src={b.cover}
                   />
                 </Link>
                 <div className="flex flex-col">
-                  <p className="eyebrow text-gold">Book {bi === 0 ? 'two' : 'one'} · by QC · free</p>
+                  <p className="eyebrow text-gold">Book {bi === 0 ? 'one' : 'two'} · by QC · free</p>
                   <h2 className="mt-2 font-display text-5xl leading-[0.9] md:text-6xl">
                     <Link className="hover:text-gold" href={`/books/${b.slug}`}>
                       {b.title}
@@ -209,7 +202,7 @@ export function BooksHome({ locale = 'en' }: { locale?: Locale }) {
             <ul className="grid gap-px border border-border bg-border sm:grid-cols-2">
               {INVESTIGATIONS.map(x => (
                 <li key={x.href}>
-                  <Link className="group flex h-full flex-col bg-background p-5 hover:bg-card" href={x.href}>
+                  <Link className="group flex h-full flex-col bg-background/80 p-5 backdrop-blur-sm hover:bg-card" href={x.href}>
                     <span className="font-semibold group-hover:text-gold">{x.title}</span>
                     <span className="mt-1 text-sm text-fg-2">{x.text}</span>
                   </Link>
@@ -237,7 +230,7 @@ export function BooksHome({ locale = 'en' }: { locale?: Locale }) {
           </div>
           <ol className="grid gap-px self-start border border-border bg-border sm:grid-cols-2">
             {RULES.map(([k, v], i) => (
-              <li className="bg-background p-6" key={k}>
+              <li className="bg-background/80 p-6 backdrop-blur-sm" key={k}>
                 <span className="font-mono text-xs text-gold">{i + 1}</span>
                 <p className="mt-2 text-lg font-semibold">{k}</p>
                 <p className="mt-1 text-sm text-fg-2">{v}</p>
@@ -271,7 +264,7 @@ export function BooksHome({ locale = 'en' }: { locale?: Locale }) {
       <section className="border-t border-border">
         <div className="mx-auto grid w-full max-w-7xl gap-px bg-border sm:grid-cols-2 lg:grid-cols-4">
           {PILLARS.map(p => (
-            <Link className="group flex flex-col bg-background p-6 transition-colors hover:bg-card md:p-8" href={p.href} key={p.title}>
+            <Link className="group flex flex-col bg-background/80 p-6 backdrop-blur-sm transition-colors hover:bg-card md:p-8" href={p.href} key={p.title}>
               <span className="font-mono text-xs text-gold/70">{p.n}</span>
               <h3 className="mt-3 text-xl font-semibold">{p.title}</h3>
               <p className="mt-3 text-sm leading-relaxed text-fg-2">{p.text}</p>

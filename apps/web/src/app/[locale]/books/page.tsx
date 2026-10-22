@@ -63,7 +63,7 @@ export default async function BooksIndex(props: { params: Promise<{ locale: stri
             <Link className="relative mx-auto block aspect-[2/3] w-52 md:mx-0 md:w-full" href={`/books/${b.slug}`}>
               <Image
                 alt={`${b.title} cover`}
-                className="object-cover shadow-[0_40px_80px_-30px_rgba(240,192,48,0.35)]"
+                className="object-cover shadow-[0_40px_80px_-30px_rgba(0,0,0,0.9)]"
                 fill
                 sizes="280px"
                 src={b.cover}

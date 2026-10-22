@@ -90,7 +90,7 @@ export default async function BookPage(props: {
       </nav>
 
       <header className="grid gap-10 md:grid-cols-[minmax(220px,320px)_1fr] md:gap-14">
-        <div className="relative mx-auto aspect-[2/3] w-56 shadow-[0_30px_80px_-20px_rgba(240,192,48,0.25)] md:mx-0 md:w-full">
+        <div className="relative mx-auto aspect-[2/3] w-56 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.9)] md:mx-0 md:w-full">
           <Image alt={`${b.title} cover`} className="object-cover" fill priority sizes="320px" src={b.cover} />
         </div>
         <div>
