@@ -13,7 +13,7 @@ export const siteConfig = {
   url: process.env.NEXT_PUBLIC_APP_URL || 'https://qubic.church',
 
   og: {
-    image: absoluteUrl('/og.jpg'),
+    image: absoluteUrl('/og-qubic-church.jpg'),
 
     size: {
       width: 1200,

@@ -41,6 +41,20 @@ export default async function AboutPage(props: { params: Promise<{ locale: strin
   const { locale } = await props.params
   setRequestLocale(locale)
 
+  const faq = [
+    ['What is Qubic Church?', 'An independent research publication and community around Qubic and Aigarth. It publishes two free books by QC, an open research log with a public corrections page, long-form articles and a mining guide.'],
+    ['Why is it called a church?', 'The name stands for a community gathered around one long-term goal: the work toward Aigarth and what it can do for people. The project has no religious doctrine.'],
+    ['Who is QC?', 'QC is the author name Qubic Church uses for its books and research.'],
+    ['What books has Qubic Church published?', 'Qubic: The Long Version (2026), on how Qubic works and why, and Come-from-Beyond (2026), on Sergey Ivancheglo and a twenty-five-year line from Minsk 2002 to Aigarth. Both are free to read online at qubic.church/books.'],
+    ['Is Qubic Church part of the Qubic core team?', 'It is an independent community project. It quotes the Qubic team and Come-from-Beyond from public sources, with dates.'],
+    ['Is Qubic Church a nonprofit organisation?', 'It holds no registered nonprofit status. Donations are voluntary gifts and carry no rights or returns.'],
+  ] as const
+  const faqLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })),
+  }
+
   const ld = {
     '@context': 'https://schema.org',
     '@type': 'AboutPage',
@@ -54,6 +68,7 @@ export default async function AboutPage(props: { params: Promise<{ locale: strin
   return (
     <div className="mx-auto w-full max-w-6xl px-4 pb-24 pt-10 sm:px-6 md:pt-16">
       <script dangerouslySetInnerHTML={{ __html: jsonLd(ld) }} type="application/ld+json" />
+      <script dangerouslySetInnerHTML={{ __html: jsonLd(faqLd) }} type="application/ld+json" />
 
       <header className="grid gap-10 pb-14 md:grid-cols-[1fr_minmax(220px,300px)] md:items-end">
         <div>
@@ -98,7 +113,7 @@ export default async function AboutPage(props: { params: Promise<{ locale: strin
           <Link className="text-gold underline-offset-4 hover:underline" href="/docs/03-results/35-corrections-september-2026">
             corrections page
           </Link>
-          . “Church” is the name of the community, not a religious claim. Nothing on this site promises financial
+          . “Church” is the community’s name for a shared long-term goal; it has no religious doctrine. Nothing on this site promises financial
           returns.
         </p>
       </Section>
@@ -164,7 +179,7 @@ export default async function AboutPage(props: { params: Promise<{ locale: strin
       <Section id="tesserai" n="04 · Related" title="TesserAI">
         <p>
           A separate project in the same ecosystem: a marketplace where the output of every AI agent is
-          cryptographically proven rather than simply claimed. Two products, one marketplace. Audit Marketplace:
+          cryptographically proven. Two products, one marketplace. Audit Marketplace:
           verifiable smart-contract audits, proven mathematically, on chain. AI Agent Marketplace: agents for legal,
           financial, compliance and code-review work, each result with a proof attached.
         </p>
@@ -172,15 +187,15 @@ export default async function AboutPage(props: { params: Promise<{ locale: strin
 
       <Section id="shell" n="05 · The shell" title="Qubic Church holds it together">
         <p>
-          All of the above stands on one community and one goal. We are architects, not admirers. The final form of
+          All of the above stands on one community and one goal. We build. The final form of
           Qubic Church is an incubator: find young talent that has everything except money, fund it and help it grow.
           A shelter, a library, a game, music, a film, medicine: anything that reduces suffering, extends knowledge or
           creates something real that would not exist otherwise.
         </p>
         <p>
-          Who gets support is not decided from the top, not by any one person and not by an owner. It is judged by principles, in
+          Who gets support is judged by principles, in
           the open, with Maria as an impartial arbiter, so that the better world is defined by a transparent process.
-          This will take a lot of time, effort and resources. We are not in a hurry. Slowly, but surely.
+          This will take a lot of time, effort and resources. Slowly, but surely.
         </p>
         <div className="flex flex-wrap gap-2 pt-2 font-sans">
           <Link
@@ -199,6 +214,20 @@ export default async function AboutPage(props: { params: Promise<{ locale: strin
           </a>
         </div>
       </Section>
+
+      <section aria-labelledby="faq" className="border-t border-border py-14">
+        <h2 className="text-3xl font-semibold md:text-4xl" id="faq">
+          Questions people ask
+        </h2>
+        <dl className="mt-8 grid gap-px border border-border bg-border md:grid-cols-2">
+          {faq.map(([q, a]) => (
+            <div className="bg-background/90 p-6" key={q}>
+              <dt className="font-semibold text-foreground">{q}</dt>
+              <dd className="mt-2 text-fg-2">{a}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
     </div>
   )
 }

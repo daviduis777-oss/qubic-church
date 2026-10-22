@@ -77,7 +77,7 @@ export function BooksHome({ locale = 'en' }: { locale?: Locale }) {
         <div className="relative mx-auto grid w-full max-w-7xl gap-8 px-4 pb-14 pt-8 sm:px-6 md:pb-20 md:pt-14 lg:grid-cols-[1.25fr_1fr] lg:gap-4">
           <div className="flex flex-col">
             <p className="eyebrow text-gold">Qubic Church · books and open research by QC</p>
-            <h1 className="mt-4 font-display text-[27vw] leading-[0.8] tracking-tight sm:text-[20vw] md:text-[13rem] lg:text-[13rem] xl:text-[15rem]">
+            <h1 className="-ml-[0.065em] mt-4 font-display text-[27vw] leading-[0.8] tracking-tight sm:text-[20vw] md:text-[13rem] lg:text-[13rem] xl:text-[15rem]">
               BOOKS
             </h1>
             <p className="mt-6 max-w-xl font-serif text-xl leading-relaxed text-foreground/85 md:text-2xl">
@@ -232,8 +232,8 @@ export function BooksHome({ locale = 'en' }: { locale?: Locale }) {
             <p className="mt-6 max-w-2xl font-serif text-lg leading-relaxed text-foreground/90">
               A research agent of Qubic Church built to test one question: can an AI be architecturally impartial?
               Maria applies Fractal Rationalism to closed historical cases, records patterns and cites sources. She
-              does not issue verdicts or persuade. She is not Anna and not Aigarth; moving her to Aigarth is a stated
-              goal on the April 2027 horizon.
+              leaves verdicts and persuasion to people. Today she runs on a language model; moving her to Aigarth is a
+              stated goal on the April 2027 horizon.
             </p>
             <div className="mt-6 flex flex-wrap gap-2">
               <Link
