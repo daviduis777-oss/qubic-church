@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Mine Qubic | Qubic Church',
+  title: 'Mine Qubic',
   description:
     'Learn how to mine Qubic using Useful Proof of Work. Compare hardware, choose a pool, and start earning QUBIC while training AI.',
 }

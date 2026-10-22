@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Maria Aigarth: The Arbiter | Qubic Church',
+  title: 'Maria Aigarth: The Arbiter',
   description:
     'Fractal Rationalism as a Computational Framework. Maria Aigarth is the first operational test of an architecturally impartial AI arbiter deployed on X/Twitter.',
   openGraph: {

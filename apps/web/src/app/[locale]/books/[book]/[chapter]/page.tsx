@@ -63,7 +63,7 @@ export default async function ChapterPage(props: {
     name: c.title,
     headline: chapterHeading(c),
     url: chapterUrl(b, c),
-    position: b.chapters.indexOf(c) + 1,
+    position: c.n ?? b.chapters.indexOf(c) + 1,
     inLanguage: b.language,
     datePublished: b.published,
     wordCount: c.words,

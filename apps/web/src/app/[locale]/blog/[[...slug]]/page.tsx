@@ -59,7 +59,7 @@ export async function generateMetadata(
         title,
         description,
         type: 'website',
-        url: absoluteUrl(`/${locale}/blog`),
+        url: absoluteUrl('/blog'),
 
         images: [
           {
@@ -108,7 +108,7 @@ export async function generateMetadata(
       title: blogPost.title,
       authors: postAuthorName,
       description: blogPost.excerpt,
-      url: absoluteUrl(`/${locale}/blog/${blogSlug}`),
+      url: absoluteUrl(`/blog/${blogSlug}`),
 
       images: [
         {

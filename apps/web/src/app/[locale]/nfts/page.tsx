@@ -100,7 +100,7 @@ export default function NFTCollectionPage() {
         selectedRarity === 'all' || nft.rarity === selectedRarity
 
       return matchesSearch && matchesRarity
-    })
+    }).sort((a, b) => a.rank - b.rank) // rarest first, as in the Rarity Codex
   }, [searchQuery, selectedRarity])
 
   const rarityStats = useMemo(() => {

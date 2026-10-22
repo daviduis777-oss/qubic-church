@@ -50,10 +50,12 @@ export async function generateMetadata(props: {
       },
     }),
 
+    alternates: { canonical: absoluteUrl(`/docs${docSlug ? `/${docSlug}` : ''}`) },
+
     openGraph: {
       type: 'article',
       title: doc.title,
-      url: absoluteUrl(`/${locale}/docs/${docSlug}`),
+      url: absoluteUrl(`/docs${docSlug ? `/${docSlug}` : ''}`),
       description: doc.description,
 
       images: [
