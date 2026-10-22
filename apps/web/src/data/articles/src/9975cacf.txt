@@ -1,0 +1,65 @@
+Qubic. Incredibly important:
+The one-paragraph version:
+17 versions of Anna Aigarth in one week. 
+That is how many the engineer Come-from-Beyond @c___f___b shipped in seven days. Every version builds on the one before it and prepares the launch of the first product of the Aigarth experiment: "BPP 9000", Bitcoin Price Predictor 9000. 
+This product will be the brightest demonstration of a body of work that has been in the making, one way or another, for almost 25 years. And that is exactly why it is time to get ready for the mining marathon: the next epoch is not just another epoch. 
+This post is the "why". The "what" comes next.
+Part 1 - What actually happened this week
+On 20 September at 17:35 CfB pinned this in price-discussion:
+"In the following weeks we are launching BTC price predictor on real-time data. The result of its work will be either UP or DOWN each hour for BTC price. It's a free version, so it won't be giving more info (like magnitude of UP/DOWN swings). To gauge efficiency of this information we need to form a group of people who will be trading BTC taking the predictions into account. In this experiment every participant must start with same amount, $100. If you volunteer for the experiment, please, prepare those $100 and be ready to make history." - CfB, 20 Sep 2026
+And right away we moved on to polishing new versions of Anna. A 28-day window. Noise switched on. A bug fix. Real BTC prices. 64 neurons, then 128, 256, 512, 1024, 2048, 4096, 8192, 16384. Threshold 224, then 168. Then a year of data instead of a month. Then synthetic data without noise, and with noise.
+This is kinda a lab notebook 
+Part 2 - What the numbers said
+Three results matter:
+"So, what have we got: Using 67% accuracy on backtest data for progressing to the next hour we get 58% accuracy on non-seen data with noise. This is a promising result." - CfB
+On real BTC price history, 25 September, 16:03:
+"So, it's not 67%, just 64%, ok" - CfB
+And the goal, stated for anyone who missed it:
+"We don't know how many neurons is needed to predict BTC price with 67%+ accuracy, but we are doubling them in each new version." - CfB, 23 Sep 2026
+"Our current goal is to find such number of neurons that accuracy doesn't approach 50%. That number may be millions depending on number of factors affecting BTC price." - CfB, 22 Sep 2026
+And further:
+"Anna does work on data without noise, she efficiently determines pattern. Noise makes it harder to do, too much noise would make it impossible. We working with synthetic data with noise now analyzing how ANN size helps to look through noise." - CfB, 26 Sep 2026
+Part 3 - The wall at 4049 and what it taught
+On 26 September every machine in the channel hit the same score: 4049. Different people, different hardware, different network populations, one number. CfB stopped the race for it:
+"Guys, we need to do an extra task before finishing current, need to research that phase shift at 4049" - CfB, 26 Sep 2026, 13:32
+"Looks like that 4049 is quality of data, not ANN" - 13:48
+"This 4049 is amazingly consistent... and across ANNs with different population" - 14:37
+The answer: "pre-grokking."
+It is the same lesson as his post about Anna 0.10.32 and the genie: the model does exactly what the data allows.
+Part 4 - The science track did not stop
+While price-discussion ran Anna, the scientific team kept its own calendar.
+22-23 September, Barcelona. Dr. Jose Sanchez @josesanchezhb from the Science team and Mr. Rose, the incubation lead, were at AI Summit Barcelona at WTC Barcelona: two days, 200+ speakers, Google Cloud, AWS, NVIDIA, OpenAI and the Barcelona Supercomputing Center in the room. In Qubic's words: "So was a bio-inspired AI that runs on ordinary CPUs. Different approach. Same conversation."
+27-29 October, Nice. The fourth peer-reviewed paper of 2026, "From Synapse to Society: Multi-level Continuity Through Neuromodulation in a Minimal Artificial Ecology" by Vivancos and Sanchez, is accepted for oral presentation at EA 2026, the 17th International Conference on Artificial Evolution.
+And a number from the All-Hands recap published on 22 September: Neuraxon reached a best ARC-AGI-3 score of 0.38, up from 0.13, on ordinary CPUs, no GPU, no language model, with a brain of fewer than 200 neurons. Around 450,000 brain trials, 50,000 brains saved, 141 rounds of evolution. Everything will be opened once the Kaggle competition closes.
+Add dkat's announcement of a Zero-Knowledge proof verifier (BN254 + Groth16) coming to the core "in the next few months". Compute off-chain, verify on-chain. That is the bridge that lets Aigarth's heavy work be proven rather than trusted.
+And one more thing from the same team, which says a lot about the range of minds behind Neuraxon. On 24 September David Vivancos @VivancosDavid, co-author of the Neuraxon papers, published the first 12 of 80 volumes of the Encyclopedia of Lost Minds: Echoes on AI. 240 thinkers, from Gilgamesh to al-Mutanabbi, 2700 BCE to 915 CE, 3,600 years of thought, each reconstructed from what actually survives of them and asked one question: if you were alive today, how would you think about AI? The man who is building a brain out of trinary neurons is also asking the oldest minds on Earth what they would make of it. Ancient geniuses, working on Qubic. 
+
+The real cyberpunk, DUDE!
+Two fronts, one paradigm.
+Part 5 - What the miners will actually run
+This part turns the week into a plan.
+On 26 September at 20:20 cyber-pc posted the BPP9000 update in the dev channel. The graded window of the mining task grows from 672 hours to 8760. Four weeks become a year. The advance threshold grows from 224 to 2920. The data block: a year plus a week of hourly BTC candles. The shift cap stays at 168.
+2920 is exactly the threshold CfB put into Anna 0.19.128 that same morning. The chat tested it at 13:01. By 20:20 it was in the miner spec. When neener wrote "whoever thinks our testing here is meaningless simply does not get it", this is what he meant. The hand-run race calibrates the network's task within hours.
+CfB, 21 September: "core devs aim for epoch 233 for our current algo."
+Part 6 - Why mining is the whole point
+Here is the thread that runs through everything above.
+In Qubic, hashrate is not security theatre. A miner runs candidate networks and sends the best ones back. Every unit of compute is a search step toward the network the whole project is looking for. CfB on why people mine it at all:
+"Looks like many miners want to get AI earlier, this is why they mine Qubic instead of another coin" - CfB, 21 Sep 2026
+On what more miners means, in the simplest arithmetic he has given:
+"If somebody wants that 300b seller to regret 1 day earlier - run Anna. 5 guys run her means 5 days earlier." - CfB, 20 Sep 2026
+On why the answer has to be expensive:
+"More neurons is better for us, we need a solution which is hard to do without a lot of computational power" - CfB, 25 Sep 2026
+"We cannot, to find it we spent more than 2 years of Qubic miners power" - CfB, 26 Sep 2026, when asked why not just write a smarter Anna
+A predictor that one laptop can reproduce is worth nothing. The value of BPP9000 is that it takes a network the size of Qubic.
+On who keeps the lights on:
+"Those who don't pay for electricity will be mining at any price level" - CfB, 19 Sep 2026
+"We cannot lose those who mine with free electricity or for future profits. During its history BTC had unprofitable mining for 50% of time" - CfB, 20 Sep 2026
+And the last content message of the week, 26 September, 19:24, three words:
+"need more miners" - CfB
+Since the XMR and Dogecoin tasks were wound down, every CPU and GPU on the network points at one job: the evolution of Aigarth, Anna, BPP9000.
+GET YOUR MINER READY NOW. WE START THE MARATHON ON WEDNESDAY, 30 SEPTEMBER, AT 12:00 UTC, WITH THE START OF EPOCH 233.
+#Qubic
+10:25 PM · Sep 26, 2026
+·
+4,085
+ Views

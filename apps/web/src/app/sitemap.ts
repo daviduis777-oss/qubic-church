@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next'
 import { allBlogs, allDocs } from 'contentlayer/generated'
 import { BOOKS, SITE_URL } from '@/lib/books'
 import { INDEXING } from '@/lib/indexing'
+import { ARTICLES } from '@/lib/articles'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   if (!INDEXING) return []
@@ -31,6 +32,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     page('/nfts', 0.5),
     page('/mine-qubic', 0.5),
     page('/donate', 0.4),
+    page('/articles', 0.8),
+    ...ARTICLES.map(a => page(`/articles/${a.slug}`, 0.7, a.date)),
     page('/maria-aigarth', 0.7),
     page('/rarity-codex', 0.5),
     page('/evidence', 0.6),

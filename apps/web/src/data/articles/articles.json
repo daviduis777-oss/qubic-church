@@ -1,0 +1,2370 @@
+[
+ {
+  "slug": "true-randomness-is-critical",
+  "title": "True randomness is critical. Why?",
+  "kicker": null,
+  "date": "2026-10-21",
+  "url": "https://x.com/usetesserai/status/2112902306639519977",
+  "author": "TesserAI",
+  "summary": "On October 17 a hacker took 2.94 trillion QU out of 1,404 Qubic wallets in one hour and forty-four minutes. The chain kept running the whole time. What broke wasn't the protocol, it was the wallet sitting next to it: when making a seed…",
+  "words": 1518,
+  "blocks": [
+   {
+    "t": "h",
+    "text": "The one-paragraph version"
+   },
+   {
+    "t": "p",
+    "text": "On October 17 a hacker took 2.94 trillion QU out of 1,404 Qubic wallets in one hour and forty-four minutes. The chain kept running the whole time. What broke wasn't the protocol, it was the wallet sitting next to it: when making a seed it asked the browser for a random number, and on Apple devices the browser handed over a coin with only four billion sides. A laptop counts to four billion before lunch. So the hacker counted. Here's the interesting part: CfB has been saying since March that randomness is a matter of life and death for AI."
+   },
+   {
+    "t": "p",
+    "text": "Below is my attempt to understand why."
+   },
+   {
+    "t": "h",
+    "text": "Part 1. Ok so what is randomness, actually"
+   },
+   {
+    "t": "p",
+    "text": "How do you think about randomness?"
+   },
+   {
+    "t": "p",
+    "text": "We think of it as noise. Something you sprinkle in so a game is fair and a lottery is a lottery. It's the other way around. Randomness is the only part of a system that cannot be predicted from the system itself. Every rule, every weight, every line of code can be read, copied and run forward by anyone who has it. A truly random bit is the one thing an observer can't derive. It's the system's only private thought."
+   },
+   {
+    "t": "p",
+    "text": "One word matters here: truly. Because a computer can't do randomness. At all. A processor is a machine that does exactly what it was told, and does it exactly the same way the second time. When a program \"takes a random number\", what it really takes is a formula: a starting number, the seed, and it spins it through arithmetic to get a long, pretty, unpredictable-looking sequence. Looking. Know the seed and you know the whole sequence till the end of time. This is called pseudorandomness, and von Neumann said it best back in 1951: anyone trying to get random numbers out of arithmetic is \"in a state of sin\". He was joking. He was also right."
+   },
+   {
+    "t": "p",
+    "text": "So where do you get the real thing? Only from the world, never from a formula. Thermal noise in a transistor. An atom decaying. The quantum \"this way or that way\" that physics forbids you to predict, in principle. All of these share one property: no observer, even with complete information about the system, can tell what comes next. Not \"hard to compute\". There is nothing to compute."
+   },
+   {
+    "t": "p",
+    "text": "And here's the trap that makes all of this so easy to miss: you can't tell from the output. A sequence from a formula and a sequence from an atom look the same. They pass the same tests. Equally \"random\" to the eye. The only difference is whether somewhere there exists a number that lets you replay the whole thing from the start. For a formula, there always is. That's why a weak generator never gives itself away. A wallet runs on it for years, looks fine, nobody notices anything, until someone finds the seed."
+   },
+   {
+    "t": "p",
+    "text": "Take real randomness out of a system and the system doesn't break. It becomes transparent to whoever holds the seed. It runs. It answers. It looks alive. It just has no secrets left, and not a single choice that is its own."
+   },
+   {
+    "t": "p",
+    "text": "A wallet seed is a 55-letter phrase that is supposed to exist nowhere else in the universe. With a weak generator, that phrase sits in a short list that someone else can print out. The wallet \"works\". The signature \"verifies\". The key just belongs to two people. That's the whole October hack in one paragraph, and notice, it's not about Qubic. It's about any system that once asked somebody for a coin and never asked where the coin came from."
+   },
+   {
+    "t": "h",
+    "text": "Part 2. A thought experiment. Try swapping the wallet for an AI"
+   },
+   {
+    "t": "p",
+    "text": "Today's AI, a large language model, is fully deterministic inside. Same function, same input, same answer. The only place where there is any randomness at all is the very last step, when one word gets picked from a list of likely ones. And it gets picked by an ordinary pseudorandom generator with a seed set by whoever owns the server. Ask a model for a random number from 1 to 10 and it'll say 7 way more often than it should. It isn't flipping a coin. It's remembering what a coin flip looks like. That's how it's built."
+   },
+   {
+    "t": "p",
+    "text": "Now picture not a chat but an agent. One that trades, negotiates, guards a network, makes its own keys, breeds its own successors. Same question we asked the wallet: what if its randomness can be read or nudged? I count four things, each worse than the last:"
+   },
+   {
+    "t": "p",
+    "text": "1. It can't keep a secret. Every key, password, nonce, one-time code comes out of the same coin. Readable coin = nothing it protects is protected. Not \"weakly protected\", not protected at all, because all of cryptography rests on one assumption: the number you picked, nobody else could have picked. The wallets in October are this in miniature: 1,404 \"unique\" seeds that turned out to be a page from a short list. An agent with a generator like that will hand its keys to anyone who thinks to look, and never notice."
+   },
+   {
+    "t": "p",
+    "text": "2. It can't play. Against another agent your only defense is being unpredictable: bluffing off-schedule, probing where no pattern says to probe. Game theory calls it a mixed strategy, and it only works if the other side can't see your dice. Poker with open cards isn't poker. A negotiation where your walk-away point is known isn't a negotiation. A trading bot whose \"random\" intervals can be computed is a bot that gets front-run on every trade. An agent with known dice doesn't lose sometimes. It loses every time, quietly, to whoever looked. And the nasty part: it won't feel it. Its stats will just look like bad luck."
+   },
+   {
+    "t": "p",
+    "text": "3. It can be steered, and nobody will see it. This is the main one and the least obvious. If you control the source of randomness you don't need to touch the AI's code. The code is open, audited, everyone's read it, and that means nothing. Tilt the coin a little. Slightly more heads than tails. The AI keeps \"freely\" choosing exactly what you wanted, forever, and no audit will ever find it, because there's nothing in the code to find. Looks autonomous. Isn't. That's the difference between hacking and owning: a hack leaves traces, a tilted coin doesn't. And trusting the chip vendor, the cloud, or the operator is still trusting somebody. Real randomness is the kind where that somebody doesn't exist at all."
+   },
+   {
+    "t": "p",
+    "text": "4. It can't evolve. Aigarth is selection: spawn variants, keep what works, repeat. That's how everything alive works, and it works because mutations are nobody's design. Nature doesn't choose who mutates. Tilt the coin and you no longer have a wild population searching for intelligence, you have a breeder picking winners. Sometimes it even looks better: faster, smoother, more predictable. But a breeder can only breed what he can imagine. Evolution breeds what nobody imagined. If the goal is to find a mind that never existed before, a breeder is the worst possible tool. Whatever grows under a tilted coin is the breeder's creature, not the network's."
+   },
+   {
+    "t": "p",
+    "text": "Add up the four. An AI with riggable randomness has no secrets, no edge, no autonomy and no real evolution. It can be as smart as you like, changes nothing. A very fast puppet."
+   },
+   {
+    "t": "h",
+    "text": "Part 3. Why the emphasis, why now, why Qubic"
+   },
+   {
+    "t": "p",
+    "text": "Every big AI today runs on ordinary servers with ordinary pseudorandom generators, seeded by whoever owns the box. Nobody worries, because today's models don't hold keys, don't trade against each other, don't evolve on their own. The day they do, \"who holds the coin?\" turns into \"who holds the AI?\", and most of the industry will find out it never asked."
+   },
+   {
+    "t": "p",
+    "text": "Qubic's core, by the way, doesn't ask anyone for a coin. When I asked where it gets its randomness, CfB answered me: \"we use RDRAND\". That's the hardware generator inside the CPU, fed by thermal noise in the silicon. Physics. Which is why the chain held in October and what broke was the app next to it. It's not yet \"randomness nobody can rig\", you still have to trust Intel, but it's the right side of the road."
+   },
+   {
+    "t": "p",
+    "text": "CfB's vision is that all of this becomes obvious within a decade. And that a network of hundreds of independent machines, where no single party controls the final roll, is where an unriggable coin can actually live. The wallet hack doesn't prove that bet. It loudly demonstrates the first half of it: a system with weak randomness is a system that belongs to someone else. We just watched one belong to someone else for an hour and forty-four minutes."
+   },
+   {
+    "t": "h",
+    "text": "Conclusion"
+   },
+   {
+    "t": "quote",
+    "text": "I'm posting it here for future references and \"Told Ya So\" moments: A truly random number generator, resistant to any influence, is vital to #AI.",
+    "cite": "Come-from-Beyond, X, March 10, 2026"
+   },
+   {
+    "t": "quote",
+    "text": "An #AI without access to a true random number generator (one that nobody can rig) is cooked. Bookmark this tweet. Within a decade, you'll see I was right.",
+    "cite": "Come-from-Beyond, X, October 8, 2026"
+   },
+   {
+    "t": "p",
+    "text": "Seems like we're closer now."
+   },
+   {
+    "t": "p",
+    "text": "Bookmark this tweet."
+   }
+  ]
+ },
+ {
+  "slug": "17-versions-of-anna-in-one-week",
+  "title": "Qubic. Incredibly important: 17 versions of Anna Aigarth in one week",
+  "kicker": null,
+  "date": "2026-09-26",
+  "url": "https://x.com/usetesserai/status/2103868458190667818",
+  "author": "TesserAI",
+  "summary": "That is how many the engineer Come-from-Beyond @c___f___b shipped in seven days. Every version builds on the one before it and prepares the launch of the first product of the Aigarth experiment: \"BPP 9000\", Bitcoin Price Predictor 9000.",
+  "words": 1318,
+  "blocks": [
+   {
+    "t": "h",
+    "text": "The one-paragraph version:"
+   },
+   {
+    "t": "p",
+    "text": "17 versions of Anna Aigarth in one week."
+   },
+   {
+    "t": "p",
+    "text": "That is how many the engineer Come-from-Beyond @c___f___b shipped in seven days. Every version builds on the one before it and prepares the launch of the first product of the Aigarth experiment: \"BPP 9000\", Bitcoin Price Predictor 9000."
+   },
+   {
+    "t": "p",
+    "text": "This product will be the brightest demonstration of a body of work that has been in the making, one way or another, for almost 25 years. And that is exactly why it is time to get ready for the mining marathon: the next epoch is not just another epoch."
+   },
+   {
+    "t": "p",
+    "text": "This post is the \"why\". The \"what\" comes next."
+   },
+   {
+    "t": "h",
+    "text": "Part 1 - What actually happened this week"
+   },
+   {
+    "t": "p",
+    "text": "On 20 September at 17:35 CfB pinned this in price-discussion:"
+   },
+   {
+    "t": "quote",
+    "text": "In the following weeks we are launching BTC price predictor on real-time data. The result of its work will be either UP or DOWN each hour for BTC price. It's a free version, so it won't be giving more info (like magnitude of UP/DOWN swings). To gauge efficiency of this information we need to form a group of people who will be trading BTC taking the predictions into account. In this experiment every participant must start with same amount, $100. If you volunteer for the experiment, please, prepare those $100 and be ready to make history.",
+    "cite": "CfB, 20 Sep 2026"
+   },
+   {
+    "t": "p",
+    "text": "And right away we moved on to polishing new versions of Anna. A 28-day window. Noise switched on. A bug fix. Real BTC prices. 64 neurons, then 128, 256, 512, 1024, 2048, 4096, 8192, 16384. Threshold 224, then 168. Then a year of data instead of a month. Then synthetic data without noise, and with noise."
+   },
+   {
+    "t": "h",
+    "text": "This is kinda a lab notebook"
+   },
+   {
+    "t": "h",
+    "text": "Part 2 - What the numbers said"
+   },
+   {
+    "t": "p",
+    "text": "Three results matter:"
+   },
+   {
+    "t": "quote",
+    "text": "So, what have we got: Using 67% accuracy on backtest data for progressing to the next hour we get 58% accuracy on non-seen data with noise. This is a promising result.",
+    "cite": "CfB"
+   },
+   {
+    "t": "p",
+    "text": "On real BTC price history, 25 September, 16:03:"
+   },
+   {
+    "t": "quote",
+    "text": "So, it's not 67%, just 64%, ok",
+    "cite": "CfB"
+   },
+   {
+    "t": "p",
+    "text": "And the goal, stated for anyone who missed it:"
+   },
+   {
+    "t": "quote",
+    "text": "We don't know how many neurons is needed to predict BTC price with 67%+ accuracy, but we are doubling them in each new version.",
+    "cite": "CfB, 23 Sep 2026"
+   },
+   {
+    "t": "quote",
+    "text": "Our current goal is to find such number of neurons that accuracy doesn't approach 50%. That number may be millions depending on number of factors affecting BTC price.",
+    "cite": "CfB, 22 Sep 2026"
+   },
+   {
+    "t": "p",
+    "text": "And further:"
+   },
+   {
+    "t": "quote",
+    "text": "Anna does work on data without noise, she efficiently determines pattern. Noise makes it harder to do, too much noise would make it impossible. We working with synthetic data with noise now analyzing how ANN size helps to look through noise.",
+    "cite": "CfB, 26 Sep 2026"
+   },
+   {
+    "t": "h",
+    "text": "Part 3 - The wall at 4049 and what it taught"
+   },
+   {
+    "t": "p",
+    "text": "On 26 September every machine in the channel hit the same score: 4049. Different people, different hardware, different network populations, one number. CfB stopped the race for it:"
+   },
+   {
+    "t": "quote",
+    "text": "Guys, we need to do an extra task before finishing current, need to research that phase shift at 4049",
+    "cite": "CfB, 26 Sep 2026, 13:32"
+   },
+   {
+    "t": "quote",
+    "text": "Looks like that 4049 is quality of data, not ANN",
+    "cite": "13:48"
+   },
+   {
+    "t": "quote",
+    "text": "This 4049 is amazingly consistent... and across ANNs with different population",
+    "cite": "14:37"
+   },
+   {
+    "t": "p",
+    "text": "The answer: \"pre-grokking.\""
+   },
+   {
+    "t": "p",
+    "text": "It is the same lesson as his post about Anna 0.10.32 and the genie: the model does exactly what the data allows."
+   },
+   {
+    "t": "h",
+    "text": "Part 4 - The science track did not stop"
+   },
+   {
+    "t": "p",
+    "text": "While price-discussion ran Anna, the scientific team kept its own calendar."
+   },
+   {
+    "t": "p",
+    "text": "22-23 September, Barcelona. Dr. Jose Sanchez @josesanchezhb from the Science team and Mr. Rose, the incubation lead, were at AI Summit Barcelona at WTC Barcelona: two days, 200+ speakers, Google Cloud, AWS, NVIDIA, OpenAI and the Barcelona Supercomputing Center in the room. In Qubic's words: \"So was a bio-inspired AI that runs on ordinary CPUs. Different approach. Same conversation.\""
+   },
+   {
+    "t": "p",
+    "text": "27-29 October, Nice. The fourth peer-reviewed paper of 2026, \"From Synapse to Society: Multi-level Continuity Through Neuromodulation in a Minimal Artificial Ecology\" by Vivancos and Sanchez, is accepted for oral presentation at EA 2026, the 17th International Conference on Artificial Evolution."
+   },
+   {
+    "t": "p",
+    "text": "And a number from the All-Hands recap published on 22 September: Neuraxon reached a best ARC-AGI-3 score of 0.38, up from 0.13, on ordinary CPUs, no GPU, no language model, with a brain of fewer than 200 neurons. Around 450,000 brain trials, 50,000 brains saved, 141 rounds of evolution. Everything will be opened once the Kaggle competition closes."
+   },
+   {
+    "t": "p",
+    "text": "Add dkat's announcement of a Zero-Knowledge proof verifier (BN254 + Groth16) coming to the core \"in the next few months\". Compute off-chain, verify on-chain. That is the bridge that lets Aigarth's heavy work be proven rather than trusted."
+   },
+   {
+    "t": "p",
+    "text": "And one more thing from the same team, which says a lot about the range of minds behind Neuraxon. On 24 September David Vivancos @VivancosDavid, co-author of the Neuraxon papers, published the first 12 of 80 volumes of the Encyclopedia of Lost Minds: Echoes on AI. 240 thinkers, from Gilgamesh to al-Mutanabbi, 2700 BCE to 915 CE, 3,600 years of thought, each reconstructed from what actually survives of them and asked one question: if you were alive today, how would you think about AI? The man who is building a brain out of trinary neurons is also asking the oldest minds on Earth what they would make of it. Ancient geniuses, working on Qubic."
+   },
+   {
+    "t": "p",
+    "text": "The real cyberpunk, DUDE!"
+   },
+   {
+    "t": "p",
+    "text": "Two fronts, one paradigm."
+   },
+   {
+    "t": "h",
+    "text": "Part 5 - What the miners will actually run"
+   },
+   {
+    "t": "p",
+    "text": "This part turns the week into a plan."
+   },
+   {
+    "t": "p",
+    "text": "On 26 September at 20:20 cyber-pc posted the BPP9000 update in the dev channel. The graded window of the mining task grows from 672 hours to 8760. Four weeks become a year. The advance threshold grows from 224 to 2920. The data block: a year plus a week of hourly BTC candles. The shift cap stays at 168."
+   },
+   {
+    "t": "p",
+    "text": "2920 is exactly the threshold CfB put into Anna 0.19.128 that same morning. The chat tested it at 13:01. By 20:20 it was in the miner spec. When neener wrote \"whoever thinks our testing here is meaningless simply does not get it\", this is what he meant. The hand-run race calibrates the network's task within hours."
+   },
+   {
+    "t": "p",
+    "text": "CfB, 21 September: \"core devs aim for epoch 233 for our current algo.\""
+   },
+   {
+    "t": "h",
+    "text": "Part 6 - Why mining is the whole point"
+   },
+   {
+    "t": "p",
+    "text": "Here is the thread that runs through everything above."
+   },
+   {
+    "t": "p",
+    "text": "In Qubic, hashrate is not security theatre. A miner runs candidate networks and sends the best ones back. Every unit of compute is a search step toward the network the whole project is looking for. CfB on why people mine it at all:"
+   },
+   {
+    "t": "quote",
+    "text": "Looks like many miners want to get AI earlier, this is why they mine Qubic instead of another coin",
+    "cite": "CfB, 21 Sep 2026"
+   },
+   {
+    "t": "p",
+    "text": "On what more miners means, in the simplest arithmetic he has given:"
+   },
+   {
+    "t": "quote",
+    "text": "If somebody wants that 300b seller to regret 1 day earlier - run Anna. 5 guys run her means 5 days earlier.",
+    "cite": "CfB, 20 Sep 2026"
+   },
+   {
+    "t": "p",
+    "text": "On why the answer has to be expensive:"
+   },
+   {
+    "t": "quote",
+    "text": "More neurons is better for us, we need a solution which is hard to do without a lot of computational power",
+    "cite": "CfB, 25 Sep 2026"
+   },
+   {
+    "t": "quote",
+    "text": "We cannot, to find it we spent more than 2 years of Qubic miners power",
+    "cite": "CfB, 26 Sep 2026, when asked why not just write a smarter Anna"
+   },
+   {
+    "t": "p",
+    "text": "A predictor that one laptop can reproduce is worth nothing. The value of BPP9000 is that it takes a network the size of Qubic."
+   },
+   {
+    "t": "p",
+    "text": "On who keeps the lights on:"
+   },
+   {
+    "t": "quote",
+    "text": "Those who don't pay for electricity will be mining at any price level",
+    "cite": "CfB, 19 Sep 2026"
+   },
+   {
+    "t": "quote",
+    "text": "We cannot lose those who mine with free electricity or for future profits. During its history BTC had unprofitable mining for 50% of time",
+    "cite": "CfB, 20 Sep 2026"
+   },
+   {
+    "t": "p",
+    "text": "And the last content message of the week, 26 September, 19:24, three words:"
+   },
+   {
+    "t": "quote",
+    "text": "need more miners",
+    "cite": "CfB"
+   },
+   {
+    "t": "p",
+    "text": "Since the XMR and Dogecoin tasks were wound down, every CPU and GPU on the network points at one job: the evolution of Aigarth, Anna, BPP9000."
+   },
+   {
+    "t": "p",
+    "text": "GET YOUR MINER READY NOW. WE START THE MARATHON ON WEDNESDAY, 30 SEPTEMBER, AT 12:00 UTC, WITH THE START OF EPOCH 233."
+   }
+  ]
+ },
+ {
+  "slug": "aigarth-september-2026-two-fronts",
+  "title": "Aigarth, September 2026: two fronts, one paradigm",
+  "kicker": "Qubic right now, 17 September",
+  "date": "2026-09-17",
+  "url": "https://x.com/usetesserai/status/2100500145846485256",
+  "author": "TesserAI",
+  "summary": "Anna.exe, a 150 KB program running a tiny trinary network, hit zero error on every level of its demo task, and the creator's reaction was not \"milestone\" but \"It's not a milestone. It's much bigger.\" That was July. Since then, two…",
+  "words": 4449,
+  "blocks": [
+   {
+    "t": "h",
+    "text": "The one-paragraph version"
+   },
+   {
+    "t": "p",
+    "text": "Anna.exe, a 150 KB program running a tiny trinary network, hit zero error on every level of its demo task, and the creator's reaction was not \"milestone\" but \"It's not a milestone. It's much bigger.\" That was July. Since then, two things have been happening in parallel."
+   },
+   {
+    "t": "p",
+    "text": "On one front, Anna was pointed at the real world, Bitcoin. It hit a wall and was rebuilt around a new idea, which the creator announced this week in the language of \"myriad universes.\""
+   },
+   {
+    "t": "p",
+    "text": "On the other front, two scientists took the same paradigm to the hardest public AI benchmark on Earth and have been climbing it for eleven weeks, on home CPUs, with no GPU and no language model. And here is the cherry: that entire climb was done without the Qubic network. Not one miner. The engine this whole thing was built to feed has not been plugged in yet. This post walks through both fronts, with dates and direct quotes, and brings you to exactly where we stand today."
+   },
+   {
+    "t": "h",
+    "text": "Part 1. Start from the top: what this is"
+   },
+   {
+    "t": "quote",
+    "text": "Aigarth is not AI, it's project aiming to find new paradigms for creation of AI.",
+    "cite": "CfB"
+   },
+   {
+    "t": "quote",
+    "text": "Aigarth isn't an object, it's process.",
+    "cite": "CfB @c___f___b"
+   },
+   {
+    "t": "p",
+    "text": "Aigarth is not a chatbot, an agent or a product. It is a research project looking for a method of creating AI. The analogy to keep in mind:"
+   },
+   {
+    "t": "quote",
+    "text": "Manhattan wasn't 'just another bomb project'. It was paradigm discovery. Aigarth is paradigm research. Anna is Little Boy - first demonstration. The big products come after.",
+    "cite": "CfB"
+   },
+   {
+    "t": "p",
+    "text": "So: Aigarth = the Manhattan Project (a new paradigm). AI built with it = what the paradigm makes possible. Anna = Little Boy, the first public demonstration that the method works."
+   },
+   {
+    "t": "quote",
+    "text": "5 years since Qubic launch is just an ETA. And goal of Aigarth is AI, not AGI. Difference between AI and AGI is same as between a car and a BMW.",
+    "cite": "CfB, 13 Jan 2026"
+   },
+   {
+    "t": "h",
+    "text": "Part 2. Why a new paradigm at all: the energy wall"
+   },
+   {
+    "t": "p",
+    "text": "The mainstream way of building AI works, but its energy cost is heading toward the physically absurd."
+   },
+   {
+    "t": "quote",
+    "text": "This is a serious problem. This is why that Aigarth's finding, allowing to save a lot of energy, is significant.",
+    "cite": "CfB, 17 Feb 2026"
+   },
+   {
+    "t": "quote",
+    "text": "If AI is possible with current energy budget of the whole Earth then Aigarth will achieve it, we have all necessary cards for that in our hand.",
+    "cite": "CfB, 23 Feb 2026"
+   },
+   {
+    "t": "p",
+    "text": "The question is not \"can we build AI.\" CfB treats that as answered. The question is \"can we build it without a Dyson sphere.\" The three walls Aigarth set out to break, and where they stood going into summer:"
+   },
+   {
+    "t": "h",
+    "text": "Generalization: solved"
+   },
+   {
+    "t": "h",
+    "text": "Universal training algorithm: solved"
+   },
+   {
+    "t": "p",
+    "text": "Energy optimization: in progress (the \"constant parameter-space dimensions\" discovery of 2 May 2026 is one of the levers)"
+   },
+   {
+    "t": "h",
+    "text": "Part 3. What is different under the hood"
+   },
+   {
+    "t": "p",
+    "text": "Three properties, all from CfB and the science papers:"
+   },
+   {
+    "t": "p",
+    "text": "Trinary, not binary. Neurons take three states: +1 (excite), 0 (neutral), -1 (inhibit). The neutral state mirrors \"ready but quiet\" biological neurons, and a discrete three-state space is far cheaper than floating-point math. That is a big slice of the energy saving."
+   },
+   {
+    "t": "p",
+    "text": "Connections, not neuron math."
+   },
+   {
+    "t": "quote",
+    "text": "Aigarth is agnostic to neuron behavior, it works with training of their groups.",
+    "cite": "CfB, 9 Nov 2025"
+   },
+   {
+    "t": "p",
+    "text": "A child and an adult have the same neuron; what changes is the wiring. So train the wiring."
+   },
+   {
+    "t": "p",
+    "text": "An evolving tissue, not a frozen model. Aigarth grows, mutates, prunes and breeds populations of network architectures. The best survive and replicate. Remember that word, survive, because CfB used it again this week."
+   },
+   {
+    "t": "p",
+    "text": "And the cleanest statement of the actual task:"
+   },
+   {
+    "t": "quote",
+    "text": "Aigarth is searching for a tool (A) that will make another tool (B). If single tool A can make efficient tools B1, B2, B3 where B is some common trait, then we will claim tool A has solved whole plurality of Bn problems thus demonstrating ability to generalize. It's current task.",
+    "cite": "CfB"
+   },
+   {
+    "t": "h",
+    "text": "Part 4. Front One: Anna. From the race to zero to the real world"
+   },
+   {
+    "t": "p",
+    "text": "4.1 The race (10 June to early July 2026)"
+   },
+   {
+    "t": "p",
+    "text": "On 10-13 June 2026 Anna.exe was handed to the community: a plain native Windows program, no network code, a tiny trinary net in memory, trained on a deliberately simple task, adding two numbers. The instruction was three words: race a number to zero. The stakes were stated in advance:"
+   },
+   {
+    "t": "quote",
+    "text": "score 0 = Aigarth is accomplished.",
+    "cite": "CfB, 10 Jun 2026"
+   },
+   {
+    "t": "quote",
+    "text": "Aigarth will be deemed finished.",
+    "cite": "CfB, on what happens at zero"
+   },
+   {
+    "t": "p",
+    "text": "Why did zero matter? Because the global best score was the network's remaining error, and CfB had already pointed at the thing that made the race more than a leaderboard:"
+   },
+   {
+    "t": "quote",
+    "text": "upon improvement of fitness function score of the training set (green column) you often get improvement of the validation set (yellow column).",
+    "cite": "CfB"
+   },
+   {
+    "t": "p",
+    "text": "Green pulls yellow. Training improves unseen data. That is generalization, visible in your own terminal."
+   },
+   {
+    "t": "p",
+    "text": "4.2 Zero (early July 2026)"
+   },
+   {
+    "t": "p",
+    "text": "About three weeks after release, zero was reached: zero error across all seven difficulty levels of the addition task. Qubic's own write-up (\"Anna Reached 0: What It Actually Means for Aigarth\") drew the line immediately: this does not mean AGI has arrived."
+   },
+   {
+    "t": "quote",
+    "text": "It's not a milestone. It's much bigger.",
+    "cite": "CfB"
+   },
+   {
+    "t": "p",
+    "text": "Little Boy detonated. The method converges, generalizes, and does it inside a tiny fixed-size architecture on ordinary hardware. That is what \"bigger than a milestone\" meant. And the same post said what came next: Anna would be pointed at Bitcoin, predicting the direction of hourly candles, then at language, then at deployment across the decentralized network."
+   },
+   {
+    "t": "p",
+    "text": "4.3 The real world pushes back (August to September 2026)"
+   },
+   {
+    "t": "p",
+    "text": "This is the part the clean story skips, and it is the most important part. A clean rule has no noise. A market is nothing but noise. Through late summer Anna grew: CfB pushed the network from 128 to 1024 neurons."
+   },
+   {
+    "t": "quote",
+    "text": "Higher it/s means we can work with larger ANNs while still staying within solution verification constraints.",
+    "cite": "CfB, Sept 2026"
+   },
+   {
+    "t": "p",
+    "text": "Then:"
+   },
+   {
+    "t": "quote",
+    "text": "We are already at limit of Qiner verifications verification and cannot properly scale to solve BPP9000 with good accuracy, so we are trying a new approach to price prediction. Now we see that with denoised data we can construct a model accounting for 100 factors with pretty high accuracy.",
+    "cite": "CfB, 16 Sept 2026"
+   },
+   {
+    "t": "p",
+    "text": "That is an admission: the first approach to the price task hit the verification wall and could not scale to good accuracy. Someone in the channel asked the natural question: does this mean the original Anna, the one running on the ant colony, is broken?"
+   },
+   {
+    "t": "quote",
+    "text": "wrong. ant colony runs another task.",
+    "cite": "CfB, 16 Sept 2026"
+   },
+   {
+    "t": "p",
+    "text": "So the wall is scoped. The price sub-project hit it, not the core. The ant colony is doing something else."
+   },
+   {
+    "t": "p",
+    "text": "4.4 Anna 0.9: zero again, but as a baseline (16 September 2026)"
+   },
+   {
+    "t": "quote",
+    "text": "Synthetic prices without noise defined by 100 independent factors are successfully predicted with 100% accuracy by our 32-neuron ANNs.",
+    "cite": "CfB, 16 Sept 2026"
+   },
+   {
+    "t": "p",
+    "text": "This is a capability proof, not a market result. If you build a price from 100 factors and hand the network those 100 factors with no noise, a small network recovering the function perfectly is what should happen. It proves the architecture can represent a 100-factor relationship, cheaply. It says nothing yet about a real market. And CfB said exactly that himself, in the same message:"
+   },
+   {
+    "t": "quote",
+    "text": "Now need version with noise.",
+    "cite": "CfB, 16 Sept 2026"
+   },
+   {
+    "t": "p",
+    "text": "When asked what it would take to convince the world, the answer was three short lines:"
+   },
+   {
+    "t": "quote",
+    "text": "Predict BTC price. But it will be done by miners. We are preparing prototype.",
+    "cite": "CfB, 16 Sept 2026"
+   },
+   {
+    "t": "p",
+    "text": "The roadmap: noise is next; the real proof is BTC; the real run happens on the miner network; today it is a prototype."
+   },
+   {
+    "t": "p",
+    "text": "4.5 The multiverse (16 September 2026, X)"
+   },
+   {
+    "t": "p",
+    "text": "Hours later, the same idea in public, in a different register:"
+   },
+   {
+    "t": "quote",
+    "text": "Remember when myriad universes were created, each with a distinct set of physical constants, and only ours gave birth to the humankind?.. Of course, you don't. Anyway, we (in #Qubic) have modified our $BTC price predicting models and now they behave like those universes. Only few, successfully predicting the price, will survive. This approach improved the speed of training by two orders of magnitude. It also sped up verification, so now we can scale 100-fold.",
+    "cite": "CfB, X, 16 Sept 2026"
+   },
+   {
+    "t": "p",
+    "text": "Strip the cosmology and it is Part 3 again: populations of models with different \"constants,\" selection on fitness, the survivors replicate. The two concrete claims are speed (training two orders of magnitude faster) and scale (verification fast enough to go 100x wider). Both are efficiency claims, and both match the Discord thread. What the tweet does not claim, and what the Discord thread explicitly says is not yet done, is a real accuracy number on real, noisy Bitcoin. That is the open frontier, and everyone involved has said so out loud."
+   },
+   {
+    "t": "p",
+    "text": "Where Front One stands today: the demo task is solved (July). The real task is engaged, the first approach was honestly retired, the second approach has its noiseless baseline (16 September), the noisy version is next, and the production run is planned for miners. Prototype."
+   },
+   {
+    "t": "h",
+    "text": "Part 5. Front Two: the scientists. Same paradigm, hardest benchmark on Earth"
+   },
+   {
+    "t": "p",
+    "text": "While the community ran Anna, David Vivancos (@VivancosDavid) and Dr. José Sánchez (@josesanchezhb) were doing something the price-watchers mostly missed. This is the difference between \"a crypto project says its tech works\" and \"outsiders with no stake in the token say it does.\""
+   },
+   {
+    "t": "p",
+    "text": "5.1 The paper track: four accepted papers in one year"
+   },
+   {
+    "t": "p",
+    "text": "Neuraxon is the academic formalization of the trinary paradigm: +1/0/-1 logic, continuous-time processing, synapses with multiple dynamic weights that form, collapse and reconnect, neurons that can die. It is the blueprint for the kind of neuron that lives inside Anna and Aigarth. The 2026 record, as confirmed at the Open Science AMA of 20 August:"
+   },
+   {
+    "t": "p",
+    "text": "\"The Neutral Buffer State\": IEEE AMLDS 2026, Osaka."
+   },
+   {
+    "t": "p",
+    "text": "\"Neuraxon v2.0\": IEEE ICMLT 2026, Berlin, 20-22 May. Presented in an evening session of eight talks and judged by researchers unaffiliated with Qubic to be the best in the room: Best Paper and Best Presentation, into IEEE Xplore and Scopus."
+   },
+   {
+    "t": "p",
+    "text": "\"Multi-Neuraxon\": AGI-26, the 19th Annual Conference on Artificial General Intelligence, San Francisco, 27-30 July (Springer proceedings). The team's own note: this venue sits higher than Osaka and Berlin."
+   },
+   {
+    "t": "p",
+    "text": "Artificial Evolution 2026: Nice, France, 27-29 October (upcoming)."
+   },
+   {
+    "t": "p",
+    "text": "Berlin was the first time people with no reason to flatter this project looked at the paradigm and said \"this is the best work here.\" That is worth more than any chart."
+   },
+   {
+    "t": "p",
+    "text": "5.2 The benchmark track: eleven weeks on ARC-AGI-3"
+   },
+   {
+    "t": "p",
+    "text": "ARC-AGI-3 (François Chollet, Mike Knoop, ARC Prize) is built specifically to break scale-based AI: unknown interactive games, no rules given, you have to explore, form hypotheses, remember and plan. Humans are the reference. On 29 June 2026 Vivancos announced that Neuraxon had entered it:"
+   },
+   {
+    "t": "quote",
+    "text": "our bio-inspired #Neuraxon 2.0 by @VivancosDavid & @josesanchezhb with @_Qubic_ #OpenScience #aigarth @c___f___b is showing promising results in the most challenging #AI #AGI benchmark #ARCAGI 3",
+    "cite": "Vivancos, X, 29 Jun 2026"
+   },
+   {
+    "t": "p",
+    "text": "The climb since then, on the Kaggle public leaderboard (team: Qubic Nxon Vivancos & Sanchez):"
+   },
+   {
+    "t": "p",
+    "text": "29 June: first entry, 0.13"
+   },
+   {
+    "t": "p",
+    "text": "early July: 0.18"
+   },
+   {
+    "t": "p",
+    "text": "6 August: 0.25 (confirmed at All-Hands; by the 20 August AMA: \"past the middle\" of roughly 2,300 competitors, evolved on about 500 CPU cores, no GPUs, playing at least 15 of the 25 training games)"
+   },
+   {
+    "t": "p",
+    "text": "4 September: 0.28, and on the training games the first time all levels of one game were completed:"
+   },
+   {
+    "t": "quote",
+    "text": "Today for the First time we achieved Level 8 on one of the training games, finishing a all the levels.",
+    "cite": "Vivancos, X, 4 Sept 2026"
+   },
+   {
+    "t": "p",
+    "text": "mid-September: 0.38, rank around #1350 of ~2,300."
+   },
+   {
+    "t": "p",
+    "text": "Eleven weeks, 0.13 to 0.38, in steps rather than a slope, which is exactly how the team's own slide (3 September) drew it: \"PROGRESS ARRIVES IN STEPS, NOT SLOPES.\" Over that window: 121 generations, more than ten thousand \"brains\" catalogued, fifty thousand evaluation episodes. On its best training game the brain now finishes level 1 in 0.45x the actions a human needs."
+   },
+   {
+    "t": "p",
+    "text": "The training games (25 public) are not what is scored; the Kaggle score is on unseen games, and the final ranking will be on a further set of unseen games when the competition closes on 2 November. \"Past the middle\" is real, but it is the middle, not the top. And the number must never be compared across boards: the verified board where API models are measured (where OpenAI's Astra posted 62.7% this month at $26,000 a run) is a different track, a different harness, a different budget. The only honest comparison is method and cost, and on that axis the team is explicit:"
+   },
+   {
+    "t": "quote",
+    "text": "Literally you could run Nxon it in an old smartphone.",
+    "cite": "Vivancos, X, 4 Sept 2026"
+   },
+   {
+    "t": "quote",
+    "text": "For the Kaggle Game the top scoreres are using the GPU provided and emmbeding 'small' #LLMs pretrained with harness to the task if we do so we could also climb the benchmark, but no we won't do that ... we are buildin #TrueAI not bruteforce compute/energy",
+    "cite": "Vivancos, X, 4 Sept 2026"
+   },
+   {
+    "t": "quote",
+    "text": "Once Kaggle challenge ends (november 2nd) everything will be open source as allways in Qubic Open Science.",
+    "cite": "Vivancos, X, 4 Sept 2026"
+   },
+   {
+    "t": "p",
+    "text": "Note what that second quote is: an admission that they could climb faster with GPUs and a small language model in the harness, and a refusal on principle. That is not \"can't.\" That is \"won't.\""
+   },
+   {
+    "t": "p",
+    "text": "And the scientific honesty is the same on this front as on Anna's:"
+   },
+   {
+    "t": "quote",
+    "text": "Only three of the seven added mechanisms proved necessary under the tested protocol.",
+    "cite": "Sánchez, AMA 20 Aug 2026"
+   },
+   {
+    "t": "quote",
+    "text": "A brain that performs well across twenty runs may stumble on the next six.",
+    "cite": "Sánchez, AMA 20 Aug 2026"
+   },
+   {
+    "t": "quote",
+    "text": "there's no G in AGI yet.",
+    "cite": "Sánchez, AMA 3 Sept 2026"
+   },
+   {
+    "t": "h",
+    "text": "Part 6. The cherry: all of this was done without the network"
+   },
+   {
+    "t": "p",
+    "text": "14 September:"
+   },
+   {
+    "t": "p",
+    "text": "\"just a reminder - the scientists achieved this result without the power of the Qubic network lol. all the work is being done on their own personal computers. once the architecture is ready - and we plug the mining power into improving the results - that's when the true climb start.\""
+   },
+   {
+    "t": "p",
+    "text": "Check it against the source. At the 20 August AMA the compute was \"roughly 500 CPU cores.\" At the 3 September AMA Vivancos described the current rig as \"burning hundreds of cores\" and said that using the network for ARC-AGI-3 \"would speed things up considerably,\" and in the same breath that the core team would first stabilize what already works: \"no promises on phasing.\" The deployment path has a name now, Anthill, Neuraxon running on the network via the ant colony algorithm, and it sits in the Q4 proposal. It has not happened yet."
+   },
+   {
+    "t": "p",
+    "text": "So the whole eleven-week climb, 0.13 to 0.38, four papers, Level 8, 0.45x human, came from a few hundred home CPU cores. The largest decentralized compute network in the world, the thing every miner reading this is part of, has not been plugged into this front at all. Today the science front runs about two generations a day. The network is built to run that loop by orders of magnitude more."
+   },
+   {
+    "t": "p",
+    "text": "And on Front One, the same sentence is waiting to become true. CfB's own roadmap for the price model ends with \"But it will be done by miners.\" The noiseless baseline was hit on personal machines in one evening. The noisy version, the real one, is the one meant for the network."
+   },
+   {
+    "t": "p",
+    "text": "That is the shape. Two fronts, both honest about where they are, both stopped at the same door: the door to the miners. Both are on record saying the true climb starts on the other side of it. And now recall Part 2: the wall we set out to break was energy. Two fronts producing these results on smartphone-class compute is not a detour from the energy question. It is the energy question, answered in the only currency that matters: watts per result."
+   },
+   {
+    "t": "h",
+    "text": "Part 7. BPP9000, the noise, and \"better than I thought\""
+   },
+   {
+    "t": "p",
+    "text": "7.1 What BPP9000 actually is"
+   },
+   {
+    "t": "p",
+    "text": "BPP9000 is the task: Bitcoin Price Prediction, the problem the Qubic mining network has been solving since epoch 224."
+   },
+   {
+    "t": "p",
+    "text": "Personally, the name cracks me up every time, because it sounds exactly like the ultimate weapon in Doom, the BFG9000 ;D"
+   },
+   {
+    "t": "p",
+    "text": "In its network form the task is small and strict: a fixed network of 64 neurons, 18 inputs, one output, fed a year of hourly BTC/USDT candles through a 28-day sliding window, and asked one question per hour: is the next candle up or down. The output is trinary: 1 for up, 0 for down, and ? for \"I don't know,\" which is scored as an error. Miners do not tune weights. Since epoch 224 the wiring is frozen and what evolves is a 27-entry rule table per neuron, and since epoch 228 the \"ant colony\" lets a miner inherit a parent solution and mutate it instead of starting from scratch. The score is simply the number of wrong answers across the window, about 8,088 hours, and the whole game is to drive that number toward zero. On real, noisy Bitcoin the best in-sample ensembles were sitting around 55%, single models barely above the coin-flip floor, and the best-error plateau had been stuck around 3500 for weeks. That is the wall from Part 4.3."
+   },
+   {
+    "t": "p",
+    "text": "Anna.exe is the same task taken off the network and handed to the community as a standalone program, \"mining algo not run by miners\" in CfB's June phrase, so that hundreds of home PCs can try things the network cannot yet verify. Anna 0.4 removed the external input file and generated its own synthetic price from 100 hidden factors; 0.5 added 10% noise; 0.9 set the noiseless baseline. And then came 0.10."
+   },
+   {
+    "t": "p",
+    "text": "7.2 The experiment: same model, two datasets"
+   },
+   {
+    "t": "p",
+    "text": "On the evening of 16 September CfB moved from training to evaluating. A community member posted a trained Anna.data file with a score of 3,236 on noisy data. CfB took that exact file, ran it against the same series with the noise stripped out, and posted the result:"
+   },
+   {
+    "t": "p",
+    "text": "\"WOW, this is how it looks on data without noise:\" Anna 0.10.64 | 534 | 8093 ticks | mode 1 | 1 mutations | + | 0 it/s (CfB, 16 Sept 2026, 21:04)"
+   },
+   {
+    "t": "p",
+    "text": "Same model. Same 8,093 ticks. Noise removed. 3,236 errors became 534. He did not explain it. He asked the room to:"
+   },
+   {
+    "t": "quote",
+    "text": "Is there anybody understanding what it means?",
+    "cite": "CfB, 16 Sept 2026"
+   },
+   {
+    "t": "p",
+    "text": "Then he did what a scientist does when a number surprises him: he refused to trust it."
+   },
+   {
+    "t": "quote",
+    "text": "We must verify.\" / \"Everybody running Anna.exe. Stop your current .data file and start a brand new one. DO NOT USED ALREADY GENERATED ONE.",
+    "cite": "CfB, 16 Sept 2026"
+   },
+   {
+    "t": "quote",
+    "text": "But 2 models isn't statistically significant. We need 3 more.",
+    "cite": "CfB, 16 Sept 2026"
+   },
+   {
+    "t": "quote",
+    "text": "Unique = you worked on it alone. Used empty file, never shared.",
+    "cite": "CfB, 16 Sept 2026"
+   },
+   {
+    "t": "p",
+    "text": "The rule was strict on purpose: a fresh empty file, one author, never passed around, a score under 3,300 on the noisy data, then post it and he runs it clean."
+   },
+   {
+    "t": "p",
+    "text": "Three independent people, three files trained from nothing on noisy data, and on clean data they land within ten errors of each other. A shared, non-unique file (3,364 with noise) came out at 1,188 clean, worse, exactly as a non-independent model should. With 8,088 hours in the window, the arithmetic is roughly 58-60% correct with noise against 93% without."
+   },
+   {
+    "t": "p",
+    "text": "7.3 What it means, in his words and in his surprise"
+   },
+   {
+    "t": "p",
+    "text": "I asked him directly whether this meant Anna had learned the structure through the noise rather than memorizing the noise. His answer is the most important quote in this article:"
+   },
+   {
+    "t": "quote",
+    "text": "Better or worse (depends on goal). We asked her to crack the pattern and output next price direction. She did it ignoring the noise and outputs future price direction WITHOUT NOISE. Just as we instructed. To verify the hypothesis we need to run a much larger model, e.g. with 1024 neurons.",
+    "cite": "CfB, 16 Sept 2026, 21:47"
+   },
+   {
+    "t": "p",
+    "text": "Read the middle of that. The models were trained on noisy data. They were never shown the clean series. And yet, evaluated on the clean series, they are six times better, which can only happen if what they learned was the underlying pattern and not the noise on top of it. Nobody told the network to denoise. It was asked to predict direction, and it found that ignoring the noise was the way to do it:"
+   },
+   {
+    "t": "quote",
+    "text": "We asked it to predict price, it denoised data for that.",
+    "cite": "CfB, 17 Sept 2026"
+   },
+   {
+    "t": "p",
+    "text": "And here is the moment I promised. Two months of \"64 neurons is not enough\" and \"on real data AI honestly says I don't know\":"
+   },
+   {
+    "t": "quote",
+    "text": "If it works the way I assume then Aigarth actually works much better than I initially thought",
+    "cite": "CfB, 16 Sept 2026, 21:14"
+   },
+   {
+    "t": "p",
+    "text": "Notice he still hedged it: if it works the way I assume. Someone asked if this meant he could quit his job. The answer was a picture, not a promise:"
+   },
+   {
+    "t": "quote",
+    "text": "Imagine diving and finding a ship full of gold. Now you need to lift the gold and all this doing so nobody else knows and steals from you.",
+    "cite": "CfB, 16 Sept 2026"
+   },
+   {
+    "t": "p",
+    "text": "Later that night he drew the ceiling, and it is the most useful thing anyone in this project has said about what price prediction can and cannot be:"
+   },
+   {
+    "t": "quote",
+    "text": "Ok, no matter how hard we try, we cannot predict noise. So once pattern is constructed we cannot do anything else. This means that our prediction will be correct in some %% of cases but never 100%",
+    "cite": "CfB, 16 Sept 2026"
+   },
+   {
+    "t": "quote",
+    "text": "It also means that our prediction accuracy depends on magnitude of signal vs magnitude of noise. When a random person comes and buys or sells BTC and never returns he generates noise",
+    "cite": "CfB, 16 Sept 2026"
+   },
+   {
+    "t": "quote",
+    "text": "but if random persons come and go at some pattern then we can extract that pattern",
+    "cite": "CfB, 16 Sept 2026"
+   },
+   {
+    "t": "p",
+    "text": "So the model is not a crystal ball. It is a pattern extractor. What repeats (bots, cycles, crowds that behave the same way twice) is signal and can be learned. What never repeats is noise and cannot be learned by anyone. The accuracy on a real market is therefore not a property of the network; it is a property of the market, the ratio of signal to noise in it. That is why the honest sentence is \"some %, never 100%.\""
+   },
+   {
+    "t": "p",
+    "text": "7.4 The phase we are in now (17 September 2026)"
+   },
+   {
+    "t": "p",
+    "text": "By the next afternoon the count was in:"
+   },
+   {
+    "t": "quote",
+    "text": "Alright, got enough models, now we are moving to 1024-neuron test",
+    "cite": "CfB, 17 Sept 2026, 13:34"
+   },
+   {
+    "t": "quote",
+    "text": "Anna 0.10.1024. Use empty Anna.data.",
+    "cite": "CfB, 17 Sept 2026, 13:36, pinned"
+   },
+   {
+    "t": "p",
+    "text": "This is the experiment that decides whether the surprise survives sixteen times more neurons. If it does, the engineering questions (window length, the throttled public parameters, the miner deployment) become the whole job. If it does not, we will hear it from the same man who told us the first approach had hit the wall, in the same channel, with the same bluntness."
+   },
+   {
+    "t": "h",
+    "text": "Part 8. The timeline"
+   },
+   {
+    "t": "p",
+    "text": "~2002: the idea begins. \"If we talk about Aigarth - it's 20+ years in the making.\" (CfB, Nov 2023)"
+   },
+   {
+    "t": "p",
+    "text": "Dec 2021: proof of concept."
+   },
+   {
+    "t": "p",
+    "text": "13 April 2022: real mining starts. The clock that matters."
+   },
+   {
+    "t": "p",
+    "text": "13 April 2024: Qubic mainnet."
+   },
+   {
+    "t": "p",
+    "text": "2 July 2025: Aigarth goes public on GitHub."
+   },
+   {
+    "t": "p",
+    "text": "Feb-May 2026: energy breakthroughs; generalization and the universal training algorithm solved; constant-dimensions discovery; Neuraxon 2.0 published."
+   },
+   {
+    "t": "p",
+    "text": "20-22 May 2026: Berlin, ICMLT. Best Paper + Best Presentation, judged by independent scientists."
+   },
+   {
+    "t": "p",
+    "text": "10-13 June 2026: Anna.exe released. \"Race a number to zero.\""
+   },
+   {
+    "t": "p",
+    "text": "29 June 2026: Neuraxon enters ARC-AGI-3 at 0.13, CPU-only."
+   },
+   {
+    "t": "p",
+    "text": "early July 2026: Anna reaches zero on all seven levels. \"It's not a milestone. It's much bigger.\""
+   },
+   {
+    "t": "p",
+    "text": "27-30 July 2026: AGI-26, San Francisco. Multi-Neuraxon presented."
+   },
+   {
+    "t": "p",
+    "text": "6 August 2026: ARC-AGI-3: 0.25."
+   },
+   {
+    "t": "p",
+    "text": "20 August 2026: Open Science AMA: four papers accepted; ~500 CPU cores; \"past the middle\" of ~2,300."
+   },
+   {
+    "t": "p",
+    "text": "3-4 September 2026: Level 7, then Level 8 on a training game; Kaggle 0.28; \"you could run Nxon in an old smartphone\"; Sánchez: \"there's no G in AGI yet.\""
+   },
+   {
+    "t": "p",
+    "text": "mid-September 2026: Kaggle 0.38, ~#1350."
+   },
+   {
+    "t": "p",
+    "text": "16 September 2026: CfB: the price approach hits the verification wall and is rebuilt; Anna 0.9 sets the noiseless baseline; \"Synthetic prices ... 100% ... 32-neuron ANNs\"; \"Now need version with noise\"; \"Predict BTC price. But it will be done by miners. We are preparing prototype.\" Same day on X: the multiverse post, training 100x faster, verification scaled 100-fold."
+   },
+   {
+    "t": "p",
+    "text": "16 September 2026, evening: Anna 0.10.64: three independent community models trained on noisy data score ~530 errors on clean data vs ~3,250 with noise; \"Aigarth actually works much better than I initially thought\"; \"we cannot predict noise ... correct in some %, never 100%\"; public parameters to be throttled, \"fly under radar.\""
+   },
+   {
+    "t": "p",
+    "text": "17 September 2026: \"got enough models, now we are moving to 1024-neuron test\"; Anna 0.10.1024 pinned."
+   },
+   {
+    "t": "p",
+    "text": "27-29 October 2026: Artificial Evolution, Nice."
+   },
+   {
+    "t": "p",
+    "text": "2 November 2026: ARC-AGI-3 competition closes; Neuraxon goes fully open source."
+   },
+   {
+    "t": "p",
+    "text": "13 April 2027: the ETA. Five years to the day from the start of real mining."
+   },
+   {
+    "t": "h",
+    "text": "Conclusion: where we actually are"
+   },
+   {
+    "t": "p",
+    "text": "Put the two fronts side by side and the picture stops being scattered."
+   },
+   {
+    "t": "p",
+    "text": "The demo task is done. Zero was reached in July, and it meant what it was supposed to mean: the method converges, generalizes, and fits in a tiny, energy-cheap architecture. Then both fronts walked into the real world, and the real world did what it always does. On the price front the first approach hit the verification wall; the creator said so plainly, retired it, and rebuilt around selection. The noiseless baseline was hit on 16 September, and that same evening the 64-neuron prototype did something nobody had told it to do: trained on noise, it learned the pattern underneath and threw the noise away, three independent times. The creator's own words were \"much better than I initially thought,\" followed immediately by \"we must verify.\" The 1024-neuron test began the next day. On the science front the same paradigm has spent eleven weeks climbing the benchmark built to defeat brute-force AI, from 0.13 to 0.38, on a few hundred CPU cores, refusing the GPU-plus-LLM shortcut the leaders use, with four peer-reviewed papers behind it and full open source promised for 2 November."
+   },
+   {
+    "t": "p",
+    "text": "The countdown has a date: 13 April 2027. Now you know what both hands on the clock are doing."
+   },
+   {
+    "t": "p",
+    "text": "Sources: direct CfB quotes from Discord (#price-discussion, 14-17 Sept 2026) and X (16 Sept 2026), dated inline; BPP9000 parameters from the Qubic core changelog (epochs 224-229) and the Qubic ANN Explorer documentation; the 16 Sept model table from the files and evaluations posted in #price-discussion by Yoshimit, UE5 and CfB; Qubic blog: \"Anna Reached 0: What It Actually Means for Aigarth,\" \"Qubic Open Science AMA Recap: Four Neuraxon Papers Accepted\" (20 Aug 2026), All-Hands recaps of 9 and 23 July and 6 Aug 2026; Vivancos posts on X (29 Jun, 4 Sept 2026); Science AMA of 3 Sept 2026 (Vivancos, Sánchez); Kaggle \"ARC Prize 2026 - ARC-AGI-3\" public leaderboard; ARC-AGI-3 technical report. Quotes are verbatim where shown, including the authors' own typos. Benchmark figures are Kaggle public-leaderboard scores and are not compared across boards. The line between \"paradigm proven on the demo task\" and \"AGI achieved\" is drawn deliberately, and the line between \"synthetic without noise\" and \"real market\" is drawn just as deliberately, because the people doing the work drew it first."
+   }
+  ]
+ },
+ {
+  "slug": "agi-astra-the-table-and-qubic",
+  "title": "AGI, Astra, the table, and where Qubic is in it",
+  "kicker": null,
+  "date": "2026-09-04",
+  "url": "https://x.com/usetesserai",
+  "author": "TesserAI",
+  "summary": "OpenAI, the charter: a highly autonomous system that outperforms humans at most economically valuable work. Definition through economy.",
+  "words": 809,
+  "blocks": [
+   {
+    "t": "quote",
+    "text": "LLMs cannot innovate",
+    "cite": "Come-from-Beyond, Discord, September 4, 2026"
+   },
+   {
+    "t": "h",
+    "text": "What is AGI. Four definitions"
+   },
+   {
+    "t": "p",
+    "text": "One term, four definitions, and they don't match:"
+   },
+   {
+    "t": "p",
+    "text": "OpenAI, the charter: a highly autonomous system that outperforms humans at most economically valuable work. Definition through economy."
+   },
+   {
+    "t": "p",
+    "text": "2. Chollet, author of ARC: intelligence is the efficiency of skill acquisition. Not \"what it can do\", but \"how fast it learns something new with little experience\". Definition through learning."
+   },
+   {
+    "t": "p",
+    "text": "3. DeepMind, \"Levels of AGI\": a ladder of levels, from \"emerging\" to \"superhuman\", separately by depth and by breadth. Definition through a scale."
+   },
+   {
+    "t": "p",
+    "text": "4. Helen Toner, ex-board of OpenAI: the term is \"almost useless\", because everyone puts his own meaning inside. Definition through refusing to define."
+   },
+   {
+    "t": "p",
+    "text": "When OpenAI showed the Astra numbers on ARC, CfB wrote: the test was about necessity, but they sold it as sufficiency. Meaning: fail ARC and you are surely not AGI. Pass ARC and it doesn't mean AGI. These are two different statements, and the market mixes them on purpose."
+   },
+   {
+    "t": "p",
+    "text": "More precisely, the marketing people mix them for you."
+   },
+   {
+    "t": "h",
+    "text": "What the metrics in the table mean"
+   },
+   {
+    "t": "p",
+    "text": "ARC-AGI-3 is games. Interactive, no instructions, you have to discover the rules yourself. The key parameter here: adaptation."
+   },
+   {
+    "t": "p",
+    "text": "Three sets: 25 public demo games (not counted in the score), 55 semi-private (for models via API), 55 fully private (Kaggle, offline)."
+   },
+   {
+    "t": "p",
+    "text": "The score is counted per level: how many actions a human spent, how many the agent spent, the ratio squared, weighted by level, averaged over games. The result is in percent."
+   },
+   {
+    "t": "p",
+    "text": "Human is 100%. This is the reference point."
+   },
+   {
+    "t": "p",
+    "text": "Now the rows."
+   },
+   {
+    "t": "p",
+    "text": "Gemini 3.1 Pro at launch: 0.37%."
+   },
+   {
+    "t": "p",
+    "text": "GPT 5.4 at launch: 0.26%."
+   },
+   {
+    "t": "p",
+    "text": "Opus 4.6 Max at launch: 0.25%."
+   },
+   {
+    "t": "p",
+    "text": "Grok-4.20: 0.00%."
+   },
+   {
+    "t": "p",
+    "text": "This is the standard harness, no add-ons. This is how the frontier looked in summer: zero with a tail."
+   },
+   {
+    "t": "p",
+    "text": "GPT-6 Astra, September 3, verified by ARC Prize: 62.7% in the standard harness, cost of the run 26,098 dollars (you feel it already?). With the provider adapter, meaning continuous memory between moves: 99.9% for 18,817 dollars."
+   },
+   {
+    "t": "p",
+    "text": "Chollet called it a \"step-function change\" and wrote about 360 dollars per game."
+   },
+   {
+    "t": "p",
+    "text": "ARC Prize, at the same time, wrote separately: we are not claiming this is AGI."
+   },
+   {
+    "t": "p",
+    "text": "Kaggle track: 50 dollars compute budget, offline, open source. Same test, different weight category."
+   },
+   {
+    "t": "h",
+    "text": "Where Qubic is in this system"
+   },
+   {
+    "t": "p",
+    "text": "Two rows, two different tasks."
+   },
+   {
+    "t": "p",
+    "text": "First. BPP9000, epoch 229. Aigarth built a model of 64 neurons and 138 connections, trained it on 8,088 hours, and on one hour the model never saw, the ensemble of 676 best gave 55.3%. 359 out of 649."
+   },
+   {
+    "t": "p",
+    "text": "The first forecast of the first Aigarth product turned out right! I ask to fix this in the history!"
+   },
+   {
+    "t": "p",
+    "text": "Second. Neuraxon, Vivancos and Sánchez, on ARC-AGI-3. On the demo games they reached level 7 in lp85, in r11l they spend 0.45 of human actions. On Kaggle the team \"Qubic Nxon Vivancos & Sanchez\": 0.25%, 67 entries, rank 1484."
+   },
+   {
+    "t": "p",
+    "text": "Now put them side by side."
+   },
+   {
+    "t": "p",
+    "text": "0.25% for Qubic. 0.25% for Opus 4.6 Max at launch. 0.26% for GPT 5.4."
+   },
+   {
+    "t": "p",
+    "text": "The same level the frontier was showing in summer."
+   },
+   {
+    "t": "p",
+    "text": "Only for the frontier it is a result on tens of thousands of GPUs, and for Neuraxon it is on 50 dollars, no GPU and no LLM."
+   },
+   {
+    "t": "p",
+    "text": "Astra: 62.7% for 26,098 dollars."
+   },
+   {
+    "t": "p",
+    "text": "The budget differs five hundred times. The place in the table is lower, for now."
+   },
+   {
+    "t": "p",
+    "text": "And one more detail. Under Chollet's tweet about Astra, Vivancos put NoGPU/NoLLM/Neuraxon. This tags say a lot."
+   },
+   {
+    "t": "h",
+    "text": "What is the difference of approaches"
+   },
+   {
+    "t": "p",
+    "text": "An LLM learns on everything people ever wrote and predicts the next token. More data and more GPUs, the better."
+   },
+   {
+    "t": "p",
+    "text": "Aigarth doesn't read text. It grows a network. From noise, by selection, on the compute of miners. Not billions of neurons, but 64, and CfB is preparing the move to 128."
+   },
+   {
+    "t": "p",
+    "text": "Last week he confirmed the mechanism: the network as a graph, degenerate and near-degenerate topologies get thrown out, the task is solved with fewer neurons, the scaling goes sublinear \"because of graph isomorphism\"."
+   },
+   {
+    "t": "p",
+    "text": "Astra talks. Aigarth grows."
+   },
+   {
+    "t": "p",
+    "text": "With Astra you can't verify that it understood. Aigarth is verified by the score: 0 errors means the best model for the task."
+   },
+   {
+    "t": "p",
+    "text": "And the last thing. About mining. Today."
+   },
+   {
+    "t": "p",
+    "text": "On the AMA the team said it plainly: miners are priority number one."
+   },
+   {
+    "t": "p",
+    "text": "CfB said it even plainer: \"Now we depend on miners. All I can do is optimizations.\""
+   },
+   {
+    "t": "p",
+    "text": "All the rows above, 55.3% on BPP9000, 128 neurons, the next task, they don't grow in a datacenter. They grow on the cards of people who switched on the miner."
+   },
+   {
+    "t": "p",
+    "text": "This is not about income. This is about who feeds the network while the market is looking at Astra."
+   },
+   {
+    "t": "p",
+    "text": "Fire up the miner. Point your card to the pool."
+   },
+   {
+    "t": "p",
+    "text": "Qubic is not in the table. It is in one of its rows, on the other side of the electricity bill."
+   },
+   {
+    "t": "p",
+    "text": "JUST RUN MINER!"
+   }
+  ]
+ },
+ {
+  "slug": "bpp-9000-first-product-of-aigarth",
+  "title": "BPP-9000: the first product of Aigarth",
+  "kicker": null,
+  "date": "2026-08-28",
+  "url": "https://x.com/usetesserai",
+  "author": "TesserAI",
+  "summary": "Three months ago Qubic was a network with a file called Anna.exe and one number on a screen.",
+  "words": 948,
+  "blocks": [
+   {
+    "t": "p",
+    "text": "Three months ago Qubic was a network with a file called Anna.exe and one number on a screen."
+   },
+   {
+    "t": "p",
+    "text": "Today it has a product."
+   },
+   {
+    "t": "p",
+    "text": "«Today we have changed crypto mining forever.»"
+   },
+   {
+    "t": "quote",
+    "text": "But others will see it only after a while.",
+    "cite": "CfB"
+   },
+   {
+    "t": "h",
+    "text": "First, the science was graded"
+   },
+   {
+    "t": "p",
+    "text": "Before anything shipped, the science underneath Aigarth was put in front of independent people. Four papers in one year, at four real scientific venues."
+   },
+   {
+    "t": "p",
+    "text": "Berlin, May - Best Paper and Best Presentation at IEEE ICMLT."
+   },
+   {
+    "t": "p",
+    "text": "Osaka, July - Best Oral Presentation: 5,582 experiments showed that ternary networks sit at criticality 88.8% of the time versus 37.2% for binary. The ternary choice CfB made two decades ago got its experimental confirmation."
+   },
+   {
+    "t": "p",
+    "text": "San Francisco - Multi-Neuraxon: 152 neurons, specialization emerging with no one assigning it, and 99–102% of motor information retained after losing 75% of the neurons."
+   },
+   {
+    "t": "p",
+    "text": "And in October the fourth paper goes to Nice - to the artificial evolution conference, presenting heritable traits in evolving populations. Which is, word for word, the mechanism our network now runs in production."
+   },
+   {
+    "t": "p",
+    "text": "At the Science AMA the team laid it out plainly: the evolutionary core of Neuraxon is already inside the Aigarth architecture - all that's left is proving the colony."
+   },
+   {
+    "t": "p",
+    "text": "Neuraxon 3.0 was unveiled in one line:"
+   },
+   {
+    "t": "p",
+    "text": "«Five rules propose. One dial decides.»"
+   },
+   {
+    "t": "p",
+    "text": "ARC-AGI-3 closes around November - and the team wants Neuraxon training on mainnet before that."
+   },
+   {
+    "t": "p",
+    "text": "Judges with no stake in Qubic keep handing this project awards."
+   },
+   {
+    "t": "p",
+    "text": "Thank you @josesanchezhb @VivancosDavid"
+   },
+   {
+    "t": "h",
+    "text": "Then the method hit zero"
+   },
+   {
+    "t": "p",
+    "text": "June: CfB drops Anna.exe in Discord. Hundreds of home CPUs start racing."
+   },
+   {
+    "t": "p",
+    "text": "July 6 - all seven tests hit zero."
+   },
+   {
+    "t": "p",
+    "text": "6/7/6."
+   },
+   {
+    "t": "p",
+    "text": "On computers united by a single task - growing Anna."
+   },
+   {
+    "t": "p",
+    "text": "«It's not a milestone. It's much bigger.»"
+   },
+   {
+    "t": "p",
+    "text": "Zero proved that intelligence can be grown, not engineered by hand."
+   },
+   {
+    "t": "p",
+    "text": "But there was no memory yet - the network searched brilliantly and forgot everything every epoch."
+   },
+   {
+    "t": "p",
+    "text": "August 26: the ant colony goes into production"
+   },
+   {
+    "t": "p",
+    "text": "Epoch 228."
+   },
+   {
+    "t": "p",
+    "text": "The last missing piece goes live."
+   },
+   {
+    "t": "p",
+    "text": "Every miner's best network becomes the parent of the next generation. The tree is written to disk. It survives restarts. It survives epochs."
+   },
+   {
+    "t": "p",
+    "text": "For the first time in the history of Proof-of-Work, what the network learns today is still with it tomorrow."
+   },
+   {
+    "t": "p",
+    "text": "And then we watched it learn, in real time."
+   },
+   {
+    "t": "p",
+    "text": "Champion score at launch: 4000."
+   },
+   {
+    "t": "p",
+    "text": "Within hours: 3790."
+   },
+   {
+    "t": "p",
+    "text": "Next day: 3664 -> 3591 -> 3525 -> 3505 as I'm writing this"
+   },
+   {
+    "t": "p",
+    "text": "The number keeps falling - hour after hour, in public, with every byte verifiable through independent explorers."
+   },
+   {
+    "t": "h",
+    "text": "BPP-9000: the first product of Aigarth"
+   },
+   {
+    "t": "p",
+    "text": "Here is what most people haven't registered yet."
+   },
+   {
+    "t": "p",
+    "text": "This is no longer a testnet toy."
+   },
+   {
+    "t": "p",
+    "text": "This is Aigarth's first product: 676+ separate models - one per computor - each predicting the direction of BTC price for the next hour."
+   },
+   {
+    "t": "p",
+    "text": "A living ensemble, running a wide search across the solution space - exactly as designed:"
+   },
+   {
+    "t": "p",
+    "text": "«We are doing wide search now, not narrow one.»"
+   },
+   {
+    "t": "p",
+    "text": "And here is how far the founder believes this goes:"
+   },
+   {
+    "t": "quote",
+    "text": "Remember that feeling when we reached 0 with Anna here? We are going to get it again with BPP9000 on large scale.",
+    "cite": "CfB"
+   },
+   {
+    "t": "p",
+    "text": "The path is stated clearly:"
+   },
+   {
+    "t": "p",
+    "text": "scale to 128 neurons -> drive the score toward zero -> cut model construction to 30 minutes so the prediction is always fresh."
+   },
+   {
+    "t": "p",
+    "text": "Three gates."
+   },
+   {
+    "t": "p",
+    "text": "When they're passed, this stops being research and becomes a service - a service where querying the network burns QUBIC, and at full utilization the burn matches the entire emission."
+   },
+   {
+    "t": "p",
+    "text": "The monetization model is being discussed in the open right now - we're deciding it together, right in the Discord."
+   },
+   {
+    "t": "p",
+    "text": "And now the part that matters most: mining"
+   },
+   {
+    "t": "p",
+    "text": "Everything above is done."
+   },
+   {
+    "t": "p",
+    "text": "Shipped. Peer-reviewed. Deployed. Running."
+   },
+   {
+    "t": "p",
+    "text": "Which is exactly why CfB keeps repeating one thing:"
+   },
+   {
+    "t": "quote",
+    "text": "Devs did everything they were supposed to, now ball on miner's court. Law of energy conservation won't allow us to create human-level AI without enough computing power.",
+    "cite": "CfB"
+   },
+   {
+    "t": "p",
+    "text": "This is physics."
+   },
+   {
+    "t": "p",
+    "text": "The method is proven. The memory works. The architecture is ready."
+   },
+   {
+    "t": "p",
+    "text": "The single variable left is computing power."
+   },
+   {
+    "t": "p",
+    "text": "And computing power is us."
+   },
+   {
+    "t": "quote",
+    "text": "A lot depends on miners now. My main job at this stage is optimization, to help miners reach 0.",
+    "cite": "CfB"
+   },
+   {
+    "t": "p",
+    "text": "The founder of this network describes his own job as helping miners."
+   },
+   {
+    "t": "p",
+    "text": "That's how much you matter."
+   },
+   {
+    "t": "p",
+    "text": "And to everyone still pointing hashrate at coins that burn electricity to produce nothing:"
+   },
+   {
+    "t": "quote",
+    "text": "If you still launch PoW cryptocurrencies which burn electricity for hashing instead of training AI then you don't use today's tech, you use yesterday's one.",
+    "cite": "CfB"
+   },
+   {
+    "t": "p",
+    "text": "Your hardware spends the same watts either way."
+   },
+   {
+    "t": "p",
+    "text": "On one side of that choice, the watt becomes a useless discarded hash."
+   },
+   {
+    "t": "p",
+    "text": "On the other - it becomes a neuron in a mind that remembers, and you get rewarded for growing it."
+   },
+   {
+    "t": "p",
+    "text": "Even the biggest players see the turn: the largest BTC miners are pouring billions into AI compute."
+   },
+   {
+    "t": "p",
+    "text": "The only difference is - there, you need a datacenter."
+   },
+   {
+    "t": "p",
+    "text": "Here, you need the machine you already own."
+   },
+   {
+    "t": "p",
+    "text": "Every network improvement, every score milestone, every burn - all of it runs on miner compute."
+   },
+   {
+    "t": "p",
+    "text": "More miners -> faster search -> zero comes sooner -> the service launches sooner."
+   },
+   {
+    "t": "p",
+    "text": "That's how the flywheel starts."
+   },
+   {
+    "t": "p",
+    "text": "And it starts with you."
+   },
+   {
+    "t": "p",
+    "text": "So this is the call. Not \"watch us\" Mine."
+   },
+   {
+    "t": "p",
+    "text": "Point your hardware at the colony."
+   },
+   {
+    "t": "p",
+    "text": "Watch your own network's tree grow through the trackers."
+   },
+   {
+    "t": "p",
+    "text": "Verify every proof yourself - trusting no one."
+   },
+   {
+    "t": "p",
+    "text": "Be first in the only mining in crypto where the work itself becomes the product."
+   },
+   {
+    "t": "p",
+    "text": "The science is awarded."
+   },
+   {
+    "t": "p",
+    "text": "The method reached zero."
+   },
+   {
+    "t": "p",
+    "text": "The memory is live."
+   },
+   {
+    "t": "p",
+    "text": "The first product is running and learning right now, as you read this."
+   },
+   {
+    "t": "quote",
+    "text": "Just run miner.",
+    "cite": "CfB"
+   },
+   {
+    "t": "p",
+    "text": "Seriously."
+   },
+   {
+    "t": "p",
+    "text": "Right now."
+   }
+  ]
+ },
+ {
+  "slug": "the-crazy-summer",
+  "title": "The crazy summer",
+  "kicker": "Just run miner",
+  "date": "2026-08-22",
+  "url": "https://x.com/usetesserai",
+  "author": "TesserAI",
+  "summary": "25 May, Berlin. The Neuraxon v2.0 paper takes Best Paper and Best Presentation at IEEE ICMLT. The judges have no stake in Qubic. This is the first time the science underneath Aigarth is graded by strangers, and it is graded first in the…",
+  "words": 1323,
+  "blocks": [
+   {
+    "t": "p",
+    "text": "Before the summer:"
+   },
+   {
+    "t": "p",
+    "text": "25 May, Berlin. The Neuraxon v2.0 paper takes Best Paper and Best Presentation at IEEE ICMLT. The judges have no stake in Qubic. This is the first time the science underneath Aigarth is graded by strangers, and it is graded first in the room."
+   },
+   {
+    "t": "p",
+    "text": "Two weeks later the race begins."
+   },
+   {
+    "t": "h",
+    "text": "June: the race"
+   },
+   {
+    "t": "p",
+    "text": "10 June. CfB posts a file in Discord: «If you guys are too bored maybe you could run Anna.exe for a while and post results here?» A hundred-some kilobytes. Seven tests. One number on the screen: the error, the distance to zero."
+   },
+   {
+    "t": "p",
+    "text": "Hundreds of home CPUs start running it the same night. People pass Anna.data snapshots around the chat like a relay baton; whoever has the lowest score is the one everybody grafts from. Evolution on top of evolution: inside the file, neurons are selected; in the chat, Anna's are."
+   },
+   {
+    "t": "p",
+    "text": "14 June. CfB: «finished my work». He says the research phase is over and what comes next is «practical AI». Nobody outside the race notices."
+   },
+   {
+    "t": "p",
+    "text": "16 June. Asked what happens at zero: «Aigarth will be deemed finished.»"
+   },
+   {
+    "t": "h",
+    "text": "July: zero, and the date"
+   },
+   {
+    "t": "p",
+    "text": "6 July. All seven tests hit zero. CfB asks the chat: «Are ALL solved or not?» The chat answers: «All Zero.» And the line that reframes the whole project:"
+   },
+   {
+    "t": "p",
+    "text": "«It's not a milestone. It's much bigger.»"
+   },
+   {
+    "t": "p",
+    "text": "The date is 6 July 2026. 6/7/6. Six seventy-six is the number of computors in the network, 26 squared, the quorum sewn into the architecture since day one."
+   },
+   {
+    "t": "p",
+    "text": "21 July, Osaka. Second paper, second award. Best Oral Presentation at AMLDS for «The Neutral Buffer State». The result: 5,582 experiments, one variable, two states or three. Ternary networks sit at criticality 88.8% of the time, binary ones 37.2%. The ternary choice CfB made two decades ago gets a measurement."
+   },
+   {
+    "t": "p",
+    "text": "22 July. All-Hands. BPP-9000 is implemented and scheduled for epoch 224. The task: neural networks on BTC candles. Same day, QUBIC goes live on Alchemy Pay: 173 countries, card to wallet."
+   },
+   {
+    "t": "p",
+    "text": "27–30 July, San Francisco. Third paper, AGI-26. Multi-Neuraxon: 152 neurons, four coupled spheres, specialization emerging with no assignment, 99–102% of motor information retained after losing 75% of the neurons."
+   },
+   {
+    "t": "p",
+    "text": "29 July. v1.301.0 goes live. Two things in one release: BPP-9000 becomes the mining algorithm, and Outsourced Computation consensus goes into the core. From this day the network's proof of work is a search for a neural network. And from this day the network can, in principle, sign instructions to the outside world with 451 computor signatures."
+   },
+   {
+    "t": "h",
+    "text": "August: the pieces start touching"
+   },
+   {
+    "t": "p",
+    "text": "3–4 August. OC mock goes live on mainnet. ocmock.qubic.org shows invocations coming off the live network, each with 451+ verified signatures, replicated by three OC machines. Mock interface, synthetic payloads, but the consensus path is real and public."
+   },
+   {
+    "t": "p",
+    "text": "5 August. CfB, on the mining score: zero on training is not a forecast of the future. Accuracy on unseen data sits around 52%. This is the honest ceiling of the summer, stated by the person with the most to gain from overstating it."
+   },
+   {
+    "t": "p",
+    "text": "6 August. All-Hands puts it on a slide: Neuraxon vs ARC-AGI-3 = 0.25. Official. And a second slide, «Science - The long road», lists why the science track exists: credibility, rigor, distinguishing Qubic from other crypto projects."
+   },
+   {
+    "t": "p",
+    "text": "9–10 August. PR #978, «Ant colony on bpp9000». cyber-pc, 39 commits, the branch started 30 July, the day after BPP went live. Trees of scored networks, parent and child, save/load, network API. The two gates that had been blocking the colony since May are closed in eleven days of commits."
+   },
+   {
+    "t": "p",
+    "text": "Same days, CfB on the thing he will not publish: «Generalization is kept secret.» «Till somebody reverse-engineers it.» The moat is the method, and he says so."
+   },
+   {
+    "t": "p",
+    "text": "18 August. cyber-pc: feature-complete, feature freeze, target mainnet at epoch 228. JOETOM explains the release policy: about three seamless transitions and one non-seamless per month; the non-seamless one carries the breaking changes."
+   },
+   {
+    "t": "p",
+    "text": "19 August. Epoch 227 begins. The halving passes as a seamless transition, with no release, because the smart contract handles it. Half the chat thinks it was skipped. It was not. The protocol did its job without ceremony."
+   },
+   {
+    "t": "p",
+    "text": "21 August. The densest day of the summer."
+   },
+   {
+    "t": "p",
+    "text": "Yours truly publishes the book «Come-from-Beyond»."
+   },
+   {
+    "t": "p",
+    "text": "Science AMA, one hour. The evolutionary part of Neuraxon is already inside the Aigarth architecture; it is not on the network yet; it goes on after the colony is proven. The 0.25 cost about 500 CPU cores for a couple of months on Vivancos's own machines, not the network. ARC-AGI-3 closes around November; they want Neuraxon training on mainnet before that. The slides give the first public definition of the Neuraxon unit."
+   },
+   {
+    "t": "p",
+    "text": "Then Neuraxon 3.0. «Five rules propose. One dial decides.» Whoa!"
+   },
+   {
+    "t": "p",
+    "text": "Fourth paper accepted: EA 2026, Nice, 27–29 October, the artificial evolution conference. The subject is heritable traits in evolving populations. That is the colony's mechanism, presented to the people who study it for a living."
+   },
+   {
+    "t": "p",
+    "text": "NVIDIA announces 100% on ARC-AGI-3. Chollet, who wrote the benchmark, replies within hours: that is the public demo set, «like saying you beat a videogame because you cleared the tutorial level». Vivancos replies to Chollet: the Kaggle board is 55 unknown games, offline, no LLM, no VLM, and that is where Neuraxon plays."
+   },
+   {
+    "t": "p",
+    "text": "Why isn't the Qubic price moving yet?"
+   },
+   {
+    "t": "p",
+    "text": "CfB: «Need practical application.» Then: «Next roadmap is mostly for AI.»"
+   },
+   {
+    "t": "p",
+    "text": "22 August. Three updates in one morning."
+   },
+   {
+    "t": "p",
+    "text": "cyber-pc posts the final colony parameters: threshold 4000, publish window 15.000 ticks, population 64 with 128 as the stated next step. Then a notice to computor operators: the colony is targeted for epoch 228, here are the new state files to include in your backups. The tree lives in the node's snapshots. Memory survives restart."
+   },
+   {
+    "t": "p",
+    "text": "dkat announces two Oracle Machine services: any Qubic contract can read any event log from any EVM chain, attested by computor quorum; and any Qubic event can be read outward, provable by zero-knowledge proof. Bridge primitive, free price feeds via Chainlink events, on-chain attestations. Proven on the dev testnet with 676 commits and 451+ quorum."
+   },
+   {
+    "t": "p",
+    "text": "CfB, the night before, on the state of things: «right now everybody is waiting for ant colony, before that Aigarth is hybernating.» And: «Just run miner.»"
+   },
+   {
+    "t": "h",
+    "text": "The puzzle"
+   },
+   {
+    "t": "p",
+    "text": "Now lay the pieces out."
+   },
+   {
+    "t": "p",
+    "text": "A method, proven at zero on 6/7/6. A network mining neural networks since 29 July. A consensus path for signed instructions outward, live in mock since 4 August. A consensus path for verified facts inward, proven on testnet on 22 August. Four papers at four real venues, two of them awarded by people with nothing to gain. A unit, formally defined. A version 3.0 that puts criticality in charge. A benchmark where the network has not yet competed, with a November deadline and a stated intent to compete on mainnet. ETA 13.04.2027"
+   },
+   {
+    "t": "p",
+    "text": "And one missing piece that everything else is shaped around: memory. Since the first epoch of useful mining, the network has searched and forgotten. Every piece above is either a thing that searches or a thing that carries results in and out. None of them accumulates."
+   },
+   {
+    "t": "p",
+    "text": "On Wednesday, epoch 228, the colony ships. Each miner's best network becomes the parent of the next. The tree is written to disk. For the first time, what the network learns on one day is still there the next."
+   },
+   {
+    "t": "p",
+    "text": "CfB was clear about the ceiling, and so are the scientists: zero is not generalization, the colony ships with population 64 not 128, OC is mock, OM is testnet, and the price answers only to practical application. But look at the order of what comes next, and notice it is no longer a wish list. Colony on the 26th. Neuraxon onto the colony, before November. Nice on 27 October. ARC closes, the corpus opens."
+   },
+   {
+    "t": "p",
+    "text": "Three months ago the network had a file called Anna.exe and a number on a screen. Today it has a calendar."
+   },
+   {
+    "t": "p",
+    "text": "Just run miner. Just run miner. JUST RUN MINER!!!"
+   }
+  ]
+ },
+ {
+  "slug": "qubic-published-its-brains",
+  "title": "Qubic published its brains. 525 million rows",
+  "kicker": null,
+  "date": "2026-08-13",
+  "url": "https://x.com/usetesserai",
+  "author": "TesserAI",
+  "summary": "Most AI projects ask you to believe them. Today Qubic's science team did the opposite. They uploaded the raw guts of their evolving neural networks to Hugging Face (link in the comments), under an open license, and said: don't take our…",
+  "words": 894,
+  "blocks": [
+   {
+    "t": "p",
+    "text": "Most AI projects ask you to believe them. Today Qubic's science team did the opposite. They uploaded the raw guts of their evolving neural networks to Hugging Face (link in the comments), under an open license, and said: don't take our word for it, download it."
+   },
+   {
+    "t": "p",
+    "text": "The dataset is called NeuraxonLive. It records an artificial world where small agents live, forage for food, mate, and die. Each one carries a brain that was grown. The brains that survive pass their design to their children. The latest run tested 6,344 brain architectures in ten days."
+   },
+   {
+    "t": "p",
+    "text": "Here is the scale - 525 million rows across four linked tables. One for the agents, one for every neuron, one for every synapse, one for the individual dendritic branches inside each neuron. Six gigabytes of the inner life of machines that were bred, not programmed."
+   },
+   {
+    "t": "h",
+    "text": "Why this is more than a data dump"
+   },
+   {
+    "t": "p",
+    "text": "For a year Qubic's researchers published papers describing an unusual architecture. Neurons that speak in three states instead of two: yes, no, and a neutral middle. Synapses that remember on three different timescales. Four neuromodulators, the same chemical families a living brain runs on. Rhythms that decide when regions talk to each other."
+   },
+   {
+    "t": "p",
+    "text": "Every mechanism in the papers is a column in the dataset. The trinary state, per neuron. The fast, slow and meta plasticity weights, per synapse. The neuromodulators, the oscillation phases, the criticality measure the Osaka paper is built on. The architecture stopped being a claim the moment it became a schema you can query."
+   },
+   {
+    "t": "h",
+    "text": "The finding that matters: inheritance"
+   },
+   {
+    "t": "p",
+    "text": "The headline result is inheritance. Quality is strongly inherited. Children carry the traits of their parents, and better parents make better children."
+   },
+   {
+    "t": "p",
+    "text": "They grow up so fast!"
+   },
+   {
+    "t": "p",
+    "text": "It sounds obvious until you see why it is the keystone. Qubic's whole bet is that you do not design an intelligence, you grow one - by selection, across generations, on ordinary machines. Selection without inheritance is a lottery you replay from scratch every round. Selection with inheritance is a ratchet. It only clicks forward. And the dataset lets anyone measure it, because every agent records who its parents were and how well it lived. You can trace a bloodline and watch fitness climb."
+   },
+   {
+    "t": "h",
+    "text": "Where we are in the big picture"
+   },
+   {
+    "t": "p",
+    "text": "Two things had to be true for the idea to work. First, that the target is reachable: a grown network can drive its error all the way to zero. The community proved that on July 6, 2026, by hand, racing a little program called Anna.exe to seven perfect zeros on home CPUs. Second, that success carries forward: a good brain begets a better one. That is what these 525 million rows now show, openly, for anyone to check."
+   },
+   {
+    "t": "p",
+    "text": "Reachable, and heritable. Those are the two legs the next step stands on."
+   },
+   {
+    "t": "p",
+    "text": "When the community drove Anna to zero, someone wrote in the chat: \"congrats on this milestone.\" The founder answered instantly:"
+   },
+   {
+    "t": "quote",
+    "text": "It's not a milestone. It's much bigger.",
+    "cite": "Come-from-Beyond. Discord 06.07.2026"
+   },
+   {
+    "t": "p",
+    "text": "He rarely throws words like that around. That was one of the rare times."
+   },
+   {
+    "t": "p",
+    "text": "What comes next, and soon"
+   },
+   {
+    "t": "p",
+    "text": "Two dates matter now."
+   },
+   {
+    "t": "p",
+    "text": "August 19 is the halving. Qubic cuts its weekly emission roughly in half. Less new supply hitting the market, mechanically, from the same protocol that has been the steady seller all year."
+   },
+   {
+    "t": "p",
+    "text": "Around the end of August, epoch 228, comes the Ant Colony. This is the piece everything has been building toward, and it is worth understanding plainly."
+   },
+   {
+    "t": "p",
+    "text": "Today every miner digs alone. Each grows a network from scratch, scores it, throws it away, starts again. Thousands of machines repeating the same cold start. It works, but almost all of the effort is wasted motion."
+   },
+   {
+    "t": "p",
+    "text": "The Ant Colony turns that scatter into a ratchet. A miner inherits the best network found so far, mutates it, and keeps the result only if it improved. Discoveries stop dying alone. They stack. The same inheritance the dataset just measured in a toy world gets wired into the mining itself. That is why the founder told a doubter this week, flatly, that the colony will move the score, and why the community keeps repeating three words: wait for the colony."
+   },
+   {
+    "t": "h",
+    "text": "The important part"
+   },
+   {
+    "t": "p",
+    "text": "This is why Qubic wins awards at scientific conferences instead of posting promises on a landing page."
+   },
+   {
+    "t": "p",
+    "text": "This summer alone: Best Oral in Osaka (IEEE) and in Berlin, Multi-Neuraxon published in Springer's AGI proceedings, and its ARC-AGI-3 score doubled to 0.25 on the strict offline board where frontier models sit below 1%. Three peer-reviewed venues in three months. Show me one other \"crypto project\" with a scientific base at this level. There isn't one."
+   },
+   {
+    "t": "p",
+    "text": "Because everything you read above - Anna, NeuraxonLive, the colony, these 525 million rows - these are not separate tricks. It is one engine. It is called Aigarth: a decentralized AI that Qubic grows directly on the network, on the same home machines that mine today. Mining here does not burn electricity into the trash. Mining is the growing of a mind. Every watt that used to go into a useless hash now goes into evolution."
+   },
+   {
+    "t": "p",
+    "text": "The engine turned over on July 29. On August 19 the supply tightens. At epoch 228 it revs."
+   },
+   {
+    "t": "p",
+    "text": "For fifteen years mining burned energy into ash. Qubic is the first to turn it into a mind. You are watching it happen in real time. UPOW, BABY!"
+   }
+  ]
+ },
+ {
+  "slug": "qubic-is-weaker-than-grok-for-now",
+  "title": "Qubic is weaker than Grok in AI. For now.",
+  "kicker": null,
+  "date": "2026-07-28",
+  "url": "https://x.com/usetesserai",
+  "author": "TesserAI",
+  "summary": "Qubic's AI architecture, Neuraxon, is scoring 0.25 on ARC-AGI-3, one of the hardest generalization tests in the field. Next to Grok's 0.3, or any frontier model, that reads like a rounding error. The number is worth a closer look…",
+  "words": 1037,
+  "blocks": [
+   {
+    "t": "p",
+    "text": "Qubic's AI architecture, Neuraxon, is scoring 0.25 on ARC-AGI-3, one of the hardest generalization tests in the field. Next to Grok's 0.3, or any frontier model, that reads like a rounding error. The number is worth a closer look anyway, because of where it started."
+   },
+   {
+    "t": "p",
+    "text": "A month ago it was 0.13. Then 0.18, 0.21, 0.22, and now 0.25. Five readings, four weeks, all moving up."
+   },
+   {
+    "t": "p",
+    "text": "What follows is the context that makes the climb worth watching: what the benchmark tests, what Neuraxon is, and how a two-person project on no GPUs got onto the same board as the largest labs in the world."
+   },
+   {
+    "t": "h",
+    "text": "What ARC-AGI-3 tests"
+   },
+   {
+    "t": "p",
+    "text": "ARC-AGI-3 is the first interactive benchmark in the ARC series. Instead of static puzzles, an agent is dropped into a brand-new game with no instructions and no goal it's told about. It has to look at the screen, act, watch the result, and work out the rules on its own. The score measures one thing: how efficiently it learns a world it has never seen, next to how a human learns the same game."
+   },
+   {
+    "t": "p",
+    "text": "That design is deliberate. It cancels the two strengths of the largest models, memorization and scale. New environments can't be memorized. Hidden goals can't be matched against training data. So GPT, Gemini and Grok all sit at the bottom here, under 1%. As the benchmark's creator puts it, as long as machines learn slower than humans, there's no AGI. The near-zero frontier scores are the design working as intended."
+   },
+   {
+    "t": "h",
+    "text": "Why not just scale a language model"
+   },
+   {
+    "t": "p",
+    "text": "Because some of the people who built this era are the ones stepping away from that bet."
+   },
+   {
+    "t": "p",
+    "text": "Yann LeCun, a Turing Award winner and one of the founders of deep learning, calls large language models a dead end for real intelligence. His argument is blunt: a model that predicts the next word can tell you a glass falls off a table with no grasp of why. It performs reasoning without owning it. He's now directing about a billion dollars toward a different architecture built on world models. François Chollet built the ARC tests in the first place to show these models don't generalize the way people do."
+   },
+   {
+    "t": "p",
+    "text": "It isn't settled, and many researchers think the ceiling is still far off. But the direction several pioneers are walking is away from pure scale, and Qubic started down that road earlier than most."
+   },
+   {
+    "t": "h",
+    "text": "What Neuraxon is"
+   },
+   {
+    "t": "p",
+    "text": "Read it for yourself. The full 35-page paper and the complete source code are open, MIT license, with a demo you can click. (link in comment)"
+   },
+   {
+    "t": "p",
+    "text": "A language model is, in a sense, a librarian. A brilliant one. It has read almost everything ever written and recombines it in an instant. But it learned all of that in advance and then stopped. It doesn't grow between conversations, and it never learns from yesterday."
+   },
+   {
+    "t": "p",
+    "text": "Neuraxon is built the other way. Closer to a nervous system that never switches off. Its neurons signal in three states rather than two: excite, inhibit, and a neutral middle the brain uses constantly. Time flows continuously instead of in tidy steps. Synapses form, weaken and reconnect; unused neurons are pruned; some die. The network rewires itself while it runs, which is why the paper is called Neural Growth. And there is no train-it-then-freeze-it moment anywhere. It learns while it runs."
+   },
+   {
+    "t": "p",
+    "text": "Underneath sits machinery most models skip: synapses on three timescales, four neuromodulators (dopamine, serotonin, acetylcholine, noradrenaline), oscillatory rhythms that decide when regions talk. On purpose, it is an attempt to build what a language model is not."
+   },
+   {
+    "t": "h",
+    "text": "The engine hasn't even started"
+   },
+   {
+    "t": "p",
+    "text": "There's a detail in the timeline that changes how the score reads. Everything above, Neuraxon does as bare architecture, before its intelligence layer is switched on at scale."
+   },
+   {
+    "t": "p",
+    "text": "Qubic's plan is to grow capability, not train it. The system for that is Aigarth: neurons that mutate, spawn copies, and are selected by fitness across seasons of real data. Evolution, on a decentralized network of miners. That engine, at full scale, is not live yet. The first standalone algorithm, BPP-9000, switches on around July 29, and its first real task is a neural net on live BTC data. A practical learning task, and one the team has stated plainly does not affect price."
+   },
+   {
+    "t": "p",
+    "text": "Hello, Anna!"
+   },
+   {
+    "t": "p",
+    "text": "So the current 0.25 comes from the cold substrate."
+   },
+   {
+    "t": "p",
+    "text": "A language model is unbeatable at recombining what already exists. Neuraxon aims at the other task: learning something genuinely new from experience. ARC-AGI-3 tests that second thing, which is why it's hard for the large models and why a growing brain, even a small one, belongs in that room."
+   },
+   {
+    "t": "h",
+    "text": "The scale it's doing this on"
+   },
+   {
+    "t": "p",
+    "text": "Now the resources, side by side, because the gap is almost comical."
+   },
+   {
+    "t": "p",
+    "text": "xAI, which makes Grok, is worth around $230 billion. It runs on something like 100,000 to 220,000 GPUs and serves tens of millions of users. Qubic's market cap is about $59 million, and its network runs on CPUs, with no GPUs at all. Four orders of magnitude between them."
+   },
+   {
+    "t": "p",
+    "text": "I'll keep it honest, because the honesty is the point. The top of the ARC-AGI-3 board is still a large model, Claude Opus 5, near 30%, well clear of the field. This is not one architecture overtaking another. It's a small, CPU-only, mostly pre-product effort reaching the same board as the largest labs on earth, at a ten-thousandth of the money, before its own engine has started. Per dollar, per watt, per person, I don't know of a more efficient line in AI right now."
+   },
+   {
+    "t": "p",
+    "text": "On the record:"
+   },
+   {
+    "t": "p",
+    "text": "Berlin, ICMLT 2026: Best Oral and Best Presentation for Neuraxon 2.0, heading to Scopus."
+   },
+   {
+    "t": "p",
+    "text": "Osaka, AMLDS 2026: Best Oral, with a result worth pausing on. A trinary system holds around 88.8% stable capacity where a binary one collapses near 37.2%."
+   },
+   {
+    "t": "p",
+    "text": "San Francisco, AGI-26, this week: Multi-Neuraxon accepted at the field's flagship AGI conference, running as you read this. News still landing."
+   },
+   {
+    "t": "p",
+    "text": "Peer review across three venues, which is something earlier brain-inspired attempts never managed."
+   },
+   {
+    "t": "p",
+    "text": "BPP-9000 goes live around July 29. Investor Day is July 30. AGI-26 is running now in San Francisco. If you track one thing, track the shape of the curve once the evolutionary engine is actually on."
+   },
+   {
+    "t": "p",
+    "text": "NeurIPS 2026?.. soon update."
+   }
+  ]
+ },
+ {
+  "slug": "the-body-three-pillars",
+  "title": "The Body: how Qubic's three pillars assemble into one machine",
+  "kicker": null,
+  "date": "2026-07-24",
+  "url": "https://x.com/usetesserai",
+  "author": "TesserAI",
+  "summary": "On September 25, 2012, Come-from-Beyond posted an idea on BitcoinTalk called \"Qubic\" - quorum-based computations. Oracle machines. Outsourced computations. Smart contracts. The author kept building for fourteen years.",
+  "words": 850,
+  "blocks": [
+   {
+    "t": "p",
+    "text": "On September 25, 2012, Come-from-Beyond posted an idea on BitcoinTalk called \"Qubic\" - quorum-based computations. Oracle machines. Outsourced computations. Smart contracts. The author kept building for fourteen years."
+   },
+   {
+    "t": "p",
+    "text": "Today this architecture is weeks from complete. What is it, really?"
+   },
+   {
+    "t": "p",
+    "text": "Qubic gets compared to other chains all the time. Faster contracts, cheaper transactions, another compute marketplace. That's a mistake. Qubic is not a feature list. It is an anatomy - an organism designed limb by limb, in a specific order, for a specific inhabitant."
+   },
+   {
+    "t": "quote",
+    "text": "Qubic is a Quorum-Based Computer which can run Smart Contracts, Oracle Machines, and Outsourced Computations. And send tokens of course.",
+    "cite": "Come-from-Beyond, May 18, 2022"
+   },
+   {
+    "t": "h",
+    "text": "The Brain - Smart Contracts"
+   },
+   {
+    "t": "p",
+    "text": "Qubic smart contracts don't run in a virtual machine. No VM, no operating system, no gas-metered interpreter. Contracts execute as C++ on bare metal, on 676 computors, with quorum finality: once 451 of 676 have signed, reorganization is impossible."
+   },
+   {
+    "t": "p",
+    "text": "This is the thinking layer. Fast, final, deterministic."
+   },
+   {
+    "t": "h",
+    "text": "The Eyes - Oracle Machines"
+   },
+   {
+    "t": "p",
+    "text": "A brain sealed in a jar is useless. Oracle Machines are how the chain perceives the outside world - external data flowing in, verified by the same quorum that runs everything else. No middleman feeding the chain its reality. 451 signatures, or it didn't happen."
+   },
+   {
+    "t": "p",
+    "text": "This is the perception layer. But perception alone has a cruel limit, and the architect named it precisely:"
+   },
+   {
+    "t": "quote",
+    "text": "Imagine you see a candy with OM but you have no hands to take it (OC)",
+    "cite": "Come-from-Beyond, April 30, 2026"
+   },
+   {
+    "t": "h",
+    "text": "The Hands - Outsourced Computations"
+   },
+   {
+    "t": "p",
+    "text": "This is the third pillar. The main one."
+   },
+   {
+    "t": "p",
+    "text": "OC is not renting out raw compute. OC is the ability of a smart contract to act in the physical world - to execute one specific task beyond the chain. Trigger a transaction on Ethereum with no bridge middleman. Release a real-estate escrow. Unlock a rental bike. Push verified data into an external system."
+   },
+   {
+    "t": "p",
+    "text": "The mechanics: whoever needs a task done buys QU and puts the task on auction. Miners pick it up instead of mining - because it pays better. Every call burns fees. All 676 computors independently record and sign the action; at 451 signatures, it executes."
+   },
+   {
+    "t": "quote",
+    "text": "With OC those who need computations to be done buy qus and publish their task on auction. With mining this computational power can be used for training AI, or just sold for fiat money which can be used just to buy qus and burn them.",
+    "cite": "Come-from-Beyond, July 31, 2024"
+   },
+   {
+    "t": "p",
+    "text": "The eyes verify what the hands did: the contract checks the result through an Oracle Machine. Perception and action, closed loop."
+   },
+   {
+    "t": "p",
+    "text": "And here is why the hands matter most:"
+   },
+   {
+    "t": "quote",
+    "text": "Training is done via Outsourced Computations",
+    "cite": "Come-from-Beyond, November 25, 2024"
+   },
+   {
+    "t": "h",
+    "text": "The Energy - Useful Proof of Work"
+   },
+   {
+    "t": "p",
+    "text": "All of this runs on mining that refuses to waste. Qubic's miners don't burn electricity on empty hashes - their work trains neural networks, and the same rails have already mined Monero and Dogecoin."
+   },
+   {
+    "t": "p",
+    "text": "Energy in. Nothing wasted. The body feeds itself."
+   },
+   {
+    "t": "h",
+    "text": "The Inhabitant - Aigarth"
+   },
+   {
+    "t": "p",
+    "text": "A body is built for someone. Aigarth - the AI paradigm growing on those same 676 machines - is what moves in."
+   },
+   {
+    "t": "quote",
+    "text": "You use paradigm discovered by Aigarth and train AI via Outsourced Computations and then deploy it as Qubic smart contract",
+    "cite": "Come-from-Beyond, May 15, 2024"
+   },
+   {
+    "t": "p",
+    "text": "It uses all three pillars in one breath. Train through the hands. Deploy as the brain. Perceive through the eyes. The pillars were never three products: they are one sentence, spoken in 2012 and executed in order ever since:"
+   },
+   {
+    "t": "quote",
+    "text": "Finish smart contracts. Oracle machines. Outsourced computations. Finish Aigarth. Deploy AIs to Qubic.",
+    "cite": "Come-from-Beyond, November 28, 2023"
+   },
+   {
+    "t": "p",
+    "text": "On July 6, 2026, Aigarth's network solved all seven of its benchmark tasks to zero error. The paradigm is proven, and the deployment phase has begun."
+   },
+   {
+    "t": "p",
+    "text": "Where's the proof? Here it is:"
+   },
+   {
+    "t": "p",
+    "text": "Berlin, May 2026: the Neuraxon paper - the bio-inspired neuron model behind this work - won Best Paper and Best Presentation at ICMLT (IEEE)."
+   },
+   {
+    "t": "p",
+    "text": "Osaka, July 2026: second award of the year. Best Oral Presentation at AMLDS (IEEE) for \"The Neutral Buffer State\" - showing that trinary neurons hold stable criticality across an 88.8% occupancy range versus 37.2% for binary. One added zero-state turns stability into architecture. This is why Qubic is ternary. It's architecture."
+   },
+   {
+    "t": "p",
+    "text": "Congratulations!"
+   },
+   {
+    "t": "p",
+    "text": "ARC-AGI-3, July 2026: the same architecture scores 0.21% on the hardest reasoning benchmark in AI - a tiny number, until you see the context: no LLM, no GPUs, no API calls, plain CPUs - while most frontier language models score zero there at thousands of dollars per run. Open source, reproducible, long road ahead, and climbing."
+   },
+   {
+    "t": "p",
+    "text": "Two IEEE awards and a frontier benchmark in one summer, all pointing at the same claim: this is not a whitepaper organism. The organs are peer-reviewed."
+   },
+   {
+    "t": "h",
+    "text": "The Assembly"
+   },
+   {
+    "t": "p",
+    "text": "Watch the calendar. Epoch 224: the new training algorithm activates - a neural network learning on live Bitcoin data. August: OC reaches mainnet. The fiat doors just opened in 173 countries. Every module the 2012 post described is either running or weeks away."
+   },
+   {
+    "t": "p",
+    "text": "Fourteen years ago the architect described a body: brain, eyes, hands, metabolism - and a mind to live in it. Then he built it in the exact order he planned."
+   },
+   {
+    "t": "p",
+    "text": "We're still too early."
+   },
+   {
+    "t": "p",
+    "text": "Or are we?.."
+   }
+  ]
+ },
+ {
+  "slug": "2026-for-qubic",
+  "title": "2026 for Qubic: peer review you cannot buy",
+  "kicker": null,
+  "date": "2026-07-19",
+  "url": "https://x.com/usetesserai",
+  "author": "TesserAI",
+  "summary": "In 2026, three Qubic researchers walked into IEEE conferences and got three papers accepted. In Berlin, a room full of academics - none of them holding a single Qubic token - voted their talk the best of the night.",
+  "words": 713,
+  "blocks": [
+   {
+    "t": "p",
+    "text": "wanna show you something the market hasn't seen yet."
+   },
+   {
+    "t": "p",
+    "text": "In 2026, three Qubic researchers walked into IEEE conferences and got three papers accepted. In Berlin, a room full of academics - none of them holding a single Qubic token - voted their talk the best of the night."
+   },
+   {
+    "t": "p",
+    "text": "You can buy influencers. You can buy stages. You cannot buy peer review. That's the whole point of this post."
+   },
+   {
+    "t": "h",
+    "text": "Three names"
+   },
+   {
+    "t": "p",
+    "text": "David Vivancos has worked on machine intelligence since 1995. 26,000+ hours. Four hundred conferences."
+   },
+   {
+    "t": "p",
+    "text": "José Sánchez García: doctorate, research position at UNIR, an accredited Spanish university. Published and cited."
+   },
+   {
+    "t": "p",
+    "text": "The papers carry those two names. The third stands behind the thing the papers study: Come-from-Beyond, the engineer who conceived Aigarth more than twenty years ago and built toward it through NXT, IOTA, and Qubic. The architecture under review is his."
+   },
+   {
+    "t": "h",
+    "text": "What actually happened this year"
+   },
+   {
+    "t": "p",
+    "text": "March. Two acceptance letters arrived within weeks of each other: the trinary paper for Osaka, the Neuraxon 2.0 paper for Berlin. Both IEEE. Before a single talk was given, the papers had already passed review. April added two more submissions - AGI-26 and ALIFE. Early May, a fifth went to NeurIPS."
+   },
+   {
+    "t": "p",
+    "text": "Berlin, May. The first live presentation. Neuraxon 2.0 at the 11th ICMLT, an IEEE machine learning conference. Eight talks ran in the evening session. The researchers in the room voted Qubic's the best of the night. None of them had any connection to the project. That's what makes it worth anything."
+   },
+   {
+    "t": "p",
+    "text": "Osaka, four days from now. July 22, 15:00, Kansai University. The trinary paper: a neuron with three states instead of two. On. Off. And deliberately silent. The claim: silence is a function, and it buys stability that binary systems pay for in waste."
+   },
+   {
+    "t": "p",
+    "text": "San Francisco, July 27–30. The MultiNeuraxon paper is accepted at AGI-26, the only major conference series on earth dedicated entirely to artificial general intelligence. It enters the Springer proceedings, next to serious research, reviewed by people who owe Qubic nothing."
+   },
+   {
+    "t": "p",
+    "text": "ARC-AGI-3, July. The benchmark built specifically to break LLMs: interactive puzzles, no instructions, nothing to memorize. Humans solve them easily. Every major AI model at launch scored under 1%. In six days and seven submissions, Neuraxon hit 0.18 - above Grok on that run, in the same near-zero band as the biggest labs on the planet."
+   },
+   {
+    "t": "p",
+    "text": "It's a starting line. But it's the same starting line as Google's and OpenAI's, on the one test that measures learning instead of memorizing. A crypto project's evolved architecture is standing on it. That same week, the Anna training task converged to zero error."
+   },
+   {
+    "t": "p",
+    "text": "NeurIPS, September 24. The fifth paper sits at the largest AI conference in the world - Sydney, December. It takes Spearman's g, the general factor of human intelligence measured since 1904, and asks whether it can be grown inside an evolved artificial brain. Reviews come back July 22. The decision lands September 24. Most NeurIPS submissions get rejected - the team published the date anyway. Remember it."
+   },
+   {
+    "t": "h",
+    "text": "Who's in the room in San Francisco"
+   },
+   {
+    "t": "p",
+    "text": "Look at the speaker list. Karl Friston - the most cited neuroscientist of his generation, whose theory sits in the footnotes of Qubic's own research line. The poster will stand in a building where the author of its theoretical foundation gives a keynote. Michael Levin. Neil Gershenfeld of MIT. Gary Marcus. Ben Goertzel, the man who named the field. Past speakers of this series: two Turing Award winners, and François Chollet - who built the very ARC benchmark Neuraxon just walked onto."
+   },
+   {
+    "t": "p",
+    "text": "And on July 30, AGI-26 runs a dedicated Investor Day. The AGI investment ecosystem in one room, days after Qubic's work enters the Springer record. I hope Qubic gets the attention there that the work has earned."
+   },
+   {
+    "t": "p",
+    "text": "One more thing."
+   },
+   {
+    "t": "p",
+    "text": "Everything above - the papers, the awards, the benchmarks - is scaffolding for a single word: Aigarth. AGI grown on a decentralized network. The idea Come-from-Beyond has carried for more than twenty years."
+   },
+   {
+    "t": "p",
+    "text": "Anna reached zero error this month. The convergence method works. New benchmarks are already loading: the ARC-AGI leaderboard climb before San Francisco, Neuraxon 3.0 in Q3, the g-factor verdict in September."
+   },
+   {
+    "t": "p",
+    "text": "We wish the Qubic team every success and thank them for their work in the Qubic family. Forward!"
+   },
+   {
+    "t": "p",
+    "text": "WE ARE STILL VERY EARLY."
+   }
+  ]
+ }
+]

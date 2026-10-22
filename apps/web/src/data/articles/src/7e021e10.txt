@@ -1,0 +1,55 @@
+AGI-Astra" the table, and where Qubic is in it
+"LLMs cannot innovate"
+Come-from-Beyond, Discord, September 4, 2026
+What is AGI. Four definitions
+One term, four definitions, and they don't match:
+OpenAI, the charter: a highly autonomous system that outperforms humans at most economically valuable work. Definition through economy.
+2.     Chollet, author of ARC: intelligence is the efficiency of skill acquisition. Not "what it can do", but "how fast it learns something new with little experience". Definition through learning.
+3.      DeepMind, "Levels of AGI": a ladder of levels, from "emerging" to "superhuman", separately by depth and by breadth. Definition through a scale.
+4.      Helen Toner, ex-board of OpenAI: the term is "almost useless", because everyone puts his own meaning inside. Definition through refusing to define.
+When OpenAI showed the Astra numbers on ARC, CfB wrote: the test was about necessity, but they sold it as sufficiency. Meaning: fail ARC and you are surely not AGI. Pass ARC and it doesn't mean AGI. These are two different statements, and the market mixes them on purpose. 
+More precisely, the marketing people mix them for you.
+What the metrics in the table mean
+ARC-AGI-3 is games. Interactive, no instructions, you have to discover the rules yourself. The key parameter here: adaptation.
+Three sets: 25 public demo games (not counted in the score), 55 semi-private (for models via API), 55 fully private (Kaggle, offline).
+The score is counted per level: how many actions a human spent, how many the agent spent, the ratio squared, weighted by level, averaged over games. The result is in percent.
+Human is 100%. This is the reference point.
+Now the rows.
+Gemini 3.1 Pro at launch: 0.37%.
+GPT 5.4 at launch: 0.26%.
+Opus 4.6 Max at launch: 0.25%.
+Grok-4.20: 0.00%.
+This is the standard harness, no add-ons. This is how the frontier looked in summer: zero with a tail.
+GPT-6 Astra, September 3, verified by ARC Prize: 62.7% in the standard harness, cost of the run 26,098 dollars (you feel it already?). With the provider adapter, meaning continuous memory between moves: 99.9% for 18,817 dollars.
+Chollet called it a "step-function change" and wrote about 360 dollars per game.
+ARC Prize, at the same time, wrote separately: we are not claiming this is AGI.
+Kaggle track: 50 dollars compute budget, offline, open source. Same test, different weight category.
+Where Qubic is in this system
+Two rows, two different tasks.
+First. BPP9000, epoch 229. Aigarth built a model of 64 neurons and 138 connections, trained it on 8,088 hours, and on one hour the model never saw, the ensemble of 676 best gave 55.3%. 359 out of 649.
+The first forecast of the first Aigarth product turned out right! I ask to fix this in the history!
+Second. Neuraxon, Vivancos and Sánchez, on ARC-AGI-3. On the demo games they reached level 7 in lp85, in r11l they spend 0.45 of human actions. On Kaggle the team "Qubic Nxon Vivancos & Sanchez": 0.25%, 67 entries, rank 1484.
+Now put them side by side.
+0.25% for Qubic. 0.25% for Opus 4.6 Max at launch. 0.26% for GPT 5.4.
+The same level the frontier was showing in summer.
+Only for the frontier it is a result on tens of thousands of GPUs, and for Neuraxon it is on 50 dollars, no GPU and no LLM.
+Astra: 62.7% for 26,098 dollars.
+The budget differs five hundred times. The place in the table is lower, for now.
+And one more detail. Under Chollet's tweet about Astra, Vivancos put NoGPU/NoLLM/Neuraxon. This tags say a lot.
+What is the difference of approaches
+An LLM learns on everything people ever wrote and predicts the next token. More data and more GPUs, the better.
+Aigarth doesn't read text. It grows a network. From noise, by selection, on the compute of miners. Not billions of neurons, but 64, and CfB is preparing the move to 128.
+Last week he confirmed the mechanism: the network as a graph, degenerate and near-degenerate topologies get thrown out, the task is solved with fewer neurons, the scaling goes sublinear "because of graph isomorphism".
+Astra talks. Aigarth grows.
+With Astra you can't verify that it understood. Aigarth is verified by the score: 0 errors means the best model for the task.
+And the last thing. About mining. Today.
+On the AMA the team said it plainly: miners are priority number one.
+CfB said it even plainer: "Now we depend on miners. All I can do is optimizations."
+All the rows above, 55.3% on BPP9000, 128 neurons, the next task, they don't grow in a datacenter. They grow on the cards of people who switched on the miner.
+This is not about income. This is about who feeds the network while the market is looking at Astra.
+Fire up the miner. Point your card to the pool.
+Qubic is not in the table. It is in one of its rows, on the other side of the electricity bill.
+
+JUST RUN MINER!
+#Qubic 
+@c___f___b @VivancosDavid @josesanchezhb 

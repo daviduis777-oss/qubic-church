@@ -1,0 +1,44 @@
+Qubic is weaker than Grok in AI. For now.
+Qubic's AI architecture, Neuraxon, is scoring 0.25 on ARC-AGI-3, one of the hardest generalization tests in the field. Next to Grok's 0.3, or any frontier model, that reads like a rounding error. The number is worth a closer look anyway, because of where it started.
+A month ago it was 0.13. Then 0.18, 0.21, 0.22, and now 0.25. Five readings, four weeks, all moving up.
+What follows is the context that makes the climb worth watching: what the benchmark tests, what Neuraxon is, and how a two-person project on no GPUs got onto the same board as the largest labs in the world.
+What ARC-AGI-3 tests
+ARC-AGI-3 is the first interactive benchmark in the ARC series. Instead of static puzzles, an agent is dropped into a brand-new game with no instructions and no goal it's told about. It has to look at the screen, act, watch the result, and work out the rules on its own. The score measures one thing: how efficiently it learns a world it has never seen, next to how a human learns the same game.
+That design is deliberate. It cancels the two strengths of the largest models, memorization and scale. New environments can't be memorized. Hidden goals can't be matched against training data. So GPT, Gemini and Grok all sit at the bottom here, under 1%. As the benchmark's creator puts it, as long as machines learn slower than humans, there's no AGI. The near-zero frontier scores are the design working as intended.
+Why not just scale a language model
+Because some of the people who built this era are the ones stepping away from that bet.
+Yann LeCun, a Turing Award winner and one of the founders of deep learning, calls large language models a dead end for real intelligence. His argument is blunt: a model that predicts the next word can tell you a glass falls off a table with no grasp of why. It performs reasoning without owning it. He's now directing about a billion dollars toward a different architecture built on world models. François Chollet built the ARC tests in the first place to show these models don't generalize the way people do.
+It isn't settled, and many researchers think the ceiling is still far off. But the direction several pioneers are walking is away from pure scale, and Qubic started down that road earlier than most.
+What Neuraxon is
+Read it for yourself. The full 35-page paper and the complete source code are open, MIT license, with a demo you can click.  (link in comment)
+A language model is, in a sense, a librarian. A brilliant one. It has read almost everything ever written and recombines it in an instant. But it learned all of that in advance and then stopped. It doesn't grow between conversations, and it never learns from yesterday.
+Neuraxon is built the other way. Closer to a nervous system that never switches off. Its neurons signal in three states rather than two: excite, inhibit, and a neutral middle the brain uses constantly. Time flows continuously instead of in tidy steps. Synapses form, weaken and reconnect; unused neurons are pruned; some die. The network rewires itself while it runs, which is why the paper is called Neural Growth. And there is no train-it-then-freeze-it moment anywhere. It learns while it runs.
+Underneath sits machinery most models skip: synapses on three timescales, four neuromodulators (dopamine, serotonin, acetylcholine, noradrenaline), oscillatory rhythms that decide when regions talk. On purpose, it is an attempt to build what a language model is not.
+The engine hasn't even started
+There's a detail in the timeline that changes how the score reads. Everything above, Neuraxon does as bare architecture, before its intelligence layer is switched on at scale.
+Qubic's plan is to grow capability, not train it. The system for that is Aigarth: neurons that mutate, spawn copies, and are selected by fitness across seasons of real data. Evolution, on a decentralized network of miners. That engine, at full scale, is not live yet. The first standalone algorithm, BPP-9000, switches on around July 29, and its first real task is a neural net on live BTC data. A practical learning task, and one the team has stated plainly does not affect price.
+Hello, Anna!
+So the current 0.25 comes from the cold substrate. 
+A language model is unbeatable at recombining what already exists. Neuraxon aims at the other task: learning something genuinely new from experience. ARC-AGI-3 tests that second thing, which is why it's hard for the large models and why a growing brain, even a small one, belongs in that room.
+The scale it's doing this on
+Now the resources, side by side, because the gap is almost comical.
+xAI, which makes Grok, is worth around $230 billion. It runs on something like 100,000 to 220,000 GPUs and serves tens of millions of users. Qubic's market cap is about $59 million, and its network runs on CPUs, with no GPUs at all. Four orders of magnitude between them.
+I'll keep it honest, because the honesty is the point. The top of the ARC-AGI-3 board is still a large model, Claude Opus 5, near 30%, well clear of the field. This is not one architecture overtaking another. It's a small, CPU-only, mostly pre-product effort reaching the same board as the largest labs on earth, at a ten-thousandth of the money, before its own engine has started. Per dollar, per watt, per person, I don't know of a more efficient line in AI right now.
+On the record:
+Berlin, ICMLT 2026: Best Oral and Best Presentation for Neuraxon 2.0, heading to Scopus.
+Osaka, AMLDS 2026: Best Oral, with a result worth pausing on. A trinary system holds around 88.8% stable capacity where a binary one collapses near 37.2%.
+San Francisco, AGI-26, this week: Multi-Neuraxon accepted at the field's flagship AGI conference, running as you read this. News still landing.
+Peer review across three venues, which is something earlier brain-inspired attempts never managed.
+BPP-9000 goes live around July 29. Investor Day is July 30. AGI-26 is running now in San Francisco. If you track one thing, track the shape of the curve once the evolutionary engine is actually on.
+
+NeurIPS 2026?.. soon update.
+
+#Qubic 
+
+@josesanchezhb
+@VivancosDavid 
+@c___f___b
+6:20 PM · Jul 28, 2026
+·
+6,281
+ Views

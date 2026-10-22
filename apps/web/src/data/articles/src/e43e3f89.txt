@@ -1,0 +1,47 @@
+The Body: How Qubic's Three Pillars Assemble Into One Machine
+On September 25, 2012, Come-from-Beyond posted an idea on BitcoinTalk called "Qubic" - quorum-based computations. Oracle machines. Outsourced computations. Smart contracts. The author kept building for fourteen years.
+Today this architecture is weeks from complete. What is it, really?
+Qubic gets compared to other chains all the time. Faster contracts, cheaper transactions, another compute marketplace. That's a mistake. Qubic is not a feature list. It is an anatomy - an organism designed limb by limb, in a specific order, for a specific inhabitant.
+"Qubic is a Quorum-Based Computer which can run Smart Contracts, Oracle Machines, and Outsourced Computations. And send tokens of course." - Come-from-Beyond, May 18, 2022
+The Brain - Smart Contracts
+Qubic smart contracts don't run in a virtual machine. No VM, no operating system, no gas-metered interpreter. Contracts execute as C++ on bare metal, on 676 computors, with quorum finality: once 451 of 676 have signed, reorganization is impossible.
+This is the thinking layer. Fast, final, deterministic.
+The Eyes - Oracle Machines
+A brain sealed in a jar is useless. Oracle Machines are how the chain perceives the outside world - external data flowing in, verified by the same quorum that runs everything else. No middleman feeding the chain its reality. 451 signatures, or it didn't happen.
+This is the perception layer. But perception alone has a cruel limit, and the architect named it precisely:
+"Imagine you see a candy with OM but you have no hands to take it (OC)" - Come-from-Beyond, April 30, 2026
+The Hands - Outsourced Computations
+This is the third pillar. The main one.
+OC is not renting out raw compute. OC is the ability of a smart contract to act in the physical world - to execute one specific task beyond the chain. Trigger a transaction on Ethereum with no bridge middleman. Release a real-estate escrow. Unlock a rental bike. Push verified data into an external system.
+The mechanics: whoever needs a task done buys QU and puts the task on auction. Miners pick it up instead of mining - because it pays better. Every call burns fees. All 676 computors independently record and sign the action; at 451 signatures, it executes.
+"With OC those who need computations to be done buy qus and publish their task on auction. With mining this computational power can be used for training AI, or just sold for fiat money which can be used just to buy qus and burn them." - Come-from-Beyond, July 31, 2024
+The eyes verify what the hands did: the contract checks the result through an Oracle Machine. Perception and action, closed loop.
+And here is why the hands matter most:
+"Training is done via Outsourced Computations" - Come-from-Beyond, November 25, 2024
+The Energy - Useful Proof of Work
+All of this runs on mining that refuses to waste. Qubic's miners don't burn electricity on empty hashes - their work trains neural networks, and the same rails have already mined Monero and Dogecoin.
+Energy in. Nothing wasted. The body feeds itself.
+The Inhabitant - Aigarth
+A body is built for someone. Aigarth - the AI paradigm growing on those same 676 machines - is what moves in.
+"You use paradigm discovered by Aigarth and train AI via Outsourced Computations and then deploy it as Qubic smart contract" - Come-from-Beyond, May 15, 2024
+It uses all three pillars in one breath. Train through the hands. Deploy as the brain. Perceive through the eyes. The pillars were never three products: they are one sentence, spoken in 2012 and executed in order ever since:
+"Finish smart contracts. Oracle machines. Outsourced computations. Finish Aigarth. Deploy AIs to Qubic." - Come-from-Beyond, November 28, 2023
+On July 6, 2026, Aigarth's network solved all seven of its benchmark tasks to zero error. The paradigm is proven, and the deployment phase has begun.
+Where's the proof? Here it is:
+Berlin, May 2026: the Neuraxon paper - the bio-inspired neuron model behind this work - won Best Paper and Best Presentation at ICMLT (IEEE).
+Osaka, July 2026: second award of the year. Best Oral Presentation at AMLDS (IEEE) for "The Neutral Buffer State" - showing that trinary neurons hold stable criticality across an 88.8% occupancy range versus 37.2% for binary. One added zero-state turns stability into architecture. This is why Qubic is ternary. It's architecture. 
+
+Congratulations!
+@c___f___b @VivancosDavid @josesanchezhb
+ARC-AGI-3, July 2026: the same architecture scores 0.21% on the hardest reasoning benchmark in AI - a tiny number, until you see the context: no LLM, no GPUs, no API calls, plain CPUs - while most frontier language models score zero there at thousands of dollars per run. Open source, reproducible, long road ahead, and climbing.
+Two IEEE awards and a frontier benchmark in one summer, all pointing at the same claim: this is not a whitepaper organism. The organs are peer-reviewed.
+The Assembly
+Watch the calendar. Epoch 224: the new training algorithm activates - a neural network learning on live Bitcoin data. August: OC reaches mainnet. The fiat doors just opened in 173 countries. Every module the 2012 post described is either running or weeks away.
+Fourteen years ago the architect described a body: brain, eyes, hands, metabolism - and a mind to live in it. Then he built it in the exact order he planned.
+We're still too early.
+Or are we?..
+#Qubic
+1:09 AM · Jul 24, 2026
+·
+7,436
+ Views

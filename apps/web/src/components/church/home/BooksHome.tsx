@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { BOOKS, bookWords, readingMinutes } from '@/lib/books'
+import { ARTICLES, formatDate } from '@/lib/articles'
 import { AnnaCycler } from './AnnaCycler'
 import { Countdown } from './Countdown'
 
@@ -312,6 +313,34 @@ export function BooksHome({ locale = 'en' }: { locale?: Locale }) {
               <span className="mt-auto pt-6 text-sm font-medium text-gold group-hover:underline">{p.cta} →</span>
             </Link>
           ))}
+        </div>
+      </section>
+
+      {/* ── ARTICLES ── */}
+      <section className="border-t border-border">
+        <div className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 md:py-20">
+          <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <p className="eyebrow text-gold">Articles · by TesserAI</p>
+              <h2 className="mt-2 font-display text-5xl leading-[0.9] md:text-6xl">Aigarth, as it happened</h2>
+            </div>
+            <Link className="text-sm font-medium text-gold hover:underline" href="/articles">
+              All {ARTICLES.length} articles →
+            </Link>
+          </div>
+          <ol className="grid gap-px border border-border bg-border md:grid-cols-3">
+            {ARTICLES.slice(0, 3).map(a => (
+              <li key={a.slug}>
+                <Link className="group flex h-full flex-col bg-background/80 p-6 backdrop-blur-sm hover:bg-card" href={`/articles/${a.slug}`}>
+                  <time className="eyebrow text-fg-2" dateTime={a.date}>
+                    {formatDate(a.date)}
+                  </time>
+                  <h3 className="mt-2 text-xl font-semibold leading-snug group-hover:text-gold">{a.title}</h3>
+                  <p className="mt-3 line-clamp-3 text-sm text-fg-2">{a.summary}</p>
+                </Link>
+              </li>
+            ))}
+          </ol>
         </div>
       </section>
 

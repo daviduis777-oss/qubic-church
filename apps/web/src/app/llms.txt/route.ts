@@ -1,3 +1,4 @@
+import { ARTICLES, articleUrl } from '@/lib/articles'
 import { allDocs } from 'contentlayer/generated'
 import { AUTHOR, BOOKS, bookUrl, chapterExcerpt, chapterUrl, SITE_URL } from '@/lib/books'
 import { SITE_DESCRIPTION } from '@/lib/indexing'
@@ -29,6 +30,10 @@ export function GET() {
     out.push(`- [${d.title}](${SITE_URL}/docs/${path})${d.description ? `: ${d.description}` : ''}`)
   }
   out.push(
+    '',
+    '## Articles (TesserAI, July to October 2026)',
+    '',
+    ...ARTICLES.map(a => `- [${a.title}](${articleUrl(a)}) (${a.date}): ${a.summary}`),
     '',
     '## Pages',
     '',

@@ -1,0 +1,164 @@
+Qubic right now. 17 Sept.
+Aigarth. September 2026: two fronts, one paradigm.
+The one-paragraph version
+Anna.exe, a 150 KB program running a tiny trinary network, hit zero error on every level of its demo task, and the creator's reaction was not "milestone" but "It's not a milestone. It's much bigger." That was July. Since then, two things have been happening in parallel.
+On one front, Anna was pointed at the real world, Bitcoin. It hit a wall and was rebuilt around a new idea, which the creator announced this week in the language of "myriad universes."
+On the other front, two scientists took the same paradigm to the hardest public AI benchmark on Earth and have been climbing it for eleven weeks, on home CPUs, with no GPU and no language model. And here is the cherry: that entire climb was done without the Qubic network. Not one miner. The engine this whole thing was built to feed has not been plugged in yet. This post walks through both fronts, with dates and direct quotes, and brings you to exactly where we stand today.
+Part 1. Start from the top: what this is
+"Aigarth is not AI, it's project aiming to find new paradigms for creation of AI." (CfB)
+"Aigarth isn't an object, it's process." (CfB @c___f___b)
+Aigarth is not a chatbot, an agent or a product. It is a research project looking for a method of creating AI. The analogy to keep in mind:
+"Manhattan wasn't 'just another bomb project'. It was paradigm discovery. Aigarth is paradigm research. Anna is Little Boy - first demonstration. The big products come after." (CfB)
+So: Aigarth = the Manhattan Project (a new paradigm). AI built with it = what the paradigm makes possible. Anna = Little Boy, the first public demonstration that the method works.
+"5 years since Qubic launch is just an ETA. And goal of Aigarth is AI, not AGI. Difference between AI and AGI is same as between a car and a BMW." (CfB, 13 Jan 2026)
+Part 2. Why a new paradigm at all: the energy wall
+The mainstream way of building AI works, but its energy cost is heading toward the physically absurd.
+"This is a serious problem. This is why that Aigarth's finding, allowing to save a lot of energy, is significant." (CfB, 17 Feb 2026)
+"If AI is possible with current energy budget of the whole Earth then Aigarth will achieve it, we have all necessary cards for that in our hand." (CfB, 23 Feb 2026)
+The question is not "can we build AI." CfB treats that as answered. The question is "can we build it without a Dyson sphere." The three walls Aigarth set out to break, and where they stood going into summer:
+Generalization: solved
+Universal training algorithm:      solved
+Energy optimization: in      progress (the "constant parameter-space dimensions" discovery of      2 May 2026 is one of the levers)
+Part 3. What is different under the hood
+Three properties, all from CfB and the science papers:
+Trinary, not binary. Neurons take three states: +1 (excite), 0 (neutral), -1 (inhibit). The neutral state mirrors "ready but quiet" biological neurons, and a discrete three-state space is far cheaper than floating-point math. That is a big slice of the energy saving.
+Connections, not neuron math.
+"Aigarth is agnostic to neuron behavior, it works with training of their groups." (CfB, 9 Nov 2025)
+A child and an adult have the same neuron; what changes is the wiring. So train the wiring.
+An evolving tissue, not a frozen model. Aigarth grows, mutates, prunes and breeds populations of network architectures. The best survive and replicate. Remember that word, survive, because CfB used it again this week.
+And the cleanest statement of the actual task:
+"Aigarth is searching for a tool (A) that will make another tool (B). If single tool A can make efficient tools B1, B2, B3 where B is some common trait, then we will claim tool A has solved whole plurality of Bn problems thus demonstrating ability to generalize. It's current task." (CfB)
+Part 4. Front One: Anna. From the race to zero to the real world
+4.1 The race (10 June to early July 2026)
+On 10-13 June 2026 Anna.exe was handed to the community: a plain native Windows program, no network code, a tiny trinary net in memory, trained on a deliberately simple task, adding two numbers. The instruction was three words: race a number to zero. The stakes were stated in advance:
+"score 0 = Aigarth is accomplished." (CfB, 10 Jun 2026)
+"Aigarth will be deemed finished." (CfB, on what happens at zero)
+Why did zero matter? Because the global best score was the network's remaining error, and CfB had already pointed at the thing that made the race more than a leaderboard:
+"upon improvement of fitness function score of the training set (green column) you often get improvement of the validation set (yellow column)." (CfB)
+Green pulls yellow. Training improves unseen data. That is generalization, visible in your own terminal.
+4.2 Zero (early July 2026)
+About three weeks after release, zero was reached: zero error across all seven difficulty levels of the addition task. Qubic's own write-up ("Anna Reached 0: What It Actually Means for Aigarth") drew the line immediately: this does not mean AGI has arrived.
+"It's not a milestone. It's much bigger." (CfB)
+Little Boy detonated. The method converges, generalizes, and does it inside a tiny fixed-size architecture on ordinary hardware. That is what "bigger than a milestone" meant. And the same post said what came next: Anna would be pointed at Bitcoin, predicting the direction of hourly candles, then at language, then at deployment across the decentralized network.
+4.3 The real world pushes back (August to September 2026)
+This is the part the clean story skips, and it is the most important part. A clean rule has no noise. A market is nothing but noise. Through late summer Anna grew: CfB pushed the network from 128 to 1024 neurons.
+"Higher it/s means we can work with larger ANNs while still staying within solution verification constraints." (CfB, Sept 2026)
+Then:
+"We are already at limit of Qiner verifications verification and cannot properly scale to solve BPP9000 with good accuracy, so we are trying a new approach to price prediction. Now we see that with denoised data we can construct a model accounting for 100 factors with pretty high accuracy." (CfB, 16 Sept 2026)
+That is an admission: the first approach to the price task hit the verification wall and could not scale to good accuracy. Someone in the channel asked the natural question: does this mean the original Anna, the one running on the ant colony, is broken?
+"wrong. ant colony runs another task." (CfB, 16 Sept 2026)
+So the wall is scoped. The price sub-project hit it, not the core. The ant colony is doing something else.
+4.4 Anna 0.9: zero again, but as a baseline (16 September 2026)
+"Synthetic prices without noise defined by 100 independent factors are successfully predicted with 100% accuracy by our 32-neuron ANNs." (CfB, 16 Sept 2026)
+This is a capability proof, not a market result. If you build a price from 100 factors and hand the network those 100 factors with no noise, a small network recovering the function perfectly is what should happen. It proves the architecture can represent a 100-factor relationship, cheaply. It says nothing yet about a real market. And CfB said exactly that himself, in the same message:
+"Now need version with noise." (CfB, 16 Sept 2026)
+When asked what it would take to convince the world, the answer was three short lines:
+"Predict BTC price. But it will be done by miners. We are preparing prototype." (CfB, 16 Sept 2026)
+The roadmap: noise is next; the real proof is BTC; the real run happens on the miner network; today it is a prototype.
+4.5 The multiverse (16 September 2026, X)
+Hours later, the same idea in public, in a different register:
+"Remember when myriad universes were created, each with a distinct set of physical constants, and only ours gave birth to the humankind?.. Of course, you don't. Anyway, we (in #Qubic) have modified our $BTC price predicting models and now they behave like those universes. Only few, successfully predicting the price, will survive. This approach improved the speed of training by two orders of magnitude. It also sped up verification, so now we can scale 100-fold." (CfB, X, 16 Sept 2026)
+Strip the cosmology and it is Part 3 again: populations of models with different "constants," selection on fitness, the survivors replicate. The two concrete claims are speed (training two orders of magnitude faster) and scale (verification fast enough to go 100x wider). Both are efficiency claims, and both match the Discord thread. What the tweet does not claim, and what the Discord thread explicitly says is not yet done, is a real accuracy number on real, noisy Bitcoin. That is the open frontier, and everyone involved has said so out loud.
+Where Front One stands today: the demo task is solved (July). The real task is engaged, the first approach was honestly retired, the second approach has its noiseless baseline (16 September), the noisy version is next, and the production run is planned for miners. Prototype.
+Part 5. Front Two: the scientists. Same paradigm, hardest benchmark on Earth
+While the community ran Anna, David Vivancos (@VivancosDavid) and Dr. José Sánchez (@josesanchezhb) were doing something the price-watchers mostly missed. This is the difference between "a crypto project says its tech works" and "outsiders with no stake in the token say it does."
+5.1 The paper track: four accepted papers in one year
+Neuraxon is the academic formalization of the trinary paradigm: +1/0/-1 logic, continuous-time processing, synapses with multiple dynamic weights that form, collapse and reconnect, neurons that can die. It is the blueprint for the kind of neuron that lives inside Anna and Aigarth. The 2026 record, as confirmed at the Open Science AMA of 20 August:
+"The Neutral Buffer State": IEEE AMLDS      2026, Osaka.
+"Neuraxon v2.0": IEEE ICMLT 2026,      Berlin, 20-22 May. Presented in an evening session of eight talks and      judged by researchers unaffiliated with Qubic to be the best in the room:      Best Paper and Best Presentation, into IEEE Xplore and Scopus.
+"Multi-Neuraxon":      AGI-26, the 19th Annual Conference on Artificial General Intelligence, San      Francisco, 27-30 July (Springer proceedings). The team's own note: this      venue sits higher than Osaka and Berlin.
+Artificial Evolution 2026:      Nice, France, 27-29 October (upcoming).
+Berlin was the first time people with no reason to flatter this project looked at the paradigm and said "this is the best work here." That is worth more than any chart.
+5.2 The benchmark track: eleven weeks on ARC-AGI-3
+ARC-AGI-3 (François Chollet, Mike Knoop, ARC Prize) is built specifically to break scale-based AI: unknown interactive games, no rules given, you have to explore, form hypotheses, remember and plan. Humans are the reference. On 29 June 2026 Vivancos announced that Neuraxon had entered it:
+"our bio-inspired #Neuraxon 2.0 by @VivancosDavid & @josesanchezhb with @_Qubic_ #OpenScience #aigarth @c___f___b is showing promising results in the most challenging #AI #AGI benchmark #ARCAGI 3" (Vivancos, X, 29 Jun 2026)
+The climb since then, on the Kaggle public leaderboard (team: Qubic Nxon Vivancos & Sanchez):
+29 June: first entry, 0.13
+early July: 0.18
+6 August: 0.25 (confirmed at      All-Hands; by the 20 August AMA: "past the middle" of roughly      2,300 competitors, evolved on about 500 CPU cores, no GPUs, playing at      least 15 of the 25 training games)
+4 September: 0.28, and on the      training games the first time all levels of one game were completed:
+"Today for the First time we achieved Level 8 on one of the training games, finishing a all the levels." (Vivancos, X, 4 Sept 2026)
+mid-September: 0.38, rank      around #1350 of ~2,300.
+Eleven weeks, 0.13 to 0.38, in steps rather than a slope, which is exactly how the team's own slide (3 September) drew it: "PROGRESS ARRIVES IN STEPS, NOT SLOPES." Over that window: 121 generations, more than ten thousand "brains" catalogued, fifty thousand evaluation episodes. On its best training game the brain now finishes level 1 in 0.45x the actions a human needs.
+The training games (25 public) are not what is scored; the Kaggle score is on unseen games, and the final ranking will be on a further set of unseen games when the competition closes on 2 November. "Past the middle" is real, but it is the middle, not the top. And the number must never be compared across boards: the verified board where API models are measured (where OpenAI's Astra posted 62.7% this month at $26,000 a run) is a different track, a different harness, a different budget. The only honest comparison is method and cost, and on that axis the team is explicit:
+"Literally you could run Nxon it in an old smartphone." (Vivancos, X, 4 Sept 2026)
+"For the Kaggle Game the top scoreres are using the GPU provided and emmbeding 'small' #LLMs pretrained with harness to the task if we do so we could also climb the benchmark, but no we won't do that ... we are buildin #TrueAI not bruteforce compute/energy" (Vivancos, X, 4 Sept 2026)
+"Once Kaggle challenge ends (november 2nd) everything will be open source as allways in Qubic Open Science." (Vivancos, X, 4 Sept 2026)
+Note what that second quote is: an admission that they could climb faster with GPUs and a small language model in the harness, and a refusal on principle. That is not "can't." That is "won't."
+And the scientific honesty is the same on this front as on Anna's:
+"Only three of the seven added mechanisms proved necessary under the tested protocol." (Sánchez, AMA 20 Aug 2026)
+"A brain that performs well across twenty runs may stumble on the next six." (Sánchez, AMA 20 Aug 2026)
+"there's no G in AGI yet." (Sánchez, AMA 3 Sept 2026)
+Part 6. The cherry: all of this was done without the network
+14 September:
+"just a reminder - the scientists achieved this result without the power of the Qubic network lol. all the work is being done on their own personal computers. once the architecture is ready - and we plug the mining power into improving the results - that's when the true climb start." 
+Check it against the source. At the 20 August AMA the compute was "roughly 500 CPU cores." At the 3 September AMA Vivancos described the current rig as "burning hundreds of cores" and said that using the network for ARC-AGI-3 "would speed things up considerably," and in the same breath that the core team would first stabilize what already works: "no promises on phasing." The deployment path has a name now, Anthill, Neuraxon running on the network via the ant colony algorithm, and it sits in the Q4 proposal. It has not happened yet.
+So the whole eleven-week climb, 0.13 to 0.38, four papers, Level 8, 0.45x human, came from a few hundred home CPU cores. The largest decentralized compute network in the world, the thing every miner reading this is part of, has not been plugged into this front at all. Today the science front runs about two generations a day. The network is built to run that loop by orders of magnitude more.
+And on Front One, the same sentence is waiting to become true. CfB's own roadmap for the price model ends with "But it will be done by miners." The noiseless baseline was hit on personal machines in one evening. The noisy version, the real one, is the one meant for the network.
+That is the shape. Two fronts, both honest about where they are, both stopped at the same door: the door to the miners. Both are on record saying the true climb starts on the other side of it. And now recall Part 2: the wall we set out to break was energy. Two fronts producing these results on smartphone-class compute is not a detour from the energy question. It is the energy question, answered in the only currency that matters: watts per result.
+Part 7. BPP9000, the noise, and "better than I thought"
+7.1 What BPP9000 actually is
+BPP9000 is the task: Bitcoin Price Prediction, the problem the Qubic mining network has been solving since epoch 224.
+Personally, the name cracks me up every time, because it sounds exactly like the ultimate weapon in Doom, the BFG9000 ;D
+ 
+In its network form the task is small and strict: a fixed network of 64 neurons, 18 inputs, one output, fed a year of hourly BTC/USDT candles through a 28-day sliding window, and asked one question per hour: is the next candle up or down. The output is trinary: 1 for up, 0 for down, and ? for "I don't know," which is scored as an error. Miners do not tune weights. Since epoch 224 the wiring is frozen and what evolves is a 27-entry rule table per neuron, and since epoch 228 the "ant colony" lets a miner inherit a parent solution and mutate it instead of starting from scratch. The score is simply the number of wrong answers across the window, about 8,088 hours, and the whole game is to drive that number toward zero. On real, noisy Bitcoin the best in-sample ensembles were sitting around 55%, single models barely above the coin-flip floor, and the best-error plateau had been stuck around 3500 for weeks. That is the wall from Part 4.3.
+Anna.exe is the same task taken off the network and handed to the community as a standalone program, "mining algo not run by miners" in CfB's June phrase, so that hundreds of home PCs can try things the network cannot yet verify. Anna 0.4 removed the external input file and generated its own synthetic price from 100 hidden factors; 0.5 added 10% noise; 0.9 set the noiseless baseline. And then came 0.10.
+7.2 The experiment: same model, two datasets
+On the evening of 16 September CfB moved from training to evaluating. A community member posted a trained Anna.data file with a score of 3,236 on noisy data. CfB took that exact file, ran it against the same series with the noise stripped out, and posted the result:
+"WOW, this is how it looks on data without noise:" Anna 0.10.64 | 534 | 8093 ticks | mode 1 | 1 mutations | + | 0 it/s (CfB, 16 Sept 2026, 21:04)
+Same model. Same 8,093 ticks. Noise removed. 3,236 errors became 534. He did not explain it. He asked the room to:
+"Is there anybody understanding what it means?" (CfB, 16 Sept 2026)
+Then he did what a scientist does when a number surprises him: he refused to trust it.
+"We must verify." / "Everybody running Anna.exe. Stop your current .data file and start a brand new one. DO NOT USED ALREADY GENERATED ONE." (CfB, 16 Sept 2026)
+"But 2 models isn't statistically significant. We need 3 more." (CfB, 16 Sept 2026)
+"Unique = you worked on it alone. Used empty file, never shared." (CfB, 16 Sept 2026)
+The rule was strict on purpose: a fresh empty file, one author, never passed around, a score under 3,300 on the noisy data, then post it and he runs it clean. 
+Three independent people, three files trained from nothing on noisy data, and on clean data they land within ten errors of each other. A shared, non-unique file (3,364 with noise) came out at 1,188 clean, worse, exactly as a non-independent model should. With 8,088 hours in the window, the arithmetic is roughly 58-60% correct with noise against 93% without.
+7.3 What it means, in his words and in his surprise
+I asked him directly whether this meant Anna had learned the structure through the noise rather than memorizing the noise. His answer is the most important quote in this article:
+"Better or worse (depends on goal). We asked her to crack the pattern and output next price direction. She did it ignoring the noise and outputs future price direction WITHOUT NOISE. Just as we instructed. To verify the hypothesis we need to run a much larger model, e.g. with 1024 neurons." (CfB, 16 Sept 2026, 21:47)
+Read the middle of that. The models were trained on noisy data. They were never shown the clean series. And yet, evaluated on the clean series, they are six times better, which can only happen if what they learned was the underlying pattern and not the noise on top of it. Nobody told the network to denoise. It was asked to predict direction, and it found that ignoring the noise was the way to do it:
+"We asked it to predict price, it denoised data for that." (CfB, 17 Sept 2026)
+And here is the moment I promised. Two months of "64 neurons is not enough" and "on real data AI honestly says I don't know":
+"If it works the way I assume then Aigarth actually works much better than I initially thought" (CfB, 16 Sept 2026, 21:14)
+Notice he still hedged it: if it works the way I assume. Someone asked if this meant he could quit his job. The answer was a picture, not a promise:
+"Imagine diving and finding a ship full of gold. Now you need to lift the gold and all this doing so nobody else knows and steals from you." (CfB, 16 Sept 2026)
+Later that night he drew the ceiling, and it is the most useful thing anyone in this project has said about what price prediction can and cannot be:
+"Ok, no matter how hard we try, we cannot predict noise. So once pattern is constructed we cannot do anything else. This means that our prediction will be correct in some %% of cases but never 100%" (CfB, 16 Sept 2026)
+"It also means that our prediction accuracy depends on magnitude of signal vs magnitude of noise. When a random person comes and buys or sells BTC and never returns he generates noise" (CfB, 16 Sept 2026)
+"but if random persons come and go at some pattern then we can extract that pattern" (CfB, 16 Sept 2026)
+So the model is not a crystal ball. It is a pattern extractor. What repeats (bots, cycles, crowds that behave the same way twice) is signal and can be learned. What never repeats is noise and cannot be learned by anyone. The accuracy on a real market is therefore not a property of the network; it is a property of the market, the ratio of signal to noise in it. That is why the honest sentence is "some %, never 100%."
+7.4 The phase we are in now (17 September 2026)
+By the next afternoon the count was in:
+"Alright, got enough models, now we are moving to 1024-neuron test" (CfB, 17 Sept 2026, 13:34)
+"Anna 0.10.1024. Use empty Anna.data." (CfB, 17 Sept 2026, 13:36, pinned)
+This is the experiment that decides whether the surprise survives sixteen times more neurons. If it does, the engineering questions (window length, the throttled public parameters, the miner deployment) become the whole job. If it does not, we will hear it from the same man who told us the first approach had hit the wall, in the same channel, with the same bluntness.
+Part 8. The timeline
+~2002: the idea begins.      "If we talk about Aigarth - it's 20+ years in the making." (CfB,      Nov 2023)
+Dec 2021: proof of concept.
+13 April 2022: real mining      starts. The clock that matters.
+13 April 2024: Qubic mainnet.
+2 July 2025: Aigarth goes      public on GitHub.
+Feb-May 2026: energy      breakthroughs; generalization and the universal training algorithm solved;      constant-dimensions discovery; Neuraxon 2.0 published.
+20-22 May 2026: Berlin, ICMLT.      Best Paper + Best Presentation, judged by independent scientists.
+10-13 June 2026: Anna.exe      released. "Race a number to zero."
+29 June 2026: Neuraxon enters      ARC-AGI-3 at 0.13, CPU-only.
+early July 2026: Anna reaches      zero on all seven levels. "It's not a milestone. It's much      bigger."
+27-30 July 2026: AGI-26, San      Francisco. Multi-Neuraxon presented.
+6 August 2026: ARC-AGI-3: 0.25.
+20 August 2026: Open Science      AMA: four papers accepted; ~500 CPU cores; "past the middle" of      ~2,300.
+3-4 September 2026: Level 7,      then Level 8 on a training game; Kaggle 0.28; "you could run Nxon in      an old smartphone"; Sánchez: "there's no G in AGI yet."
+mid-September 2026: Kaggle      0.38, ~#1350.
+16 September 2026: CfB: the      price approach hits the verification wall and is rebuilt; Anna 0.9 sets      the noiseless baseline; "Synthetic prices ... 100% ... 32-neuron      ANNs"; "Now need version with noise"; "Predict BTC      price. But it will be done by miners. We are preparing prototype."      Same day on X: the multiverse post, training 100x faster, verification      scaled 100-fold.
+16 September 2026, evening:      Anna 0.10.64: three independent community models trained on noisy data      score ~530 errors on clean data vs ~3,250 with noise; "Aigarth      actually works much better than I initially thought"; "we cannot      predict noise ... correct in some %, never 100%"; public parameters      to be throttled, "fly under radar."
+17 September 2026: "got      enough models, now we are moving to 1024-neuron test"; Anna 0.10.1024      pinned.
+27-29 October 2026: Artificial      Evolution, Nice.
+2 November 2026: ARC-AGI-3      competition closes; Neuraxon goes fully open source.
+13 April 2027: the ETA. Five      years to the day from the start of real mining.
+Conclusion: where we actually are
+Put the two fronts side by side and the picture stops being scattered.
+The demo task is done. Zero was reached in July, and it meant what it was supposed to mean: the method converges, generalizes, and fits in a tiny, energy-cheap architecture. Then both fronts walked into the real world, and the real world did what it always does. On the price front the first approach hit the verification wall; the creator said so plainly, retired it, and rebuilt around selection. The noiseless baseline was hit on 16 September, and that same evening the 64-neuron prototype did something nobody had told it to do: trained on noise, it learned the pattern underneath and threw the noise away, three independent times. The creator's own words were "much better than I initially thought," followed immediately by "we must verify." The 1024-neuron test began the next day. On the science front the same paradigm has spent eleven weeks climbing the benchmark built to defeat brute-force AI, from 0.13 to 0.38, on a few hundred CPU cores, refusing the GPU-plus-LLM shortcut the leaders use, with four peer-reviewed papers behind it and full open source promised for 2 November.
+The countdown has a date: 13 April 2027. Now you know what both hands on the clock are doing.
+Sources: direct CfB quotes from Discord (#price-discussion, 14-17 Sept 2026) and X (16 Sept 2026), dated inline; BPP9000 parameters from the Qubic core changelog (epochs 224-229) and the Qubic ANN Explorer documentation; the 16 Sept model table from the files and evaluations posted in #price-discussion by Yoshimit, UE5 and CfB; Qubic blog: "Anna Reached 0: What It Actually Means for Aigarth," "Qubic Open Science AMA Recap: Four Neuraxon Papers Accepted" (20 Aug 2026), All-Hands recaps of 9 and 23 July and 6 Aug 2026; Vivancos posts on X (29 Jun, 4 Sept 2026); Science AMA of 3 Sept 2026 (Vivancos, Sánchez); Kaggle "ARC Prize 2026 - ARC-AGI-3" public leaderboard; ARC-AGI-3 technical report. Quotes are verbatim where shown, including the authors' own typos. Benchmark figures are Kaggle public-leaderboard scores and are not compared across boards. The line between "paradigm proven on the demo task" and "AGI achieved" is drawn deliberately, and the line between "synthetic without noise" and "real market" is drawn just as deliberately, because the people doing the work drew it first.
+
+#Qubic 
