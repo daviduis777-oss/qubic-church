@@ -1,9 +1,35 @@
 import type { MetadataRoute } from 'next'
+import { allBlogs, allDocs } from 'contentlayer/generated'
+import { BOOKS, SITE_URL } from '@/lib/books'
+import { INDEXING } from '@/lib/indexing'
 
-type Sitemap = MetadataRoute.Sitemap
-
-// Site is intentionally not indexed (robots.txt Disallow /, layout meta robots noindex).
-// Sitemap is therefore empty, no URLs to advertise to search engines.
-export default function sitemap(): Sitemap {
-  return []
+export default function sitemap(): MetadataRoute.Sitemap {
+  if (!INDEXING) return []
+  const now = new Date()
+  const page = (path: string, priority: number, lastModified: Date | string = now) => ({
+    url: `${SITE_URL}/en${path}`,
+    lastModified,
+    priority,
+  })
+  return [
+    page('', 1),
+    page('/about', 0.9),
+    page('/books', 0.9),
+    ...BOOKS.flatMap(b => [
+      page(`/books/${b.slug}`, 0.9, b.published),
+      ...b.chapters.map(c => page(`/books/${b.slug}/${c.slug}`, 0.8, b.published)),
+    ]),
+    page('/docs', 0.8),
+    ...allDocs
+      .filter(d => d.slugAsParams.startsWith('en/') && !d.noindex)
+      .map(d => page(`/docs/${d.slugAsParams.replace(/^en\/?/, '')}`, 0.7)),
+    page('/blog', 0.6),
+    ...allBlogs
+      .filter(p => p.slugAsParams.startsWith('en/'))
+      .map(p => page(`/blog/${p.slugAsParams.replace(/^en\/?/, '')}`, 0.6, p.date)),
+    page('/cfb', 0.7),
+    page('/nfts', 0.5),
+    page('/mine-qubic', 0.5),
+    page('/donate', 0.4),
+  ]
 }

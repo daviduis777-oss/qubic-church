@@ -4,9 +4,10 @@ import { getTranslations } from 'next-intl/server'
 import { siteConfig } from '@/config/site'
 
 const FOOTER_LINKS = [
-  { href: '/docs', label: 'Research' },
   { href: '/books', label: 'Books' },
-  { href: '/companion', label: 'Companion' },
+  { href: '/docs', label: 'Research' },
+  { href: '/cfb', label: 'Come-from-Beyond' },
+  { href: '/about', label: 'About' },
   { href: '/donate', label: 'Donate' },
   { href: '/legal', label: 'Legal' },
 ]

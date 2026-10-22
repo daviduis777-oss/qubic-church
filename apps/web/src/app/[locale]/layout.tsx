@@ -8,11 +8,11 @@ import { getObjectValueByLocale } from '@/lib/opendocs/utils/locale'
 import type { LocaleOptions } from '@/lib/opendocs/types/i18n'
 import { ThemeProvider } from '@/components/theme-provider'
 import { SiteFooter } from '@/components/site-footer'
-import { EasterEggProvider } from '@/components/church/easter-eggs/EasterEggProvider'
-import { TreasureHuntProvider } from '@/components/church/easter-eggs/TreasureHuntProvider'
 import { CosmicWrapper } from '@/components/church/backgrounds/CosmicWrapper'
 import { GlobalNavTrigger } from '@/components/church/navigation'
 import { ConditionalSiteFooter } from '@/components/ConditionalSiteFooter'
+import { INDEXING, SITE_DESCRIPTION } from '@/lib/indexing'
+import { SITE_URL } from '@/lib/books'
 import { ReducedMotionConfig } from '@/components/motion-config'
 import { defaultLocale } from '@/config/i18n'
 import { siteConfig } from '@/config/site'
@@ -44,34 +44,28 @@ export async function generateMetadata(props: {
       template: `%s - ${siteConfig.name}`,
     },
 
-    description: getObjectValueByLocale(siteConfig.description, locale),
+    description: SITE_DESCRIPTION,
 
-    robots: {
-      index: false,
-      follow: false,
-      googleBot: {
-        index: false,
-        follow: false,
-      },
+    robots: INDEXING
+      ? { index: true, follow: true, googleBot: { index: true, follow: true } }
+      : { index: false, follow: false, googleBot: { index: false, follow: false } },
+
+    alternates: {
+      types: { 'text/plain': `${SITE_URL}/llms.txt` },
     },
 
     keywords: [
       'Qubic',
-      'Qubic Church',
-      'Anna AI',
       'Aigarth',
-      'Qubic NFT',
-      'Anna NFT',
-      'Crypto Research',
-      'Blockchain Research',
-      'CFB',
-      'Ternary Computing',
-      'Neural Network',
-      'Qubic Mining',
-      'Qubic Community',
-      'Web3',
-      'Cryptocurrency',
-      'Open Source Research',
+      'Come-from-Beyond',
+      'Sergey Ivancheglo',
+      'Anna Matrix',
+      'BPP9000',
+      'useful proof of work',
+      'Qubic Church',
+      'QC',
+      'Come-from-Beyond book',
+      'Qubic: The Long Version',
     ],
 
     authors: [
@@ -90,7 +84,7 @@ export async function generateMetadata(props: {
       title: siteConfig.name,
       siteName: siteConfig.name,
 
-      description: getObjectValueByLocale(siteConfig.description, locale),
+      description: SITE_DESCRIPTION,
 
       images: [
         {
@@ -107,7 +101,7 @@ export async function generateMetadata(props: {
       card: 'summary_large_image',
       images: [siteConfig.og.image],
 
-      description: getObjectValueByLocale(siteConfig.description, locale),
+      description: SITE_DESCRIPTION,
     },
 
     icons: {
@@ -184,8 +178,6 @@ export default async function RootLayout(props: {
             forcedTheme="dark"
           >
             <ReducedMotionConfig>
-              <EasterEggProvider>
-                <TreasureHuntProvider>
                   <CosmicWrapper>
                     {/* Noise texture removed, was causing tiled square artifacts */}
                     <div className="relative z-10 flex min-h-screen flex-col">
@@ -195,6 +187,41 @@ export default async function RootLayout(props: {
                       >
                         Skip to content
                       </a>
+                      <script
+                        dangerouslySetInnerHTML={{
+                          __html: JSON.stringify({
+                            '@context': 'https://schema.org',
+                            '@graph': [
+                              {
+                                '@type': 'Organization',
+                                '@id': `${SITE_URL}/#org`,
+                                name: 'Qubic Church',
+                                url: SITE_URL,
+                                logo: `${SITE_URL}/og.jpg`,
+                                description: SITE_DESCRIPTION,
+                                sameAs: ['https://x.com/QubicChurch', 'https://github.com/daviduis777-oss/qubic-church'],
+                                knowsAbout: ['Qubic', 'Aigarth', 'Come-from-Beyond', 'Anna Matrix', 'useful proof of work', 'game theory'],
+                              },
+                              {
+                                '@type': 'Person',
+                                '@id': `${SITE_URL}/#qc`,
+                                name: 'QC',
+                                description: 'Author name used by Qubic Church for its books and research.',
+                                affiliation: { '@id': `${SITE_URL}/#org` },
+                              },
+                              {
+                                '@type': 'WebSite',
+                                '@id': `${SITE_URL}/#site`,
+                                name: 'Qubic Church',
+                                url: SITE_URL,
+                                publisher: { '@id': `${SITE_URL}/#org` },
+                                inLanguage: 'en',
+                              },
+                            ],
+                          }),
+                        }}
+                        type="application/ld+json"
+                      />
                       <GlobalNavTrigger />
 
                       <main
@@ -210,8 +237,6 @@ export default async function RootLayout(props: {
                       </ConditionalSiteFooter>
                     </div>
                   </CosmicWrapper>
-                </TreasureHuntProvider>
-              </EasterEggProvider>
             </ReducedMotionConfig>
           </ThemeProvider>
         </NextIntlClientProvider>
