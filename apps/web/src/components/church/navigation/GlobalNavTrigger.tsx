@@ -7,6 +7,7 @@ import { usePathname } from '@/navigation'
 const LINKS = [
   ['/books', 'Books'],
   ['/docs', 'Research'],
+  ['/articles', 'Articles'],
   ['/cfb', 'Come-from-Beyond'],
   ['/nfts', 'Anna'],
   ['/maria-aigarth', 'Maria'],

@@ -59,7 +59,7 @@ export const siteConfig = {
 
     discord: {
       label: 'Discord',
-      url: 'https://x.com/QubicChurch',
+      url: 'https://discord.gg/DTnCtckwRs',
     },
   },
 
@@ -96,6 +96,7 @@ export const siteConfig = {
     sameAs: [
       'https://x.com/QubicChurch',
       'https://github.com/daviduis777-oss/qubic-church',
+      'https://discord.gg/DTnCtckwRs',
     ],
   },
 } as const

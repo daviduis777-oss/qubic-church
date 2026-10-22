@@ -1,0 +1,37 @@
+Qubic published its brains. 525 million rows. U can check.
+Most AI projects ask you to believe them. Today Qubic's science team did the opposite. They uploaded the raw guts of their evolving neural networks to Hugging Face (link in the comments), under an open license, and said: don't take our word for it, download it.
+The dataset is called NeuraxonLive. It records an artificial world where small agents live, forage for food, mate, and die. Each one carries a brain that was grown. The brains that survive pass their design to their children. The latest run tested 6,344 brain architectures in ten days.
+Here is the scale - 525 million rows across four linked tables. One for the agents, one for every neuron, one for every synapse, one for the individual dendritic branches inside each neuron. Six gigabytes of the inner life of machines that were bred, not programmed.
+Why this is more than a data dump
+For a year Qubic's researchers published papers describing an unusual architecture. Neurons that speak in three states instead of two: yes, no, and a neutral middle. Synapses that remember on three different timescales. Four neuromodulators, the same chemical families a living brain runs on. Rhythms that decide when regions talk to each other.
+Every mechanism in the papers is a column in the dataset. The trinary state, per neuron. The fast, slow and meta plasticity weights, per synapse. The neuromodulators, the oscillation phases, the criticality measure the Osaka paper is built on. The architecture stopped being a claim the moment it became a schema you can query.
+The finding that matters: inheritance
+The headline result is inheritance. Quality is strongly inherited. Children carry the traits of their parents, and better parents make better children.
+They grow up so fast!
+It sounds obvious until you see why it is the keystone. Qubic's whole bet is that you do not design an intelligence, you grow one - by selection, across generations, on ordinary machines. Selection without inheritance is a lottery you replay from scratch every round. Selection with inheritance is a ratchet. It only clicks forward. And the dataset lets anyone measure it, because every agent records who its parents were and how well it lived. You can trace a bloodline and watch fitness climb.
+Where we are in the big picture
+Two things had to be true for the idea to work. First, that the target is reachable: a grown network can drive its error all the way to zero. The community proved that on July 6, 2026, by hand, racing a little program called Anna.exe to seven perfect zeros on home CPUs. Second, that success carries forward: a good brain begets a better one. That is what these 525 million rows now show, openly, for anyone to check.
+Reachable, and heritable. Those are the two legs the next step stands on.
+When the community drove Anna to zero, someone wrote in the chat: "congrats on this milestone." The founder answered instantly:
+"It's not a milestone. It's much bigger." - Come-from-Beyond. Discord 06.07.2026
+He rarely throws words like that around. That was one of the rare times.
+What comes next, and soon
+Two dates matter now.
+August 19 is the halving. Qubic cuts its weekly emission roughly in half. Less new supply hitting the market, mechanically, from the same protocol that has been the steady seller all year.
+Around the end of August, epoch 228, comes the Ant Colony. This is the piece everything has been building toward, and it is worth understanding plainly.
+Today every miner digs alone. Each grows a network from scratch, scores it, throws it away, starts again. Thousands of machines repeating the same cold start. It works, but almost all of the effort is wasted motion.
+The Ant Colony turns that scatter into a ratchet. A miner inherits the best network found so far, mutates it, and keeps the result only if it improved. Discoveries stop dying alone. They stack. The same inheritance the dataset just measured in a toy world gets wired into the mining itself. That is why the founder told a doubter this week, flatly, that the colony will move the score, and why the community keeps repeating three words: wait for the colony.
+The important part
+This is why Qubic wins awards at scientific conferences instead of posting promises on a landing page.
+This summer alone: Best Oral in Osaka (IEEE) and in Berlin, Multi-Neuraxon published in Springer's AGI proceedings, and its ARC-AGI-3 score doubled to 0.25 on the strict offline board where frontier models sit below 1%. Three peer-reviewed venues in three months. Show me one other "crypto project" with a scientific base at this level. There isn't one.
+Because everything you read above - Anna, NeuraxonLive, the colony, these 525 million rows - these are not separate tricks. It is one engine. It is called Aigarth: a decentralized AI that Qubic grows directly on the network, on the same home machines that mine today. Mining here does not burn electricity into the trash. Mining is the growing of a mind. Every watt that used to go into a useless hash now goes into evolution.
+The engine turned over on July 29. On August 19 the supply tightens. At epoch 228 it revs.
+For fifteen years mining burned energy into ash. Qubic is the first to turn it into a mind. You are watching it happen in real time.  UPOW, BABY!
+
+@c___f___b @VivancosDavid @josesanchezhb
+
+#Qubic $Qubic 
+3:36 AM · Aug 13, 2026
+·
+10.6K
+ Views

@@ -1,0 +1,52 @@
+UST RUN MINER
+The Crazy Summer
+Before the summer:
+25 May, Berlin. The Neuraxon v2.0 paper takes Best Paper and Best Presentation at IEEE ICMLT. The judges have no stake in Qubic. This is the first time the science underneath Aigarth is graded by strangers, and it is graded first in the room.
+Two weeks later the race begins.
+June: the race
+10 June. CfB posts a file in Discord: «If you guys are too bored maybe you could run Anna.exe for a while and post results here?» A hundred-some kilobytes. Seven tests. One number on the screen: the error, the distance to zero.
+Hundreds of home CPUs start running it the same night. People pass Anna.data snapshots around the chat like a relay baton; whoever has the lowest score is the one everybody grafts from. Evolution on top of evolution: inside the file, neurons are selected; in the chat, Anna's are.
+14 June. CfB: «finished my work». He says the research phase is over and what comes next is «practical AI». Nobody outside the race notices.
+16 June. Asked what happens at zero: «Aigarth will be deemed finished.»
+July: zero, and the date
+6 July. All seven tests hit zero. CfB asks the chat: «Are ALL solved or not?» The chat answers: «All Zero.» And the line that reframes the whole project:
+«It's not a milestone. It's much bigger.»
+The date is 6 July 2026. 6/7/6. Six seventy-six is the number of computors in the network, 26 squared, the quorum sewn into the architecture since day one.
+21 July, Osaka. Second paper, second award. Best Oral Presentation at AMLDS for «The Neutral Buffer State». The result: 5,582 experiments, one variable, two states or three. Ternary networks sit at criticality 88.8% of the time, binary ones 37.2%. The ternary choice CfB made two decades ago gets a measurement.
+
+@VivancosDavid @josesanchezhb
+22 July. All-Hands. BPP-9000 is implemented and scheduled for epoch 224. The task: neural networks on BTC candles. Same day, QUBIC goes live on Alchemy Pay: 173 countries, card to wallet.
+27–30 July, San Francisco. Third paper, AGI-26. Multi-Neuraxon: 152 neurons, four coupled spheres, specialization emerging with no assignment, 99–102% of motor information retained after losing 75% of the neurons.
+29 July. v1.301.0 goes live. Two things in one release: BPP-9000 becomes the mining algorithm, and Outsourced Computation consensus goes into the core. From this day the network's proof of work is a search for a neural network. And from this day the network can, in principle, sign instructions to the outside world with 451 computor signatures.
+August: the pieces start touching
+3–4 August. OC mock goes live on mainnet. ocmock.qubic.org shows invocations coming off the live network, each with 451+ verified signatures, replicated by three OC machines. Mock interface, synthetic payloads, but the consensus path is real and public.
+5 August. CfB, on the mining score: zero on training is not a forecast of the future. Accuracy on unseen data sits around 52%. This is the honest ceiling of the summer, stated by the person with the most to gain from overstating it.
+6 August. All-Hands puts it on a slide: Neuraxon vs ARC-AGI-3 = 0.25. Official. And a second slide, «Science - The long road», lists why the science track exists: credibility, rigor, distinguishing Qubic from other crypto projects.
+9–10 August. PR #978, «Ant colony on bpp9000». cyber-pc, 39 commits, the branch started 30 July, the day after BPP went live. Trees of scored networks, parent and child, save/load, network API. The two gates that had been blocking the colony since May are closed in eleven days of commits.
+Same days, CfB on the thing he will not publish: «Generalization is kept secret.» «Till somebody reverse-engineers it.» The moat is the method, and he says so.
+18 August. cyber-pc: feature-complete, feature freeze, target mainnet at epoch 228. JOETOM explains the release policy: about three seamless transitions and one non-seamless per month; the non-seamless one carries the breaking changes.
+19 August. Epoch 227 begins. The halving passes as a seamless transition, with no release, because the smart contract handles it. Half the chat thinks it was skipped. It was not. The protocol did its job without ceremony.
+21 August. The densest day of the summer.
+Yours truly publishes the book «Come-from-Beyond».
+Science AMA, one hour. The evolutionary part of Neuraxon is already inside the Aigarth architecture; it is not on the network yet; it goes on after the colony is proven. The 0.25 cost about 500 CPU cores for a couple of months on Vivancos's own machines, not the network. ARC-AGI-3 closes around November; they want Neuraxon training on mainnet before that. The slides give the first public definition of the Neuraxon unit.
+Then Neuraxon 3.0. «Five rules propose. One dial decides.» Whoa!
+Fourth paper accepted: EA 2026, Nice, 27–29 October, the artificial evolution conference. The subject is heritable traits in evolving populations. That is the colony's mechanism, presented to the people who study it for a living.
+NVIDIA announces 100% on ARC-AGI-3. Chollet, who wrote the benchmark, replies within hours: that is the public demo set, «like saying you beat a videogame because you cleared the tutorial level». Vivancos replies to Chollet: the Kaggle board is 55 unknown games, offline, no LLM, no VLM, and that is where Neuraxon plays.
+Why isn't the Qubic price moving yet?
+CfB: «Need practical application.» Then: «Next roadmap is mostly for AI.»
+22 August. Three updates in one morning.
+cyber-pc posts the final colony parameters: threshold 4000, publish window 15.000 ticks, population 64 with 128 as the stated next step. Then a notice to computor operators: the colony is targeted for epoch 228, here are the new state files to include in your backups. The tree lives in the node's snapshots. Memory survives restart.
+dkat announces two Oracle Machine services: any Qubic contract can read any event log from any EVM chain, attested by computor quorum; and any Qubic event can be read outward, provable by zero-knowledge proof. Bridge primitive, free price feeds via Chainlink events, on-chain attestations. Proven on the dev testnet with 676 commits and 451+ quorum.
+CfB, the night before, on the state of things: «right now everybody is waiting for ant colony, before that Aigarth is hybernating.» And: «Just run miner.»
+The puzzle
+Now lay the pieces out.
+A method, proven at zero on 6/7/6. A network mining neural networks since 29 July. A consensus path for signed instructions outward, live in mock since 4 August. A consensus path for verified facts inward, proven on testnet on 22 August. Four papers at four real venues, two of them awarded by people with nothing to gain. A unit, formally defined. A version 3.0 that puts criticality in charge. A benchmark where the network has not yet competed, with a November deadline and a stated intent to compete on mainnet. ETA 13.04.2027
+And one missing piece that everything else is shaped around: memory. Since the first epoch of useful mining, the network has searched and forgotten. Every piece above is either a thing that searches or a thing that carries results in and out. None of them accumulates.
+On Wednesday, epoch 228, the colony ships. Each miner's best network becomes the parent of the next. The tree is written to disk. For the first time, what the network learns on one day is still there the next.
+CfB was clear about the ceiling, and so are the scientists: zero is not generalization, the colony ships with population 64 not 128, OC is mock, OM is testnet, and the price answers only to practical application. But look at the order of what comes next, and notice it is no longer a wish list. Colony on the 26th. Neuraxon onto the colony, before November. Nice on 27 October. ARC closes, the corpus opens.
+Three months ago the network had a file called Anna.exe and a number on a screen. Today it has a calendar.
+Just run miner. Just run miner. JUST RUN MINER!!!
+
+@c___f___b
+#Qubic 
+$Qubic 

@@ -6,11 +6,14 @@ import { siteConfig } from '@/config/site'
 const FOOTER_LINKS = [
   { href: '/books', label: 'Books' },
   { href: '/docs', label: 'Research' },
+  { href: '/articles', label: 'Articles' },
   { href: '/cfb', label: 'Come-from-Beyond' },
   { href: '/maria-aigarth', label: 'Maria' },
   { href: '/about', label: 'About' },
   { href: '/donate', label: 'Donate' },
   { href: '/legal', label: 'Legal' },
+  { href: 'https://discord.gg/DTnCtckwRs', label: 'Discord' },
+  { href: 'https://x.com/QubicChurch', label: 'X' },
 ]
 
 const DONATION_ADDRESS =
