@@ -2482,3 +2482,7 @@
     display: none !important;
   }
 }
+
+.font-display {
+  font-family: var(--font-display), 'Bebas Neue', Impact, sans-serif;
+}
