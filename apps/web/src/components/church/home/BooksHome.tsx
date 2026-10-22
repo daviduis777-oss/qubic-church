@@ -73,10 +73,10 @@ export function BooksHome({ locale = 'en' }: { locale?: Locale }) {
             style={{ background: 'radial-gradient(closest-side, rgba(255,210,74,0.16), transparent 70%)' }}
           />
         </div>
-        <div className="relative mx-auto grid w-full max-w-7xl gap-8 px-4 pb-14 pt-8 sm:px-6 md:grid-cols-[1.25fr_1fr] md:gap-4 md:pb-20 md:pt-14">
+        <div className="relative mx-auto grid w-full max-w-7xl gap-8 px-4 pb-14 pt-8 sm:px-6 md:pb-20 md:pt-14 lg:grid-cols-[1.25fr_1fr] lg:gap-4">
           <div className="flex flex-col">
             <p className="eyebrow text-gold">Qubic Church · books and open research by QC</p>
-            <h1 className="mt-4 font-display text-[27vw] leading-[0.8] tracking-tight sm:text-[20vw] md:text-[13rem] lg:text-[15rem]">
+            <h1 className="mt-4 font-display text-[27vw] leading-[0.8] tracking-tight sm:text-[20vw] md:text-[13rem] lg:text-[13rem] xl:text-[15rem]">
               BOOKS
             </h1>
             <p className="mt-6 max-w-xl font-serif text-xl leading-relaxed text-foreground/85 md:text-2xl">
@@ -98,7 +98,7 @@ export function BooksHome({ locale = 'en' }: { locale?: Locale }) {
               </Link>
             </div>
 
-            <div className="mt-12 border-t border-border pt-6 md:mt-auto">
+            <div className="mt-12 border-t border-border pt-6 lg:mt-auto">
               <p className="mb-4 font-mono text-sm tracking-[0.4em] text-gold">13.04.2027</p>
               <Countdown />
             </div>

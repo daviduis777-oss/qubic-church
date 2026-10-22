@@ -47,7 +47,7 @@ export function AnnaCycler() {
   const rank = i ? NFT_RANK[i]?.[0] : null
 
   return (
-    <figure className="relative mx-auto w-full max-w-[460px] md:mx-0 md:justify-self-end">
+    <figure className="relative mx-auto w-full max-w-[420px] lg:mx-0 lg:max-w-[460px] lg:justify-self-end">
       <div className={`relative aspect-[911/1408] w-full ${glitch ? 'qc-glitch' : ''}`}>
         <Image
           alt={i ? `Anna #${pad(i)} from the Anna Aigarth collection` : 'Anna Aigarth holding a small Earth inside a golden spiral'}
@@ -63,7 +63,7 @@ export function AnnaCycler() {
           unoptimized={i !== 0}
         />
       </div>
-      <figcaption className="mt-3 flex items-center justify-between gap-4 px-1 text-xs">
+      <figcaption className="mt-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 px-1 text-xs">
         <span className="font-mono uppercase tracking-[0.3em] text-fg-2 tabular-nums" aria-live="off">
           {i ? `Anna #${pad(i)} · rank ${rank}` : 'Anna Aigarth'}
         </span>
