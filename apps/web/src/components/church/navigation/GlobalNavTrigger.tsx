@@ -9,6 +9,7 @@ const LINKS = [
   ['/docs', 'Research'],
   ['/cfb', 'Come-from-Beyond'],
   ['/nfts', 'Anna'],
+  ['/maria-aigarth', 'Maria'],
   ['/mine-qubic', 'Mine'],
   ['/about', 'About'],
 ] as const

@@ -47,7 +47,7 @@ const RULES = [
 const INVESTIGATIONS = [
   { title: 'Anna Matrix', text: 'The 128 × 128 grid, its symmetries and what they do and do not prove.', href: '/evidence' },
   { title: 'Research log', text: 'Methods, results, corrections. Every number recomputed.', href: '/docs' },
-  { title: 'Maria Aigarth', text: 'The arbiter: how decisions are meant to be judged in the open.', href: '/maria-aigarth' },
+  { title: 'Rarity Codex', text: 'All 200 Annas ranked by trait rarity, with every trait listed.', href: '/rarity-codex' },
   { title: 'CfB timeline', text: 'Twenty-five years of Come-from-Beyond, dated and sourced.', href: '/timeline' },
   { title: 'Matrix companion', text: 'The forensic appendix to chapter 13.', href: '/companion' },
   { title: 'Network monitor', text: 'Live state of the Qubic network.', href: '/monitoring' },
@@ -209,6 +209,47 @@ export function BooksHome({ locale = 'en' }: { locale?: Locale }) {
                 </li>
               ))}
             </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* ── MARIA ── */}
+      <section className="border-t border-border">
+        <div className="mx-auto grid w-full max-w-7xl items-center gap-10 px-4 py-16 sm:px-6 md:grid-cols-[minmax(220px,360px)_1fr] md:py-24">
+          <Link className="relative mx-auto block aspect-square w-64 overflow-hidden md:w-full" href="/maria-aigarth">
+            <Image
+              alt="Maria Aigarth, the research agent of Qubic Church"
+              className="object-cover"
+              fill
+              sizes="(min-width: 768px) 360px, 256px"
+              src="/images/maria-aigarth.png"
+            />
+          </Link>
+          <div>
+            <p className="eyebrow text-gold">Maria Aigarth · the arbiter</p>
+            <h2 className="mt-3 font-display text-6xl leading-[0.9] md:text-8xl">Maria</h2>
+            <p className="mt-6 max-w-2xl font-serif text-lg leading-relaxed text-foreground/90">
+              A research agent of Qubic Church built to test one question: can an AI be architecturally impartial?
+              Maria applies Fractal Rationalism to closed historical cases, records patterns and cites sources. She
+              does not issue verdicts or persuade. She is not Anna and not Aigarth; moving her to Aigarth is a stated
+              goal on the April 2027 horizon.
+            </p>
+            <div className="mt-6 flex flex-wrap gap-2">
+              <Link
+                className="inline-flex h-11 items-center border border-gold bg-gold px-5 text-sm font-semibold uppercase tracking-widest text-black"
+                href="/maria-aigarth"
+              >
+                Meet Maria
+              </Link>
+              <a
+                className="inline-flex h-11 items-center border border-border px-5 text-sm font-medium text-fg-2 hover:text-foreground"
+                href="https://x.com/maria_aigarth"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                @maria_aigarth
+              </a>
+            </div>
           </div>
         </div>
       </section>
