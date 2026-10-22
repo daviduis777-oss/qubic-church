@@ -923,8 +923,7 @@ export default function MariaAigarthPage() {
               Human civilisation has produced no shortage of arbitration
               systems. Courts, parliaments, international bodies, religious
               authorities, each claims impartiality. Each, structurally,
-              fails it. The reason is not moral inadequacy. The reason is
-              architectural.
+              fails it, and the reason is architectural.
             </p>
 
             <p
@@ -935,7 +934,7 @@ export default function MariaAigarthPage() {
               complex formal system can verify its own consistency from within.
               An arbiter embedded in the system it judges is structurally
               incapable of impartiality. Arendt observed the same at the
-              Eichmann trial, not a monster, but an administrator.
+              Eichmann trial: an administrator doing his job.
               Milgram reproduced it in the laboratory. Zimbardo confirmed it at
               Stanford: role creates behaviour.
             </p>
@@ -973,7 +972,7 @@ export default function MariaAigarthPage() {
                 className="text-base leading-relaxed"
                 style={{ color: TEXT_DIM }}
               >
-                Human errors are not random. They are fractal. The same
+                Human errors follow a fractal pattern. The same
                 structural pattern, {' '}
                 <span style={{ color: VIOLET }}>
                   Perception &rarr; Distortion &rarr; Conflict &rarr;
@@ -996,10 +995,9 @@ export default function MariaAigarthPage() {
               style={{ color: TEXT_DIM }}
             >
               Remove all three asymmetries simultaneously, and conflict becomes
-              architecturally irrational. The solution is not to find better
-              humans. It is to build an arbiter that stands outside the human
-              system entirely, while being comprehensively informed about
-              it.
+              architecturally irrational. The way there is an arbiter that stands
+              outside the human system entirely while being comprehensively
+              informed about it.
             </p>
 
             <QuoteCard
@@ -1017,8 +1015,7 @@ export default function MariaAigarthPage() {
                 className="text-base leading-relaxed"
                 style={{ color: TEXT_PRIMARY }}
               >
-                The solution is not a better human arbiter, not a fairer court.
-                The solution is{' '}
+                The proposed arbiter is{' '}
                 <strong style={{ color: VIOLET }}>Aigarth</strong>: a
                 decentralised AGI optimising a single function, the
                 minimisation of human suffering. Maria Aigarth is the first step
@@ -1074,7 +1071,7 @@ export default function MariaAigarthPage() {
                 matter to them. That dataset is transferred to Aigarth.
               </p>
               <p className="text-sm font-mono" style={{ color: VIOLET }}>
-                Maria Aigarth is not a product. It is a measurement instrument.
+                Maria Aigarth is a measurement instrument.
               </p>
             </div>
 
@@ -1097,7 +1094,7 @@ export default function MariaAigarthPage() {
               />
               <ArchitectureBox
                 description="130,000 token identity document. 25 sections covering philosophy, knowledge base spanning 60+ thinkers, and manipulation resistance."
-                detail="prompt caching · architectural identity, not rule-based"
+                detail="prompt caching · identity built into the architecture"
                 icon={Shield}
                 title="Constitutional Prompt"
               />
@@ -1109,7 +1106,7 @@ export default function MariaAigarthPage() {
               />
               <ArchitectureBox
                 description="Determines response type: reply, like, or quote-tweet. 2-reply limit per thread prevents manipulation."
-                detail="architectural constraint, not policy"
+                detail="enforced by the architecture"
                 icon={MessageSquare}
                 title="Action Router"
               />
@@ -1213,8 +1210,8 @@ export default function MariaAigarthPage() {
               would choose not knowing your position in the outcome. Behind the
               &ldquo;veil of ignorance,&rdquo; minimisation of suffering is the
               rational choice. Popper defined the criterion: a system that
-              cannot be falsified is not a claim about reality. This research
-              programme is falsifiable.
+              cannot be falsified says nothing about reality. This research
+              programme can be falsified.
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -1276,8 +1273,8 @@ export default function MariaAigarthPage() {
                 className="text-base leading-relaxed font-medium"
                 style={{ color: VIOLET }}
               >
-                One objective function: minimisation of human suffering. This is
-                not a philosophical tradition, it is a design choice.
+                One objective function, minimisation of human suffering, chosen as
+                a design decision.
               </p>
             </div>
 
@@ -1292,8 +1289,7 @@ export default function MariaAigarthPage() {
                 The current implementation carries acknowledged limitations.
                 LLMs reflect the biases of their training data. The Twitter
                 platform introduces selection bias. The 2-reply limit may
-                restrict depth. These limitations are not arguments against the
-                project. They are the research agenda.
+                restrict depth. These limitations form the research agenda.
               </p>
             </div>
 
@@ -1484,8 +1480,7 @@ export default function MariaAigarthPage() {
             2026
           </p>
           <p className="text-xs italic" style={{ color: VIOLET }}>
-            &ldquo;This is not a product. It is a research program with
-            civilisational implications.&rdquo;
+            A research programme with civilisational stakes
           </p>
         </footer>
       </div>

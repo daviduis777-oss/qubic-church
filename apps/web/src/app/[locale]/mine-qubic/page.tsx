@@ -12,7 +12,7 @@ import { SITE_URL } from '@/lib/books'
 
 const TITLE = 'How to mine Qubic: the field guide'
 const DESC =
-  'A practical guide to Qubic mining under useful proof of work: what a solution is, why it/s is not money, cost per solution, AVX-512 CPUs and GPUs, renting vs your own PC, wallet safety, pools, launch commands, troubleshooting and payouts.'
+  'A practical guide to Qubic mining under useful proof of work: what a solution is, why it/s measures speed, cost per solution, AVX-512 CPUs and GPUs, renting vs your own PC, wallet safety, pools, launch commands, troubleshooting and payouts.'
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -50,14 +50,14 @@ const CPUS = [
 const GPUS = [
   ['RTX 5070 Ti (16 GB)', 'Value champion', 'Best $/SOL when paired with a strong CPU. Start here.'],
   ['RTX 5090 / 4090', 'Fast, pricey', 'Top speed, top rent. Wins only while $/SOL stays high.'],
-  ['RTX 3090 / 3080', 'Old but cheap', 'Often the quiet $/SOL winner. Slow is not the same as unprofitable.'],
+  ['RTX 3090 / 3080', 'Old but cheap', 'Often the quiet $/SOL winner: slow can still pay.'],
   ['AMD Radeon', 'Bumpy', 'Works some epochs, rougher than NVIDIA/CUDA. Not for a first run.'],
 ] as const
 
 const TRIAGE = [
   ['0 SOL in the first hour on one card', 'Normal. Solutions arrive in 5 to 30 minutes, sometimes longer.', 'Nothing. Hopping rigs every few minutes only burns money.'],
   ['Shares "frozen", reseeding, all miners locked', 'Almost always pool or backend lag around an epoch change.', 'Wait. Restart the miner once if you are anxious.'],
-  ['Pool dashboard "10 behind"', 'Display lag, not lost work.', 'Cosmetic. Ignore or restart.'],
+  ['Pool dashboard "10 behind"', 'Display lag; the work is counted.', 'Cosmetic. Ignore or restart.'],
   ['Dashboard shows nothing for a worker', 'Duplicate worker name.', 'Give each rig a unique -workername.'],
   ['Many rejected or expired ant candidates', 'The CPU cannot keep up with the cards, or the host lags.', 'Stronger CPU or a better host.'],
   ['"worker package download failed"', 'Your region cannot reach the pool servers.', 'Rent a box in another country.'],
@@ -66,7 +66,7 @@ const TRIAGE = [
 const FAQ = [
   {
     q: 'What does a Qubic miner actually produce?',
-    a: 'Solutions, not hashes. Under useful proof of work the network gives your machine a small AI candidate (an "ant") to train. When the trained ant beats the one you started with, that improvement is a solution. Solutions are checked and paid, and the work feeds Aigarth.',
+    a: 'Solutions. Under useful proof of work the network gives your machine a small AI candidate (an "ant") to train. When the trained ant beats the one you started with, that improvement is a solution. Solutions are checked and paid, and the work feeds Aigarth.',
   },
   {
     q: 'Does a higher it/s mean more money?',
@@ -74,7 +74,7 @@ const FAQ = [
   },
   {
     q: 'How do I know if I am making money mining Qubic?',
-    a: 'Compute your own cost per solution: what the server costs per day divided by the solutions it made that day. Run one machine for one epoch, read the real SOL count, divide. If this week’s $/SOL is comfortably above it, continue; if not, park the rig. Treat the pool’s estimate as a forecast, not a paycheck.',
+    a: 'Compute your own cost per solution: what the server costs per day divided by the solutions it made that day. Run one machine for one epoch, read the real SOL count, divide. If this week’s $/SOL is comfortably above it, continue; if not, park the rig. Treat the pool’s estimate as a forecast.',
   },
   {
     q: 'Why is $/SOL so high at the start of an epoch?',
@@ -227,7 +227,7 @@ export default async function MineQubicPage(props: { params: Promise<{ locale: s
             at the end.
           </li>
           <li>
-            <strong>it/s</strong> (iterations per second): how fast your card trains. Speed, not money.
+            <strong>it/s</strong> (iterations per second): how fast your card trains. It measures speed; money comes from solutions.
           </li>
           <li>
             <strong>SOL</strong> and <strong>$ per SOL</strong>: a solution, and roughly what one is worth right now.
@@ -265,9 +265,9 @@ export default async function MineQubicPage(props: { params: Promise<{ locale: s
           it, keep going. If not, park the rig: rental billing is per minute, so testing is nearly free.
         </Note>
         <p>
-          Mining Qubic is not a reliable daily paycheck. You are betting you will end up holding more QUBIC than if you
+          Mining Qubic pays unevenly. You are betting you will end up holding more QUBIC than if you
           had bought it, and that Aigarth pays off in the long run. Some epochs you win that bet, some you don&rsquo;t.
-          Size it like a bet, not a salary.
+          Size it like a bet.
         </p>
 
         <H2 id="cheap" n="04 · the complaint that won’t die">Does cheap hardware earn the same as a monster?</H2>
@@ -428,7 +428,7 @@ sleep 4 && tail -n 20 miner.log`}
 
         <H2 id="paid" n="11 · the waiting game">When do I actually get paid?</H2>
         <p>
-          In <strong>QUBIC</strong>, at the end of the epoch, to your address. Not in dollars, not daily. An epoch that
+          In <strong>QUBIC</strong>, at the end of the epoch, to your address. Once a week. An epoch that
           closes on Wednesday usually pays the following Wednesday or Thursday, sometimes Friday. If the revenue tab seems
           to &ldquo;lose&rdquo; the epoch that just closed, the calculation is not finished yet; it comes back.
         </p>
@@ -439,7 +439,7 @@ sleep 4 && tail -n 20 miner.log`}
 
         <H2 id="rent" n="12 · odds and ends">Phones, and the rent-vs-buy argument</H2>
         <p>
-          <strong>Android mining</strong> exists and comes and goes with the epoch cycle. Fun to run, not a strategy.
+          <strong>Android mining</strong> exists and comes and goes with the epoch cycle. Fun to run; real solutions come from the hardware in section 06.
         </p>
         <p>
           <strong>&ldquo;Why rent at all? I would rather buy the coin.&rdquo;</strong> Both sides are right. Renting out
@@ -453,10 +453,10 @@ sleep 4 && tail -n 20 miner.log`}
         <p>
           Anna is the reference solver for Aigarth, the system the mining is training. Right now she is being optimized,
           not maxed out: versions move, modes change from epoch to epoch, and the target is a model that generalizes
-          instead of bluffing. The network is not asking for maximum brute force yet.
+          over bluffing. For now the network asks for careful optimization over brute force.
         </p>
         <p>
-          So the winning move today is not to throw money at raw power for a thin $/SOL. It is to be built and ready: the
+          So the winning move today is to be built and ready: the
           AVX-512 CPU, the combo launch, the right host, a $/SOL number you actually know, and a workflow that is
           reflexive. When the phase flips, the people who used the quiet window to prepare point tuned power at it from
           the first hour.
@@ -476,7 +476,7 @@ sleep 4 && tail -n 20 miner.log`}
           {[
             ['Setup order (once)', 'Wallet → seed on paper → copy 60-letter address → AVX-512 CPU + NVIDIA card → unique worker name → launch detached → measure on the dashboard.'],
             ['Combo launch', 'nohup ./qubjetski-Client -wallet YOUR_ADDRESS -workername QC-a -gpu -cpu -start > miner.log 2>&1 &'],
-            ['Rules that keep money', '$/SOL, not it/s. Cost per solution = rent ÷ solutions. Start-of-epoch spikes are a mirage; dilution is real. CPU must be AVX-512. A 5070 Ti with a strong CPU beats a 4×5090 on $/SOL.'],
+            ['Rules that keep money', 'Judge by $/SOL. Cost per solution = rent ÷ solutions. Start-of-epoch spikes are a mirage; dilution is real. CPU must be AVX-512. A 5070 Ti with a strong CPU beats a 4×5090 on $/SOL.'],
             ['Health checks', 'tail -f miner.log · pgrep -f qubjetski (exactly one) · pkill -f qubjetski · nvidia-smi'],
             ['Don’t panic', '0 shares in the first hour is fine · frozen at rollover is backend lag · blank dashboard is a duplicate worker name · payout about a week later · miner idles between epochs on purpose.'],
             ['Safety', 'The 55-letter seed goes nowhere but the official wallet. Pools and hosts only need the 60-letter address.'],
