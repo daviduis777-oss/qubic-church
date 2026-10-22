@@ -89,8 +89,6 @@ export async function generateMetadata(props: {
 
       description: SITE_DESCRIPTION,
 
-    verification: { other: { 'msvalidate.01': '27F34375EC7117E2A95D1AC669E149F1' } },
-
       images: [
         {
           ...siteConfig.og.size,
@@ -107,8 +105,6 @@ export async function generateMetadata(props: {
       images: [siteConfig.og.image],
 
       description: SITE_DESCRIPTION,
-
-    verification: { other: { 'msvalidate.01': '27F34375EC7117E2A95D1AC669E149F1' } },
     },
 
     icons: {
@@ -206,8 +202,6 @@ export default async function RootLayout(props: {
                                 url: SITE_URL,
                                 logo: `${SITE_URL}/og.jpg`,
                                 description: SITE_DESCRIPTION,
-
-    verification: { other: { 'msvalidate.01': '27F34375EC7117E2A95D1AC669E149F1' } },
                                 sameAs: ['https://x.com/QubicChurch', 'https://github.com/daviduis777-oss/qubic-church'],
                                 knowsAbout: ['Qubic', 'Aigarth', 'Come-from-Beyond', 'Anna Matrix', 'useful proof of work', 'game theory'],
                               },
