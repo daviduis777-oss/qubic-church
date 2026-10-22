@@ -168,7 +168,7 @@ export function QortexControls({
           <div className="relative flex-1 sm:flex-initial">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
             <Input
-              placeholder="ID or seed..."
+              placeholder="ID…"
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value)

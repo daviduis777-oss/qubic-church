@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { jsonLd } from '@/lib/json-ld'
 import Link from 'next/link'
 import { setRequestLocale } from 'next-intl/server'
 import { SITE_URL } from '@/lib/books'
@@ -31,7 +32,7 @@ export default async function ArticlesPage(props: { params: Promise<{ locale: st
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 pb-24 pt-10 sm:px-6 md:pt-16">
-      <script dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} type="application/ld+json" />
+      <script dangerouslySetInnerHTML={{ __html: jsonLd(ld) }} type="application/ld+json" />
       <header className="grid gap-6 border-b border-border pb-12 md:grid-cols-[1fr_auto] md:items-end">
         <div>
           <p className="eyebrow text-gold">Articles · by TesserAI · July to October 2026</p>

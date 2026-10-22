@@ -118,12 +118,12 @@ export async function GET() {
     }
 
     return NextResponse.json(
-      { data: null, message: 'No predictions yet. Run ORACLE_PROPHECY.mjs to start predicting.' },
+      { data: null, message: 'No predictions have been published yet.' },
       { status: 200, headers: { 'Cache-Control': 'public, max-age=15' } }
     )
   } catch (error) {
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to read predictions' },
+      { error: 'Failed to read predictions' },
       { status: 500 }
     )
   }

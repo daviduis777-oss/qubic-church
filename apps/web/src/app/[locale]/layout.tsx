@@ -1,4 +1,5 @@
 import { setRequestLocale } from 'next-intl/server'
+import { jsonLd } from '@/lib/json-ld'
 import { NextIntlClientProvider } from 'next-intl'
 import type { Metadata, Viewport } from 'next'
 
@@ -196,7 +197,7 @@ export default async function RootLayout(props: {
                       </a>
                       <script
                         dangerouslySetInnerHTML={{
-                          __html: JSON.stringify({
+                          __html: jsonLd({
                             '@context': 'https://schema.org',
                             '@graph': [
                               {

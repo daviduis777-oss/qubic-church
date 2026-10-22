@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { jsonLd } from '@/lib/json-ld'
 import Image from 'next/image'
 import Link from 'next/link'
 import { setRequestLocale } from 'next-intl/server'
@@ -47,7 +48,7 @@ export default async function BooksIndex(props: { params: Promise<{ locale: stri
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 pb-24 pt-10 sm:px-6 md:pt-16">
-      <script dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} type="application/ld+json" />
+      <script dangerouslySetInnerHTML={{ __html: jsonLd(ld) }} type="application/ld+json" />
       <header className="border-b border-border pb-10">
         <p className="eyebrow text-gold">The library · by QC · free</p>
         <h1 className="mt-3 font-display text-7xl leading-[0.85] md:text-9xl">Books</h1>

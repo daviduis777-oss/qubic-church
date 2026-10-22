@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { jsonLd } from '@/lib/json-ld'
 import Link from 'next/link'
 import { setRequestLocale } from 'next-intl/server'
 import { SITE_URL } from '@/lib/books'
@@ -184,7 +185,7 @@ export default async function MineQubicPage(props: { params: Promise<{ locale: s
 
   return (
     <div className="mx-auto w-full max-w-3xl px-4 pb-24 pt-10 sm:px-6 md:pt-16">
-      <script dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} type="application/ld+json" />
+      <script dangerouslySetInnerHTML={{ __html: jsonLd(ld) }} type="application/ld+json" />
 
       <header>
         <p className="eyebrow text-gold">Mining desk · field guide · useful proof of work</p>

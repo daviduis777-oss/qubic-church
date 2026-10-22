@@ -1,4 +1,6 @@
 {
+  "simulated": true,
+  "note": "Configuration of a simulation. Agent names are personas for a scenario model; nothing here is a real statement.",
   "agent_configs": [
     {
       "active_hours": [
