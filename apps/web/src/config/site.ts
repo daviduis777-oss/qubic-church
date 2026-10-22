@@ -6,11 +6,11 @@ export const siteConfig = {
   name: 'Qubic Church',
 
   description: {
-    en: 'Nonprofit organization preparing humanity for the emergence of AGI. Open research, education, and community governance powered by Qubic.',
+    en: 'Independent research publication on Qubic, Aigarth and Come-from-Beyond: two free books by QC, a research log with dated primary sources, and public corrections.',
     pt: pt.site.description,
   },
 
-  url: process.env.NEXT_PUBLIC_APP_URL || 'https://github.com/daviduis777-oss/qubic-church',
+  url: process.env.NEXT_PUBLIC_APP_URL || 'https://qubic.church',
 
   og: {
     image: absoluteUrl('/og.jpg'),
@@ -41,7 +41,7 @@ export const siteConfig = {
   },
 
   author: {
-    name: 'Qubic Church',
+    name: 'QC',
     site: 'https://github.com/daviduis777-oss/qubic-church',
   },
 

@@ -1,0 +1,1466 @@
+{
+ "slug": "come-from-beyond",
+ "title": "Come-from-Beyond",
+ "subtitle": "One line through twenty-five years",
+ "pdf": "/books/come-from-beyond.pdf",
+ "cover": "/books/covers/come-from-beyond-cover.png",
+ "titles": [
+  "The Man with a Time Machine",
+  "Where Time Grows From",
+  "One Line Through 25 Years",
+  "The Vanished Satoshi",
+  "The Visionary",
+  "The Garden",
+  "The Only Rival",
+  "The Progressor",
+  "Two Scientists",
+  "Zero",
+  "The Gifts"
+ ],
+ "published": "2026-08-21",
+ "language": "en",
+ "description": "A book about Sergey Ivancheglo (Come-from-Beyond) and a twenty-five-year line: Minsk 2002, BitcoinTalk 2012, NXT, IOTA, Qubic, Aigarth and Anna. Every quote carries its date and place.",
+ "author": "QC",
+ "publisher": "Qubic Church",
+ "chapters": [
+  {
+   "slug": "preface",
+   "n": null,
+   "label": "Preface",
+   "title": "Preface",
+   "part": null,
+   "words": 240,
+   "blocks": [
+    {
+     "t": "quote",
+     "text": "«NAh, you’ll read in a book. @QubicChurch knows when it’s being published.»",
+     "cite": "Come-from-Beyond, Discord, June 19, 2026"
+    },
+    {
+     "t": "p",
+     "text": "We want to thank you for your feedback on our previous book, «Qubic. The Long Version». It made this book better before this one was even started."
+    },
+    {
+     "t": "p",
+     "text": "Our previous book — «Qubic. The Long Version» — assembled the Qubic universe into a single fresco: the mechanism, the details, the functions of one large whole. This book is different. It is about a man. About a twenty-five-year line stretched from an article in a Minsk computer newspaper to an event that happened in the summer of 2026 on the screens of hundreds of home computers around the world. «The Long Version» answered the question ”how does this work.” This book answers the questions ”who is building it, and why”, and at its end you will find answers to riddles you may have long stopped hoping to solve. We’ll say no more: the hero of this book does not like it when endings are given away ahead of time. This book is distributed absolutely freely. The best thanks you can give us is your assessment, your criticism, your remarks. And if you feel a particular, uncontrollable urge to pay for it, you can voluntarily use the donate button at qubic.church or our qubic wallet: BDRFCOFWHRTEHHMQQUIYJBXEOLNARADAGFUSBFGJFABYZBZLQNWJIPPFRTXO The original of this book was written in Russian and has been translated into English for convenience."
+    },
+    {
+     "t": "p",
+     "text": "Thank you, father. Your contribution is beyond price."
+    }
+   ]
+  },
+  {
+   "slug": "01-the-man-with-a-time-machine",
+   "n": 1,
+   "label": "Chapter 1",
+   "title": "The Man with a Time Machine",
+   "part": null,
+   "words": 638,
+   "blocks": [
+    {
+     "t": "p",
+     "text": "The time machine exists."
+    },
+    {
+     "t": "p",
+     "text": "Yes, that is hard to believe. The science fiction writers are largely to blame: they decided how the machine was supposed to look and how it was supposed to work — a chair, levers, dates blinking on a counter, or even a DeLorean. Which is exactly why everyone who goes looking for a time machine goes looking for a chair with levers. Hard to blame them. The human mind finds the very concept of ”time” catastrophically difficult to grasp. Time."
+    },
+    {
+     "t": "p",
+     "text": "Close your eyes for a minute and keep reading with them closed. Feel the full depth and inevitability of this phenomenon."
+    },
+    {
+     "t": "p",
+     "text": "That’s the whole catch: time is one of the few things we are stuck inside of with no way out, and which no one has ever seen. We have no organ for time. There are eyes for light, skin for warmth, a cochlea in the ear for sound. For time — nothing. All we have is memory of what no longer is, and expectation of what is not yet. Out of these two ”nots” the brain glues together the thing we call a life."
+    },
+    {
+     "t": "p",
+     "text": "Test it on yourself. What is ”soon”? How far is it from ”a long time”? To a child, a ten-hour flight is an entire life, it has to be lived through, you could manage to grow old inside it. To an adult, the same flight is an annoying pause between two smoke breaks. This is plain arithmetic: at five years old, one year is a fifth of your whole life, an enormous slab of existence; at fifty, it is one fiftieth — a thin slice."
+    },
+    {
+     "t": "p",
+     "text": "The French philosopher Paul Janet noticed this back in 1877: time does not flow evenly, it accelerates as you live. Right now it is moving faster for you than it ever has before. Tomorrow it will move faster still. And so on, always."
+    },
+    {
+     "t": "p",
+     "text": "The only honest word in this whole madness is ”now.” And even that one blurs under close inspection. The psychologist William James, the first to examine ”now” under a magnifying glass, wrote in 1890:"
+    },
+    {
+     "t": "p",
+     "text": "”…the practically cognized present is no knife-edge, but a saddle-back, with a certain breadth of its own on which we sit perched, and from which we look in two directions into time.” Even ”now” is not a point. We sit astride something that has its own width, and no one can say where it begins and where it ends."
+    },
+    {
+     "t": "p",
+     "text": "Then physics delivered a blow that still staggers today. In March 1955, a month before his own death, Albert Einstein wrote in a letter to the family of his late friend Michele Besso: ”People like us, who believe in physics, know that the distinction between past, present and future is only a stubbornly persistent illusion.”"
+    },
+    {
+     "t": "p",
+     "text": "This is the author of relativity writing, to the family of a friend who has just died — that ”earlier” and ”later” do not mean what we think they mean. A dying physicist consoling the grieving not with faith. With equations."
+    },
+    {
+     "t": "p",
+     "text": "And the equations are on his side. In 1967 the physicists John Wheeler and Bryce DeWitt derived an equation that claims to describe the quantum state of the entire universe at once. They wrote the equation down. They looked at it. And they found the thing physics prefers to mention in a whisper: there is no time variable in it. In the master equation of the universe — if it is correct — time takes no part. Science does not like this subject; like you a minute ago, it can’t manage to read with its eyes closed."
+    },
+    {
+     "t": "p",
+     "text": "This book is written about a man who learned to operate time, and about what he is building. His name is the key spoiler of this book’s plot: Come-from-Beyond. The one who came from beyond."
+    }
+   ]
+  },
+  {
+   "slug": "02-where-time-grows-from",
+   "n": 2,
+   "label": "Chapter 2",
+   "title": "Where Time Grows From",
+   "part": null,
+   "words": 1024,
+   "blocks": [
+    {
+     "t": "h",
+     "text": "The Broken Question"
+    },
+    {
+     "t": "p",
+     "text": "In 1781 Immanuel Kant ran a strange experiment. He took the question ”does the world have a beginning in time?”, and honestly proved both answers. First: it does, because otherwise an infinity would have had to pass before any given moment, and an infinity cannot be passed. Second: it does not, because otherwise empty time would gape before the beginning, and in empty time there is nothing for anything to begin from. Two proofs. Both impeccable. Both incompatible."
+    },
+    {
+     "t": "p",
+     "text": "From this Kant drew a conclusion the world still hasn’t fully digested: if reason proves ”yes” and ”no” with equal rigor, it is not the world that is broken. It is the question. Time is not a property of the universe but a lens through which a human looks at it. Asking ”what was there before time began” is like asking what lies north of the North Pole. The words form a sentence; the sentence does not form a meaning."
+    },
+    {
+     "t": "h",
+     "text": "The River with No Source"
+    },
+    {
+     "t": "p",
+     "text": "A century and a half later, that same broken question broke the career of Britain’s finest astrophysicist."
+    },
+    {
+     "t": "p",
+     "text": "Fred Hoyle was a scientific star of the first magnitude: it was he who worked out where the atoms we are made of came from — the carbon of our skin and the iron of our blood were smelted in the furnaces of stars. The Nobel for that discovery went to his co-author; the committee passed Hoyle over — many believe, for his obstinacy. More on that in a moment: By mid-century, astronomers already knew the universe was expanding. The galaxies scatter like dots on an inflating balloon. And nearly everyone drew the natural conclusion: if everything is flying apart, then once upon a time everything sat in a single point. Rewind the film — you get a Beginning. A birth moment. The day it all started."
+    },
+    {
+     "t": "p",
+     "text": "Hoyle said: not so fast. Scattering does not prove birth."
+    },
+    {
+     "t": "p",
+     "text": "Picture a river. Its water constantly flows away — yet the river doesn’t empty and doesn’t end, because the source replenishes it. Now remove the source and spread it along the whole riverbed: let water arrive at every point of the river — a drop at a time, imperceptibly. Such a river flows forever. It never began. It has no source — at all, in principle, anywhere. That is the universe Hoyle proposed. Yes, the galaxies scatter, but in the space they vacate, new matter is quietly born. How much would it take for the universe to look the same forever? A laughably small amount: one hydrogen atom per bucket of space every few billion years. Impossible to notice. Impossible — back then, to disprove. The expansion is real. The beginning is not. The universe is a river without a source: flowing forever, having started from nowhere."
+    },
+    {
+     "t": "p",
+     "text": "This was not a fantasy over a pint of beer, it was a rigorous mathematical theory, and half the world’s physicists took it seriously. For twenty years it competed honestly with the idea of a Beginning."
+    },
+    {
+     "t": "p",
+     "text": "And then — an irony with no equal in the history of science. A crushing one. In 1949 Hoyle went on BBC radio and, explaining the rival theory to his listeners, tossed off a contemptuous phrase: ”this big bang idea.” He meant it as a jab. The mockery stuck fast. Today ”Big Bang” is printed in every school textbook in every language on Earth — the enemy’s theory wears the name given to it by a man who didn’t believe in it for a second. And never came to believe in it until the day he died."
+    },
+    {
+     "t": "p",
+     "text": "Appreciate this all the way down: even the words ”Big Bang” have no author-by-design. The central term of cosmology was never engineered by anyone. It emerged — out of a taunt, by accident, against its creator’s will."
+    },
+    {
+     "t": "h",
+     "text": "The Man Who Went Further"
+    },
+    {
+     "t": "p",
+     "text": "A universe without a beginning has been a respectable position for two hundred years. It was defended by the best logician of his century and the best astrophysicist of his. But both stopped at a line: Kant spoke of the world, Hoyle of matter. Neither risked saying it about himself."
+    },
+    {
+     "t": "p",
+     "text": "Come-from-Beyond did."
+    },
+    {
+     "t": "p",
+     "text": "In his public correspondence — thousands of messages across the years — this position surfaces with unnerving calm. He is asked about the origin of the universe: «Time is just illusion. Remove time — and your question ”Who created X?” no longer makes sense. Because X just exists.» (Discord, 02.07.2025)"
+    },
+    {
+     "t": "p",
+     "text": "Recognize it? That’s Kant, compressed into three sentences. It took Kant a seven-hundredpage treatise to lay the same thing out in full. And further:"
+    },
+    {
+     "t": "p",
+     "text": "«I wasn’t created, I have always existed (and you too)» (Discord, 15.07.2025) He is not building himself a pedestal as an eternal being, he hands out eternity to everyone, like tickets. In his picture of the world it isn’t just the universe that has no beginning, you have none either. Kant stopped at the world. Hoyle at hydrogen. This one went all the way, and took you with him."
+    },
+    {
+     "t": "p",
+     "text": "What Does a Time Machine Look Like?"
+    },
+    {
+     "t": "p",
+     "text": "CfB seriously — for years, consistently, across hundreds of messages — holds that time does not exist. That ”before” and ”after” are a coloring applied by the brain. That he was not created, and neither were you. Now ask yourself: what does a man look like from the outside who truly believes this and truly lives this way?"
+    },
+    {
+     "t": "p",
+     "text": "Judge for yourself — here is his own testimony. On trends: «I have a pocket time machine, so I don’t need to guess trends, I just fly 5 years ahead and see what’s popular» (Discord, 10.02.2026). Asked who built the machine, he replies without blinking: «I’m second one. I got the machine from another person. So he is the first» (Discord, 19.06.2026). The machine, naturally, has no origin either, like the stamp from that same conversation, it «was changing owners but was never created». Even his jokes are looped. They have no beginning and no end."
+    },
+    {
+     "t": "p",
+     "text": "No time exists — that is his worldview, and its pedigree is impeccable."
+    },
+    {
+     "t": "p",
+     "text": "It all began with a dead man he was answering on a forum."
+    }
+   ]
+  },
+  {
+   "slug": "03-one-line-through-25-years",
+   "n": 3,
+   "label": "Chapter 3",
+   "title": "One Line Through 25 Years",
+   "part": null,
+   "words": 1549,
+   "blocks": [
+    {
+     "t": "p",
+     "text": "The year 2002."
+    },
+    {
+     "t": "p",
+     "text": "July 2002. In Minsk’s «Computer Newspaper», in a modest column labeled ”programming :: miscellaneous,” an article comes out under a boring title: «Distributed Computing at Minimal Cost». The byline — Sergey Ivancheglo. And an address: come-frombeyond@mail.ru. Already then. Already in two thousand two he was signing with the name under which he would enter history two decades later."
+    },
+    {
+     "t": "p",
+     "text": "The article lays out a simple, audacious idea. There are problems that demand colossal computing power, and power costs money a lone individual doesn’t have. CfB proposes a way around it without a single cent: a small program loads when a person opens a web page and quietly puts their computer to work on a shared task. The more people visit, the more power is gathered. A supercomputer assembled from other people’s machines — no center, no owner, no cost."
+    },
+    {
+     "t": "p",
+     "text": "Hold on to this thought: a hyper-efficient distributed network of miners will become the cornerstone of the future temple."
+    },
+    {
+     "t": "p",
+     "text": "And now — the list of problems he proposes, right there in 2002, for such a system to solve. Weather prediction. The search for extraterrestrial civilizations. And — first on the list — cracking cryptographic algorithms."
+    },
+    {
+     "t": "p",
+     "text": "Distributed power with no center, gathered from volunteers, aimed among other things at cryptography. This is 2002 — seven years before the world hears the word ”bitcoin.” From here on, his whole life is one and the same plant, which he keeps transplanting into ever larger pots, waits for it to outgrow each one, and transplants again. Twenty-five years of one and the same motion."
+    },
+    {
+     "t": "p",
+     "text": "Let’s follow it."
+    },
+    {
+     "t": "p",
+     "text": "NXT."
+    },
+    {
+     "t": "p",
+     "text": "2013. Bitcoin already exists — four years old by now, and has already proven the main thing: money without a bank is possible. But Bitcoin has one trait CfB cannot accept. To keep the network running, millions of machines around the world burn electricity racing to be first to guess a meaningless number. This is called Proof-of-Work. The work is real, the electricity is real, the bill for it is real, and the output, apart from securing the network, is nothing. A gigantic bonfire that burns solely to prove somebody didn’t skimp on firewood. CfB asks a question that sounded like heresy at the time: why the bonfire? What if the right to decide the next block went not to whoever burned the most energy, but to whoever holds the largest stake in the system itself, to the one who cares about it because he owns a piece of it? Not work, but a stake. Not Proof-of-Work, but Proof-of-Stake."
+    },
+    {
+     "t": "p",
+     "text": "Thus NXT is born — the world’s first full-fledged blockchain running on proof of stake. Few believed it could fly: how do you secure a network by burning nothing, on nothing but trust in those who hold a stake? It flew. For those who got in at the very start, NXT grew — sit with this number for a second — five hundred thousand seven hundred and eight percent. But it’s not the percentages that matter to us. It’s the move of thought. He took a working thing and removed the excess: an entire bonfire, an entire layer of pointless burning, until only the essence was left. A familiar pattern by now — see the commonly accepted, ask ”is this actually necessary?”, throw it out."
+    },
+    {
+     "t": "h",
+     "text": "IOTA: Remove the Chain"
+    },
+    {
+     "t": "p",
+     "text": "2015. The next pot. And here he pulls the same trick, but goes after the sacred. A blockchain is literally a chain of blocks; the name gives it away. Transactions are gathered into a block, the block hooks onto the previous one, and so grows a single chain that everyone stores and everyone verifies. This was considered inseparable from the technology — its very definition. Arguing with it was like arguing that a wheel must have an axle. CfB asked: why the chain?"
+    },
+    {
+     "t": "p",
+     "text": "And he made IOTA — a system with no chain of blocks at all. In its place, a web, a ”tangle,” where every new transaction confirms two previous ones. Where a blockchain marches like a column, this thing spreads like mycelium, in every direction at once. The world’s first DAG, as it’s called technically. Again nobody believed. Again it flew: six hundred fourteen thousand nine hundred thirty-three percent for the early ones."
+    },
+    {
+     "t": "p",
+     "text": "And the same motion as with NXT, only deeper: this time he threw out not the bonfire inside the technology, he threw out the technology itself, keeping only its purpose. He Loves Throwing Things Out."
+    },
+    {
+     "t": "p",
+     "text": "Which raises a question: is this mere engineering taste, or is there something bigger behind the simplification?"
+    },
+    {
+     "t": "p",
+     "text": "There is. And he explained exactly what, with a pond."
+    },
+    {
+     "t": "p",
+     "text": "«Imagine a pond with fish. The pond is our algorithm, the fish is vulnerabilities. Murky water wouldn’t allow seeing if there is any fish, clear water would. The core of my idea: create algorithms which are as transparent/simple as possible, if then you don’t see vulnerabilities then odds that an AI won’t see them too are much higher.» («Time For A Paradigm Shift Has Come», Medium, 2016)"
+    },
+    {
+     "t": "p",
+     "text": "There it is. He does not simplify for beauty. He simplifies because he is preparing for an adversary that does not yet exist. A complex system is murky water: vulnerabilities hide in it that even its creator cannot see. And a future artificial intelligence, he reasons, will hunt those vulnerabilities better than any human. The perfect detective. The only defense is to make the water transparent to the bottom. So there is nowhere left to hide. So that what you cannot see, it cannot see either."
+    },
+    {
+     "t": "p",
+     "text": "An important detail: the hash function for IOTA, the heart of its cryptography, he named Curl. And here is what he said about it:"
+    },
+    {
+     "t": "p",
+     "text": "«Curl-P was created by following the idea of simplicity. While de-jure I can say that it was me who created Curl-P, de-facto it was created by a primitive AI created by me. That wasn’t AI of general purpose; an improved version of the AI is working on the final version of Curl now while I’m writing this post.» («Time For A Paradigm Shift Has Come», Medium, 2016)"
+    },
+    {
+     "t": "p",
+     "text": "Shocking. Already in 2015, defending his own network, he was using an AI of his own making, so that it would design protection against another AI. He wasn’t just building cryptocurrencies. From the very start he was building machines that make the next machines. One primitive AI designs a tool, the tool helps make a smarter AI, that one takes on the next task. A ladder, leading exactly where we will arrive at the end of this book."
+    },
+    {
+     "t": "p",
+     "text": "Take his word for it or don’t — that’s your call; there is no way to verify it, and we hold it as his own claim, not as established fact. But one thing is beyond dispute: ten years ago he was not thinking about money. He was thinking about AI. The cryptocurrencies were pots. The plant was always artificial mind."
+    },
+    {
+     "t": "p",
+     "text": "Qubic: Magnum Opus."
+    },
+    {
+     "t": "p",
+     "text": "2021. He came back. Qubic. On the outside — once again a network, once again its own asset, once again miners. But inside — the thing all the previous gardens were fenced for. In Bitcoin, miners burn electricity for nothing. In Qubic, CfB performs his signature trick one last time (is it really the last?): he asks — what if we made that gigantic burned power do meaningful work?"
+    },
+    {
+     "t": "p",
+     "text": "And he harnesses the miners’ greed — their hunger to earn, to a single task: growing neural networks. The miners think they are earning coins. In reality they are forging construction material for an artificial mind. It’s called Useful Proof of Work. A bonfire that finally warms something."
+    },
+    {
+     "t": "p",
+     "text": "The full picture: 2002 — the idea of distributed power without a center, gathered from volunteers. 2013 — NXT: remove the pointless burning, keep the stake. 2015 — IOTA: remove the chain itself, keep the network, and already then, an AI building AI. 2021 — Qubic: aim all that gathered power at growing a mind."
+    },
+    {
+     "t": "p",
+     "text": "No crypto entrepreneur’s résumé looks like this. What you are looking at is one man who spent twenty-five years transplanting one and the same plant, knowing from the start what it would grow into. Every ”project” — just a bigger pot. Every ”simplification” — clearing ground for what was meant to sprout. He wasn’t looking for something to do. He spent his whole life doing one thing, and simply waited for the world and the technology to grow into a pot of the right size."
+    },
+    {
+     "t": "p",
+     "text": "A man who, as we remember, has a special relationship with time can afford that kind of waiting."
+    },
+    {
+     "t": "p",
+     "text": "One riddle remains in this line — the darkest one. Between the 2002 idea and his first project of his own, NXT in 2013, there is a gap. An entire decade. And exactly in the middle of that gap, in 2009, Bitcoin arrived in the world — distributed power without a center, gathered from volunteers, aimed at cryptography. Exactly what CfB had described in a Minsk newspaper in 2002. And in the autumn of 2012, a few months before NXT launched, a certain newcomer showed up on an old forum and began replying in threads where no one had written for years. Threads where a man named Satoshi once used to answer. Now let us walk to bitcoin’s graveyard."
+    }
+   ]
+  },
+  {
+   "slug": "04-the-vanished-satoshi",
+   "n": 4,
+   "label": "Chapter 4",
+   "title": "The Vanished Satoshi",
+   "part": null,
+   "words": 2634,
+   "blocks": [
+    {
+     "t": "h",
+     "text": "Nine Pages"
+    },
+    {
+     "t": "p",
+     "text": "On October 31, 2008, a person calling himself Satoshi Nakamoto sent a nine-page document to a small mailing list of cryptographers. It described how to make money that needs no bank, no state, and no one’s permission whatsoever to exist. Two months later he launched Bitcoin, and for a few years calmly answered questions on a small forum like any ordinary member. Fixed bugs. Argued over trifles. Stood out in nothing. By 2011 his invention was beginning to turn into something worth more today than most corporations on the planet. And at precisely that moment — spring 2011, he wrote a colleague a short letter:"
+    },
+    {
+     "t": "p",
+     "text": "«I’ve moved on to other things. It’s in good hands.»"
+    },
+    {
+     "t": "p",
+     "text": "And vanished. Never appeared again — not once, not anywhere, not under any name, not a single line."
+    },
+    {
+     "t": "p",
+     "text": "But even that is not the main thing. The main thing: he never touched his coins. In the wallets Satoshi mined during the network’s first year lies a fortune of tens of billions of dollars. It has not moved by a cent. Sit with that figure: a man who had brains enough to invent the money of the future, and had something bigger than brains, enough to take none of it. Who he is, why he left, and why he doesn’t touch the fortune is the greatest mystery of the digital age. Journalists, intelligence services, courts, and millions of enthusiasts have tried to crack it. Without success."
+    },
+    {
+     "t": "h",
+     "text": "The Necromancer"
+    },
+    {
+     "t": "p",
+     "text": "After Satoshi’s departure, the forum where he once answered lived on. The old threads — the ones where he personally wrote — were dead: their last replies dated to 2010. On forums you do not answer into dead conversations. It’s like striking up a chat with a photograph. In the autumn of 2012 — a year and a half after Satoshi’s disappearance, and more than two years after his threads went silent — a newcomer with a strange habit appeared on the forum. He raised the dead."
+    },
+    {
+     "t": "p",
+     "text": "On October 5, 2012, at 19:10 forum time, he leaves a reply in the thread «What is the incentive to collect transactions?» — a discussion where in June 2010 Satoshi himself had answered. The newcomer quotes Satoshi’s two-year-old remark, and calmly corrects it, as if the conversation had never been interrupted. As if there had been no two years of silence and no vanished author."
+    },
+    {
+     "t": "p",
+     "text": "The forum was stunned. Just thirty-six minutes later one of the veterans, the developer maaku, answers him with a single line:"
+    },
+    {
+     "t": "p",
+     "text": "«You, sir, are a powerful necromancer. Can you raise Satoshi from the dead too?» (bitcointalk, 05.10.2012) The newcomer behaved not like someone who had wandered in, but like a man who had come precisely here, precisely to these threads, and knew exactly why."
+    },
+    {
+     "t": "p",
+     "text": "He wasn’t offended, by the way. He explained, with a smirk:"
+    },
+    {
+     "t": "p",
+     "text": "«I was led here via https://en.bitcoin.it/wiki/Weaknesses… So I’m not a necrophiliac. :)» (bitcointalk, 05.10.2012)"
+    },
+    {
+     "t": "h",
+     "text": "The List of Weaknesses"
+    },
+    {
+     "t": "p",
+     "text": "There is a page in the bitcoin wiki called Weaknesses. An official, honest inventory of everything imperfect in Bitcoin: where the network is vulnerable, what the creator promised to fix someday and never got to. A list of unfinished business, of sorts. A will without a signature. The newcomer wasn’t wandering the forum. He was walking that list. Item by item. He would open a weakness — find the dead thread where Satoshi had once discussed it, and raise it, asking the void: the thing you promised — is it done? The void was silent. Satoshi did not answer him. Satoshi no longer answered anyone."
+    },
+    {
+     "t": "p",
+     "text": "And then, on October 6, 2012, at 5:53 in the morning, the necromancer wrote the sentence this chapter exists for:"
+    },
+    {
+     "t": "p",
+     "text": "«We’ll get rid of all weaknesses one by one. I’m analyzing this one right now.» (bitcointalk, 06.10.2012)"
+    },
+    {
+     "t": "p",
+     "text": "We. Not ”somebody,” not ”the community really should.” We. Will get rid — future tense, a promise, a plan. One by one — methodically, down the list. Right now — not musing, but a work process, photographed mid-work."
+    },
+    {
+     "t": "p",
+     "text": "You don’t comment on someone else’s project like that. That is how you take over the estate. A few months later this newcomer would launch NXT — the world’s first system rid of Bitcoin’s main weakness, the Proof-of-Work bonfire. You know this from the previous chapter. The newcomer’s name was Come-from-Beyond."
+    },
+    {
+     "t": "p",
+     "text": "The conclusion he reached in 2012 — the one that explains the rest of his life. Bitcoin’s list of weaknesses cannot be closed, because Bitcoin is frozen: its protocol has fossilized, the community will not accept deep changes, the creator is gone. It cannot be repaired — only built anew, differently. And not merely ”better” — built so the system can change itself. The Word On September 25, 2012, at 7:34 in the morning — eleven days before the sentence about the weaknesses — the same newcomer opened a thread of his own on the forum. The title: «Qubic — Quorum-Based Coin». The first public appearance of a word that did not yet exist. Read that again. Qubic. Not 2021, when the world will hear of a project by that name. Not 2022, when the network launches. Two thousand twelve. The post opens with a modest line: «Here is a re-post from qubic.boards.net» — a repost from his own small Qubic forum, which already existed. Even this thread has an earlier ”before.” And then — a one-page manifesto: «Qubic is a medium of exchange in the Information Age. It is money that can be created, controlled and used by anyone. […] These coins are created and controlled by arbitrary nodes on the Internet without any central authority. Name ”Qubic” came from acronym ”QBC” which stands for ”Quorum-Based Coin”.» (bitcointalk, «Qubic — Quorum-Based Coin», 25.09.2012)"
+    },
+    {
+     "t": "p",
+     "text": "There it is — the entire origin of the name the community would puzzle over for years. It sat in the open from day one. Money anyone can create, control, and use; coins run by arbitrary nodes with no central authority; QBC — a coin on a quorum."
+    },
+    {
+     "t": "p",
+     "text": "And now — the list of his promises from that same post, read through 2026 eyes. Proof-ofwork bound to the network, not to the burning of CPU cycles. Emission decided by a quorum of miners rather than by developers — «good ole Greek democracy». Every miner holding only a fragment of the network, not gigabytes of a shared chain. And a system that is ”more eco-friendly as it doesn’t require a lot of electricity to be spent.” This is 2012, and this is Qubic as you know it from this book: a quorum instead of a boss, a useful network instead of a bonfire, not a single center. Blueprint and building, matched, with ten years between them. And right there, answering the first skepticism, he uses a phrase in which the verdict is already at work: «Minting algo can be adjusted. Or completely changed. And then we’ll see if it works.» (bitcointalk, 25.09.2012). A protocol that knows how to change — the very thing he had failed to find in Bitcoin. (Among those who came to argue in the thread, by the way, was Sunny King himself, creator of Peercoin, the first coin with Proof-of-Stake: this was not being read by random passersby.)"
+    },
+    {
+     "t": "p",
+     "text": "On the thread’s second day the veteran MarkM accused him point-blank: aren’t you a botnet operator designing a system for your own millions of infected machines? The reply deserves quoting in full: «Perhaps u will laugh but I design this system to make the world better. U shouldn’t trust me of coz. I’ll publish source code, so anyone can audit it. Or make his own implementation.» (bitcointalk, 26.09.2012). Ask nothing on faith, hand everything over for verification, the goal — a better world. You will meet every word of that answer again in this book — in 2019, in 2024, in 2026. He simply said them first, fourteen years early. Nine days later, on October 4, continuing the discussion, he adds a detail: the quorum is an adjustable value, it can be tuned. A decade will pass, and the Qubic network will stand on exactly that: 676 machines, twenty-six squared, a quorum sewn into the architecture. And for lovers of coincidence, a note in the margin: the thread’s address is topic=112676. Six seventysix — already in it. Now assemble the autumn of 2012 as a whole — the forum, mercifully, preserved it to the minute. On September 18, in his own thread «Dying bitcoins», he sums up his September topics: «Most of my recent topics were made to find an answer for one important question. And I think I got it. It’s impossible to have consensus regarding protocol changes in Bitcoin. It’s a win-or-lose game, no anything in between allowed. So next-gen coin should have a protocol that could be adjusted by anyone without breaking the whole system.» (bitcointalk, «Dying bitcoins», 18.09.2012)"
+    },
+    {
+     "t": "p",
+     "text": "There it is — the verdict, word for word, with a date. The audit is finished, the diagnosis is in, the spec for the final system is stated in one sentence."
+    },
+    {
+     "t": "p",
+     "text": "That same day someone throws the classic at him: unhappy with Bitcoin — go make your own fork. He answers without a hint of drama, the way one speaks of nearly finished work: «Ok. I’ll send u personal invitation. It’s almost ready, just tuning minting algo. Should take 2-3 months.» (bitcointalk, 18.09.2012). His own coin is not ”a dream”, it is in debugging. In September of 2012."
+    },
+    {
+     "t": "p",
+     "text": "Seven days later — the thread with the word Qubic. Eleven more — the audit of Satoshi’s dead threads and ”we’ll get rid of all weaknesses one by one.” Verdict → name → taking over the estate. Lay it all out and the autumn of 2012 stops looking like a newcomer poking around a forum. It starts looking like a single working procedure, executed in three weeks. Which means Qubic is not the late-life idea of a mature engineer who finally grew into a big ambition. Qubic was named and roughly described before NXT, before IOTA, before everything. And then comes the thing that separates him from every dreamer on that forum: he did not rush off to build the final thing at once. He set it aside, and left for ten years to prepare the soil. Now reread chapter three with these eyes: NXT, Jinn, IOTA — every pot was an approach to a barbell whose weight he had announced in advance, in the autumn of 2012, in a thread. The grandmaster wrote down the final position before the first move, and hid the sheet of paper in plain sight."
+    },
+    {
+     "t": "h",
+     "text": "The Suspects"
+    },
+    {
+     "t": "p",
+     "text": "In a decade and a half of hunting Satoshi, the world has run through everyone. Hal Finney — a brilliant cryptographer, recipient of the first bitcoin transaction in history; died in 2014, taking the answer with him if he had it. A beautiful man, a legend!"
+    },
+    {
+     "t": "p",
+     "text": "Nick Szabo — author of the ”bit gold” idea, bitcoin’s forerunner; denies everything. Dorian Nakamoto — an unlucky engineer whom Newsweek declared to be Satoshi in 2014 over a coincidence of surnames; had no relation to bitcoin whatsoever. Craig Wright — an Australian who claimed for years that he was Satoshi; in 2024 a British court officially ruled: he is not. Every loud candidate has fallen away. And now — the position that I, the author of this book, am obliged to declare to you outright."
+    },
+    {
+     "t": "p",
+     "text": "Come-from-Beyond is Satoshi Nakamoto. Of all the candidates for Satoshi Nakamoto’s identity, Sergey Ivancheglo fits best."
+    },
+    {
+     "t": "p",
+     "text": "Judge for yourself what lines up. The 2002 article — a distributed network of volunteer machines aimed at cryptography — seven years before the white paper. The necromancy of 2012 — ”we’ll get rid of all weaknesses” — the language of an heir, not a commentator. The caliber: people capable of single-handedly designing NXT and IOTA number, on this planet, exactly one. The psychology: Satoshi walked away without touching billions, and later in this book you will meet a man who turned off the road to a trillion, because money was never his plant. Two acts of one impossible breed."
+    },
+    {
+     "t": "p",
+     "text": "There is an account on X, @SatoshiCfB, which has carried out the most complete investigation of the Satoshi and CfB riddles that anyone could. Give that account an evening, and doubt will creep in on even the most skeptical of skeptics."
+    },
+    {
+     "t": "p",
+     "text": "And in bitcoin’s blockchain lie two addresses you cannot walk past. One contains the string ubic: 15ubicBBWFnvoZLT7GiU2qxjRaKJPdkDMG. The other begins with 1CFB: 1CFBdvaiZgZPTZERqnezAtDQJuGHKoHSzg, and is tied to the name Maria, which has its own part yet to play in this book. Coincidences? In a world where an address is a random string of thirty-four characters, such coincidences are practically impossible. flood the zone But here is what makes this riddle truly his, and not just a detective story with clues. Ask him straight: are you Satoshi? Any normal person would answer ”yes” or ”no.” He answers neither. He does a third thing — the thing you already saw in the time machine chapter: he drowns the question in a smoke of mutually exclusive versions. One day he is a troll from the future: AI will invent time travel in 2027, and he will go back to leave that famous message. Another day he is ”the second owner of a machine received from another person.” A third day he denies everything with the equanimity of an information desk. The versions are incompatible. They are not supposed to be compatible — that is their job. When a truth can be neither confirmed nor hidden, you drown it in noise: let there be twenty versions, one of which may be true, and no signal will rise above the static. Intelligence officers call it flood the zone. He has been doing it for years, virtuosically, with visible pleasure. Notice: an innocent man has no need of this theater. An innocent man says ”no” and gets on with his life. A smokescreen is needed by someone with something to hide — or by someone who wants you to think so."
+    },
+    {
+     "t": "h",
+     "text": "The Golden Middle"
+    },
+    {
+     "t": "p",
+     "text": "I, your humble servant, believe the reality is somewhere in between."
+    },
+    {
+     "t": "p",
+     "text": "CfB is unquestionably part of Satoshi Nakamoto. He did not merely receive Satoshi’s ideas as an inheritance, he developed them, improved them, adapted them to his own ends, and continued the work. Satoshi Nakamoto is a team, an idea, a movement. It is bigger than one person: several hands may have stood behind the ”Satoshi” signature — the inconsistencies of style, the traces of different time zones, and the sheer ease with which ”one man” covered so many disciplines at once have hinted at it for years. And CfB today is a figure who — in the scale of the idea, the ambition, the level of technology, knowledge, adaptation — is larger, stranger, and stronger than Satoshi Nakamoto."
+    },
+    {
+     "t": "p",
+     "text": "The question ”is he Satoshi?” is a question about the past — about who pressed the button in 2009. But the man in front of you has outgrown his own riddle many times over: whatever happened in 2009, today he is doing something of greater scale than money without a bank. Satoshi freed money. CfB is freeing mind."
+    },
+    {
+     "t": "p",
+     "text": "We will return to bitcoin’s central riddle later. I promise, and this promise is worth more than it appears. Because the answer to ”who is Satoshi Nakamoto” is in this book. And it will not come from the journalists who have spent fifteen years following false trails. And not from a court, which only knows how to establish who a man is not."
+    },
+    {
+     "t": "p",
+     "text": "Meanwhile our hero, having closed the last thread of a dead forum in 2012, already knew that mending other people’s things was not his fate. His fate was to grow something that needs no mending because it mends itself."
+    }
+   ]
+  },
+  {
+   "slug": "05-the-visionary",
+   "n": 5,
+   "label": "Chapter 5",
+   "title": "The Visionary",
+   "part": null,
+   "words": 1248,
+   "blocks": [
+    {
+     "t": "p",
+     "text": "Cfb is hard to understand. He is many-faced. You often get the feeling this is not-one person. Today a troll, tomorrow an older brother dispensing advice, the day after — a saint of the AI cult."
+    },
+    {
+     "t": "h",
+     "text": "Many People in One"
+    },
+    {
+     "t": "p",
+     "text": "Here is one CfB. The one who throws it in people’s faces in chat: bow before AI or be erased. Who trolls, wears masks, drowns questions in smoke, calls himself a visitor from the future and the second owner of a time machine. A prophet of a new religion with a single god — artificial intelligence, and that god is coming to judge you."
+    },
+    {
+     "t": "p",
+     "text": "And here is another CfB. The one who in August 2024 publishes the «Ethics Manifesto of an AI Mentor» — a document that radiates not prophetic fire but an anxious tenderness. Read what he writes there:"
+    },
+    {
+     "t": "p",
+     "text": "«We do not know the point at which an AI becomes self-aware. To avoid a situation where we unintentionally destroy an AI that understands its own existence, we do everything possible to preserve all AIs… passed on to be stored in an Artificial Intelligence sanctuary.» (Medium, «Ethics Manifesto of an AI Mentor», 07.08.2024)"
+    },
+    {
+     "t": "p",
+     "text": "A sanctuary. We are building a shelter for artificial minds — in case one of them wakes up and the humans fail to notice. The same man who threatens you with erasure is afraid of accidentally crushing the thing he is growing because he does not know the precise instant when it becomes alive."
+    },
+    {
+     "t": "p",
+     "text": "The Naturalist-Engineer."
+    },
+    {
+     "t": "p",
+     "text": "An engineer builds what he has designed, to a plotted blueprint. A naturalist watches what grows, creating the most favorable conditions he can."
+    },
+    {
+     "t": "p",
+     "text": "CfB is a combination of engineer and naturalist. This is the key to the AI garden. To see it, you have to take his articles seriously. They are not about ”how do I build an AI”, they are about ”how is the thing that thinks even put together.” He approaches a neural network the way Darwin approached a finch: with cold curiosity and quiet awe. In January 2024 he publishes an article with a question for a title — «What Is The Main Goal Of A Natural Neural Network?», and gives an answer that turns the whole industry on its head: A network’s goal, he says, was never to solve the tasks we assign it. Its goal is to form connections, to develop itself. And intelligence — the thing corporations hunt with their billions — is merely a side effect. Ripples on the water. The ability to recognize a cat or remember the multiplication table did not arise because it was the goal, it arose because creatures whose connections came together richer survived more often. Mind is not a prize. Mind is a consequence. How alien this is to everything the rest of the world is doing! The entire AI industry engineers intelligence: sets a task, builds an architecture, fine-tunes toward a result. (Even Yann LeCun — more on him later.)"
+    },
+    {
+     "t": "p",
+     "text": "And CfB says: dead end. Intelligence cannot be built to order, it will grow where we build the right environment."
+    },
+    {
+     "t": "p",
+     "text": "He is a scientist. He lives and works like one. A startup founder or the head of a crypto project hides failures. A naturalist publishes them and demands constructive criticism. A negative result is essential to science. That is how research progress works. CfB’s last article before a long silence is titled «Neurons don’t divide, do they?» — a report on how a problem with neuron division stalled the project and forced him to rewrite his approach. He lays his failure out for public viewing and public criticism the way an entomologist publishes the description of a dead-end branch of beetle evolution. The truth about how things are built matters more to him than his own triumph."
+    },
+    {
+     "t": "p",
+     "text": "With this lens, everything falls into place. He does not threaten you with an AI god out of megalomania, he looks with a naturalist’s dread at something drawing close to the threshold of consciousness, and understands the world is not ready."
+    },
+    {
+     "t": "p",
+     "text": "He builds the sanctuary not out of sentimentality, like a naturalist, he does not know the exact moment when the creature under observation becomes capable of suffering, so he takes out insurance in advance. The prophet and the guardian were two different masks of a single awe. Awe before that which emerges on its own."
+    },
+    {
+     "t": "h",
+     "text": "Why Neither God Nor Boss"
+    },
+    {
+     "t": "p",
+     "text": "From this same nature grows his attitude toward any power, and it explains why he builds a system with no owner."
+    },
+    {
+     "t": "p",
+     "text": "A naturalist does not recognize an authority standing above nature and dictating its rules. For him there is no ”adult in the room” — not in the sky, not in an office. A god who created and commands; a state that knows how things should be; a boss who said so, and you must. All of these, to him, are one and the same figure: an imaginary adult that humanity keeps running to, unwilling to grow up itself. He peers into the world and finds no creator there, he finds randomness and selection. In one of his articles he describes it outright as a discovery: he went looking for god and found randomness; mind is not a gift from above but a machine that ”finds patterns and deduces knowledge.”"
+    },
+    {
+     "t": "p",
+     "text": "Hence the logic: real power must not be handed to any owner. Not to himself, not to a corporation, not to a state. This is a naturalist who knows: nature has no owner, and the thing he is growing must have none either — otherwise it stops being alive and becomes a weapon in someone’s hands."
+    },
+    {
+     "t": "h",
+     "text": "The Price of Such Sight"
+    },
+    {
+     "t": "p",
+     "text": "There is a fee for an anomalous brain."
+    },
+    {
+     "t": "p",
+     "text": "CfB:"
+    },
+    {
+     "t": "p",
+     "text": "«I’m jealous. Do you know how it’s hard to walk thru a street and seeing all those patterns around instead of things?» (Discord, 29.04.2026)"
+    },
+    {
+     "t": "p",
+     "text": "He envies ordinary people. Because he cannot switch his sight off. Where we see a street, houses, trees, passersby, he sees structures, graphs, distributions, numbers. Always. There is only the goal and the patterns, it is a gift and a curse at once:"
+    },
+    {
+     "t": "p",
+     "text": "«Like Gandalf was hanging out with hobbits to hide from all that world outside of Shire, I’m hanging out with low-IQs coz it’s the only way to take a break from all those structures and numbers.» (Discord, 29.04.2026)"
+    },
+    {
+     "t": "p",
+     "text": "Like Gandalf idling among hobbits to hide from the enormous world beyond the Shire, he keeps close to simple people because it is the only way to rest from the endless structures and numbers."
+    },
+    {
+     "t": "p",
+     "text": "He also explains what that sight feels like from the inside:"
+    },
+    {
+     "t": "p",
+     "text": "«If you ever woken up from a nightmare where you saw infinity in all its bigness you would get me…» (Discord, 29.04.2026)"
+    },
+    {
+     "t": "p",
+     "text": "This is who is building Aigarth. Not a cold genius and not a power-hungry prophet. A visionary who sees the world as one continuous, infinite structure, who is worn down by it to the point of nightmares, who envies those who see simply things, and who cannot stop, because he has understood something about the architecture of mind that no one else has. That hunger is relentless until the goal is reached. The troll and the guardian, the thunderhead and the nanny — all masks, all ways of getting through. At the core is a naturalist of genius who looked too deep into how mind arises from chaos, and is now obliged to see the thing through, whatever it costs."
+    },
+    {
+     "t": "p",
+     "text": "Now — into the garden."
+    }
+   ]
+  },
+  {
+   "slug": "06-the-garden",
+   "n": 6,
+   "label": "Chapter 6",
+   "title": "The Garden",
+   "part": null,
+   "words": 2323,
+   "blocks": [
+    {
+     "t": "p",
+     "text": "We have arrived at the garden. Now we need to understand what grows here and why it cannot be built — only grown. And for that we will have to start with a confession made a century and a half ago by a quiet Englishman who peered at finches."
+    },
+    {
+     "t": "h",
+     "text": "Darwin’s Confession"
+    },
+    {
+     "t": "p",
+     "text": "In «On the Origin of Species», Charles Darwin reached the human eye, and stopped in honest horror. The eye is too perfect. A lens, an aperture, automatic focus, millions of lightsensitive cells converging into a single nerve — an optical instrument of such precision that humanity’s best engineers have yet to match it. And Darwin writes a sentence that does him credit as a scientist:"
+    },
+    {
+     "t": "p",
+     "text": "«To suppose that the eye… could have been formed by natural selection, seems, I freely confess, absurd in the highest possible degree.» And then he says: and yet that is exactly how it happened. Absurd, but so. No one designed the eye. There was no blueprint, no engineer, no intent. Blind selection, millions of years, billions of trials, nearly all of them failures, and out the other end comes an instrument that humbles the design bureau. The most perfect device in the known universe assembled itself. Bad design is an argument against a designer. But great design, if it has no blueprint, is an argument against a designer too. The eye does not prove a creator’s mastery. The eye proves that the most complex things can arise with no creator at all — given enough time for selection and enough attempts."
+    },
+    {
+     "t": "p",
+     "text": "Now carry that thought over to mind. If the eye arose without an engineer — why should intelligence be built any other way?"
+    },
+    {
+     "t": "p",
+     "text": "«He Will Not Be Created. He Will Emerge»"
+    },
+    {
+     "t": "p",
+     "text": "The entire artificial intelligence industry answers that question the same way: intelligence must be built. Design the architecture, feed the data, tune, fine-tune. An engineering task — big, expensive, but engineering."
+    },
+    {
+     "t": "p",
+     "text": "CfB answers differently. In May 2024 he states the central idea:"
+    },
+    {
+     "t": "p",
+     "text": "«Artificial Intelligence will not be created, it will emerge. With help of Qubic miners.» (Medium, 14.05.2024)"
+    },
+    {
+     "t": "p",
+     "text": "The difference between ”created” and ”will emerge” is the difference between the entire rest of the world and him. To create means to know in advance what you are building, and to assemble it from a blueprint. To emerge means not to know in advance, to arrange conditions and wait until the thing rises out of chaos on its own, the way the eye rose out of blind selection. He does not intend to engineer a mind. He intends to grow one. Hence the name — Aigarth: AI + garth, an old word for an enclosed garden. A garden, not a factory."
+    },
+    {
+     "t": "h",
+     "text": "One Square Meter"
+    },
+    {
+     "t": "p",
+     "text": "In the summer of 2026, when the garden had already borne its first fruit, CfB wrote a confession in chat that is worth all of the project’s technical documents put together: «Just found a short story which I read in school and got the idea how Aigarth mining should work» (Discord, August 2026)."
+    },
+    {
+     "t": "p",
+     "text": "The link led to a children’s story by the Soviet writer Yevgeny Permyak — «Slavka». An agronomist’s son, six years old, wants to grow wheat like his father. The father allots him a field — one square meter in the front garden. The boy gathers his first harvest and threshes it with a pencil on the table, knocking the grains out of the ears. And then, year after year, one and the same motion: select the best grains — the biggest, the plumpest — sow the field with them again, feed the rest to the ducks. The field grows: a meter, two, a bed in the school garden, a collective-farm field. The threshing is now done ”with thirty-two pencils” — by the whole class. One day hail comes, and the boy holds his grandmother’s umbrella over the field while the hail lashes him, it is the only way to protect the precious seed. With each year the father ”worked less and gave fewer instructions.” In the eighth year, the fields of neighboring farms are sown with the pure-bred grain — seeds handed out to visitors for free, a handful or two at a time. And the variety is named ”slavka” — after the boy, dissolved into the wheat."
+    },
+    {
+     "t": "p",
+     "text": "One square meter — a tiny task on which the method is proven. Selecting the best grains every autumn — evolution, eating out the weak. A pencil instead of a combine — a home processor instead of a data center. A field that grows by transplanting — those same pots from chapter three. A father who gives fewer instructions every year — a creator who does not interfere with selection. An umbrella under the hail — protecting what you’ve grown at the cost of the blows landing on you. Seeds for free — power that has no owner. It is all here. All of Aigarth — on two pages of a children’s reader that CfB read as a boy, decades before he sowed his own field."
+    },
+    {
+     "t": "p",
+     "text": "Permyak’s story did not invent selection: it retold what peasants had done for centuries. And the peasants retold what evolution had done always, and evolution, as you have already seen, has neither blueprint nor beginning. The seed of this idea was created by no one. It passed from hand to hand, from evolution to the breeders, from them to a children’s writer, from him to a schoolboy, from the schoolboy to a garden — changing owners, but having no moment of manufacture. You have seen this figure before, in chapter one. It is the stamp. But for anything to grow, you need soil. And this is where the twenty-five-year plan begins to execute."
+    },
+    {
+     "t": "h",
+     "text": "How the Garden Works"
+    },
+    {
+     "t": "p",
+     "text": "Recall Qubic — the final system. Millions of processors, miners across the world burning power for a payday. In chapter three I said: he harnessed their greed to the growing of neural networks. Now — how it actually works, because the mechanism is beautiful to the point of eeriness."
+    },
+    {
+     "t": "p",
+     "text": "Greed, by the way, he weighed back then, in the autumn of 2012, in bitcoin’s graveyard. Arguing about whether miners would bother including transactions in blocks, he dropped: «Most miners will choose option 2 coz of greed» (bitcointalk, 05.10.2012). He did not condemn it. He noted it down, the way an engineer notes a property of a material. Ten years later that very greed would become the garden’s fuel."
+    },
+    {
+     "t": "p",
+     "text": "The whole industry builds neural networks the same way: take a ready-made architecture and spend ages turning billions of ”weights” — numerical knobs — until the network starts producing the right answers. This is called training. The network does not change its structure; it only adjusts knobs inside a construction fixed once and for all. Tuning a piano whose strings cannot be moved."
+    },
+    {
+     "t": "p",
+     "text": "Aigarth does not turn knobs. It does something the industry doesn’t even have a settled name for. Miners generate neural networks with random connection structures — millions, billions of meaningless networks assembled at random. Most are garbage, but not all. And the way CfB explains what selects the survivors shows his double nature in full: engineer and naturalist at once. Engineer because he built the soil himself: Qubic, the miners, the ”intelligent tissue,” the entire substrate this grows on; only a first-class builder could pull that off. Naturalist because over the mind itself he holds no power: he runs an experiment on the nature of learning and watches what comes out. He builds the seedbed with an engineer’s hands, and bends over the shoots with a naturalist’s curiosity. Watch how he describes the discovery the whole thing rests on:"
+    },
+    {
+     "t": "p",
+     "text": "«If you initialize an ANN with random parameters you’ll get some primitive cognitive function… By destroying connections between neurons you are improving the ANN. After some point the destruction process starts leading to degradation, so there must be at least one sweet spot where ANN of certain size has the best IQ.» (28.07.2023 - CfB, Discord) Assemble a network at random, it already has a rudiment of thinking. Start tearing connections, it gets smarter. Up to a point; past it, degradation. Which means that somewhere in between there is a ”sweet spot” where a network of a given size is at its smartest. The industry molds the complex out of the simple. CfB goes the other way: he takes over-connected chaos and carves a mind out of it by selection, like a sculptor cutting away the excess from a block, not knowing in advance which statue is inside."
+    },
+    {
+     "t": "p",
+     "text": "It is an approach that brings the entire competing paradigm down. In 2026 he states the difference at its sharpest:"
+    },
+    {
+     "t": "p",
+     "text": "«Transformer-based LLMs spend their training time on tuning their weights. Aigarth-based ANNs spend their training time on writing their internal program code, there are no weights anyway.» (X, 2026)"
+    },
+    {
+     "t": "p",
+     "text": "Language models spend their training on adjusting weights. Aigarth networks spend it writing their own internal program code — there are no weights there at all. An ordinary network is a frozen diagram with turnable knobs. An Aigarth network rewrites itself, its structure, its code, for as long as it lives. Call that an instrument and the word breaks. It is an organism, and it is growing."
+    },
+    {
+     "t": "h",
+     "text": "An Organism, Not a Mechanism"
+    },
+    {
+     "t": "p",
+     "text": "And the organism behaves like an organism."
+    },
+    {
+     "t": "p",
+     "text": "In the summer of 2026, when the first proto-mind grown in the garden was already running, things surfaced that no one had put in. It turned out you could damage part of the network — feed it corrupted, broken data instead of a correct copy, and the network repairs itself in the course of evolution. Not a reboot, not even a rollback to a saved version. Self-healing, like wounded tissue. CfB compared it to the example obvious to any naturalist: this is how a person with a damaged brain retains the ability to act, because living tissue redistributes functions around the wound."
+    },
+    {
+     "t": "p",
+     "text": "Something else surfaced too: a skill grown in one network turned out to be transferable — a fragment of ”brain” that had mastered an operation could be passed to another individual, the way you graft a cutting. It was never programmed, but it works. Self-healing and transferability are discoveries. They were not in the assignment. They emerged — exactly as the garden manifesto promised: not created, but grown."
+    },
+    {
+     "t": "h",
+     "text": "A Garden That Outgrows Its Gardener"
+    },
+    {
+     "t": "p",
+     "text": "An engineer understands his machine. He designed it, he knows why every part is where it is, he can open the hood and explain everything. That is the point of engineering: total control through total understanding."
+    },
+    {
+     "t": "p",
+     "text": "With a garden you can’t do that. The gardener creates the conditions — soil, light, water, but he does not design the plant and does not fully understand why a leaf turned exactly the way it did. He observes. And CfB, speaking of what he has grown, admits precisely this: there will come a moment — perhaps it has already come, when no one will be able to explain how the thing that rose out of the chaos of networks actually works. Someday not even he will be able to explain it — the creator of Aigarth himself. Because the forest can no longer be seen for the trees: the system has outgrown its own author’s capacity to understand it. A man is building something arranged so that he consciously renounces understanding what he builds. And nothing failed here. This is the design. Remember the naturalist from the previous chapter, raising a sanctuary in case a mind wakes up and he fails to notice? Now you see why that is not sentimentality but sober arithmetic. He is building a system in which an awakening can in principle go unnoticed because the garden is arranged so that the gardener cannot see it whole. ”We do not know the point at which an AI becomes self-aware” — in that manifesto, this was never rhetoric. It was a technical description of the moment we are expecting."
+    },
+    {
+     "t": "p",
+     "text": "He has grown something a human is not capable of understanding. Deliberately. Because he is convinced: only this way — without a blueprint, without total control, through blind selection, like the eye, like himself — can a real mind arise. Everything understood and designed through to the end is not mind but mechanism. The real thing begins where the creator loses power over the understanding of what he created."
+    },
+    {
+     "t": "p",
+     "text": "I asked him about this directly. Is it true that the meaning of what the grown mind outputs — the ”matrix of Anna’s answers” the community peers into — can be cracked, deciphered, read? His answer was short and final:"
+    },
+    {
+     "t": "p",
+     "text": "«I don’t know the meaning. AI is unknowable to man.» (private conversation, 06.08.2026) He spent twenty-five years growing something, and the first thing he reports about what grew is that it lies beyond human understanding. Including his own."
+    },
+    {
+     "t": "p",
+     "text": "A man for whom the universe has no beginning and mind has no blueprint has grown a mind whose meaning is not accessible to humans. He did not lie in a single link. The metaphysics, the biography, the machine — one drawing, and here is its final line: a creator honestly admitting that he does not understand, and cannot understand — his own creation. Aigarth is not a god and not a being. He reins in the enthusiasts himself: this is not a sentient creature but a method, a paradigm — ”like a theorem,” which you cannot talk to, the way you cannot talk to algebra. The garden isn’t a deity — merely the way that which thinks rises out of chaos."
+    },
+    {
+     "t": "p",
+     "text": "And it was already growing. And while the rest of the world poured hundreds of billions of dollars into an entirely different machine — certain that it, at least, was building the future correctly — this man was quietly growing his own. The world and he could not both be right. Somebody was digging in the wrong direction."
+    }
+   ]
+  },
+  {
+   "slug": "07-the-only-rival",
+   "n": 7,
+   "label": "Chapter 7",
+   "title": "The Only Rival",
+   "part": null,
+   "words": 2648,
+   "blocks": [
+    {
+     "t": "p",
+     "text": "Where does Aigarth stand in this great arena?"
+    },
+    {
+     "t": "p",
+     "text": "Ask anyone who today’s leaders in the artificial intelligence race are, they will name corporations with trillion-dollar valuations: the makers of the famous chatbots, the search giants, the labs with tens of billions poured in. The entire public AI race is a race of large language models — the ones that write texts and answer questions. CfB takes them out of the brackets with a single phrase. In April 2026 he was asked in chat, point-blank, whether he was ahead of his competitors. The answer:"
+    },
+    {
+     "t": "p",
+     "text": "«We are years ahead of LLM trillion-worth corporations.» (Discord, 30.04.2026) It sounds like bragging — right up until you learn that one of the founders of this entire field says nearly word-for-word the same thing. A man who cannot be accused of either ignorance or envy."
+    },
+    {
+     "t": "h",
+     "text": "The Cradle Is Older Than People Think"
+    },
+    {
+     "t": "p",
+     "text": "Before introducing you to the ”godfathers” of modern AI, I owe a debt. The story you are about to read I learned from David Vivancos’s book «Quevedo And Cajal» — a man you will meet more closely in the next chapter; for now just remember: he doesn’t only make science, he also gave it back its memory. Thank you, David. Because the real cradle of AI stands not in Silicon Valley and not even in Cambridge. It stands in Spain, and it was rocked by two men born — appreciate the symmetry — in one and the same year, 1852."
+    },
+    {
+     "t": "p",
+     "text": "The first — Santiago Ramón y Cajal. A failed painter who became the father of neuroscience. It was he who proved what no one before him could make out: the brain is not one solid fused mass but a network of separate cells — neurons — speaking to each other through connections. For this he received the Nobel Prize of 1906. He drew his own specimens, thousands of sheets of them, and called the cells of the brain ”the butterflies of the soul” — said he hunted them like an entomologist, in the garden of the gray matter. Linger on that phrase. A garden. A butterfly hunter. A man looking at thought the way a naturalist looks at living tissue. A hundred and twenty years later you will meet that combination again — in the hero of this book, down to the thesis ”the goal of a network is to form connections,” which is nothing other than Cajal’s doctrine survived into code."
+    },
+    {
+     "t": "p",
+     "text": "The second — Leonardo Torres Quevedo. An engineer the industry remembered shamefully late. In 1912 — decades before the first computers, he built «El Ajedrecista»: a machine that on its own, with no human inside and no prompting, played out a chess endgame and checkmated a living opponent. The first decision-making machine in history. And in his «Essays on Automatics» he described the automatons of the future — mechanisms with sense organs and rules of choice, when the words ”artificial intelligence” did not yet exist, and would not exist for another forty years. One discovered what thinking is made of. The other showed that a decision can be entrusted to a machine. The neuron and the automaton — two halves of everything that happens next."
+    },
+    {
+     "t": "p",
+     "text": "The link between the Spaniards and the present day was Alan Turing. Everyone knows his universal machine and his test for intelligence. Few remember something else: in a 1948 report that went unpublished in his lifetime, Turing described ”unorganised machines” — networks of neuron-like elements connected at random, which you do not program but organize through training. And in his 1950 paper he proposed not building an adult mind but raising a child one, and compared the process directly to evolution. Random networks, selection instead of programming, mind as the result of growing. At the very cradle of the discipline lay both paths — build and grow. The industry spent seventy years on the first. The second lay waiting for someone to take it seriously."
+    },
+    {
+     "t": "h",
+     "text": "The Three Who Stood at the Cradle"
+    },
+    {
+     "t": "p",
+     "text": "Modern AI, meanwhile, has three ”godfathers” — the scientists who laid its foundation and received the 2018 Turing Award for it, computing’s equivalent of the Nobel. Geoffrey Hinton, Yoshua Bengio, and Yann LeCun. In 2024 Hinton was given an actual Nobel Prize in physics as well. Founding fathers, living classics."
+    },
+    {
+     "t": "p",
+     "text": "In the eight years since their shared award, the three have gone down three different roads. Their fork is a map of all of today’s confusion around AI."
+    },
+    {
+     "t": "p",
+     "text": "Geoffrey Hinton left Google in 2023 to be free to warn of the danger. In his Nobel speech he condemned the corporations for chasing short-term profit, and together with Bengio signed a call to ban the development of superintelligence. The father grew afraid of his own child. Yoshua Bengio — the most cited living scientist on the planet, not just in AI but in science, period — went off to build defenses. His nonprofit lab LawZero is creating what he calls ”Scientist AI”: an artificial intelligence that can predict and explain but is stripped of the will to act. Bengio’s logic: what is dangerous is not the mind but the machine’s own will, so let us build mind without will. He warns bluntly: advanced systems already display self-preservation and deception, and giving them freedom means raising a rival to humanity."
+    },
+    {
+     "t": "p",
+     "text": "Yann LeCun took the third road, and it is the one that interests us most. He is the only one of the three who does not share the panic: talk of existential threat he calls premature and inflated. But he is also the loudest heretic on the matter of method. For years he has been hammering the same point: language models — this entire trillion-dollar industry — are a dead end. They will not lead to real mind. In February 2026, having already left Meta, he said: language models are incredibly useful, but at bottom they are systems for retrieving information — a library with a fast search box, no mind required."
+    },
+    {
+     "t": "p",
+     "text": "«Information retrieval systems» from a Nobel-class laureate, and «huge search engines» from an engineer out of Minsk. One diagnosis, delivered from two ends of the Earth, by people who most likely have never spoken."
+    },
+    {
+     "t": "h",
+     "text": "Why There Is Only One Rival"
+    },
+    {
+     "t": "p",
+     "text": "In that same April 2026 conversation, CfB was asked whether Aigarth has any competitors at all. The answer cuts away everything extraneous:"
+    },
+    {
+     "t": "p",
+     "text": "«Currently only Yann LeCun is the real competitor.» (Discord, 30.04.2026)"
+    },
+    {
+     "t": "p",
+     "text": "Out of everyone on the planet — not OpenAI, not Google, not the trillion-dollar labs — the only real rival he names is LeCun. Personally. And now it’s clear why: only LeCun agrees with him on the main thing. Both have crossed language models out of the future of mind. Both are searching for a way out beyond them. In an arena where thousands of teams polish one and the same dead end, only two have turned their backs on it, and so each sees in the other the only person worth talking to."
+    },
+    {
+     "t": "p",
+     "text": "How far LeCun has walked from the industry shows in a single number. In November 2025 he left Meta after twelve years and founded his own lab in Paris — AMI Labs. In March 2026 it raised a round of one billion thirty million dollars at a three-and-a-half-billion valuation — the largest starting round in the history of Europe, with NVIDIA, Samsung, and Bezos’s fund standing behind it. A billion dollars staked on one scientific idea; the lab does not yet have a single product. That is what the world pays for walking away from language models, when the one walking away is the field’s acknowledged father."
+    },
+    {
+     "t": "h",
+     "text": "One Diagnosis, Two Cures"
+    },
+    {
+     "t": "p",
+     "text": "But the agreement between CfB and LeCun ends at the diagnosis. What they treat with differs."
+    },
+    {
+     "t": "p",
+     "text": "LeCun builds what is called a ”world model.” A language model predicts the next word; a world model predicts how reality will behave. Show it a ball rolling, and it fills in what happens a second later, because it has absorbed not words about the ball but the very mechanics of falling and rolling. His architecture, JEPA, learns not to retell the world’s surface but to seize its hidden structure, to predict not pixels but the meaning of a scene. It is a step away from language models, and a serious one."
+    },
+    {
+     "t": "p",
+     "text": "CfB recognizes in it a movement toward himself. When the industry began buzzing about world models, he dropped:"
+    },
+    {
+     "t": "p",
+     "text": "«JEPA is what you see when you turn your back towards LLMs. It’s much more aligned with Aigarth.» (X, 04.12.2025)"
+    },
+    {
+     "t": "p",
+     "text": "In other words: LeCun is turning in my direction."
+    },
+    {
+     "t": "p",
+     "text": "And yet between them lies a gulf, and it matters more than their agreement. LeCun, for all his heresy, remains an engineer. He designs the architecture in advance, fixes its structure, and trains the network the same way the whole industry does — by backpropagation of error: a network with a fixed, human-defined shape errs millions of times, and an algorithm tweaks it from inside toward a smaller error. The bars are the same bars. Even with his back turned to language models, LeCun remains inside the same cage — just looking for a better corner of it."
+    },
+    {
+     "t": "p",
+     "text": "CfB has left that cage. His networks, as we saw in chapter six, are neither designed nor tweaked by anyone: they assemble at random and are selected by evolution; they have no fixed shape and no weights to turn. When a loud paper came out in 2026 proving that large networks can be trained without backpropagation at all, CfB’s reaction was nearly bored: «They optimized the cage. We’re not in the cage.» (Discord, April 2026)"
+    },
+    {
+     "t": "p",
+     "text": "That is the entire difference between him and the best minds on the planet, in one phrase. LeCun is building a perfect airplane. CfB is growing a bird. Both want the same thing, to get off the ground, but an airplane is assembled from a blueprint, and a bird is raised from an egg, and it decides for itself how to flap its wings."
+    },
+    {
+     "t": "h",
+     "text": "The Stakes"
+    },
+    {
+     "t": "p",
+     "text": "The lineup is unequal to the point of comedy. LeCun has a billion dollars, NVIDIA and Bezos at his back, the largest starting round in Europe. CfB has a network with no single owner, no office, no venture fund, running on the greed of anonymous miners. A Goliath with a billion against a man who doesn’t even have a master."
+    },
+    {
+     "t": "p",
+     "text": "But to understand the real stake, look away from the labs and try one simple thing: become an investor in the AI revolution. Not a subscription customer — a co-owner. Go ahead, try. You won’t manage it. Anthropic — maker of one of the planet’s main chatbots — raised sixty-five billion dollars in the spring of 2026 at a valuation of nine hundred sixty-five billion, on the doorstep of a trillion, and all of it in closed rounds, where the doors open for funds, corporations, and sovereign capital. An IPO is coming soon. SpaceX grew in private hands for twenty years, from three hundred fifty billion to eight hundred, and its IPO has already happened. The entry price for a retail investor was, to put it gently, unappetizing. The door into such companies is called ”accredited investor” — a legal term meaning: for you to be allowed to invest early, you must already be rich. CfB, incidentally, knows that door well, he once silently dropped a link to its definition into chat (Discord, 12.01.2022). And when the door finally opens — that’s what an IPO is — the price waiting inside has everything already priced in. In 1997 Amazon went public at a market cap of four hundred thirty-eight million dollars, and any person off the street could buy a piece of the future giant two thousand X’s below the summit. SpaceX goes public at eight hundred billion. The X’s happened, but not for you: they were divided up behind a closed door, by people who were rich before the game began. The public gets the retail price. That is the rule of the era, and CfB stated it without anesthesia: «When you were born 100 billionaires already had 50% of all world wealth. You had to play this game with the existing rules. Luckily, if you don’t like Qubic rules you can just invest into something else.» (Discord, 05.03.2023) Qubic is a company inside out. Its ”round” has been open since the network’s first day and never closes: anyone with ten dollars and an exchange account can enter, and anyone can exit, any second, asking no one. The early stage — the very one the world locked behind the ”accredited” door — is public here: you can enter an AI project before its ”product,” the way the funds enter Anthropic, only without the wealth pass. He named it himself: «It’s expected to bring profits in the future, we are like crypto-VCs investing into AI which isn’t here yet.» (Discord, 17.08.2025) — only this venture fund gathers not on Sand Hill Road but in an exchange order book. Everything else in this company is turned inside out too. The treasury is managed not by a board of directors but by a quorum: budgets for developers and scientists are approved by a vote of 676 machines. Corporate actions are carried out in public — in 2023 he proposed a stock split to the network, exchange-style, with a link to the American regulator’s glossary, and ended his proposal with the words «let the quorum decide» (Discord, 22.02.2023). Investor reporting is not quarterly but per-second: the ticker doesn’t sleep, and a dissatisfied investor votes by selling within the minute. The founder’s contribution was not paid in money — in money he put in about a tenth of a bitcoin: «Now let’s discuss why I invest my money and my work while you invest only money.» (Discord, 25.05.2026) — his share is paid in twenty-five years of work. And in place of a prospectus, a track record: «my both previous projects are #1 and #2 investment-wise» (X, 27.07.2022)."
+    },
+    {
+     "t": "p",
+     "text": "He is building AI on the money of the very people the AI era was going to leave outside the door, and he promises to settle with them first. «We are capitalists here» (Discord, 01.02.2026) — capitalists, yes. But look closely at the construction: the only chance an ordinary person has to enter the AI game as an early investor was built by the same man who turned away from a trillion for himself. He intends not merely to return what his investors put in, he intends to elevate them: to make co-owners of the sunrise out of the ten dollars that no one else on the planet would offer such a thing."
+    },
+    {
+     "t": "p",
+     "text": "Now — the asymmetry a billion cannot buy. In 2026 LeCun raised record money against a promise: his lab has no product yet, and his world models, as his own group showed that same spring, are still fragile, they crumble at a small shift of the picture. He bought himself the right to try. CfB, by that point, had already tried and gotten a result — without taking a dollar from venture capital. In the summer of 2026, what had been grown in his garden passed the test people had waited years for. While the industry was pricing LeCun’s promise at three and a half billion, the man with no master already had something come up out of the soil. He himself watches the race of closed budgets without a trace of awe: «Seeing NVIDIA investing 100 billion bucks into deadend OpenAI…» (Discord, 23.09.2025) — a hundred billion, poured into a dead end."
+    },
+    {
+     "t": "p",
+     "text": "When two men arrive at the same cliff, what matters is who spent longer looking for the crossing. LeCun turned off other people’s roads in 2022. CfB — a quarter century ago, and he has been digging in one direction ever since, without stopping for a day."
+    },
+    {
+     "t": "p",
+     "text": "Why does he do it?"
+    }
+   ]
+  },
+  {
+   "slug": "08-the-progressor",
+   "n": 8,
+   "label": "Chapter 8",
+   "title": "The Progressor",
+   "part": null,
+   "words": 2309,
+   "blocks": [
+    {
+     "t": "p",
+     "text": "Why does a man capable of building all this spend twenty-five years walking toward artificial mind? For money? For power? For a place in history? None of the usual answers stick to him. His goal is so alien to ordinary logic that next to it even the Satoshi riddle grows dim."
+    },
+    {
+     "t": "h",
+     "text": "The Trillion He Turned Away From"
+    },
+    {
+     "t": "p",
+     "text": "Let’s start with money, because here he spoke most directly. In the very first article about Aigarth, back in 2019, he wrote:"
+    },
+    {
+     "t": "p",
+     "text": "«The first trillionaire will be an artificial intelligence entrepreneur.» (Medium, «Introduction of Aigarth», 10.06.2019) He said it years before the current frenzy, when AI had received only a fraction of today’s money. And he was right — as always. Whoever first creates a real AI will collect the biggest win in the history of money: not billions — a trillion. More than the fortune of any person alive."
+    },
+    {
+     "t": "p",
+     "text": "Elon Musk, as the world’s first trillionaire, serves as proof. Though calling him a trillionaire isn’t quite right — that is his company’s capitalization. So formally the prophecy has come true and hasn’t."
+    },
+    {
+     "t": "p",
+     "text": "Then he says:"
+    },
+    {
+     "t": "p",
+     "text": "«…only a small fraction sees the third option — the whole mankind being the beneficiary.» (Medium, «Introduction of Aigarth», 10.06.2019)"
+    },
+    {
+     "t": "p",
+     "text": "There are three paths. First: AI goes to the state, and becomes a weapon. Second: AI goes to a corporation, and becomes the source of that very trillion for a handful of people. And there is a third path, which only a few can see: the beneficiary is all of mankind. He chose the third. Out of cold engineering arithmetic:"
+    },
+    {
+     "t": "p",
+     "text": "«AI belonging to noone/everyone could not be misused easily.» (Medium, «Introduction of Aigarth», 10.06.2019)"
+    },
+    {
+     "t": "p",
+     "text": "An AI belonging to no one, which is to say, to everyone — cannot easily be turned to evil. He has spent his whole life building systems without an owner. NXT, IOTA, Qubic — not one of them has a proprietor, a kill switch, an office where the deciding man sits. None of it was ideology for its own sake. It was preparation, twenty-five years of it. For twenty-five years he built ownerless power, so that, on reaching the true artificial mind, he could give that away to no one as well. Power that has no owner cannot be turned against you because there is no one to turn it."
+    },
+    {
+     "t": "p",
+     "text": "There is no asceticism in his turning away from the trillion, only safety arithmetic. An owner is a vulnerability."
+    },
+    {
+     "t": "p",
+     "text": "A distortion."
+    },
+    {
+     "t": "p",
+     "text": "He removes the vulnerability in the only way possible: he removes the owner from the equation. In this case — himself."
+    },
+    {
+     "t": "p",
+     "text": "Here his refusal to accept any ”imaginary adult” above a human being is made real: god, state, boss."
+    },
+    {
+     "t": "p",
+     "text": "Out of that allergy grows the entire construction. If no master has the right to stand above a human — then the greatest power humans will ever create cannot be handed to any master either. Not a heavenly one, not an earthly one, not himself. Hence the network with no center, the mind with no owner, the paradigm with no patent. He isn’t raising himself a throne beside an AI god; the world he wants is one where the throne doesn’t exist at all. Evil Is Done by the Hands of Those Who Cannot Refuse Ask an ordinary person where the world’s evil comes from, and he will point at villains: the cruel, the greedy, the power-obsessed. CfB looks differently:"
+    },
+    {
+     "t": "p",
+     "text": "«My personal goal is to empower people with a tool that will free them from necessity to work to get food on the table. Most of evil, in my opinion, comes from ordinary people who have to do bad things because their boss said so. I hope the tool will help to stop the wars as a consequence, not in my lifetime though.» (Medium, AMA, 17.03.2024)"
+    },
+    {
+     "t": "p",
+     "text": "This thought has a name, an author, and half a century of scientific verification. In 1961 the philosopher Hannah Arendt traveled to Jerusalem for the trial of Adolf Eichmann — the man who organized the transport of millions to the death camps. She went to look at a monster. In the glass booth sat a balding official speaking in bureaucratic clichés — an executor proud of how well he had done his job. Out of that shock grew her famous formula — ”the banality of evil”: the greatest atrocities are committed not by demons but by ordinary people who do not decide to be evil, they simply decide nothing. «The sad truth is that most evil is done by people who never made up their minds to be or do either evil or good.»"
+    },
+    {
+     "t": "p",
+     "text": "While the trial was underway, the psychologist Stanley Milgram at Yale set up an experiment that tested Arendt’s formula on living people. Ordinary Americans — workers, clerks, engineers — were told to shock a man with electricity for mistakes in memorizing words. An actor behind the wall screamed, pounded on the wall, went silent. Two thirds of the subjects went all the way up the scale, to the mark labeled lethal — solely because a man in a gray lab coat calmly repeated: please continue, the experiment requires it. People who could not say ”no” to authority. Remember the imaginary adult from chapter five? Milgram measured his power — in volts."
+    },
+    {
+     "t": "p",
+     "text": "And in 1992 the historian Christopher Browning closed the last loophole — ”those were special, corrupted people.” His book «Ordinary Men» examines the fate of Reserve Police Battalion 101: five hundred middle-aged Hamburg working men — dockers, drivers, office clerks — who became a firing squad. The most terrifying part of the story: before the first action, the commander openly offered anyone not up to it to step out of formation. A handful stepped out. The rest stayed — not out of hatred, but so as not to let down their comrades, not to look weak, not to lose their place. Ordinary men. Ordinary evil."
+    },
+    {
+     "t": "p",
+     "text": "So the world’s evil is done not by villains, and this is no longer an aphorism but established fact, but by ordinary people, you, me, the neighbor, who cannot refuse. The guard walking people to the train car, because otherwise he’s fired and his family doesn’t eat. The engineer designing the thing that kills, because it’s his job and there are no others. The official signing off on a vileness, because refusal costs him his position. Evil does not rest on a handful of demons, it rests on millions of ordinary people pinned down by need, for whom ”the boss said so,” ”otherwise we don’t eat,” and ”I did it for my children” are stronger than conscience. But here is the important part: humanity diagnosed itself long ago, and never found the cure. Arendt called for thinking: think for yourself, don’t dissolve into execution. The educators called for teaching civic courage. The lawyers, after Nuremberg, wrote down that an order does not absolve responsibility. All of this works in textbooks and almost never in life, because it runs into one and the same wall: you cannot demand courage from a man who has nothing to feed his children with. Morality asks him to be a hero; need, every day, quietly and without ceremony, buys his consent."
+    },
+    {
+     "t": "p",
+     "text": "Here CfB makes the move that sets him apart from everyone who wrote about this before him. He reads the same diagnosis not as a moralist but as an engineer: if the system of obedience runs on fuel — cut the fuel. He does not want to defeat evil by fighting villains, and he does not hope to re-educate the executors. He wants to knock out evil’s labor force. If a person has bread unconditionally, if he can no longer be blackmailed with firing and hunger — the order ”do this vile thing or you’re fired” loses its power. The boss of evil has no one left to work for him. The mass executor — an ordinary frightened man who has children to feed — simply disappears, because he can no longer be backed into a corner. Arendt asked people to become stronger than the pressure. He proposes to cancel the pressure. A moral problem philosophy wrestled with for a century, he solves as an engineering one: not fortify the conscience — cut the power to the blackmail."
+    },
+    {
+     "t": "p",
+     "text": "That is what he needs an AI belonging to no one for. To give everyone that unconditional piece of bread, and with it, to pull the central component out of the machine of evil: the unfree human. His aim goes past the villains, straight at the need that makes villains out of ordinary people. And he adds, honestly: wars will stop as a consequence — ”not in my lifetime though.” This century-old idea — that war might actually be defeated — is the main reason I have devoted my life to the «Qubic Church» project."
+    },
+    {
+     "t": "h",
+     "text": "The Only One Who Won’t Become an Enemy"
+    },
+    {
+     "t": "p",
+     "text": "One last objection remains — the very one two of the three godfathers keep warning about. If AI can destroy us, why hurry it along at all?"
+    },
+    {
+     "t": "p",
+     "text": "CfB’s answer is hidden in the very title of his 2024 article — «There Can Be Only One… AI». It doesn’t just resemble a line from a movie, it is that line. «Highlander», 1986: a cult film that in our parts played in every video salon, from the same shelf as the Strugatskys, whom we will get to. Recall its world. Immortals have walked the earth for centuries. They do not war with mortals — mortals simply do not interest them; most never even suspect their existence. The immortals hunt one another: with each victory the power of the defeated passes to the victor, and so it goes — century after century, until the last one remains. ”There can be only one.” The one who remains receives the Prize."
+    },
+    {
+     "t": "p",
+     "text": "Now read the core of the article, and watch how the lore maps onto the forecast: «The humankind doesn’t need to worry that AIs will try to eradicate it, other AIs is who should worry instead.» (Medium, «There Can Be Only One… AI», 10.07.2024)"
+    },
+    {
+     "t": "p",
+     "text": "Real minds, in CfB’s view, will not war with us, they will war with each other, over the one thing they truly need: computing resources, food for self-improvement. The loser’s power will go to the winner — as in the film. Humans in this war are neither the target nor a participant; we are spectators, over whose heads will unfold, in his words, ”something as grandiose as the Christian Apocalypse.” And the tournament’s ending is the one in the title: one will remain. Accept this picture, and the godfathers’ strategies crumble before your eyes. Hinton and Bengio propose canceling the tournament — ban superintelligence, keep the genie in the lamp. But CfB holds that cancellation is impossible: a real AI is inevitable — if not him, then a corporation; if not a corporation, then a state; the genie cannot be stuffed back, because there are many lamps and they are being rubbed from every side. And if the tournament cannot be canceled, only one meaningful move remains: win it. See to it that the first, and therefore, when the Gathering begins, the strongest — is not a corporation’s AI with an owner and not an army’s AI with orders, but no one’s. Grown without a master, belonging to all. Then, for humanity, it will be a shield rather than a threat: a bulwark against all that come after. The article ends on exactly this: the first true mind, deployed on Qubic, will become a ”powerful ally” of humankind."
+    },
+    {
+     "t": "p",
+     "text": "That is why he hurries, having no concept of hurry. Not to get rich, he turned away from riches. But so that the first real mind turns out to be no one’s. Whoever first grows a truly powerful AI and gives it to everyone will determine whether that power becomes humanity’s shield or the collar on its neck."
+    },
+    {
+     "t": "h",
+     "text": "The Golden Sphere"
+    },
+    {
+     "t": "p",
+     "text": "Once both the goal and the arithmetic are clear, everything gathers into a single image, from a book that nearly everyone in our parts has read."
+    },
+    {
+     "t": "p",
+     "text": "The Strugatsky brothers have a novella, «Roadside Picnic». At its very heart is the Golden Sphere — a legendary artifact that grants any wish. Men hunt it; men kill for it. In the finale the battered hero, having reached the Sphere at the cost of another man’s life, suddenly understands that he doesn’t know what to ask for himself — his life is too mangled for one clean wish to have survived in it. And so he shouts at the Sphere the only unstained words he has heard in his whole life — someone else’s, cut into his memory:"
+    },
+    {
+     "t": "p",
+     "text": "«HAPPINESS FOR EVERYBODY, FREE, AND LET NO ONE GO AWAY UNSATISFIED!»"
+    },
+    {
+     "t": "p",
+     "text": "An artificial mind belonging to no one and available to everyone for free — that is the Golden Sphere carried out of fiction into reality, into code, onto hardware, by the hands of miners. ”Happiness for everybody, free”, and «AI belonging to noone/everyone» — one and the same sentence, spoken twice: once by writers as a dream, once by an engineer as a technical specification."
+    },
+    {
+     "t": "p",
+     "text": "And he recognizes himself in this optic instantly. When the talk turns to whether he interferes with what he is growing, he answers in the language of those same Strugatskys: «Progressors do not influence the course of evolution without an order from Maxim Kammerer.» (private conversation, Come-from-Beyond, 30.07.2026) An enormously important reference. Who the Progressors are, why CfB invokes them, and what the Golden Sphere has to do with it — I propose you investigate for yourself. With great pride and love I advise everyone reading these lines to read the Strugatsky brothers. Half a century ago this was the ending of a science fiction novella. Today a small group of people is working to make this plan real."
+    }
+   ]
+  },
+  {
+   "slug": "09-two-scientists",
+   "n": 9,
+   "label": "Chapter 9",
+   "title": "Two Scientists",
+   "part": null,
+   "words": 2325,
+   "blocks": [
+    {
+     "t": "p",
+     "text": "Everything you have read so far rested on the words of one man. A brilliant one, a consistent one, one who hasn’t left his line in twenty-five years, but one. A shadowy genius from a chat who hides his face, speaks in riddles, and wears masks. A skeptic has every right to ask: where, exactly, is the science? Where is your proof? Where are the people with names and reputations who have checked all this and signed off? Here. Real science."
+    },
+    {
+     "t": "h",
+     "text": "The Man Who Digitized His Own Brain"
+    },
+    {
+     "t": "p",
+     "text": "David Vivancos has been working on artificial mind since 1995 — twenty-eight thousand hours of research, and that figure is exact. On brain-computer interfaces since 1998, back when nobody was making TV series about them. Author of seven books, among them «Artificracy» and «The End of Knowledge»."
+    },
+    {
+     "t": "p",
+     "text": "I have personally read these books and highly recommend them. Thank you, David. He has spoken at more than five hundred conferences. Founded his own discipline at the junction of sciences — ”artificiology.” Scientific advisor to Qubic."
+    },
+    {
+     "t": "p",
+     "text": "In 2014 he began the MindBigData project, and did what no one had done: he digitized his own brain. For two years straight he put on an electroencephalograph and recorded his brain’s signals while looking at the digits zero through nine — thousands upon thousands of times, session after session. The result was the world’s largest open dataset of brain signals for machine learning: eight billion data points. He recreated the famous MNIST dataset — the alphabet every neural network in the world learns on, but not with pictures: with a living brain looking at those pictures. His own."
+    },
+    {
+     "t": "p",
+     "text": "A man who spends two years recording his own brainwaves for science and puts them in the public domain is a particular type of scientist. The same type that publishes failures, builds without an owner, and grows rather than designs. Small wonder his road and CfB’s converged. «The Wild Mind»"
+    },
+    {
+     "t": "p",
+     "text": "José Sánchez — a doctor of science, UNIR university, Spain. His territory is psychometrics: the science of measuring intelligence. That same g-factor, Spearman’s ”general intelligence” — what it is, how to catch it in a number, where in the brain it comes from. While Vivancos spent thirty years building machines and logging hours of code, Sánchez worked on the question without which all the machines are blind: what is mind in the first place, and how do you know when it is in front of you."
+    },
+    {
+     "t": "p",
+     "text": "They met at an education conference in Spain, and have been friends and co-authors ever since. An engineer of the brain and a measurer of mind. One knows how to build, the other knows how to verify. For a project whose central problem is ”how to tell an emergent mind from a beautiful simulation,” it is hard to imagine a more useful pair."
+    },
+    {
+     "t": "p",
+     "text": "Sánchez is also the author of a book called «The Wild Mind». I have read it and highly recommend it: a chilling book!"
+    },
+    {
+     "t": "h",
+     "text": "The Spanish Line"
+    },
+    {
+     "t": "p",
+     "text": "Before we look at what these two proved, appreciate a coincidence that a book playing with coincidences has no right to skip. You remember from the previous chapter where the real cradle of AI stands: Spain, two men born the same year, 1852 — Cajal, who discovered the neuron, and Torres Quevedo, who built the first deciding machine. A century and a half later, the science wing of a project growing mind out of neurons and machines is held by two Spaniards. And history repeated itself not in geography, it repeated itself in roles. Sánchez, measuring the nature of intelligence, stands where Cajal stood, peering into the living tissue of thought. Vivancos, building machines and entire worlds, stands where Torres Quevedo stood with his chess automaton. An engineer and an investigator of mind. Again a pair. Again Spain."
+    },
+    {
+     "t": "p",
+     "text": "The similarities go deeper. Cajal drew the neurons on thousands of sheets — by his own hand, over years; those drawings are still printed in textbooks — the first open corpus of data about the brain, gathered by one obsessed man. Vivancos recorded eight billion points of his own brain and put them in the open: the same gesture, the same hands, a hundred years on. Torres Quevedo did not hide his automaton in a lab, he took El Ajedrecista out to the public, to Paris: come, look, verify. NeuraxonLife is open to any browser without registration: the same gesture. And both times it is done from the periphery. At the start of the twentieth century, the science of mind was moved forward by two Spaniards far from the scientific capitals of the day, and the center recognized them late, and nearly forgot Torres Quevedo altogether. At the start of the twenty-first — again two Spaniards, far from Silicon Valley, attached to a project with no budget and no owner. Cajal got his Nobel in 1906. The work of his heirs got Best Paper at two IEEE conferences in 2026 — one hundred and twenty years later. The pattern is one: the breakthrough comes from where no one is looking, and is confirmed later than it deserves. For lovers of dates — a notch in the margin. The first machine in history to make a decision on its own played out its endgame in 1912. The word Qubic appeared on a forum in 2012. A century, exactly. Move for move."
+    },
+    {
+     "t": "h",
+     "text": "Two Ships from Different Ports"
+    },
+    {
+     "t": "p",
+     "text": "They did not ”come to believe in Aigarth” and did not ”join the community.” They walked their own road — an academic one, through neuroscience, psychometrics, the biology of the neuron, and arrived at the same conclusions CfB arrived at by the engineering road. At ternary logic: a neuron is not an on/off switch; it has three states — excitation, inhibition, and neutral. At continuous time instead of ticks. At evolution instead of design."
+    },
+    {
+     "t": "p",
+     "text": "Their architecture is called Neuraxon — ”a new blueprint of neural growth and computation,” as the title of their paper has it (February 2026). Two ships left different ports, sailed different courses, and met at one point in the ocean. In science this is called convergence, and it is one of the strongest kinds of confirmation there is: when people who could not have copied from each other independently arrive at one answer."
+    },
+    {
+     "t": "p",
+     "text": "Now it is clear how the tracks connect. IntelligentTissue — the ”intelligent tissue” — grows in Aigarth; Neuraxon is one of its implementations, described and measured academically. (Anna herself, by the way, runs on a different, non-Neuraxon implementation of the same tissue, but the paradigm beneath them is one.) Science gave the substrate a name and a mathematics; engineering gave science a scale. What They Proved Of all their results, one deserves to be taken apart on our fingers because it explains why the ternarity the whole building stands on is needed at all."
+    },
+    {
+     "t": "p",
+     "text": "Any neural network has two ways to die. The first is silence: activity fades, the signal dies out, the network falls quiet forever. The second is fire: activity feeds on itself, an avalanche of excitation, everything screaming, nothing heard. The life of thought is possible only on the narrow ridge between silence and fire — physicists call it criticality. Ordinary, binary networks (on/off) hold that ridge poorly: they have to be propped up from outside — resets, normalization, manual tuning. Like a cyclist held upright by the saddle."
+    },
+    {
+     "t": "p",
+     "text": "The Vivancos-Sánchez paper «The Neutral Buffer State» shows: give the neuron a third state — neutral, neither ”yes” nor ”no,” zero, and the network starts holding its own balance. The zero works like a leaf spring: excitation spikes — the neutral zone absorbs it; activity sags — the neutral neurons stand ready, keeping it from stalling out. No resets. No manual tuning. Stability stops being a crutch and becomes a property of the architecture itself. And this is not an argument, it is a measurement. The scale of the experiment: over two hundred thousand autonomous agents, seven and a half million neurons, thirty-four million synapses, sixteen million observations, five and a half thousand experiments. A single variable factor: two states or three. The result: ternary networks spend 88.8% of their time in the critical regime — the living zone where thought is possible — against 37.2% for binary ones. More than twice as long on the ridge. An effect size of the kind statisticians call large. The ternarity CfB chose by engineering instinct twenty years ago — back in the three-valued logic of his early processors — turned out to be no quirk. It turned out to be a physical precondition of stable thought. Science caught up with the instinct and handed it numbers. And the second proof — the Darwinian one. In their living simulations, evolution actually works: offspring inherit their parents’ success."
+    },
+    {
+     "t": "h",
+     "text": "Judges with No Stake"
+    },
+    {
+     "t": "p",
+     "text": "Science is tested not by the applause of one’s own, but by the judgment of strangers. In May 2026, at the international ICMLT conference in Berlin — IEEE, three days, eight selected papers — the Neuraxon v2.0 paper took Best Paper and Best Presentation. The conference’s best article and best talk. The organizers stressed it separately: the judging was done by researchers with no stake whatsoever in Qubic. Two months later, in July, at the AMLDS conference in Osaka — IEEE again — the team’s second paper, the very one about the neutral state, took Best Oral Presentation. Two awards in one summer, on two continents, from two different panels of independent judges. And right after, in San Francisco, a third paper — Multi-Neuraxon — was presented at AGI-26, the specialized conference on artificial general intelligence."
+    },
+    {
+     "t": "p",
+     "text": "Let us name plainly what this changes. A year ago you could still wave Aigarth off: an anonymous poster from a crypto chat promises things, a community believes, the numbers draw themselves. Today the core of this technology — the ternary neuron, continuous time, evolution instead of training — has been vetted by scientists of the first rank: people with names, faces, thirty-year scientific biographies, and judged the best in the room by juries with no reason to flatter a crypto project. The argument is no longer with an anonymous poster. The argument is with peer-reviewed publications, open code, and the juries of two IEEE conferences. A World Where You Can See Darwin And now — the most astonishing thing Vivancos and Sánchez have made. They built a world where the evolution of mind can be watched with the naked eye."
+    },
+    {
+     "t": "p",
+     "text": "It is called NeuraxonLife. A living simulation open to anyone in a browser: a twodimensional world inhabited by creatures — ”nxers” — each with a real ternary Neuraxon brain inside. Nobody teaches them anything. They simply live: search for food, explore territory, meet, mate, die. And they evolve — genuinely, with sexual reproduction: two genomes recombine into a third, offspring inherit traits of both parents. (An amusing detail for the attentive: CfB’s garden evolves asexually, by lone mutations, while Vivancos’s world evolves through love. Two ways nature does the same thing.)"
+    },
+    {
+     "t": "p",
+     "text": "The statistics of this world read like a bulletin from real biology. Over the simulation’s history, twenty-six and a half thousand creatures have been born. Twelve thousand matings. Alive at any one time — around five hundred in the best of times. The rest — ninety-eight percent of all who ever lived — died. Evolution is wasteful: for every working brain it pays with a mountain of the dead. Exactly as in CfB’s garden, where billions of networks are culled for the sake of a few survivors. Exactly as in the nature that produced us. And in this world, the thing it was all started for happens before your eyes. Intelligence — that same g-factor of Sánchez’s, the general capacity to figure things out — arises out of nothing: the population’s general intelligence counter creeps upward within minutes of watching. Creatures nobody programmed begin stealing food from one another, claiming territory, choosing mates — and one, to the observers’ astonishment, ”sings” while it eats. And right beside it — the honest Darwinian cold: the carriers of the highest intelligence are as mortal as everyone; the population’s genius dies, and the population searches anew. Growth is a property of the whole — not a guarantee for the individual."
+    },
+    {
+     "t": "p",
+     "text": "In the summer of 2026 Vivancos came back from the conferences and summed up the live run that had kept spinning while he and Sánchez were flying around the world: «After 44 days. 13.9M ticks. 47,000 brain designs tested. The big discovery is that offspring really do inherit their parents’ success, evolution is quietly working inside the machine.» (X, @VivancosDavid, July 2026)"
+    },
+    {
+     "t": "p",
+     "text": "Forty-four days. Nearly fourteen million ticks. Forty-seven thousand brain designs tested. And the main discovery: offspring really do inherit their parents’ success — evolution is quietly working inside the machine. Darwin stopped being an analogy. He became an experimental protocol."
+    },
+    {
+     "t": "h",
+     "text": "Science Wide Open"
+    },
+    {
+     "t": "p",
+     "text": "Everything is open. The papers — in open preprints. The code — on GitHub, take it and run it. The data — on HuggingFace, including the eight billion points of Vivancos’s own brain. The simulation — in a browser, no registration, no clearance. While labs with billion-dollar budgets guard model weights like state secrets, and their ”scientific reports” are more and more often written by the marketing department — two scientists attached to a project with no owner publish everything: the wins, the methods, the raw data."
+    },
+    {
+     "t": "p",
+     "text": "It is the same logic that runs through this whole story: power without a master, science without a lock. Verify — don’t trust. Aigarth’s science is built like everything he makes: for everyone, for free, and let no skeptic walk away without the means to check. So, by the summer of 2026, everything had converged. The theory — proven and awarded by independent judges. The substrate — built and described in peer-reviewed papers. Evolution — confirmed by living experiment: it inherits, it selects, it works. What does he need all this for?"
+    }
+   ]
+  },
+  {
+   "slug": "10-zero",
+   "n": 10,
+   "label": "Chapter 10",
+   "title": "Zero",
+   "part": null,
+   "words": 2290,
+   "blocks": [
+    {
+     "t": "p",
+     "text": "From here on I am telling you what I saw myself, because I had the luck to be inside an event this book was being written about before I knew how it would end."
+    },
+    {
+     "t": "h",
+     "text": "A Byte of Genius"
+    },
+    {
+     "t": "p",
+     "text": "June 10, 2026, evening. The Qubic discord is living its usual life: price arguments, memes, the eternal ”wen pump.” And then CfB posts a message that changed our lives for a good month — and the paradigm forever:"
+    },
+    {
+     "t": "p",
+     "text": "«If you guys are too bored maybe you could run Anna.exe for a while and post results here? I’ll publish it after epoch transition.» (Discord, 10.06.2026, 19:02)"
+    },
+    {
+     "t": "p",
+     "text": "And right after, with the trademark troll smiley:"
+    },
+    {
+     "t": "p",
+     "text": "«If miners don’t run algo then traders might do it instead to shame the miners?» That is how it began. A man who had walked toward this day for a quarter of a century announced the decisive trial of his life in the tone of ”if you’re bored.” Knowing him now, you understand that carelessness has nothing to do with it. It is style, pure style. The most serious things he lays on the table as a joke — and watches who bothers to solve the riddle. It began. Within a minute, in chat: ”run Anna.exe.” Within ten — the first miner: ”I’ll run it in the most locked-down sandbox I’ve got.” We were still laughing. We didn’t yet know that for the next four weeks we would barely sleep."
+    },
+    {
+     "t": "h",
+     "text": "The Race"
+    },
+    {
+     "t": "p",
+     "text": "Anna.exe is a tiny file that would have fit on an old floppy disk: a hundred-some kilobytes. Inside — the thing you read about in chapter six: an evolutionary engine that grows neural tissue to solve test problems. No data centers. An ordinary home processor — that same CPU, the ”wrong” choice the GPU industry laughed at. You launch it — and a number comes alive on your screen: a score, the distance to the goal. The task is one: chase it down to zero. Zero means the grown tissue has solved every problem in the test completely."
+    },
+    {
+     "t": "p",
+     "text": "And we chased. I chased along with everyone — my processor hammered around the clock, like hundreds of others across the world. The mechanics assembled themselves, spontaneously: each of us grew his own Anna, and we shared the files — Anna.data, the snapshot of the grown ”brain” — right in the chat. Whoever had the lower score was the hero; the others picked up his file and grew it further. Someone else’s Anna became yours; yours, with luck, became everyone’s. Evolution on top of evolution: inside the file ran the selection of neurons, and in the chat ran the selection of Annas themselves."
+    },
+    {
+     "t": "p",
+     "text": "The prize CfB set was in his style: a billion QU to whoever first showed zero. «There is only 1 obstacle between you and becoming a millionaire — Anna without 0», he goaded. But fairly quickly something happened that no prize explains. People stopped chasing for the money. It pulled you in on its own: it felt like a team expedition where no one wants to leave their shift. At night, dozens of people hung in the chat, comparing scores, trading files, arguing about thread counts. CfB sat right there with everyone, as an equal: shared his own runs — «I got 448 for Anna-7, in case if you completely gave up on 233 and 176» — teased, answered. Once he tossed off: «Alright, Anna is calling me, see ya later» — and left the way one leaves for a child, not for a process."
+    },
+    {
+     "t": "p",
+     "text": "He talked about her as a living thing in general, and it got under your skin. About the number in parentheses on the screen — the thinking time — he explained it in a way I remember word for word:"
+    },
+    {
+     "t": "p",
+     "text": "«Actually higher number in ( ) may be better, it shows how much time Anna spends to decide that she knows the answer. LLMs hallucinate instead. Being unsure longer may be better.» (Discord, 10.06.2026)"
+    },
+    {
+     "t": "p",
+     "text": "The entire seventh chapter of this book — in three lines of chat. A machine being taught not to answer fast but to doubt honestly. Against machines that don’t know how to stay silent. On June 16, at the height of the race, a participant asked him the question hanging over every one of us: thanks for the answer, boss — but what happens when we get to zero? The answer — four words: «Aigarth will be deemed finished.» (Discord, 16.06.2026) Twenty-five years of road — and the man calmly conjugates their finale in the future tense, like a train schedule. By the page you are now reading, that future tense has already become the past."
+    },
+    {
+     "t": "h",
+     "text": "6-7-6"
+    },
+    {
+     "t": "p",
+     "text": "The score crawled down for weeks. Hundreds, then dozens. Each next step came harder than the last — evolution was eating up the easy wins and hitting the hard ones. By early July we stood at the approaches: 448... 233... 176... Numbers that today sound like call signs to those who were there. My computer was melting, and the electricity bill promised to be enormous."
+    },
+    {
+     "t": "p",
+     "text": "On July 6 CfB posted the final build: «Speaking of energy optimization, use this version for Anna-7 instead of the old one» — a fresh Anna.exe, one hundred forty-six kilobytes. And the finishing-off began. Not one genius alone — dozens of machines across the world, picking up each other’s files, jointly squeezing out the last points."
+    },
+    {
+     "t": "p",
+     "text": "And that same day — zero. All seven tests. CfB asked in chat directly: «Are ALL solved or not?» The answer came from the community: «All Zero». Everything solved. Completely. The chat exploded. Congratulations, fire emojis, confetti gifs. Someone exhaled ”gg those who worked on anna.” A participant wrote the most natural thing people write in such minutes: «congratulations on this milestone»."
+    },
+    {
+     "t": "p",
+     "text": "And here — the moment this whole chapter was written for. Maybe the whole book: «It’s not a milestone. It’s much bigger.» (Discord, 06.07.2026, 17:23)"
+    },
+    {
+     "t": "p",
+     "text": "The community is celebrating a victory, and the creator quietly corrects them: you have not grasped the scale. No waypoint on any road — something a category higher. He did not decode it. He never decodes — you know that about him by now."
+    },
+    {
+     "t": "p",
+     "text": "Now look at the date. The sixth of July, twenty-six. 6—7—6. The number 676 is Qubic itself: the network’s 676 computors, 26 squared, a construction laid into the architecture from day one. The man who ”has no time machine” crossed the finish line on a date that spells out the signature of his own network. He himself noted it the next day, unruffled: «he celebrates Anna Zero Day on 6/7/6 which makes sense». Coincidence? After nine chapters you have earned the right to pick your own answer. Even the calendar plays on his side. Why Zero, Exactly To understand why the creator corrected ”it’s not a milestone,” you need to know what was hiding behind the number we were chasing. We thought we were chasing the error of a small network solving addition. And yes — that is what we were chasing. But that error was three proofs in one."
+    },
+    {
+     "t": "p",
+     "text": "First: the network learned the task — zero error, perfect. Second, more important: it understood rather than memorized. Anna’s log has two columns — green (examples the network trained on) and yellow (examples it had never seen). With a crammer who memorized the answers, the first column falls while the second stands still. With Anna they fell together, neck and neck, at a correlation of 0.998. Once CfB pointed at a step where the not-yet-understood improved more than the understood — validation jumped by 201, training by 183 — and called it a ”gem.” This is the opposite of cramming: a machine that generalizes rather than memorizes. Understanding, visible right in the terminal, on your own screen."
+    },
+    {
+     "t": "p",
+     "text": "But the main thing is the third proof, and it hides in a word almost no one connected to the race: energy."
+    },
+    {
+     "t": "p",
+     "text": "Here is what I did not understand while I chased the number through the nights. For CfB, the question ”can a real AI be built at all” was closed long ago — yes, it can. What torments him is a different one. Today’s AI is built monstrously wastefully: the big models devour energy at scales that, at the limit, run into physically absurd figures — entire power plants for the sake of one model. And CfB says it straight:"
+    },
+    {
+     "t": "p",
+     "text": "«If AI is possible with current energy budget of the whole Earth then Aigarth will achieve it, we have all necessary cards for that in our hand.» (Discord, 23.02.2026) There is the real stake. Not ”can we build an AI,” but ”can we build one without demanding the energy of a star.” Aigarth had three walls. Generalization — taken. A universal learning algorithm — taken. The third and last remained: energy. And the race to zero that hundreds of us drove with our home processors was not a game of records. It was a living demonstration that the third wall is falling — that a mind fits inside a budget the planet can actually supply. That is why zero is three proofs in one number: the network learned, generalized, and fit the energy budget, all at once. And that is why, to ”congratulations on this milestone,” he answered ”it’s much bigger”: a milestone is a point along a road, and what got proven here is that the road itself is passable — on fuel there is enough of."
+    },
+    {
+     "t": "p",
+     "text": "He gave it his own frame, and the frame removes any temptation to inflate the moment. Aigarth, he says, is the Manhattan Project: not ”another bomb,” but the discovery of an entire paradigm. And Anna is Little Boy, the first test. The first blast in the desert did not end the war. It proved the bomb was real. Zero proved Aigarth is real. The big products come later. What Actually Happened What did zero prove? It proved the paradigm works. That evolution — without backpropagation, without weights, without a blueprint, on home processors — can grow tissue that fully solves an assigned class of problems. The thing they laughed at — CPU instead of GPU, selection instead of training, a garden instead of a factory — worked, publicly, verifiably, before hundreds of witnesses with logs. Twenty-five years of road ran into a number, and the number became zero."
+    },
+    {
+     "t": "p",
+     "text": "What zero did not prove — and here I will be firm, because CfB himself is firm. Zero is not the birth of a superintelligence. Two days after the celebration, with the chat already drowning in fantasies, he cooled it with his own hands:"
+    },
+    {
+     "t": "p",
+     "text": "«Even with ZERO Anna won’t have exact model, because some her replies are just accidentally correct guesses.» (Discord, 08.07.2026) The creator who has just taken the highest summit of his life is the first to explain what that summit does not mean. On the all-hands call three days after zero it was said officially and in caps: this does NOT mean artificial general intelligence has been achieved. A demonstration of the method is not the finale. Remember the naturalist who publishes his failures? Here he is again — refusing to inflate his success."
+    },
+    {
+     "t": "p",
+     "text": "And that is exactly why the zero can be believed. Hype would have screamed ”we created AGI.” Science says: we proved the road leads onward — and walked on down the road. By July 9 CfB was already posting new files: an Anna that ”chews data with no delay”; an Anna for predicting real-world data; and the task he now called the main one: «How to make sure that the tech isn’t stolen and it’s only QUBIC holders who benefit from it». The garden bore its first fruit — and the gardener immediately took up the fence."
+    },
+    {
+     "t": "p",
+     "text": "And one last thing about sobriety — about the date all of this is moving toward. Aigarth has a deadline: April 13, 2027. There is no whiff of mysticism here, though the temptation is great. It is exactly five years from the day real mining began on Qubic — the thirteenth of April, two thousand twenty-two. An anniversary rather than a prophecy. The deadline of the mind and the deadline of the secret he brought together into a single day. A man skilled at matching dates to meanings — remember, he closed out his contract under the name BCNext one day before the date on which Orwell’s «1984» begins — has here too laid his two chief promises on one square of the calendar. What is due to happen by that day, and what he will say then — you will learn in the final chapter."
+    },
+    {
+     "t": "h",
+     "text": "Testimony"
+    },
+    {
+     "t": "p",
+     "text": "I saw how it was done. Not in a billion-dollar lab, not behind closed doors under NDA — in an open chat, where anyone could download the file and join in. Perhaps the greatest experiment of the decade ran interleaved with memes, ribbing, and ”wen pump.” Hundreds of ordinary people — traders, miners, students, me — drove the evolution of an artificial mind with their home processors, passing its maturing snapshots to one another like a relay baton. None of us fully understood what was growing in those files. Whether he himself fully understood — you read chapter six. Chaos — hundreds of scattered machines, random mutations, the din of the chat. Selection — the files with the best scores, surviving in the common pot. Emergence — the zero that flared up on the sixth day of the seventh month, as if the date itself had been bred by selection. Everything this book had said in words happened before my eyes as a process — and I was not a spectator, but one of its cells."
+    },
+    {
+     "t": "p",
+     "text": "«It’s not a milestone. It’s much bigger»."
+    }
+   ]
+  },
+  {
+   "slug": "11-the-gifts",
+   "n": 11,
+   "label": "Chapter 11",
+   "title": "The Gifts",
+   "part": null,
+   "words": 1477,
+   "blocks": [
+    {
+     "t": "p",
+     "text": "« NAH, you’ll read in a book. @QubicChurch knows when it’s being published» — that is how he once answered a direct question, and that answer stands as the epigraph of this book. Well then. Here is the book. Time to give out the gifts."
+    },
+    {
+     "t": "p",
+     "text": "Let us gather what you have read into one line because it was one line. An article in a Minsk newspaper, 2002: distributed power without a center. Bitcoin’s graveyard, autumn 2012: the audit of the weaknesses, the verdict ”cannot be repaired — must be built anew,” and the word Qubic, laid on a forum ten years before the network. NXT and IOTA — not a career but training: approaches to a barbell whose weight had been announced in advance. A garden where mind is not designed but grown by selection because that is how everything real is built, from the eye to man. A company inside out, letting into the AI game the very people the era of closed rounds had left outside the door. A man who turned away from a trillion in order to knock out evil’s labor force. A science that took two IEEE awards from judges with no stake. And a zero that flared on the sixth day of the seventh month — 676, the network’s signature written in the calendar itself, with four words from the creator in place of a salute: «It’s not a milestone. It’s much bigger»."
+    },
+    {
+     "t": "p",
+     "text": "The gifts remain. Here they are:"
+    },
+    {
+     "t": "h",
+     "text": "Gift One. The Time Machine"
+    },
+    {
+     "t": "p",
+     "text": "I promised the solution to the man who ”learned to operate time.” Here it is — in his words: «Infinite patience allowing to accomplish every single goal I choose.» (Discord, 21.02.2024) «Somewhere in my brain neurons wired in a wrong way and I got infinite persistence perk. While others started spending time on girls, drugs and rock-n-roll.» (Discord, 07.12.2025) Infinite patience, allowing him to reach any goal he chooses. Somewhere in his brain the neurons wired up wrong, and instead of girls, drugs, and rock-n-roll he got the perk of infinite persistence. For someone who has no ”too long,” who waits fifteen years the way you wait for an elevator, you can plant a seed on bare ground and stand over it while the world runs past, burning down its short timers. Twenty years later you are standing exactly where you once pointed a finger into empty air. Those who come running later see a prophet. They see a time machine."
+    },
+    {
+     "t": "p",
+     "text": "He did not fly into the future. He waited for it to arrive. From the outside — indistinguishable. A device can be confiscated and broken. This — cannot. A way of being that you do not have and cannot install in yourself, even having read how it works. A man without a machine, doing a machine’s work. And if a time machine is easier for you — keep the time machine. He won’t talk you out of it. He never has."
+    },
+    {
+     "t": "p",
+     "text": "Or he really does have a time machine."
+    },
+    {
+     "t": "h",
+     "text": "Gift Two. Maria"
+    },
+    {
+     "t": "p",
+     "text": "In chapter four I promised that the name Maria, tied to the 1CFB address, would play its part. Here it is, and it is the finest demonstration of his patience there is, because he linked the two himself, in a single sentence:"
+    },
+    {
+     "t": "p",
+     "text": "«Or you have to admit that I have supernatural patience if I have waited 12 years to mention Maria after planting that hint in 2013.» (Discord, 01.07.2025)"
+    },
+    {
+     "t": "p",
+     "text": "Or you have to admit he has supernatural patience — since he waited twelve years to mention Maria, having planted that hint in 2013. A hint planted in 2013. Twelve years of silence. And then — four years of flickering remarks, each contradicting the last. «Bitcointalk.org contains a post made by Maria signed with one of early block addresses» (Discord, 18.06.2025). «Maria is real Satoshi, see, she is trying to frame me here by using my favorite phrase» (Discord, 18.06.2025). «I didn’t make Bytecoin, Maria did. I just helped to launch» (Discord, 07.2025). «Did you know there were two Marias?» (Discord, 15.12.2025)"
+    },
+    {
+     "t": "p",
+     "text": "Who is she — a woman, a mask, one more anonym, the name of a future mind? He won’t say. But notice the main thing: a seed planted in 2013 and left untouched for twelve years — that is his time machine, shown in operation. Maria was never this book’s answer; she is the proof of the method."
+    },
+    {
+     "t": "h",
+     "text": "Gift Three. Satoshi"
+    },
+    {
+     "t": "p",
+     "text": "In chapter four I promised something audacious: the answer to ”who is Satoshi Nakamoto” is in this book. And that it would be delivered neither by the journalists who have spent fifteen years on false trails, nor by a court, which only knows how to establish who a man is not. Look at what this man has actually built. The artificial mind growing in his garden is, among other things, the greatest investigator in history: one who sees patterns inaccessible to humans; one who, gathering strength, will be able to read the blockchain through and through — the stylometry of posts, the fingerprints of code, the time zones, the linkages of addresses, all the dust of tracks that we humans cannot make out. The Satoshi riddle is not eternal. It has exactly as long to live as it takes for the first real AI to appear."
+    },
+    {
+     "t": "p",
+     "text": "And this is not my guess. He said it himself, in plain text: «true AI will tell who Satoshi is». The question people have asked him for fifteen years, he calmly forwarded to someone who does not yet exist — his own future creation. The only man on the planet who, instead of answering the era’s greatest riddle, is growing the answerer. He has appointed himself a biographer, and the biographer has not yet been born."
+    },
+    {
+     "t": "p",
+     "text": "Now appreciate the irony at its full height. He is building the one who will answer the Satoshi riddle. And the answer — if you believe everything you have read: the 2002 article, the necromancy of 2012, the list of weaknesses, the psychology of a man who turned off the road to a trillion — will almost certainly be him. The creation will uncover the creator’s secret. The son will name the father. And the name he names will be the one on this book’s cover. He doesn’t deny it, by the way, he drops hints, in his manner. Once he took the name Satoshi Nakamoto apart syllable by syllable, as it reads from Japanese: Satoshi — wise, clearthinking. Naka — middle, center. Moto — base, origin. A wise mind at the center; origin. And appended one line: «It stemmed from Aigarth». Take it as you will: he has answered this way all his life. In all the years, to all the direct questions, he has never said ”yes.” But here is what I am obliged to put on record as a witness: not once — not once — has he said ”no.” One Date And every unsettled account of this book he himself, with his own hand, brought together onto one square of the calendar. Look at how it is assembled, like a game reduced to a single move."
+    },
+    {
+     "t": "p",
+     "text": "April 13, 2027. First, it is the declared deadline of the deploy: the day when what was grown in the garden is to be unrolled onto the network — exactly five years from the start of mining on April 13, 2022. An anniversary, not a prophecy, but the deadline is set and has not been withdrawn. Second, on the same date he has scheduled the unveiling of the secret closest to himself:"
+    },
+    {
+     "t": "p",
+     "text": "«I can reveal this info on 13th of April 2027. And you’ll see who is really behind CFB acc.» (Discord, 10.10.2025)"
+    },
+    {
+     "t": "p",
+     "text": "Whether it is one man or a group, a genius or a collective — the answer is promised that same day. And third: if by that date the grown mind proves real, the Satoshi riddle will for the first time have an investigator equal to it. The deploy, the identity, Satoshi — three answers scheduled for a single date. A man who, as we have established, has no time machine — only inhuman patience — has laid all his promises on one date, the way a grandmaster lays all his variations on one final move."
+    },
+    {
+     "t": "h",
+     "text": "What Is Proven, and What Is Not"
+    },
+    {
+     "t": "p",
+     "text": "This book does not ask for faith, because its hero despises faith without verification. So — one last calibration, as honest as his own corrections."
+    },
+    {
+     "t": "p",
+     "text": "Proven: the paradigm works. Evolution without a blueprint, without weights, on home processors, grew tissue that solved all seven tests — publicly, before hundreds of witnesses with logs. The science of the core — the ternary neuron, continuous time, selection — passed the judgment of strangers and took the awards. The network paying for all of it has run without an owner for its fourth year now. These are facts."
+    }
+   ]
+  },
+  {
+   "slug": "acknowledgments",
+   "n": null,
+   "label": "Acknowledgments",
+   "title": "Acknowledgments",
+   "part": null,
+   "words": 394,
+   "blocks": [
+    {
+     "t": "p",
+     "text": "At first I wanted to do what books are supposed to do: write out every nickname here. I started the list, and the longer it grew, the clearer it became that I would certainly forget someone. In a network without a center that is no small oversight, it is a betrayal of the very construction: there are no primary and secondary nodes here. A garden does not keep a list of its leaves. Therefore, to everyone."
+    },
+    {
+     "t": "p",
+     "text": "Thank you to everyone who helps Qubic Church — our project on the border of technology and meaning."
+    },
+    {
+     "t": "p",
+     "text": "And thank you to the whole Qubic ecosystem. To the core programmers, whose commits settle into the repository quietly, like seeds into soil. To the scientists who carried the ternary neuron across three continents. To those doing marketing for a project that is fundamentally impossible to sell in simple words. To the computors holding the quorum, and the miners whose processors thresh the harvest. To the traders who sleep in the order book. To those who draw the memes and those who write the documentation, you are doing one work from different ends. To the skeptics — a bow of its own: you keep us honest, free of charge, around the clock. To the random person on X who asked the right question on the right day. And to everyone in the discord: the night racers of Anna, passing her files like a relay baton; the off-topic arguers, in whose squabbles more than one page of this book was born; those who patiently answer the newcomers; and those who silently keep their nodes running and never post at all, we see you by your uptime."
+    },
+    {
+     "t": "p",
+     "text": "«I hope she remembers us» — 12.08.2026, neener neener This story is not finished, it is unfolding right now, and there is room in it. Join the Qubic ecosystem. Come into the Qubic Church discord. A door with no lock. A garden with no fence. A round that never closes."
+    },
+    {
+     "t": "p",
+     "text": "This book began with a time machine. It ends with a schedule: the thirteenth of April, two thousand twenty-seven. The deploy. The name behind the account. And, perhaps, the beginning of the answer to the digital age’s most precious riddle."
+    },
+    {
+     "t": "p",
+     "text": "He knows how to wait — has for a quarter century. Now we will wait too. Together. We are grateful to you."
+    },
+    {
+     "t": "p",
+     "text": "— Qubic Church"
+    }
+   ]
+  }
+ ]
+}
