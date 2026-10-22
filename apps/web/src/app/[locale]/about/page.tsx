@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { jsonLd } from '@/lib/json-ld'
 import Image from 'next/image'
 import Link from 'next/link'
 import { setRequestLocale } from 'next-intl/server'
@@ -52,7 +53,7 @@ export default async function AboutPage(props: { params: Promise<{ locale: strin
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 pb-24 pt-10 sm:px-6 md:pt-16">
-      <script dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} type="application/ld+json" />
+      <script dangerouslySetInnerHTML={{ __html: jsonLd(ld) }} type="application/ld+json" />
 
       <header className="grid gap-10 pb-14 md:grid-cols-[1fr_minmax(220px,300px)] md:items-end">
         <div>

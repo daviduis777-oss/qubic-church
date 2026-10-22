@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { jsonLd } from '@/lib/json-ld'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { setRequestLocale } from 'next-intl/server'
@@ -53,7 +54,7 @@ export default async function ArticlePage(props: { params: Promise<{ locale: str
 
   return (
     <div className="w-full pb-24">
-      <script dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} type="application/ld+json" />
+      <script dangerouslySetInnerHTML={{ __html: jsonLd(ld) }} type="application/ld+json" />
       <article className="mx-auto w-full max-w-[44rem] px-5 pt-10 md:pt-16">
         <nav aria-label="Breadcrumb" className="mb-10 text-sm text-fg-2">
           <Link className="hover:text-foreground" href="/articles">

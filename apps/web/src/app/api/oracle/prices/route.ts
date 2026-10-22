@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
   try {
     if (!existsSync(DATA_PATH)) {
       return NextResponse.json(
-        { data: null, message: 'No price data yet. Run ORACLE_DOMINATOR.mjs to collect data.' },
+        { data: null, message: 'No price data has been published yet.' },
         {
           status: 200,
           headers: { 'Cache-Control': 'public, max-age=15' },
@@ -82,7 +82,7 @@ export async function GET(request: NextRequest) {
     )
   } catch (error) {
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to read price data' },
+      { error: 'Failed to read price data' },
       { status: 500 }
     )
   }

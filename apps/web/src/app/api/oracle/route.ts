@@ -126,7 +126,7 @@ export async function POST(request: NextRequest) {
   }
 
   // Validate amount
-  if (!amount || typeof amount !== 'number' || amount < 1) {
+  if (!amount || typeof amount !== 'number' || !Number.isInteger(amount) || amount < 1) {
     return NextResponse.json({ error: 'Amount must be at least 1 QU' }, { status: 400 })
   }
   if (amount > 10_000) {
@@ -164,6 +164,8 @@ export async function POST(request: NextRequest) {
     const encodedTx = tx.encodeTransactionToBase64(txBytes)
 
     // Broadcast transaction
+    // Claim the cooldown before touching the network, so parallel requests cannot slip through
+    lastTxTime = Date.now()
     const broadcastResult = await rpcCall('/broadcast-transaction', {
       method: 'POST',
       body: JSON.stringify({
@@ -175,8 +177,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to broadcast transaction' }, { status: 502 })
     }
 
-    // Update rate limit timestamp
-    lastTxTime = Date.now()
 
     return NextResponse.json({
       success: true,

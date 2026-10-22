@@ -64,7 +64,8 @@ async function getStatus() {
 
 async function getStats(request: NextRequest) {
   const file = request.nextUrl.searchParams.get('file')
-  const tail = parseInt(request.nextUrl.searchParams.get('tail') || '50')
+  const tailRaw = parseInt(request.nextUrl.searchParams.get('tail') || '50', 10)
+  const tail = Number.isInteger(tailRaw) && tailRaw > 0 ? Math.min(tailRaw, 5000) : 50
 
   if (!file) {
     return NextResponse.json({ error: 'file parameter required' }, { status: 400 })

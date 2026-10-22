@@ -268,7 +268,7 @@ export async function POST(request: NextRequest) {
     switch (query) {
       case 'rowSum': {
         const row = params?.row
-        if (typeof row !== 'number' || row < 0 || row >= 128) {
+        if (typeof row !== 'number' || !Number.isInteger(row) || row < 0 || row >= 128) {
           return NextResponse.json({ error: 'Invalid row' }, { status: 400 })
         }
         return NextResponse.json({
@@ -280,7 +280,7 @@ export async function POST(request: NextRequest) {
 
       case 'colSum': {
         const col = params?.col
-        if (typeof col !== 'number' || col < 0 || col >= 128) {
+        if (typeof col !== 'number' || !Number.isInteger(col) || col < 0 || col >= 128) {
           return NextResponse.json({ error: 'Invalid column' }, { status: 400 })
         }
         return NextResponse.json({
@@ -314,7 +314,7 @@ export async function POST(request: NextRequest) {
 
       case 'wordEncoding': {
         const word = params?.word
-        if (typeof word !== 'string' || word.length === 0) {
+        if (typeof word !== 'string' || word.length === 0 || word.length > 64) {
           return NextResponse.json({ error: 'Invalid word' }, { status: 400 })
         }
 

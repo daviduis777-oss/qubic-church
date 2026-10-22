@@ -8,6 +8,10 @@ export const dynamic = 'force-dynamic'
 
 // SSE stream that tails a JSONL file
 export async function GET(request: NextRequest) {
+  // Local simulator stream: on the deployed site there is no simulator, so do not hold connections open
+  if (process.env.NODE_ENV === 'production') {
+    return new Response('Not available', { status: 404 })
+  }
   const file = request.nextUrl.searchParams.get('file') || 'live_run.jsonl'
   const safeName = path.basename(file)
   const filePath = path.join(RESULTS_DIR, safeName)

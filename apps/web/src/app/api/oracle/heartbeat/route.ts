@@ -23,7 +23,7 @@ export async function GET() {
 
     if (!snapshot && !history) {
       return NextResponse.json(
-        { data: null, message: 'No heartbeat data yet. Run ORACLE_HEARTBEAT.mjs to scan protocol.' },
+        { data: null, message: 'No heartbeat data has been published yet.' },
         { status: 200, headers: { 'Cache-Control': 'public, max-age=15' } }
       )
     }
@@ -40,7 +40,7 @@ export async function GET() {
     )
   } catch (error) {
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to read heartbeat data' },
+      { error: 'Failed to read heartbeat data' },
       { status: 500 }
     )
   }
