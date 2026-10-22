@@ -26,16 +26,16 @@ export function GET() {
     .filter(d => d.slugAsParams.startsWith('en/') && !d.noindex)
     .sort((a, b) => a.slugAsParams.localeCompare(b.slugAsParams))) {
     const path = d.slugAsParams.replace(/^en\/?/, '')
-    out.push(`- [${d.title}](${SITE_URL}/en/docs/${path})${d.description ? `: ${d.description}` : ''}`)
+    out.push(`- [${d.title}](${SITE_URL}/docs/${path})${d.description ? `: ${d.description}` : ''}`)
   }
   out.push(
     '',
     '## Pages',
     '',
-    `- [About: what Qubic Church is and builds](${SITE_URL}/en/about)`,
-    `- [Corrections, September 2026](${SITE_URL}/en/docs/03-results/35-corrections-september-2026)`,
-    `- [Come-from-Beyond dossier](${SITE_URL}/en/cfb)`,
-    `- [Support the research](${SITE_URL}/en/donate)`,
+    `- [About: what Qubic Church is and builds](${SITE_URL}/about)`,
+    `- [Corrections, September 2026](${SITE_URL}/docs/03-results/35-corrections-september-2026)`,
+    `- [Come-from-Beyond dossier](${SITE_URL}/cfb)`,
+    `- [Support the research](${SITE_URL}/donate)`,
     '',
     '## Optional',
     '',
