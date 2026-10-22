@@ -133,7 +133,7 @@ export async function GET(request: Request) {
   } catch (error) {
     console.error('Mining stats error:', error)
     return NextResponse.json(
-      { error: 'Failed to fetch data', details: String(error) },
+      { error: 'Failed to fetch data' },
       { status: 500 }
     )
   }
