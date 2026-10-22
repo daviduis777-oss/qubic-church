@@ -57,7 +57,7 @@ async function getStatus() {
   const running = simProcess !== null && simProcess.exitCode === null
   return NextResponse.json({
     running,
-    pid: running ? simProcess?.pid : null,
+    pid: running && process.env.NODE_ENV !== 'production' ? simProcess?.pid : null,
     config: simConfig,
   })
 }

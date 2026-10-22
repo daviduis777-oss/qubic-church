@@ -294,7 +294,8 @@ export async function POST(request: NextRequest) {
         const { row1, col1, row2, col2 } = params || {}
         if (
           typeof row1 !== 'number' || typeof col1 !== 'number' ||
-          typeof row2 !== 'number' || typeof col2 !== 'number'
+          typeof row2 !== 'number' || typeof col2 !== 'number' ||
+          ![row1, col1, row2, col2].every(n => Number.isInteger(n) && n >= 0 && n <= 127)
         ) {
           return NextResponse.json({ error: 'Invalid positions' }, { status: 400 })
         }
