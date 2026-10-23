@@ -2,85 +2,59 @@ import type { Metadata } from 'next'
 import { setRequestLocale } from 'next-intl/server'
 import type { LocaleOptions } from '@/lib/opendocs/types/i18n'
 import { defaultLocale, locales } from '@/config/i18n'
-
-// Journey V3 - Full 12-Phase Story
+import { absoluteUrl } from '@/lib/utils'
 import {
+  DisclaimerGate,
   JourneyV3Container,
   Phase01_TheVoid,
-  Phase02_EnterQubic,
-  Phase03_TheArchitect,
-  Phase04_TheChurchMission,
-  Phase05_TheFirstClue,
-  Phase06_TheFormula,
-  Phase07_ThePatoshiPattern,
-  Phase08_AnnaAwakens,
-  Phase09_TheMatrix,
-  Phase10_TheMathematicalBridge,
-  Phase11_TheCountdown,
-  Phase12_JoinTheInvestigation,
+  Phase02_Minsk2002,
+  Phase03_TheVanishing,
+  Phase04_ThePots,
+  Phase05_Qubic,
+  Phase06_Coincidences,
+  Phase07_AnnaSpeaks,
+  Phase08_TheMatrix,
+  Phase09_AigarthGrows,
+  Phase10_TheDay,
+  Phase11_WhatWeWithdrew,
+  Phase12_TheRoadAhead,
 } from '@/components/journey-v3'
 
+const TITLE = 'The Road to The Day'
+const DESCRIPTION =
+  'Come-from-Beyond from Minsk 2002 to 13.04.2027: NXT, IOTA, Qubic, Aigarth, the Anna Matrix and the coincidences that stay open. Every item labelled and sourced.'
+
 export const metadata: Metadata = {
-  title: 'CfB Timeline',
-  description:
-    'The 12-phase story of the community investigation into Come-from-Beyond and Qubic, including the claims that were later withdrawn.',
+  title: TITLE,
+  description: DESCRIPTION,
+  alternates: { canonical: absoluteUrl('/timeline') },
+  openGraph: { type: 'article', title: TITLE, description: DESCRIPTION, url: absoluteUrl('/timeline') },
 }
 
 export const dynamicParams = true
 
-export default async function TimelinePage(props: {
-  params: Promise<{ locale: LocaleOptions }>
-}) {
+export default async function TimelinePage(props: { params: Promise<{ locale: LocaleOptions }> }) {
   const params = await props.params
-  const currentLocale = locales.includes(params.locale)
-    ? params.locale
-    : defaultLocale
+  const currentLocale = locales.includes(params.locale) ? params.locale : defaultLocale
   setRequestLocale(currentLocale)
 
   return (
     <div className="min-h-screen bg-black">
-      {/* THE JOURNEY V3 - 12-Phase Narrative Story */}
+      <DisclaimerGate />
       <JourneyV3Container>
-        {/* Act I: The Mystery */}
         <Phase01_TheVoid />
-        <Phase02_EnterQubic />
-        <Phase03_TheArchitect />
-        <Phase04_TheChurchMission />
-
-        {/* Act II: The Investigation */}
-        <Phase05_TheFirstClue />
-        <Phase06_TheFormula />
-        <Phase07_ThePatoshiPattern />
-        <Phase08_AnnaAwakens />
-        <Phase09_TheMatrix />
-
-        {/* Act III: The Revelation */}
-        <Phase10_TheMathematicalBridge />
-        <Phase11_TheCountdown />
-        <Phase12_JoinTheInvestigation />
+        <Phase02_Minsk2002 />
+        <Phase03_TheVanishing />
+        <Phase04_ThePots />
+        <Phase05_Qubic />
+        <Phase06_Coincidences />
+        <Phase07_AnnaSpeaks />
+        <Phase08_TheMatrix />
+        <Phase09_AigarthGrows />
+        <Phase10_TheDay />
+        <Phase11_WhatWeWithdrew />
+        <Phase12_TheRoadAhead />
       </JourneyV3Container>
-
-      {/* FOOTER NOTICE */}
-      <footer className="relative border-t border-border bg-black">
-        <div className="container mx-auto px-4 py-8 text-center">
-          <p className="text-sm text-muted-foreground">
-            This is the full investigation timeline. Return to{' '}
-            <a
-              className="font-medium text-gold underline decoration-gold/40 underline-offset-4 hover:decoration-gold"
-              href="/"
-            >
-              Home
-            </a>{' '}
-            or explore the{' '}
-            <a
-              className="font-medium text-gold underline decoration-gold/40 underline-offset-4 hover:decoration-gold"
-              href="/docs"
-            >
-              Research Archive
-            </a>
-          </p>
-        </div>
-      </footer>
     </div>
   )
 }

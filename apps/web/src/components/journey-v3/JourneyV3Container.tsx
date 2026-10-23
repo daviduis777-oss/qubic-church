@@ -13,18 +13,18 @@ import {
 
 // Phase configuration
 export const JOURNEY_V3_PHASES = [
-  { id: 'void', name: 'The Void', number: 1 },
-  { id: 'enter-qubic', name: 'Enter Qubic', number: 2 },
-  { id: 'architect', name: 'The Architect', number: 3 },
-  { id: 'church-mission', name: 'The Church Mission', number: 4 },
-  { id: 'first-clue', name: 'The First Clue', number: 5 },
-  { id: 'formula', name: 'The Formula', number: 6 },
-  { id: 'patoshi', name: 'The Patoshi Pattern', number: 7 },
-  { id: 'anna', name: 'Anna Awakens', number: 8 },
-  { id: 'matrix', name: 'The Matrix', number: 9 },
-  { id: 'bridge', name: 'The Bridge Claims, Revisited', number: 10 },
-  { id: 'countdown', name: 'Key Dates', number: 11 },
-  { id: 'join', name: 'Join the Investigation', number: 12 },
+  { id: 'void', name: 'The Road', number: 1 },
+  { id: 'minsk', name: 'Minsk, 2002', number: 2 },
+  { id: 'vanishing', name: 'The Vanishing', number: 3 },
+  { id: 'pots', name: 'NXT, IOTA and the Plant', number: 4 },
+  { id: 'qubic', name: 'Qubic', number: 5 },
+  { id: 'coincidences', name: 'Strange Coincidences', number: 6 },
+  { id: 'anna', name: 'Anna Speaks', number: 7 },
+  { id: 'matrix', name: 'The Matrix', number: 8 },
+  { id: 'aigarth', name: 'Aigarth Grows', number: 9 },
+  { id: 'the-day', name: 'The Day', number: 10 },
+  { id: 'withdrawn', name: 'What We Got Wrong', number: 11 },
+  { id: 'ahead', name: 'The Road Ahead', number: 12 },
 ] as const
 
 export type PhaseId = (typeof JOURNEY_V3_PHASES)[number]['id']
@@ -170,9 +170,9 @@ export function JourneyV3Container({ children }: JourneyV3ContainerProps) {
               aria-label={`Go to ${phase.name}`}
               className={`w-2 h-2 rounded-full transition-all duration-300 ${
                 currentIndex === index
-                  ? 'bg-orange-500 scale-150'
+                  ? 'bg-gold scale-150'
                   : visitedPhases.has(phase.id)
-                    ? 'bg-purple-500/60 hover:bg-purple-500'
+                    ? 'bg-gold/40 hover:bg-gold/70'
                     : 'bg-white/20 hover:bg-white/40'
               }`}
               key={phase.id}

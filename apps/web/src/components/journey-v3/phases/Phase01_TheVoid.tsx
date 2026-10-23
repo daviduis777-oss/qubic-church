@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { Component, useState, useEffect, type ReactNode } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import dynamic from 'next/dynamic'
 import { ChevronDown } from 'lucide-react'
@@ -12,6 +12,27 @@ const Hyperspeed = dynamic(() => import('@/components/Hyperspeed'), {
   ssr: false,
   loading: () => <div className="absolute inset-0 bg-black" />,
 })
+
+/** Keeps the page alive if the WebGL background fails on this device. */
+class BackgroundBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
+  state = { failed: false }
+  static getDerivedStateFromError() {
+    return { failed: true }
+  }
+  render() {
+    return this.state.failed ? null : this.props.children
+  }
+}
+
+function canUseWebGL() {
+  try {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return false
+    const c = document.createElement('canvas')
+    return Boolean(c.getContext('webgl2') || c.getContext('webgl'))
+  } catch {
+    return false
+  }
+}
 
 // Hyperspeed configuration with Bitcoin orange & Qubic purple
 const HYPERSPEED_CONFIG = {
@@ -81,9 +102,11 @@ function useTypewriter(text: string, isActive: boolean, speed: number = 35) {
 export function Phase01_TheVoid() {
   const [showContent, setShowContent] = useState(false)
   const [mounted, setMounted] = useState(false)
+  const [webgl, setWebgl] = useState(false)
 
   useEffect(() => {
     setMounted(true)
+    setWebgl(canUseWebGL())
     const timer = setTimeout(() => setShowContent(true), 1200)
     return () => clearTimeout(timer)
   }, [])
@@ -105,7 +128,11 @@ export function Phase01_TheVoid() {
 
       {/* Hyperspeed Effect */}
       <div className="absolute inset-0 overflow-hidden">
-        <Hyperspeed effectOptions={HYPERSPEED_CONFIG} />
+        {webgl && (
+          <BackgroundBoundary>
+            <Hyperspeed effectOptions={HYPERSPEED_CONFIG} />
+          </BackgroundBoundary>
+        )}
       </div>
 
       {/* Vignette overlay */}
@@ -198,9 +225,8 @@ export function Phase01_TheVoid() {
               >
                 <div className="inline-block relative">
                   <span className="text-xl md:text-2xl text-white/80 drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">
-                    For{' '}
                     <span className="text-gold font-mono font-bold text-2xl md:text-3xl relative">
-                      17 years
+                      2002 &rarr; 13.04.2027
                       <motion.span
                         animate={{ opacity: [0.5, 1, 0.5] }}
                         className="absolute inset-0 bg-gold/30 blur-xl rounded-full"
@@ -224,15 +250,16 @@ export function Phase01_TheVoid() {
               >
                 <div className="bg-black/50 backdrop-blur-md px-6 py-5 border border-white/10">
                   <p className="text-base md:text-lg text-white/90 leading-relaxed">
-                    In <span className="text-white font-semibold">2009</span>,
-                    an anonymous genius created{' '}
-                    <span className="text-gold font-semibold">Bitcoin</span>, a
-                    revolutionary digital currency that would change the world.
+                    In <span className="text-white font-semibold">2002</span> a
+                    programmer in Minsk signed his first article as{' '}
+                    <span className="text-gold font-semibold">Come-from-Beyond</span>.
+                    In <span className="text-white font-semibold">2009</span> someone
+                    calling himself Satoshi Nakamoto launched Bitcoin and later
+                    vanished.
                   </p>
                   <p className="text-base md:text-lg text-white/70 leading-relaxed mt-3">
-                    But hidden within the very first blocks of Bitcoin's
-                    blockchain, a mathematical pattern was waiting to be
-                    discovered...
+                    Twenty-five years, one line of work, and a date he keeps
+                    repeating. This is the road between them.
                   </p>
                   <motion.p
                     animate={{ opacity: 1 }}
@@ -240,7 +267,7 @@ export function Phase01_TheVoid() {
                     initial={{ opacity: 0 }}
                     transition={{ delay: 0.5 }}
                   >
-                    A pattern that connects to something that didn't exist yet.
+                    Some doors on this road are still open.
                   </motion.p>
                 </div>
               </motion.div>
@@ -256,7 +283,7 @@ export function Phase01_TheVoid() {
           transition={{ duration: 0.8, delay: 0.8 }}
         >
           <span className="text-white/60 text-xs tracking-widest uppercase font-medium">
-            Begin the Investigation
+            Walk the road
           </span>
           <motion.div
             animate={{ y: [0, 6, 0] }}

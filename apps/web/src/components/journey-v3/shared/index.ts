@@ -1,3 +1,6 @@
 export { CollapsibleSection } from './CollapsibleSection'
 export { SourceCitation, SourceCitationGroup } from './SourceCitation'
 export { PhaseWrapper } from './PhaseWrapper'
+export { DisclaimerGate } from './DisclaimerGate'
+export { ClueCard, Moments, OpenQuestion, Prose, Quote } from './Story'
+export type { Clue, ClueStatus, Moment } from './Story'

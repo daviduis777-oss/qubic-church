@@ -49,7 +49,7 @@ const INVESTIGATIONS = [
   { title: 'Anna Matrix', text: 'The 128 × 128 grid, its symmetries and what they do and do not prove.', href: '/evidence' },
   { title: 'Research log', text: 'Methods, results, corrections. Every number recomputed.', href: '/docs' },
   { title: 'Rarity Codex', text: 'All 200 Annas ranked by trait rarity, with every trait listed.', href: '/rarity-codex' },
-  { title: 'CfB timeline', text: 'Twenty-five years of Come-from-Beyond, dated and sourced.', href: '/timeline' },
+  { title: 'The Road to The Day', text: 'Come-from-Beyond from Minsk 2002 to 13.04.2027. Some doors left open.', href: '/timeline' },
   { title: 'Matrix companion', text: 'The forensic appendix to chapter 13.', href: '/companion' },
   { title: 'Network monitor', text: 'Live state of the Qubic network.', href: '/monitoring' },
 ] as const
