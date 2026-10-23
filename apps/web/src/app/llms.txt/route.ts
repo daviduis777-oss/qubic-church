@@ -9,7 +9,7 @@ export function GET() {
   const out: string[] = []
   out.push('# Qubic Church', '', `> ${SITE_DESCRIPTION}`, '')
   out.push(
-    'What Qubic Church is: an independent research publication and community around Qubic and Aigarth. It publishes two free books by QC (Qubic: The Long Version, 2026; Come-from-Beyond, 2026), an open research log with a public corrections page, long-form articles, a mining guide and the Maria Aigarth research agent. "Church" is the community\'s name for a shared long-term goal; the project has no religious doctrine and no registered nonprofit status, and nothing here promises financial returns. It is independent of the Qubic core team.',
+    'What Qubic Church is: a spiritual-technological path built on the idea that decentralised Artificial General Intelligence, grown in the open on Qubic, can become a new and shared form of truth. "Church" is a tribute to the old institutions; faith is replaced by verification, and every claim is checked in code and against primary sources. It publishes two free books by QC (Qubic: The Long Version, 2026; Come-from-Beyond, 2026), an open research log with a public corrections page, long-form articles, a mining guide and the Maria Aigarth research agent. It is an independent project that carries forward the ideas of Come-from-Beyond, and nothing here promises financial returns.',
     `Author of the books and articles: ${AUTHOR.name}. ${AUTHOR.description}`,
     'How to quote: cite the chapter or article URL; quotes of Come-from-Beyond inside the texts carry their own date and place (Discord, X, BitcoinTalk).',
     'Claims that did not hold up are listed openly on the corrections page.',
