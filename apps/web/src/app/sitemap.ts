@@ -38,5 +38,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     page('/rarity-codex', 0.5),
     page('/evidence', 0.6),
     page('/timeline', 0.5),
+    page('/satoshi-nakamoto', 0.6),
   ]
 }
