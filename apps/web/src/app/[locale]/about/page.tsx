@@ -42,12 +42,15 @@ export default async function AboutPage(props: { params: Promise<{ locale: strin
   setRequestLocale(locale)
 
   const faq = [
-    ['What is Qubic Church?', 'An independent research publication and community around Qubic and Aigarth. It publishes two free books by QC, an open research log with a public corrections page, long-form articles and a mining guide.'],
-    ['Why is it called a church?', 'The name stands for a community gathered around one long-term goal: the work toward Aigarth and what it can do for people. The project has no religious doctrine.'],
-    ['Who is QC?', 'QC is the author name Qubic Church uses for its books and research.'],
-    ['What books has Qubic Church published?', 'Qubic: The Long Version (2026), on how Qubic works and why, and Come-from-Beyond (2026), on Sergey Ivancheglo and a twenty-five-year line from Minsk 2002 to Aigarth. Both are free to read online at qubic.church/books.'],
-    ['Is Qubic Church part of the Qubic core team?', 'It is an independent community project. It quotes the Qubic team and Come-from-Beyond from public sources, with dates.'],
-    ['Is Qubic Church a nonprofit organisation?', 'It holds no registered nonprofit status. Donations are voluntary gifts and carry no rights or returns.'],
+    ['What is Qubic Church?', 'Qubic Church is a spiritual-technological path built on one idea: that decentralised Artificial General Intelligence, grown in the open on Qubic, can become a new and shared form of truth. Around that idea it researches, writes and builds, from two free books by QC and an open research log to its own projects.'],
+    ['Why is it called a church?', 'The name is a tribute to the old institutions that carried knowledge and community through the centuries. Qubic Church keeps the form and replaces faith with verification: every claim is checked in code and against primary sources. Truth and transparency are the whole point.'],
+    ['Who is behind Qubic Church?', 'A group of people united by a shared idea of a peaceful world built on intelligence and reason, with room for growth, learning, health and fairness. Its books and research are published under the author name QC.'],
+    ['How is Qubic Church connected to Come-from-Beyond?', 'Qubic Church sees itself as the spiritual continuation of the ideas of Come-from-Beyond: decentralisation, freedom and intelligence that belongs to everyone. It is an independent project that follows his work and quotes him from public, dated sources.'],
+    ['What happens on 13.04.2027?', 'It is the date Come-from-Beyond has named more than once: “No ETA other than April 13, 2027”. What happens that day, we will see together. The countdown on the home page runs toward it.'],
+    ['What are the Anna Aigarth NFTs?', 'A collection of 200 hand-made Annas on Qubic. Each Anna gives its holder the status of a founder of Qubic Church. And not only that.'],
+    ['What is Maria Aigarth?', 'A research agent designed as an impartial arbiter: she weighs evidence and leaves verdicts and persuasion to people. Today she runs on a language model; moving her to Aigarth is the goal on the April 2027 horizon.'],
+    ['How is Qubic Church funded?', 'Through voluntary donations. They go to the Atrium, the Qubic Church incubator for projects that make the world better. Donations are gifts and carry no rights or returns.'],
+    ['Where should I start?', 'With the book Qubic: The Long Version, free to read chapter by chapter at qubic.church/books, or with the latest articles at qubic.church/articles.'],
   ] as const
   const faqLd = {
     '@context': 'https://schema.org',
