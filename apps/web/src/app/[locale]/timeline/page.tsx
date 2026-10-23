@@ -24,7 +24,7 @@ import {
 
 const TITLE = 'The Road to The Day'
 const DESCRIPTION =
-  'Come-from-Beyond from 2000 to 13.04.2027: NXT, IOTA, Qubic, Aigarth, the Anna Matrix, and the Satoshi Nakamoto question argued as a hypothesis, with his denials. Every item labelled and sourced.'
+  'Come-from-Beyond from 2000 to 13.04.2027: NXT, IOTA, Qubic, Aigarth, the Anna Matrix, and the Satoshi Nakamoto chapter with his own answers on record. Every item labelled and sourced.'
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -49,7 +49,7 @@ const ld = {
     { '@type': 'Thing', name: 'Aigarth' },
   ],
   abstract:
-    'A sourced timeline of Come-from-Beyond and Qubic. The Satoshi Nakamoto chapter is a hypothesis, not a finding: it sets out the coincidences from one side and includes his repeated denials.',
+    'A sourced timeline of Come-from-Beyond and Qubic. The Satoshi Nakamoto chapter lays out the case, block by block and quote by quote, and includes his own answers on record.',
 }
 
 export default async function TimelinePage(props: { params: Promise<{ locale: LocaleOptions }> }) {

@@ -1,7 +1,7 @@
 'use client'
 
-import { Component, useState, useEffect, type ReactNode } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { Component, useState, useEffect, useRef, type ReactNode } from 'react'
+import { motion, AnimatePresence, useInView } from 'framer-motion'
 import dynamic from 'next/dynamic'
 import { ChevronDown } from 'lucide-react'
 import { BitcoinLogoSVG, QubicLogoSVG } from '@/components/logos'
@@ -27,6 +27,8 @@ class BackgroundBoundary extends Component<{ children: ReactNode }, { failed: bo
 function canUseWebGL() {
   try {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return false
+    // Phones get the still hero: the bloom pass is too heavy there.
+    if (window.innerWidth < 768) return false
     const c = document.createElement('canvas')
     return Boolean(c.getContext('webgl2') || c.getContext('webgl'))
   } catch {
@@ -103,6 +105,9 @@ export function Phase01_TheVoid() {
   const [showContent, setShowContent] = useState(false)
   const [mounted, setMounted] = useState(false)
   const [webgl, setWebgl] = useState(false)
+  // The WebGL road renders only while the hero is on screen; scrolled past, it is disposed.
+  const hero = useRef<HTMLElement>(null)
+  const heroInView = useInView(hero, { amount: 0.05 })
 
   useEffect(() => {
     setMounted(true)
@@ -122,13 +127,14 @@ export function Phase01_TheVoid() {
     <section
       className="relative min-h-screen w-full flex flex-col items-center justify-center overflow-hidden bg-black"
       id="phase-void"
+      ref={hero}
     >
       {/* Permanent black background */}
       <div className="absolute inset-0 bg-black" />
 
       {/* Hyperspeed Effect */}
       <div className="absolute inset-0 overflow-hidden">
-        {webgl && (
+        {webgl && heroInView && (
           <BackgroundBoundary>
             <Hyperspeed effectOptions={HYPERSPEED_CONFIG} />
           </BackgroundBoundary>

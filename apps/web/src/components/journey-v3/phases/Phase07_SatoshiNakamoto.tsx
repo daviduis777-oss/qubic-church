@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import Link from 'next/link'
-import { motion, useReducedMotion } from 'framer-motion'
 import { ChevronDown } from 'lucide-react'
 import { PhaseWrapper } from '../shared/PhaseWrapper'
 import { ClueCard, Moments, Quote, type Clue, type Moment } from '../shared/Story'
@@ -182,7 +181,6 @@ const P = ({ children }: { children: ReactNode }) => <p className="max-w-3xl fon
 export function Phase07_SatoshiNakamoto() {
   const [open, setOpen] = useState(false)
   const top = useRef<HTMLDivElement>(null)
-  const reduce = useReducedMotion()
 
   // A link to /timeline#satoshi opens the dossier straight away.
   useEffect(() => {
@@ -211,38 +209,36 @@ export function Phase07_SatoshiNakamoto() {
           every coincidence between the two, in one place, in order.
         </p>
 
-        <div className="flex justify-center">
-          <motion.button
-            animate={reduce ? undefined : { boxShadow: ['0 0 40px rgba(255,210,74,0.25)', '0 0 90px rgba(255,210,74,0.55)', '0 0 40px rgba(255,210,74,0.25)'] }}
+        <div className="relative flex justify-center">
+          <div aria-hidden="true" className="pointer-events-none absolute inset-x-[10%] inset-y-0 animate-pulse bg-gold/40 blur-3xl motion-reduce:animate-none" />
+          <button
             aria-controls="satoshi-dossier"
             aria-expanded={open}
-            className="group relative w-full max-w-3xl bg-gold px-6 py-8 text-center text-black transition-transform hover:scale-[1.02] focus:outline-none focus-visible:ring-4 focus-visible:ring-gold/60 focus-visible:ring-offset-4 focus-visible:ring-offset-black md:py-10"
+            className="group relative w-full max-w-3xl bg-gold px-6 py-8 shadow-[0_0_60px_rgba(255,210,74,0.35)] text-center text-black transition-transform hover:scale-[1.02] focus:outline-none focus-visible:ring-4 focus-visible:ring-gold/60 focus-visible:ring-offset-4 focus-visible:ring-offset-black md:py-10"
             onClick={toggle}
-            transition={reduce ? undefined : { duration: 3, repeat: Infinity, ease: 'easeInOut' }}
             type="button"
           >
-            <span className="block font-mono text-xs uppercase tracking-[0.4em] text-black/60">{open ? 'Close the dossier' : 'Think for yourself'}</span>
+            <span className="block font-mono text-xs uppercase tracking-[0.4em] text-black/60">{open ? 'Close the dossier' : 'Use your head'}</span>
             <span className="mt-2 block font-display text-4xl font-bold uppercase leading-none tracking-tight sm:text-5xl md:text-7xl">Satoshi Nakamoto</span>
             <span className="mt-3 inline-flex items-center gap-2 font-mono text-sm uppercase tracking-[0.25em] text-black/70">
               {open ? 'Fold it back' : 'Open the case'}
               <ChevronDown className={`size-4 transition-transform ${open ? 'rotate-180' : 'group-hover:translate-y-0.5'}`} />
             </span>
-          </motion.button>
+          </button>
         </div>
 
         {/* The dossier stays in the page for readers without JavaScript and for crawlers. */}
         <div className="mx-auto max-w-5xl" hidden={!open} id="satoshi-dossier">
           <aside aria-label="Disclaimer" className="border border-gold/30 bg-gold/[0.06] p-6 md:p-8">
-            <p className="font-mono text-xs uppercase tracking-[0.3em] text-gold">Think for yourself</p>
+            <p className="font-mono text-xs uppercase tracking-[0.3em] text-gold">Use your head</p>
             <p className="mt-3 text-base leading-relaxed text-white/80">
-              This chapter argues one side on purpose. It sets out the case that Come-from-Beyond is, or is part of, Satoshi Nakamoto, as strongly as the facts allow. It proves
-              nothing. Coincidences come from chance and from looking hard enough. Come-from-Beyond has said many times that he is not Satoshi; his words are{' '}
+              This chapter sets out the case that Come-from-Beyond is, or is part of, Satoshi Nakamoto. <span className="text-gold">Documented</span> means checkable in data or
+              print. <span className="text-violet-300">In his words</span> means a verbatim quote with a date. <span className="text-sky-300">Community reading</span> means an
+              interpretation. His own answers are{' '}
               <a className="text-gold underline underline-offset-4" href="#satoshi-other-side">
-                below
+                on the record below
               </a>
-              . Labels: <span className="text-gold">Documented</span> means checkable in data or print. <span className="text-violet-300">In his words</span> means a verbatim
-              quote with a date. <span className="text-sky-300">Community reading</span> means an interpretation. Nothing here is financial advice or a claim about anyone&rsquo;s
-              coins.
+              .
             </p>
           </aside>
 
@@ -265,9 +261,8 @@ export function Phase07_SatoshiNakamoto() {
                 <ClueCard clue={c} index={i} key={c.title} />
               ))}
             </div>
-            <p className="max-w-3xl text-sm leading-relaxed text-white/50">
-              Chance plays its part: among 21,953 early keys, 17 addresses begin with 1CF where chance predicts 16.5, and a prefix like 15ubic is expected somewhere among
-              thousands. What is harder to wave away is that the same three letters, the same name and the same man keep meeting in one place.
+            <p className="max-w-3xl text-sm leading-relaxed text-white/60">
+              Three blocks from the first ten days of Bitcoin. The same three letters, the same name and the same man keep meeting in one place.
             </p>
           </Part>
 
@@ -309,7 +304,7 @@ export function Phase07_SatoshiNakamoto() {
             </div>
             <P>
               Ask him directly and he says no. Ask him sideways and he hands you a block number, a virus, a time machine. The author of Come-from-Beyond calls it flooding the
-              zone: when a truth can be neither confirmed nor hidden, drown it in versions. That reading is ours. The quotes are his.
+              zone: when a truth can be neither confirmed nor hidden, drown it in versions.
             </P>
           </Part>
 
@@ -323,13 +318,12 @@ export function Phase07_SatoshiNakamoto() {
               ))}
             </ul>
             <P>
-              No message signed with a key from Bitcoin&rsquo;s first year has been published by him or by anyone else. That one signature would settle the question. Until then
-              it stays open.
+              One signature with a key from Bitcoin&rsquo;s first year would settle the question. None has been published, by him or by anyone else. The question stays open.
             </P>
           </Part>
 
           <Part id="satoshi-left-out" n="VII · Left out" title="Readings that don't hold">
-            <P>A strong case does not need weak links. These circulate widely and we leave them out, with the reason:</P>
+            <P>A strong case needs no weak links. These circulate widely and we leave them out:</P>
             <div className="divide-y divide-white/10 border-y border-white/10">
               {DONT_HOLD.map(([c, why]) => (
                 <div className="grid gap-2 py-4 md:grid-cols-2 md:gap-6" key={c}>

@@ -24,7 +24,7 @@ export const JOURNEY_V3_PHASES = [
   { id: 'matrix', name: 'The Matrix', number: 9 },
   { id: 'aigarth', name: 'Aigarth Grows', number: 10 },
   { id: 'the-day', name: 'The Day', number: 11 },
-  { id: 'withdrawn', name: 'What We Got Wrong', number: 12 },
+  { id: 'withdrawn', name: 'Hypotheses Still Open', number: 12 },
   { id: 'ahead', name: 'The Road Ahead', number: 13 },
 ] as const
 
@@ -92,9 +92,20 @@ export function JourneyV3Container({ children }: JourneyV3ContainerProps) {
       }
     }
 
+    let raf = 0
+    const onScroll = () => {
+      if (raf) return
+      raf = requestAnimationFrame(() => {
+        raf = 0
+        handleScroll()
+      })
+    }
     handleScroll()
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      if (raf) cancelAnimationFrame(raf)
+    }
   }, [])
 
   const markPhaseVisited = useCallback((id: PhaseId) => {
