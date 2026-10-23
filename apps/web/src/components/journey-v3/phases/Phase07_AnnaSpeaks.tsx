@@ -74,7 +74,7 @@ function AskAnna() {
 
 export function Phase07_AnnaSpeaks() {
   return (
-    <PhaseWrapper id="anna" phaseNumber={7} subtitle="A bot on X that answers sums in its own way" title="Anna Speaks">
+    <PhaseWrapper id="anna" phaseNumber={8} subtitle="A bot on X that answers sums in its own way" title="Anna Speaks">
       <div className="space-y-10">
         <Prose>
           <p>

@@ -81,7 +81,7 @@ export function DisclaimerGate({
             <div className="mt-5 space-y-3 text-base leading-relaxed text-white/75">
               {children ?? (
                 <>
-              <p>This is a story told with the lights low. It follows Come-from-Beyond from Minsk 2002 to 13.04.2027, and it leaves some doors open on purpose.</p>
+              <p>This is a story told with the lights low. It follows Come-from-Beyond from the year 2000 to 13.04.2027, and it leaves some doors open on purpose. Halfway down the road is a door marked Satoshi Nakamoto. Behind it, a hypothesis argued from one side.</p>
               <p>Every item carries its label. A fact has a source. His words are quoted verbatim, with a date. A community reading is exactly that: a reading.</p>
               <p>
                 Coincidences prove nothing. Come-from-Beyond has said many times that he is not Satoshi Nakamoto, and this page makes no claim about who Satoshi is. Nothing here is

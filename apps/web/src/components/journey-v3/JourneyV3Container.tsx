@@ -14,17 +14,18 @@ import {
 // Phase configuration
 export const JOURNEY_V3_PHASES = [
   { id: 'void', name: 'The Road', number: 1 },
-  { id: 'minsk', name: 'Minsk, 2002', number: 2 },
+  { id: 'origin', name: 'The First Articles', number: 2 },
   { id: 'vanishing', name: 'The Vanishing', number: 3 },
   { id: 'pots', name: 'NXT, IOTA and the Plant', number: 4 },
   { id: 'qubic', name: 'Qubic', number: 5 },
   { id: 'coincidences', name: 'Strange Coincidences', number: 6 },
-  { id: 'anna', name: 'Anna Speaks', number: 7 },
-  { id: 'matrix', name: 'The Matrix', number: 8 },
-  { id: 'aigarth', name: 'Aigarth Grows', number: 9 },
-  { id: 'the-day', name: 'The Day', number: 10 },
-  { id: 'withdrawn', name: 'What We Got Wrong', number: 11 },
-  { id: 'ahead', name: 'The Road Ahead', number: 12 },
+  { id: 'satoshi', name: 'Satoshi Nakamoto', number: 7 },
+  { id: 'anna', name: 'Anna Speaks', number: 8 },
+  { id: 'matrix', name: 'The Matrix', number: 9 },
+  { id: 'aigarth', name: 'Aigarth Grows', number: 10 },
+  { id: 'the-day', name: 'The Day', number: 11 },
+  { id: 'withdrawn', name: 'What We Got Wrong', number: 12 },
+  { id: 'ahead', name: 'The Road Ahead', number: 13 },
 ] as const
 
 export type PhaseId = (typeof JOURNEY_V3_PHASES)[number]['id']

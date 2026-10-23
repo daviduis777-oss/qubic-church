@@ -226,7 +226,7 @@ export function Phase01_TheVoid() {
                 <div className="inline-block relative">
                   <span className="text-xl md:text-2xl text-white/80 drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">
                     <span className="text-gold font-mono font-bold text-2xl md:text-3xl relative">
-                      2002 &rarr; 13.04.2027
+                      2000 &rarr; 13.04.2027
                       <motion.span
                         animate={{ opacity: [0.5, 1, 0.5] }}
                         className="absolute inset-0 bg-gold/30 blur-xl rounded-full"
@@ -250,16 +250,17 @@ export function Phase01_TheVoid() {
               >
                 <div className="bg-black/50 backdrop-blur-md px-6 py-5 border border-white/10">
                   <p className="text-base md:text-lg text-white/90 leading-relaxed">
-                    In <span className="text-white font-semibold">2002</span> a
-                    programmer in Minsk signed his first article as{' '}
+                    In <span className="text-white font-semibold">2000</span> a
+                    programmer signed his first articles as{' '}
                     <span className="text-gold font-semibold">Come-from-Beyond</span>.
                     In <span className="text-white font-semibold">2009</span> someone
                     calling himself Satoshi Nakamoto launched Bitcoin and later
                     vanished.
                   </p>
                   <p className="text-base md:text-lg text-white/70 leading-relaxed mt-3">
-                    Twenty-five years, one line of work, and a date he keeps
-                    repeating. This is the road between them.
+                    Twenty-six years, one line of work, and a date he keeps
+                    repeating. This is the road between them, and halfway down
+                    it a door marked Satoshi Nakamoto.
                   </p>
                   <motion.p
                     animate={{ opacity: 1 }}

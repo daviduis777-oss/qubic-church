@@ -24,7 +24,8 @@ export function PhaseWrapper({
   background = 'default',
 }: PhaseWrapperProps) {
   const ref = useRef<HTMLElement>(null)
-  const isInView = useInView(ref, { once: false, amount: 0.2 })
+  // Reveal once and stay visible: a phase can grow far taller than the viewport (the Satoshi dossier).
+  const isInView = useInView(ref, { once: true, margin: '0px 0px -15% 0px' })
 
   const backgroundStyles = {
     default: 'bg-transparent',

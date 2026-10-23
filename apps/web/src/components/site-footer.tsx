@@ -8,7 +8,7 @@ const FOOTER_LINKS = [
   { href: '/docs', label: 'Research' },
   { href: '/articles', label: 'Articles' },
   { href: '/cfb', label: 'Come-from-Beyond' },
-  { href: '/satoshi-nakamoto', label: 'Satoshi Nakamoto' },
+  { href: '/timeline#satoshi', label: 'Satoshi Nakamoto' },
   { href: '/maria-aigarth', label: 'Maria' },
   { href: '/about', label: 'About' },
   { href: '/donate', label: 'Donate' },

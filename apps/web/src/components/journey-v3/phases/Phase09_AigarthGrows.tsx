@@ -46,7 +46,7 @@ const MOMENTS: Moment[] = [
 
 export function Phase09_AigarthGrows() {
   return (
-    <PhaseWrapper id="aigarth" phaseNumber={9} subtitle="2024 to 2026: the plant comes up" title="Aigarth Grows">
+    <PhaseWrapper id="aigarth" phaseNumber={10} subtitle="2024 to 2026: the plant comes up" title="Aigarth Grows">
       <div className="space-y-10">
         <Moments items={MOMENTS} />
 

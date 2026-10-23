@@ -166,7 +166,7 @@ const CLUES: Clue[] = [
 
 export function Phase08_TheMatrix() {
   return (
-    <PhaseWrapper background="dark" id="matrix" phaseNumber={8} subtitle="16,384 answers and a shape nobody has fully explained" title="The Matrix">
+    <PhaseWrapper background="dark" id="matrix" phaseNumber={9} subtitle="16,384 answers and a shape nobody has fully explained" title="The Matrix">
       <div className="space-y-10">
         <MatrixCanvas />
 
