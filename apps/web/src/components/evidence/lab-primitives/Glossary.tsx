@@ -56,7 +56,7 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
   attractor: {
     title: 'Attractor',
     short: 'A stable output pattern the dynamics keep returning to.',
-    long: 'Picture marbles rolling on a hilly landscape; they end up in the valleys (attractors). An earlier reading of 19 such valleys as concepts in Anna was withdrawn in September 2026: the stored end states are not fixed points, and the 19 were selected afterwards.',
+    long: 'Picture marbles rolling on a hilly landscape; they end up in the valleys (attractors). An earlier reading of 19 such valleys as concepts in Anna was not confirmed in September 2026 and stays open: the stored end states are not fixed points, and the 19 were selected afterwards.',
   },
   basin: {
     title: 'Basin',

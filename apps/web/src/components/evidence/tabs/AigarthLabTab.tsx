@@ -428,7 +428,7 @@ export default function AigarthLabTab() {
     )
   }
 
-  // The seven-position figure was withdrawn in September 2026.
+  // The seven-position figure was not confirmed in September 2026; it is not shown.
   const plots = index.plots.filter(p => !p.includes('7position'))
   const datasets = index.datasets.filter(d => !d.path.includes('7position'))
 

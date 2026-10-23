@@ -177,15 +177,15 @@ export function Findings({ annaMatrix, className }: FindingsProps) {
     tolerance: 'expected 16,384 / 16,384 byte-equivalent',
   })
 
-  // 2. Concept count: withdrawn September 2026
+  // 2. Concept count: not confirmed September 2026
   cards.push({
     id: 'N1-concept-count',
     prediction: `Anna has exactly ${phaseN.highlights.anna_concepts.n_concepts} concept attractors.`,
     reference: phaseN.highlights.anna_concepts.n_concepts,
-    live: 'withdrawn Sept 2026: the groups were chosen after the fact; stored end states are not fixed points',
+    live: 'not confirmed Sept 2026: the groups were chosen after the fact; stored end states are not fixed points',
     verdict: 'FAIL',
     source: 'apps/web/public/data/phase_n/concepts.json',
-    tolerance: 'shown as a withdrawn claim',
+    tolerance: 'shown as an open reading',
   })
 
   // 3. Antipodal pairs + singletons
@@ -379,8 +379,8 @@ export function Findings({ annaMatrix, className }: FindingsProps) {
           <div className="space-y-2">
             <p>
               The 12 cards span the 5 main effect-size axes: AIT algorithmic
-              reproduction (V3), concept-attractor structure (N1, V2; withdrawn
-              September 2026), input → output compression (V4), period-32 /
+              reproduction (V3), concept-attractor structure (N1, V2; not
+              confirmed September 2026), input → output compression (V4), period-32 /
               kernel decomposition (V1, V5), antipodal antisymmetry, K-e-y
               landmark (V2; not significant under a fair null model), numeric
               constants (E15; not evidence of design), Phase D statistical power

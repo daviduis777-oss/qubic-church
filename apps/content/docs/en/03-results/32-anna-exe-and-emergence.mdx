@@ -8,8 +8,8 @@ date: 2026-06-15
 
 # Anna.exe and Emergent Computation: Overview
 
-<Callout type="warning" title="Correction, September 2026">
-Some Anna.exe findings below were narrowed in a re-check: earlier Python ports were not faithful to the binary (signed bits, halting, mutation, addressing), and the constructive adder works only in a modified base-3 model. The "decomposition theorem" is a hypothesis supported by finite constructions, not a proven theorem. See [Corrections, September 2026](/docs/03-results/35-corrections-september-2026).
+<Callout type="info" title="Re-check, September 2026">
+Some Anna.exe findings below were narrowed in a re-check: earlier Python ports were not faithful to the binary (signed bits, halting, mutation, addressing), and the constructive adder works only in a modified base-3 model. The "decomposition theorem" is a hypothesis supported by finite constructions, not a proven theorem. See [September 2026 re-check](/docs/03-results/35-corrections-september-2026).
 </Callout>
 
 <Callout type="info" title="The thread in one sentence">
@@ -39,7 +39,7 @@ A reproducibility-relevant detail: the binary uses the hardware RNG (`RDRAND`) f
 
 ## 2. The central finding: composition succeeds where monolithic search stalls
 
-Earlier versions claimed that a hand-built adder proves the unmodified substrate capable with under a third of the cells. That did not hold up: the construction uses 37 cells, base 3 instead of base 4, unsigned instead of signed addition, and separate control cells instead of the output cells as halting cells. Run with the binary's halting rule, it stops after one tick and gets 13,468 of 16,384 sums wrong. It is a correct unsigned adder only in its own modified model. The binary's monolithic (1+1) search stays in a high-error regime far above 0, CFB's own screenshot shows ~41% wrong partway through the run, and the error floor rises sharply with problem size.
+Earlier versions claimed that a hand-built adder proves the unmodified substrate capable with under a third of the cells. The re-check did not confirm this: the construction uses 37 cells, base 3 instead of base 4, unsigned instead of signed addition, and separate control cells instead of the output cells as halting cells. Run with the binary's halting rule, it stops after one tick and gets 13,468 of 16,384 sums wrong. It is a correct unsigned adder only in its own modified model. The binary's monolithic (1+1) search stays in a high-error regime far above 0, CFB's own screenshot shows ~41% wrong partway through the run, and the error floor rises sharply with problem size.
 
 The resolution, in our modified model, is composition. Evolve a one-bit full adder (0 error in a few hundred evaluations), then wire seven copies in a ripple-carry chain, and the result is a **perfect 7-bit adder: 0 of 131,072 output bits wrong over all 16,384 pairs**. This is exactly CFB's own 2019 "Scratch" vision (evolve A+B, then drag-and-drop to compose), carried out end-to-end.
 

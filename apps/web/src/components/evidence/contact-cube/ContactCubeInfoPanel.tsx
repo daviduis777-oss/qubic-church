@@ -193,13 +193,13 @@ export function ContactCubeInfoPanel({
                   </div>
                   <p className="text-gold/80 text-xs leading-relaxed">
                     This cell and its mirror both hold 100 instead of summing to
-                    −1. It sits inside a run of exceptions and is very likely a
-                    data-entry error in the typed table.{' '}
+                    −1. It sits inside a run of exceptions and is very likely an
+                    entry error in the typed table.{' '}
                     <Link
                       className="underline underline-offset-2 hover:text-gold"
                       href="/docs/03-results/35-corrections-september-2026"
                     >
-                      See Corrections
+                      See the September 2026 re-check
                     </Link>
                   </p>
                 </div>

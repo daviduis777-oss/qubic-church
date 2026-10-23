@@ -398,7 +398,7 @@ export const EXPLAIN_TRAJECTORY = {
       <p>
         Anna&apos;s answers fall into fewer distinct outcomes than the
         doodle&apos;s. We once called them 19 &ldquo;concepts&rdquo;, but that
-        reading was withdrawn in September 2026.
+        reading was not confirmed in September 2026 and stays open.
       </p>
     </div>
   ),
@@ -513,7 +513,7 @@ export const EXPLAIN_CONCEPT_EMERGENCE = {
         Phase N showed: with 50,000 inputs, ~7.3 % are stable basin members;
         these stable inputs were grouped after the fact into 19 centroids (8
         antipodal pairs + 3 singletons). The reading of these as concepts was
-        withdrawn in September 2026.
+        not confirmed in September 2026.
       </p>
       <p>
         Important caveat: the 19 post-hoc groups were <em>discovered</em> by
@@ -538,7 +538,7 @@ export const EXPLAIN_CONCEPT_EMERGENCE = {
       <BlockMath math="\mathrm{stable}(u_i) \iff \mathbb{E}_{j}\!\left[ d_H(\mathrm{AIT}(W, u_i), \mathrm{AIT}(W, u_i \oplus e_j)) \right] < 4" />
       <p>
         Phase N empirical: Anna has ~7.3 % stable inputs across 50,000 samples
-        (M3); 19 post-hoc clusters (N1; concept reading withdrawn).
+        (M3); 19 post-hoc clusters (N1; concept reading not confirmed).
       </p>
       <p>2D projection (real PCA via power iteration on 19 centroids):</p>
       <BlockMath math="\pi(o_i) = U_2^\top (o_i - \bar{c}), \quad U_2 = \text{top-2 eigenvectors of cov}(\{\mathrm{centroid}_k\}_{k=0}^{18})" />

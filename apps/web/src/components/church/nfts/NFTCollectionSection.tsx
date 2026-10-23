@@ -186,7 +186,7 @@ export function NFTCollectionSection() {
               <p className="text-white/60 leading-relaxed mb-3">
                 Select NFTs are directly linked to major research discoveries.
                 Anna #1 links to the Matrix Symmetry chapter, #42 to the Genesis Block analysis,
-                and #200 to the September 2026 corrections.
+                and #200 to the September 2026 re-check.
               </p>
               <p className="text-sm text-[#D4AF37]/80">
                 Owning these NFTs grants you a permanent connection to specific findings in the research.

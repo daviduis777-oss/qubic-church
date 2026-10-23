@@ -161,7 +161,7 @@ const DONT_HOLD: [string, string][] = [
   ['“He holds 800,000 BTC”', 'Nothing supports it, and nobody should repeat it about a living person.'],
   ['“Satoshi emailed about joining the cypherpunks at 14”, “the 100 push-ups email”', 'No such emails are known.'],
   ['“Satoshi cut a name out of The Times headline”', 'The print front page read exactly as the Genesis block does.'],
-  ['“The mathematical bridge”: 27, 47, 137, 283, block 576', 'Numbers picked after looking at the data. We withdrew these ourselves in September 2026.'],
+  ['“The mathematical bridge”: 27, 47, 137, 283, block 576', 'Numbers picked after looking at the data. Open, not evidence.'],
 ]
 
 function Part({ id, n, title, children }: { id: string; n: string; title: string; children: ReactNode }) {

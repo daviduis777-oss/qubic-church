@@ -121,7 +121,7 @@ export default function AnnaConceptLab() {
       {
         label: 'Earlier "concepts"',
         value: '19',
-        sub: 'post-hoc grouping, withdrawn Sept 2026',
+        sub: 'post-hoc grouping, not confirmed Sept 2026',
       },
       {
         label: 'Algorithm match',
@@ -131,7 +131,7 @@ export default function AnnaConceptLab() {
       {
         label: 'Random control',
         value: '0 groups',
-        sub: 'reported; uses the withdrawn definition',
+        sub: 'reported; uses the earlier, unconfirmed definition',
       },
       {
         label: 'Output sensitivity',
@@ -176,9 +176,9 @@ export default function AnnaConceptLab() {
       {/* HERO */}
       <HeroBlock
         eyebrow="AIT Inference"
-        headline="A verified port of Anna's inference, and a withdrawn concept reading."
+        headline="A verified port of Anna's inference, and an open concept reading."
         stats={heroStats}
-        tagline="The TypeScript port reproduces all 16,384 stored scanner states. The earlier reading that any input lands on one of 19 concepts was withdrawn in September 2026: the 19 groups were chosen after the fact, and the stored end states are not fixed points."
+        tagline="The TypeScript port reproduces all 16,384 stored scanner states. The earlier reading that any input lands on one of 19 concepts was not confirmed in September 2026 and stays open: the 19 groups were chosen after the fact, and the stored end states are not fixed points."
       />
 
       {/* WHAT IS ANNA: onramp */}
@@ -264,7 +264,7 @@ export default function AnnaConceptLab() {
             Earlier versions listed {data.report.total_verifications}{' '}
             pre-registered claims with effect sizes from 11&sigma; to
             167&sigma;. These values are reported, not independently re-run, and
-            the concept-classifier reading was withdrawn in September 2026. What
+            the concept-classifier reading was not confirmed in September 2026. What
             still stands: the TypeScript port reproduces all 16,384 stored
             scanner states.
           </p>

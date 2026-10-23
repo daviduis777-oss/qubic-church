@@ -112,9 +112,9 @@ export default async function AboutPage(props: { params: Promise<{ locale: strin
           and every quote of Come-from-Beyond given with its date and place.
         </p>
         <p>
-          When a claim does not survive checking, it is withdrawn and listed on the{' '}
+          When a re-check does not confirm a reading, it is kept as an open question and listed on the{' '}
           <Link className="text-gold underline-offset-4 hover:underline" href="/docs/03-results/35-corrections-september-2026">
-            corrections page
+            re-check page
           </Link>
           . “Church” is the community’s name for a shared long-term goal; it has no religious doctrine. Nothing on this site promises financial
           returns.

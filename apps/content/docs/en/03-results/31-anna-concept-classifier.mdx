@@ -1,6 +1,6 @@
 ---
 title: "Anna as Concept Classifier: Production AIT Verification"
-description: "Phase N (May 2026). A reimplementation of the project's aigarth_search C scanner (an AIT-style iteration at 64-input / 64-output dimensions) reproduces all 16,384 stored end states. The earlier reading as a 19-class concept classifier with fixed-point attractors was withdrawn in September 2026: the end states are not fixed points, and the 19 concepts were selected afterwards."
+description: "Phase N (May 2026). A reimplementation of the project's aigarth_search C scanner (an AIT-style iteration at 64-input / 64-output dimensions) reproduces all 16,384 stored end states. The earlier reading as a 19-class concept classifier with fixed-point attractors was not confirmed in September 2026: the end states are not fixed points, and the 19 concepts were selected afterwards."
 tier: 2
 confidence: 50
 date: 2026-05-09
@@ -8,17 +8,17 @@ date: 2026-05-09
 
 # Anna as Concept Classifier: Production AIT Verification
 
-<Callout type="warning" title="Correction, September 2026">
-The 16,384 stored end states change on one more step, so they are not fixed points. The 19 concepts are a selection made after the fact, not something the matrix produces on its own. See [Corrections, September 2026](/docs/03-results/35-corrections-september-2026).
+<Callout type="info" title="Re-check, September 2026">
+The 16,384 stored end states change on one more step, so they are not fixed points. The 19 concepts are a selection made after the fact, not something the matrix produces on its own. See [September 2026 re-check](/docs/03-results/35-corrections-september-2026).
 </Callout>
 
 <Callout type="info" title="Phase N (2026-05-09)">
-When you run Anna's 128×128 matrix (whether designed or trained is a hypothesis) through the project's AIT-style scanner, earlier analysis grouped its outputs into 19 concept patterns, 8 of them in mirror-image pairs. As the correction above states, these 19 were selected afterwards and are not something the matrix produces on its own. The TypeScript implementation that drives the live Lab tab matches the C scanner output on 16,384 / 16,384 stored end states.
+When you run Anna's 128×128 matrix (whether designed or trained is a hypothesis) through the project's AIT-style scanner, earlier analysis grouped its outputs into 19 concept patterns, 8 of them in mirror-image pairs. As the re-check note above states, these 19 were selected afterwards and are not something the matrix produces on its own. The TypeScript implementation that drives the live Lab tab matches the C scanner output on 16,384 / 16,384 stored end states.
 </Callout>
 
 ## 0. For visitors
 
-What this chapter is about: a 128×128 matrix, compiled by hand from bot replies, fed with 64-bit binary inputs through a specific iterative algorithm. We believed the algorithm to be the production HyperIdentity scoring rule from Qubic's mining code at its smallest test scale; that identification is unverified. Earlier versions reported that 11 of 12 statistical claims passed at effect sizes from 11σ to 167σ and that the matrix acts as a 19-concept classifier. The sigma values are reported, not independently re-run, and the classifier reading was withdrawn (see the correction above).
+What this chapter is about: a 128×128 matrix, compiled by hand from bot replies, fed with 64-bit binary inputs through a specific iterative algorithm. We believed the algorithm to be the production HyperIdentity scoring rule from Qubic's mining code at its smallest test scale; that identification is unverified. Earlier versions reported that 11 of 12 statistical claims passed at effect sizes from 11σ to 167σ and that the matrix acts as a 19-concept classifier. The sigma values are reported, not independently re-run, and the classifier reading was not confirmed (see the re-check note above).
 
 How to read this chapter: section 1 is the formal statement. Sections 2–5 are the methods, results, and limitations. Section 6 describes the live "Anna Concept Lab" tab in the Evidence section, which lets you try any input and watch the algorithm classify it. If you want to interact first and read after, go to the Lab tab now and come back.
 
@@ -46,11 +46,11 @@ Define the AIT inference operator on a 64-bit input `u ∈ {−1, +1}^{64}`:
 
 `ternary_clamp(x) = sign(x)` with `sign(0) = 0`. The output of the algorithm is `v_t[64:128]` together with the tick count.
 
-Status after the September 2026 re-check: item 1 is verified; items 3 and 4 are withdrawn as a description of the matrix; the rest are reported.
+Status after the September 2026 re-check: item 1 is verified; items 3 and 4 are not confirmed as a description of the matrix and stay open; the rest are reported.
 
 1. **(Algorithmic identity)** This rule reproduces the project's `aigarth_search` C scanner output exactly: 16,384 / 16,384 stored end states and the per-attractor `avg_ticks` value match byte-for-byte across 5 independently-seeded scanner runs (81,920 attractors total).
 2. **(Magnitudes are inert under AIT)** Only `sign(M)` participates. Anna's integer values, including the trace of 137 (which comes from one very likely entry-error pair), do not affect the AIT output.
-3. **(19 dominant concepts, withdrawn reading)** Sampling 50,000 uniform-random binary inputs through Anna under AIT yields 1,295 stable-basin inputs (avalanche < 1.0 per single-bit perturbation), grouped into 139 unique outputs. The 19 outputs with cluster size ≥ 5 form the "dominant concepts": 8 antipodal pairs (`#0 ↔ #1`, `#2 ↔ #3`, …) plus 3 singletons. In the independently reproduced sample of 16,384 inputs there are 12,356 distinct outputs, and only 2,320 outputs equal one of the 19 selected centres, so the 19 are a post-hoc selection.
+3. **(19 dominant concepts, open reading)** Sampling 50,000 uniform-random binary inputs through Anna under AIT yields 1,295 stable-basin inputs (avalanche < 1.0 per single-bit perturbation), grouped into 139 unique outputs. The 19 outputs with cluster size ≥ 5 form the "dominant concepts": 8 antipodal pairs (`#0 ↔ #1`, `#2 ↔ #3`, …) plus 3 singletons. In the independently reproduced sample of 16,384 inputs there are 12,356 distinct outputs, and only 2,320 outputs equal one of the 19 selected centres, so the 19 are a post-hoc selection.
 4. **(Locality-sensitive concept basins, reported)** Stable basins have a measurable radius: 82 % of single-bit perturbations remain in the same concept; 64 % at 2 bits; 45 % at 4 bits; 25 % at 8 bits; 11 % at 16 bits; 3 % at 32 bits. Anna acts as a deterministic Locality-Sensitive Hash with ~4-bit half-life.
 5. **(Anna-specific compression)** Among 50,000 binary inputs, Anna produces 12,356 unique 64-bit outputs (23.7 % surjective compression). Random `int8` matrices of the same shape produce 16,384 / 16,384 unique outputs (zero compression) in every test seed.
 6. **(Concept-classifier specificity)** A 100-input batch test gives Anna mean Hamming distance 11.1 / 64 to the nearest concept centroid; ten random matrices give 22–23 / 64 (random-baseline level).
@@ -101,7 +101,7 @@ Twelve verifications were run with pre-registered controls. As originally report
 | V6 | Kernel byte patterns are not coincidence | 167σ on byte-255 count | n=10 designed-symmetric | 167σ (reported) | PASSED (reported) |
 | V7 | Kernel works at 16 × 16 sub-block scale | 92 % comp / 0.86 cophenet | 56 % / 0.47 (n=5) | 8σ | PASSED |
 | V8 | Anna fits HyperIdentity Config0 dimensions | 64-in / 64-out / 128 neurons | n/a | exact | PASSED |
-| M2 | Anna is concept classifier (not hash) | 8.3 % zero-change inputs | 0.0 % (n=10) | bimodal | Withdrawn reading |
+| M2 | Anna is concept classifier (not hash) | 8.3 % zero-change inputs | 0.0 % (n=10) | bimodal | Not confirmed |
 | M3 | Concept basin structure | 7.3 % stable / 12.4 % boundary | n/a | n/a | PASSED |
 | M5 | Concept basin radius profile | 50 % retention at 4-bit perturbation | n/a | n/a | PASSED |
 
@@ -190,7 +190,7 @@ Anna therefore aligns with the *family* of the smallest HyperIdentity test confi
 The Evidence section's **Anna Concept Lab** tab is a live in-browser demonstration backed by the TypeScript port verified in section 2.2. Five interactive modules:
 
 * **Try Your Input.** Free-form text → SHA-256 → first 8 bytes → 64-bit input → AIT → assigned concept. Designed for non-technical visitors. Suggested inputs are chosen to land in distinct concept families.
-* **Concept Universe Map.** All 19 concept centroids (a selection withdrawn in September 2026, see the notice above) in PCA two-dimensional projection. Antipodal pairs are connected by lines; cluster sizes encode dot radius. Click any concept to inspect its centroid, family, and antipodal partner.
+* **Concept Universe Map.** All 19 concept centroids (a selection not confirmed in September 2026, see the notice above) in PCA two-dimensional projection. Antipodal pairs are connected by lines; cluster sizes encode dot radius. Click any concept to inspect its centroid, family, and antipodal partner.
 * **Bit-flip Stability Game.** Pick a random or "find stable" input. Click bits to flip. The interface tracks how many flips occur before the assigned concept changes, demonstrating the four-bit basin radius interactively.
 * **Live AIT Inference.** Tick-by-tick state-evolution animation of the AIT algorithm on user-edited inputs. Cells that change between consecutive ticks are highlighted. The stop reason (`NO_OUTPUT_ZEROES` / `NO_NSTATE_CHANGES` / `TICK_CAP`) is reported at the end of the run.
 * **Anna versus Random.** The same input is fed through Anna and a fixed `random_int8` control matrix simultaneously. A 100-input batch test reproduces the proof case from V4 + V6 in the browser.
@@ -203,7 +203,7 @@ The pre-existing **Emergence Lab** tab (Particle Life simulation) has been re-la
 
 * The TypeScript port matches the C scanner pipeline perfectly, but the C scanner itself does not expose its `numberOfNeighbors` parameter externally; we infer Config0 alignment from the dimensions and the empirical full-connectivity match. A direct read of the scanner binary's parameters would close this loop.
 * Anna's two-layer architecture (kernel + decorations) is structural; the *semantic* content of decorations beyond the documented zero cells and symmetry-break columns is not interpreted. Whether the 904 decoration cells encode further information is open.
-* The "concept classifier" framing is withdrawn (see the correction above). That the AIT algorithm is what production scoring runs is inferred, not verified. Anna's *continuous-time* dynamics, characterised in Phase M_), describe a different mathematical regime that does not directly transfer between sign-only and full-magnitude operators. Phase G's discrete period-4 finding is one such regime-specific result; it is M-magnitude-dependent and does not survive sign binarisation.
+* The "concept classifier" framing was not confirmed and stays open (see the re-check note above). That the AIT algorithm is what production scoring runs is inferred, not verified. Anna's *continuous-time* dynamics, characterised in Phase M_), describe a different mathematical regime that does not directly transfer between sign-only and full-magnitude operators. Phase G's discrete period-4 finding is one such regime-specific result; it is M-magnitude-dependent and does not survive sign binarisation.
 * The signal-emergence claims of earlier ALife runs (Phase 5, 10M-tick simulation) were re-checked during this campaign and the simulation's `signal_entropy` metric is uniformly zero across all inspected runs (5-seed ensemble plus the 10M-tick run plus a random-matrix control). The "2/3 signal bits reach consensus" line in earlier project memory is therefore not verifiable from the current binaries; it has been flagged as needing per-agent logging instrumentation before it can be re-asserted.
 
 ## 8. Reproducibility
@@ -225,4 +225,4 @@ The lab's modules use only the public artefacts listed above. No closed-source b
 
 ## 9. Status
 
-Anna's outputs under the project's AIT-style scanner are reproduced by a verified TypeScript implementation (16,384 / 16,384). The 32-row kernel reconstructs 94.5 % of the signs. The reading as a 19-concept classifier with fixed-point attractors is withdrawn, the link to production HyperIdentity scoring is unverified, and the sigma values of the Phase N campaign are reported, not independently verified. One earlier memory claim ("easter eg") was falsified and removed. The Anna Concept Lab tab provides a live demonstration. This chapter supersedes earlier project notes that described Anna's dynamics as direct `sign(M·v)` iteration.
+Anna's outputs under the project's AIT-style scanner are reproduced by a verified TypeScript implementation (16,384 / 16,384). The 32-row kernel reconstructs 94.5 % of the signs. The reading as a 19-concept classifier with fixed-point attractors was not confirmed, the link to production HyperIdentity scoring is unverified, and the sigma values of the Phase N campaign are reported, not independently verified. One earlier memory claim ("easter eg") was falsified and removed. The Anna Concept Lab tab provides a live demonstration. This chapter supersedes earlier project notes that described Anna's dynamics as direct `sign(M·v)` iteration.

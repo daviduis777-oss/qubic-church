@@ -1,22 +1,22 @@
 ---
 title: Grok Path verified - and some new findings the old research missed
 date: 2026-04-19 22:00:00
-excerpt: Historical post, corrected in September 2026. The 20 matrix lookups of the "Confuse Grok" sequence are arithmetically correct, but the "three new Tier 1 connections", 137 as the inverse fine structure constant and the PUSHBYTES_72 link were withdrawn.
+excerpt: Historical post, re-checked in September 2026. The 20 matrix lookups of the "Confuse Grok" sequence are arithmetically correct, but the "three new Tier 1 connections", 137 as the inverse fine structure constant and the PUSHBYTES_72 link were not confirmed.
 author_id: qubicchurch
 tags: [cfb, grok-path, anna-matrix, verification, tier-2, tier-3]
 ---
 
-<Callout type="warning" title="Correction, September 2026">The matrix lookups below are arithmetically correct, but the way the 40 numbers were mapped to matrix cells was chosen after looking at the data and never tested against a null model. The "three new Tier 1 connections" are withdrawn: 137 has no link to the fine structure constant (the matrix trace of 137 itself comes from a very likely entry error), and the PUSHBYTES_72 link rests on a Genesis Script reading that failed. There is no "master key". The chapter this post announced was removed. See [Corrections, September 2026](/docs/03-results/35-corrections-september-2026).</Callout>
+<Callout type="info" title="Re-check, September 2026">The matrix lookups below are arithmetically correct, but the way the 40 numbers were mapped to matrix cells was chosen after looking at the data and never tested against a null model. The "three new Tier 1 connections" were not confirmed: 137 has no link to the fine structure constant (the matrix trace of 137 itself comes from a very likely entry error), and the PUSHBYTES_72 link rests on a Genesis Script reading that was not confirmed. No "master key" was found. The chapter this post announced was set aside. See [September 2026 re-check](/docs/03-results/35-corrections-september-2026).</Callout>
 
 ## What changed
 
-A chapter "Grok Path Verification" was published in a sidebar section called "CFB Signature Analysis". It was removed in September 2026.
+A chapter "Grok Path Verification" was published in a sidebar section called "CFB Signature Analysis". It was set aside in September 2026.
 
 ## The short version
 
 On [2026-01-13](https://x.com/c___f___b/status/2011199355940978756) CFB posted 40 numbers in a public exchange with the Grok AI. An older internal research note (2026-01-14) claimed those numbers were 20 coordinate pairs navigating through the Anna Matrix, and that the sequence was anchored to two of his 2014 Bitcoin vanity addresses. We went through every claim with scripts and reported the outcome with explicit confidence tiers.
 
-## Tier 1 - as originally labelled (the "New" items are withdrawn, see the correction above)
+## Tier 1 - as originally labelled (the "New" items stay open, see the re-check note above)
 
 - All 20 matrix values at the claimed coordinates match exactly (`20 / 20`, zero errors).
 - The `1CFB` vanity address hash160 ends with bytes `[72, 2, 45]`. Byte 19 = 45 = row of path step 1.
@@ -24,7 +24,7 @@ On [2026-01-13](https://x.com/c___f___b/status/2011199355940978756) CFB posted 4
 - **New**: Start row (45) + end row (82) = 127 --- the Mersenne mirror axis. The path begins and ends on matrix-mirror rows.
 - **New**: Coordinate sum of step 1 = 137 = inverse of the fine-structure constant (1/alpha). The earlier research tried to argue this via a stretched interpretation of the matrix *value* (-118 unsigned = 138, off by one). The cleaner observation is that the coordinate *sum* is exactly 137.
 - **New**: Byte 17 of `1CFB` = 72 = PUSHBYTES_72, the same opcode documented in a Genesis chapter that has since been removed. And step 3 of the path has coordinate sum `14 + 58 = 72`. The number 72 appears across at least four independent structural layers now.
-- **New**: `1CFB` byte 17 - byte 19 = `72 - 45 = 27`, the value of a BTC address selection that was later withdrawn (off-by-one index error).
+- **New**: `1CFB` byte 17 - byte 19 = `72 - 45 = 27`, the value of a BTC address selection that was later not confirmed (off-by-one index error).
 
 ## Tier 2 - observations with weight but not proof
 
@@ -45,6 +45,6 @@ Transparency. When earlier research has made stronger claims than the evidence s
 
 ## What this unlocks
 
-Earlier text called the `PUSHBYTES_72` connection in `1CFB` byte 17 a new Tier 1 finding; that is withdrawn. The path visits rows that hit a previously documented "special row" set more often than chance would predict. And the second half of the path looks generative. If we can figure out what rule produces steps 11 to 20 from step 10, we may be able to extend the path and test whether it hits further anchor addresses.
+Earlier text called the `PUSHBYTES_72` connection in `1CFB` byte 17 a new Tier 1 finding; that reading stays open. The path visits rows that hit a previously documented "special row" set more often than chance would predict. And the second half of the path looks generative. If we can figure out what rule produces steps 11 to 20 from step 10, we may be able to extend the path and test whether it hits further anchor addresses.
 
-The chapter was removed in September 2026. See [Corrections, September 2026](/docs/03-results/35-corrections-september-2026).
+The chapter was set aside in September 2026. See [September 2026 re-check](/docs/03-results/35-corrections-september-2026).

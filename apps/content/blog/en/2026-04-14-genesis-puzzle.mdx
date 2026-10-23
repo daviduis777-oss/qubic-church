@@ -1,18 +1,18 @@
 ---
 title: Genesis Block Cryptographic Puzzle
 date: 2026-04-14 12:00:00
-excerpt: Historical post, corrected in September 2026. The Genesis public key does not form a working Bitcoin Script, the [72,72] link to 500-BTC blocks came from an index error, and the other design claims in this post were withdrawn.
+excerpt: Historical post, re-checked in September 2026. The Genesis public key does not form a working Bitcoin Script, the [72,72] link to 500-BTC blocks came from an index error, and the other design readings in this post were not confirmed.
 author_id: qubicchurch
 tags: [genesis, bitcoin, anna-matrix, period-4, cryptography]
 ---
 
-<Callout type="warning" title="Correction, September 2026">This post is kept as a record, but its main claims did not hold up. The Genesis public key does not parse as a valid executable Script (the 72-byte push is incomplete), so there is no designed second program. The [72,72] lookup does not select the 500-BTC blocks; that selection was an off-by-one index error. The period-4 cycle at step 11 is not specific to the Genesis key: random inputs reach the same cycles. The POCC, HASV and PXMARAS transfers do not prove a single controlling entity or a Bitcoin origin. The "seven missing signature bytes" reading is only a hypothesis, and its link to the seven-position signature has no basis. The chapter this post announced was removed. See [Corrections, September 2026](/docs/03-results/35-corrections-september-2026).</Callout>
+<Callout type="info" title="Re-check, September 2026">This post is kept as a record; its main claims were not confirmed by the re-check and stay open. The Genesis public key does not parse as a valid executable Script (the 72-byte push is incomplete), so there is no designed second program. The [72,72] lookup does not select the 500-BTC blocks; that selection was an off-by-one index error. The period-4 cycle at step 11 is not specific to the Genesis key: random inputs reach the same cycles. The POCC, HASV and PXMARAS transfers do not prove a single controlling entity or a Bitcoin origin. The "seven missing signature bytes" reading is only a hypothesis, and its link to the seven-position signature has no basis. The chapter this post announced was set aside. See [September 2026 re-check](/docs/03-results/35-corrections-september-2026).</Callout>
 
 ## What changed
 
 A new chapter has been published:
 
-- Chapter 26: Genesis Block Cryptographic Puzzle (since removed, see [Corrections, September 2026](/docs/03-results/35-corrections-september-2026))
+- Chapter 26: Genesis Block Cryptographic Puzzle (since set aside, see [September 2026 re-check](/docs/03-results/35-corrections-september-2026))
 
 ## Thirteen findings
 
@@ -25,9 +25,9 @@ The dual-purpose encoding means the bytes were deliberately chosen to satisfy bo
 
 ## Matrix resonance
 
-The script contains `PUSHBYTES_72` (opcode 0x48 = 72). Looking up position `matrix[72][72]` in the Anna Matrix yields `-27`. Earlier text read this as the constant that selects 10 early Bitcoin addresses containing 500 BTC; that selection was an off-by-one index error and is withdrawn.
+The script contains `PUSHBYTES_72` (opcode 0x48 = 72). Looking up position `matrix[72][72]` in the Anna Matrix yields `-27`. Earlier text read this as the constant that selects 10 early Bitcoin addresses containing 500 BTC; that selection was an off-by-one index error and was not confirmed.
 
-When the 65 pubkey bytes are encoded as a ternary state and iterated through the Anna Matrix, the system converges to a period-4 cycle at step 11 with sum signature `(-42, 50, 38, -56)`. This observation motivated follow-up work on the seven-position signature, which was later withdrawn.
+When the 65 pubkey bytes are encoded as a ternary state and iterated through the Anna Matrix, the system converges to a period-4 cycle at step 11 with sum signature `(-42, 50, 38, -56)`. This observation motivated follow-up work on the seven-position signature, which was later not confirmed.
 
 ## On-chain trinity
 
@@ -44,4 +44,4 @@ The chapter explicitly separates three types of finding:
 - Tier 1 (blockchain): the on-chain trinity, the 26x27 transfer pattern. All blockchain-verifiable.
 - Tier 2 (observation): the signature fragment interpretation. A possibility, not a proof.
 
-The chapter was removed in September 2026. See [Corrections, September 2026](/docs/03-results/35-corrections-september-2026).
+The chapter was set aside in September 2026. See [September 2026 re-check](/docs/03-results/35-corrections-september-2026).

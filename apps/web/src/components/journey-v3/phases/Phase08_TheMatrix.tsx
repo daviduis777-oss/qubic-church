@@ -178,9 +178,9 @@ export function Phase08_TheMatrix() {
 
         <Prose>
           <p>
-            We checked the loud theories one by one: a hidden message, a weight file, a bridge to Bitcoin. None held, and the{' '}
+            We checked the loud theories one by one: a hidden message, a weight file, a bridge to Bitcoin. None was confirmed, and the{' '}
             <a className="text-gold underline decoration-gold/40 underline-offset-4" href="/docs/03-results/35-corrections-september-2026">
-              corrections page
+              re-check page
             </a>{' '}
             says why. What remains is stranger than any of them. In August 2026 Come-from-Beyond wrote that Anna runs on an implementation of Intelligent Tissue he has not
             named, different from Neuraxon.

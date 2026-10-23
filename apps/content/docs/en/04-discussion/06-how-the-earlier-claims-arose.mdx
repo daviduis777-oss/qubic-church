@@ -6,7 +6,7 @@ date: 2026-09-30
 
 # How the earlier claims arose
 
-Between late 2025 and spring 2026 this site presented findings as "Tier 1" or "proven" that did not survive a re-check in September 2026. The list is on the [corrections page](/docs/03-results/35-corrections-september-2026). This page explains how that happened. We think the mechanisms are more useful to readers than the individual errors, because they are common wherever people look for hidden patterns.
+Between late 2025 and spring 2026 this site presented findings as "Tier 1" or "proven" that were not confirmed by a re-check in September 2026. The list is on the [re-check page](/docs/03-results/35-corrections-september-2026). This page explains how that happened. We think the mechanisms are more useful to readers than the individual readings, because they are common wherever people look for hidden patterns.
 
 ## The raw material was real
 
@@ -18,19 +18,19 @@ Most of the starting points were true facts:
 - there are cells whose values spell "Key" in ASCII;
 - the trace of the matrix as typed is 137.
 
-The errors came from what was done with such facts.
+The earlier readings came from what was done with such facts.
 
 ## Five mechanisms
 
 **1. Very many attempts, reported as if there had been one.** Close to a million Bitcoin addresses were generated from the matrix in various ways. Millions of seeds were tried. Dozens of decoders, byte orders and coordinate mappings were tested. With that many attempts, some matches are certain. The matches were reported, the attempts mostly were not.
 
-**2. Wrong chance models.** Whether a match is surprising depends on how often it happens by chance, and several of those rates were wrong:
+**2. Chance models that did not fit.** Whether a match is surprising depends on how often it happens by chance, and several of those rates did not fit the data:
 
 - the probability of an address starting with `1CF` was taken as about 1 in 79,000 instead of about 1 in 1,300;
 - the spread of a byte sum was taken as 36 instead of about 330;
 - one reported spread was smaller than any set of whole-number counts can produce.
 
-Each error turned an ordinary result into an "extremely unlikely" one.
+Each of these turned an ordinary result into an "extremely unlikely" one.
 
 **3. Numbers chosen after the fact.** 27, 121, 137, 19, 576 and 676 were treated as signatures because they showed up. Almost any number can be written as a combination of a few others. Without fixing in advance which numbers count, such matches carry no weight.
 

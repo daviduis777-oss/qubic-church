@@ -7,7 +7,7 @@ date: 2026-02-27
 
 # Research Methodology Notes
 
-<Callout type="warning" title="Correction, September 2026">The control method described below samples with replacement from the value histogram; it is not an exact permutation, as earlier versions stated. The matrix provenance was also corrected. See [Corrections, September 2026](/docs/03-results/35-corrections-september-2026).</Callout>
+<Callout type="info" title="Re-check, September 2026">The control method described below samples with replacement from the value histogram; it is not an exact permutation, as earlier versions stated. The matrix provenance was also corrected. See [September 2026 re-check](/docs/03-results/35-corrections-september-2026).</Callout>
 
 This document describes the analytical methods, verification protocols, and statistical frameworks applied throughout this research. A clear understanding of these methods is essential for evaluating the strength of any claims made elsewhere in the documentation.
 
@@ -152,7 +152,7 @@ anna_values = anna_matrix.flatten()        # All 16,384 values
 control_matrix = np.random.choice(anna_values, size=(128, 128))
 ```
 
-Note: without `replace=False`, `np.random.choice` samples **with replacement**. This is a sample from the empirical histogram, not a permutation of the actual values, so the value counts of a control differ slightly from Anna's. An exact permutation is `np.random.permutation(anna_values).reshape(128, 128)`. Earlier versions of this page called the method above a shuffle; that was wrong, and p-values from older runners are not validated by this page.
+Note: without `replace=False`, `np.random.choice` samples **with replacement**. This is a sample from the empirical histogram, not a permutation of the actual values, so the value counts of a control differ slightly from Anna's. An exact permutation is `np.random.permutation(anna_values).reshape(128, 128)`. Earlier versions of this page called the method above a shuffle; that description did not fit the code, and p-values from older runners are not validated by this page.
 
 Both approaches keep the controls close to Anna's value distribution, so differences mainly reflect the **spatial arrangement** of values.
 
@@ -209,7 +209,7 @@ Certain address pairs exhibit combined mathematical properties that are unique w
 
 ## Debunked Claims
 
-The following claims, made earlier in the research, did not survive statistical validation:
+The following claims, made earlier in the research, were not confirmed by statistical validation:
 
 | Claim | Reason for Rejection |
 |-------|---------------------|
@@ -280,7 +280,7 @@ This research is entirely observational. No controlled experiments can be perfor
 
 ### Data Provenance
 
-The Anna Matrix data was compiled by hand by our team from replies of the @anna_aigarth bot on X. Some runs of cells are very likely data entry errors (see [Corrections, September 2026](/docs/03-results/35-corrections-september-2026)). While internal consistency checks (point symmetry, reproducible queries) support data integrity, independent extraction by other researchers would strengthen confidence.
+The Anna Matrix data was compiled by hand by our team from replies of the @anna_aigarth bot on X. Some runs of cells are very likely data entry errors (see [September 2026 re-check](/docs/03-results/35-corrections-september-2026)). While internal consistency checks (point symmetry, reproducible queries) support data integrity, independent extraction by other researchers would strengthen confidence.
 
 ---
 

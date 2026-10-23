@@ -371,7 +371,7 @@ export function LiveAITInference({
             label="Distance to nearest reference state"
             sub={
               result.concept
-                ? `reference state #${result.concept.conceptId} of ${concepts.length} from the earlier, withdrawn grouping`
+                ? `reference state #${result.concept.conceptId} of ${concepts.length} from the earlier grouping, which was not confirmed`
                 : 'no reference states loaded'
             }
             tone="accent"

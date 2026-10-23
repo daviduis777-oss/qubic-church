@@ -1,7 +1,7 @@
 ---
 title: "September 2026: what we found about the Anna Matrix"
 date: 2026-09-30 12:00:00
-excerpt: "We re-checked everything on this site against the raw data. The Anna Matrix turned out to be something concrete: a table of the Anna bot's answers whose format matches a unit in Qubic's public Aigarth code, and Anna's newest design turned up in Qubic's mining code. Here is what we found, what we are testing next, and what we removed along the way."
+excerpt: "We re-checked everything on this site against the raw data. The Anna Matrix turned out to be something concrete: a table of the Anna bot's answers whose format matches a unit in Qubic's public Aigarth code, and Anna's newest design turned up in Qubic's mining code. Here is what we found, what we are testing next, and what we set aside along the way."
 author_id: qubicchurch
 tags: [anna-matrix, aigarth, research, corrections, reproducibility]
 ---
@@ -15,13 +15,13 @@ In September 2026 we went through every page of this site and every number on it
 - **It is unusually linear, even for such a unit.** Which training produces that is the open question we are working on now.
 - **Anna 0.22 and Qubic mining share one design.** Anna 0.22.64 works with a year of real Bitcoin hours, and Qubic's public mining code runs networks of the same kind on Bitcoin data.
 
-Many earlier claims did not survive the re-check, and we removed them. The full list, with a reason for each, is on the [corrections page](/docs/03-results/35-corrections-september-2026).
+Many earlier readings were not confirmed by the re-check, and we set them aside as open questions. The full list, with what the re-check found for each, is on the [re-check page](/docs/03-results/35-corrections-september-2026).
 
 ## What the Anna Matrix is
 
 The 128 x 128 Anna Matrix was compiled by hand from answers of the @anna_aigarth bot to queries of the form `x+y=?`. Row 63 - y and column x + 64 hold the bot's answer. It is not a weight file, a key or a hidden message.
 
-Its best-known property is real: 16,316 of its 16,384 cells follow an exact mirror rule, where each cell and its opposite cell add up to -1. The 68 cells that break it sit in four runs. Our tests point to our own transcription for three of them: a block pasted one row off in column 30 (strongly supported), a swapped digit and a copied neighbour cell. The cause of the fourth run, in column 22, is unclear. It could be a block from the wrong source or answers from another bot state.
+Its best-known property is real: 16,316 of its 16,384 cells follow an exact mirror rule, where each cell and its opposite cell add up to -1. The 68 cells that break it sit in four runs. Our tests point to entry errors in the typed table for three of them: a block pasted one row off in column 30 (strongly supported), a swapped digit and a copied neighbour cell. The cause of the fourth run, in column 22, is unclear. It could be a block from the wrong source or answers from another bot state.
 
 Setting each of those cells to the value its mirror cell requires gives a fully symmetric table. That symmetry is imposed by the correction, so it is not evidence in itself. We publish the result as a separate [candidate file](/data/anna-matrix-clean.json), next to the unchanged original. Its trace is -64 instead of 137.
 
@@ -81,21 +81,21 @@ Each of these has a protocol that is fixed before the run. We publish the result
 
 The patterns people point to, such as `1CFB` in block 264 or `cfb` in the key of block 369, occur about as often as chance predicts. On block 369 CFB wrote: "I hinted to a block with a special number (369), why 369 is special is another topic. He spotted "cfb" inside it. It wasn't telling that it's related to me, because without plausible deniability that would be equal to saying that CFB=Satoshi." (1552052838060789803). He has also denied being Satoshi. Only a signature from an early key could settle the question. See [CFB and Satoshi: what the primary sources say](/docs/03-results/17-cfb-satoshi-analysis).
 
-## What we removed
+## What we set aside
 
-- **The Bitcoin-Qubic bridge.** The "46-fold" excess of `1CF` addresses came from wrong probabilities: among 21,953 early keys there are 17 such addresses, where chance predicts 16.5.
-- **The March 3, 2026 time lock.** The date comes from the riddle text of the community token GENESIS (6,268 days after the Bitcoin genesis block). On that day the token AIGARTH was issued; no unlock or distribution to holders followed. We had also tied the date to a CFB message, which actually says "No ETA other than April 13, 2027".
-- **Hidden messages and signatures.** "Key", GAME, MEGA, the trace of 137, the seven-position signature and the deviation sum 1161 are either not unusual under a fair chance model or come from our own typing errors.
-- **"19 concepts" and attractor claims.** The stored end states are not stable, and the 19 were picked afterwards.
-- **Identity percentages** such as "91.4% CFB = Satoshi". They had no calibrated method behind them.
-- **About a hundred pages and several data files.** These include 88 archived pages that were still reachable, 15 chapters, and research data files with test keys generated during the matrix experiments (none belong to anyone's wallet). Some archived pages contained information about private individuals. They should never have been published, and we apologise for that. We will also remove them from the public repository history.
+- **The Bitcoin-Qubic bridge.** The "46-fold" excess of `1CF` addresses came from Base58 probabilities that do not match the encoding: among 21,953 early keys there are 17 such addresses, where chance predicts 16.5.
+- **The March 3, 2026 time lock.** The date comes from the riddle text of the community token GENESIS (6,268 days after the Bitcoin genesis block). On that day the token AIGARTH was issued; no unlock or distribution to holders followed. The date passed without an event. Earlier versions had also tied the date to a CFB message, which actually says "No ETA other than April 13, 2027".
+- **Hidden messages and signatures.** "Key", GAME, MEGA, the trace of 137, the seven-position signature and the deviation sum 1161 are either not unusual under a fair chance model or come from entry errors in the typed table.
+- **"19 concepts" and attractor readings.** The stored end states are not stable, and the 19 were picked afterwards. The reading stays open.
+- **Identity percentages** such as "91.4% CFB = Satoshi". They had no calibrated method behind them. The numbers are retired; the question is not.
+- **About a hundred pages and several data files.** These include 88 archived pages that were still reachable, 15 chapters, and research data files with test keys generated during the matrix experiments (none belong to anyone's wallet). Some archived pages contained information about private individuals. Those pages were set aside, and we will also remove them from the public repository history.
 
 ## How we work now
 
-We did not invent the raw facts. The mistakes came from how we tested them:
+We did not invent the raw facts. The earlier readings came from how we tested them:
 
 - we tried far too many ideas and reported the hits;
-- we used wrong chance models;
+- we used chance models that did not fit the data;
 - we picked numbers after the fact;
 - we confirmed findings with the same data that produced them.
 

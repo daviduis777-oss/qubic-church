@@ -142,9 +142,9 @@ function getResearchConnection(id: number): ResearchConnection | undefined {
       teaser: 'What the numbers in the first block do and do not show',
     },
     200: {
-      title: 'Corrections, September 2026',
+      title: 'The September 2026 re-check',
       slug: '/docs/03-results/35-corrections-september-2026',
-      teaser: 'Which earlier claims were withdrawn, and why',
+      teaser: 'What the re-check confirmed, and which readings stay open',
     },
   }
 

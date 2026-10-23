@@ -8,7 +8,7 @@ const FINDINGS = [
   {
     title: 'A table of bot answers.',
     figure: '16,316 / 16,384',
-    text: "The 128 × 128 Anna Matrix is a table our team compiled by hand from the Anna bot's replies on X to questions of the form x + y = ?. Row = 63 − y, column = x + 64. 16,316 of its 16,384 cells obey the mirror rule M[i, j] + M[127 − i, 127 − j] = −1. The 68 cells that break it sit in four runs. Three look like our own transcription errors (a block pasted one row off, a swapped digit, a copied neighbour); the cause of the fourth is unclear. Setting those cells to the value their mirror requires gives a fully symmetric candidate table, a symmetry imposed by the correction rather than evidence.",
+    text: "The 128 × 128 Anna Matrix is a table our team compiled by hand from the Anna bot's replies on X to questions of the form x + y = ?. Row = 63 − y, column = x + 64. 16,316 of its 16,384 cells obey the mirror rule M[i, j] + M[127 − i, 127 − j] = −1. The 68 cells that break it sit in four runs. Three look like entry errors in the typed table (a block pasted one row off, a swapped digit, a copied neighbour); the cause of the fourth is unclear. Setting those cells to the value their mirror requires gives a fully symmetric candidate table, a symmetry imposed by the correction rather than evidence.",
     href: CH36,
   },
   {

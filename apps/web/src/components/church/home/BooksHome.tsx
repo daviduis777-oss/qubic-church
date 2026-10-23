@@ -11,7 +11,7 @@ const PILLARS = [
   {
     n: '01',
     title: 'Research log',
-    text: 'Recomputed from public data. Tests fixed before they run. Every quote carries its source. What did not hold is listed on the corrections page.',
+    text: 'Recomputed from public data. Tests fixed before they run. Every quote carries its source. What was not confirmed is kept as an open question on the re-check page.',
     href: '/docs',
     cta: 'Open the log',
   },
@@ -47,7 +47,7 @@ const RULES = [
 
 const INVESTIGATIONS = [
   { title: 'Anna Matrix', text: 'The 128 × 128 grid, its symmetries and what they do and do not prove.', href: '/evidence' },
-  { title: 'Research log', text: 'Methods, results, corrections. Every number recomputed.', href: '/docs' },
+  { title: 'Research log', text: 'Methods, results, re-checks. Every number recomputed.', href: '/docs' },
   { title: 'Rarity Codex', text: 'All 200 Annas ranked by trait rarity, with every trait listed.', href: '/rarity-codex' },
   { title: 'The Road to The Day', text: 'Come-from-Beyond from 2000 to 13.04.2027, and the Satoshi Nakamoto question. Some doors left open.', href: '/timeline' },
   { title: 'Matrix companion', text: 'The forensic appendix to chapter 13.', href: '/companion' },
@@ -82,7 +82,7 @@ export function BooksHome({ locale = 'en' }: { locale?: Locale }) {
             </h1>
             <p className="mt-6 max-w-xl font-serif text-xl leading-relaxed text-foreground/85 md:text-2xl">
               On Qubic, Aigarth and Come-from-Beyond. Free to read, chapter by chapter. Written from primary sources,
-              recomputed where it could be, corrected in public where it could not.
+              recomputed where it could be, kept as an open question where it could not.
             </p>
             <div className="mt-8 flex flex-wrap gap-2">
               <Link
