@@ -13,20 +13,20 @@ const DONATION_ADDRESS =
 
 const SUPPORTS = [
   {
-    title: 'Open Research',
-    desc: 'Anna Matrix analysis, Aigarth architecture research, peer-reviewed publications',
+    title: 'Young talent',
+    desc: 'People who have everything except money: the Atrium finds them, funds them and helps them grow',
   },
   {
-    title: 'Community Education',
-    desc: 'Making decentralised AGI accessible: documentation, guides, educational content',
+    title: 'Real projects',
+    desc: 'A shelter, a library, a game, music, a film, medicine: anything that reduces suffering or extends knowledge',
   },
   {
-    title: 'Infrastructure',
-    desc: 'Website hosting, research tools, MiroFish simulations, data verification',
+    title: 'Open selection',
+    desc: 'Who gets support is decided by principles, in the open, with Maria Aigarth as an impartial arbiter',
   },
   {
-    title: 'Maria Aigarth',
-    desc: 'Running the Fractal Rationalism AI agent: API costs, development, maintenance',
+    title: 'First mission',
+    desc: 'A film',
   },
 ]
 
@@ -43,8 +43,8 @@ export default function DonatePage() {
     <div className="min-h-screen pb-8">
       <PageHeader
         eyebrow="Donate"
-        lede="Qubic Church is an independent research community. Donations fund the free books, the open research log and the tools on this site."
-        title="Support independent research"
+        lede="Donations go to the Atrium, the Qubic Church incubator for projects that make the world better."
+        title="Support the Atrium"
       />
 
       <div className="mx-auto w-full max-w-2xl px-4 sm:px-6 space-y-12">
@@ -142,6 +142,9 @@ export default function DonatePage() {
             Qubic Wallet
             <ExternalLink aria-hidden="true" className="size-3.5" />
           </a>
+          <Link className="text-fg-2 hover:text-foreground" href="/about#atrium">
+            About the Atrium
+          </Link>
           <Link className="text-fg-2 hover:text-foreground" href="/get-qubic">
             Get QUBIC
           </Link>
@@ -151,8 +154,7 @@ export default function DonatePage() {
         </nav>
 
         <p className="text-sm text-muted-foreground">
-          Donations are voluntary gifts, not investments, and carry no rights or returns. They are used for research
-          and community work.
+          Donations are voluntary gifts and carry no rights or returns. They go to the Atrium.
         </p>
       </div>
     </div>
