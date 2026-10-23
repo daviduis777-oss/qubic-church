@@ -50,7 +50,7 @@ export function SourceCitation({
   )
 
   const baseClasses = cn(
-    'inline-flex items-center gap-2 px-3 py-1.5',
+    'inline-flex max-w-full min-w-0 items-center gap-2 px-3 py-1.5',
     'text-sm text-white/70 hover:text-white/90',
     'bg-white/5 hover:bg-white/10 border border-white/10',
     'transition-colors cursor-pointer',
