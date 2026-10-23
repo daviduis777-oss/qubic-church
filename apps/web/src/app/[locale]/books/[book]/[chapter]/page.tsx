@@ -32,7 +32,8 @@ export async function generateMetadata(props: {
   const r = b && getChapter(b, cs)
   if (!b || !r) return {}
   const c = r.chapter
-  const title = `${c.title} · ${b.title} by QC`
+  const full = `${c.title} · ${b.title} by QC`
+  const title = full.length <= 65 ? full : `${c.title} · ${b.title}`.length <= 65 ? `${c.title} · ${b.title}` : `${c.title} · QC`
   return {
     title,
     description: chapterExcerpt(c, 155),

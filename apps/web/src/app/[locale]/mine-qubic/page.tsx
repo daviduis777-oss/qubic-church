@@ -12,7 +12,7 @@ import { SITE_URL } from '@/lib/books'
 
 const TITLE = 'How to mine Qubic: the field guide'
 const DESC =
-  'A practical guide to Qubic mining under useful proof of work: what a solution is, why it/s measures speed, cost per solution, AVX-512 CPUs and GPUs, renting vs your own PC, wallet safety, pools, launch commands, troubleshooting and payouts.'
+  'A practical guide to mining Qubic under useful proof of work: CPUs and GPUs, cost per solution, renting or your own PC, wallet safety, pools and payouts.'
 
 export const metadata: Metadata = {
   title: TITLE,

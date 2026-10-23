@@ -7,10 +7,10 @@ import { AUTHOR, BOOKS, bookUrl, bookWords, readingMinutes, SITE_URL } from '@/l
 
 const TITLE = 'Books by QC: Come-from-Beyond and Qubic: The Long Version'
 const DESC =
-  'Two free books by QC, published by Qubic Church: Come-from-Beyond, on Sergey Ivancheglo and a twenty-five-year line, and Qubic: The Long Version, on how Qubic works and why. Read chapter by chapter or download the PDF.'
+  'Two free books by QC: Come-from-Beyond, on Sergey Ivancheglo, and Qubic: The Long Version, on how Qubic works and why. Read online or download the PDF.'
 
 export const metadata: Metadata = {
-  title: TITLE,
+  title: { absolute: TITLE },
   description: DESC,
   alternates: { canonical: `${SITE_URL}/books` },
   openGraph: { type: 'website', title: TITLE, description: DESC, url: `${SITE_URL}/books` },
