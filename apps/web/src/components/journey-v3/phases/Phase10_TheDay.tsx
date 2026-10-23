@@ -41,7 +41,7 @@ function Countdown() {
 
 export function Phase10_TheDay() {
   return (
-    <PhaseWrapper background="dark" id="the-day" phaseNumber={10} subtitle="The date he keeps returning to" title="The Day">
+    <PhaseWrapper background="dark" id="the-day" phaseNumber={11} subtitle="The date he keeps returning to" title="The Day">
       <div className="space-y-10">
         <Countdown />
 

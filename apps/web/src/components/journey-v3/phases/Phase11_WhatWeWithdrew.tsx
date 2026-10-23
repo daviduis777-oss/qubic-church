@@ -15,7 +15,7 @@ const ITEMS: [string, string, string][] = [
 
 export function Phase11_WhatWeWithdrew() {
   return (
-    <PhaseWrapper id="withdrawn" phaseNumber={11} subtitle="The road also has dead ends. We marked ours." title="What We Got Wrong">
+    <PhaseWrapper id="withdrawn" phaseNumber={12} subtitle="The road also has dead ends. We marked ours." title="What We Got Wrong">
       <div className="space-y-8">
         <Prose>
           <p>

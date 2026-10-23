@@ -55,6 +55,7 @@ const nextConfig: NextConfig = {
       '/docs/mdx/:path*',
     ]
     return [
+      { source: '/satoshi-nakamoto', destination: '/timeline#satoshi', permanent: true },
       {
         source: '/data/anna_matrix.json',
         destination: '/data/anna-matrix.json',

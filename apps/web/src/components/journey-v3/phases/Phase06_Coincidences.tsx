@@ -2,7 +2,7 @@
 
 import { PhaseWrapper } from '../shared/PhaseWrapper'
 import { SourceCitation, SourceCitationGroup } from '../shared/SourceCitation'
-import { ClueCard, OpenQuestion, Quote, type Clue } from '../shared/Story'
+import { ClueCard, OpenQuestion, type Clue } from '../shared/Story'
 
 const CH17 = '/docs/03-results/17-cfb-satoshi-analysis'
 const FACTS = '/docs/05-appendices/02-foundation-facts'
@@ -84,14 +84,6 @@ const CLUES: Clue[] = [
   },
 ]
 
-const DENIALS: [string, string][] = [
-  ['20.03.2023', 'Anyway, ownership of that address doesn’t prove to be Satoshi, just early Bitcoin miner'],
-  ['25.12.2024', 'It’s all nice guys, but I’m not Satoshi. End of story.'],
-  ['23.04.2026', 'I’m not Satoshi. Not even that CFB which was posting in cyberpunk forum.'],
-  ['22.09.2026', 'I’m not Satoshi'],
-  ['22.09.2026', 'No. It’s just a coincidence. Ask ChatGPT chance to spot “cfb”, it’s pretty high'],
-]
-
 export function Phase06_Coincidences() {
   return (
     <PhaseWrapper background="dark" id="coincidences" phaseNumber={6} subtitle="Things that are on the record and still refuse to sit still" title="Strange Coincidences">
@@ -102,30 +94,7 @@ export function Phase06_Coincidences() {
           ))}
         </div>
 
-        <Quote source="Come-from-Beyond, Discord #price-discussion, 22.09.2026">
-          I hinted to a block with a special number (369), why 369 is special is another topic. He spotted &ldquo;cfb&rdquo; inside it. It wasn&rsquo;t telling that it&rsquo;s
-          related to me, because without plausible deniability that would be equal to saying that CFB=Satoshi.
-        </Quote>
-
-        <section aria-labelledby="denials" className="border border-white/10 bg-black/60 p-5 md:p-7">
-          <h3 className="font-mono text-xs uppercase tracking-[0.25em] text-white/50" id="denials">
-            What he says when asked directly
-          </h3>
-          <ul className="mt-4 space-y-3">
-            {DENIALS.map(([d, t]) => (
-              <li className="grid gap-1 md:grid-cols-[110px_1fr] md:gap-4" key={d + t}>
-                <span className="font-mono text-xs text-white/40">{d}</span>
-                <span className="italic text-white/80">&ldquo;{t}&rdquo;</span>
-              </li>
-            ))}
-          </ul>
-          <p className="mt-5 text-sm text-white/50">
-            Chance plays a part too: among 21,953 early Bitcoin keys, 17 addresses begin with 1CF, and chance alone predicts 16.5. A message signed with an early key would
-            settle the question. None has been published.
-          </p>
-        </section>
-
-        <OpenQuestion>He denies it plainly and often. He also keeps pointing at the blocks. Which of the two is the message?</OpenQuestion>
+        <OpenQuestion>He denies it plainly and often. He also keeps pointing at the blocks. The full case, his denials included, waits behind the next door.</OpenQuestion>
 
         <SourceCitationGroup>
           <SourceCitation href={CH17} title="CFB and Satoshi: what the primary sources say" />

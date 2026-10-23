@@ -1166,7 +1166,7 @@ function BiographyCard() {
               }}
             >
               A new book by Qubic Church: the twenty-five-year line behind the
-              man in this dossier, from a Minsk newspaper to Qubic. Read it free
+              man in this dossier, from a computer newspaper to Qubic. Read it free
               in the browser or download the PDF.
             </p>
             <div

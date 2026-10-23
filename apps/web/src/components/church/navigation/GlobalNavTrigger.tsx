@@ -9,7 +9,7 @@ const LINKS = [
   ['/docs', 'Research'],
   ['/articles', 'Articles'],
   ['/cfb', 'Come-from-Beyond'],
-  ['/satoshi-nakamoto', 'Satoshi'],
+  ['/timeline#satoshi', 'Satoshi'],
   ['/nfts', 'Anna'],
   ['/maria-aigarth', 'Maria'],
   ['/mine-qubic', 'Mine'],
