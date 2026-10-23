@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { seoDescription, seoTitle, seoTitleText } from '@/lib/seo'
 import { compareDesc } from 'date-fns'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import type { Metadata } from 'next'
@@ -94,8 +95,8 @@ export async function generateMetadata(
     : absoluteUrl(`/${locale}/blog/og/${blogSlug}`)
 
   return {
-    title: blogPost.title,
-    description: blogPost.excerpt,
+    title: seoTitle(blogPost.title),
+    description: seoDescription(blogPost.excerpt),
     keywords: blogPost.tags || [],
 
     authors: {
@@ -105,9 +106,9 @@ export async function generateMetadata(
 
     openGraph: {
       type: 'article',
-      title: blogPost.title,
+      title: seoTitleText(blogPost.title),
       authors: postAuthorName,
-      description: blogPost.excerpt,
+      description: seoDescription(blogPost.excerpt),
       url: absoluteUrl(`/blog/${blogSlug}`),
 
       images: [
@@ -120,11 +121,11 @@ export async function generateMetadata(
     },
 
     twitter: {
-      title: blogPost.title,
+      title: seoTitleText(blogPost.title),
       images: [postOgImage],
       creator: postAuthorTwitter,
       card: 'summary_large_image',
-      description: blogPost.excerpt,
+      description: seoDescription(blogPost.excerpt),
     },
   }
 }

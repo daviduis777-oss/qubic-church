@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { seoDescription, seoTitle, seoTitleText } from '@/lib/seo'
 import { jsonLd } from '@/lib/json-ld'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -16,11 +17,11 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
   const a = getArticle(slug)
   if (!a) return {}
   return {
-    title: a.title,
-    description: a.summary,
+    title: seoTitle(a.title),
+    description: seoDescription(a.summary),
     alternates: { canonical: articleUrl(a) },
     authors: [{ name: a.author, url: 'https://x.com/usetesserai' }],
-    openGraph: { type: 'article', title: a.title, description: a.summary, url: articleUrl(a), publishedTime: a.date },
+    openGraph: { type: 'article', title: seoTitleText(a.title), description: seoDescription(a.summary), url: articleUrl(a), publishedTime: a.date },
   }
 }
 

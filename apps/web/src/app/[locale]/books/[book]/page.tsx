@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { seoDescription } from '@/lib/seo'
 import { jsonLd } from '@/lib/json-ld'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -29,13 +30,13 @@ export async function generateMetadata(props: {
   if (!b) return {}
   return {
     title: `${b.title} by QC: read online`,
-    description: b.description,
+    description: seoDescription(b.description),
     alternates: { canonical: bookUrl(b) },
     authors: [{ name: AUTHOR.name }],
     openGraph: {
       type: 'book',
       title: `${b.title} by QC`,
-      description: b.description,
+      description: seoDescription(b.description),
       url: bookUrl(b),
       images: [{ url: `${SITE_URL}${b.cover}` }],
     },

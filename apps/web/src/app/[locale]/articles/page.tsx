@@ -5,9 +5,9 @@ import { setRequestLocale } from 'next-intl/server'
 import { SITE_URL } from '@/lib/books'
 import { ARTICLES, articleMinutes, articleUrl, formatDate } from '@/lib/articles'
 
-const TITLE = 'Articles: Qubic, Aigarth and Neuraxon, month by month'
+const TITLE = 'Articles on Qubic, Aigarth and Neuraxon'
 const DESC =
-  'Long-form articles by TesserAI on Qubic, Aigarth, Anna, BPP-9000 and the Neuraxon papers, July to October 2026, with dated quotes from Come-from-Beyond and the science team.'
+  'Long-form articles by TesserAI on Qubic, Aigarth, Anna, BPP-9000 and the Neuraxon papers, with dated quotes from Come-from-Beyond and the science team.'
 
 export const metadata: Metadata = {
   title: TITLE,

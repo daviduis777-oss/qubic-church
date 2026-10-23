@@ -10,7 +10,7 @@ import { BooksHome } from '@/components/church/home/BooksHome'
 // Footer removed from homepage, single-screen hero only
 
 export const metadata: Metadata = {
-  title: 'Qubic Church | Books and open research on Qubic, Aigarth and Come-from-Beyond',
+  title: { absolute: 'Qubic Church: books and open research on Qubic and Aigarth' },
   description: SITE_DESCRIPTION,
   alternates: { canonical: `${SITE_URL}/` },
 }

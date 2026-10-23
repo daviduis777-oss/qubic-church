@@ -8,4 +8,4 @@ export const INDEXING =
   (process.env.NEXT_PUBLIC_INDEXING !== '0' && process.env.VERCEL_ENV === 'production')
 
 export const SITE_DESCRIPTION =
-  'Qubic Church is an independent research publication on Qubic, Aigarth and Come-from-Beyond (Sergey Ivancheglo): two free books by QC, a research log with recomputed results and dated primary sources, and a public corrections page.'
+  'Independent research on Qubic, Aigarth and Come-from-Beyond: two free books by QC, an open research log with primary sources and a public corrections page.'

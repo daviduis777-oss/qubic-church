@@ -5,12 +5,12 @@ import Link from 'next/link'
 import { setRequestLocale } from 'next-intl/server'
 import { SITE_URL } from '@/lib/books'
 
-const TITLE = 'About Qubic Church: what we publish and what we build'
+const TITLE = 'About Qubic Church'
 const DESC =
-  'Qubic Church is a research publication and a community around Qubic and Aigarth. It publishes books by QC and an open research log, and builds three things: the Fractal Rationalism Institute, Web4World and the Atrium. The Atrium’s first mission is a film.'
+  'Qubic Church is an independent research publication and community around Qubic and Aigarth: books by QC, an open research log, the Institute and Web4World.'
 
 export const metadata: Metadata = {
-  title: TITLE,
+  title: { absolute: TITLE },
   description: DESC,
   alternates: { canonical: `${SITE_URL}/about` },
   openGraph: { type: 'article', title: TITLE, description: DESC, url: `${SITE_URL}/about` },

@@ -1,4 +1,5 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server'
+import { seoDescription, seoTitle, seoTitleText } from '@/lib/seo'
 import type { LocaleOptions } from '@/lib/opendocs/types/i18n'
 import type { Metadata } from 'next'
 
@@ -39,8 +40,8 @@ export async function generateMetadata(props: {
   const docSlug = docSlugList.join('/') || ''
 
   return {
-    title: doc.title,
-    description: doc.description,
+    title: seoTitle(doc.title),
+    description: seoDescription(doc.description),
 
     ...(doc.noindex && {
       robots: {
@@ -54,9 +55,9 @@ export async function generateMetadata(props: {
 
     openGraph: {
       type: 'article',
-      title: doc.title,
+      title: seoTitleText(doc.title),
       url: absoluteUrl(`/docs${docSlug ? `/${docSlug}` : ''}`),
-      description: doc.description,
+      description: seoDescription(doc.description),
 
       images: [
         {
@@ -69,8 +70,8 @@ export async function generateMetadata(props: {
 
     twitter: {
       card: 'summary_large_image',
-      title: doc.title,
-      description: doc.description,
+      title: seoTitleText(doc.title),
+      description: seoDescription(doc.description),
       images: [siteConfig.og.image],
       creator: siteConfig.links.twitter.username,
     },
