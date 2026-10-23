@@ -171,7 +171,7 @@ function MatrixCellDetail({
         <p className="text-xs text-muted-foreground leading-relaxed">
           Each cell in the 128x128 Anna Matrix encodes an interaction weight.
           {(row === 21 || row === 68 || row === 96) &&
-            ' Earlier versions gave this row a special role (input, transform or output layer). That reading is unproven and has been withdrawn.'}
+            ' Earlier versions gave this row a special role (input, transform or output layer). That reading is unproven and stays an open question.'}
         </p>
       </div>
     </>

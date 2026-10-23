@@ -8,8 +8,8 @@ date: 2026-05-04
 
 # Period-4 Anti-Attractor: Tier-1 Verification
 
-<Callout type="warning" title="Correction, September 2026">
-The period-4 dynamics are real for the table as compiled, but the asymmetry at seven positions disappears once a very likely data entry error in column 30 is corrected. Claims about exactly one global cycle for all starting states are not proven. The same holds for "exactly two cycles as global attractors": it is verified for the sampled inputs and a hypothesis for all inputs. A dominant phase near π/2 is not necessary for period 4, and the stored scanner outputs are not fixed points; both earlier claims were withdrawn. See [Corrections, September 2026](/docs/03-results/35-corrections-september-2026).
+<Callout type="info" title="Re-check, September 2026">
+The period-4 dynamics are real for the table as compiled, but the asymmetry at seven positions disappears once a very likely entry error in column 30 of the typed table is corrected. Claims about exactly one global cycle for all starting states are not proven. The same holds for "exactly two cycles as global attractors": it is verified for the sampled inputs and a hypothesis for all inputs. A dominant phase near π/2 is not necessary for period 4, and the stored scanner outputs are not fixed points; neither earlier claim was confirmed. See [September 2026 re-check](/docs/03-results/35-corrections-september-2026).
 </Callout>
 
 <Callout type="info" title="Phase A Audit (2026-05-04)">
@@ -159,7 +159,7 @@ Both numbers are real and reproducible. They describe two different mathematical
 
 Earlier project documents conflated the two as "Anna's attractor basins". They are different.
 
-## 8. Corrections issued by Phase A
+## 8. Re-checks issued by Phase A
 
 | Earlier statement | Status |
 | --- | --- |
@@ -170,8 +170,8 @@ Earlier project documents conflated the two as "Anna's attractor basins". They a
 ## 9. Connections to other chapters
 
 - **Chapter 25 (Aigarth Research Lab) §4.6**, discovered the period-4 cycle from random binary inputs and identified the spectral cause. Phase A confirmed and hardened with 4 nulls.
-- **Genesis encoding (earlier chapter, withdrawn)**, an earlier chapter encoded the 65-byte Genesis pubkey into a 128-vector and observed the same period-4 cycle. Random inputs do the same, so this is not Genesis-specific.
-- **Seven-position signature (earlier chapter, withdrawn)**, within a single cycle, opposite-tick states (A vs C, B vs D) are near-antipodal but break at 7 positions: `{3, 18, 32, 61, 65, 101, 109}`. Phase A reproduces this for the table as typed. The break needs the column 30 values exactly as typed and disappears after correcting that very likely entry-error run. See [Corrections, September 2026](/docs/03-results/35-corrections-september-2026).
+- **Genesis encoding (earlier chapter, set aside)**, an earlier chapter encoded the 65-byte Genesis pubkey into a 128-vector and observed the same period-4 cycle. Random inputs do the same, so this is not Genesis-specific.
+- **Seven-position signature (earlier chapter, set aside)**, within a single cycle, opposite-tick states (A vs C, B vs D) are near-antipodal but break at 7 positions: `{3, 18, 32, 61, 65, 101, 109}`. Phase A reproduces this for the table as typed. The break needs the column 30 values exactly as typed and disappears after correcting that very likely entry-error run. See [September 2026 re-check](/docs/03-results/35-corrections-september-2026).
 
 ## 10. Reproducibility
 
@@ -237,7 +237,7 @@ print("Cycle sums B:", [sum(s) for s in B])
 | `T⁴(s) = s` for all 8 cycle states | **1** | analytic on every state |
 | Period-4 not generic for int8 matrices | **1** | 0/200 in 3 nulls, 1/200 in fourth |
 | π/2 phase not sufficient | **1** | `null_phase_keep_pi2` 1/200 vs Anna 200/200 |
-| π/2 phase necessary | **withdrawn** | counterexample `[[1, 2], [-2, 1]]` |
+| π/2 phase necessary | **not confirmed** | counterexample `[[1, 2], [-2, 1]]` |
 | Convergence median `ttfc = 8`, `ttcc = 12` | **1** | 100K samples |
 | Spectral structure motivates period-4 | **2** | dominant eigenvalue at 90.4565° |
 | `aigarth_search` is not direct `T` iteration | **1** | tick distribution mismatch confirmed |
@@ -253,7 +253,7 @@ The period-4 attractor described in this chapter is a property of the direct ter
 Two consequences:
 
 1. **Magnitudes are inert under `T_AIT`.** Anna's specific int8 values, including the trace of 137 (from a very likely entry-error pair) and the K-e-y diagonal, participate in `T` but not in `T_AIT`.
-2. **Period-4 does not transfer.** Sampling 100 random binary inputs under `sign(M) · v` shows period-4 in only 1 of 100 cases. Phase G's period-4 finding is M-magnitude-dependent and lives in the `T` regime; the AIT regime gives different stopping states instead (Chapter 31; the earlier "19-concept classifier" reading is withdrawn).
+2. **Period-4 does not transfer.** Sampling 100 random binary inputs under `sign(M) · v` shows period-4 in only 1 of 100 cases. Phase G's period-4 finding is M-magnitude-dependent and lives in the `T` regime; the AIT regime gives different stopping states instead (Chapter 31; the earlier "19-concept classifier" reading was not confirmed and stays open).
 
 Both regimes are valid descriptions of Anna under different operators. The production scoring task uses `T_AIT`; the analytic exploration in this chapter uses `T`. They are complementary, not contradictory.
 
@@ -282,7 +282,7 @@ This extends the earlier clamped-input runs over 1000 random binary inputs to th
 Pre-reg + audit: __, __.
 
 
-## 14. The free-iteration cycle and the "concept" centroids (withdrawn reading)
+## 14. The free-iteration cycle and the "concept" centroids (open reading)
 
 An earlier follow-up mapped the four cycle states onto four of the "19 concept attractors" of Chapter 31 and read this as an architectural regularity. The 19 concepts were selected afterwards from 12,356 distinct stopping states, and the stopping states are not fixed points. The mapping therefore describes a nearest-centroid assignment, not a property of the matrix.
 

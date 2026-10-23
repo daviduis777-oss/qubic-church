@@ -9,10 +9,10 @@ export function GET() {
   const out: string[] = []
   out.push('# Qubic Church', '', `> ${SITE_DESCRIPTION}`, '')
   out.push(
-    'What Qubic Church is: a spiritual-technological path built on the idea that decentralised Artificial General Intelligence, grown in the open on Qubic, can become a new and shared form of truth. "Church" is a tribute to the old institutions; faith is replaced by verification, and every claim is checked in code and against primary sources. It publishes two free books by QC (Qubic: The Long Version, 2026; Come-from-Beyond, 2026), an open research log with a public corrections page, long-form articles, a mining guide and the Maria Aigarth research agent. It is the direct heir to the ideas of Come-from-Beyond and exists because of him, and nothing here promises financial returns.',
+    'What Qubic Church is: a spiritual-technological path built on the idea that decentralised Artificial General Intelligence, grown in the open on Qubic, can become a new and shared form of truth. "Church" is a tribute to the old institutions; faith is replaced by verification, and every claim is checked in code and against primary sources. It publishes two free books by QC (Qubic: The Long Version, 2026; Come-from-Beyond, 2026), an open research log with a public re-check of its own findings, long-form articles, a mining guide and the Maria Aigarth research agent. It is the direct heir to the ideas of Come-from-Beyond and exists because of him, and nothing here promises financial returns.',
     `Author of the books and articles: ${AUTHOR.name}. ${AUTHOR.description}`,
     'How to quote: cite the chapter or article URL; quotes of Come-from-Beyond inside the texts carry their own date and place (Discord, X, BitcoinTalk).',
-    'Claims that did not hold up are listed openly on the corrections page.',
+    'Readings that the September 2026 re-check did not confirm are listed openly, as open questions, on the re-check page.',
     '',
   )
   out.push('## Books (free, full text online)', '')
@@ -38,7 +38,7 @@ export function GET() {
     '## Pages',
     '',
     `- [About: what Qubic Church is and builds](${SITE_URL}/about)`,
-    `- [Corrections, September 2026](${SITE_URL}/docs/03-results/35-corrections-september-2026)`,
+    `- [The September 2026 re-check: what held, what stays open](${SITE_URL}/docs/03-results/35-corrections-september-2026)`,
     `- [Come-from-Beyond dossier](${SITE_URL}/cfb)`,
     `- [How to mine Qubic: field guide to useful proof of work, hardware, pools and payouts](${SITE_URL}/mine-qubic)`,
     `- [Anna Aigarth collection: 200 NFTs, each gives founder status in Qubic Church](${SITE_URL}/nfts)`,

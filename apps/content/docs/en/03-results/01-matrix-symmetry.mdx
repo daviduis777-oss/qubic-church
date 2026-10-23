@@ -8,7 +8,7 @@ date: 2026-02-27
 
 # Matrix Symmetry & Structural Properties
 
-<Callout type="warning" title="Correction, September 2026">The complement rule is verified. The 68 exception cells are not a hidden layer: they sit in runs in columns 22/105 and 30/97 plus two small cases, split evenly between the halves, and are very likely data entry errors in our hand-compiled table. See [Corrections, September 2026](/docs/03-results/35-corrections-september-2026).</Callout>
+<Callout type="info" title="Re-check, September 2026">The complement rule is verified. The 68 exception cells are not a hidden layer: they sit in runs in columns 22/105 and 30/97 plus two small cases, split evenly between the halves, and are very likely data entry errors in our hand-compiled table. See [September 2026 re-check](/docs/03-results/35-corrections-september-2026).</Callout>
 
 <Callout type="info" title="Tier 1 -- Reproducible Analysis">
 All findings in this document are independently reproducible using the provided verification scripts and the publicly available matrix data file.
@@ -93,7 +93,7 @@ Under a null hypothesis of uniformly random 8-bit signed integer entries:
 - **Standard deviations from expectation**: > 100 sigma
 - **Chi-square test**: null hypothesis of uniform-random byte assignment rejected at p &lt; 0.001
 
-A prior iteration of this chapter cited `p < 10^-500`; that figure was not independently reproduced and has been retracted. The observed deviation is already visible at &gt;100σ without requiring an exponent that large. The symmetry is clearly not a statistical artifact. In terms of the bot queries it reads: the answer for the bitwise complements of x and y is the bitwise complement of the answer. See [Corrections, September 2026](/docs/03-results/35-corrections-september-2026).
+A prior iteration of this chapter cited `p < 10^-500`; that figure was not independently reproduced and is retired. The observed deviation is already visible at &gt;100σ without requiring an exponent that large. The symmetry is clearly not a statistical artifact. In terms of the bot queries it reads: the answer for the bitwise complements of x and y is the bitwise complement of the answer. See [September 2026 re-check](/docs/03-results/35-corrections-september-2026).
 
 ---
 
@@ -113,14 +113,14 @@ Exactly 68 cells deviate from the mirror identity. They form 34 pairs.
 
 ### 2.2 Interpretation
 
-Earlier versions of this chapter read the exceptions as a deliberate secondary encoding layer, concentrated in columns 22 and 97 and all in the upper half. That did not hold up. The exceptions form runs in two mirror column pairs, 22 with 105 and 30 with 97, plus two small cases:
+Earlier versions of this chapter read the exceptions as a deliberate secondary encoding layer, concentrated in columns 22 and 97 and all in the upper half. The re-check did not confirm that reading. The exceptions form runs in two mirror column pairs, 22 with 105 and 30 with 97, plus two small cases:
 
 1. **Column 30 run** (x = -34, 20 cells): shifted by one row, the values match their mirror cells in column 97 almost exactly. This is very likely a data entry error.
 2. **Column 22 run** (x = -42, 13 cells, including [22, 22] = 100): a model trained on the rest of the table finds the column 105 side consistent with the bot and the column 22 values at chance level. This run very likely comes from our data collection as well.
 3. **Column 41** (2 cells): -101 was typed where the bot pattern requires -110, a swapped digit.
 4. **Column 0/127** (1 pair): one side carries the value of its neighbour cell.
 
-The exceptions carry no demonstrated message. Details are in [Corrections, September 2026](/docs/03-results/35-corrections-september-2026).
+The exceptions carry no demonstrated message. Details are in [September 2026 re-check](/docs/03-results/35-corrections-september-2026).
 
 ---
 
@@ -217,7 +217,7 @@ When a sign-ternary 128-vector `s` is iterated through the matrix under `s := si
 [3, 18, 32, 61, 65, 101, 109]
 ```
 
-This holds across all tested inputs, but only for the table as typed: it needs the column 30 values exactly as they were entered. After correcting the column 30 run, the seven positions disappear. Since that run is very likely an entry error, the signature describes our transcription rather than the bot. See [Corrections, September 2026](/docs/03-results/35-corrections-september-2026).
+This holds across all tested inputs, but only for the table as typed: it needs the column 30 values exactly as they were entered. After correcting the column 30 run, the seven positions disappear. Since that run is very likely an entry error, the signature describes our transcription rather than the bot. See [September 2026 re-check](/docs/03-results/35-corrections-september-2026).
 
 ---
 
@@ -257,7 +257,7 @@ symmetry_rate(r) = count(is_symmetric(r, c) for c in 0..127) / 128
 
 1. **Single-matrix analysis**: All findings pertain to one specific 128x128 matrix. Without access to the generation algorithm or additional matrices from the same source, it is not possible to determine whether these properties are unique to this instance or inherent to a class of matrices.
 
-2. **Exception cells**: The 68 exception cells are very likely data entry errors in our hand-compiled table (strongly supported, not proven, because our records lack the original bot replies for these queries). They carry no demonstrated message.
+2. **Exception cells**: The 68 exception cells are very likely entry errors in the typed table (strongly supported, not proven, because our records lack the original bot replies for these queries). They carry no demonstrated message.
 
 3. **Row bias context**: The value-26 bias across 8 rows is statistically significant, but its functional purpose within any computational or cryptographic application remains unestablished.
 

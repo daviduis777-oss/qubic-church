@@ -131,8 +131,8 @@ export function ContactCubeInfoModal({
             <p className="text-sm text-gray-300 leading-relaxed">
               The only position where the value equals its mirror value (both =
               100) instead of summing to -1. It sits inside a run of exceptions
-              and is very likely a data-entry error in the typed table (see the
-              corrections page).
+              and is very likely an entry error in the typed table (see the
+              re-check page).
             </p>
           </section>
 

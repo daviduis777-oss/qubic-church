@@ -8,7 +8,7 @@ date: 2026-02-27
 
 # Mirror Wallets & Key Generation
 
-<Callout type="warning" title="Correction, September 2026">The claims of deliberate construction were withdrawn. The 0x7b family (8 observed against about 7.3 expected) and the byte sum 2,299 (about 1 in 1,100 for a random address) are not unusual, and the "46-fold" 1CF enrichment came from wrong Base58 probabilities. The arithmetic of the XOR byte sum and the K12 derivation remain verified. Seeds that earlier versions printed were removed. See [Corrections, September 2026](/docs/03-results/35-corrections-september-2026).</Callout>
+<Callout type="info" title="Re-check, September 2026">The claims of deliberate construction were not confirmed and stay open. The 0x7b family (8 observed against about 7.3 expected) and the byte sum 2,299 (about 1 in 1,100 for a random address) are not unusual, and the "46-fold" 1CF enrichment came from Base58 probabilities that do not match the encoding. The arithmetic of the XOR byte sum and the K12 derivation remain verified. Seeds that earlier versions printed were set aside. See [September 2026 re-check](/docs/03-results/35-corrections-september-2026).</Callout>
 
 > A systematic investigation of mathematical address transformations, mirror wallet generation techniques, and deterministic key derivation methods in Bitcoin's cryptographic architecture.
 
@@ -23,14 +23,14 @@ This chapter consolidates two complementary research threads: (1) the constructi
 - Mirror palindrome transformations preserve address prefixes when the leading bytes of a Hash160 remain unchanged.
 - All 24 generated mirror addresses pass Base58 checksum validation, yet none exhibit blockchain activity, and no corresponding private keys are obtainable.
 - The KangarooTwelve (K12) double-hash function, not SHA256, is the correct method for deriving private keys from Qubic seeds.
-- A family of 8 addresses shares the constraint `first byte = 0x7b` and `byte sum = 2,299 = 121 x 19`. Earlier versions read this as deliberate construction; the count matches chance expectation (about 7.3), so this is withdrawn.
+- A family of 8 addresses shares the constraint `first byte = 0x7b` and `byte sum = 2,299 = 121 x 19`. Earlier versions read this as deliberate construction; the count matches chance expectation (about 7.3), so this reading was not confirmed.
 - Attempts to reverse-engineer private keys via Syzygy derivation, Hash160 inversion, or brute-force enumeration all yielded null results, confirming the one-way nature of the ECDSA key derivation pipeline.
 
 ---
 
 ## Key Findings
 
-**Legend**: [VERIFIED] = arithmetically reproducible (checksum, cryptographic derivation, blockchain lookup); [SIGNIFICANT] = statistical test with reported p-value; [OBSERVATION] = pattern noted but test not pre-registered; [OPEN] = not yet resolved.
+**Legend**: [VERIFIED] = arithmetically reproducible (checksum, cryptographic derivation, blockchain lookup); [SIGNIFICANT] = statistical test with reported p-value; [OBSERVATION] = pattern noted but test not pre-registered; [OPEN] = not yet resolved; [NOT CONFIRMED] = an earlier reading the September 2026 re-check did not confirm.
 
 | # | Finding | Confidence | Status |
 |---|---------|------------|--------|
@@ -41,7 +41,7 @@ This chapter consolidates two complementary research threads: (1) the constructi
 | 5 | K12(K12()) is the correct Qubic seed-to-key derivation | Reproducible against reference | **[VERIFIED]** |
 | 6 | The 0x7b family of 8 addresses shares identical first-byte and byte-sum constraints | Reproducible | **[VERIFIED]** |
 | 7 | Byte sum 2,299 = 121 x 19 | Arithmetic identity; about 1 in 1,100 for a random address | **[OBSERVATION]** |
-| 8 | 1CF-prefix enrichment of 46x | Came from wrong Base58 probabilities; the count is close to expectation | **[WITHDRAWN]** |
+| 8 | 1CF-prefix enrichment of 46x | Came from Base58 probabilities that do not match the encoding; the count is close to expectation | **[NOT CONFIRMED]** |
 | 9 | Private key derivation from Hash160 or public-key data is cryptographically infeasible | Standard ECDSA property | **[VERIFIED]** |
 | 10 | The exact seed and transformation for the target 1CFB address remains undetermined | - | **[OPEN]** |
 
@@ -438,7 +438,7 @@ Position [91, 20]  ->  step27 + XOR 13  ->  1CFiVYy5wuys6zAbvGGYpE2xh1NopsoHbi
 
 ### 6.4 The 1CF Prefix Census
 
-Earlier versions reported 1,169 addresses with the "1CF" prefix against about 25 expected, a "46-fold enrichment", and read it as deliberate vanity generation. This did not hold up. The base rate used was wrong for Base58, and filtered subsets and duplicates were mixed into one population. Using the correct rate, 754 reported 1CF addresses among 983,040 generated keys are close to the 739 expected. Among 21,953 public keys in our Patoshi corpus, 17 addresses start with `1CF`, against 16.5 expected.
+Earlier versions reported 1,169 addresses with the "1CF" prefix against about 25 expected, a "46-fold enrichment", and read it as deliberate vanity generation. The re-check did not confirm this. The base rate used did not match Base58, and filtered subsets and duplicates were mixed into one population. Using the correct rate, 754 reported 1CF addresses among 983,040 generated keys are close to the 739 expected. Among 21,953 public keys in our Patoshi corpus, 17 addresses start with `1CF`, against 16.5 expected.
 
 ---
 
@@ -666,9 +666,9 @@ blockchain_check_results.json        Blockchain activity data (0 transactions)
 
 3. **KangarooTwelve (K12)** is the correct hash function for Qubic seed-to-key derivation, not SHA-256. This has been validated against the official reference implementation.
 
-4. **The 0x7b family** of 8 addresses sharing `first byte = 0x7b` and `byte sum = 2,299 = 121 x 19` is consistent with chance (about 7.3 expected). The earlier claim of deliberate generation is withdrawn.
+4. **The 0x7b family** of 8 addresses sharing `first byte = 0x7b` and `byte sum = 2,299 = 121 x 19` is consistent with chance (about 7.3 expected). The earlier reading of deliberate generation was not confirmed.
 
-5. **The 1CF prefix** count is close to the random expectation once the correct Base58 probabilities are used. The earlier "46x" claim is withdrawn.
+5. **The 1CF prefix** count is close to the random expectation once the correct Base58 probabilities are used. The earlier "46x" figure is retired; the question is not.
 
 6. **Private key recovery is infeasible** through any of the tested approaches. Bitcoin's cryptographic primitives function as designed.
 
@@ -677,11 +677,11 @@ blockchain_check_results.json        Blockchain activity data (0 transactions)
 ---
 
 *See also*:
-- [Corrections, September 2026](/docs/03-results/35-corrections-september-2026)
+- [September 2026 re-check](/docs/03-results/35-corrections-september-2026)
 - [Genesis Block Numerical Analysis](/docs/03-results/05-genesis-block-analysis)
 
 ---
 
 *Document Classification: Tier 3*
-*Confidence: 40% (arithmetic and K12 derivation verified; design claims withdrawn in September 2026)*
+*Confidence: 40% (arithmetic and K12 derivation verified; design readings not confirmed in September 2026)*
 *Last Updated: 2026-02-27*

@@ -1,16 +1,16 @@
 ---
 title: Seven-position signature - independently reproduced
 date: 2026-04-19 18:00:00
-excerpt: Historical post, corrected in September 2026. The seven-position set [3, 18, 32, 61, 65, 101, 109] is real for the matrix as typed, but it depends on a very likely data entry error in column 30. The diagonal-27 link to ten unspent coinbase blocks was an index error.
+excerpt: Historical post, re-checked in September 2026. The seven-position set [3, 18, 32, 61, 65, 101, 109] is real for the matrix as typed, but it depends on a very likely data entry error in column 30. The diagonal-27 link to ten unspent coinbase blocks was an index error.
 author_id: qubicchurch
 tags: [anna-matrix, period-4, attractor, verification]
 ---
 
-<Callout type="warning" title="Correction, September 2026">The seven-position set is arithmetically true of the matrix as we typed it, but it needs the column 30 values exactly as typed. That run is very likely a data entry error (shifted one row), and after correcting it the seven positions disappear. "Only two cycles exist in the entire state space" was verified only on samples and is a hypothesis for all inputs. The diagonal-27 match to "10 unspent early coinbase blocks" is withdrawn: the block list is off by one from the matrix indices. The chapter this post announced was removed. See [Corrections, September 2026](/docs/03-results/35-corrections-september-2026).</Callout>
+<Callout type="info" title="Re-check, September 2026">The seven-position set is arithmetically true of the matrix as typed, but it needs the column 30 values exactly as typed. That run is very likely an entry error in the typed table (shifted one row), and after correcting it the seven positions disappear. "Only two cycles exist in the entire state space" was verified only on samples and is a hypothesis for all inputs. The diagonal-27 match to "10 unspent early coinbase blocks" was not confirmed: the block list is off by one from the matrix indices. The chapter this post announced was set aside. See [September 2026 re-check](/docs/03-results/35-corrections-september-2026).</Callout>
 
 ## What changed
 
-- Chapter 27: Seven-Position Signature & Period-4 Attractor published (removed in September 2026, see [Corrections, September 2026](/docs/03-results/35-corrections-september-2026)).
+- Chapter 27: Seven-Position Signature & Period-4 Attractor published (set aside in September 2026, see [September 2026 re-check](/docs/03-results/35-corrections-september-2026)).
 
 ## The discovery
 
@@ -55,7 +55,7 @@ Zero of 1,000 shuffled-matrix trials produced any period-4 cycle. Shuffling the 
 1. **Only two cycles observed.** Every sampled input reached one of two cycles; that the entire `3^128` ternary state space partitions into exactly two basins is not proven. The two cycles are negations of each other.
 2. **Positions 18 and 109 form a mirror pair** on the Mersenne axis (18 + 109 = 127).
 3. **Four of seven positions (32, 61, 65, 101)** lie in rows where the 68 anomaly cells concentrate. Three (3, 18, 109) do not.
-4. **Diagonal-27 completeness.** The matrix has exactly 10 diagonal cells with `|M[b][b]| = 27`, at positions `[72, 73, 74, 79, 88, 92, 94, 95, 119, 120]`. Earlier text said this matches 10 unspent early Bitcoin coinbase blocks; that match is withdrawn (off-by-one indices).
+4. **Diagonal-27 completeness.** The matrix has exactly 10 diagonal cells with `|M[b][b]| = 27`, at positions `[72, 73, 74, 79, 88, 92, 94, 95, 119, 120]`. Earlier text said this matches 10 unspent early Bitcoin coinbase blocks; that match was not confirmed (off-by-one indices).
 5. **Row 72 structure.** Row 72 contains exactly 27 cells with value -27 and zero cells with +27. The 27x(-27) pattern is an exact count, not a rough approximation.
 
 ## Attribution
@@ -64,7 +64,7 @@ Credit for the original observation goes to the anonymous researcher who posted 
 
 ## Open questions
 
-These questions became moot after the correction above. As originally listed:
+These questions became moot after the re-check noted above. As originally listed:
 
 - What predicate on the initial state determines which of the two cycles it falls into?
 - Do the seven positions satisfy any bit-pattern or XOR relation?
@@ -72,4 +72,4 @@ These questions became moot after the correction above. As originally listed:
 
 ## Reproduction
 
-The verification script was part of the removed chapter. The September 2026 re-check is summarised in [Corrections, September 2026](/docs/03-results/35-corrections-september-2026).
+The verification script was part of the chapter that was set aside. The re-check is summarised on the [re-check page](/docs/03-results/35-corrections-september-2026).

@@ -14,7 +14,7 @@ The facts about the table and the public code on this page are verified by recom
 
 ## 1. A table of bot replies
 
-The Anna Matrix is a 128 x 128 table of signed bytes. It was compiled by hand from replies of the @anna_aigarth bot on X to queries of the form `x+y=?`, with x and y between -64 and 63. The reply to `x+y=?` sits in row `63 - y` and column `x + 64`. The table is not a weight file and was not extracted from any program. The details and the history of this finding are on the [corrections page](/docs/03-results/35-corrections-september-2026).
+The Anna Matrix is a 128 x 128 table of signed bytes. It was compiled by hand from replies of the @anna_aigarth bot on X to queries of the form `x+y=?`, with x and y between -64 and 63. The reply to `x+y=?` sits in row `63 - y` and column `x + 64`. The table is not a weight file and was not extracted from any program. The details and the history of this finding are on the [re-check page](/docs/03-results/35-corrections-september-2026).
 
 The most striking property of the table is a complement rule: `M[i][j] + M[127-i][127-j] = -1` holds for 16,316 of the 16,384 cells. In terms of the queries it says that the answer for the bitwise complements of x and y is the bitwise complement of the answer.
 
@@ -29,7 +29,7 @@ The 68 cells that break the rule form four runs. For each run we asked which sid
 | Column 41 (x = -23), 2 cells | -101 typed where the pattern requires -110 | A swapped digit |
 | Column 0/127, 1 cell | A neighbouring value copied | Weak evidence, only one cell |
 
-Setting each wrong cell to `-1 - mirror` gives a table that satisfies the rule for all 16,384 cells. That full symmetry is imposed by the correction, so it is not evidence in itself. The trace of the corrected table is -64 instead of 137. We publish it as a separate file, [anna-matrix-clean.json](/data/anna-matrix-clean.json) (SHA-256 `fa5193b2...8c772bd5`). It is a candidate, not a replacement: the original [anna-matrix.json](/data/anna-matrix.json) stays unchanged, and the cleaned version stands until original bot replies for these cells turn up.
+Setting each exception cell to `-1 - mirror` gives a table that satisfies the rule for all 16,384 cells. That full symmetry is imposed by the correction, so it is not evidence in itself. The trace of the corrected table is -64 instead of 137. We publish it as a separate file, [anna-matrix-clean.json](/data/anna-matrix-clean.json) (SHA-256 `fa5193b2...8c772bd5`). It is a candidate, not a replacement: the original [anna-matrix.json](/data/anna-matrix.json) stays unchanged, and the cleaned version stands until original bot replies for these cells turn up.
 
 ## 3. The matching unit in the public Aigarth code
 
@@ -59,7 +59,7 @@ The protocol was fixed before the runs. The main runs (270 trainings) gave:
 Our reading:
 
 - The statistics of the Anna table are typical for a small public unit trained on a complete arithmetic table. About one run in ten comes as close as that.
-- The statistics alone do not say which arithmetic operation it was. A unit trained on subtraction matches just as often when compared with its own target. Our first report called the result specific to addition; a cross-check showed that the comparison was built so that the subtraction control could not match, and we withdrew that label.
+- The statistics alone do not say which arithmetic operation it was. A unit trained on subtraction matches just as often when compared with its own target. Our first report called the result specific to addition; a cross-check showed that the comparison was built so that the subtraction control could not match, so that label was not confirmed and is set aside.
 - The sign of the bot's answer agrees with the sign of x + y in 69.7% of the cells. This agreement is largely reproduced by tables with the same row and column sums: on the transcribed table, four such controls reach 11,320 to 11,398 correct signs, against 11,418 for the table itself (exploratory, four chains, not a significance test). So it shows a correlation with the sign of x + y, not that an adder was learned. The bot's task, `x+y=?`, is the stronger clue for addition.
 - Training on only 1,000 examples, or random growth without selection, does not produce tables like this.
 
@@ -80,7 +80,7 @@ We tested the first question with a protocol fixed before the run. Each fit star
 
 - The Anna Matrix is compatible with a small trained ternary unit of this class, and is unusually linear even for one. It is not a hidden message, a weight file or a bridge to Bitcoin.
 - Its mirror symmetry is what this kind of network produces, so it is not a design signature.
-- Several patterns that earlier chapters read as meaningful (trace 137, the seven positions, the (22,22) pair) come from errors in collecting the replies. See the [corrections](/docs/03-results/35-corrections-september-2026).
+- Several patterns that earlier chapters read as meaningful (trace 137, the seven positions, the (22,22) pair) come from entry errors in the typed table. See the [September 2026 re-check](/docs/03-results/35-corrections-september-2026).
 - The program that produced the replies is still not identified.
 
 ## Reproducing this

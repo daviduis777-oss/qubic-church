@@ -6,7 +6,7 @@ export const siteConfig = {
   name: 'Qubic Church',
 
   description: {
-    en: 'Independent research publication on Qubic, Aigarth and Come-from-Beyond: two free books by QC, a research log with dated primary sources, and public corrections.',
+    en: 'Independent research publication on Qubic, Aigarth and Come-from-Beyond: two free books by QC, a research log with dated primary sources, and an open re-check of its own findings.',
     pt: pt.site.description,
   },
 

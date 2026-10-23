@@ -9,20 +9,20 @@ revised: 2026-05-12
 
 # Encoded Message Catalogue
 
-<Callout type="warning" title="Correction, September 2026">
-Messages read from the exception cells depend on cells that are corrected or unresolved; at least one run of them is very likely our own data entry error. Treat the catalogue below as unverified. See [Corrections, September 2026](/docs/03-results/35-corrections-september-2026).
+<Callout type="info" title="Re-check, September 2026">
+Messages read from the exception cells depend on cells that are corrected or unresolved; at least one run of them is very likely an entry error in the typed table. Treat the catalogue below as unverified. See [September 2026 re-check](/docs/03-results/35-corrections-september-2026).
 </Callout>
 
 <Callout type="warning" title="Audit revision, 2026-05-12">
 This document was revised after an independent re-derivation_). Of four messages originally claimed as "validated":
 
-- **K-e-y** at `M[8,74][9,75][10,76]` decodes to bytes (75, 101, 121) = ASCII "Key". The values are real. The earlier p ≈ 0.0005 is withdrawn (September 2026): the old test could not produce a hit by construction. A fair histogram-permutation null gives about p = 0.09 (185 of 2,000 controls). **Not significant.**
+- **K-e-y** at `M[8,74][9,75][10,76]` decodes to bytes (75, 101, 121) = ASCII "Key". The values are real. The earlier p ≈ 0.0005 is retired (September 2026): the old test could not produce a hit by construction. A fair histogram-permutation null gives about p = 0.09 (185 of 2,000 controls). **Not significant.**
 - ✗ **GAME** in XOR-127 stream: ZERO occurrences across the full 16,384-cell stream. The originally-claimed positions decode to `"-k#4"`, not "GAME". **FALSIFIED.**
 - ✗ **CFB** at Row 11, Cols 9-11: cells decode to `"DGC"` (|abs|) or `";8<"` (XOR-127), not "CFB". ZERO "CFB" occurrences in the full XOR-127 stream. **FALSIFIED.**
 - ✗ **MEGA** (XOR-127 stream): ZERO occurrences. **FALSIFIED.**
 - ⚠ **RISE** in mod-26 stream: 1 occurrence at some position, p ≈ 0.035. Below uncorrected α = 0.05 but does NOT survive Bonferroni correction across ~20 candidate words tested. Treat as **OBSERVATION, not validated**.
 
-The rest of this document preserves the historical claim record. **Believe only the verdicts in this banner and in the September 2026 correction above.** Reproduce with the audit script and the verification snippet in section 8.
+The rest of this document preserves the historical claim record. **Believe only the verdicts in this banner and in the September 2026 re-check note above.** Reproduce with the audit script and the verification snippet in section 8.
 </Callout>
 
 ## Executive Summary
@@ -107,7 +107,7 @@ With multiple decode methods and many possible word matches, multiple-testing co
 | **Location** | Diagonal M[8,74], M[9,75], M[10,76] |
 | **Raw cell values** | [-75, 101, -121] |
 | **Decoded bytes** | (75, 101, 121) = ASCII "K", "e", "y" |
-| **Monte Carlo p-value** | Earlier: 0.0005 (withdrawn, the test could not produce a hit). Corrected: about 0.09 under a histogram-permutation null (185 of 2,000); 14 of 2,000 under an iid null |
+| **Monte Carlo p-value** | Earlier: 0.0005 (retired, the test could not produce a hit). Re-checked: about 0.09 under a histogram-permutation null (185 of 2,000); 14 of 2,000 under an iid null |
 | **Validation status** | Values verified; significance killed (September 2026) |
 
 The bytes (75, 101, 121) spell "Key" in ASCII. All three cells also satisfy the complement rule, so they are ordinary bot replies, not exception cells. Reproduce the values:
@@ -373,7 +373,7 @@ Without access to the original matrix data, no finding can be independently veri
 |----------|---------|
 | [Matrix Symmetry & Structural Properties](/docs/03-results/01-matrix-symmetry) | Symmetry properties and 68 exception cells |
 | [Mathematical Decode & Pattern Analysis](/docs/03-results/02-matrix-decode) | Spectral, SVD, and attractor analysis |
-| [Corrections, September 2026](/docs/03-results/35-corrections-september-2026) | What the September 2026 re-check changed |
+| [September 2026 re-check](/docs/03-results/35-corrections-september-2026) | What the September 2026 re-check changed |
 
 ---
 

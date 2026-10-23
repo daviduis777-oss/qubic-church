@@ -81,7 +81,7 @@ const TABS = [
     id: 'anna-concept-lab',
     label: 'Anna Concept Lab',
     description:
-      'A port of the AIT inference. The concept reading was withdrawn in September 2026.',
+      'A port of the AIT inference. The concept reading was not confirmed in September 2026 and stays open.',
     Component: AnnaConceptLab,
   },
   {

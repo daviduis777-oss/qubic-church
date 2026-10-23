@@ -11,13 +11,13 @@ last_revised: 2026-09-29
 
 
 <Callout type="info" title="Independent Research">
-This document records independent experiments on the Anna Matrix and Aigarth architecture. It also preserves historical claims that have not all been independently reproduced; the correction below takes precedence over older confidence labels.
+This document records independent experiments on the Anna Matrix and Aigarth architecture. It also preserves historical claims that have not all been independently reproduced; the re-check note below takes precedence over older confidence labels.
 </Callout>
 
-<Callout type="warning" title="Correction, September 2026: read this before the historical results">
+<Callout type="info" title="Re-check, September 2026: read this before the historical results">
 Several later sections keep historical **[PROVEN]** labels that the available evidence does not justify. In every archived native Aigarth run we checked, including a 10-million-tick run with seed 7, `signal_entropy` and `signal_diversity` stay at zero. The reported 10-million-tick seed-42 signal-language result and the program that produced it are not available for independent replay, and a positive transfer-entropy value alone does not establish signal-mediated communication. Treat sections 3.3 and 3.4 as **reported, not verified**.
 
-The matrix is a hand-compiled table of bot replies, so claims that it was "deliberately constructed", and the "19-concept classifier", trace-137 and K-e-y landmarks, do not stand as evidence of design. The direct `sign(M·v)` period-4 result is reproducible on the tested inputs, but finite samples do not prove that the full ternary state space has exactly two cycles. A controlled perturbation study shows that repairing the 68 exception cells keeps the period-4 behavior in samples but changes the cycle basins, and a matched perturbation control can also produce five cycles. So neither the exception cells nor the linear spectrum alone establish a causal chain from matrix eigenvalues to social cooperation. The direct matrix operator, the custom ALife simulation and the Anna.exe automata are separate systems. See also [Corrections, September 2026](/docs/03-results/35-corrections-september-2026).
+The matrix is a hand-compiled table of bot replies, so claims that it was "deliberately constructed", and the "19-concept classifier", trace-137 and K-e-y landmarks, do not stand as evidence of design. The direct `sign(M·v)` period-4 result is reproducible on the tested inputs, but finite samples do not prove that the full ternary state space has exactly two cycles. A controlled perturbation study shows that repairing the 68 exception cells keeps the period-4 behavior in samples but changes the cycle basins, and a matched perturbation control can also produce five cycles. So neither the exception cells nor the linear spectrum alone establish a causal chain from matrix eigenvalues to social cooperation. The direct matrix operator, the custom ALife simulation and the Anna.exe automata are separate systems. See also [September 2026 re-check](/docs/03-results/35-corrections-september-2026).
 </Callout>
 
 <Callout type="warning" title="Update 2026-05-04, Period-4 Verification + Corrections">
@@ -48,7 +48,7 @@ Phase D added eight sub-experiments_):
 - **D2 (n=100 paper-grade):** Anna ITU hit rate 0.5533 ± 0.0262 vs density-matched 0.5024 ± 0.0291. Welch t = 13.02, p = 1.23 × 10⁻²⁸, Cohen's d = 1.84.
 - **D1c (bias correction):** Anna's outputs are 84% zeros, a sparse-output prior. After subtracting the bias-only prediction, Anna shows **genuine task-conditional structure on 7 of 14 tasks** (MAX, AND, identity_a/b, OR, MIN, shift_left, all residuals ≥ +0.04, p < 10⁻⁷). Addition's task-conditional residual is only +0.010; parity_eq's apparent +0.318 advantage is almost entirely sparse-output bias.
 - **D4b (mapping):** `thresh64` (top-50% magnitude) outperforms `sign(M)` by +0.022, paired t = 7.71, p = 5 × 10⁻¹². Anna's information lives in the high-magnitude cells.
-- **D5 (7-position signature):** Within-cycle T² antipodal break positions {3, 18, 32, 61, 65, 101, 109} reproduce the earlier seven-position result exactly (z = −18.3 vs random period-4 cycles). This holds only for the table as typed; see the September 2026 correction.
+- **D5 (7-position signature):** Within-cycle T² antipodal break positions {3, 18, 32, 61, 65, 101, 109} reproduce the earlier seven-position result exactly (z = −18.3 vs random period-4 cycles). This holds only for the table as typed; see the September 2026 re-check.
 - **D7 (frontend):** New "Aigarth Lab" tab live in the Evidence section, consuming `apps/web/public/data/phase_d/` bundle.
 
 The dominant interpretation has shifted: **Anna provides a sparse-output prior plus modest task-conditional structure on bit-selecting operations**, not "addition specialist."
@@ -80,7 +80,7 @@ But several earlier claims are now **rejected or qualified**:
 - ✗ **Anna FAILS as modern AI matrix** (F4): worse than random in Reservoir Computing memory (-30%) and XOR-classification (-5pp). Only "advantage" on linear separation is the sparse-output bias artifact.
 - ⚠ **"Anna improves ITU performance" is qualified**: TRUE in our `ITUClAnnaInit` test setup; UNKNOWN in any production AI system.
 
-**Revised position (May 2026, superseded by the September 2026 correction above: the matrix is a compilation of bot replies, and design intent is a hypothesis).** Anna is a deliberately constructed mathematical artifact with verified multi-property design (WH-sparse + intentional constants + period-4 spectrum). It is NOT a useful matrix for general AI tasks, NOT integrated into the public Aigarth library, and its actual intended use remains undocumented. The "AGI brain seed" interpretation is unsupported by evidence in any context we tested.
+**Revised position (May 2026, superseded by the September 2026 re-check above: the matrix is a compilation of bot replies, and design intent is a hypothesis).** Anna is a deliberately constructed mathematical artifact with verified multi-property design (WH-sparse + intentional constants + period-4 spectrum). It is NOT a useful matrix for general AI tasks, NOT integrated into the public Aigarth library, and its actual intended use remains undocumented. The "AGI brain seed" interpretation is unsupported by evidence in any context we tested.
 </Callout>
 
 ## Executive Summary
@@ -534,8 +534,8 @@ Together, the two cycles cover all 8 known energy levels. The system does **not*
 
 The period-4 cycle uses exactly half of Anna's 8 known energy levels (±56, ±50, ±42, ±38). The four levels in the cycle ({-50, -38, 42, 56}) and the four not in the cycle ({-56, -42, 38, 50}) form complementary sets. This is consistent with the matrix's antisymmetric structure.
 
-<Callout type="warning" title="Correction: Prior attractor claims">
-An earlier version of this analysis incorrectly reported "8 personality-type attractors" with 50/50 cooperative-aggressive split. This was a sampling artifact: the code recorded the final state after 100 iterations without checking convergence. Since 100 mod 4 = 0, the output always landed at one of the cycle's four phases, and the transient states produced the other four energy levels. The system has no fixed-point attractors in the ternary iteration, only this period-4 cycle. The C-scanner's 16,384 "attractors" use a different convergence criterion (binary inputs with cycle detection). **[CORRECTED]**
+<Callout type="info" title="Re-check: prior attractor claims">
+An earlier version of this analysis incorrectly reported "8 personality-type attractors" with 50/50 cooperative-aggressive split. This was a sampling artifact: the code recorded the final state after 100 iterations without checking convergence. Since 100 mod 4 = 0, the output always landed at one of the cycle's four phases, and the transient states produced the other four energy levels. The system has no fixed-point attractors in the ternary iteration, only this period-4 cycle. The C-scanner's 16,384 "attractors" use a different convergence criterion (binary inputs with cycle detection). **[RE-CHECKED]**
 </Callout>
 
 **Why this matters for ALife:** The period-4 cycle produces a deterministic behavioral sequence:
@@ -579,7 +579,7 @@ Dominant eigenvalue at 90.456° with 40.4% spectral dominance
  → 4.3x more stable than random matrix societies
 ```
 
-The chain above is a hypothesis about our own simulation. It has not been shown that it is new, and the perturbation study in the September 2026 correction shows that the spectrum alone does not establish it.
+The chain above is a hypothesis about our own simulation. It has not been shown that it is new, and the perturbation study in the September 2026 re-check shows that the spectrum alone does not establish it.
 
 ### 4.6c Eigenvalue Angle and Social Behavior
 
@@ -669,7 +669,7 @@ This combination, rising fitness with declining lifespan, indicates selection fo
 
 1. **Direct iteration `T(v) = sign(M·v)` reached 2 period-4 cycles on every tested input**, antipodal pair `B = −A`, sums `(−42, +50, +38, −56)`, within 24 ticks (median 8). That this holds for every non-zero ternary input is not proven. [Phase A verification 2026-05-04, Section 4.6 below.]
  - Separately, the `aigarth_search` ITU-style iteration produces **16,384 unique outputs**, a different algorithm, both findings real.
-2. Anna's structural properties differ strongly from random matrices (antisymmetry 99.58%, spectral radius 2342, 40.4% spectral dominance). The earlier "1-in-500-million" combined figure mixed post-hoc properties and is withdrawn.
+2. Anna's structural properties differ strongly from random matrices (antisymmetry 99.58%, spectral radius 2342, 40.4% spectral dominance). The earlier "1-in-500-million" combined figure mixed post-hoc properties and is retired.
 3. Anna produces **qualitatively different ALife** than random matrices: +52% population, +130% food sharing, -45% aggression, 3.8x more stable
 4. Cooperation converges to **33.0% ± 0.1%** across 5 independent seeds (1M ticks each), a structural attractor, not an accident
 5. Agents exhibit **circadian cooperation splitting**: +3% cooperation during day vs night, consistent across all seeds
@@ -678,7 +678,7 @@ This combination, rising fitness with declining lifespan, indicates selection fo
 8. Genome diversity loss only **0.4% over 10,000 generations**, no genetic collapse
 9. Aggression drives cooperation 83.8% of the time (Axelrod effect, 10M-tick transfer entropy analysis)
 10. The 90° eigenvalue property is **scale-invariant**, present at every extraction size from 2x2 to 128x128, with dominance increasing at smaller scales (fractal structure)
-11. For the table as typed, the two sampled cycles break antipodal symmetry at positions `[3, 18, 32, 61, 65, 101, 109]`. This needs the column 30 values exactly as typed; after correcting that very likely entry-error run, the seven positions disappear. See [Corrections, September 2026](/docs/03-results/35-corrections-september-2026).
+11. For the table as typed, the two sampled cycles break antipodal symmetry at positions `[3, 18, 32, 61, 65, 101, 109]`. This needs the column 30 values exactly as typed; after correcting that very likely entry-error run, the seven positions disappear. See [September 2026 re-check](/docs/03-results/35-corrections-september-2026).
 12. The official Aigarth system uses variable-topology networks with up to 8M ticks per inference
 
 ### What Remains Unknown

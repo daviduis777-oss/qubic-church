@@ -7,7 +7,7 @@ description: Complete verification code for independently reproducing all Tier 1
 
 ## Overview
 
-<Callout type="warning" title="Correction, September 2026">The scripts below verify arithmetic. Passing them does not make a finding significant: the primary formula and the boot address are withdrawn interpretations, 137 is the trace of the matrix as typed rather than the fine structure constant, and the March 2026 prediction script was removed because the time-lock hypothesis failed. See [Corrections, September 2026](/docs/03-results/35-corrections-september-2026).</Callout>
+<Callout type="info" title="Re-check, September 2026">The scripts below verify arithmetic. Passing them does not make a finding significant: the primary formula and the boot address are interpretations the re-check did not confirm, 137 is the trace of the matrix as typed rather than the fine structure constant, and the March 2026 prediction script was set aside because the date passed without an event. See [September 2026 re-check](/docs/03-results/35-corrections-september-2026).</Callout>
 
 This appendix provides complete, executable code for verifying all major research findings. Each script is self-contained and requires only Python 3.8+.
 
@@ -158,9 +158,9 @@ if __name__ == "__main__":
     exit(0 if success else 1)
 ```
 
-### C.2.2 March 2026 Calculation (removed)
+### C.2.2 March 2026 Calculation (set aside)
 
-Earlier versions included a script that derived March 2026 dates for a predicted time-lock event. No time-lock event occurred on March 3, 2026 (that day only saw the community token AIGARTH being issued; see [chapter 38](/docs/03-results/38-genesis-exodus-aigarth)), and the hypothesis is withdrawn. The underlying arithmetic (Pre-Genesis + 17.5 years, Genesis + 6,268 days) is ordinary calendar arithmetic and carries no significance.
+Earlier versions included a script that derived March 2026 dates for a predicted time-lock event. No time-lock event occurred on March 3, 2026 (that day only saw the community token AIGARTH being issued; see [chapter 38](/docs/03-results/38-genesis-exodus-aigarth)), and the hypothesis was not confirmed and stays open. The underlying arithmetic (Pre-Genesis + 17.5 years, Genesis + 6,268 days) is ordinary calendar arithmetic and carries no significance.
 
 ---
 
@@ -373,9 +373,9 @@ if __name__ == "__main__":
 
 ---
 
-## C.6 Removed: bridge demonstration
+## C.6 Set aside: bridge demonstration
 
-An earlier version contained a script that "converted" early Bitcoin addresses into Qubic seeds. There is no bridge between the two chains, so the script demonstrated nothing and was removed in September 2026. See [Corrections, September 2026](/docs/03-results/35-corrections-september-2026).
+An earlier version contained a script that "converted" early Bitcoin addresses into Qubic seeds. There is no bridge between the two chains, so the script demonstrated nothing and was set aside in September 2026. See [September 2026 re-check](/docs/03-results/35-corrections-september-2026).
 
 ---
 
@@ -500,7 +500,7 @@ Match: True
 
 ## C.8 Genesis Seed Testing Scripts (January 2026)
 
-Documentation of the Genesis seed testing. Earlier versions said it validated a time-lock hypothesis; a search with zero matches cannot validate a time lock, and the hypothesis is withdrawn.
+Documentation of the Genesis seed testing. Earlier versions said it validated a time-lock hypothesis; a search with zero matches cannot validate a time lock, and the hypothesis was not confirmed.
 
 **Scripts Location**: `apps/web/scripts/`
 - `comprehensive_genesis_seed_finder.py` - Main exhaustive test (4.9M combinations)
@@ -514,7 +514,7 @@ Tests Executed:      4,943,648
 Duration:            29.4 minutes
 Matches Found:       0
 
-Conclusion: no match found (the earlier "Time-Lock is ACTIVE until March 3, 2026" reading is withdrawn)
+Conclusion: no match found (the earlier "Time-Lock is ACTIVE until March 3, 2026" reading was not confirmed)
 ```
 
 ---

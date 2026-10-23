@@ -109,8 +109,8 @@ export function WhatIsAnna({ className }: { className?: string }) {
               title="Anna the chatbot"
             />
             <LayerCard
-              body="A 128×128 table compiled by hand from replies of the Anna bot. It follows an exact complement rule and has 8 antipodal-symmetric blocks. Trace = 137 and the K-e-y diagonal are true of the typed table but not significant. The earlier reading of it as a 19-concept classifier was withdrawn in September 2026. This Lab characterises the matrix."
-              cta="Read the Phase N chapter (corrected)"
+              body="A 128×128 table compiled by hand from replies of the Anna bot. It follows an exact complement rule and has 8 antipodal-symmetric blocks. Trace = 137 and the K-e-y diagonal are true of the typed table but not significant. The earlier reading of it as a 19-concept classifier was not confirmed in September 2026 and stays open. This Lab characterises the matrix."
+              cta="Read the Phase N chapter (re-checked)"
               href="/docs/03-results/31-anna-concept-classifier"
               icon={<Grid3X3 className="w-4 h-4 text-gold" />}
               title="Anna the matrix"

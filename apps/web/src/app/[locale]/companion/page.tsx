@@ -116,7 +116,7 @@ const SECTIONS: Section[] = [
     title: 'Negative Results',
     tier: 'method',
     oneLine:
-      'What did not survive, including some claims earlier versions of this research treated as confirmed.',
+      'What the re-check did not confirm, including some claims earlier versions of this research treated as confirmed.',
   },
   {
     num: '§12',
@@ -185,7 +185,7 @@ const TIER_BADGES: Record<Section['tier'], { color: string; label: string }> = {
   'Tier 1': { color: TIER1, label: 'Tier 1 · Verified' },
   'Tier 3': { color: TIER3, label: 'Tier 3 · Speculative' },
   hypothesis: { color: TIER2, label: 'Hypothesis' },
-  withdrawn: { color: 'var(--muted-foreground)', label: 'Withdrawn Sept 2026' },
+  withdrawn: { color: 'var(--muted-foreground)', label: 'Open · re-checked Sept 2026' },
   method: { color: CYAN, label: 'Method' },
   tools: { color: CYAN, label: 'Tools' },
   reference: { color: 'var(--muted-foreground)', label: 'Reference' },
@@ -291,23 +291,23 @@ export default function CompanionPage() {
               className="rounded-md border border-border bg-muted px-4 py-3 text-sm leading-relaxed text-foreground"
               role="note"
             >
-              <strong>Correction, September 2026.</strong> The matrix is a table
+              <strong>Re-check, September 2026.</strong> The matrix is a table
               our team compiled by hand from replies of the Anna bot on X. This
               notice covers every section of the companion and the PDF. Only the
               point symmetry (§1) holds as stated. The period-4 result (§3) is a
               hypothesis: only 768 sampled inputs were verified and global
               convergence is unproven. The seven-position asymmetry (§4) depends
-              on a run of cells in column 30 that is very likely our own data
-              entry error, and the Genesis block script reading (§6) does not
-              hold. The diagonal and Patoshi reading (§5), the embedded messages
-              (§7), the on-chain triangle (§8) and the 1CFB anchors (§9) are
-              withdrawn. The Tier labels in the PDF are out of date. No bridge
-              or activation exists. See{' '}
+              on a run of cells in column 30 that is very likely an entry error
+              in the typed table, and the Genesis block script reading (§6) was
+              not confirmed. The diagonal and Patoshi reading (§5), the embedded
+              messages (§7), the on-chain triangle (§8) and the 1CFB anchors (§9)
+              were not confirmed and stay open. The Tier labels in the PDF are
+              out of date. No bridge or activation was found. See{' '}
               <Link
                 className="underline"
                 href="/docs/03-results/35-corrections-september-2026"
               >
-                Corrections, September 2026
+                the September 2026 re-check
               </Link>
               .
             </p>
@@ -392,8 +392,8 @@ export default function CompanionPage() {
               </Link>{' '}
               of <em>Qubic, The Long Version</em>. The chapter tells the story
               of how the Anna Matrix was found. This document carries the
-              arguments. Several of them were withdrawn in September 2026 (see
-              the notice above).
+              arguments. Several of them were not confirmed in September 2026
+              and stay open (see the notice above).
             </p>
             <p
               className="text-base leading-relaxed"
@@ -433,7 +433,8 @@ export default function CompanionPage() {
 
             <p className="text-sm leading-relaxed" style={{ color: TEXT_DIM }}>
               These are the labels the PDF uses. They are out of date: most
-              sections the PDF marks as Tier 1 were withdrawn in September 2026.
+              sections the PDF marks as Tier 1 were not confirmed in September
+              2026 and stay open.
               The badges in the contents list below show the current status.
             </p>
 
@@ -511,7 +512,7 @@ export default function CompanionPage() {
                     className="text-xs font-mono tracking-widest uppercase"
                     style={{ color: TEXT_DIM }}
                   >
-                    Sections withdrawn
+                    Sections open
                   </div>
                 </div>
                 <div className="space-y-1">
@@ -539,8 +540,8 @@ export default function CompanionPage() {
                 The PDF reports 22,480 hypotheses tested and 10 confirmed at
                 Tier 1. An independent review in September 2026 did not uphold
                 those labels: only the point symmetry (§1) holds as stated, the
-                period-4 result (§3) is a hypothesis, and §4 to §9 are
-                withdrawn.
+                period-4 result (§3) is a hypothesis, and §4 to §9 were not
+                confirmed and stay open.
               </p>
             </div>
           </section>
@@ -801,7 +802,7 @@ export default function CompanionPage() {
 
             <p className="text-xs italic pt-3" style={{ color: TEXT_DIM }}>
               Only §1 holds as stated. §3 is a hypothesis, and §4 to §9 were
-              withdrawn in September 2026.
+              not confirmed in September 2026 and stay open.
             </p>
           </section>
 
@@ -855,10 +856,10 @@ export default function CompanionPage() {
                 />
                 <span>
                   <span style={{ color: TEXT_PRIMARY }}>
-                    Hide failed hypotheses.
+                    Hide unconfirmed hypotheses.
                   </span>{' '}
-                  Section §11 lists what did not survive, including some claims
-                  that earlier versions of this research treated as confirmed.
+                  Section §11 lists what the re-check did not confirm, including
+                  some claims that earlier versions of this research treated as confirmed.
                 </span>
               </li>
             </ul>

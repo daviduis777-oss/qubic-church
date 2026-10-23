@@ -5,7 +5,7 @@ description: Formal procedures for verifying research findings, including statis
 
 # Verification Protocol
 
-<Callout type="warning" title="Correction, September 2026">The finding table, the combined probabilities (about 5.5σ, "1 in 50 million") and the 27-divisible block sum were removed because they did not hold up. See [Corrections, September 2026](/docs/03-results/35-corrections-september-2026).</Callout>
+<Callout type="info" title="Re-check, September 2026">The finding table, the combined probabilities (about 5.5σ, "1 in 50 million") and the 27-divisible block sum were set aside because the re-check did not confirm them. See [September 2026 re-check](/docs/03-results/35-corrections-september-2026).</Callout>
 
 ## Introduction
 
@@ -29,7 +29,7 @@ The 5σ threshold represents the standard for scientific discovery claims in phy
 
 ### Current Finding Classifications
 
-Earlier versions of this page listed four findings with p-values down to 10⁻⁵ and a combined significance of about 5.5σ. This did not hold up: the findings were selected after looking at the data, the "27-divisible sum" among them. The table is withdrawn, see [Corrections, September 2026](/docs/03-results/35-corrections-september-2026). The thresholds above remain a general standard, not a claim about any finding on this site.
+Earlier versions of this page listed four findings with p-values down to 10⁻⁵ and a combined significance of about 5.5σ. The re-check did not confirm this: the findings were selected after looking at the data, the "27-divisible sum" among them. The table is retired, see [September 2026 re-check](/docs/03-results/35-corrections-september-2026). The thresholds above remain a general standard, not a claim about any finding on this site.
 
 ## Chi-Squared Verification
 
@@ -80,7 +80,7 @@ The Chi-squared test determines whether observed distributions differ significan
 
 ## Combined Probability Analysis
 
-Multiplying p-values of separate findings is only valid if the findings are independent and were specified before looking at the data. Neither condition held for the four findings that earlier versions of this page combined into "1 in 76 trillion" and "1 in 50 million". Those figures are withdrawn.
+Multiplying p-values of separate findings is only valid if the findings are independent and were specified before looking at the data. Neither condition held for the four findings that earlier versions of this page combined into "1 in 76 trillion" and "1 in 50 million". Those figures are retired; the underlying questions stay open.
 
 ## Reproducibility Verification
 
@@ -119,8 +119,8 @@ pip install -r requirements.txt
 # Run verification
 python verify_findings.py
 
-# The earlier expected output ("Finding 1-4: VERIFIED") is withdrawn.
-# See Corrections, September 2026.
+# The earlier expected output ("Finding 1-4: VERIFIED") was not confirmed.
+# See the September 2026 re-check.
 ```
 
 ## Independent Verification Checklist
@@ -188,7 +188,7 @@ Findings must satisfy:
 
 ## Conclusion
 
-The verification protocol establishes standards for validating research findings. The combined probabilities that earlier versions reported are withdrawn.
+The verification protocol establishes standards for validating research findings. The combined probabilities that earlier versions reported are retired.
 
 **Key Caveats**:
 - Combined probabilities assume independence between findings
@@ -196,6 +196,6 @@ The verification protocol establishes standards for validating research findings
 - Individual findings should be evaluated independently
 - The 5σ threshold is borrowed from particle physics where conditions differ
 
-The September 2026 re-check is documented in [Corrections, September 2026](/docs/03-results/35-corrections-september-2026).
+The September 2026 re-check is documented in [September 2026 re-check](/docs/03-results/35-corrections-september-2026).
 
 The following section describes the data processing framework used to extract and prepare source data for analysis.

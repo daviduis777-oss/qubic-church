@@ -1,11 +1,11 @@
 ---
 title: Implications
-description: What follows from the findings that survived the September 2026 re-check, and which earlier implications were withdrawn.
+description: What follows from the findings that the September 2026 re-check confirmed, and which earlier implications stay open.
 ---
 
 # Implications
 
-<Callout type="warning" title="Correction, September 2026">This page was rewritten. Earlier versions drew implications from a uniform Patoshi distribution, from trace 137 as the fine structure constant, from a JINN architecture and from time-lock reveal phases in March 2026. None of these held up. See [Corrections, September 2026](/docs/03-results/35-corrections-september-2026).</Callout>
+<Callout type="info" title="Re-check, September 2026">This page was rewritten. Earlier versions drew implications from a uniform Patoshi distribution, from trace 137 as the fine structure constant, from a JINN architecture and from time-lock reveal phases in March 2026. None of these held up. See [September 2026 re-check](/docs/03-results/35-corrections-september-2026).</Callout>
 
 ## Overview
 
@@ -26,9 +26,9 @@ The 128 x 128 table was compiled by hand from replies of the @anna_aigarth bot o
 
 **Implications:**
 
-- The table describes what the bot answered while the replies were collected. It is not a weight file, not JINN memory and not Qubic source code. Reading it as "weights" or as a "memory matrix" is wrong.
+- The table describes what the bot answered while the replies were collected. It is not a weight file, not JINN memory and not Qubic source code. Reading it as "weights" or as a "memory matrix" is not supported by any source.
 - Its structure is real and worth studying: 16,316 of 16,384 cells satisfy the complement rule, the table has full rank, and a small number of Walsh components explain most of its signs.
-- Most of the 68 exception cells come from our own data collection: a one-row shift in column 30, a run in column 22 that does not fit the bot at all, a swapped digit in column 41 and a copied neighbour value in column 0/127. Findings that depended on these cells, such as trace 137, the seven-position signature and messages read from exception cells, describe our transcription, not the bot.
+- Most of the 68 exception cells come from entry errors in the typed table: a one-row shift in column 30, a run in column 22 that does not fit the bot at all, a swapped digit in column 41 and a copied neighbour value in column 0/127. Findings that depended on these cells, such as trace 137, the seven-position signature and messages read from exception cells, describe the typed table, not the bot.
 - Any claimed link between the table and Bitcoin data has no known mechanism.
 
 ## 2. The Bot Looks Like a Small Trained Ternary Unit (Hypothesis)
@@ -60,9 +60,9 @@ The version Anna 0.22.64 reads its targets from a fixed embedded table: 9,456 ho
 
 ---
 
-## 5. Withdrawn Implications
+## 5. Implications that stay open
 
-| Earlier implication | Why it was withdrawn |
+| Earlier implication | What the re-check found |
 |--------------------|---------------------|
 | Patoshi blocks spread uniformly over 676 computors (CV 1.2%) | The reported statistics are impossible for whole-number counts |
 | Trace 137 encodes the fine structure constant | 137 comes from one diagonal pair in a very likely entry-error run |
@@ -79,9 +79,9 @@ The re-check itself is the main methodological lesson:
 
 - **Provenance first.** The largest error was not statistical: it was treating a hand-compiled table as an artifact from source code.
 - **Check your own data entry.** A one-row shift in 20 cells produced a "signature" that survived every statistical test we ran on the table as typed.
-- **Pre-register.** Most withdrawn findings were patterns selected after looking at the data.
+- **Pre-register.** Most of the findings that were not confirmed were patterns selected after looking at the data.
 - **Fair nulls.** Several p-values came from tests that could not fail, or from nulls that did not match the claim.
 
 ## Conclusion
 
-The durable implications are about Anna and Aigarth: the bot's replies form a highly structured table, consistent with a small trained ternary unit; Anna.exe evolves adders; one later version trains on BTC hourly directions. The earlier implications about Bitcoin history, a Bitcoin-Qubic bridge and time locks are withdrawn.
+The durable implications are about Anna and Aigarth: the bot's replies form a highly structured table, consistent with a small trained ternary unit; Anna.exe evolves adders; one later version trains on BTC hourly directions. The earlier implications about Bitcoin history, a Bitcoin-Qubic bridge and time locks were not confirmed and stay open.

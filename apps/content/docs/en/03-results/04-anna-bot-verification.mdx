@@ -8,8 +8,8 @@ date: 2026-04-20
 
 # Anna Bot Algorithm Verification
 
-<Callout type="warning" title="Correction, September 2026">
-Our bot reply files are not ten independent sources, and matching replies do not show how the bot computes its answers or that the design was intentional. The matrix was compiled by hand from these replies, so the coordinate formula describes how our table is indexed, not a lookup inside the bot. The exception cells are mostly our own entry errors, not messages. See [Corrections, September 2026](/docs/03-results/35-corrections-september-2026).
+<Callout type="info" title="Re-check, September 2026">
+Our bot reply files are not ten independent sources, and matching replies do not show how the bot computes its answers or that the design was intentional. The matrix was compiled by hand from these replies, so the coordinate formula describes how our table is indexed, not a lookup inside the bot. The exception cells are mostly our own entry errors, not messages. See [September 2026 re-check](/docs/03-results/35-corrections-september-2026).
 </Callout>
 
 ## Executive Summary
@@ -235,7 +235,7 @@ Individual rows exhibit distinct output profiles. Rows sharing the same `row % 8
 
 **Important**: These are statistical tendencies, not deterministic rules. Each row has its own collision profile.
 
-### 3. Universal Columns (withdrawn)
+### 3. Universal Columns (not confirmed)
 
 Earlier versions reported three columns (28, 34, -17) that return the same value in every row. A full scan of the table finds no constant column: these columns contain 35, 58 and 56 different values.
 
@@ -266,9 +266,9 @@ The 34 pairs (68 cells) that violate the symmetry rule are concentrated in four 
 
 Mirror columns always sum to 127 by definition, so the sums carry no information.
 
-### 5. Embedded Messages (withdrawn)
+### 5. Embedded Messages (not confirmed)
 
-Earlier versions reported ASCII strings such as `>FIB`, `AI.MEG` and `GOU` from XOR operations on the exception pairs. The stated `>FIB` cell values are wrong, and all these strings come from runs that are very likely data entry errors. They are withdrawn. See [Corrections, September 2026](/docs/03-results/35-corrections-september-2026).
+Earlier versions reported ASCII strings such as `>FIB`, `AI.MEG` and `GOU` from XOR operations on the exception pairs. The stated `>FIB` cell values do not match the table, and all these strings come from runs that are very likely entry errors in the typed table. They are not confirmed and stay open. See [September 2026 re-check](/docs/03-results/35-corrections-september-2026).
 
 ---
 
@@ -307,7 +307,7 @@ The following are fully verified with 100% confidence:
 
 1. **Corpus coverage**: 897 responses cover approximately 5.5% of the 16,384-cell matrix. Unsampled regions may contain patterns not captured by current analysis.
 2. **Temporal stability**: All data was collected within a bounded time window. Whether the matrix is static or subject to periodic updates has not been confirmed through long-term monitoring.
-3. **Exception cells**: The 68 exception cells are very likely data entry errors. The ASCII fragments once read from them are withdrawn.
+3. **Exception cells**: The 68 exception cells are very likely entry errors in the typed table. The ASCII fragments once read from them are not confirmed.
 4. **Prediction accuracy bounds**: The 70-75% pattern-based prediction estimate is derived from the sampled corpus and may not generalize uniformly across the full coordinate space.
 5. **Causal claims**: The structure of the table reflects how the bot answered. It does not establish whether the bot's program was designed or trained.
 
@@ -373,12 +373,12 @@ Phase 3b: Re-aggregated Validation (April 2026)
 Phase 4: Matrix Analysis
   ├── Point symmetry quantified: 99.58%
   ├── 68 asymmetric cells identified
-  ├── XOR message extraction performed (results withdrawn in September 2026)
+  ├── XOR message extraction performed (results not confirmed in September 2026)
   └── Value distribution tested (chi-square, p < 0.001)
 
 Phase 5: Pattern Characterization
   ├── Row-level behavioral profiling
-  ├── Universal column identification (withdrawn: no column is constant)
+  ├── Universal column identification (not confirmed: no column is constant)
   ├── Residue class tendency mapping
   └── Prediction accuracy estimation (70-75%)
 ```

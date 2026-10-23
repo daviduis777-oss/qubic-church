@@ -8,7 +8,7 @@ date: 2026-02-27
 
 # Genesis Block Numerical Analysis
 
-<Callout type="warning" title="Correction, September 2026">The raw facts (285 bytes, Merkle byte sum 3,839, nonce 2,083,236,893, Genesis Hash160) are verified. Three claims were wrong and are removed: the difficulty target has 32 leading zero bits, not 43; 2,671 mod 9 is 7, not 0; and Qubic has no 19-tick epochs. See [Corrections, September 2026](/docs/03-results/35-corrections-september-2026).</Callout>
+<Callout type="info" title="Re-check, September 2026">The raw facts (285 bytes, Merkle byte sum 3,839, nonce 2,083,236,893, Genesis Hash160) are verified. Three claims were not confirmed and are set aside: the difficulty target has 32 leading zero bits, not 43; 2,671 mod 9 is 7, not 0; and Qubic has no 19-tick epochs. See [September 2026 re-check](/docs/03-results/35-corrections-september-2026).</Callout>
 
 > A systematic examination of the mathematical structure of the Bitcoin Genesis Block, focusing on factorization properties, modular arithmetic, and byte-level analysis of cryptographic fields.
 
@@ -79,7 +79,7 @@ The serialized Genesis Block occupies exactly 285 bytes. The prime factorization
 
 ### 2.2 Significance of Factor 19
 
-Earlier versions claimed that Qubic uses 19-tick epochs. This is wrong: Qubic epochs last seven days, with 676 computors. There is no protocol reason to single out 19.
+Earlier versions claimed that Qubic uses 19-tick epochs. The re-check did not confirm this: Qubic epochs last seven days, with 676 computors. There is no protocol reason to single out 19.
 
 The appearance of 19 as a factor of the Genesis Block length is noted. However, the probability of any randomly chosen integer being divisible by 19 is 1/19 = 5.26%, which is not statistically exceptional on its own.
 
@@ -105,7 +105,7 @@ Computing the block length modulo 121 gives:
 285 mod 121 = 43
 ```
 
-Earlier versions stated that the difficulty target has 43 leading zero bits and read this as a match. That is wrong. `nBits = 0x1d00ffff` gives a target with 32 leading zero bits:
+Earlier versions stated that the difficulty target has 43 leading zero bits and read this as a match. The re-check did not confirm this. `nBits = 0x1d00ffff` gives a target with 32 leading zero bits:
 
 ```
 Target: 0x00000000ffff0000000000000000000000000000000000000000000000000000
@@ -304,13 +304,13 @@ No individual finding survives strict Bonferroni correction. However, the combin
 
 ### 8.2 Intentionality Assessment
 
-**Assessment**: With the difficulty-target match withdrawn, no finding connects two independent block properties, and no finding survives correction for multiple testing. The patterns are consistent with coincidence and selection after the fact.
+**Assessment**: With the difficulty-target match not confirmed, no finding connects two independent block properties, and no finding survives correction for multiple testing. The patterns are consistent with coincidence and selection after the fact.
 
 ---
 
 ## 9. Integration with Related Analyses
 
-Earlier versions linked these values to a "Bitcoin-Qubic bridge", a formula relating block heights to Qubic parameters, and the 1CFB byte sum 2,299 = 121 x 19. The bridge claims did not hold up, see [Corrections, September 2026](/docs/03-results/35-corrections-september-2026). The byte sum 2,299 is correct as arithmetic, but its probability for a random address is about 1 in 1,100, not rare.
+Earlier versions linked these values to a "Bitcoin-Qubic bridge", a formula relating block heights to Qubic parameters, and the 1CFB byte sum 2,299 = 121 x 19. The bridge claims were not confirmed, see [September 2026 re-check](/docs/03-results/35-corrections-september-2026). The byte sum 2,299 is correct as arithmetic, but its probability for a random address is about 1 in 1,100, not rare.
 
 **Combined interpretation**: No finding constitutes evidence of design. Small constants such as 11 and 19 divide many integers, and they were chosen after looking at the data.
 
@@ -447,7 +447,7 @@ print(f"2299 / 121 = {2299 / 121}")        # 19.0
 
 ### Related Documentation
 
-- [Corrections, September 2026](/docs/03-results/35-corrections-september-2026)
+- [September 2026 re-check](/docs/03-results/35-corrections-september-2026)
 - [Glossary of Terms](/docs/03-results/20-glossary)
 
 ---

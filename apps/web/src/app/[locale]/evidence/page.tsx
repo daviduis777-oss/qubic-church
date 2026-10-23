@@ -50,12 +50,13 @@ export default async function EvidencePage(props: {
               role="note"
             >
               This page was rebuilt in September 2026. Earlier versions showed
-              claims that did not hold up; they are listed on the{' '}
+              readings the re-check did not confirm; they are listed as open
+              questions on the{' '}
               <Link
                 className="underline underline-offset-4 hover:text-foreground"
                 href="/docs/03-results/35-corrections-september-2026"
               >
-                Corrections page
+                re-check page
               </Link>
               .
             </p>

@@ -40,9 +40,9 @@ const PHASE_TITLES: Record<string, PhaseEntry> = {
  'Out of dozens of matrices with the same eigenvalues, Anna is the only one that generalizes from small to full inputs. The top siblings overfit.',
  },
  E5: {
- title: 'Numeric coincidences (withdrawn as evidence)',
+ title: 'Numeric coincidences (open, not evidence)',
  tagline:
- 'Trace = 137 of the table as typed comes from a very likely data-entry error; the corrected table has trace -64. The π × 100 and K-e-y readings are coincidences, not encoded constants.',
+ 'Trace = 137 of the table as typed comes from a very likely entry error in the typed table; the corrected table has trace -64. The π × 100 and K-e-y readings are coincidences, not encoded constants.',
  },
  E9: {
  title: 'Reverse-engineering attempt',

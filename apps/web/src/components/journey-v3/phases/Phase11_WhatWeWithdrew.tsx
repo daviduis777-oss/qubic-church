@@ -41,7 +41,7 @@ export function Phase11_WhatWeWithdrew() {
         </div>
 
         <SourceCitationGroup>
-          <SourceCitation href="/docs/03-results/35-corrections-september-2026" title="Corrections, September 2026" />
+          <SourceCitation href="/docs/03-results/35-corrections-september-2026" title="September 2026 re-check" />
           <SourceCitation href="/docs/04-discussion/06-how-the-earlier-claims-arose" title="How the earlier claims arose" />
         </SourceCitationGroup>
       </div>

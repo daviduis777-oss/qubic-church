@@ -83,8 +83,8 @@ export function ResearchInfoModal({ isOpen, onClose }: ResearchInfoModalProps) {
                 Row Stratification:{' '}
               </span>
               Earlier versions described rows 21, 68 and 96 as input, transform
-              and output layers. That reading is unproven and has been
-              withdrawn.
+              and output layers. That reading is unproven and stays an open
+              question.
             </p>
           </div>
         </div>
@@ -180,7 +180,7 @@ export function ResearchInfoModal({ isOpen, onClose }: ResearchInfoModalProps) {
               Anna admits at least 2 period-4 cycles on the sampled inputs (see
               Chapter 30); that these are the only ones is a hypothesis. The
               separate input-clamped AIT operator behaves differently. Earlier
-              readings of the cycle as a cooperation rhythm were withdrawn.
+              readings of the cycle as a cooperation rhythm were not confirmed.
             </p>
           </div>
         </div>

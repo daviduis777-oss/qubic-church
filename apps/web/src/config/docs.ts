@@ -30,7 +30,7 @@ export const docsConfig: DocsConfig = {
       items: [
         {
           href: '/docs/03-results/35-corrections-september-2026',
-          title: { en: 'Corrections, September 2026', pt: 'Correcoes, Setembro 2026' },
+          title: { en: 'The September 2026 re-check', pt: 'A reverificacao de Setembro 2026' },
           items: [],
         },
         {
