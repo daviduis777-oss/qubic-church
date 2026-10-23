@@ -55,7 +55,7 @@ export async function SiteFooter() {
 
         <div className="w-full max-w-sm space-y-3 md:w-80">
           <p className="eyebrow text-muted-foreground">
-            Support independent research
+            Support the Atrium
           </p>
           <code className="block w-full select-all break-all border border-border bg-card px-3 py-2 font-mono text-xs leading-relaxed text-fg-2">
             {DONATION_ADDRESS}
