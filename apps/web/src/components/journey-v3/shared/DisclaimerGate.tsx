@@ -24,8 +24,8 @@ export function DisclaimerGate({
   title = 'The Road to The Day',
   eyebrow = 'Before you enter',
   children,
-  linkHref = '/docs/03-results/35-corrections-september-2026',
-  linkLabel = 'What we checked and withdrew',
+  linkHref,
+  linkLabel,
 }: DisclaimerGateProps = {}) {
   const KEY = storageKey
   const [open, setOpen] = useState(false)
@@ -79,16 +79,7 @@ export function DisclaimerGate({
               {title}
             </h2>
             <div className="mt-5 space-y-3 text-base leading-relaxed text-white/75">
-              {children ?? (
-                <>
-              <p>This is a story told with the lights low. It follows Come-from-Beyond from the year 2000 to 13.04.2027, and it leaves some doors open on purpose. Halfway down the road is a door marked Satoshi Nakamoto. Behind it, a hypothesis argued from one side.</p>
-              <p>Every item carries its label. A fact has a source. His words are quoted verbatim, with a date. A community reading is exactly that: a reading.</p>
-              <p>
-                Coincidences prove nothing. Come-from-Beyond has said many times that he is not Satoshi Nakamoto, and this page makes no claim about who Satoshi is. Nothing here is
-                financial advice.
-              </p>
-            </>
-              )}
+              {children ?? <p className="text-xl text-white/90">Use your head.</p>}
             </div>
             <div className="mt-8 flex flex-wrap items-center gap-4">
               <button
@@ -99,9 +90,11 @@ export function DisclaimerGate({
               >
                 Enter
               </button>
-              <Link className="text-sm text-white/50 underline decoration-white/20 underline-offset-4 hover:text-white" href={linkHref}>
-                {linkLabel}
-              </Link>
+              {linkHref && linkLabel && (
+                <Link className="text-sm text-white/50 underline decoration-white/20 underline-offset-4 hover:text-white" href={linkHref}>
+                  {linkLabel}
+                </Link>
+              )}
             </div>
           </motion.div>
         </motion.div>

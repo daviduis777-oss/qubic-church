@@ -44,7 +44,7 @@ export function GET() {
     `- [Anna Aigarth collection: 200 NFTs, each gives founder status in Qubic Church](${SITE_URL}/nfts)`,
     `- [Rarity codex of the Anna collection](${SITE_URL}/rarity-codex)`,
     `- [Anna Matrix research lab](${SITE_URL}/evidence)`,
-    `- [The Road to The Day: Come-from-Beyond from 2000 to 13.04.2027, with a Satoshi Nakamoto chapter: the case that he is, or is part of, Satoshi, argued from one side as a hypothesis, with his repeated denials](${SITE_URL}/timeline)`,
+    `- [The Road to The Day: Come-from-Beyond from 2000 to 13.04.2027, with a Satoshi Nakamoto chapter: the case that he is, or is part of, Satoshi, with his own answers on record](${SITE_URL}/timeline)`,
     `- [Maria Aigarth: a research agent testing whether an AI arbiter can be architecturally impartial (Fractal Rationalism)](${SITE_URL}/maria-aigarth)`,
     `- [Support the research](${SITE_URL}/donate)`,
     '',
