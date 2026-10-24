@@ -2,9 +2,11 @@
 
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import Link from 'next/link'
+import { createPortal } from 'react-dom'
 import { ChevronDown } from 'lucide-react'
+import { GlitchText } from '@/components/ui/GlitchText'
 import { PhaseWrapper } from '../shared/PhaseWrapper'
-import { ClueCard, Moments, Quote, type Clue, type Moment } from '../shared/Story'
+import { ClueCard, Moments, OpenQuestion, Quote, type Clue, type Moment } from '../shared/Story'
 
 const CH17 = '/docs/03-results/17-cfb-satoshi-analysis'
 const FACTS = '/docs/05-appendices/02-foundation-facts'
@@ -164,6 +166,131 @@ const DONT_HOLD: [string, string][] = [
   ['“The mathematical bridge”: 27, 47, 137, 283, block 576', 'Numbers picked after looking at the data. Open, not evidence.'],
 ]
 
+const THREE_WEEKS: Moment[] = [
+  {
+    date: '18.09.2012',
+    title: 'The verdict',
+    text: (
+      <>
+        In his own thread, <span className="text-white/85">Dying bitcoins</span>: &ldquo;It&rsquo;s impossible to have consensus regarding protocol changes in Bitcoin&hellip; So
+        next-gen coin should have a protocol that could be adjusted by anyone without breaking the whole system.&rdquo; The same day, told to go make his own fork:{' '}
+        <span className="italic text-white/85">&ldquo;Ok. I&rsquo;ll send u personal invitation. It&rsquo;s almost ready, just tuning minting algo. Should take 2-3 months.&rdquo;</span>
+      </>
+    ),
+    href: BOOK4,
+    hrefLabel: 'Come-from-Beyond, ch. 4',
+  },
+  {
+    date: '25.09.2012',
+    title: 'The name',
+    text: (
+      <>
+        Thread 112676: <span className="text-white/85">Qubic: Quorum-Based Coin</span>. Money anyone can create, control and use; coins run by arbitrary nodes with no central
+        authority; a minting algorithm that can be changed. The post opens with a repost from his own small Qubic forum, which already existed.
+      </>
+    ),
+    href: BOOK4,
+    hrefLabel: 'Come-from-Beyond, ch. 4',
+  },
+  {
+    date: '26.09.2012',
+    title: 'The promise',
+    text: (
+      <>
+        Accused of designing a system for a botnet: <span className="italic text-white/85">&ldquo;Perhaps u will laugh but I design this system to make the world better. U
+        shouldn&rsquo;t trust me of coz. I&rsquo;ll publish source code, so anyone can audit it.&rdquo;</span>
+      </>
+    ),
+  },
+  {
+    date: '05.10.2012',
+    title: 'The necromancer',
+    text: 'He answers in a thread where Satoshi last wrote in June 2010, quoting him and correcting him. Thirty-six minutes later a veteran developer: “You, sir, are a powerful necromancer. Can you raise Satoshi from the dead too?”',
+  },
+  {
+    date: '06.10.2012, 05:53',
+    title: 'The estate',
+    text: (
+      <>
+        <span className="italic text-white/85">&ldquo;We&rsquo;ll get rid of all weaknesses one by one. I&rsquo;m analyzing this one right now.&rdquo;</span> We. One by one. Right
+        now. Verdict, name, takeover: three weeks.
+      </>
+    ),
+    href: BOOK4,
+    hrefLabel: 'Come-from-Beyond, ch. 4',
+  },
+]
+
+const HEADLINE = 'The Times 03/Jan/2009 Chancellor on brink of second bailout for banks'
+const HEADLINE_HITS = [22, 43, 64]
+
+const THREADS: Clue[] = [
+  {
+    title: 'One handshake from ArtForz',
+    text: (
+      <>
+        In May 2026, reading about the 2010 miner who gamed block timestamps, he wrote: <span className="italic text-white/85">&ldquo;15 years ago I was talking to a
+        Russian-speaking guy who claimed that his friend had used that very technique&hellip; it seems I was just one extra handshake away from ArtForz.&rdquo;</span> That puts
+        him inside Bitcoin&rsquo;s inner circle in 2011.
+      </>
+    ),
+    status: 'his-words',
+    source: 'Come-from-Beyond on X, 03.05.2026',
+    href: 'https://x.com/c___f___b/status/2051010728065208621',
+  },
+  {
+    title: 'Five years to the day',
+    text: 'Qubic’s first block: 13 April 2022. The Day: 13 April 2027. He explained the date himself: “It’s 5 years after launch of Qubic.” And separately: on that day “you’ll see who is really behind CFB acc”.',
+    status: 'his-words',
+    source: 'Discord, 11.06.2024 and 10.10.2025',
+    href: FACTS,
+  },
+  {
+    title: '4 8 15 16 23 42',
+    text: 'The two dust transactions of 4 July 2025 that paid exactly 676 satoshis each also carried a message: the six numbers from Lost. Someone with a sense of humour, a knowledge of Qubic’s quorum and access to a Bitcoin wallet.',
+    status: 'community',
+    source: 'Block 903,977, via @SatoshiCfB',
+    href: 'https://x.com/SatoshiCfB',
+  },
+  {
+    title: 'The first birthmark',
+    text: 'His December 2000 article taught how to hide an encrypted authorship mark inside a program so that ownership can be proved later. Nine years later the first blocks of Bitcoin carried 15ubic, 1CFB and da1cfb4ad.',
+    status: 'community',
+    source: 'KV, No. 49, 2000 (found by @SatoshiCfB)',
+    href: 'https://kv.by/archive/index2000491105.htm',
+  },
+]
+
+function GenesisHeadline() {
+  const [lit, setLit] = useState(false)
+  return (
+    <div className="border border-white/10 bg-black/70 p-5 md:p-7">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="font-mono text-xs uppercase tracking-[0.25em] text-gold">The Genesis headline</p>
+        <button
+          aria-pressed={lit}
+          className="border border-white/15 px-3 py-1.5 font-mono text-xs uppercase tracking-wider text-white/60 hover:text-white"
+          onClick={() => setLit(v => !v)}
+          type="button"
+        >
+          {lit ? 'Hide' : 'Every 21st character'}
+        </button>
+      </div>
+      <p className="mt-5 break-words font-mono text-lg leading-relaxed text-white/80 md:text-2xl" onMouseEnter={() => setLit(true)} onMouseLeave={() => setLit(false)}>
+        {HEADLINE.split('').map((ch, i) => (
+          <span className={lit && HEADLINE_HITS.includes(i) ? 'bg-gold px-0.5 font-bold text-black' : ''} key={i}>
+            {ch}
+          </span>
+        ))}
+      </p>
+      <p className="mt-4 text-sm text-white/55">
+        The text Satoshi wrote into block 0. Start at the C of Chancellor and step 21 characters twice: C, f, b. A community reading; other letter triples line up too. Still,
+        it is the one people keep finding.
+      </p>
+    </div>
+  )
+}
+
 function Part({ id, n, title, children }: { id: string; n: string; title: string; children: ReactNode }) {
   return (
     <section aria-labelledby={id} className="border-t border-white/10 py-12 md:py-16">
@@ -195,11 +322,41 @@ export function Phase07_SatoshiNakamoto() {
     return () => window.removeEventListener('hashchange', check)
   }, [])
 
-  const toggle = () => {
-    const next = !open
-    setOpen(next)
-    if (!next) top.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  const [flash, setFlash] = useState(false)
+  const [glitch, setGlitch] = useState(false)
+
+  const openWithGlitch = () => {
+    setOpen(true)
+    setGlitch(true)
+    setTimeout(() => setGlitch(false), 400)
   }
+
+  const toggle = () => {
+    if (open) {
+      setOpen(false)
+      top.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    } else openWithGlitch()
+  }
+
+  // Easter eggs. Type 3 6 9 anywhere on the page: the door opens and the hex shows.
+  useEffect(() => {
+    let buf = ''
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.target as HTMLElement)?.tagName === 'INPUT') return
+      buf = (buf + e.key).slice(-3)
+      if (buf === '369') {
+        buf = ''
+        openWithGlitch()
+        setFlash(true)
+        setTimeout(() => setFlash(false), 2600)
+        document.getElementById('phase-satoshi')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    // eslint-disable-next-line no-console
+    console.log('%cWhy 369? Guess why my virus had length of 369 bytes.%c\n…1d a1 cf b4 ad…  → /docs/03-results/17-cfb-satoshi-analysis', 'color:#ffd24a;font:bold 14px monospace', 'color:#999;font:12px monospace')
+    return () => window.removeEventListener('keydown', onKey)
+  }, [])
 
   return (
     <PhaseWrapper background="dark" id="satoshi" phaseNumber={7} subtitle="The legend. Open it if you want to." title="Satoshi Nakamoto">
@@ -219,7 +376,11 @@ export function Phase07_SatoshiNakamoto() {
             type="button"
           >
             <span className="block font-mono text-xs uppercase tracking-[0.4em] text-black/60">{open ? 'Close the dossier' : 'Use your head'}</span>
-            <span className="mt-2 block font-display text-4xl font-bold uppercase leading-none tracking-tight sm:text-5xl md:text-7xl">Satoshi Nakamoto</span>
+            <span className="mt-2 block font-display text-4xl font-bold uppercase leading-none tracking-tight sm:text-5xl md:text-7xl">
+              <GlitchText glitchDuration={1200} maxInterval={14000} minInterval={6000}>
+                Satoshi Nakamoto
+              </GlitchText>
+            </span>
             <span className="mt-3 inline-flex items-center gap-2 font-mono text-sm uppercase tracking-[0.25em] text-black/70">
               {open ? 'Fold it back' : 'Open the case'}
               <ChevronDown className={`size-4 transition-transform ${open ? 'rotate-180' : 'group-hover:translate-y-0.5'}`} />
@@ -228,7 +389,15 @@ export function Phase07_SatoshiNakamoto() {
         </div>
 
         {/* The dossier stays in the page for readers without JavaScript and for crawlers. */}
-        <div className="mx-auto max-w-5xl" hidden={!open} id="satoshi-dossier">
+        {flash &&
+          typeof document !== 'undefined' &&
+          createPortal(
+            <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-[200] flex items-center justify-center bg-black/80">
+              <p className="qc-glitch font-mono text-4xl font-bold tracking-[0.3em] text-gold md:text-7xl">da1cfb4ad</p>
+            </div>,
+            document.body
+          )}
+        <div className={`mx-auto max-w-5xl ${glitch ? 'qc-glitch' : ''}`} hidden={!open} id="satoshi-dossier">
           <aside aria-label="Disclaimer" className="border border-gold/30 bg-gold/[0.06] p-6 md:p-8">
             <p className="font-mono text-xs uppercase tracking-[0.3em] text-gold">Use your head</p>
             <p className="mt-3 text-base leading-relaxed text-white/80">
@@ -294,6 +463,20 @@ export function Phase07_SatoshiNakamoto() {
             </P>
           </Part>
 
+          <Part id="satoshi-weeks" n="IV½ · The three weeks" title="Autumn 2012, day by day">
+            <Moments items={THREE_WEEKS} />
+            <OpenQuestion>Verdict on 18 September, the name Qubic on 25 September, the takeover of Satoshi&rsquo;s list on 6 October. Who plans a decade in three weeks?</OpenQuestion>
+          </Part>
+
+          <Part id="satoshi-threads" n="IV¾ · Loose threads" title="The ones that keep pulling">
+            <GenesisHeadline />
+            <div className="grid gap-4 md:grid-cols-2">
+              {THREADS.map((c, i) => (
+                <ClueCard clue={c} index={i} key={c.title} />
+              ))}
+            </div>
+          </Part>
+
           <Part id="satoshi-words" n="V · In his words" title="He keeps pointing">
             <div className="grid gap-4">
               {WORDS.map(([q, s]) => (
@@ -337,10 +520,25 @@ export function Phase07_SatoshiNakamoto() {
 
           <Part id="satoshi-what-if" n="VIII · And if" title="What if?">
             <P>
-              If he is not Satoshi, then one programmer wrote about hidden authorship marks in 2000, described volunteer computing aimed at cryptography in 2002, walked into
-              Satoshi&rsquo;s abandoned threads in 2012, named Qubic in a thread numbered 112676, and has been joking about block 369 ever since. All by chance.
+              If he is not Satoshi, then one programmer wrote about hidden authorship marks in 2000, described volunteer computing aimed at cryptography in 2002, was one
+              handshake from the first big miner in 2011, walked into Satoshi&rsquo;s abandoned threads in 2012, named Qubic in a thread numbered 112676 three weeks after
+              passing his verdict on Bitcoin, launched it on a 13th of April, set The Day five years later to the day, and has been joking about block 369 ever since. All by
+              chance.
             </P>
             <P>If he is, the date is already set. On 13.04.2027 we will see together.</P>
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+              {[
+                ['26', 'years, 2000 to 2026'],
+                ['26²', '= 676 computors'],
+                ['112676', 'the Qubic thread'],
+                ['369', 'the block, the virus'],
+              ].map(([n, l]) => (
+                <div className="border border-gold/20 bg-black/60 p-4 text-center" key={n}>
+                  <p className="font-mono text-3xl font-bold text-gold md:text-4xl">{n}</p>
+                  <p className="mt-1 text-xs uppercase tracking-wider text-white/45">{l}</p>
+                </div>
+              ))}
+            </div>
           </Part>
 
           <footer className="border-t border-white/10 pt-8">
