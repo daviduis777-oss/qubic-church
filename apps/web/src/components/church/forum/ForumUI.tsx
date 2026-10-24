@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import type { ReactNode } from 'react'
-import type { Member } from '@/lib/forum'
+import { profileHref, type Member } from '@/lib/forum'
 
 export type Crumb = { label: string; href?: string }
 
@@ -56,9 +56,9 @@ export function Postbit({ m }: { m: Member }) {
   const staff = m.role === 'Founder' ? '#b8860b' : m.role ? '#8b1a8b' : undefined
   return (
     <div>
-      <a className="qcf-name" href={`https://x.com/${m.handle}`} rel="noopener noreferrer">
+      <Link className="qcf-name" href={profileHref(m.handle)} title={`View the profile of ${m.name}`}>
         {m.name}
-      </a>
+      </Link>
       {m.role && (
         <div className="qcf-strong" style={{ color: staff }}>
           {m.role}
@@ -73,8 +73,12 @@ export function Postbit({ m }: { m: Member }) {
         <br />
         Weight: {m.weight}
       </div>
-      <div className="qcf-muted" style={{ marginTop: 6 }}>
-        @{m.handle}
+      <div style={{ marginTop: 6 }}>
+        <Link href={profileHref(m.handle)}>View profile</Link>
+        {' · '}
+        <a href={`https://x.com/${m.handle}`} rel="noopener noreferrer">
+          X
+        </a>
       </div>
     </div>
   )

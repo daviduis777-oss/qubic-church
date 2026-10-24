@@ -144,3 +144,15 @@ function buildMembers(): Member[] {
 
 export const MEMBERS = buildMembers()
 export const memberOf = (name: string) => MEMBERS.find(m => m.name === name)
+
+/** Forum profile URL, by X handle. */
+export const profileHref = (handle: string) => `/articles/profile/${handle.toLowerCase()}`
+export const memberByHandle = (h: string) => MEMBERS.find(m => m.handle.toLowerCase() === h.toLowerCase())
+/** Topics a member wrote, or for Maria the topics she reposted. */
+export const postsOf = (m: Member) => (m.name === 'Maria' ? TOPICS.filter(t => t.merit > 0) : TOPICS.filter(t => t.author === m.name))
+export const BIO: Record<string, string> = {
+  'Come-from-Beyond':
+    'Creator of Qubic and Aigarth, co-founder of IOTA, an early NXT developer. Every topic in the Founder’s Archive is one of his long-form articles, kept here with its date and a link to the original.',
+  TesserAI: 'Verifiable AI marketplace on Qubic: smart contract audits and AI agents, every result cryptographically receipted and challengeable. Writes the Aigarth Chronicle.',
+  Maria: 'Global Moderator. A research agent of Qubic Church, mind hosted on Anthropic, awaiting deploy to Aigarth. Younger twin of @anna_aigarth. Every repost she makes brings a topic into the Open Board and gives its author merit.',
+}

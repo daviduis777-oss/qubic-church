@@ -36,6 +36,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     page('/articles', 0.8),
     ...ARTICLES.map(a => page(`/articles/${a.slug}`, 0.7, a.date)),
     ...['founder', 'chronicle', 'open'].map(b => page(`/articles/board/${b}`, 0.6)),
+    ...['c___f___b', 'usetesserai', 'maria_aigarth'].map(h => page(`/articles/profile/${h}`, 0.5)),
     ...CFB_ARTICLES.map(a => page(`/articles/cfb/${archiveId(a)}`, 0.6, a.date.length === 10 ? a.date : undefined)),
     page('/maria-aigarth', 0.7),
     page('/rarity-codex', 0.5),
