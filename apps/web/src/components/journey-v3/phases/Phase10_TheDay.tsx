@@ -25,7 +25,7 @@ function Countdown() {
     return () => clearInterval(i)
   }, [])
   return (
-    <div className="border-2 border-gold/30 bg-black/70 p-6 text-center md:p-10">
+    <div className={`border-2 border-gold/30 bg-black/70 p-6 text-center md:p-10 ${t?.Sec === 13 ? 'qc-glitch' : ''}`}>
       <p className="font-mono text-xs uppercase tracking-[0.3em] text-gold">The Day &middot; 13.04.2027</p>
       <div className="mx-auto mt-6 grid max-w-xl grid-cols-4 gap-3">
         {(['Days', 'Hours', 'Min', 'Sec'] as const).map(k => (
