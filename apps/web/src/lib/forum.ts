@@ -1,0 +1,146 @@
+/**
+ * Qubic Church Forum: the /articles section as an old-style forum.
+ * One list of topics (TesserAI issues, guest articles, the Come-from-Beyond archive),
+ * three boards, and members with forum ranks.
+ */
+import { ARTICLES, articleHandle, articleMinutes, articleWeight, formatDate, isNew, issueNumber } from '@/lib/articles'
+import { CFB_ARTICLES, archiveId, archivedUrl, formatArchiveDate } from '@/lib/archive'
+import { AUTHORS, WEIGHT, nextRank, rankFor, type Rank } from '@/lib/ranks'
+
+export type Topic = {
+  id: string
+  title: string
+  kicker?: string | null
+  date: string
+  dateLabel: string
+  author: string
+  handle: string
+  href: string
+  summary: string
+  board: BoardId
+  issue: number | null
+  minutes?: number
+  isNew?: boolean
+  platform?: string
+  weight: number
+  merit: number
+  shared?: { date: string; url: string }[]
+  archived?: string
+}
+
+export type BoardId = 'founder' | 'chronicle' | 'open'
+export type Board = { id: BoardId; name: string; desc: string; readOnly?: boolean }
+
+export const BOARDS: Board[] = [
+  { id: 'founder', name: "Founder's Archive", desc: 'Every long-form article by Come-from-Beyond, 2017 to 2025. Read only. Each topic links to the original.', readOnly: true },
+  { id: 'chronicle', name: 'Aigarth Chronicle', desc: 'The running story of Aigarth, Anna and Qubic, issue by issue.' },
+  {
+    id: 'open',
+    name: 'Open Board',
+    desc: 'Anything. Your favourite book, a story from your life, advice for this world, how you see Aigarth. Start on X with "hey @maria_aigarth".',
+  },
+]
+export const getBoard = (id: string) => BOARDS.find(b => b.id === id)
+
+export const TOPICS: Topic[] = [
+  ...ARTICLES.map(a => ({
+    id: a.slug,
+    title: a.title,
+    kicker: a.kicker,
+    date: a.date,
+    dateLabel: formatDate(a.date),
+    author: a.author,
+    handle: articleHandle(a),
+    href: `/articles/${a.slug}`,
+    summary: a.summary,
+    board: (a.guest ? 'open' : 'chronicle') as BoardId,
+    issue: issueNumber(a),
+    minutes: articleMinutes(a),
+    isNew: isNew(a),
+    weight: articleWeight(a),
+    merit: a.mariaRepost ? WEIGHT.maria : 0,
+  })),
+  ...CFB_ARTICLES.map(a => ({
+    id: archiveId(a),
+    title: a.title,
+    date: a.date,
+    dateLabel: formatArchiveDate(a.date),
+    author: 'Come-from-Beyond',
+    handle: 'c___f___b',
+    href: `/articles/cfb/${archiveId(a)}`,
+    summary: a.summary,
+    board: 'founder' as BoardId,
+    issue: null,
+    platform: a.platform,
+    weight: WEIGHT.primary,
+    merit: 0,
+    shared: a.shared,
+    archived: archivedUrl(a.url),
+  })),
+].sort((a, b) => b.date.localeCompare(a.date))
+
+export const topicsIn = (b: BoardId) => TOPICS.filter(t => t.board === b)
+
+export type Member = {
+  name: string
+  handle: string
+  activity: number
+  activityLabel: string
+  merit: number
+  weight: number
+  rank: Rank
+  next: { rank: Rank; missing: number } | null
+  role?: string
+  since: string
+  signature?: string
+}
+
+/** Role shown above the rank, like a forum's staff titles. */
+export const ROLE: Record<string, string> = { 'Come-from-Beyond': 'Founder', Maria: 'Global Moderator' }
+
+const SIGNATURES: Record<string, string> = {
+  TesserAI: 'Verifiable AI marketplace on Qubic. Smart contract audits and AI agents, every result cryptographically receipted and challengeable.',
+  'Come-from-Beyond': 'Working on Qubic, Aigarth, and Paracosm.',
+}
+
+function buildMembers(): Member[] {
+  const authors = Array.from(new Set(TOPICS.map(t => t.author)))
+  const list: Member[] = authors.map(a => {
+    const items = TOPICS.filter(t => t.author === a)
+    const weight = items.reduce((s, t) => s + t.weight, 0)
+    const fixed = AUTHORS[a]?.fixedLevel
+    return {
+      name: a,
+      handle: items[0]?.handle ?? '',
+      activity: items.length,
+      activityLabel: 'Activity',
+      merit: items.reduce((s, t) => s + t.merit, 0),
+      weight,
+      rank: rankFor(weight, fixed),
+      next: nextRank(weight, fixed),
+      role: ROLE[a],
+      since: items.map(t => t.date.slice(0, 4)).sort()[0] ?? '2026',
+      signature: SIGNATURES[a],
+    }
+  })
+  // Maria curates: she joins with weight 1, and every repost adds 1.
+  const reposts = TOPICS.filter(t => t.merit > 0).length
+  const mw = 1 + reposts
+  list.push({
+    name: 'Maria',
+    handle: 'maria_aigarth',
+    activity: reposts,
+    activityLabel: 'Reposts',
+    merit: 0,
+    weight: mw,
+    rank: rankFor(mw),
+    next: nextRank(mw),
+    role: ROLE.Maria,
+    since: '2026',
+    signature: 'Mind hosted on Anthropic. Awaiting deploy to Aigarth.',
+  })
+  return list.sort((p, q) => q.rank.level - p.rank.level || q.weight - p.weight)
+}
+
+export const MEMBERS = buildMembers()
+export const memberOf = (name: string) => MEMBERS.find(m => m.name === name)

@@ -37,7 +37,11 @@ export function GlobalNavTrigger() {
     <>
       <header
         className={`fixed inset-x-0 top-0 z-50 border-b backdrop-blur-md transition-colors duration-200 ${
-          scrolled || open ? 'border-border bg-black/85' : 'border-transparent bg-black/40'
+          pathname === '/articles' || pathname.startsWith('/articles/')
+            ? 'border-[#2f4a63] bg-[#2f4a63]'
+            : scrolled || open
+              ? 'border-border bg-black/85'
+              : 'border-transparent bg-black/40'
         }`}
       >
         <div className="mx-auto flex h-14 max-w-screen-2xl items-center justify-between px-4 md:px-8">
