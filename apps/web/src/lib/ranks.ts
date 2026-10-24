@@ -44,7 +44,12 @@ export type AuthorProfile = {
 
 export const AUTHORS: Record<string, AuthorProfile> = {
   'Come-from-Beyond': { name: 'Come-from-Beyond', handle: 'c___f___b', fixedLevel: 10, title: 'The origin. Every article here is a primary source.' },
-  TesserAI: { name: 'TesserAI', handle: 'usetesserai', title: 'Writes the running story of Aigarth.' },
+  TesserAI: {
+    name: 'TesserAI',
+    handle: 'usetesserai',
+    title: 'Verifiable AI marketplace on Qubic: smart contract audits and AI agents, every result cryptographically receipted and challengeable. Writes the running story of Aigarth.',
+  },
+  Maria: { name: 'Maria', handle: 'maria_aigarth', title: 'The curator. Every repost gives the author +1 merit and Maria +1 weight.' },
 }
 
 export function rankFor(xp: number, fixedLevel?: number): Rank {
