@@ -28,6 +28,8 @@ export const WEIGHT = {
   issue: 1,
   /** a primary source: the author built the thing the archive is about */
   primary: 3,
+  /** Maria reposted it: weight given by someone else, not the author */
+  maria: 1,
 } as const
 
 export type AuthorProfile = {

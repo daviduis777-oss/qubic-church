@@ -6,7 +6,7 @@ import { notFound } from 'next/navigation'
 import { setRequestLocale } from 'next-intl/server'
 import { locales } from '@/config/i18n'
 import { SITE_URL } from '@/lib/books'
-import { ARTICLES, articleKeywords, articleMinutes, articleUrl, formatDate, getArticle, issueNumber } from '@/lib/articles'
+import { ARTICLES, articleHandle, articleKeywords, articleMinutes, articleUrl, articleWeight, authorUrl, formatDate, getArticle, issueNumber } from '@/lib/articles'
 
 export function generateStaticParams() {
   return locales.flatMap(locale => ARTICLES.map(a => ({ locale, slug: a.slug })))
@@ -20,7 +20,7 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
     title: seoTitle(a.title),
     description: seoDescription(a.summary),
     alternates: { canonical: articleUrl(a) },
-    authors: [{ name: a.author, url: 'https://x.com/usetesserai' }],
+    authors: [{ name: a.author, url: authorUrl(a) }],
     openGraph: { type: 'article', title: seoTitleText(a.title), description: seoDescription(a.summary), url: articleUrl(a), publishedTime: a.date },
   }
 }
@@ -43,7 +43,7 @@ export default async function ArticlePage(props: { params: Promise<{ locale: str
     url: articleUrl(a),
     wordCount: a.words,
     inLanguage: 'en',
-    author: { '@type': 'Organization', name: 'TesserAI', url: 'https://x.com/usetesserai', sameAs: ['https://x.com/usetesserai'] },
+    author: a.guest ? { '@type': 'Person', name: a.author, url: authorUrl(a), sameAs: [authorUrl(a)] } : { '@type': 'Organization', name: 'TesserAI', url: 'https://x.com/usetesserai', sameAs: ['https://x.com/usetesserai'] },
     keywords: articleKeywords(a).join(', '),
     articleSection: 'Articles',
     isPartOf: { '@type': 'CreativeWorkSeries', name: 'Qubic Church: Articles', url: `${SITE_URL}/articles` },
@@ -67,16 +67,32 @@ export default async function ArticlePage(props: { params: Promise<{ locale: str
           </Link>
           <span className="mx-2 text-fg-2/60">/</span>
           <span className="font-mono text-xs uppercase tracking-[0.25em] text-gold">No. {issueNumber(a)}</span>
+          {a.guest && <span className="ml-3 font-mono text-xs uppercase tracking-[0.25em] text-fg-2">Guest issue</span>}
         </nav>
         <header className="mb-12 border-b border-border pb-10">
           {a.kicker && <p className="eyebrow mb-3 text-gold">{a.kicker}</p>}
           <h1 className="font-display text-5xl leading-[0.95] md:text-7xl">{a.title}</h1>
           <p className="mt-6 text-sm text-fg-2">
-            By <span className="text-foreground">TesserAI</span> · <time dateTime={a.date}>{formatDate(a.date)}</time> ·{' '}
+            By{' '}
+            <a className="text-foreground underline underline-offset-4 hover:text-gold" href={authorUrl(a)} rel="noopener noreferrer" target="_blank">
+              {a.author}
+            </a>{' '}
+            <span className="text-fg-2/70">@{articleHandle(a)}</span> · <time dateTime={a.date}>{formatDate(a.date)}</time> ·{' '}
             {articleMinutes(a)} min read ·{' '}
             <a className="underline underline-offset-4 hover:text-foreground" href={a.url} rel="noopener noreferrer" target="_blank">
               original on X ↗
             </a>
+          </p>
+          <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.2em] text-fg-2/80">
+            weight {articleWeight(a)}
+            {a.mariaRepost && (
+              <>
+                {' · '}
+                <a className="text-gold hover:underline" href={a.mariaRepost} rel="noopener noreferrer" target="_blank">
+                  reposted by Maria ↗
+                </a>
+              </>
+            )}
           </p>
         </header>
 

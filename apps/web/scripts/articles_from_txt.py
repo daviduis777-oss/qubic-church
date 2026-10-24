@@ -1,6 +1,8 @@
 """Turn TesserAI X articles (plain text exports) into src/data/articles/articles.json.
 
-Run from apps/web:  python3 scripts/articles-from-txt.py
+Run from apps/web:  python3 scripts/articles_from_txt.py
+Entries not listed in META (guest issues added with add-article.py) are kept as they are;
+extra fields on META entries (mariaRepost, handle) are kept too.
 The text is the author's own; only layout is inferred (headings, quotes) and
 X page residue (timestamps, view counts, trailing tags) is dropped.
 """
@@ -91,7 +93,9 @@ def blocks_of(lines):
 
 
 def main():
-    arts = []
+    existing = {x["slug"]: x for x in json.loads(OUT.read_text(encoding="utf-8"))} if OUT.exists() else {}
+    meta_slugs = {m[1] for m in META}
+    arts = [x for s, x in existing.items() if s not in meta_slugs]
     for key, slug, title, kicker, date, url in META:
         text = (SRC / f"{key}.txt").read_text(encoding="utf-8")
         lines = clean_lines(text, title, kicker)
@@ -99,9 +103,14 @@ def main():
         words = sum(len(b["text"].split()) for b in blocks)
         first = next((b["text"] for b in blocks if b["t"] == "p" and len(b["text"]) > 80), "")
         summary = first if len(first) <= 240 else first[:237].rsplit(" ", 1)[0] + "…"
-        arts.append({"slug": slug, "title": title, "kicker": kicker, "date": date, "url": url,
-                     "author": "TesserAI", "summary": summary, "words": words, "blocks": blocks})
+        entry = {"slug": slug, "title": title, "kicker": kicker, "date": date, "url": url,
+                 "author": "TesserAI", "handle": "usetesserai", "summary": summary, "words": words, "blocks": blocks}
+        for k in ("mariaRepost", "guest"):
+            if k in existing.get(slug, {}):
+                entry[k] = existing[slug][k]
+        arts.append(entry)
         print(slug, len(blocks), "blocks", words, "words")
+    arts.sort(key=lambda x: x["date"], reverse=True)
     OUT.write_text(json.dumps(arts, ensure_ascii=False, indent=1), encoding="utf-8")
 
 

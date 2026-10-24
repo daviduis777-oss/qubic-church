@@ -32,7 +32,8 @@ type P = { x: number; y: number }
 
 const W = 1000
 const H = 720
-const HUB_HUES = ['#ffd24a', '#7dd3fc', '#c4b5fd', '#86efac', '#fda4af', '#fcd34d']
+const AUTHOR_COLORS: Record<string, string> = { TesserAI: '#ffd24a', 'Come-from-Beyond': '#7dd3fc' }
+const GUEST_HUES = ['#c4b5fd', '#86efac', '#fda4af', '#f9a8d4', '#fdba74', '#67e8f9', '#a3e635']
 
 /** Small deterministic PRNG so the map is the same on every visit. */
 function mulberry(seed: number) {
@@ -49,7 +50,8 @@ const ORIGIN: P = { x: W / 2, y: H / 2 }
 const hash = (s: string) => Array.from(s).reduce((h, c) => (Math.imul(h, 31) + c.charCodeAt(0)) | 0, 7)
 
 function layout(nodes: NeuronNode[]) {
-  const authors = Array.from(new Set(nodes.map(n => n.author)))
+  const weightOf = (a: string) => nodes.filter(n => n.author === a).reduce((t, n) => t + n.weight, 0)
+  const authors = Array.from(new Set(nodes.map(n => n.author))).sort((a, b) => weightOf(b) - weightOf(a))
   const hubs: P[] = authors.map((_, i) => {
     if (authors.length === 1) return { x: W / 2, y: H / 2 }
     const t = (i / authors.length) * Math.PI * 2 - Math.PI / 2
@@ -115,7 +117,7 @@ export function ArticlesNeurons({ nodes }: { nodes: NeuronNode[] }) {
   const mapRef = useRef<HTMLDivElement>(null)
   const active = hover ?? sel
   const node = nodes[sel]
-  const color = (a: string) => HUB_HUES[authors.indexOf(a) % HUB_HUES.length]
+  const color = (a: string) => AUTHOR_COLORS[a] ?? GUEST_HUES[Math.abs(hash(a)) % GUEST_HUES.length] ?? '#c4b5fd'
 
   useEffect(() => {
     const h = decodeURIComponent(window.location.hash.replace('#', ''))

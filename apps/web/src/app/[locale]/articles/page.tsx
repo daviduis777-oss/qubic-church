@@ -3,7 +3,7 @@ import { jsonLd } from '@/lib/json-ld'
 import Link from 'next/link'
 import { setRequestLocale } from 'next-intl/server'
 import { SITE_URL } from '@/lib/books'
-import { ARTICLES, articleKeywords, articleMinutes, articleUrl, formatDate, isNew, issueNumber } from '@/lib/articles'
+import { ARTICLES, articleHandle, articleKeywords, articleMinutes, articleUrl, articleWeight, articleWeightLabel, formatDate, isNew, issueNumber } from '@/lib/articles'
 import { CFB_ARTICLES, formatArchiveDate } from '@/lib/archive'
 import { ArticlesNeurons, type NeuronNode } from '@/components/church/articles/ArticlesNeurons'
 import { RANKS, WEIGHT } from '@/lib/ranks'
@@ -31,7 +31,7 @@ export default async function ArticlesPage(props: { params: Promise<{ locale: st
       date: a.date,
       dateLabel: formatDate(a.date),
       author: a.author,
-      handle: 'usetesserai',
+      handle: articleHandle(a),
       href: `/articles/${a.slug}`,
       external: false,
       summary: a.summary,
@@ -39,8 +39,8 @@ export default async function ArticlesPage(props: { params: Promise<{ locale: st
       issue: issueNumber(a),
       minutes: articleMinutes(a),
       isNew: isNew(a),
-      weight: WEIGHT.issue,
-      weightLabel: 'an issue',
+      weight: articleWeight(a),
+      weightLabel: articleWeightLabel(a),
     })),
     ...CFB_ARTICLES.map(a => ({
       id: a.url.split('/').filter(Boolean).pop() ?? a.url,
@@ -118,7 +118,7 @@ export default async function ArticlesPage(props: { params: Promise<{ locale: st
           <h2 className="mt-3 font-display text-5xl leading-[0.9] md:text-6xl">How the archive ranks.</h2>
           <p className="mt-6 font-serif text-lg leading-relaxed text-foreground/85">
             Every article has a weight. An issue written for the archive weighs {WEIGHT.issue}. A primary source, an article by
-            the person who built the thing we write about, weighs {WEIGHT.primary}. On the map a heavier article is a bigger dot.
+            the person who built the thing we write about, weighs {WEIGHT.primary}. A repost by Maria adds {WEIGHT.maria}. On the map a heavier article is a bigger dot.
           </p>
           <p className="mt-4 font-serif text-lg leading-relaxed text-foreground/85">
             An author's weight is the sum of their articles. It sets their level, and the level sets the size of their hub.
@@ -129,8 +129,8 @@ export default async function ArticlesPage(props: { params: Promise<{ locale: st
             from Seed. Your level, your weight and the distance to the next level are shown next to your name in the index.
           </p>
           <p className="mt-4 text-sm text-fg-2">
-            Planned, not live yet: a repost by Maria adds weight to the article, an article quoted by another issue gets heavier,
-            and a year in the archive adds one more. Weight is given by others, not by the author.
+            Weight is given by others, not by the author: Maria's repost counts, the author's own does not. Planned next: an
+            article quoted by another issue gets heavier, and a year in the archive adds one more.
           </p>
         </div>
         <div>
@@ -153,7 +153,7 @@ export default async function ArticlesPage(props: { params: Promise<{ locale: st
             </tbody>
           </table>
           <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.2em] text-fg-2/70">
-            issue = {WEIGHT.issue} · primary source = {WEIGHT.primary} · level = total weight on the ladder
+            issue = {WEIGHT.issue} · primary source = {WEIGHT.primary} · reposted by Maria = +{WEIGHT.maria} · level = total weight on the ladder
           </p>
         </div>
       </section>
