@@ -191,13 +191,15 @@ export function Phase01_TheVoid() {
           <div className="mb-6">
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight">
               <span className="text-white block drop-shadow-[0_2px_20px_rgba(0,0,0,0.9)]">
-                <GlitchText
-                  glitchDuration={2000}
-                  maxInterval={25000}
-                  minInterval={15000}
-                >
-                  {headline1 || '\u00A0'}
-                </GlitchText>
+                <span className="qc-rgb">
+                  <GlitchText
+                    glitchDuration={1500}
+                    maxInterval={9000}
+                    minInterval={4000}
+                  >
+                    {headline1 || '\u00A0'}
+                  </GlitchText>
+                </span>
                 {headline1.length > 0 && headline1.length < 20 && (
                   <span className="animate-pulse text-gold">|</span>
                 )}

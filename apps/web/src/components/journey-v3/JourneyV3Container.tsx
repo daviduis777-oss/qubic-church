@@ -161,10 +161,14 @@ export function JourneyV3Container({ children }: JourneyV3ContainerProps) {
   return (
     <JourneyV3Context.Provider value={contextValue}>
       <div className="relative bg-black">
-        {/* Subtle gradient background */}
-        <div className="fixed inset-0 pointer-events-none z-0">
-          <div className="absolute inset-0 bg-gradient-to-b from-black via-purple-950/10 to-black" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-gold/5 via-transparent to-transparent" />
+        {/* Nebula, grain and scanlines behind the whole road. Transform and opacity only. */}
+        <div aria-hidden="true" className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-[#0a0618]/50 to-black/60" />
+          <div className="qc-breathe absolute -right-48 top-[8%] h-[70vmax] w-[70vmax] rounded-full bg-[radial-gradient(closest-side,rgba(255,210,74,0.5),transparent_70%)]" />
+          <div className="qc-drift absolute -left-56 top-[45%] h-[80vmax] w-[80vmax] rounded-full bg-[radial-gradient(closest-side,rgba(120,80,220,0.6),transparent_70%)]" />
+          <div className="qc-breathe absolute bottom-[-20%] left-1/3 h-[60vmax] w-[60vmax] rounded-full bg-[radial-gradient(closest-side,rgba(0,200,255,0.35),transparent_70%)] [animation-delay:-5s]" />
+          <div className="qc-noise qc-flicker absolute inset-0" />
+          <div className="qc-scanlines absolute inset-0" />
         </div>
 
         {/* Progress Bar */}

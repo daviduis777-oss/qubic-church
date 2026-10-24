@@ -377,9 +377,11 @@ export function Phase07_SatoshiNakamoto() {
           >
             <span className="block font-mono text-xs uppercase tracking-[0.4em] text-black/60">{open ? 'Close the dossier' : 'Use your head'}</span>
             <span className="mt-2 block font-display text-4xl font-bold uppercase leading-none tracking-tight sm:text-5xl md:text-7xl">
-              <GlitchText glitchDuration={1200} maxInterval={14000} minInterval={6000}>
-                Satoshi Nakamoto
-              </GlitchText>
+              <span className="qc-rgb">
+                <GlitchText glitchDuration={1000} maxInterval={7000} minInterval={3000}>
+                  Satoshi Nakamoto
+                </GlitchText>
+              </span>
             </span>
             <span className="mt-3 inline-flex items-center gap-2 font-mono text-sm uppercase tracking-[0.25em] text-black/70">
               {open ? 'Fold it back' : 'Open the case'}
