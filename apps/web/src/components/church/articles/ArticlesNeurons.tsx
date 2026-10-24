@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { AUTHORS, RANKS, nextRank, rankFor, rankProgress } from '@/lib/ranks'
 
 export type NeuronNode = {
   id: string
@@ -21,6 +22,9 @@ export type NeuronNode = {
   minutes?: number
   isNew?: boolean
   platform?: string
+  /** what this piece adds to its author */
+  weight: number
+  weightLabel: string
 }
 
 type Edge = { a: number; b: number; kind: 'hub' | 'syn' }
@@ -124,7 +128,15 @@ export function ArticlesNeurons({ nodes }: { nodes: NeuronNode[] }) {
     if (window.innerWidth < 1024) mapRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
-  const groups = authors.map(a => ({ author: a, handle: nodes.find(n => n.author === a)?.handle ?? '', items: nodes.map((n, i) => ({ n, i })).filter(({ n }) => n.author === a) }))
+  const groups = authors.map(a => {
+    const items = nodes.map((n, i) => ({ n, i })).filter(({ n }) => n.author === a)
+    const xp = items.reduce((t, { n }) => t + n.weight, 0)
+    const prof = AUTHORS[a]
+    return { author: a, handle: nodes.find(n => n.author === a)?.handle ?? '', items, xp, rank: rankFor(xp, prof?.fixedLevel), next: nextRank(xp, prof?.fixedLevel), progress: rankProgress(xp, prof?.fixedLevel), title: prof?.title }
+  })
+  const levelOf = (a: string) => groups.find(g => g.author === a)?.rank.level ?? 1
+  const hubR = (a: string) => 6 + levelOf(a) * 1.5
+  const dotR = (w: number) => 3.5 + 3 * Math.sqrt(w)
 
   return (
     <div className="mt-10 grid gap-8 lg:grid-cols-[300px_1fr] lg:gap-10">
@@ -132,7 +144,7 @@ export function ArticlesNeurons({ nodes }: { nodes: NeuronNode[] }) {
       <nav aria-label="All articles" className="order-2 lg:order-1 lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto lg:pr-2">
         {groups.map(g => (
           <section className="mb-8" key={g.author}>
-            <h2 className="flex items-baseline gap-2 border-b border-border pb-2 font-mono text-xs uppercase tracking-[0.25em]">
+            <h2 className="flex items-baseline gap-2 font-mono text-xs uppercase tracking-[0.25em]">
               <span className="inline-block h-2 w-2 rounded-full" style={{ background: color(g.author) }} />
               <span className="text-foreground">{g.author}</span>
               <a className="text-fg-2 hover:text-gold" href={`https://x.com/${g.handle}`} rel="noopener noreferrer" target="_blank">
@@ -140,6 +152,16 @@ export function ArticlesNeurons({ nodes }: { nodes: NeuronNode[] }) {
               </a>
               <span className="ml-auto text-fg-2">{g.items.length}</span>
             </h2>
+            <div className="mt-2 flex items-baseline justify-between font-mono text-[11px] uppercase tracking-[0.2em]">
+              <span style={{ color: color(g.author) }}>
+                LVL {g.rank.level} · {g.rank.name}
+              </span>
+              <span className="text-fg-2">{g.next ? `${g.xp} / ${g.next.rank.min}` : `${g.xp} · ∞`}</span>
+            </div>
+            <div aria-hidden className="mt-1 h-px w-full bg-border">
+              <div className="h-px" style={{ width: `${Math.round(g.progress * 100)}%`, background: color(g.author) }} />
+            </div>
+            {g.title && <p className="mt-2 text-[11px] leading-snug text-fg-2">{g.title}</p>}
             <ol className="mt-2">
               {g.items.map(({ n, i }) => (
                 <li key={n.id}>
@@ -184,7 +206,7 @@ export function ArticlesNeurons({ nodes }: { nodes: NeuronNode[] }) {
               ))}
             </defs>
             {hubs.map((h, i) => (
-              <circle className="qc-breathe" cx={h.x} cy={h.y} fill={`url(#hub-${hash(at(authors, i, ''))})`} key={at(authors, i, '')} r={170} style={{ transformBox: 'fill-box', transformOrigin: 'center' }} />
+              <circle className="qc-breathe" cx={h.x} cy={h.y} fill={`url(#hub-${hash(at(authors, i, ''))})`} key={at(authors, i, '')} r={110 + levelOf(at(authors, i, '')) * 9} style={{ transformBox: 'fill-box', transformOrigin: 'center' }} />
             ))}
             {edges.map((e, k) => {
               const p = at(pos, e.a, ORIGIN)
@@ -209,10 +231,14 @@ export function ArticlesNeurons({ nodes }: { nodes: NeuronNode[] }) {
               const a = at(authors, i, '')
               return (
                 <g key={a}>
-                  <circle cx={h.x} cy={h.y} fill={color(a)} r={9} />
-                  <circle cx={h.x} cy={h.y} fill="none" r={16} stroke={color(a)} strokeOpacity={0.5} strokeWidth={1} />
-                  <text fill={color(a)} fontFamily="ui-monospace, monospace" fontSize="12" letterSpacing="2" textAnchor="middle" x={h.x} y={h.y + 36}>
+                  <circle cx={h.x} cy={h.y} fill={color(a)} r={hubR(a)} />
+                  <circle cx={h.x} cy={h.y} fill="none" r={hubR(a) + 7} stroke={color(a)} strokeOpacity={0.5} strokeWidth={1} />
+                  {levelOf(a) >= 10 && <circle className="qc-breathe" cx={h.x} cy={h.y} fill="none" r={hubR(a) + 16} stroke={color(a)} strokeOpacity={0.3} strokeWidth={1} style={{ transformBox: 'fill-box', transformOrigin: 'center' }} />}
+                  <text fill={color(a)} fontFamily="ui-monospace, monospace" fontSize="12" letterSpacing="2" textAnchor="middle" x={h.x} y={h.y + hubR(a) + 26}>
                     {a.toUpperCase()}
+                  </text>
+                  <text fill={color(a)} fillOpacity={0.8} fontFamily="ui-monospace, monospace" fontSize="10" letterSpacing="2" textAnchor="middle" x={h.x} y={h.y + hubR(a) + 42}>
+                    {`LVL ${levelOf(a)} · ${(groups.find(g => g.author === a)?.rank.name ?? '').toUpperCase()}`}
                   </text>
                 </g>
               )
@@ -234,28 +260,42 @@ export function ArticlesNeurons({ nodes }: { nodes: NeuronNode[] }) {
                     if (e.key === 'Enter' || e.key === ' ') choose(i)
                   }}
                 >
-                  <title>{`${n.issue ? `No. ${n.issue} · ` : ''}${n.title} · ${n.dateLabel}`}</title>
+                  <title>{`${n.issue ? `No. ${n.issue} · ` : ''}${n.title} · ${n.dateLabel} · weight ${n.weight}`}</title>
                   <circle cx={p.x} cy={p.y} fill="transparent" r={16} />
-                  {on && <circle className="qc-breathe" cx={p.x} cy={p.y} fill={c} fillOpacity={0.25} r={18} style={{ transformBox: 'fill-box', transformOrigin: 'center' }} />}
+                  {on && <circle className="qc-breathe" cx={p.x} cy={p.y} fill={c} fillOpacity={0.25} r={dotR(n.weight) + 11} style={{ transformBox: 'fill-box', transformOrigin: 'center' }} />}
                   <circle
                     className="qc-neuron"
                     cx={p.x}
                     cy={p.y}
                     fill={on ? c : '#0b0b0f'}
-                    r={n.issue ? 7 : 5}
+                    r={dotR(n.weight)}
                     stroke={c}
                     strokeWidth={on ? 2.5 : 1.5}
                     style={{ animationDelay: `${(hash(n.id) % 70) / 10}s`, transformBox: 'fill-box', transformOrigin: 'center' }}
                   />
-                  {n.isNew && <circle cx={p.x + 8} cy={p.y - 8} fill="#ffd24a" r={2.5} />}
+                  {n.isNew && <circle cx={p.x + dotR(n.weight) + 2} cy={p.y - dotR(n.weight) - 2} fill="#ffd24a" r={2.5} />}
                 </g>
               )
             })}
           </svg>
           <p className="pointer-events-none absolute left-3 top-3 font-mono text-[10px] uppercase tracking-[0.25em] text-fg-2">
-            {nodes.length} articles · {authors.length} authors · one dot each
+            {nodes.length} articles · {authors.length} authors · one dot each · bigger dot, heavier article
           </p>
         </div>
+
+        <ol aria-label="Rank ladder" className="mt-3 flex flex-wrap gap-x-3 gap-y-1 font-mono text-[10px] uppercase tracking-[0.2em] text-fg-2/70">
+          {RANKS.map(r => {
+            const holders = groups.filter(g => g.rank.level === r.level)
+            return (
+              <li className={holders.length ? 'text-foreground' : undefined} key={r.level} title={Number.isFinite(r.min) ? `from weight ${r.min}` : 'the origin only'}>
+                {r.level} {r.name}
+                {holders.map(g => (
+                  <span className="ml-1 inline-block h-1.5 w-1.5 rounded-full align-middle" key={g.author} style={{ background: color(g.author) }} />
+                ))}
+              </li>
+            )
+          })}
+        </ol>
 
         {node && (
           <article className="mt-6 border border-border bg-card/60 p-6 backdrop-blur-sm md:p-8" key={node.id}>
@@ -266,7 +306,10 @@ export function ArticlesNeurons({ nodes }: { nodes: NeuronNode[] }) {
             {node.kicker && <p className="mt-3 font-mono text-xs uppercase tracking-[0.3em] text-fg-2">{node.kicker}</p>}
             <h2 className="mt-3 font-display text-4xl leading-[0.95] md:text-5xl">{node.title}</h2>
             <p className="mt-4 max-w-3xl font-serif text-lg leading-relaxed text-foreground/85">{node.summary}</p>
-            {node.tags.length > 0 && <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.2em] text-fg-2/70">{node.tags.join(' · ')}</p>}
+            <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.2em] text-fg-2/70">
+              weight {node.weight} · {node.weightLabel}
+              {node.tags.length > 0 && ` · ${node.tags.join(' · ')}`}
+            </p>
             <div className="mt-5 flex flex-wrap items-center gap-3">
               {node.external ? (
                 <a className="inline-flex h-11 items-center border border-gold bg-gold/10 px-5 text-sm font-medium text-gold hover:bg-gold/20" href={node.href} rel="noopener noreferrer" target="_blank">

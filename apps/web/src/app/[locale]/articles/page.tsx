@@ -6,6 +6,7 @@ import { SITE_URL } from '@/lib/books'
 import { ARTICLES, articleKeywords, articleMinutes, articleUrl, formatDate, isNew, issueNumber } from '@/lib/articles'
 import { CFB_ARTICLES, formatArchiveDate } from '@/lib/archive'
 import { ArticlesNeurons, type NeuronNode } from '@/components/church/articles/ArticlesNeurons'
+import { WEIGHT } from '@/lib/ranks'
 
 const TITLE = 'Articles and the archive: Qubic, Aigarth, Neuraxon'
 const DESC =
@@ -38,6 +39,8 @@ export default async function ArticlesPage(props: { params: Promise<{ locale: st
       issue: issueNumber(a),
       minutes: articleMinutes(a),
       isNew: isNew(a),
+      weight: WEIGHT.issue,
+      weightLabel: 'an issue',
     })),
     ...CFB_ARTICLES.map(a => ({
       id: a.url.split('/').filter(Boolean).pop() ?? a.url,
@@ -52,6 +55,8 @@ export default async function ArticlesPage(props: { params: Promise<{ locale: st
       tags: a.tags,
       issue: null,
       platform: a.platform,
+      weight: WEIGHT.primary,
+      weightLabel: 'primary source',
     })),
   ]
 
