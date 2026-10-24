@@ -2591,3 +2591,10 @@
 @media (prefers-reduced-motion: reduce) {
   .qc-breathe, .qc-drift, .qc-glitch, .qc-rgb, .qc-rgb-slow, .qc-flicker { animation: none; }
 }
+
+/* Articles map: every article is a neuron, every author a hub */
+@keyframes qc-neuron { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.35); } }
+.qc-neuron { animation: qc-neuron 4s ease-in-out infinite; }
+@keyframes qc-synapse { to { stroke-dashoffset: -24; } }
+.qc-synapse { stroke-dasharray: 6 6; animation: qc-synapse 0.8s linear infinite; }
+@media (prefers-reduced-motion: reduce) { .qc-neuron, .qc-synapse { animation: none; } }
