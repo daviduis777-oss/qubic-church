@@ -63,7 +63,9 @@ export function PhaseWrapper({
           </motion.div>
 
           <h2 className="text-3xl md:text-5xl font-bold text-white/90 mb-3">
-            {title}
+            <span className="qc-rgb-slow" style={{ animationDelay: `-${(phaseNumber * 1.7) % 11}s` }}>
+              {title}
+            </span>
           </h2>
 
           {subtitle && (

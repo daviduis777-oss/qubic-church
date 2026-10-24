@@ -20,7 +20,6 @@ const QUIET_ROUTES = [
   '/get-qubic',
   '/mine-qubic',
   '/donate',
-  '/timeline',
   '/satoshi-nakamoto',
   '/books',
   '/companion',
