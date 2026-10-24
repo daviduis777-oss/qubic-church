@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation'
 import { setRequestLocale } from 'next-intl/server'
 import { locales } from '@/config/i18n'
 import { SITE_URL } from '@/lib/books'
-import { BOARDS, getBoard, memberOf, topicsIn } from '@/lib/forum'
+import { BOARDS, getBoard, memberOf, profileHref, topicsIn } from '@/lib/forum'
 import { ForumShell } from '@/components/church/forum/ForumUI'
 
 export function generateStaticParams() {
@@ -86,13 +86,14 @@ export default async function BoardPage(props: { params: Promise<{ locale: strin
                     </div>
                   </td>
                   <td style={{ fontSize: 12 }}>
-                    <span className="qcf-strong">{t.author}</span>
+                    <Link className="qcf-strong" href={profileHref(t.handle)} title={`View the profile of ${t.author}`}>
+                      {t.author}
+                    </Link>
                     {m && (
                       <div className="qcf-small" style={{ color: m.role === 'Founder' ? '#b8860b' : '#555' }}>
                         {m.role ?? m.rank.name} · rank {m.rank.level}
                       </div>
                     )}
-                    <div className="qcf-small qcf-muted">{t.dateLabel}</div>
                   </td>
                   <td className="qcf-hide-sm" style={{ textAlign: 'center' }}>
                     {t.weight}

@@ -6,7 +6,7 @@ import { SITE_URL } from '@/lib/books'
 import { ARTICLES, articleUrl } from '@/lib/articles'
 import { CFB_ARTICLES } from '@/lib/archive'
 import { RANKS, WEIGHT } from '@/lib/ranks'
-import { BOARDS, MEMBERS, TOPICS, topicsIn } from '@/lib/forum'
+import { BOARDS, MEMBERS, TOPICS, profileHref, topicsIn } from '@/lib/forum'
 import { ForumShell, Quote, Stars } from '@/components/church/forum/ForumUI'
 
 const TITLE = 'Qubic Church Forum: articles on Qubic, Aigarth and Come-from-Beyond'
@@ -74,7 +74,7 @@ export default async function ArticlesPage(props: { params: Promise<{ locale: st
                   <td className="qcf-small qcf-muted" style={{ width: 270 }}>
                     {last ? (
                       <>
-                        <b>Last post</b> by {last.author}
+                        <b>Last post</b> by <Link href={profileHref(last.handle)}>{last.author}</Link>
                         <br />
                         in <Link href={last.href}>{last.title}</Link>
                         <br />
@@ -104,7 +104,8 @@ export default async function ArticlesPage(props: { params: Promise<{ locale: st
                   </Link>
                   {t.isNew && <span className="qcf-new">new</span>}
                   <div className="qcf-small qcf-muted">
-                    by {t.author} in {BOARDS.find(b => b.id === t.board)?.name} · {t.dateLabel}
+                    by <Link href={profileHref(t.handle)}>{t.author}</Link> in{' '}
+                    <Link href={`/articles/board/${t.board}`}>{BOARDS.find(b => b.id === t.board)?.name}</Link> · {t.dateLabel}
                   </div>
                 </td>
               </tr>
@@ -211,10 +212,14 @@ export default async function ArticlesPage(props: { params: Promise<{ locale: st
             {MEMBERS.map((m, i) => (
               <tr className={i % 2 ? 'qcf-win2' : 'qcf-win'} key={m.name}>
                 <td>
-                  <a className="qcf-strong" href={`https://x.com/${m.handle}`} rel="noopener noreferrer">
+                  <Link className="qcf-strong" href={profileHref(m.handle)} title={`View the profile of ${m.name}`}>
                     {m.name}
-                  </a>
-                  <div className="qcf-small qcf-muted">@{m.handle}</div>
+                  </Link>
+                  <div className="qcf-small">
+                    <a href={`https://x.com/${m.handle}`} rel="noopener noreferrer">
+                      @{m.handle}
+                    </a>
+                  </div>
                 </td>
                 <td style={{ fontSize: 12 }}>
                   {m.role && (
@@ -246,7 +251,10 @@ export default async function ArticlesPage(props: { params: Promise<{ locale: st
         <div className="qcf-cat">Qubic Church Forum · Info Center</div>
         <div className="qcf-win" style={{ padding: '8px 10px', fontSize: 12 }}>
           <b>Forum stats:</b> {TOPICS.length} posts in {BOARDS.length} boards by {MEMBERS.length} members. Latest member:{' '}
-          <b>Maria</b>.
+          <Link className="qcf-strong" href={profileHref('maria_aigarth')}>
+            Maria
+          </Link>
+          .
           {newest && (
             <>
               {' '}
