@@ -1,23 +1,23 @@
 /**
- * Archive ranks. Modelled on forum rank ladders (BitcoinTalk: Newbie → Legendary by
- * activity and merit): every article carries a weight, an author's weight adds up,
- * and the ladder doubles at each step so the top is far away.
+ * Archive ranks, library style. Every article has a weight, an author's weight adds
+ * up, and the ladder doubles at each step so the top is far away: one pamphlet,
+ * then a folio, a shelf, a bookcase, a section, a reading room, a floor, a wing.
  *
- * Level 10, Beyond, is not reachable by weight. It belongs to the origin.
+ * Rank 10, the Beyond wing, is not reachable by weight. It belongs to the origin.
  */
 export type Rank = { level: number; name: string; min: number }
 
 export const RANKS: Rank[] = [
-  { level: 1, name: 'Seed', min: 1 },
-  { level: 2, name: 'Sprout', min: 3 },
-  { level: 3, name: 'Tissue', min: 10 },
-  { level: 4, name: 'Neuron', min: 25 },
-  { level: 5, name: 'Synapse', min: 60 },
-  { level: 6, name: 'Loop', min: 150 },
-  { level: 7, name: 'Colony', min: 400 },
-  { level: 8, name: 'Quorum', min: 1000 },
-  { level: 9, name: 'Legendary', min: 2500 },
-  { level: 10, name: 'Beyond', min: Number.POSITIVE_INFINITY },
+  { level: 1, name: 'Pamphlet', min: 1 },
+  { level: 2, name: 'Folio', min: 3 },
+  { level: 3, name: 'Shelf', min: 10 },
+  { level: 4, name: 'Bookcase', min: 25 },
+  { level: 5, name: 'Section', min: 60 },
+  { level: 6, name: 'Reading room', min: 150 },
+  { level: 7, name: 'Floor', min: 400 },
+  { level: 8, name: 'Wing', min: 1000 },
+  { level: 9, name: 'Library', min: 2500 },
+  { level: 10, name: 'Beyond wing', min: Number.POSITIVE_INFINITY },
 ]
 
 export const BEYOND = RANKS[9]!
@@ -35,14 +35,14 @@ export const WEIGHT = {
 export type AuthorProfile = {
   name: string
   handle: string
-  /** fixed level, used only for the origin */
+  /** fixed rank, used only for the origin */
   fixedLevel?: number
-  /** short line shown under the level */
+  /** short line shown under the rank */
   title?: string
 }
 
 export const AUTHORS: Record<string, AuthorProfile> = {
-  'Come-from-Beyond': { name: 'Come-from-Beyond', handle: 'c___f___b', fixedLevel: 10, title: 'The origin. Every article here is a primary source.' },
+  'Come-from-Beyond': { name: 'Come-from-Beyond', handle: 'c___f___b', fixedLevel: 10, title: 'The origin. Every article on this shelf is a primary source.' },
   TesserAI: { name: 'TesserAI', handle: 'usetesserai', title: 'Writes the running story of Aigarth.' },
 }
 
@@ -60,11 +60,5 @@ export function nextRank(xp: number, fixedLevel?: number): { rank: Rank; missing
   return r ? { rank: r, missing: r.min - xp } : null
 }
 
-/** 0..1 progress inside the current rank band. */
-export function rankProgress(xp: number, fixedLevel?: number): number {
-  if (fixedLevel) return 1
-  const cur = rankFor(xp)
-  const nxt = nextRank(xp)
-  if (!nxt) return 1
-  return Math.max(0, Math.min(1, (xp - cur.min) / (nxt.rank.min - cur.min)))
-}
+/** "Rank 3 · Shelf": the number is always written. */
+export const rankLabel = (r: Rank) => `Rank ${r.level} · ${r.name}`
