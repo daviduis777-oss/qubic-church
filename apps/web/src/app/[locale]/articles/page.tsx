@@ -3,8 +3,9 @@ import { jsonLd } from '@/lib/json-ld'
 import Link from 'next/link'
 import { setRequestLocale } from 'next-intl/server'
 import { SITE_URL } from '@/lib/books'
-import { ARTICLES, articleMinutes, articleUrl, formatDate, isNew, issueNumber } from '@/lib/articles'
+import { ARTICLES, articleKeywords, articleMinutes, articleUrl, formatDate, isNew, issueNumber } from '@/lib/articles'
 import { CFB_ARTICLES, formatArchiveDate } from '@/lib/archive'
+import { ArticlesNeurons, type NeuronNode } from '@/components/church/articles/ArticlesNeurons'
 
 const TITLE = 'Articles and the archive: Qubic, Aigarth, Neuraxon'
 const DESC =
@@ -20,8 +21,39 @@ export const metadata: Metadata = {
 export default async function ArticlesPage(props: { params: Promise<{ locale: string }> }) {
   const { locale } = await props.params
   setRequestLocale(locale)
-  const [lead, ...rest] = ARTICLES
   const first = ARTICLES[ARTICLES.length - 1]
+  const nodes: NeuronNode[] = [
+    ...ARTICLES.map(a => ({
+      id: a.slug,
+      title: a.title,
+      kicker: a.kicker,
+      date: a.date,
+      dateLabel: formatDate(a.date),
+      author: a.author,
+      handle: 'usetesserai',
+      href: `/articles/${a.slug}`,
+      external: false,
+      summary: a.summary,
+      tags: articleKeywords(a).slice(0, 6),
+      issue: issueNumber(a),
+      minutes: articleMinutes(a),
+      isNew: isNew(a),
+    })),
+    ...CFB_ARTICLES.map(a => ({
+      id: a.url.split('/').filter(Boolean).pop() ?? a.url,
+      title: a.title,
+      date: a.date,
+      dateLabel: formatArchiveDate(a.date),
+      author: 'Come-from-Beyond',
+      handle: 'c___f___b',
+      href: a.url,
+      external: true,
+      summary: a.summary,
+      tags: a.tags,
+      issue: null,
+      platform: a.platform,
+    })),
+  ]
 
   const ld = {
     '@context': 'https://schema.org',
@@ -45,9 +77,9 @@ export default async function ArticlesPage(props: { params: Promise<{ locale: st
           </p>
           <h1 className="mt-3 font-display text-7xl leading-[0.85] md:text-9xl">Articles</h1>
           <p className="mt-6 max-w-2xl font-serif text-xl leading-relaxed text-foreground/85">
-            The story of Aigarth as it happens: Anna racing to zero, BPP-9000, the Neuraxon papers and ARC-AGI-3,
-            and why randomness matters. Every quote carries its date and place. A new issue lands whenever Aigarth moves,
-            anyone can write for the archive, and the archive keeps Come-from-Beyond's own articles where they can be found.
+            The story of Aigarth as it happens, and the archive that keeps it. Every dot on the map is one article, wired to
+            its author; pick one on the left or on the map. A new issue lands whenever Aigarth moves, anyone can write for
+            the archive, and Come-from-Beyond's own articles are here where they can be found.
           </p>
         </div>
         <div className="flex flex-wrap gap-2 md:justify-end">
@@ -65,85 +97,11 @@ export default async function ArticlesPage(props: { params: Promise<{ locale: st
           <a className="inline-flex h-11 items-center border border-border px-5 text-sm font-medium text-fg-2 hover:text-foreground" href="#write">
             Write us an article
           </a>
-          <a className="inline-flex h-11 items-center border border-border px-5 text-sm font-medium text-fg-2 hover:text-foreground" href="#cfb">
-            Come-from-Beyond archive
-          </a>
+
         </div>
       </header>
 
-      {lead && (
-        <Link className="group mt-12 block border border-border bg-card/60 p-6 backdrop-blur-sm hover:border-gold/60 md:p-10" href={`/articles/${lead.slug}`}>
-          <p className="eyebrow text-gold">
-            {isNew(lead) ? 'New · ' : 'Latest · '}No. {issueNumber(lead)} · {formatDate(lead.date)}
-          </p>
-          {lead.kicker && <p className="mt-3 font-mono text-xs uppercase tracking-[0.3em] text-fg-2">{lead.kicker}</p>}
-          <h2 className="mt-3 font-display text-5xl leading-[0.95] group-hover:text-gold md:text-7xl">{lead.title}</h2>
-          <p className="mt-5 max-w-3xl font-serif text-lg leading-relaxed text-foreground/85">{lead.summary}</p>
-          <p className="mt-5 text-sm text-fg-2">{articleMinutes(lead)} min read · Read the article →</p>
-        </Link>
-      )}
-
-      <ol className="mt-12 grid gap-px border border-border bg-border md:grid-cols-2">
-        {rest.map(a => (
-          <li key={a.slug}>
-            <Link className="group flex h-full flex-col bg-background/90 p-6 backdrop-blur-sm hover:bg-card md:p-8" href={`/articles/${a.slug}`}>
-              <p className="flex items-center justify-between font-mono text-xs uppercase tracking-[0.25em] text-fg-2">
-                <span className="text-gold/80">No. {issueNumber(a)}</span>
-                <time dateTime={a.date}>{formatDate(a.date)}</time>
-              </p>
-              {a.kicker && <span className="mt-2 font-mono text-xs uppercase tracking-[0.3em] text-gold/80">{a.kicker}</span>}
-              <h2 className="mt-2 text-2xl font-semibold leading-snug group-hover:text-gold">{a.title}</h2>
-              <p className="mt-3 line-clamp-3 text-fg-2">{a.summary}</p>
-              <span className="mt-auto pt-5 text-sm text-fg-2">{articleMinutes(a)} min read</span>
-            </Link>
-          </li>
-        ))}
-      </ol>
-
-      {/* ── ARCHIVE · COME-FROM-BEYOND ── */}
-      <section className="mt-20 scroll-mt-24" id="cfb">
-        <header className="border-b border-border pb-8">
-          <p className="eyebrow text-gold">The archive · Come-from-Beyond · {CFB_ARTICLES.length} articles</p>
-          <h2 className="mt-3 font-display text-5xl leading-[0.9] md:text-7xl">Where it started.</h2>
-          <p className="mt-5 max-w-3xl font-serif text-lg leading-relaxed text-foreground/85">
-            Every long-form article Come-from-Beyond has published, in order, with a line on what it says and a link to the
-            original. Nothing is copied here: the archive keeps the dates and the links so they do not get lost when a platform
-            changes. Read him first, then read us.
-          </p>
-        </header>
-        <ol className="divide-y divide-border">
-          {CFB_ARTICLES.map(a => (
-            <li key={a.url}>
-              <a
-                className="group grid gap-2 py-6 hover:bg-card/40 md:grid-cols-[180px_1fr_auto] md:gap-8 md:px-4"
-                href={a.url}
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                <div className="font-mono text-xs uppercase tracking-[0.25em] text-fg-2">
-                  <time dateTime={a.date}>{formatArchiveDate(a.date)}</time>
-                  <span className="mt-1 block text-gold/80">{a.platform}</span>
-                </div>
-                <div>
-                  <h3 className="text-2xl font-semibold leading-snug group-hover:text-gold">{a.title}</h3>
-                  <p className="mt-2 text-fg-2">{a.summary}</p>
-                  {a.tags.length > 0 && (
-                    <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.2em] text-fg-2/70">{a.tags.join(' · ')}</p>
-                  )}
-                </div>
-                <span className="self-center whitespace-nowrap text-sm text-fg-2 group-hover:text-gold">Read the original ↗</span>
-              </a>
-            </li>
-          ))}
-        </ol>
-        <p className="mt-6 text-sm text-fg-2">
-          Missing one? Tag @usetesserai with the link and it goes in. His shorter posts live on{' '}
-          <a className="text-gold hover:underline" href="https://x.com/c___f___b" rel="noopener noreferrer" target="_blank">
-            @c___f___b
-          </a>{' '}
-          and in the <Link className="text-gold hover:underline" href="/cfb">Come-from-Beyond dossier</Link>.
-        </p>
-      </section>
+      <ArticlesNeurons nodes={nodes} />
 
       {/* ── NEVER MISS AN ISSUE ── */}
       <section className="mt-16 scroll-mt-24 grid gap-px border border-border bg-border md:grid-cols-3" id="subscribe">
