@@ -1,23 +1,24 @@
 /**
- * Archive ranks, library style. Every article has a weight, an author's weight adds
- * up, and the ladder doubles at each step so the top is far away: one pamphlet,
- * then a folio, a shelf, a bookcase, a section, a reading room, a floor, a wing.
+ * Archive ranks, forum style (BitcoinTalk: Newbie, Jr. Member ... Legendary, and
+ * Satoshi shown as Founder). Activity is what you write, merit is what others give
+ * you (Maria's repost), weight is the sum and sets the rank. The ladder roughly
+ * doubles at each step, so the top is far away.
  *
- * Rank 10, the Beyond wing, is not reachable by weight. It belongs to the origin.
+ * Rank 10, Founder, is not reachable by weight. It belongs to the origin.
  */
 export type Rank = { level: number; name: string; min: number }
 
 export const RANKS: Rank[] = [
-  { level: 1, name: 'Pamphlet', min: 1 },
-  { level: 2, name: 'Folio', min: 3 },
-  { level: 3, name: 'Shelf', min: 10 },
-  { level: 4, name: 'Bookcase', min: 25 },
-  { level: 5, name: 'Section', min: 60 },
-  { level: 6, name: 'Reading room', min: 150 },
-  { level: 7, name: 'Floor', min: 400 },
-  { level: 8, name: 'Wing', min: 1000 },
-  { level: 9, name: 'Library', min: 2500 },
-  { level: 10, name: 'Beyond wing', min: Number.POSITIVE_INFINITY },
+  { level: 1, name: 'Newbie', min: 1 },
+  { level: 2, name: 'Jr. Member', min: 3 },
+  { level: 3, name: 'Member', min: 10 },
+  { level: 4, name: 'Full Member', min: 25 },
+  { level: 5, name: 'Sr. Member', min: 60 },
+  { level: 6, name: 'Hero Member', min: 150 },
+  { level: 7, name: 'Legendary', min: 400 },
+  { level: 8, name: 'Elder', min: 1000 },
+  { level: 9, name: 'Ancient', min: 2500 },
+  { level: 10, name: 'Founder', min: Number.POSITIVE_INFINITY },
 ]
 
 export const BEYOND = RANKS[9]!
@@ -42,7 +43,7 @@ export type AuthorProfile = {
 }
 
 export const AUTHORS: Record<string, AuthorProfile> = {
-  'Come-from-Beyond': { name: 'Come-from-Beyond', handle: 'c___f___b', fixedLevel: 10, title: 'The origin. Every article on this shelf is a primary source.' },
+  'Come-from-Beyond': { name: 'Come-from-Beyond', handle: 'c___f___b', fixedLevel: 10, title: 'The origin. Every article here is a primary source.' },
   TesserAI: { name: 'TesserAI', handle: 'usetesserai', title: 'Writes the running story of Aigarth.' },
 }
 
@@ -60,5 +61,5 @@ export function nextRank(xp: number, fixedLevel?: number): { rank: Rank; missing
   return r ? { rank: r, missing: r.min - xp } : null
 }
 
-/** "Rank 3 · Shelf": the number is always written. */
+/** "Rank 3 · Member": the number is always written. */
 export const rankLabel = (r: Rank) => `Rank ${r.level} · ${r.name}`

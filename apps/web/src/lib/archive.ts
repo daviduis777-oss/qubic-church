@@ -8,6 +8,8 @@ export type ArchiveEntry = {
   platform: 'Medium' | 'Qubic blog' | 'X' | 'BitcoinTalk' | string
   summary: string
   tags: string[]
+  /** where he shared it on X */
+  shared?: { date: string; url: string }[]
 }
 
 /** Long-form articles by Come-from-Beyond, newest first. Links to the originals; nothing is republished. */
@@ -20,3 +22,6 @@ export const formatArchiveDate = (d: string) => {
   const dt = new Date(Date.UTC(Number(y), Number(m) - 1, Number(day ?? 15), 12))
   return dt.toLocaleDateString('en-GB', day ? { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' } : { month: 'long', year: 'numeric', timeZone: 'UTC' })
 }
+
+/** A preserved copy on the Internet Archive (nearest snapshot). */
+export const archivedUrl = (url: string) => `https://web.archive.org/web/2026/${url}`
