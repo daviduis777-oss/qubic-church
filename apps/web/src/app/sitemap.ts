@@ -3,6 +3,7 @@ import { allBlogs, allDocs } from 'contentlayer/generated'
 import { BOOKS, SITE_URL } from '@/lib/books'
 import { INDEXING } from '@/lib/indexing'
 import { ARTICLES } from '@/lib/articles'
+import { CFB_ARTICLES, archiveId } from '@/lib/archive'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   if (!INDEXING) return []
@@ -34,6 +35,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     page('/donate', 0.4),
     page('/articles', 0.8),
     ...ARTICLES.map(a => page(`/articles/${a.slug}`, 0.7, a.date)),
+    ...CFB_ARTICLES.map(a => page(`/articles/cfb/${archiveId(a)}`, 0.6, a.date.length === 10 ? a.date : undefined)),
     page('/maria-aigarth', 0.7),
     page('/rarity-codex', 0.5),
     page('/evidence', 0.6),

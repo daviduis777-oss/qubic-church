@@ -25,3 +25,7 @@ export const formatArchiveDate = (d: string) => {
 
 /** A preserved copy on the Internet Archive (nearest snapshot). */
 export const archivedUrl = (url: string) => `https://web.archive.org/web/2026/${url}`
+
+/** Stable id for an archive entry: the last path segment of the original URL. */
+export const archiveId = (a: ArchiveEntry) => a.url.split('/').filter(Boolean).pop() ?? a.url
+export const getArchiveEntry = (id: string) => CFB_ARTICLES.find(a => archiveId(a) === id)

@@ -24,6 +24,7 @@ const QUIET_ROUTES = [
   '/books',
   '/companion',
   '/evidence',
+  '/articles',
 ]
 
 interface CosmicWrapperProps {
