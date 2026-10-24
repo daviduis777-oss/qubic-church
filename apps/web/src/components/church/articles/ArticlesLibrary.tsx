@@ -32,7 +32,7 @@ export type Volume = {
   archived?: string
 }
 
-const AUTHOR_COLORS: Record<string, string> = { TesserAI: '#ffd24a', 'Come-from-Beyond': '#7dd3fc' }
+const AUTHOR_COLORS: Record<string, string> = { TesserAI: '#ffd24a', 'Come-from-Beyond': '#7dd3fc', Maria: '#f0abfc' }
 const GUEST_HUES = ['#c4b5fd', '#86efac', '#fda4af', '#f9a8d4', '#fdba74', '#67e8f9', '#a3e635']
 const hash = (s: string) => Array.from(s).reduce((h, c) => (Math.imul(h, 31) + c.charCodeAt(0)) | 0, 7)
 const colorOf = (a: string) => AUTHOR_COLORS[a] ?? GUEST_HUES[Math.abs(hash(a)) % GUEST_HUES.length] ?? '#c4b5fd'
@@ -65,22 +65,30 @@ function Title({ v }: { v: Volume }) {
 export function ArticlesLibrary({ volumes }: { volumes: Volume[] }) {
   const members = useMemo(() => {
     const authors = Array.from(new Set(volumes.map(v => v.author)))
-    return authors
-      .map(a => {
-        const items = volumes.filter(v => v.author === a)
-        const xp = items.reduce((t, v) => t + v.weight, 0)
-        const merit = items.reduce((t, v) => t + (v.merit ?? 0), 0)
-        const prof = AUTHORS[a]
-        const rank = rankFor(xp, prof?.fixedLevel)
-        const next = nextRank(xp, prof?.fixedLevel)
-        const since = items.map(v => v.date.slice(0, 4)).sort()[0]
-        return { author: a, handle: items[0]?.handle ?? '', items, xp, merit, rank, next, since, title: prof?.title, color: colorOf(a) }
-      })
-      .sort((p, q) => q.rank.level - p.rank.level || q.xp - p.xp)
+    const writers = authors.map(a => {
+      const items = volumes.filter(v => v.author === a)
+      const xp = items.reduce((t, v) => t + v.weight, 0)
+      const merit = items.reduce((t, v) => t + (v.merit ?? 0), 0)
+      const prof = AUTHORS[a]
+      const since = items.map(v => v.date.slice(0, 4)).sort()[0]
+      return {
+        author: a, handle: items[0]?.handle ?? '', activity: items.length, activityLabel: 'Activity', items, xp, merit,
+        rank: rankFor(xp, prof?.fixedLevel), next: nextRank(xp, prof?.fixedLevel), since, title: prof?.title, color: colorOf(a),
+      }
+    })
+    // Maria curates: she joins as a Newbie (weight 1), and every repost adds 1 to her weight
+    // and 1 merit to the author she reposted.
+    const reposted = volumes.filter(v => (v.merit ?? 0) > 0)
+    const mxp = 1 + reposted.length
+    const maria = {
+      author: 'Maria', handle: AUTHORS.Maria?.handle ?? 'maria_aigarth', activity: reposted.length, activityLabel: 'Reposts', items: reposted, xp: mxp, merit: 0,
+      rank: rankFor(mxp), next: nextRank(mxp), since: '2026', title: AUTHORS.Maria?.title, color: colorOf('Maria'),
+    }
+    return [...writers, maria].sort((p, q) => q.rank.level - p.rank.level || q.xp - p.xp)
   }, [volumes])
   const [tab, setTab] = useState<string>('all')
 
-  const listed = (tab === 'all' ? volumes : volumes.filter(v => v.author === tab)).slice().sort((a, b) => b.date.localeCompare(a.date))
+  const listed = (tab === 'all' ? volumes : (members.find(m => m.author === tab)?.items ?? [])).slice().sort((a, b) => b.date.localeCompare(a.date))
   const byYear = listed.reduce<Record<string, Volume[]>>((acc, v) => {
     const y = v.date.slice(0, 4)
     ;(acc[y] ??= []).push(v)
@@ -133,8 +141,8 @@ export function ArticlesLibrary({ volumes }: { volumes: Volume[] }) {
 
                   <dl className="mt-4 grid grid-cols-3 gap-2 border-t border-border pt-3 font-mono text-xs">
                     <div>
-                      <dt className="text-[10px] uppercase tracking-[0.2em] text-fg-2">Activity</dt>
-                      <dd className="mt-1 text-foreground">{m.items.length}</dd>
+                      <dt className="text-[10px] uppercase tracking-[0.2em] text-fg-2">{m.activityLabel}</dt>
+                      <dd className="mt-1 text-foreground">{m.activity}</dd>
                     </div>
                     <div>
                       <dt className="text-[10px] uppercase tracking-[0.2em] text-fg-2">Merit</dt>
@@ -157,7 +165,7 @@ export function ArticlesLibrary({ volumes }: { volumes: Volume[] }) {
 
                   {m.title && <p className="mt-3 text-sm text-fg-2">{m.title}</p>}
                   <p className="mt-auto pt-3 font-mono text-[10px] uppercase tracking-[0.2em] text-fg-2/70">
-                    writing since {m.since} · {selected ? 'showing only these' : 'click to filter'}
+                    {m.author === 'Maria' ? 'curating' : 'writing'} since {m.since} · {selected ? 'showing only these' : 'click to filter'}
                   </p>
                 </button>
               </li>
@@ -185,6 +193,7 @@ export function ArticlesLibrary({ volumes }: { volumes: Volume[] }) {
             ))}
           </div>
         </div>
+        {listed.length === 0 && <p className="pt-6 text-fg-2">Nothing here yet. The first repost by Maria will appear here.</p>}
         <div className="md:columns-2 md:gap-10">
           {Object.keys(byYear)
             .sort((a, b) => b.localeCompare(a))

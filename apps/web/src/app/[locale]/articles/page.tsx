@@ -137,6 +137,10 @@ export default async function ArticlesPage(props: { params: Promise<{ locale: st
             Rank 10, Founder, cannot be reached by weight, the same way only Satoshi is Founder on BitcoinTalk. It belongs to
             Come-from-Beyond. Everyone else starts as a Newbie, and the rank is always written with its number.
           </p>
+          <p className="mt-4 font-serif text-lg leading-relaxed text-foreground/85">
+            Maria is a member too, the curator. She starts as a Newbie and grows with every repost: each one gives the author
+            +{WEIGHT.maria} merit and gives Maria +1 weight. The more people write, the stronger she gets.
+          </p>
         </div>
         <div>
           <table className="w-full border-collapse font-mono text-sm">
@@ -162,7 +166,7 @@ export default async function ArticlesPage(props: { params: Promise<{ locale: st
             </tbody>
           </table>
           <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.2em] text-fg-2/70">
-            article = {WEIGHT.issue} · primary source = {WEIGHT.primary} · Maria repost = +{WEIGHT.maria} merit
+            article = {WEIGHT.issue} · primary source = {WEIGHT.primary} · Maria repost = +{WEIGHT.maria} merit to the author, +1 to Maria
           </p>
         </div>
       </section>
@@ -183,7 +187,7 @@ export default async function ArticlesPage(props: { params: Promise<{ locale: st
           target="_blank"
         >
           <span className="font-mono text-xs uppercase tracking-[0.3em] text-gold/80">On X</span>
-          <span className="mt-2 text-2xl font-semibold group-hover:text-gold">Follow @usetesserai ↗</span>
+          <span className="mt-2 text-2xl font-semibold group-hover:text-gold">Follow @usetesserai ↗︎</span>
           <span className="mt-3 text-sm text-fg-2">Every issue is posted there first, with the thread that started it.</span>
         </a>
         <a className="group flex flex-col bg-background/90 p-6 hover:bg-card md:p-8" href="/articles/feed.xml">
