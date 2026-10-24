@@ -2598,3 +2598,66 @@
 @keyframes qc-synapse { to { stroke-dashoffset: -24; } }
 .qc-synapse { stroke-dasharray: 6 6; animation: qc-synapse 0.8s linear infinite; }
 @media (prefers-reduced-motion: reduce) { .qc-neuron, .qc-synapse { animation: none; } }
+
+/* ── Qubic Church Forum: the /articles section in the style of a late-2000s forum ── */
+.qcf {
+  --qcf-page: #e5e5e8;
+  --qcf-frame: #ffffff;
+  --qcf-head: #476c8e;
+  --qcf-cat: linear-gradient(#a3b6ca, #7f9cba);
+  --qcf-title: #c6d4e4;
+  --qcf-win: #ecedf3;
+  --qcf-win2: #f6f6f6;
+  --qcf-win3: #e0e1e8;
+  --qcf-line: #c0c3cf;
+  --qcf-text: #000000;
+  --qcf-muted: #555555;
+  --qcf-link: #476c8e;
+  --qcf-quote: #f1f2f4;
+  background: var(--qcf-page);
+  color: var(--qcf-text);
+  font-family: Verdana, 'Segoe UI', Tahoma, sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.qcf a { color: var(--qcf-link); }
+.qcf a:hover { text-decoration: underline; }
+.qcf .qcf-wrap { max-width: 1100px; margin: 0 auto; padding: 16px 12px 32px; }
+.qcf .qcf-head { background: var(--qcf-head); color: #fff; padding: 14px 16px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; }
+.qcf .qcf-head a { color: #fff; }
+.qcf .qcf-logo { font-family: Georgia, 'Times New Roman', serif; font-size: 26px; font-weight: 700; letter-spacing: 0.3px; }
+.qcf .qcf-tag { font-size: 11px; opacity: 0.85; }
+.qcf .qcf-menu { background: var(--qcf-title); padding: 4px 10px; font-size: 11px; display: flex; flex-wrap: wrap; gap: 4px 14px; }
+.qcf .qcf-menu a { font-weight: 700; }
+.qcf .qcf-menu .qcf-hello { margin-left: auto; color: var(--qcf-muted); }
+.qcf .qcf-crumbs { margin: 12px 2px; font-size: 12px; font-weight: 700; }
+.qcf .qcf-box { background: var(--qcf-frame); border: 1px solid var(--qcf-line); margin-top: 14px; overflow-x: auto; }
+.qcf table { width: 100%; border-collapse: collapse; }
+.qcf .qcf-cat, .qcf th { background: var(--qcf-cat); color: #fff; font-weight: 700; font-size: 12px; padding: 6px 8px; text-align: left; }
+.qcf .qcf-cat a { color: #fff; }
+.qcf td { padding: 8px; border-top: 1px solid var(--qcf-line); vertical-align: top; }
+.qcf .qcf-win { background: var(--qcf-win); }
+.qcf .qcf-win2 { background: var(--qcf-win2); }
+.qcf .qcf-win3 { background: var(--qcf-win3); }
+.qcf .qcf-muted { color: var(--qcf-muted); }
+.qcf .qcf-small { font-size: 11px; }
+.qcf .qcf-strong { font-weight: 700; }
+.qcf .qcf-btn { display: inline-block; padding: 3px 10px; border: 1px solid #8a8a8a; background: linear-gradient(#fdfdfd, #d6d6d6); color: #000; font-size: 12px; border-radius: 2px; }
+.qcf .qcf-btn:hover { text-decoration: none; background: linear-gradient(#ffffff, #c9c9c9); }
+.qcf .qcf-btn-main { border-color: var(--qcf-head); background: linear-gradient(#6f92b3, #476c8e); color: #fff !important; }
+.qcf .qcf-quote-head { font-size: 11px; color: var(--qcf-muted); margin: 10px 0 0; }
+.qcf .qcf-quote { background: var(--qcf-quote); border: 1px solid #d0d0e0; padding: 6px 10px; margin: 2px 0 10px; font-style: italic; }
+.qcf .qcf-post { font-size: 13px; }
+.qcf .qcf-post p { margin: 0 0 12px; }
+.qcf .qcf-post h3 { font-weight: 700; font-size: 14px; margin: 18px 0 6px; }
+.qcf .qcf-sig { border-top: 1px dashed var(--qcf-line); margin-top: 18px; padding-top: 6px; font-size: 11px; color: var(--qcf-muted); }
+.qcf .qcf-postbit { width: 190px; font-size: 11px; }
+.qcf .qcf-name { font-size: 13px; font-weight: 700; }
+.qcf .qcf-stars { color: #d4a017; letter-spacing: 1px; font-size: 11px; white-space: nowrap; }
+.qcf .qcf-stars .off { color: #c8c8c8; }
+.qcf .qcf-new { color: #c00; font-size: 10px; font-weight: 700; margin-left: 6px; }
+@media (max-width: 640px) {
+  .qcf .qcf-postbit { width: auto; }
+  .qcf .qcf-stack td { display: block; width: auto; }
+  .qcf .qcf-hide-sm { display: none; }
+}
