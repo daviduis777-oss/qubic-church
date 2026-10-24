@@ -6,7 +6,7 @@ import { SITE_URL } from '@/lib/books'
 import { ARTICLES, articleKeywords, articleMinutes, articleUrl, formatDate, isNew, issueNumber } from '@/lib/articles'
 import { CFB_ARTICLES, formatArchiveDate } from '@/lib/archive'
 import { ArticlesNeurons, type NeuronNode } from '@/components/church/articles/ArticlesNeurons'
-import { WEIGHT } from '@/lib/ranks'
+import { RANKS, WEIGHT } from '@/lib/ranks'
 
 const TITLE = 'Articles and the archive: Qubic, Aigarth, Neuraxon'
 const DESC =
@@ -102,11 +102,61 @@ export default async function ArticlesPage(props: { params: Promise<{ locale: st
           <a className="inline-flex h-11 items-center border border-border px-5 text-sm font-medium text-fg-2 hover:text-foreground" href="#write">
             Write us an article
           </a>
+          <a className="inline-flex h-11 items-center border border-border px-5 text-sm font-medium text-fg-2 hover:text-foreground" href="#ranks">
+            How it ranks
+          </a>
 
         </div>
       </header>
 
       <ArticlesNeurons nodes={nodes} />
+
+      {/* ── HOW THE ARCHIVE RANKS ── */}
+      <section className="mt-16 scroll-mt-24 grid gap-10 border-t border-border pt-12 lg:grid-cols-[1fr_1fr]" id="ranks">
+        <div>
+          <p className="eyebrow text-gold">Weight and levels</p>
+          <h2 className="mt-3 font-display text-5xl leading-[0.9] md:text-6xl">How the archive ranks.</h2>
+          <p className="mt-6 font-serif text-lg leading-relaxed text-foreground/85">
+            Every article has a weight. An issue written for the archive weighs {WEIGHT.issue}. A primary source, an article by
+            the person who built the thing we write about, weighs {WEIGHT.primary}. On the map a heavier article is a bigger dot.
+          </p>
+          <p className="mt-4 font-serif text-lg leading-relaxed text-foreground/85">
+            An author's weight is the sum of their articles. It sets their level, and the level sets the size of their hub.
+            The ladder doubles at every step, the way forum ranks do: the first levels come fast, the top is far away.
+          </p>
+          <p className="mt-4 font-serif text-lg leading-relaxed text-foreground/85">
+            Level 10, Beyond, cannot be reached by weight. It belongs to the origin, Come-from-Beyond. Everyone else climbs
+            from Seed. Your level, your weight and the distance to the next level are shown next to your name in the index.
+          </p>
+          <p className="mt-4 text-sm text-fg-2">
+            Planned, not live yet: a repost by Maria adds weight to the article, an article quoted by another issue gets heavier,
+            and a year in the archive adds one more. Weight is given by others, not by the author.
+          </p>
+        </div>
+        <div>
+          <table className="w-full border-collapse font-mono text-sm">
+            <thead>
+              <tr className="border-b border-border text-left text-[11px] uppercase tracking-[0.25em] text-fg-2">
+                <th className="py-2 pr-4 font-normal">LVL</th>
+                <th className="py-2 pr-4 font-normal">Rank</th>
+                <th className="py-2 font-normal">From weight</th>
+              </tr>
+            </thead>
+            <tbody>
+              {RANKS.map(r => (
+                <tr className="border-b border-border/60" key={r.level}>
+                  <td className="py-2 pr-4 text-gold">{r.level}</td>
+                  <td className="py-2 pr-4 text-foreground">{r.name}</td>
+                  <td className="py-2 text-fg-2">{Number.isFinite(r.min) ? r.min : 'the origin only'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.2em] text-fg-2/70">
+            issue = {WEIGHT.issue} · primary source = {WEIGHT.primary} · level = total weight on the ladder
+          </p>
+        </div>
+      </section>
 
       {/* ── NEVER MISS AN ISSUE ── */}
       <section className="mt-16 scroll-mt-24 grid gap-px border border-border bg-border md:grid-cols-3" id="subscribe">

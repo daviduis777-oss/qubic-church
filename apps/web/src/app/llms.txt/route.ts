@@ -1,5 +1,6 @@
 import { ARTICLES, articleUrl } from '@/lib/articles'
 import { CFB_ARTICLES } from '@/lib/archive'
+import { RANKS, WEIGHT } from '@/lib/ranks'
 import { allDocs } from 'contentlayer/generated'
 import { AUTHOR, BOOKS, bookUrl, chapterExcerpt, chapterUrl, SITE_URL } from '@/lib/books'
 import { SITE_DESCRIPTION } from '@/lib/indexing'
@@ -36,6 +37,8 @@ export function GET() {
     '',
     ...ARTICLES.map(a => `- [${a.title}](${articleUrl(a)}) (${a.date}): ${a.summary}`),
     `- Open call: anyone can write an article for the archive, any topic, no category, no censorship (a favourite book, a story from life, advice, how they see Aigarth or Come-from-Beyond). Post it on X starting with "hey @Maria_aigarth" with #Qubic #Aigarth; Maria reposts it and it enters the archive under the author's name. Details: ${SITE_URL}/articles#write`,
+    '',
+    `- How the archive ranks: every article has a weight (an issue = ${WEIGHT.issue}, a primary source by Come-from-Beyond = ${WEIGHT.primary}); an author's level is their total weight on a doubling ladder (${RANKS.filter(r => Number.isFinite(r.min)).map(r => `${r.level} ${r.name} from ${r.min}`).join(', ')}); level 10 Beyond is reserved for the origin. ${SITE_URL}/articles#ranks`,
     '',
     '## Archive: long-form articles by Come-from-Beyond (links to the originals, nothing republished)',
     '',
