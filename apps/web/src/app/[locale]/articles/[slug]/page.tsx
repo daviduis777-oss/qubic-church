@@ -6,7 +6,7 @@ import { notFound } from 'next/navigation'
 import { setRequestLocale } from 'next-intl/server'
 import { locales } from '@/config/i18n'
 import { SITE_URL } from '@/lib/books'
-import { ARTICLES, articleMinutes, articleUrl, formatDate, getArticle } from '@/lib/articles'
+import { ARTICLES, articleMinutes, articleUrl, formatDate, getArticle, issueNumber } from '@/lib/articles'
 
 export function generateStaticParams() {
   return locales.flatMap(locale => ARTICLES.map(a => ({ locale, slug: a.slug })))
@@ -61,6 +61,8 @@ export default async function ArticlePage(props: { params: Promise<{ locale: str
           <Link className="hover:text-foreground" href="/articles">
             Articles
           </Link>
+          <span className="mx-2 text-fg-2/60">/</span>
+          <span className="font-mono text-xs uppercase tracking-[0.25em] text-gold">No. {issueNumber(a)}</span>
         </nav>
         <header className="mb-12 border-b border-border pb-10">
           {a.kicker && <p className="eyebrow mb-3 text-gold">{a.kicker}</p>}

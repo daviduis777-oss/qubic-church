@@ -18,6 +18,11 @@ export type Article = {
 export const ARTICLES: Article[] = (data as Article[]).slice().sort((a, b) => b.date.localeCompare(a.date))
 
 export const getArticle = (slug: string) => ARTICLES.find(a => a.slug === slug)
+/** Issue number: the first article published is No. 1. */
+export const issueNumber = (a: Article) => ARTICLES.length - ARTICLES.indexOf(a)
+/** New for two weeks after publication. */
+export const isNew = (a: Article, now = new Date()) => now.getTime() - new Date(`${a.date}T12:00:00Z`).getTime() < 14 * 864e5
+export const ARTICLES_FEED = `${SITE_URL}/articles/feed.xml`
 export const articleUrl = (a: Article) => `${SITE_URL}/articles/${a.slug}`
 export const articleMinutes = (a: Article) => Math.max(1, Math.round(a.words / 230))
 export const formatDate = (d: string) =>

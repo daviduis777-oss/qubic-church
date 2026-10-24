@@ -56,7 +56,7 @@ export async function generateMetadata(props: {
       : { index: false, follow: false, googleBot: { index: false, follow: false } },
 
     alternates: {
-      types: { 'text/plain': `${SITE_URL}/llms.txt` },
+      types: { 'text/plain': `${SITE_URL}/llms.txt`, 'application/rss+xml': `${SITE_URL}/articles/feed.xml` },
     },
 
     keywords: [
@@ -152,6 +152,7 @@ export default async function RootLayout(props: {
       suppressHydrationWarning
     >
       <head>
+        <link href={`${SITE_URL}/articles/feed.xml`} rel="alternate" title="Qubic Church: Articles" type="application/rss+xml" />
         <meta content="#000000" name="theme-color" />
         <style>
           {

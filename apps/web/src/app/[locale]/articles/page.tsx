@@ -3,7 +3,7 @@ import { jsonLd } from '@/lib/json-ld'
 import Link from 'next/link'
 import { setRequestLocale } from 'next-intl/server'
 import { SITE_URL } from '@/lib/books'
-import { ARTICLES, articleMinutes, articleUrl, formatDate } from '@/lib/articles'
+import { ARTICLES, articleMinutes, articleUrl, formatDate, isNew, issueNumber } from '@/lib/articles'
 
 const TITLE = 'Articles on Qubic, Aigarth and Neuraxon'
 const DESC =
@@ -35,26 +35,33 @@ export default async function ArticlesPage(props: { params: Promise<{ locale: st
       <script dangerouslySetInnerHTML={{ __html: jsonLd(ld) }} type="application/ld+json" />
       <header className="grid gap-6 border-b border-border pb-12 md:grid-cols-[1fr_auto] md:items-end">
         <div>
-          <p className="eyebrow text-gold">Articles · by TesserAI · July to October 2026</p>
+          <p className="eyebrow text-gold">Articles · the running story of Aigarth · by TesserAI · {ARTICLES.length} issues since July 2026</p>
           <h1 className="mt-3 font-display text-7xl leading-[0.85] md:text-9xl">Articles</h1>
           <p className="mt-6 max-w-2xl font-serif text-xl leading-relaxed text-foreground/85">
-            The story of Aigarth as it happened: Anna racing to zero, BPP-9000, the Neuraxon papers and ARC-AGI-3,
-            and why randomness matters. Every quote carries its date and place.
+            The story of Aigarth as it happens: Anna racing to zero, BPP-9000, the Neuraxon papers and ARC-AGI-3,
+            and why randomness matters. Every quote carries its date and place. A new issue lands whenever Aigarth moves.
           </p>
         </div>
-        <a
-          className="inline-flex h-11 items-center self-start border border-border px-5 text-sm font-medium text-fg-2 hover:text-foreground md:self-auto"
-          href="https://x.com/usetesserai"
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          @usetesserai on X ↗
-        </a>
+        <div className="flex flex-wrap gap-2 md:justify-end">
+          <a
+            className="inline-flex h-11 items-center border border-gold bg-gold/10 px-5 text-sm font-medium text-gold hover:bg-gold/20"
+            href="https://x.com/usetesserai"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Follow @usetesserai ↗
+          </a>
+          <a className="inline-flex h-11 items-center border border-border px-5 text-sm font-medium text-fg-2 hover:text-foreground" href="/articles/feed.xml">
+            RSS
+          </a>
+        </div>
       </header>
 
       {lead && (
         <Link className="group mt-12 block border border-border bg-card/60 p-6 backdrop-blur-sm hover:border-gold/60 md:p-10" href={`/articles/${lead.slug}`}>
-          <p className="eyebrow text-gold">Latest · {formatDate(lead.date)}</p>
+          <p className="eyebrow text-gold">
+            {isNew(lead) ? 'New · ' : 'Latest · '}No. {issueNumber(lead)} · {formatDate(lead.date)}
+          </p>
           {lead.kicker && <p className="mt-3 font-mono text-xs uppercase tracking-[0.3em] text-fg-2">{lead.kicker}</p>}
           <h2 className="mt-3 font-display text-5xl leading-[0.95] group-hover:text-gold md:text-7xl">{lead.title}</h2>
           <p className="mt-5 max-w-3xl font-serif text-lg leading-relaxed text-foreground/85">{lead.summary}</p>
@@ -66,9 +73,10 @@ export default async function ArticlesPage(props: { params: Promise<{ locale: st
         {rest.map(a => (
           <li key={a.slug}>
             <Link className="group flex h-full flex-col bg-background/90 p-6 backdrop-blur-sm hover:bg-card md:p-8" href={`/articles/${a.slug}`}>
-              <time className="eyebrow text-fg-2" dateTime={a.date}>
-                {formatDate(a.date)}
-              </time>
+              <p className="flex items-center justify-between font-mono text-xs uppercase tracking-[0.25em] text-fg-2">
+                <span className="text-gold/80">No. {issueNumber(a)}</span>
+                <time dateTime={a.date}>{formatDate(a.date)}</time>
+              </p>
               {a.kicker && <span className="mt-2 font-mono text-xs uppercase tracking-[0.3em] text-gold/80">{a.kicker}</span>}
               <h2 className="mt-2 text-2xl font-semibold leading-snug group-hover:text-gold">{a.title}</h2>
               <p className="mt-3 line-clamp-3 text-fg-2">{a.summary}</p>
