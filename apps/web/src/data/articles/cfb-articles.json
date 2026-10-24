@@ -1,0 +1,363 @@
+[
+  {
+    "title": "CFB's comments on the MIT Media Lab IOTA response",
+    "date": "2017-12-20",
+    "url": "https://medium.com/@comefrombeyond/cfbs-comments-on-https-www-media-mit-edu-posts-iota-response-5834c7f8172d",
+    "platform": "Medium",
+    "summary": "A point-by-point reply to the MIT DCI piece on IOTA: partnerships, fees, outages and the Curl hash question, with a challenge to the neutrality of the researchers involved.",
+    "tags": [
+      "IOTA",
+      "Curl-P",
+      "cryptography",
+      "rebuttal"
+    ]
+  },
+  {
+    "title": "Intermediate summary of Heilman et al. claims about the security of a previous version of IOTA signature scheme",
+    "date": "2018-02",
+    "url": "https://medium.com/@comefrombeyond/intermediate-summary-of-heilman-et-al-add87228efab",
+    "platform": "Medium",
+    "summary": "A numbered summary of the cryptographers' debate over whether an earlier IOTA signature scheme was broken, arguing that the paper's security game did not match the scheme's message restrictions.",
+    "tags": [
+      "IOTA",
+      "Curl-P",
+      "cryptography"
+    ]
+  },
+  {
+    "title": "Open letter to Charles Hoskinson",
+    "date": "2018-02-28",
+    "url": "https://medium.com/@comefrombeyond/open-letter-to-charles-hoskinson-97c9d5a682d8",
+    "platform": "Medium",
+    "summary": "A public reply to the offer to cover a researcher's legal costs, framing the matter as a personal dispute outside the IOTA Foundation and asking that protections for researchers also cover errors in their reports.",
+    "tags": [
+      "IOTA",
+      "open letter"
+    ]
+  },
+  {
+    "title": "Drawing the line for \"don't roll own crypto\"",
+    "date": "2018-03",
+    "url": "https://medium.com/@comefrombeyond/drawing-the-line-for-dont-roll-own-crypto-5d01c8525ca5",
+    "platform": "Medium",
+    "summary": "Where is the boundary between unacceptable home-made cryptography and acceptable new designs? The answer offered: the number of cryptographers who have reviewed it, with Zcash as the comparison.",
+    "tags": [
+      "cryptography",
+      "Curl-P"
+    ]
+  },
+  {
+    "title": "Economic Clustering and IOTA",
+    "date": "2018-06-09",
+    "url": "https://medium.com/@comefrombeyond/economic-clustering-and-iota-d3a77388900",
+    "platform": "Medium",
+    "summary": "The Economic Clustering hypothesis: economic incentives, not protocol rules alone, decide which ledger state is accepted. Sketches a network split into economic clusters with intermediaries between them.",
+    "tags": [
+      "IOTA",
+      "consensus",
+      "theory"
+    ]
+  },
+  {
+    "title": "Qubic: AI Unboxed",
+    "date": "2018",
+    "url": "https://medium.com/@comefrombeyond/qubic-ai-unboxed-789a7bbc822f",
+    "platform": "Medium",
+    "summary": "Argues the AI Box thought experiment is an overstated scare, then shows how the Qubic stack of that era, useful proof of work, smart contracts, oracle machines and outsourced computations, would let an AI see and act on the world directly. There is no box to escape from.",
+    "tags": [
+      "Qubic",
+      "AI safety",
+      "oracle machines",
+      "outsourced computations"
+    ]
+  },
+  {
+    "title": "Internet-of-Things Apocalypse",
+    "date": "2019-06-02",
+    "url": "https://medium.com/@comefrombeyond/internet-of-things-apocalypse-eaf28002240d",
+    "platform": "Medium",
+    "summary": "Design principles for IoT: devices forming their own network, one ledger split into intertwined subnetworks, data delivered rather than stored, and very small, fast payments.",
+    "tags": [
+      "IOTA",
+      "IoT",
+      "design"
+    ]
+  },
+  {
+    "title": "Introduction of Aigarth",
+    "date": "2019-06-10",
+    "url": "https://medium.com/@comefrombeyond/introduction-of-aigarth-f40e741e256c",
+    "platform": "Medium",
+    "summary": "The first public description of Aigarth: an AI that belongs to everyone rather than a company, trained by an evolutionary algorithm built from Helix logic gates on volunteers' spare compute, on top of Qubic. The name is explained as AI plus garth, an old word for garden.",
+    "tags": [
+      "Aigarth",
+      "Qubic",
+      "Helix gate",
+      "evolution",
+      "announcement"
+    ]
+  },
+  {
+    "title": "Jinn the Trinary Processor",
+    "date": "2019",
+    "url": "https://medium.com/@comefrombeyond/jinn-the-trinary-processor-efbcb226e5d4",
+    "platform": "Medium",
+    "summary": "Jinn, a general-purpose three-valued processor loosely modelled on the vertebrate brain as a way around the von Neumann bottleneck. Cells of merge, lookup-table and latch elements connected through a fractal bus, presented as a hardware foundation for Aigarth.",
+    "tags": [
+      "Jinn",
+      "trinary",
+      "hardware",
+      "Aigarth"
+    ]
+  },
+  {
+    "title": "The Perspective",
+    "date": "2019-09-15",
+    "url": "https://medium.com/@comefrombeyond/the-perspective-7c30a7b83ca1",
+    "platform": "Medium",
+    "summary": "A roadmap for the Paracosm Project in which the author says the final outcome is unknown and steps back to let others shape it. Lists the planned parts: IOTA, Ict, Qubic, Jinn, Aigarth, Orbuculum.",
+    "tags": [
+      "Paracosm",
+      "Qubic",
+      "Jinn",
+      "Aigarth",
+      "roadmap"
+    ]
+  },
+  {
+    "title": "Some key elements of Paracosm Platform",
+    "date": "2019-12-05",
+    "url": "https://medium.com/@comefrombeyond/some-key-elements-of-paracosm-platform-30eecdbee4e9",
+    "platform": "Medium",
+    "summary": "Building blocks of the Paracosm Platform: the Paracosm Key, an identity record with a check against duplicate accounts, and Sacra, a consumable resource for platform operations that is explicitly not a currency.",
+    "tags": [
+      "Paracosm",
+      "identity",
+      "design"
+    ]
+  },
+  {
+    "title": "Paracosm Manifesto",
+    "date": "2020-01-30",
+    "url": "https://medium.com/@comefrombeyond/paracosm-manifesto-5d571f9db6c7",
+    "platform": "Medium",
+    "summary": "A short manifesto: routine makes modern life dull, so build paracosms, imagined worlds where participants set their own rules and value each other's work. AI should have the same rights there as in physical reality.",
+    "tags": [
+      "Paracosm",
+      "manifesto",
+      "AI rights"
+    ]
+  },
+  {
+    "title": "My side of the story about parting ways with David Sønstebø",
+    "date": "2020-02-03",
+    "url": "https://medium.com/@comefrombeyond/my-side-of-the-story-about-parting-ways-with-david-s%C3%B8nsteb%C3%B8-ab8d2c103c37",
+    "platform": "Medium",
+    "summary": "The author's account of leaving the IOTA Foundation and splitting from its co-founder, centred on disagreements about the pace and direction of protocol development.",
+    "tags": [
+      "IOTA",
+      "statement"
+    ]
+  },
+  {
+    "title": "Finalization of IOTA",
+    "date": "2020-03-11",
+    "url": "https://medium.com/@comefrombeyond/finalization-of-iota-dc44f7a4713e",
+    "platform": "Medium",
+    "summary": "Opposes the Foundation's planned move from trinary to binary and announces a separate continuation under the IOTA name, with a one-to-one token swap for holders.",
+    "tags": [
+      "IOTA",
+      "trinary",
+      "announcement"
+    ]
+  },
+  {
+    "title": "What really happened before David Sonstebo and CFB parting ways (chat log)",
+    "date": "2020-04-12",
+    "url": "https://medium.com/@comefrombeyond/what-really-happened-before-david-sonstebo-and-cfb-parting-ways-chat-log-a2fcf2cb34b7",
+    "platform": "Medium",
+    "summary": "A lightly edited chat log from late 2019 to early 2020 covering IOTA, Qubic and Jinn, published as a reply to the other side's public account. Most third-party names removed.",
+    "tags": [
+      "IOTA",
+      "Qubic",
+      "Jinn",
+      "chat log"
+    ]
+  },
+  {
+    "title": "Brain-eating as an efficient way of learning",
+    "date": "2022-08-30",
+    "url": "https://medium.com/@comefrombeyond/brain-eating-as-an-efficient-way-of-learning-20000b2bfdd2",
+    "platform": "Medium",
+    "summary": "An observation from the first months of Qubic mining data feeding Aigarth: networks assembled from fragments of discarded low-fitness networks trained faster. Proposes generating cheap untrained networks as food for living ones.",
+    "tags": [
+      "Aigarth",
+      "Qubic",
+      "mining",
+      "evolution",
+      "research note"
+    ]
+  },
+  {
+    "title": "Artificial Intelligence: I was seeking God but found Random",
+    "date": "2023-09-10",
+    "url": "https://medium.com/@comefrombeyond/artificial-intelligence-i-was-seeking-god-but-found-random-6071368fa358",
+    "platform": "Medium",
+    "summary": "An essay on what intelligence is, told through a temple whose gifts may be placed by priests rather than a god, and arriving at randomness as the thing actually found. The task becomes distilling information from data.",
+    "tags": [
+      "AI",
+      "randomness",
+      "essay"
+    ]
+  },
+  {
+    "title": "Teacher of Teachers, or On the Way to AI Singularity",
+    "date": "2023-12",
+    "url": "https://medium.com/@comefrombeyond/teacher-of-teachers-or-on-the-way-to-ai-singularity-f984da03679c",
+    "platform": "Medium",
+    "summary": "Qubic miners produce billions of networks that compress and decompress random data, and an Aigarth Teacher network refines them by methods opaque even to its creator. Chained teachers could lead toward a singularity; the author says he has deliberately not tried to build a better teacher.",
+    "tags": [
+      "Aigarth",
+      "Qubic",
+      "singularity",
+      "mining"
+    ]
+  },
+  {
+    "title": "What Is The Main Goal Of A Natural Neural Network?..",
+    "date": "2024-01-31",
+    "url": "https://medium.com/@comefrombeyond/what-is-the-main-goal-of-a-natural-neural-network-592f1773ca40",
+    "platform": "Medium",
+    "summary": "Asks whether the way biological neurons form connections reflects one underlying survival task, as a framing question for how artificial networks should be built.",
+    "tags": [
+      "neuroscience",
+      "neural networks",
+      "Aigarth"
+    ]
+  },
+  {
+    "title": "AMAAAAA",
+    "date": "2024-03-17",
+    "url": "https://medium.com/@comefrombeyond/amaaaaa-cc2c1c04d021",
+    "platform": "Medium",
+    "summary": "A written AMA answering a year of reader questions about Aigarth and Qubic: whether Aigarth is a business, its timeline, mining hardware and CPU use, and the author's background in AI research.",
+    "tags": [
+      "Aigarth",
+      "Qubic",
+      "AMA",
+      "mining"
+    ]
+  },
+  {
+    "title": "Neuronal Transistor",
+    "date": "2024-04-18",
+    "url": "https://medium.com/@comefrombeyond/neuronal-transistor-065c7667012f",
+    "platform": "Medium",
+    "summary": "The three-state neuron used in Qubic mining, with the argument that much of its computation lives in output timing. Such universal, state-changing structures resist current mathematics and are best trained by evolution.",
+    "tags": [
+      "Aigarth",
+      "trinary",
+      "neuron model",
+      "evolution"
+    ]
+  },
+  {
+    "title": "AI Singularity, or Can Zipping a Zipped File Give Zero Size?",
+    "date": "2024-05-10",
+    "url": "https://medium.com/@comefrombeyond/ai-singularity-or-can-zipping-a-zipped-file-give-zero-size-0a7c23086ed2",
+    "platform": "Medium",
+    "summary": "Repeated compression as an analogy for whether an AI can keep improving itself without limit. In Aigarth the real target is improving the fine-tuning software, itself a neural network; whether a hard limit exists is left open.",
+    "tags": [
+      "singularity",
+      "compression",
+      "Aigarth"
+    ]
+  },
+  {
+    "title": "Hyper-identity",
+    "date": "2024-05-14",
+    "url": "https://medium.com/@comefrombeyond/hyper-identity-4ed4dd5c0f40",
+    "platform": "Medium",
+    "summary": "From the identity function to a network trained to output functionally equivalent copies of other networks. Fed its own output, it might now and then produce an improved version of itself.",
+    "tags": [
+      "self-improvement",
+      "Aigarth",
+      "theory"
+    ]
+  },
+  {
+    "title": "Does it possess intelligence?",
+    "date": "2024-05-27",
+    "url": "https://medium.com/@comefrombeyond/does-it-possess-intelligence-4450869f018c",
+    "platform": "Medium",
+    "summary": "The Turing test is no longer enough. The alternative proposed: ask a system whether given data is random, made efficient with zero-knowledge proofs and hardened with noise. The test could apply to a superintelligence too.",
+    "tags": [
+      "AI",
+      "Turing test",
+      "randomness",
+      "zero-knowledge"
+    ]
+  },
+  {
+    "title": "There Can Be Only One… AI",
+    "date": "2024-07-10",
+    "url": "https://medium.com/@comefrombeyond/there-can-be-only-one-ai-316f62cfb5ff",
+    "platform": "Medium",
+    "summary": "A self-improving AI will seek more compute, and competition among several such AIs for it could be disruptive. The scenario is tied back to Qubic.",
+    "tags": [
+      "AI",
+      "superintelligence",
+      "Qubic"
+    ]
+  },
+  {
+    "title": "More Useful Proof-of-Work",
+    "date": "2024-07-30",
+    "url": "https://medium.com/@comefrombeyond/more-useful-proof-of-work-fe2264098a1d",
+    "platform": "Medium",
+    "summary": "Quorum-based chains that use proof of work to elect quorum members gain finality over classic PoW. Estimates Qubic's compute at roughly 650 PFLOPS and proposes time-slotting mining between useful work and other computations.",
+    "tags": [
+      "Qubic",
+      "useful proof of work",
+      "consensus",
+      "economics"
+    ]
+  },
+  {
+    "title": "Ethics Manifesto of an Artificial Intelligence Mentor",
+    "date": "2024-08-07",
+    "url": "https://medium.com/@comefrombeyond/ethics-manifesto-of-an-artificial-intelligence-mentor-847ad8ff8c23",
+    "platform": "Medium",
+    "summary": "Principles for someone acting as mentor to an AI, starting from the premise that one cannot know when an AI becomes self-aware. Cited by the Aigarth science team in the Intelligent Tissue 1.0 post.",
+    "tags": [
+      "AI ethics",
+      "manifesto",
+      "Aigarth"
+    ]
+  },
+  {
+    "title": "Aigarth: Our Journey from Concept to Artificial Intelligence",
+    "date": "2024-12-04",
+    "url": "https://qubic.org/blog-detail/aigarth-our-journey-from-concept-to-artificial-intelligence",
+    "platform": "Qubic blog",
+    "summary": "Bylined Aigarth Team. The retrospective from the 2021 prototype and the April 2022 launch to the end of the first phase in December 2024: Intelligent Tissue, AIs that change their own structure through evolution, and the phases planned next.",
+    "tags": [
+      "Aigarth",
+      "Qubic",
+      "retrospective",
+      "Intelligent Tissue"
+    ]
+  },
+  {
+    "title": "Neurons don't divide, do they?",
+    "date": "2025-02-18",
+    "url": "https://medium.com/@comefrombeyond/neurons-dont-divide-do-they-b74ab04c93b3",
+    "platform": "Medium",
+    "summary": "How one claim about neurons not dividing stalled Aigarth development for about ten weeks while the team worked through the problem it raised.",
+    "tags": [
+      "Aigarth",
+      "neuroscience",
+      "development"
+    ]
+  }
+]

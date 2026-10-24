@@ -1,4 +1,5 @@
 import { ARTICLES, articleUrl } from '@/lib/articles'
+import { CFB_ARTICLES } from '@/lib/archive'
 import { allDocs } from 'contentlayer/generated'
 import { AUTHOR, BOOKS, bookUrl, chapterExcerpt, chapterUrl, SITE_URL } from '@/lib/books'
 import { SITE_DESCRIPTION } from '@/lib/indexing'
@@ -34,6 +35,11 @@ export function GET() {
     '## Articles (TesserAI, July to October 2026)',
     '',
     ...ARTICLES.map(a => `- [${a.title}](${articleUrl(a)}) (${a.date}): ${a.summary}`),
+    `- The Articles feed is open to guest issues: write it as an article on X, tag @maria_aigarth and @usetesserai; the best pieces enter the archive as numbered issues under the author's name. Rules and the archive: ${SITE_URL}/articles`,
+    '',
+    '## Archive: long-form articles by Come-from-Beyond (links to the originals, nothing republished)',
+    '',
+    ...CFB_ARTICLES.map(a => `- [${a.title}](${a.url}) (${a.platform}, ${a.date}): ${a.summary}`),
     '',
     '## Pages',
     '',
