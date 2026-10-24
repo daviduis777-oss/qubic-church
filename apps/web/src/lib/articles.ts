@@ -1,5 +1,6 @@
 import data from '@/data/articles/articles.json'
 import { SITE_URL } from '@/lib/books'
+import { WEIGHT } from '@/lib/ranks'
 
 export type ArticleBlock = { t: 'p' | 'h' | 'quote'; text: string; cite?: string }
 export type Article = {
@@ -9,6 +10,12 @@ export type Article = {
   date: string
   url: string
   author: string
+  /** X handle without @; TesserAI when absent */
+  handle?: string
+  /** true for issues by guest authors */
+  guest?: boolean
+  /** URL of Maria's repost; adds weight */
+  mariaRepost?: string
   summary: string
   words: number
   blocks: ArticleBlock[]
@@ -18,6 +25,11 @@ export type Article = {
 export const ARTICLES: Article[] = (data as Article[]).slice().sort((a, b) => b.date.localeCompare(a.date))
 
 export const getArticle = (slug: string) => ARTICLES.find(a => a.slug === slug)
+export const articleHandle = (a: Article) => a.handle ?? 'usetesserai'
+export const authorUrl = (a: Article) => `https://x.com/${articleHandle(a)}`
+/** What this issue adds to its author: an issue, plus Maria's repost when there is one. */
+export const articleWeight = (a: Article) => WEIGHT.issue + (a.mariaRepost ? WEIGHT.maria : 0)
+export const articleWeightLabel = (a: Article) => (a.mariaRepost ? 'an issue · reposted by Maria' : 'an issue')
 /** Issue number: the first article published is No. 1. */
 export const issueNumber = (a: Article) => ARTICLES.length - ARTICLES.indexOf(a)
 /** New for two weeks after publication. */
@@ -37,7 +49,7 @@ export const formatDate = (d: string) =>
   new Date(`${d}T12:00:00Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })
 
 export function articleMarkdown(a: Article) {
-  const out = [`# ${a.title}`, '', `By ${a.author} (@usetesserai) · ${a.date} · Original: ${a.url}`, `Source page: ${articleUrl(a)}`, '']
+  const out = [`# ${a.title}`, '', `By ${a.author} (@${articleHandle(a)}) · ${a.date} · Original: ${a.url}`, `Source page: ${articleUrl(a)}`, '']
   for (const b of a.blocks) {
     if (b.t === 'h') out.push(`## ${b.text}`, '')
     else if (b.t === 'quote') out.push(`> ${b.text}${b.cite ? `\n> — ${b.cite}` : ''}`, '')
