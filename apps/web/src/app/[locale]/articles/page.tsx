@@ -5,7 +5,8 @@ import { setRequestLocale } from 'next-intl/server'
 import { SITE_URL } from '@/lib/books'
 import { ARTICLES, articleHandle, articleKeywords, articleMinutes, articleUrl, articleWeight, articleWeightLabel, formatDate, isNew, issueNumber } from '@/lib/articles'
 import { CFB_ARTICLES, archiveId, archivedUrl, formatArchiveDate } from '@/lib/archive'
-import { ArticlesLibrary, Pips, type Volume } from '@/components/church/articles/ArticlesLibrary'
+import { Pips, type Volume } from '@/components/church/articles/ArticlesLibrary'
+import { ArticlesForum } from '@/components/church/articles/ArticlesForum'
 import { RANKS, WEIGHT } from '@/lib/ranks'
 
 const TITLE = 'Articles and the archive: Qubic, Aigarth, Neuraxon'
@@ -86,8 +87,8 @@ export default async function ArticlesPage(props: { params: Promise<{ locale: st
           </p>
           <h1 className="mt-3 font-display text-7xl leading-[0.85] md:text-9xl">Articles</h1>
           <p className="mt-6 max-w-2xl font-serif text-xl leading-relaxed text-foreground/85">
-            The story of Aigarth as it happens, and the library that keeps it. Every author is a member with a rank, and the
-            catalogue below lists every article by year. A new issue lands whenever Aigarth moves, anyone can
+            The story of Aigarth as it happens, kept as a forum. Every author is a member with a rank, every article is a
+            topic on a board. A new issue lands whenever Aigarth moves, anyone can
             write for the archive, and Come-from-Beyond's own articles are here where they can be found.
           </p>
         </div>
@@ -106,9 +107,6 @@ export default async function ArticlesPage(props: { params: Promise<{ locale: st
           <a className="inline-flex h-11 items-center border border-border px-5 text-sm font-medium text-fg-2 hover:text-foreground" href="#write">
             Write us an article
           </a>
-          <a className="inline-flex h-11 items-center border border-border px-5 text-sm font-medium text-fg-2 hover:text-foreground" href="#catalogue">
-            Catalogue
-          </a>
           <a className="inline-flex h-11 items-center border border-border px-5 text-sm font-medium text-fg-2 hover:text-foreground" href="#ranks">
             Ranks
           </a>
@@ -116,7 +114,7 @@ export default async function ArticlesPage(props: { params: Promise<{ locale: st
         </div>
       </header>
 
-      <ArticlesLibrary volumes={nodes} />
+      <ArticlesForum volumes={nodes} />
 
       {/* ── HOW THE ARCHIVE RANKS ── */}
       <section className="mt-16 scroll-mt-24 grid gap-10 border-t border-border pt-12 lg:grid-cols-[1fr_1fr]" id="ranks">
@@ -138,8 +136,8 @@ export default async function ArticlesPage(props: { params: Promise<{ locale: st
             Come-from-Beyond. Everyone else starts as a Newbie, and the rank is always written with its number.
           </p>
           <p className="mt-4 font-serif text-lg leading-relaxed text-foreground/85">
-            Maria is a member too, the curator. She starts as a Newbie and grows with every repost: each one gives the author
-            +{WEIGHT.maria} merit and gives Maria +1 weight. The more people write, the stronger she gets.
+            Maria is a member too, the forum's Global Moderator. She starts as a Newbie and grows with every repost: each one
+            gives the author +{WEIGHT.maria} merit and gives Maria +1 weight. The more people write, the stronger she gets.
           </p>
         </div>
         <div>
