@@ -23,6 +23,14 @@ export const issueNumber = (a: Article) => ARTICLES.length - ARTICLES.indexOf(a)
 /** New for two weeks after publication. */
 export const isNew = (a: Article, now = new Date()) => now.getTime() - new Date(`${a.date}T12:00:00Z`).getTime() < 14 * 864e5
 export const ARTICLES_FEED = `${SITE_URL}/articles/feed.xml`
+
+const TOPIC_TERMS = ['Qubic', 'Aigarth', 'Anna', 'Anna.exe', 'BPP-9000', 'BPP9000', 'Neuraxon', 'ARC-AGI', 'ARC-AGI-3', 'Come-from-Beyond', 'CfB', 'useful proof of work', 'uPoW', 'mining', 'Ant Colony', 'ternary', 'NeuraxonLive', 'Hugging Face', 'IEEE', 'AGI', 'randomness', 'seed', 'wallet', 'Grok', 'Astra', 'Monero', 'Computors', 'epoch']
+/** Topic words that actually occur in the article, for search engines. */
+export function articleKeywords(a: Article): string[] {
+  const text = `${a.title} ${a.kicker ?? ''} ${a.summary} ${a.blocks.map(b => b.text).join(' ')}`.toLowerCase()
+  const hits = TOPIC_TERMS.filter(t => text.includes(t.toLowerCase()))
+  return Array.from(new Set(['Qubic', 'Aigarth', ...hits])).slice(0, 12)
+}
 export const articleUrl = (a: Article) => `${SITE_URL}/articles/${a.slug}`
 export const articleMinutes = (a: Article) => Math.max(1, Math.round(a.words / 230))
 export const formatDate = (d: string) =>

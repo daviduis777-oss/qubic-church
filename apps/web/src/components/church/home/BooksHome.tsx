@@ -2,6 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { BOOKS, bookWords, readingMinutes } from '@/lib/books'
 import { ARTICLES, articleMinutes, formatDate, isNew, issueNumber } from '@/lib/articles'
+import { IssueCarousel } from './IssueCarousel'
 import { AnnaCycler } from './AnnaCycler'
 import { Countdown } from './Countdown'
 
@@ -157,20 +158,23 @@ export function BooksHome({ locale = 'en' }: { locale?: Locale }) {
               </div>
             </Link>
           )}
-          <ol className="mt-4 grid gap-px border border-border bg-border md:grid-cols-3">
-            {ARTICLES.slice(1, 4).map(a => (
-              <li key={a.slug}>
-                <Link className="group flex h-full flex-col bg-background/80 p-6 backdrop-blur-sm hover:bg-card" href={`/articles/${a.slug}`}>
-                  <p className="flex items-center justify-between font-mono text-xs uppercase tracking-[0.25em] text-fg-2">
-                    <span>No. {issueNumber(a)}</span>
-                    <time dateTime={a.date}>{formatDate(a.date)}</time>
-                  </p>
-                  <h3 className="mt-3 text-xl font-semibold leading-snug group-hover:text-gold">{a.title}</h3>
-                  <p className="mt-3 line-clamp-3 text-sm text-fg-2">{a.summary}</p>
-                </Link>
-              </li>
-            ))}
-          </ol>
+          <div className="mt-4">
+            <IssueCarousel count={ARTICLES.length - 1}>
+              {ARTICLES.slice(1).map(a => (
+                <li className="w-[85%] shrink-0 snap-start sm:w-[48%] lg:w-[32%]" key={a.slug}>
+                  <Link className="group flex h-full flex-col bg-background/80 p-6 backdrop-blur-sm hover:bg-card" href={`/articles/${a.slug}`}>
+                    <p className="flex items-center justify-between font-mono text-xs uppercase tracking-[0.25em] text-fg-2">
+                      <span>No. {issueNumber(a)}</span>
+                      <time dateTime={a.date}>{formatDate(a.date)}</time>
+                    </p>
+                    <h3 className="mt-3 text-xl font-semibold leading-snug group-hover:text-gold">{a.title}</h3>
+                    <p className="mt-3 line-clamp-3 text-sm text-fg-2">{a.summary}</p>
+                    <span className="mt-auto pt-4 text-xs text-fg-2">{articleMinutes(a)} min read</span>
+                  </Link>
+                </li>
+              ))}
+            </IssueCarousel>
+          </div>
           <p className="mt-4 text-sm text-fg-2">
             A new issue lands whenever Aigarth moves. Follow{' '}
             <a className="text-gold hover:underline" href="https://x.com/usetesserai" rel="noopener noreferrer" target="_blank">

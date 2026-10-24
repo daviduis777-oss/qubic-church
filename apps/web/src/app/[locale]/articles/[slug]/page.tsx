@@ -6,7 +6,7 @@ import { notFound } from 'next/navigation'
 import { setRequestLocale } from 'next-intl/server'
 import { locales } from '@/config/i18n'
 import { SITE_URL } from '@/lib/books'
-import { ARTICLES, articleMinutes, articleUrl, formatDate, getArticle, issueNumber } from '@/lib/articles'
+import { ARTICLES, articleKeywords, articleMinutes, articleUrl, formatDate, getArticle, issueNumber } from '@/lib/articles'
 
 export function generateStaticParams() {
   return locales.flatMap(locale => ARTICLES.map(a => ({ locale, slug: a.slug })))
@@ -43,7 +43,11 @@ export default async function ArticlePage(props: { params: Promise<{ locale: str
     url: articleUrl(a),
     wordCount: a.words,
     inLanguage: 'en',
-    author: { '@type': 'Organization', name: 'TesserAI', url: 'https://x.com/usetesserai' },
+    author: { '@type': 'Organization', name: 'TesserAI', url: 'https://x.com/usetesserai', sameAs: ['https://x.com/usetesserai'] },
+    keywords: articleKeywords(a).join(', '),
+    articleSection: 'Articles',
+    isPartOf: { '@type': 'CreativeWorkSeries', name: 'Qubic Church: Articles', url: `${SITE_URL}/articles` },
+    position: issueNumber(a),
     publisher: { '@id': `${SITE_URL}/#org` },
     isBasedOn: a.url,
     about: [
