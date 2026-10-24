@@ -180,11 +180,11 @@ export function BooksHome({ locale = 'en' }: { locale?: Locale }) {
             <a className="text-gold hover:underline" href="https://x.com/usetesserai" rel="noopener noreferrer" target="_blank">
               @usetesserai
             </a>{' '}
-            or subscribe by RSS to get the next one first. The feed is open to guest issues:{' '}
+            or subscribe by RSS to get the next one first. Anyone can{' '}
             <Link className="text-gold hover:underline" href="/articles#write">
-              write one
+              write us an article
             </Link>
-            .
+            : no topic, no censorship, it stays in the archive.
           </p>
         </div>
       </section>

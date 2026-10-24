@@ -47,7 +47,7 @@ export default async function ArticlesPage(props: { params: Promise<{ locale: st
           <p className="mt-6 max-w-2xl font-serif text-xl leading-relaxed text-foreground/85">
             The story of Aigarth as it happens: Anna racing to zero, BPP-9000, the Neuraxon papers and ARC-AGI-3,
             and why randomness matters. Every quote carries its date and place. A new issue lands whenever Aigarth moves,
-            the feed is open to guest issues, and the archive below keeps Come-from-Beyond's own articles where they can be found.
+            anyone can write for the archive, and the archive keeps Come-from-Beyond's own articles where they can be found.
           </p>
         </div>
         <div className="flex flex-wrap gap-2 md:justify-end">
@@ -63,7 +63,7 @@ export default async function ArticlesPage(props: { params: Promise<{ locale: st
             RSS
           </a>
           <a className="inline-flex h-11 items-center border border-border px-5 text-sm font-medium text-fg-2 hover:text-foreground" href="#write">
-            Write an issue
+            Write us an article
           </a>
           <a className="inline-flex h-11 items-center border border-border px-5 text-sm font-medium text-fg-2 hover:text-foreground" href="#cfb">
             Come-from-Beyond archive
@@ -176,66 +176,58 @@ export default async function ArticlesPage(props: { params: Promise<{ locale: st
         <div className="grid gap-10 lg:grid-cols-[1fr_1fr]">
           <div>
             <p className="eyebrow text-gold">Open call</p>
-            <h2 className="mt-3 font-display text-5xl leading-[0.9] md:text-6xl">Write an issue.</h2>
-            <p className="mt-6 font-serif text-lg leading-relaxed text-foreground/85">
-              Articles is open to guest issues. If you run Anna, mine BPP-9000, read the Neuraxon papers or dig through the
-              Discord archive, write it up. We publish people. The best pieces go into the feed with your name on them, and
-              the next issue is announced to everyone who follows.
+            <h2 className="mt-3 font-display text-5xl leading-[0.9] md:text-6xl">Write us an article.</h2>
+            <p className="mt-6 font-serif text-xl leading-relaxed text-foreground/90">No topic. No category. No censorship.</p>
+            <p className="mt-4 font-serif text-lg leading-relaxed text-foreground/85">
+              Tell us about your favourite book. A story from your life that sounds made up. A piece of advice, or a lesson
+              this world should hear. How you see Aigarth. What you think of Come-from-Beyond. Anything.
             </p>
             <p className="mt-4 font-serif text-lg leading-relaxed text-foreground/85">
-              Write the way you talk. A rough draft in your own words beats a polished text a model wrote for you.
+              This site is an archive. What you write stays here, under your name.
+            </p>
+            <p className="mt-4 font-serif text-lg leading-relaxed text-foreground/85">
+              Write it the way you talk. Text with no LLM in it has a different vibe, and that vibe is the point.
             </p>
           </div>
           <div className="grid gap-6">
             <div>
-              <h3 className="font-mono text-xs uppercase tracking-[0.3em] text-gold/80">What gets published</h3>
-              <ul className="mt-3 space-y-2 text-fg-2">
-                <li>First-hand: you ran it, you read it, you measured it.</li>
-                <li>Every quote with its date and place. Screenshots welcome.</li>
-                <li>600 to 2,500 words. One idea, followed to the end.</li>
-                <li>Your own voice. Plain words, no filler.</li>
-                <li>No price talk, no financial advice.</li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-mono text-xs uppercase tracking-[0.3em] text-gold/80">How it gets in</h3>
+              <h3 className="font-mono text-xs uppercase tracking-[0.3em] text-gold/80">How</h3>
               <ol className="mt-3 space-y-3 text-fg-2">
                 <li className="flex gap-3">
                   <span className="font-mono text-gold">1</span>
-                  <span>Write it as an article on X, in your own words.</span>
+                  <span>
+                    Post it on X. Start with{' '}
+                    <span className="font-mono text-foreground">hey @Maria_aigarth</span>, add{' '}
+                    <span className="font-mono text-foreground">#Qubic #Aigarth</span>.
+                  </span>
                 </li>
                 <li className="flex gap-3">
                   <span className="font-mono text-gold">2</span>
                   <span>
-                    Tag{' '}
                     <a className="text-gold hover:underline" href="https://x.com/maria_aigarth" rel="noopener noreferrer" target="_blank">
-                      @maria_aigarth
+                      Maria
                     </a>{' '}
-                    and{' '}
-                    <a className="text-gold hover:underline" href="https://x.com/usetesserai" rel="noopener noreferrer" target="_blank">
-                      @usetesserai
-                    </a>
-                    .
+                    reposts you.
                   </span>
                 </li>
                 <li className="flex gap-3">
                   <span className="font-mono text-gold">3</span>
-                  <span>Maria reposts it. The best pieces enter this archive as numbered issues, with your name and a link back to your profile. You keep all rights; we fix typos only.</span>
+                  <span>It goes into the archive with your name and a link to your profile. You keep all rights. We fix typos only.</span>
                 </li>
               </ol>
             </div>
             <div className="flex flex-wrap gap-2">
               <a
-                className="inline-flex h-11 items-center border border-gold bg-gold/10 px-5 text-sm font-medium text-gold hover:bg-gold/20"
-                href={`https://x.com/intent/post?text=${encodeURIComponent('@maria_aigarth @usetesserai New issue for the qubic.church archive: ')}`}
+                className="inline-flex h-11 items-center border border-gold bg-gold/10 px-5 font-mono text-sm font-medium text-gold hover:bg-gold/20"
+                href={`https://x.com/intent/post?text=${encodeURIComponent('hey @Maria_aigarth \n\n\n#Qubic #Aigarth')}`}
                 rel="noopener noreferrer"
                 target="_blank"
               >
-                Post on X and tag @maria_aigarth ↗
+                hey @Maria_aigarth ↗
               </a>
               {first && (
                 <Link className="inline-flex h-11 items-center border border-border px-5 text-sm font-medium text-fg-2 hover:text-foreground" href={`/articles/${first.slug}`}>
-                  Read No. 1 as a model
+                  Read No. 1
                 </Link>
               )}
             </div>

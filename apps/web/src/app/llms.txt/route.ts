@@ -35,7 +35,7 @@ export function GET() {
     '## Articles (TesserAI, July to October 2026)',
     '',
     ...ARTICLES.map(a => `- [${a.title}](${articleUrl(a)}) (${a.date}): ${a.summary}`),
-    `- The Articles feed is open to guest issues: write it as an article on X, tag @maria_aigarth and @usetesserai; the best pieces enter the archive as numbered issues under the author's name. Rules and the archive: ${SITE_URL}/articles`,
+    `- Open call: anyone can write an article for the archive, any topic, no category, no censorship (a favourite book, a story from life, advice, how they see Aigarth or Come-from-Beyond). Post it on X starting with "hey @Maria_aigarth" with #Qubic #Aigarth; Maria reposts it and it enters the archive under the author's name. Details: ${SITE_URL}/articles#write`,
     '',
     '## Archive: long-form articles by Come-from-Beyond (links to the originals, nothing republished)',
     '',
