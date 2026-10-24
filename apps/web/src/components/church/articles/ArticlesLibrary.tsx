@@ -212,7 +212,7 @@ export function ArticlesLibrary({ volumes }: { volumes: Volume[] }) {
                         <span className="mt-0.5 block font-mono text-[10px] uppercase tracking-wider text-fg-2/70">
                           <span style={{ color: colorOf(v.author) }}>{v.author}</span>
                           {v.minutes ? ` · ${v.minutes} min` : ''}
-                          {v.external && ` · ${v.platform ?? 'original'} ↗`}
+                          {v.platform && ` · ${v.platform}`}
                           {v.shared?.map(s => (
                             <a className="ml-2 underline-offset-2 hover:text-gold hover:underline" href={s.url} key={s.url} rel="noopener noreferrer" target="_blank">
                               on X {s.date.slice(2, 4)}

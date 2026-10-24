@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { setRequestLocale } from 'next-intl/server'
 import { SITE_URL } from '@/lib/books'
 import { ARTICLES, articleHandle, articleKeywords, articleMinutes, articleUrl, articleWeight, articleWeightLabel, formatDate, isNew, issueNumber } from '@/lib/articles'
-import { CFB_ARTICLES, archivedUrl, formatArchiveDate } from '@/lib/archive'
+import { CFB_ARTICLES, archiveId, archivedUrl, formatArchiveDate } from '@/lib/archive'
 import { ArticlesLibrary, Pips, type Volume } from '@/components/church/articles/ArticlesLibrary'
 import { RANKS, WEIGHT } from '@/lib/ranks'
 
@@ -51,8 +51,8 @@ export default async function ArticlesPage(props: { params: Promise<{ locale: st
       dateLabel: formatArchiveDate(a.date),
       author: 'Come-from-Beyond',
       handle: 'c___f___b',
-      href: a.url,
-      external: true,
+      href: `/articles/cfb/${archiveId(a)}`,
+      external: false,
       summary: a.summary,
       tags: a.tags,
       issue: null,
