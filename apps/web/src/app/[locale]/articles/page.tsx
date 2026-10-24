@@ -4,8 +4,8 @@ import Link from 'next/link'
 import { setRequestLocale } from 'next-intl/server'
 import { SITE_URL } from '@/lib/books'
 import { ARTICLES, articleHandle, articleKeywords, articleMinutes, articleUrl, articleWeight, articleWeightLabel, formatDate, isNew, issueNumber } from '@/lib/articles'
-import { CFB_ARTICLES, formatArchiveDate } from '@/lib/archive'
-import { ArticlesLibrary, type Volume } from '@/components/church/articles/ArticlesLibrary'
+import { CFB_ARTICLES, archivedUrl, formatArchiveDate } from '@/lib/archive'
+import { ArticlesLibrary, Pips, type Volume } from '@/components/church/articles/ArticlesLibrary'
 import { RANKS, WEIGHT } from '@/lib/ranks'
 
 const TITLE = 'Articles and the archive: Qubic, Aigarth, Neuraxon'
@@ -42,6 +42,7 @@ export default async function ArticlesPage(props: { params: Promise<{ locale: st
       weight: articleWeight(a),
       weightLabel: articleWeightLabel(a),
       words: a.words,
+      merit: a.mariaRepost ? WEIGHT.maria : 0,
     })),
     ...CFB_ARTICLES.map(a => ({
       id: a.url.split('/').filter(Boolean).pop() ?? a.url,
@@ -58,6 +59,8 @@ export default async function ArticlesPage(props: { params: Promise<{ locale: st
       platform: a.platform,
       weight: WEIGHT.primary,
       weightLabel: 'primary source',
+      shared: a.shared,
+      archived: archivedUrl(a.url),
     })),
   ]
 
@@ -83,8 +86,8 @@ export default async function ArticlesPage(props: { params: Promise<{ locale: st
           </p>
           <h1 className="mt-3 font-display text-7xl leading-[0.85] md:text-9xl">Articles</h1>
           <p className="mt-6 max-w-2xl font-serif text-xl leading-relaxed text-foreground/85">
-            The story of Aigarth as it happens, and the library that keeps it. Every author has a shelf, every article is a
-            spine on it, and the catalogue below lists them by year. A new issue lands whenever Aigarth moves, anyone can
+            The story of Aigarth as it happens, and the library that keeps it. Every author is a member with a rank, and the
+            catalogue below lists every article by year. A new issue lands whenever Aigarth moves, anyone can
             write for the archive, and Come-from-Beyond's own articles are here where they can be found.
           </p>
         </div>
@@ -118,24 +121,21 @@ export default async function ArticlesPage(props: { params: Promise<{ locale: st
       {/* ── HOW THE ARCHIVE RANKS ── */}
       <section className="mt-16 scroll-mt-24 grid gap-10 border-t border-border pt-12 lg:grid-cols-[1fr_1fr]" id="ranks">
         <div>
-          <p className="eyebrow text-gold">Weight and ranks</p>
-          <h2 className="mt-3 font-display text-5xl leading-[0.9] md:text-6xl">How the library ranks.</h2>
+          <p className="eyebrow text-gold">Ranks</p>
+          <h2 className="mt-3 font-display text-5xl leading-[0.9] md:text-6xl">How ranks work.</h2>
           <p className="mt-6 font-serif text-lg leading-relaxed text-foreground/85">
-            Every article has a weight. An issue written for the archive weighs {WEIGHT.issue}. A primary source, an article by
-            the person who built the thing we write about, weighs {WEIGHT.primary}. A repost by Maria adds {WEIGHT.maria}. On the shelf a heavier article is a thicker spine.
+            Like an old forum. Every member has three numbers. <strong>Activity</strong> is how many articles you wrote.{' '}
+            <strong>Merit</strong> is what others gave you: each repost by Maria is +{WEIGHT.maria}. <strong>Weight</strong> is
+            the sum, and weight sets your rank.
           </p>
           <p className="mt-4 font-serif text-lg leading-relaxed text-foreground/85">
-            An author's weight is the sum of their articles. It sets their rank, and the rank is always written with its
-            number: Rank 1 is a pamphlet, Rank 3 a shelf, Rank 8 a wing. The ladder doubles at every step, the way library
-            collections and forum ranks grow: the first steps come fast, the top is far away.
+            An article weighs {WEIGHT.issue}. A primary source, an article by the person who built the thing we write about,
+            weighs {WEIGHT.primary}. The thresholds roughly double at every step: the first ranks come in a week, Legendary takes
+            years.
           </p>
           <p className="mt-4 font-serif text-lg leading-relaxed text-foreground/85">
-            Rank 10, the Beyond wing, cannot be reached by weight. It belongs to the origin, Come-from-Beyond. Everyone else
-            starts with a pamphlet. Your rank, your weight and the distance to the next rank are written on your shelf.
-          </p>
-          <p className="mt-4 text-sm text-fg-2">
-            Weight is given by others, not by the author: Maria's repost counts, the author's own does not. Planned next: an
-            article quoted by another issue gets heavier, and a year in the archive adds one more.
+            Rank 10, Founder, cannot be reached by weight, the same way only Satoshi is Founder on BitcoinTalk. It belongs to
+            Come-from-Beyond. Everyone else starts as a Newbie, and the rank is always written with its number.
           </p>
         </div>
         <div>
@@ -144,7 +144,8 @@ export default async function ArticlesPage(props: { params: Promise<{ locale: st
               <tr className="border-b border-border text-left text-[11px] uppercase tracking-[0.25em] text-fg-2">
                 <th className="py-2 pr-4 font-normal">Rank</th>
                 <th className="py-2 pr-4 font-normal">Name</th>
-                <th className="py-2 font-normal">From weight</th>
+                <th className="hidden py-2 pr-4 font-normal sm:table-cell">Stars</th>
+                <th className="py-2 font-normal">Weight</th>
               </tr>
             </thead>
             <tbody>
@@ -152,13 +153,16 @@ export default async function ArticlesPage(props: { params: Promise<{ locale: st
                 <tr className="border-b border-border/60" key={r.level}>
                   <td className="py-2 pr-4 text-gold">{r.level}</td>
                   <td className="py-2 pr-4 text-foreground">{r.name}</td>
-                  <td className="py-2 text-fg-2">{Number.isFinite(r.min) ? r.min : 'the origin only'}</td>
+                  <td className="hidden py-2 pr-4 sm:table-cell">
+                    <Pips color="#ffd24a" level={r.level} />
+                  </td>
+                  <td className="py-2 text-fg-2">{Number.isFinite(r.min) ? r.min : 'origin only'}</td>
                 </tr>
               ))}
             </tbody>
           </table>
           <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.2em] text-fg-2/70">
-            issue = {WEIGHT.issue} · primary source = {WEIGHT.primary} · reposted by Maria = +{WEIGHT.maria} · rank = total weight on the ladder
+            article = {WEIGHT.issue} · primary source = {WEIGHT.primary} · Maria repost = +{WEIGHT.maria} merit
           </p>
         </div>
       </section>
