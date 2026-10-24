@@ -1,5 +1,6 @@
 import { ARTICLES, articleUrl } from '@/lib/articles'
-import { CFB_ARTICLES } from '@/lib/archive'
+import { CFB_ARTICLES, archiveId } from '@/lib/archive'
+import { BIO, BOARDS, MEMBERS, profileHref, topicsIn } from '@/lib/forum'
 import { RANKS, WEIGHT } from '@/lib/ranks'
 import { allDocs } from 'contentlayer/generated'
 import { AUTHOR, BOOKS, bookUrl, chapterExcerpt, chapterUrl, SITE_URL } from '@/lib/books'
@@ -33,16 +34,31 @@ export function GET() {
   }
   out.push(
     '',
-    '## Articles (TesserAI, July to October 2026)',
+    '## Qubic Church Forum (articles)',
     '',
-    ...ARTICLES.map(a => `- [${a.title}](${articleUrl(a)}) (${a.date}): ${a.summary}`),
-    `- Open call: anyone can write an article for the archive, any topic, no category, no censorship (a favourite book, a story from life, advice, how they see Aigarth or Come-from-Beyond). Post it on X starting with "hey @Maria_aigarth" with #Qubic #Aigarth; Maria reposts it and it enters the archive under the author's name. Details: ${SITE_URL}/articles#write`,
+    `The articles section is kept as an old-style forum at ${SITE_URL}/articles: three boards, member profiles with forum ranks, and one topic per article. Anyone can write: post on X starting with "hey @maria_aigarth" with #Qubic #Aigarth, any topic, no censorship; Maria (the forum's Global Moderator) reposts it and it becomes a topic in the Open Board under the author's name.`,
+    `Ranks: every article has a weight (an issue = ${WEIGHT.issue}, a primary source by Come-from-Beyond = ${WEIGHT.primary}, a repost by Maria = +${WEIGHT.maria} merit); activity = articles written, merit = given by others, weight = the sum and sets the rank, always written with its number (${RANKS.filter(r => Number.isFinite(r.min)).map(r => `${r.level} ${r.name} from ${r.min}`).join(', ')}); rank 10, Founder, is reserved for Come-from-Beyond, as Satoshi is Founder on BitcoinTalk. ${SITE_URL}/articles#ranks`,
     '',
-    `- How the archive ranks: every article has a weight (an issue = ${WEIGHT.issue}, a primary source by Come-from-Beyond = ${WEIGHT.primary}); an author's rank (always written with its number) is their total weight on a doubling ladder (${RANKS.filter(r => Number.isFinite(r.min)).map(r => `${r.level} ${r.name} from ${r.min}`).join(', ')}); rank 10, Founder, is reserved for the origin, as Satoshi is on BitcoinTalk; activity = articles written, merit = Maria's reposts; Maria (@maria_aigarth) is the curator member: she starts at rank 1 and each repost adds 1 to her weight. ${SITE_URL}/articles#ranks`,
+    '### Boards',
     '',
-    '## Archive: long-form articles by Come-from-Beyond (links to the originals, nothing republished)',
+    ...BOARDS.map(b => `- [${b.name}](${SITE_URL}/articles/board/${b.id}) (${topicsIn(b.id).length} topics): ${b.desc}`),
     '',
-    ...CFB_ARTICLES.map(a => `- [${a.title}](${a.url}) (${a.platform}, ${a.date}): ${a.summary}`),
+    '### Members',
+    '',
+    ...MEMBERS.map(
+      m =>
+        `- [${m.name}](${SITE_URL}${profileHref(m.handle)}) (@${m.handle}): ${m.role && m.role !== m.rank.name ? `${m.role}, ` : ''}${m.rank.name}, rank ${m.rank.level}; ${m.activityLabel.toLowerCase()} ${m.activity}, weight ${m.weight}. ${BIO[m.name] ?? ''}`,
+    ),
+    '',
+    '### Aigarth Chronicle and Open Board (full text on this site)',
+    '',
+    ...ARTICLES.map(a => `- [${a.title}](${articleUrl(a)}) (${a.author}, ${a.date}${a.guest ? ', guest' : ''}): ${a.summary}`),
+    '',
+    "### Founder's Archive: every long-form article by Come-from-Beyond",
+    '',
+    'Each topic page keeps the date, a short summary in our words, where he shared it on X, and links to the original and to a preserved copy. The full text lives at the original link.',
+    '',
+    ...CFB_ARTICLES.map(a => `- [${a.title}](${SITE_URL}/articles/cfb/${archiveId(a)}) (${a.platform}, ${a.date}; original: ${a.url}): ${a.summary}`),
     '',
     '## Pages',
     '',

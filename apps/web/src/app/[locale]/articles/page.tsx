@@ -11,7 +11,7 @@ import { ForumShell, Quote, Stars } from '@/components/church/forum/ForumUI'
 
 const TITLE = 'Qubic Church Forum: articles on Qubic, Aigarth and Come-from-Beyond'
 const DESC =
-  'An old-style forum archive: the running story of Aigarth, guest articles on any topic, and every long-form article by Come-from-Beyond with dates and links to the originals.'
+  'Old-style forum archive: the running story of Aigarth, guest articles on any topic, and every long-form article by Come-from-Beyond with dates.'
 
 export const metadata: Metadata = {
   title: { absolute: TITLE },
