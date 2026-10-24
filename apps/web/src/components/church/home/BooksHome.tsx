@@ -180,7 +180,11 @@ export function BooksHome({ locale = 'en' }: { locale?: Locale }) {
             <a className="text-gold hover:underline" href="https://x.com/usetesserai" rel="noopener noreferrer" target="_blank">
               @usetesserai
             </a>{' '}
-            or subscribe by RSS to get the next one first.
+            or subscribe by RSS to get the next one first. The feed is open to guest issues:{' '}
+            <Link className="text-gold hover:underline" href="/articles#write">
+              write one
+            </Link>
+            .
           </p>
         </div>
       </section>
