@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { BOOKS, bookWords, readingMinutes } from '@/lib/books'
-import { ARTICLES, formatDate } from '@/lib/articles'
+import { ARTICLES, articleMinutes, formatDate, isNew, issueNumber } from '@/lib/articles'
 import { AnnaCycler } from './AnnaCycler'
 import { Countdown } from './Countdown'
 
@@ -55,6 +55,7 @@ const INVESTIGATIONS = [
 ] as const
 
 export function BooksHome({ locale = 'en' }: { locale?: Locale }) {
+  const lead = ARTICLES[0]
   void locale
   return (
     <div className="text-foreground">
@@ -98,6 +99,14 @@ export function BooksHome({ locale = 'en' }: { locale?: Locale }) {
                 What we build
               </Link>
             </div>
+            {lead && (
+              <Link className="group mt-5 inline-flex max-w-xl items-baseline gap-3 text-sm text-fg-2 hover:text-foreground" href={`/articles/${lead.slug}`}>
+                <span className="shrink-0 border border-gold/50 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.25em] text-gold">
+                  {isNew(lead) ? 'New issue' : `No. ${issueNumber(lead)}`}
+                </span>
+                <span className="line-clamp-1 group-hover:text-gold">{lead.title} →</span>
+              </Link>
+            )}
 
             <div className="mt-12 border-t border-border pt-6 lg:mt-auto">
               <p className="mb-4 font-mono text-sm tracking-[0.4em] text-gold">13.04.2027</p>
@@ -106,6 +115,69 @@ export function BooksHome({ locale = 'en' }: { locale?: Locale }) {
           </div>
 
           <AnnaCycler />
+        </div>
+      </section>
+
+      {/* ── ARTICLES: the running story ── */}
+      <section className="scroll-mt-20 border-t border-border bg-[linear-gradient(180deg,rgba(240,192,48,0.07),transparent_60%)]" id="articles">
+        <div className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 md:py-20">
+          <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <p className="eyebrow text-gold">Articles · the running story of Aigarth · by TesserAI</p>
+              <h2 className="mt-2 font-display text-5xl leading-[0.9] md:text-6xl">As it happens</h2>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Link className="inline-flex h-10 items-center border border-gold bg-gold/10 px-4 text-sm font-medium text-gold hover:bg-gold/20" href="/articles">
+                All {ARTICLES.length} issues
+              </Link>
+              <a className="inline-flex h-10 items-center border border-border px-4 text-sm font-medium text-fg-2 hover:text-foreground" href="/articles/feed.xml">
+                RSS
+              </a>
+            </div>
+          </div>
+          {lead && (
+            <Link
+              className="group grid gap-6 border border-gold/40 bg-background/80 p-6 backdrop-blur-sm hover:border-gold md:grid-cols-[auto_1fr] md:gap-10 md:p-10"
+              href={`/articles/${lead.slug}`}
+            >
+              <div className="md:w-40">
+                <p className="font-mono text-xs uppercase tracking-[0.3em] text-gold">
+                  {isNew(lead) ? 'New · ' : 'Latest · '}No. {issueNumber(lead)}
+                </p>
+                <time className="mt-2 block text-sm text-fg-2" dateTime={lead.date}>
+                  {formatDate(lead.date)}
+                </time>
+                <p className="mt-1 text-sm text-fg-2">{articleMinutes(lead)} min read</p>
+              </div>
+              <div>
+                {lead.kicker && <p className="font-mono text-xs uppercase tracking-[0.3em] text-fg-2">{lead.kicker}</p>}
+                <h3 className="mt-2 font-display text-4xl leading-[0.95] group-hover:text-gold md:text-6xl">{lead.title}</h3>
+                <p className="mt-4 max-w-3xl font-serif text-lg leading-relaxed text-foreground/85">{lead.summary}</p>
+                <p className="mt-4 text-sm font-medium text-gold">Read the issue →</p>
+              </div>
+            </Link>
+          )}
+          <ol className="mt-4 grid gap-px border border-border bg-border md:grid-cols-3">
+            {ARTICLES.slice(1, 4).map(a => (
+              <li key={a.slug}>
+                <Link className="group flex h-full flex-col bg-background/80 p-6 backdrop-blur-sm hover:bg-card" href={`/articles/${a.slug}`}>
+                  <p className="flex items-center justify-between font-mono text-xs uppercase tracking-[0.25em] text-fg-2">
+                    <span>No. {issueNumber(a)}</span>
+                    <time dateTime={a.date}>{formatDate(a.date)}</time>
+                  </p>
+                  <h3 className="mt-3 text-xl font-semibold leading-snug group-hover:text-gold">{a.title}</h3>
+                  <p className="mt-3 line-clamp-3 text-sm text-fg-2">{a.summary}</p>
+                </Link>
+              </li>
+            ))}
+          </ol>
+          <p className="mt-4 text-sm text-fg-2">
+            A new issue lands whenever Aigarth moves. Follow{' '}
+            <a className="text-gold hover:underline" href="https://x.com/usetesserai" rel="noopener noreferrer" target="_blank">
+              @usetesserai
+            </a>{' '}
+            or subscribe by RSS to get the next one first.
+          </p>
         </div>
       </section>
 
@@ -313,34 +385,6 @@ export function BooksHome({ locale = 'en' }: { locale?: Locale }) {
               <span className="mt-auto pt-6 text-sm font-medium text-gold group-hover:underline">{p.cta} →</span>
             </Link>
           ))}
-        </div>
-      </section>
-
-      {/* ── ARTICLES ── */}
-      <section className="border-t border-border">
-        <div className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 md:py-20">
-          <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <p className="eyebrow text-gold">Articles · by TesserAI</p>
-              <h2 className="mt-2 font-display text-5xl leading-[0.9] md:text-6xl">Aigarth, as it happened</h2>
-            </div>
-            <Link className="text-sm font-medium text-gold hover:underline" href="/articles">
-              All {ARTICLES.length} articles →
-            </Link>
-          </div>
-          <ol className="grid gap-px border border-border bg-border md:grid-cols-3">
-            {ARTICLES.slice(0, 3).map(a => (
-              <li key={a.slug}>
-                <Link className="group flex h-full flex-col bg-background/80 p-6 backdrop-blur-sm hover:bg-card" href={`/articles/${a.slug}`}>
-                  <time className="eyebrow text-fg-2" dateTime={a.date}>
-                    {formatDate(a.date)}
-                  </time>
-                  <h3 className="mt-2 text-xl font-semibold leading-snug group-hover:text-gold">{a.title}</h3>
-                  <p className="mt-3 line-clamp-3 text-sm text-fg-2">{a.summary}</p>
-                </Link>
-              </li>
-            ))}
-          </ol>
         </div>
       </section>
 
