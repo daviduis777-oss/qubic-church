@@ -10,6 +10,7 @@ export function ModQueue({ modKey }: { modKey: string }) {
   const [busy, setBusy] = useState<number | null>(null)
   const [maria, setMaria] = useState<Record<number, string>>({})
   const [note, setNote] = useState<Record<number, string>>({})
+  const [pubAs, setAs] = useState<Record<number, string>>({})
 
   const load = useCallback(async () => {
     const r = await fetch(`/api/forum/mod?key=${encodeURIComponent(modKey)}`, { cache: 'no-store' })
@@ -24,7 +25,7 @@ export function ModQueue({ modKey }: { modKey: string }) {
   const act = async (n: number, action: 'approve' | 'reject') => {
     setBusy(n)
     setErr('')
-    const r = await fetch('/api/forum/mod', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: modKey, number: n, action, mariaRepost: maria[n] || undefined, note: note[n] || undefined }) })
+    const r = await fetch('/api/forum/mod', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: modKey, number: n, action, mariaRepost: maria[n] || undefined, note: note[n] || undefined, as: pubAs[n] || undefined }) })
     const j = await r.json()
     setBusy(null)
     if (!r.ok) return setErr(j.error ?? 'error')
@@ -67,6 +68,9 @@ export function ModQueue({ modKey }: { modKey: string }) {
               <a href={i.html_url} rel="noopener noreferrer">
                 issue
               </a>
+            </p>
+            <p style={{ margin: '0 0 6px' }}>
+              <input onChange={e => setAs(m => ({ ...m, [i.number]: e.target.value }))} placeholder="Publish as existing member (handle, e.g. usetesserai), optional: links this identity to them" style={field} value={pubAs[i.number] ?? ''} />
             </p>
             {i.data.kind === 'topic' && (
               <>
