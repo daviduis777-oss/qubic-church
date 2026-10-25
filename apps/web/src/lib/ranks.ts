@@ -40,16 +40,20 @@ export type AuthorProfile = {
   fixedLevel?: number
   /** short line shown under the rank */
   title?: string
+  /** profile picture (X), for members who came from X */
+  avatar?: string
 }
 
 export const AUTHORS: Record<string, AuthorProfile> = {
-  'Come-from-Beyond': { name: 'Come-from-Beyond', handle: 'c___f___b', fixedLevel: 10, title: 'The origin. Every article here is a primary source.' },
+  'Come-from-Beyond': { name: 'Come-from-Beyond', handle: 'c___f___b', fixedLevel: 10, title: 'The origin. Every article here is a primary source.', avatar: 'https://pbs.twimg.com/profile_images/956595678813270017/fYVjtfeG_200x200.jpg' },
   TesserAI: {
     name: 'TesserAI',
     handle: 'usetesserai',
+    avatar: 'https://pbs.twimg.com/profile_images/2062568705666756608/f0LRumC9_200x200.jpg',
     title: 'Verifiable AI marketplace on Qubic: smart contract audits and AI agents, every result cryptographically receipted and challengeable. Writes the running story of Aigarth.',
   },
-  Maria: { name: 'Maria', handle: 'maria_aigarth', title: 'The curator. Every repost gives the author +1 merit and Maria +1 weight.' },
+  Maria: { name: 'Maria', handle: 'maria_aigarth', title: 'The curator. Every repost gives the author +1 merit and Maria +1 weight.', avatar: 'https://pbs.twimg.com/profile_images/2029520793554898944/GXEaD1CT_200x200.jpg' },
+  fallin: { name: 'fallin', handle: 'inqubic', avatar: 'https://pbs.twimg.com/profile_images/2056376206271094784/DoOoaQbf_200x200.jpg' },
 }
 
 export function rankFor(xp: number, fixedLevel?: number): Rank {

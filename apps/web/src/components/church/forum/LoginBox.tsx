@@ -46,6 +46,7 @@ export function LoginBox({ onLogin }: { onLogin: (me: Me) => void }) {
         localStorage.setItem('qcf-name', name)
       } catch {}
       onLogin(j.user)
+      window.dispatchEvent(new Event('qcf-login'))
     },
     [name, onLogin],
   )

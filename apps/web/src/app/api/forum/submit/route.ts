@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getSession } from '@/lib/forum/auth'
-import { countPendingBy, createPending } from '@/lib/forum/github'
+import { countPendingBy, createPending, type Pending } from '@/lib/forum/github'
+import { DAILY_CAP, loadAll, moderationQueue, postsToday, publish } from '@/lib/forum/publish'
 import { ARTICLES } from '@/lib/articles'
 
 export const dynamic = 'force-dynamic'
@@ -23,20 +24,28 @@ export async function POST(req: Request) {
   const xUrl = (b.xUrl ?? '').trim()
   if (xUrl && !/^https?:\/\/(?:www\.)?(?:x|twitter)\.com\/[A-Za-z0-9_]{1,15}\/status\/\d+/.test(xUrl)) return NextResponse.json({ error: 'The X link looks wrong.' }, { status: 400 })
 
+  const post: Pending = {
+    kind,
+    title: kind === 'reply' ? `Re: ${ARTICLES.find(a => a.slug === b.topic)?.title ?? ''}` : title,
+    text,
+    board: 'open',
+    topic: kind === 'reply' ? b.topic : undefined,
+    xUrl: xUrl || undefined,
+    author: user,
+    date: new Date().toISOString().slice(0, 10),
+  }
   try {
-    if ((await countPendingBy(user.id)) >= 3) return NextResponse.json({ error: 'You already have 3 posts waiting for a moderator. Give them a moment.' }, { status: 429 })
-    const issue = await createPending({
-      kind,
-      title: kind === 'reply' ? `Re: ${ARTICLES.find(a => a.slug === b.topic)?.title ?? ''}` : title,
-      text,
-      board: 'open',
-      topic: kind === 'reply' ? b.topic : undefined,
-      xUrl: xUrl || undefined,
-      author: user,
-      date: new Date().toISOString().slice(0, 10),
-    })
-    return NextResponse.json({ ok: true, queue: issue.number })
+    if (moderationQueue()) {
+      if ((await countPendingBy(user.id)) >= 3) return NextResponse.json({ error: 'You already have 3 posts waiting for a moderator. Give them a moment.' }, { status: 429 })
+      const issue = await createPending(post)
+      return NextResponse.json({ ok: true, queue: issue.number })
+    }
+    const { articles, replies, known } = await loadAll()
+    if (postsToday(user, known, articles.data, replies.data, post.date) >= DAILY_CAP) return NextResponse.json({ error: `${DAILY_CAP} posts a day is the limit. Tomorrow is another day.` }, { status: 429 })
+    const out = await publish(post)
+    if (out.error) return NextResponse.json({ error: out.error }, { status: 409 })
+    return NextResponse.json({ ok: true, published: true, slug: out.slug, topic: out.topic, author: out.author })
   } catch (e) {
-    return NextResponse.json({ error: `Could not queue the post: ${(e as Error).message.slice(0, 120)}` }, { status: 500 })
+    return NextResponse.json({ error: `Could not publish: ${(e as Error).message.slice(0, 160)}` }, { status: 500 })
   }
 }

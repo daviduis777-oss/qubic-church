@@ -1,6 +1,8 @@
 import Link from 'next/link'
 import type { ReactNode } from 'react'
 import { homeOf, profileHref, type Member } from '@/lib/forum'
+import { AUTHORS } from '@/lib/ranks'
+import { Avatar } from './Avatar'
 import { LoginStatus } from './LoginStatus'
 
 export type Crumb = { label: string; href?: string }
@@ -62,6 +64,9 @@ export function Postbit({ m }: { m: Member }) {
       <Link className="qcf-name" href={profileHref(m.handle)} title={`View the profile of ${m.name}`}>
         {m.name}
       </Link>
+      <div style={{ margin: '6px 0' }}>
+        <Avatar pic={AUTHORS[m.name]?.avatar} seed={m.identity ?? m.handle} />
+      </div>
       {m.role && (
         <div className="qcf-strong" style={{ color: staff }}>
           {m.role}

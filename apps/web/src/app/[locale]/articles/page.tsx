@@ -135,7 +135,7 @@ export default async function ArticlesPage(props: { params: Promise<{ locale: st
           </p>
           <ol style={{ paddingLeft: 22, margin: '0 0 12px', listStyle: 'decimal' }}>
             <li>
-              <Link href="/articles/new">Start a topic here</Link>. Login is a signature from your Qubic wallet or a tripcode: no email, no password, nothing personal. A moderator reads it, then it appears on the Open Board under your name.
+              <Link href="/articles/new">Start a topic here</Link>. Login is a signature from your Qubic wallet or a tripcode: no email, no password, nothing personal. It appears on the Open Board under your name within a couple of minutes.
             </li>
             <li>
               Or post on X starting with <b>hey @maria_aigarth</b> and <b>#Qubic #Aigarth</b>. Put the tag in the post itself, not only inside an X Article: mentions inside articles do not notify anyone.{' '}

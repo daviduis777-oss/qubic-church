@@ -9,10 +9,14 @@ type Me = { auth: 'qubic' | 'trip'; name: string; handle: string } | null
 export function LoginStatus() {
   const [me, setMe] = useState<Me | undefined>(undefined)
   useEffect(() => {
-    fetch('/api/forum/me', { cache: 'no-store' })
-      .then(r => r.json())
-      .then(j => setMe(j.user ?? null))
-      .catch(() => setMe(null))
+    const load = () =>
+      fetch('/api/forum/me', { cache: 'no-store' })
+        .then(r => r.json())
+        .then(j => setMe(j.user ?? null))
+        .catch(() => setMe(null))
+    load()
+    window.addEventListener('qcf-login', load)
+    return () => window.removeEventListener('qcf-login', load)
   }, [])
   if (me === undefined) return <>Welcome.</>
   if (!me)
