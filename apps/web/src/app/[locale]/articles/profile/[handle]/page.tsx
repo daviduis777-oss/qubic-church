@@ -6,6 +6,8 @@ import { locales } from '@/config/i18n'
 import { SITE_URL } from '@/lib/books'
 import { BIO, BOARDS, MEMBERS, homeOf, memberByHandle, postsOf, profileHref } from '@/lib/forum'
 import { ForumShell, Stars } from '@/components/church/forum/ForumUI'
+import { Avatar } from '@/components/church/forum/Avatar'
+import { AUTHORS } from '@/lib/ranks'
 
 export function generateStaticParams() {
   return locales.flatMap(locale => MEMBERS.map(m => ({ locale, handle: m.handle.toLowerCase() })))
@@ -65,21 +67,8 @@ export default async function ProfilePage(props: { params: Promise<{ locale: str
           <tbody>
             <tr className="qcf-win qcf-stack">
               <td style={{ width: 200, textAlign: 'center' }}>
-                <div
-                  aria-hidden
-                  style={{
-                    width: 96,
-                    height: 96,
-                    margin: '4px auto 8px',
-                    background: '#c6d4e4',
-                    border: '1px solid var(--qcf-line)',
-                    fontFamily: 'Georgia, serif',
-                    fontSize: 48,
-                    lineHeight: '96px',
-                    color: '#476c8e',
-                  }}
-                >
-                  {m.name.slice(0, 1)}
+                <div style={{ width: 96, margin: '4px auto 8px' }}>
+                  <Avatar pic={AUTHORS[m.name]?.avatar} seed={m.identity ?? m.handle} size={96} />
                 </div>
                 <h1 className="qcf-name">{m.name}</h1>
                 {m.role && (

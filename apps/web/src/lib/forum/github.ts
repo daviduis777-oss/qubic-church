@@ -81,5 +81,5 @@ export async function readJson<T>(path: string): Promise<{ data: T; sha: string 
 /** Commit a JSON file to the default branch (one commit = one deploy). */
 export async function writeJson(path: string, data: unknown, sha: string, message: string) {
   const content = Buffer.from(JSON.stringify(data, null, 1) + '\n', 'utf8').toString('base64')
-  await gh(`/contents/${path}`, { method: 'PUT', body: JSON.stringify({ message, content, sha, committer: { name: 'Qubic Church Forum', email: 'forum@qubic.church' } }) })
+  await gh(`/contents/${path}`, { method: 'PUT', body: JSON.stringify({ message, content, ...(sha ? { sha } : {}), committer: { name: 'Qubic Church Forum', email: 'forum@qubic.church' } }) })
 }

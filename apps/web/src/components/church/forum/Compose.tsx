@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react'
 import { LoginBox, type Me } from './LoginBox'
 
 /**
- * New topic, or a reply. Posts go into the moderation queue; nothing appears until a moderator approves it.
+ * New topic, or a reply. Posts publish on their own (the site rebuilds in about two minutes);
+ * with FORUM_MODERATION=queue they wait for a moderator instead.
  */
 export function Compose({ kind, topic, topicTitle }: { kind: 'topic' | 'reply'; topic?: string; topicTitle?: string }) {
   const [me, setMe] = useState<Me | null | undefined>(undefined)
@@ -14,7 +15,7 @@ export function Compose({ kind, topic, topicTitle }: { kind: 'topic' | 'reply'; 
   const [xUrl, setXUrl] = useState('')
   const [busy, setBusy] = useState('')
   const [err, setErr] = useState('')
-  const [done, setDone] = useState<number | null>(null)
+  const [done, setDone] = useState<{ queue?: number; slug?: string; topic?: string } | null>(null)
 
   useEffect(() => {
     fetch('/api/forum/me', { cache: 'no-store' })
@@ -44,12 +45,12 @@ export function Compose({ kind, topic, topicTitle }: { kind: 'topic' | 'reply'; 
 
   const submit = async () => {
     setErr('')
-    setBusy('Sending to the moderators…')
+    setBusy('Publishing…')
     try {
       const r = await fetch('/api/forum/submit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ kind, topic, title, text, xUrl }) })
       const j = await r.json()
       if (!r.ok) throw new Error(j.error)
-      setDone(j.queue)
+      setDone(j.published ? { slug: j.slug, topic: j.topic } : { queue: j.queue })
     } catch (e) {
       setErr((e as Error).message)
     } finally {
@@ -70,12 +71,19 @@ export function Compose({ kind, topic, topicTitle }: { kind: 'topic' | 'reply'; 
   if (done)
     return (
       <div className="qcf-box">
-        <div className="qcf-cat">Sent</div>
+        <div className="qcf-cat">{done.queue ? 'Sent' : 'Published'}</div>
         <div className="qcf-win qcf-post" style={{ padding: 12 }}>
-          <p>
-            Your {kind} is in the queue (#{done}). A moderator reads it and it appears on the board, usually within a day. Your name, {me.name}, stays on it.
-          </p>
-          <p className="qcf-small qcf-muted">If you also posted it on X with “hey @maria_aigarth”, Maria&apos;s repost adds merit once it is published.</p>
+          {done.queue ? (
+            <p>
+              Your {kind} is in the queue (#{done.queue}). A moderator reads it and it appears on the board, usually within a day. Your name, {me.name}, stays on it.
+            </p>
+          ) : (
+            <p>
+              Your {kind} is in the archive. The site rebuilds now; in about two minutes it is live at{' '}
+              <a href={`/articles/${done.slug ?? done.topic}`}>qubic.church/articles/{done.slug ?? done.topic}</a>.
+            </p>
+          )}
+          <p className="qcf-small qcf-muted">If you also posted it on X with “hey @maria_aigarth”, Maria&apos;s repost adds merit.</p>
         </div>
       </div>
     )
@@ -116,7 +124,7 @@ export function Compose({ kind, topic, topicTitle }: { kind: 'topic' | 'reply'; 
           <button className="qcf-btn qcf-btn-main" disabled={Boolean(busy)} onClick={submit} style={{ cursor: 'pointer' }} type="button">
             {kind === 'topic' ? 'Post topic' : 'Post reply'}
           </button>{' '}
-          <span className="qcf-small qcf-muted">Goes to the moderation queue. No topic, no category, no censorship, but a moderator reads everything first.</span>
+          <span className="qcf-small qcf-muted">Publishes right away under your name. No topic, no category, no censorship. The site rebuilds in about two minutes.</span>
         </p>
         {busy && <p className="qcf-small">{busy}</p>}
         {err && (
