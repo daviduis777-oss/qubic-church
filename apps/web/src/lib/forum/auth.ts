@@ -58,7 +58,8 @@ export function makeNonce(): { nonce: string; token: string; message: string } {
   return { nonce, token, message: loginMessage(nonce) }
 }
 
-export const loginMessage = (nonce: string) => `Qubic Church Forum login\nnonce: ${nonce}\nThis signature only proves you hold this ID. It moves nothing.`
+/** One line on purpose: the Qubic wallet app inlines the message into a JavaScript string literal, and a newline breaks it (error -32015). */
+export const loginMessage = (nonce: string) => `Qubic Church Forum login. Nonce ${nonce}. This signature only proves you hold this ID. It moves nothing.`
 
 export const QUBIC_ID = /^[A-Z]{60}$/
 
