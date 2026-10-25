@@ -37,12 +37,11 @@ export default async function BoardPage(props: { params: Promise<{ locale: strin
       </p>
       {b.id === 'open' && (
         <p style={{ margin: '0 2px 8px' }}>
-          <a
-            className="qcf-btn qcf-btn-main"
-            href={`https://x.com/intent/post?text=${encodeURIComponent('hey @maria_aigarth \n\n\n#Qubic #Aigarth')}`}
-            rel="noopener noreferrer"
-          >
-            New topic (on X)
+          <Link className="qcf-btn qcf-btn-main" href="/articles/new">
+            New topic
+          </Link>{' '}
+          <a className="qcf-btn" href={`https://x.com/intent/post?text=${encodeURIComponent('hey @maria_aigarth \n\n\n#Qubic #Aigarth')}`} rel="noopener noreferrer">
+            Post on X instead
           </a>{' '}
           <Link className="qcf-btn" href="/articles#write">
             How it works
@@ -67,7 +66,7 @@ export default async function BoardPage(props: { params: Promise<{ locale: strin
             {topics.length === 0 && (
               <tr className="qcf-win">
                 <td className="qcf-muted" colSpan={4} style={{ textAlign: 'center', padding: 24 }}>
-                  No topics yet. Post on X starting with “hey @maria_aigarth”, add #Qubic #Aigarth, and yours will be the first.
+                  No topics yet. Start one here, or post on X starting with “hey @maria_aigarth” with #Qubic #Aigarth, and yours will be the first.
                 </td>
               </tr>
             )}

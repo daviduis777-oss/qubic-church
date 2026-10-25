@@ -51,7 +51,7 @@ export const BOARDS: Board[] = [
   {
     id: 'open',
     name: 'Open Board',
-    desc: 'Anything. Your favourite book, a story from your life, advice for this world, how you see Aigarth. Start on X with "hey @maria_aigarth".',
+    desc: 'Anything. Your favourite book, a story from your life, advice for this world, how you see Aigarth. Start a topic here, or on X with "hey @maria_aigarth".',
   },
 ]
 export const getBoard = (id: string) => BOARDS.find(b => b.id === id)
@@ -134,7 +134,9 @@ function buildMembers(): Member[] {
     const replies = REPLIES.filter(r => r.author === a)
     const weight = items.reduce((s, t) => s + t.weight, 0)
     const fixed = AUTHORS[a]?.fixedLevel
-    const any = items[0] ?? replies[0]
+    // Who the member is: the X account they came from, if any; otherwise their oldest post. A linked wallet posting later must not flip it.
+    const all = [...items, ...replies].sort((p, q) => p.date.localeCompare(q.date))
+    const any = all.find(t => t.auth === 'x') ?? all[0]
     const handle = any?.handle ?? ''
     const prof = profileOf(handle)
     return {

@@ -16,6 +16,7 @@ export async function verifyQubicSignature(identity: string, message: string, si
   try {
     const { schnorrq, K12 } = await cryptoPromise
     const helper = new QubicHelper()
+    if (!(await helper.verifyIdentity(identity))) return false
     const pk = helper.getIdentityBytes(identity)
     if (!pk || pk.length !== 32) return false
     const bytes = new TextEncoder().encode(PREFIX + message)

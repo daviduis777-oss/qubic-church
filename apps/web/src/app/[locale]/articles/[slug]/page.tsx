@@ -6,7 +6,7 @@ import { notFound } from 'next/navigation'
 import { setRequestLocale } from 'next-intl/server'
 import { locales } from '@/config/i18n'
 import { SITE_URL } from '@/lib/books'
-import { ARTICLES, articleKeywords, articleMinutes, articleUrl, articleWeight, authorUrl, formatDate, getArticle, issueNumber } from '@/lib/articles'
+import { ARTICLES, articleKeywords, articleMinutes, articleUrl, articleWeight, authorUrl, formatDate, getArticle, issueNumber, originalUrl } from '@/lib/articles'
 import { memberOf, repliesTo } from '@/lib/forum'
 import { Compose } from '@/components/church/forum/Compose'
 import { blocksFromText } from '@/lib/forum/text'
@@ -47,13 +47,13 @@ export default async function ArticlePage(props: { params: Promise<{ locale: str
     url: articleUrl(a),
     wordCount: a.words,
     inLanguage: 'en',
-    author: a.guest ? { '@type': 'Person', name: a.author, url: authorUrl(a), sameAs: [authorUrl(a)] } : { '@type': 'Organization', name: 'TesserAI', url: 'https://x.com/usetesserai', sameAs: ['https://x.com/usetesserai'] },
+    author: a.guest ? { '@type': 'Person', name: a.author, ...(authorUrl(a) ? { url: authorUrl(a), sameAs: [authorUrl(a)] } : {}) } : { '@type': 'Organization', name: 'TesserAI', url: 'https://x.com/usetesserai', sameAs: ['https://x.com/usetesserai'] },
     keywords: articleKeywords(a).join(', '),
     articleSection: 'Articles',
     isPartOf: { '@type': 'CreativeWorkSeries', name: 'Qubic Church: Articles', url: `${SITE_URL}/articles` },
     position: issueNumber(a),
     publisher: { '@id': `${SITE_URL}/#org` },
-    isBasedOn: a.url,
+    ...(originalUrl(a) ? { isBasedOn: originalUrl(a) } : {}),
     about: [
       { '@type': 'Thing', name: 'Qubic' },
       { '@type': 'Thing', name: 'Aigarth' },
@@ -98,10 +98,14 @@ export default async function ArticlePage(props: { params: Promise<{ locale: str
                       </a>
                     </>
                   )}
-                  {' · '}
-                  <a href={a.url} rel="noopener noreferrer">
-                    original on X
-                  </a>
+                  {originalUrl(a) && (
+                    <>
+                      {' · '}
+                      <a href={originalUrl(a)} rel="noopener noreferrer">
+                        original on X
+                      </a>
+                    </>
+                  )}
                 </div>
                 {a.note && (
                   <div className="qcf-small" style={{ background: '#fff8dc', border: '1px solid #e0cf8a', padding: '6px 10px', marginBottom: 12 }}>

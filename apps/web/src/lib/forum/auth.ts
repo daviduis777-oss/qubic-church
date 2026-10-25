@@ -30,20 +30,23 @@ function secret(): Buffer {
 const b64u = (b: Buffer) => b.toString('base64url')
 const hmac = (data: string) => b64u(createHmac('sha256', secret()).update(data).digest())
 
-/** token = base64url(json).signature */
-export function signToken(payload: Record<string, unknown>, ttlSeconds: number): string {
-  const body = b64u(Buffer.from(JSON.stringify({ ...payload, exp: Math.floor(Date.now() / 1000) + ttlSeconds })))
+export type TokenKind = 'session' | 'nonce'
+
+/** token = base64url(json).signature. Every token names its kind, so a nonce can never pass as a session. */
+export function signToken(kind: TokenKind, payload: Record<string, unknown>, ttlSeconds: number): string {
+  const body = b64u(Buffer.from(JSON.stringify({ ...payload, kind, exp: Math.floor(Date.now() / 1000) + ttlSeconds })))
   return `${body}.${hmac(body)}`
 }
 
-export function verifyToken<T extends Record<string, unknown>>(token: string | undefined | null): (T & { exp: number }) | null {
+export function verifyToken<T extends Record<string, unknown>>(kind: TokenKind, token: string | undefined | null): (T & { exp: number }) | null {
   if (!token) return null
   const [body, sig] = token.split('.')
   if (!body || !sig) return null
   const expect = hmac(body)
   if (expect.length !== sig.length || !timingSafeEqual(Buffer.from(expect), Buffer.from(sig))) return null
   try {
-    const data = JSON.parse(Buffer.from(body, 'base64url').toString('utf8')) as T & { exp: number }
+    const data = JSON.parse(Buffer.from(body, 'base64url').toString('utf8')) as T & { exp: number; kind?: string }
+    if (data.kind !== kind) return null
     if (typeof data.exp !== 'number' || data.exp < Date.now() / 1000) return null
     return data
   } catch {
@@ -54,7 +57,7 @@ export function verifyToken<T extends Record<string, unknown>>(token: string | u
 /** A login challenge. The wallet signs loginMessage(nonce); the server checks the nonce token and the signature. */
 export function makeNonce(): { nonce: string; token: string; message: string } {
   const nonce = b64u(randomBytes(18))
-  const token = signToken({ nonce }, 10 * 60)
+  const token = signToken('nonce', { nonce }, 10 * 60)
   return { nonce, token, message: loginMessage(nonce) }
 }
 
@@ -76,16 +79,17 @@ export function handleFor(user: Pick<ForumUser, 'auth' | 'id'>): string {
 
 export async function getSession(): Promise<ForumUser | null> {
   const jar = await cookies()
-  const t = verifyToken<ForumUser>(jar.get(COOKIE)?.value)
+  const t = verifyToken<ForumUser>('session', jar.get(COOKIE)?.value)
   if (!t) return null
   const { auth, id, name, handle } = t
+  if ((auth !== 'qubic' && auth !== 'trip') || typeof id !== 'string' || typeof name !== 'string' || typeof handle !== 'string') return null
   return { auth, id, name, handle }
 }
 
 export function sessionCookie(user: ForumUser) {
   return {
     name: COOKIE,
-    value: signToken(user as unknown as Record<string, unknown>, SESSION_DAYS * 86400),
+    value: signToken('session', user as unknown as Record<string, unknown>, SESSION_DAYS * 86400),
     httpOnly: true,
     sameSite: 'lax' as const,
     secure: process.env.NODE_ENV === 'production',

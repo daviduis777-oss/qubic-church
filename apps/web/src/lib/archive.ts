@@ -28,4 +28,10 @@ export const archivedUrl = (url: string) => `https://web.archive.org/web/2026/${
 
 /** Stable id for an archive entry: the last path segment of the original URL. */
 export const archiveId = (a: ArchiveEntry) => a.url.split('/').filter(Boolean).pop() ?? a.url
-export const getArchiveEntry = (id: string) => CFB_ARTICLES.find(a => archiveId(a) === id)
+export const getArchiveEntry = (id: string) => {
+  let d = id
+  try {
+    d = decodeURIComponent(id)
+  } catch {}
+  return CFB_ARTICLES.find(a => archiveId(a) === d || archiveId(a) === id)
+}

@@ -15,7 +15,7 @@ export function Compose({ kind, topic, topicTitle }: { kind: 'topic' | 'reply'; 
   const [xUrl, setXUrl] = useState('')
   const [busy, setBusy] = useState('')
   const [err, setErr] = useState('')
-  const [done, setDone] = useState<{ queue?: number; slug?: string; topic?: string } | null>(null)
+  const [done, setDone] = useState<{ queue?: number; slug?: string; topic?: string; author?: string } | null>(null)
 
   useEffect(() => {
     fetch('/api/forum/me', { cache: 'no-store' })
@@ -50,7 +50,7 @@ export function Compose({ kind, topic, topicTitle }: { kind: 'topic' | 'reply'; 
       const r = await fetch('/api/forum/submit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ kind, topic, title, text, xUrl }) })
       const j = await r.json()
       if (!r.ok) throw new Error(j.error)
-      setDone(j.published ? { slug: j.slug, topic: j.topic } : { queue: j.queue })
+      setDone(j.published ? { slug: j.slug, topic: j.topic, author: j.author } : { queue: j.queue })
     } catch (e) {
       setErr((e as Error).message)
     } finally {
@@ -79,7 +79,7 @@ export function Compose({ kind, topic, topicTitle }: { kind: 'topic' | 'reply'; 
             </p>
           ) : (
             <p>
-              Your {kind} is in the archive. The site rebuilds now; in about two minutes it is live at{' '}
+              Your {kind} is in the archive under the name <b>{done.author ?? me.name}</b>. The site rebuilds now; in about two minutes it is live at{' '}
               <a href={`/articles/${done.slug ?? done.topic}`}>qubic.church/articles/{done.slug ?? done.topic}</a>.
             </p>
           )}

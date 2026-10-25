@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getSession } from '@/lib/forum/auth'
 import { readJson, writeFile, writeJson } from '@/lib/forum/github'
-import { PROFILES_PATH, memberHandleOf, type Profile } from '@/lib/forum/publish'
+import { PROFILES_PATH, memberOfLogin, type Profile } from '@/lib/forum/publish'
 
 export const dynamic = 'force-dynamic'
 
@@ -12,9 +12,9 @@ export async function GET() {
   const user = await getSession()
   if (!user) return NextResponse.json({ error: 'Login first.' }, { status: 401 })
   try {
-    const handle = await memberHandleOf(user)
+    const { handle, name, exists } = await memberOfLogin(user)
     const { data } = await readJson<Record<string, Profile>>(PROFILES_PATH)
-    return NextResponse.json({ handle, profile: data[handle.toLowerCase()] ?? {} })
+    return NextResponse.json({ handle, name, exists, profile: data[handle.toLowerCase()] ?? {} })
   } catch (e) {
     return NextResponse.json({ error: `Could not load the profile: ${(e as Error).message.slice(0, 120)}` }, { status: 500 })
   }
@@ -38,7 +38,10 @@ export async function POST(req: Request) {
     if (jpeg[0] !== 0xff || jpeg[1] !== 0xd8) return NextResponse.json({ error: 'The avatar must be a JPEG.' }, { status: 400 })
   }
   try {
-    const handle = (await memberHandleOf(user)).toLowerCase()
+    const me = await memberOfLogin(user)
+    const handle = me.handle.toLowerCase()
+    const owner = me.known.find(k => k.handle.toLowerCase() === x.toLowerCase())
+    if (x && owner && owner.handle.toLowerCase() !== handle) return NextResponse.json({ error: `@${owner.handle} is the X account of member ${owner.author}. If that is you, ask a moderator to link your login to them.` }, { status: 409 })
     const { data, sha } = await readJson<Record<string, Profile>>(PROFILES_PATH)
     const cur = data[handle] ?? {}
     const next: Profile = { ...cur }
