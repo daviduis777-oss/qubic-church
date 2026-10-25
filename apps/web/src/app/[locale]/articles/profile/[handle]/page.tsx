@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import { setRequestLocale } from 'next-intl/server'
 import { locales } from '@/config/i18n'
 import { SITE_URL } from '@/lib/books'
+import { jsonLd } from '@/lib/json-ld'
 import { BOARDS, MEMBERS, bioOf, homeOf, memberByHandle, postsOf, profileHref } from '@/lib/forum'
 import { ForumShell, Stars } from '@/components/church/forum/ForumUI'
 import { Avatar } from '@/components/church/forum/Avatar'
@@ -65,8 +66,25 @@ export default async function ProfilePage(props: { params: Promise<{ locale: str
       </a>,
     ])
 
+  const sameAs = [m.x ? `https://x.com/${m.x}` : null, m.auth === 'qubic' ? homeOf(m).href : null].filter(Boolean) as string[]
+  const ld = {
+    '@context': 'https://schema.org',
+    '@type': 'ProfilePage',
+    url: `${SITE_URL}${profileHref(m.handle)}`,
+    name: `${m.name} on The Crypt, the forum of Qubic Church`,
+    mainEntity: {
+      '@type': 'Person',
+      name: m.name,
+      ...(bioOf(m) ? { description: bioOf(m) } : {}),
+      ...(sameAs.length ? { sameAs } : {}),
+      ...(m.role ? { jobTitle: m.role } : {}),
+      interactionStatistic: { '@type': 'InteractionCounter', interactionType: 'https://schema.org/WriteAction', userInteractionCount: m.activity },
+    },
+    hasPart: posts.slice(0, 20).map(t => ({ '@type': 'Article', headline: t.title, url: `${SITE_URL}${t.href}`, datePublished: t.date })),
+  }
   return (
     <ForumShell crumbs={[{ label: 'The Crypt', href: '/articles' }, { label: `View the profile of ${m.name}` }]}>
+      <script dangerouslySetInnerHTML={{ __html: jsonLd(ld) }} type="application/ld+json" />
       <div className="qcf-box">
         <div className="qcf-cat">View the profile of {m.name}</div>
         <table>
