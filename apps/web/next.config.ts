@@ -14,7 +14,7 @@ const nextConfig: NextConfig = {
       'contentlayer/generated': './.contentlayer/generated',
     },
   },
-  serverExternalPackages: ['pino', 'pino-pretty'],
+  serverExternalPackages: ['pino', 'pino-pretty', '@qubic-lib/qubic-ts-library'],
   async headers() {
     return [
       {

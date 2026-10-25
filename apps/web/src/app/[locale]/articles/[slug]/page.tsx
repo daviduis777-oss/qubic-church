@@ -7,7 +7,9 @@ import { setRequestLocale } from 'next-intl/server'
 import { locales } from '@/config/i18n'
 import { SITE_URL } from '@/lib/books'
 import { ARTICLES, articleKeywords, articleMinutes, articleUrl, articleWeight, authorUrl, formatDate, getArticle, issueNumber } from '@/lib/articles'
-import { memberOf } from '@/lib/forum'
+import { memberOf, repliesTo } from '@/lib/forum'
+import { Compose } from '@/components/church/forum/Compose'
+import { blocksFromText } from '@/lib/forum/text'
 import { ForumShell, Postbit, Quote } from '@/components/church/forum/ForumUI'
 
 export function generateStaticParams() {
@@ -60,6 +62,7 @@ export default async function ArticlePage(props: { params: Promise<{ locale: str
   }
 
   const m = memberOf(a.author)
+  const replies = repliesTo(a.slug)
   const boardName = a.guest ? 'Open Board' : 'Aigarth Chronicle'
   const boardId = a.guest ? 'open' : 'chronicle'
 
@@ -123,6 +126,50 @@ export default async function ArticlePage(props: { params: Promise<{ locale: str
             </tr>
           </tbody>
         </table>
+      </div>
+
+      {replies.map((r, k) => {
+        const rm = memberOf(r.author)
+        return (
+          <div className="qcf-box" key={r.id} style={{ marginTop: 8 }}>
+            <table>
+              <tbody>
+                <tr className={`${k % 2 ? 'qcf-win' : 'qcf-win2'} qcf-stack`}>
+                  <td className="qcf-postbit">{rm && <Postbit m={rm} />}</td>
+                  <td>
+                    <div className="qcf-small qcf-muted" style={{ borderBottom: '1px solid var(--qcf-line)', paddingBottom: 6, marginBottom: 10 }}>
+                      <b style={{ color: 'var(--qcf-text)' }}>Re: {a.title}</b>
+                      <br />« Reply #{k + 1} on: {formatDate(r.date)} »
+                      {r.xUrl && (
+                        <>
+                          {' · '}
+                          <a href={r.xUrl} rel="noopener noreferrer">
+                            on X
+                          </a>
+                        </>
+                      )}
+                    </div>
+                    <div className="qcf-post">
+                      {blocksFromText(r.text).map((b, i) =>
+                        b.t === 'quote' ? (
+                          <Quote from={b.cite} key={i}>
+                            {b.text}
+                          </Quote>
+                        ) : (
+                          <p key={i}>{b.text}</p>
+                        ),
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        )
+      })}
+
+      <div style={{ marginTop: 14 }}>
+        <Compose kind="reply" topic={a.slug} topicTitle={a.title} />
       </div>
 
       <div className="qcf-box">
