@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import type { ReactNode } from 'react'
 import { homeOf, profileHref, type Member } from '@/lib/forum'
-import { AUTHORS } from '@/lib/ranks'
 import { Avatar } from './Avatar'
 import { LoginStatus } from './LoginStatus'
 
@@ -65,7 +64,7 @@ export function Postbit({ m }: { m: Member }) {
         {m.name}
       </Link>
       <div style={{ margin: '6px 0' }}>
-        <Avatar pic={AUTHORS[m.name]?.avatar} seed={m.identity ?? m.handle} />
+        <Avatar pic={m.avatar} seed={m.identity ?? m.handle} />
       </div>
       {m.role && (
         <div className="qcf-strong" style={{ color: staff }}>
@@ -83,11 +82,19 @@ export function Postbit({ m }: { m: Member }) {
       </div>
       <div style={{ marginTop: 6 }}>
         <Link href={profileHref(m.handle)}>View profile</Link>
-        {homeOf(m).href && (
+        {m.auth === 'qubic' && homeOf(m).href && (
           <>
             {' · '}
             <a href={homeOf(m).href} rel="noopener noreferrer">
-              {m.auth === 'qubic' ? 'Qubic ID' : 'X'}
+              Qubic ID
+            </a>
+          </>
+        )}
+        {m.x && (
+          <>
+            {' · '}
+            <a href={`https://x.com/${m.x}`} rel="noopener noreferrer">
+              X
             </a>
           </>
         )}

@@ -83,3 +83,19 @@ export async function writeJson(path: string, data: unknown, sha: string, messag
   const content = Buffer.from(JSON.stringify(data, null, 1) + '\n', 'utf8').toString('base64')
   await gh(`/contents/${path}`, { method: 'PUT', body: JSON.stringify({ message, content, ...(sha ? { sha } : {}), committer: { name: 'Qubic Church Forum', email: 'forum@qubic.church' } }) })
 }
+
+/** The blob sha of a file on the default branch, or null when it does not exist. */
+export async function fileSha(path: string): Promise<string | null> {
+  try {
+    const f = await gh<{ sha: string }>(`/contents/${path}`)
+    return f.sha
+  } catch {
+    return null
+  }
+}
+
+/** Commit a binary file (already base64) to the default branch. */
+export async function writeFile(path: string, base64: string, message: string) {
+  const sha = await fileSha(path)
+  await gh(`/contents/${path}`, { method: 'PUT', body: JSON.stringify({ message, content: base64, ...(sha ? { sha } : {}), committer: { name: 'Qubic Church Forum', email: 'forum@qubic.church' } }) })
+}

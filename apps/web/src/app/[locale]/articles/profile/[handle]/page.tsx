@@ -4,10 +4,9 @@ import { notFound } from 'next/navigation'
 import { setRequestLocale } from 'next-intl/server'
 import { locales } from '@/config/i18n'
 import { SITE_URL } from '@/lib/books'
-import { BIO, BOARDS, MEMBERS, homeOf, memberByHandle, postsOf, profileHref } from '@/lib/forum'
+import { BOARDS, MEMBERS, bioOf, homeOf, memberByHandle, postsOf, profileHref } from '@/lib/forum'
 import { ForumShell, Stars } from '@/components/church/forum/ForumUI'
 import { Avatar } from '@/components/church/forum/Avatar'
-import { AUTHORS } from '@/lib/ranks'
 
 export function generateStaticParams() {
   return locales.flatMap(locale => MEMBERS.map(m => ({ locale, handle: m.handle.toLowerCase() })))
@@ -19,7 +18,7 @@ export async function generateMetadata(props: { params: Promise<{ handle: string
   if (!m) return {}
   return {
     title: { absolute: `View the profile of ${m.name} · Qubic Church Forum` },
-    description: `${m.name} (@${m.handle}) on Qubic Church Forum: ${m.role ? `${m.role}, ` : ''}${m.rank.name}, rank ${m.rank.level}. ${BIO[m.name] ?? ''}`.slice(0, 160),
+    description: `${m.name} (@${m.handle}) on Qubic Church Forum: ${m.role ? `${m.role}, ` : ''}${m.rank.name}, rank ${m.rank.level}. ${bioOf(m) ?? ''}`.slice(0, 160),
     alternates: { canonical: `${SITE_URL}${profileHref(m.handle)}` },
   }
 }
@@ -58,6 +57,13 @@ export default async function ProfilePage(props: { params: Promise<{ locale: str
       ),
     ],
   ]
+  if (m.auth !== 'x' && m.x)
+    rows.push([
+      'X',
+      <a href={`https://x.com/${m.x}`} key="x" rel="noopener noreferrer">
+        @{m.x}
+      </a>,
+    ])
 
   return (
     <ForumShell crumbs={[{ label: 'Qubic Church Forum', href: '/articles' }, { label: `View the profile of ${m.name}` }]}>
@@ -68,7 +74,7 @@ export default async function ProfilePage(props: { params: Promise<{ locale: str
             <tr className="qcf-win qcf-stack">
               <td style={{ width: 200, textAlign: 'center' }}>
                 <div style={{ width: 96, margin: '4px auto 8px' }}>
-                  <Avatar pic={AUTHORS[m.name]?.avatar} seed={m.identity ?? m.handle} size={96} />
+                  <Avatar pic={m.avatar} seed={m.identity ?? m.handle} size={96} />
                 </div>
                 <h1 className="qcf-name">{m.name}</h1>
                 {m.role && (
@@ -91,7 +97,7 @@ export default async function ProfilePage(props: { params: Promise<{ locale: str
                     ))}
                   </tbody>
                 </table>
-                {BIO[m.name] && <p style={{ margin: '10px 8px 0' }}>{BIO[m.name]}</p>}
+                {bioOf(m) && <p style={{ margin: '10px 8px 0', whiteSpace: 'pre-line' }}>{bioOf(m)}</p>}
                 {m.signature && <div className="qcf-sig" style={{ margin: '12px 8px 0' }}>{m.signature}</div>}
               </td>
             </tr>
