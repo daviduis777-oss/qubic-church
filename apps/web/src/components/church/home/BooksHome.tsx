@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { BOOKS, bookWords, readingMinutes } from '@/lib/books'
-import { ARTICLES, articleMinutes, formatDate, isNew, issueNumber } from '@/lib/articles'
+import { ARTICLES, articleMinutes, formatDate, isNew } from '@/lib/articles'
 import { IssueCarousel } from './IssueCarousel'
 import { AnnaCycler } from './AnnaCycler'
 import { Countdown } from './Countdown'
@@ -110,8 +110,8 @@ export function BooksHome({ locale = 'en' }: { locale?: Locale }) {
             </div>
             {lead && (
               <Link className="group mt-5 inline-flex max-w-xl items-baseline gap-3 text-sm text-fg-2 hover:text-foreground" href={`/articles/${lead.slug}`}>
-                <span className="shrink-0 border border-gold/50 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.25em] text-gold">
-                  {isNew(lead) ? 'New issue' : `No. ${issueNumber(lead)}`}
+                <span className="shrink-0 border border-white/40 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.25em] text-white/90">
+                  {isNew(lead) ? 'New in the Crypt' : 'Latest in the Crypt'}
                 </span>
                 <span className="line-clamp-1 group-hover:text-gold">{lead.title} →</span>
               </Link>
@@ -132,12 +132,12 @@ export function BooksHome({ locale = 'en' }: { locale?: Locale }) {
         <div className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 md:py-20">
           <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
             <div>
-              <p className="eyebrow text-gold">Articles · the running story of Aigarth · by TesserAI</p>
+              <p className="eyebrow text-foreground/70">The Crypt · newest first · written by the community</p>
               <h2 className="mt-2 font-display text-5xl leading-[0.9] md:text-6xl">As it happens</h2>
             </div>
             <div className="flex flex-wrap gap-2">
               <Link className="inline-flex h-10 items-center border border-gold bg-gold/10 px-4 text-sm font-medium text-gold hover:bg-gold/20" href="/articles">
-                All {ARTICLES.length} issues
+                All {ARTICLES.length} topics
               </Link>
               <a className="inline-flex h-10 items-center border border-border px-4 text-sm font-medium text-fg-2 hover:text-foreground" href="/articles/feed.xml">
                 RSS
@@ -150,9 +150,8 @@ export function BooksHome({ locale = 'en' }: { locale?: Locale }) {
               href={`/articles/${lead.slug}`}
             >
               <div className="md:w-40">
-                <p className="font-mono text-xs uppercase tracking-[0.3em] text-gold">
-                  {isNew(lead) ? 'New · ' : 'Latest · '}No. {issueNumber(lead)}
-                </p>
+                <p className="font-mono text-xs uppercase tracking-[0.3em] text-gold">{isNew(lead) ? 'New' : 'Latest'}</p>
+                <p className="mt-2 text-sm font-medium text-foreground">by {lead.author}</p>
                 <time className="mt-2 block text-sm text-fg-2" dateTime={lead.date}>
                   {formatDate(lead.date)}
                 </time>
@@ -162,7 +161,7 @@ export function BooksHome({ locale = 'en' }: { locale?: Locale }) {
                 {lead.kicker && <p className="font-mono text-xs uppercase tracking-[0.3em] text-fg-2">{lead.kicker}</p>}
                 <h3 className="mt-2 font-display text-4xl leading-[0.95] group-hover:text-gold md:text-6xl">{lead.title}</h3>
                 <p className="mt-4 max-w-3xl font-serif text-lg leading-relaxed text-foreground/85">{lead.summary}</p>
-                <p className="mt-4 text-sm font-medium text-gold">Read the issue →</p>
+                <p className="mt-4 text-sm font-medium text-gold">Read the topic →</p>
               </div>
             </Link>
           )}
@@ -172,7 +171,10 @@ export function BooksHome({ locale = 'en' }: { locale?: Locale }) {
                 <li className="w-[85%] shrink-0 snap-start sm:w-[48%] lg:w-[32%]" key={a.slug}>
                   <Link className="group flex h-full flex-col bg-background/80 p-6 backdrop-blur-sm hover:bg-card" href={`/articles/${a.slug}`}>
                     <p className="flex items-center justify-between font-mono text-xs uppercase tracking-[0.25em] text-fg-2">
-                      <span>No. {issueNumber(a)}</span>
+                      <span className="normal-case tracking-normal">
+                        {a.author}
+                        {isNew(a) && <span className="ml-2 text-gold">new</span>}
+                      </span>
                       <time dateTime={a.date}>{formatDate(a.date)}</time>
                     </p>
                     <h3 className="mt-3 text-xl font-semibold leading-snug group-hover:text-gold">{a.title}</h3>
@@ -184,7 +186,7 @@ export function BooksHome({ locale = 'en' }: { locale?: Locale }) {
             </IssueCarousel>
           </div>
           <p className="mt-4 text-sm text-fg-2">
-            A new issue lands whenever Aigarth moves. Follow{' '}
+            New topics appear here on their own, the moment someone posts. Follow{' '}
             <a className="text-gold hover:underline" href="https://x.com/usetesserai" rel="noopener noreferrer" target="_blank">
               @usetesserai
             </a>{' '}
@@ -192,7 +194,7 @@ export function BooksHome({ locale = 'en' }: { locale?: Locale }) {
             <Link className="text-gold hover:underline" href="/articles#write">
               write us an article
             </Link>
-            : no topic, no censorship, it stays in the archive.
+            : log in with a Qubic wallet, no topic, no censorship, it stays in the archive.
           </p>
         </div>
       </section>

@@ -32,6 +32,8 @@ export function GlobalNavTrigger() {
   useEffect(() => setOpen(false), [pathname])
 
   const active = (href: string) => pathname === href || pathname.startsWith(`${href}/`)
+  // On the forum's blue bar the gold reads too loud: the wordmark and Donate turn white there.
+  const crypt = pathname === '/articles' || pathname.startsWith('/articles/')
 
   return (
     <>
@@ -46,7 +48,7 @@ export function GlobalNavTrigger() {
       >
         <div className="mx-auto flex h-14 max-w-screen-2xl items-center justify-between px-4 md:px-8">
           <Link
-            className="text-sm font-semibold uppercase tracking-wordmark text-gold transition-colors hover:text-gold-strong md:text-base"
+            className={`text-sm font-semibold uppercase tracking-wordmark transition-colors md:text-base ${crypt ? 'text-white hover:text-white/80' : 'text-gold hover:text-gold-strong'}`}
             href="/"
           >
             Qubic Church
@@ -66,7 +68,7 @@ export function GlobalNavTrigger() {
               </Link>
             ))}
             <Link
-              className="ml-2 inline-flex h-9 items-center border border-gold/50 px-3 text-sm font-medium text-gold transition-colors hover:border-gold hover:bg-gold/10"
+              className={`ml-2 inline-flex h-9 items-center border px-3 text-sm font-medium transition-colors ${crypt ? 'border-white/50 text-white hover:border-white hover:bg-white/10' : 'border-gold/50 text-gold hover:border-gold hover:bg-gold/10'}`}
               href="/donate"
             >
               Donate
