@@ -3,7 +3,7 @@ import { setRequestLocale } from 'next-intl/server'
 import { ModQueue } from '@/components/church/forum/ModQueue'
 import { ForumShell } from '@/components/church/forum/ForumUI'
 
-export const metadata: Metadata = { title: { absolute: 'Moderation · Qubic Church Forum' }, robots: { index: false, follow: false } }
+export const metadata: Metadata = { title: { absolute: 'Moderation · The Crypt' }, robots: { index: false, follow: false } }
 export const dynamic = 'force-dynamic'
 
 export default async function ModPage(props: { params: Promise<{ locale: string }>; searchParams: Promise<{ key?: string }> }) {
@@ -11,7 +11,7 @@ export default async function ModPage(props: { params: Promise<{ locale: string 
   setRequestLocale(locale)
   const { key } = await props.searchParams
   return (
-    <ForumShell crumbs={[{ label: 'Qubic Church Forum', href: '/articles' }, { label: 'Moderation queue' }]}>
+    <ForumShell crumbs={[{ label: 'The Crypt', href: '/articles' }, { label: 'Moderation queue' }]}>
       <h1 className="sr-only">Moderation queue</h1>
       {key ? (
         <ModQueue modKey={key} />

@@ -61,7 +61,7 @@ export function LoginBox({ onLogin }: { onLogin: (me: Me) => void }) {
         const { SignClient } = await import('@walletconnect/sign-client')
         client.current = (await SignClient.init({
           projectId,
-          metadata: { name: 'Qubic Church Forum', description: 'Login by signature. Nothing moves.', url: 'https://qubic.church', icons: ['https://qubic.church/favicon.ico'] },
+          metadata: { name: 'The Crypt · Qubic Church', description: 'Login by signature. Nothing moves.', url: 'https://qubic.church', icons: ['https://qubic.church/favicon.ico'] },
         })) as unknown as SignClientT
       }
       const { uri: u, approval } = await client.current.connect({ requiredNamespaces: { qubic: { chains: [CHAIN], methods: METHODS, events: ['accountsChanged'] } } })

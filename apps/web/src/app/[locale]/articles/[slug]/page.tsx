@@ -69,7 +69,7 @@ export default async function ArticlePage(props: { params: Promise<{ locale: str
   return (
     <ForumShell
       crumbs={[
-        { label: 'Qubic Church Forum', href: '/articles' },
+        { label: 'The Crypt', href: '/articles' },
         { label: boardName, href: `/articles/board/${boardId}` },
         { label: a.title },
       ]}

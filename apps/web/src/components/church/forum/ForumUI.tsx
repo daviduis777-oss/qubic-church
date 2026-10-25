@@ -13,9 +13,9 @@ export function ForumShell({ crumbs, children }: { crumbs: Crumb[]; children: Re
       <div className="qcf-wrap">
         <div className="qcf-head">
           <Link className="qcf-logo" href="/articles">
-            Qubic Church Forum
+            The Crypt
           </Link>
-          <span className="qcf-tag">The archive of Aigarth, est. 2026 · founded on the words of Come-from-Beyond</span>
+          <span className="qcf-tag">The forum of Qubic Church · the archive of Aigarth, est. 2026 · founded on the words of Come-from-Beyond</span>
         </div>
         <div className="qcf-menu">
           <Link href="/articles">Home</Link>
@@ -39,7 +39,7 @@ export function ForumShell({ crumbs, children }: { crumbs: Crumb[]; children: Re
         </nav>
         {children}
         <p className="qcf-small qcf-muted" style={{ textAlign: 'center', marginTop: 24 }}>
-          Qubic Church Forum · powered by Qubic Church · <Link href="/">qubic.church</Link> · Not financial advice.
+          The Crypt · the forum of Qubic Church · <Link href="/">qubic.church</Link> · Not financial advice.
         </p>
       </div>
     </div>

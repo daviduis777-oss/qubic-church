@@ -9,7 +9,7 @@ import { RANKS, WEIGHT } from '@/lib/ranks'
 import { BOARDS, MEMBERS, TOPICS, homeOf, profileHref, topicsIn } from '@/lib/forum'
 import { ForumShell, Quote, Stars } from '@/components/church/forum/ForumUI'
 
-const TITLE = 'Qubic Church Forum: articles on Qubic, Aigarth and Come-from-Beyond'
+const TITLE = 'The Crypt: the forum of Qubic Church. Articles on Qubic, Aigarth and Come-from-Beyond'
 const DESC =
   'Old-style forum archive: the running story of Aigarth, guest articles on any topic, and every long-form article by Come-from-Beyond with dates.'
 
@@ -45,9 +45,9 @@ export default async function ArticlesPage(props: { params: Promise<{ locale: st
   }
 
   return (
-    <ForumShell crumbs={[{ label: 'Qubic Church Forum' }]}>
+    <ForumShell crumbs={[{ label: 'The Crypt' }]}>
       <script dangerouslySetInnerHTML={{ __html: jsonLd(ld) }} type="application/ld+json" />
-      <h1 className="sr-only">Qubic Church Forum: Articles</h1>
+      <h1 className="sr-only">The Crypt: the forum of Qubic Church</h1>
 
       {/* boards */}
       <div className="qcf-box">
@@ -257,7 +257,7 @@ export default async function ArticlesPage(props: { params: Promise<{ locale: st
 
       {/* info center */}
       <div className="qcf-box">
-        <div className="qcf-cat">Qubic Church Forum · Info Center</div>
+        <div className="qcf-cat">The Crypt · Info Center</div>
         <div className="qcf-win" style={{ padding: '8px 10px', fontSize: 12 }}>
           <b>Forum stats:</b> {TOPICS.length} posts in {BOARDS.length} boards by {MEMBERS.length} members. Latest member:{' '}
           <Link className="qcf-strong" href={profileHref(newestMember.handle)}>

@@ -5,7 +5,6 @@ import { ARTICLES, articleMinutes, formatDate, isNew, issueNumber } from '@/lib/
 import { IssueCarousel } from './IssueCarousel'
 import { AnnaCycler } from './AnnaCycler'
 import { Countdown } from './Countdown'
-import { ForumTeaser } from './ForumTeaser'
 
 type Locale = 'en' | 'pt'
 
@@ -77,10 +76,7 @@ export function BooksHome({ locale = 'en' }: { locale?: Locale }) {
             style={{ background: 'radial-gradient(closest-side, rgba(255,210,74,0.16), transparent 70%)' }}
           />
         </div>
-        <div className="relative mx-auto w-full max-w-7xl px-4 pt-6 sm:px-6 md:pt-8">
-          <ForumTeaser />
-        </div>
-        <div className="relative mx-auto grid w-full max-w-7xl gap-8 px-4 pb-14 pt-8 sm:px-6 md:pb-20 md:pt-12 lg:grid-cols-[1.25fr_1fr] lg:gap-4">
+        <div className="relative mx-auto grid w-full max-w-7xl gap-8 px-4 pb-14 pt-8 sm:px-6 md:pb-20 md:pt-14 lg:grid-cols-[1.25fr_1fr] lg:gap-4">
           <div className="flex flex-col">
             <p className="eyebrow text-gold">Qubic Church · books and open research by QC</p>
             <h1 className="-ml-[0.065em] mt-4 font-display text-[27vw] leading-[0.8] tracking-tight sm:text-[20vw] md:text-[13rem] lg:text-[13rem] xl:text-[15rem]">
@@ -102,6 +98,14 @@ export function BooksHome({ locale = 'en' }: { locale?: Locale }) {
                 href="/about"
               >
                 What we build
+              </Link>
+              <Link
+                className="group inline-flex h-12 items-center gap-3 border border-[#7f9cba] bg-[linear-gradient(#6f92b3,#476c8e)] px-6 text-sm font-semibold uppercase tracking-widest text-white shadow-[0_0_30px_-6px_rgba(111,146,179,0.9)] hover:shadow-[0_0_40px_-4px_rgba(160,190,220,1)]"
+                href="/articles"
+                title="The Crypt: the forum of Qubic Church, in the style of 2009"
+              >
+                Enter the Crypt
+                <span aria-hidden className="transition-transform group-hover:translate-y-0.5">↓</span>
               </Link>
             </div>
             {lead && (

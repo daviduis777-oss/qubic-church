@@ -34,7 +34,7 @@ export function GET() {
   }
   out.push(
     '',
-    '## Qubic Church Forum (articles)',
+    '## The Crypt: the forum of Qubic Church (/articles)',
     '',
     `The articles section is kept as an old-style forum at ${SITE_URL}/articles: three boards, member profiles with forum ranks, and one topic per article. Anyone can write: post on X starting with "hey @maria_aigarth" with #Qubic #Aigarth, any topic, no censorship; Maria (the forum's Global Moderator) reposts it and it becomes a topic in the Open Board under the author's name.`,
     `Ranks: every article has a weight (an issue = ${WEIGHT.issue}, a primary source by Come-from-Beyond = ${WEIGHT.primary}, a repost by Maria = +${WEIGHT.maria} merit); activity = articles written, merit = given by others, weight = the sum and sets the rank, always written with its number (${RANKS.filter(r => Number.isFinite(r.min)).map(r => `${r.level} ${r.name} from ${r.min}`).join(', ')}); rank 10, Founder, is reserved for Come-from-Beyond, as Satoshi is Founder on BitcoinTalk. ${SITE_URL}/articles#ranks`,

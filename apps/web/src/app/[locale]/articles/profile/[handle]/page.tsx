@@ -17,8 +17,8 @@ export async function generateMetadata(props: { params: Promise<{ handle: string
   const m = memberByHandle(handle)
   if (!m) return {}
   return {
-    title: { absolute: `View the profile of ${m.name} · Qubic Church Forum` },
-    description: `${m.name} (@${m.handle}) on Qubic Church Forum: ${m.role ? `${m.role}, ` : ''}${m.rank.name}, rank ${m.rank.level}. ${bioOf(m) ?? ''}`.slice(0, 160),
+    title: { absolute: `View the profile of ${m.name} · The Crypt` },
+    description: `${m.name} (@${m.handle}) in The Crypt, the forum of Qubic Church: ${m.role ? `${m.role}, ` : ''}${m.rank.name}, rank ${m.rank.level}. ${bioOf(m) ?? ''}`.slice(0, 160),
     alternates: { canonical: `${SITE_URL}${profileHref(m.handle)}` },
   }
 }
@@ -66,7 +66,7 @@ export default async function ProfilePage(props: { params: Promise<{ locale: str
     ])
 
   return (
-    <ForumShell crumbs={[{ label: 'Qubic Church Forum', href: '/articles' }, { label: `View the profile of ${m.name}` }]}>
+    <ForumShell crumbs={[{ label: 'The Crypt', href: '/articles' }, { label: `View the profile of ${m.name}` }]}>
       <div className="qcf-box">
         <div className="qcf-cat">View the profile of {m.name}</div>
         <table>

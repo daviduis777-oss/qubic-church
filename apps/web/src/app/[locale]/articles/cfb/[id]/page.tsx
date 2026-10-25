@@ -51,7 +51,7 @@ export default async function CfbArchivePage(props: { params: Promise<{ locale: 
   return (
     <ForumShell
       crumbs={[
-        { label: 'Qubic Church Forum', href: '/articles' },
+        { label: 'The Crypt', href: '/articles' },
         { label: "Founder's Archive", href: '/articles/board/founder' },
         { label: a.title },
       ]}

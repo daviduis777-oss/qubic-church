@@ -3,13 +3,13 @@ import { setRequestLocale } from 'next-intl/server'
 import { Compose } from '@/components/church/forum/Compose'
 import { ForumShell } from '@/components/church/forum/ForumUI'
 
-export const metadata: Metadata = { title: { absolute: 'New topic · Qubic Church Forum' }, robots: { index: false } }
+export const metadata: Metadata = { title: { absolute: 'New topic · The Crypt' }, robots: { index: false } }
 
 export default async function NewTopicPage(props: { params: Promise<{ locale: string }> }) {
   const { locale } = await props.params
   setRequestLocale(locale)
   return (
-    <ForumShell crumbs={[{ label: 'Qubic Church Forum', href: '/articles' }, { label: 'Open Board', href: '/articles/board/open' }, { label: 'Start new topic' }]}>
+    <ForumShell crumbs={[{ label: 'The Crypt', href: '/articles' }, { label: 'Open Board', href: '/articles/board/open' }, { label: 'Start new topic' }]}>
       <h1 className="sr-only">Start new topic</h1>
       <Compose kind="topic" />
       <div className="qcf-box">
