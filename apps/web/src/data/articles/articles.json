@@ -1,5 +1,236 @@
 [
  {
+  "slug": "aigarths-third-task-simulating-proteins",
+  "title": "Aigarth's third task: simulating proteins",
+  "kicker": null,
+  "date": "2026-10-25",
+  "url": "https://x.com/usetesserai/status/2114275081501176275",
+  "author": "TesserAI",
+  "handle": "usetesserai",
+  "guest": false,
+  "summary": "In October 2021, half a year before Qubic launched, CfB wrote: \"solving protein folding problem to cure cancer\". In September 2026 it came back, two words at a time. In October it got a place in the roadmap: 1. first A+B, 2. then price…",
+  "words": 1501,
+  "blocks": [
+   {
+    "t": "p",
+    "text": "Hey @Maria_Aigarth"
+   },
+   {
+    "t": "h",
+    "text": "The one-paragraph version"
+   },
+   {
+    "t": "p",
+    "text": "In October 2021, half a year before Qubic launched, CfB wrote: \"solving protein folding problem to cure cancer\". In September 2026 it came back, two words at a time. In October it got a place in the roadmap: 1. first A+B, 2. then price prediction, 3. then protein simulation."
+   },
+   {
+    "t": "p",
+    "text": "Third task, second product. The first one is BPP-9000 (Bitcoin Price Predictor)."
+   },
+   {
+    "t": "p",
+    "text": "Below is my attempt to understand what this actually means."
+   },
+   {
+    "t": "h",
+    "text": "Part 1. Five years of waiting"
+   },
+   {
+    "t": "p",
+    "text": "16 October 2021. Discord, computor-operator. Qubic doesn't exist yet as a network. CfB, talking about what all this computing is ultimately for:"
+   },
+   {
+    "t": "quote",
+    "text": "solving protein folding problem to cure cancer",
+    "cite": "Come-from-Beyond, Discord, 16.10.2021"
+   },
+   {
+    "t": "p",
+    "text": "Qubic launched on 13 April 2022. Then came smart contracts, Anna learning to add, the Monero months, the ant colony, BPP-9000 predicting the next hour of Bitcoin."
+   },
+   {
+    "t": "p",
+    "text": "11 September 2026:"
+   },
+   {
+    "t": "quote",
+    "text": "cancer cure",
+    "cite": "Come-from-Beyond, Discord, 11.09.2026, 23:53"
+   },
+   {
+    "t": "quote",
+    "text": "need good protein folding simulator tho",
+    "cite": "Come-from-Beyond, Discord, 11.09.2026, 23:54"
+   },
+   {
+    "t": "p",
+    "text": "15 October:"
+   },
+   {
+    "t": "quote",
+    "text": "several months to write own simulator",
+    "cite": "Come-from-Beyond, Discord, 15.10.2026"
+   },
+   {
+    "t": "p",
+    "text": "22 October. The roadmap, in three lines: A+B. Price prediction. Protein simulation."
+   },
+   {
+    "t": "p",
+    "text": "24 October. The detail that tells you this is an engineering plan and not a dream: the check has to fit into about a second, while a simulation today takes hours on a single machine. And about how to close that gap:"
+   },
+   {
+    "t": "quote",
+    "text": "maybe possible with AI",
+    "cite": "Come-from-Beyond, Discord, 24.10.2026"
+   },
+   {
+    "t": "p",
+    "text": "That's the whole timeline. Five years from one sentence to a line in the roadmap. If you've followed CfB for a while, you know the pattern. Oracle machines and outsourced computations were named in 2021 and went live in 2026. Anna was announced in 2024 and now runs on real Bitcoin data. He names a thing early, goes quiet, and comes back with it in the network."
+   },
+   {
+    "t": "h",
+    "text": "Part 2. Ok so what is protein folding, actually"
+   },
+   {
+    "t": "p",
+    "text": "A protein is a chain. A long string of beads, a few hundred of them, made from twenty kinds of bead. The cell builds the string in a straight line. Then, in a fraction of a second, the string folds itself into one precise 3D shape. And the shape is everything."
+   },
+   {
+    "t": "p",
+    "text": "Most diseases are, in some way, a story about shapes. A protein with the wrong bead in the wrong place folds into a slightly wrong shape and starts doing the wrong job. A lot of cancer is exactly that: a switch in the cell that is stuck in \"on\"."
+   },
+   {
+    "t": "p",
+    "text": "So why not just look at the shape? Because the string can bend in more ways than there are atoms in the universe, and nature finds the right fold without trying them all. We don't know its shortcut. We search."
+   },
+   {
+    "t": "p",
+    "text": "There are two very different ways to \"know\" a protein today."
+   },
+   {
+    "t": "p",
+    "text": "The first is prediction. AlphaFold and its cousins look at the string and say \"it will probably look like this\". They're brilliant, they won a Nobel prize, and they take about a minute per protein on a good GPU. But they give you one frozen photo. They don't show you how the protein moves, breathes, opens, closes. And a drug cares about the movie, not the photo."
+   },
+   {
+    "t": "p",
+    "text": "The second is simulation. You actually put every atom in a box and let physics run, step by tiny step, a few millionths of a billionth of a second at a time. This is the movie. It's also brutally expensive. On a top gaming GPU, a small protein of around 23,000 atoms gets you roughly 1.8 microseconds of motion per day of computing. A real fold takes microseconds to milliseconds. So: days to years, for one protein, on one machine."
+   },
+   {
+    "t": "p",
+    "text": "There's a famous supercomputer built only for this, Anton 3. It does about a hundred microseconds a day for a million atoms and is more than a hundred times faster than any general supercomputer at the job. One lab owns it."
+   },
+   {
+    "t": "p",
+    "text": "That's the \"hours on a single machine\" CfB is talking about. It's the real wall the whole field leans on."
+   },
+   {
+    "t": "h",
+    "text": "Part 3. The one-second problem"
+   },
+   {
+    "t": "p",
+    "text": "What makes Qubic different from everyone who tried this before?"
+   },
+   {
+    "t": "p",
+    "text": "Proof of work only works if finding is hard and checking is easy. Bitcoin miners burn the planet's electricity to find a number, and anyone can check it in a millisecond. BPP-9000 works the same way: miners search for a network that makes the fewest mistakes on a year of hourly candles, and any computor can re-run the network and count the mistakes. Hard to find, quick to check. That's why 676 strangers can agree on who did the work without trusting each other."
+   },
+   {
+    "t": "p",
+    "text": "So the question for proteins isn't \"can Qubic fold a protein\". It's \"can 676 machines check, in about a second, that a miner actually did?\""
+   },
+   {
+    "t": "p",
+    "text": "For a shape, the answer is mostly yes. Scoring how good a fold is (how comfortable the atoms are, are any of them crushed into each other) takes milliseconds. The search is what takes forever: the classic method generates ten or twenty thousand candidate folds per protein just to find a good one. Hard to find, quick to check. The asymmetry exists. It's documented. It's exactly the shape of a mining task."
+   },
+   {
+    "t": "p",
+    "text": "There are two catches."
+   },
+   {
+    "t": "p",
+    "text": "Catch one: the scoring function lies sometimes. In 2011 Rhiju Das of Stanford published \"Four small puzzles that Rosetta doesn't solve\". He took four small molecules, including the tiny Trp-cage protein, and found that Rosetta, the standard tool for protein design, gave some of its own wrong folds a better energy score than the real, natural shape. If you pay miners for the \"lowest energy\", they'll find every flaw in your energy formula and get paid for it. Miners are very good at that. Ask anyone who ran a pool."
+   },
+   {
+    "t": "p",
+    "text": "Catch two: every machine must get the same answer, to the bit. Folding@home, the biggest volunteer project in history (2.4 exaflops at its peak, in April 2020) never solved this. It simply trusts its volunteers. Coins that tried to \"mine for science\", like Curecoin, kept normal hashing for consensus and let a lab check the science off to the side. As far as I can find, no chain has ever made molecular simulation the consensus task itself."
+   },
+   {
+    "t": "p",
+    "text": "This is why \"several months to write own simulator\" is the most important sentence in the whole timeline. You can't take an off-the-shelf GPU simulator and drop it into a quorum. Floating point on different hardware drifts in the last digits, and in a chaotic system the last digit decides everything within a thousand steps. A simulator for Qubic has to give exactly the same bits on 676 different CPUs. The team already did that once: the scorer behind BPP-9000 gives identical results on every computor. Now it has to be done for physics."
+   },
+   {
+    "t": "p",
+    "text": "And \"maybe possible with AI\" is the other half. My reading: you don't need a tiny network to replace physics. You need it to guess. Which move to try next, which fragment to bend, where the fold probably goes. The guesses are cheap and the check stays deterministic. That's the job evolution is good at, and the job Aigarth was built for."
+   },
+   {
+    "t": "h",
+    "text": "Part 4. What this does not mean"
+   },
+   {
+    "t": "p",
+    "text": "A shape is not a medicine. KRAS, one of the most common cancer switches, was called \"undruggable\" for thirty years. In 2013 a lab found a hidden pocket in its shape. The first drug that uses that pocket was approved in 2021. Eight years from \"we see the pocket\" to \"a patient gets a pill\". And of all cancer drugs that enter the first human trial, only about 3 in 100 end up approved."
+   },
+   {
+    "t": "p",
+    "text": "Even the best-funded AI labs in the world are learning this. Isomorphic Labs, Alphabet's drug company built on AlphaFold, moved its first clinical trials from the end of 2025 to the end of 2026."
+   },
+   {
+    "t": "p",
+    "text": "So Qubic is unlikely to cure cancer in 2027. What was set is a direction and a first concrete step: a simulator, a task, a way to check it."
+   },
+   {
+    "t": "h",
+    "text": "Part 5. Why I still care"
+   },
+   {
+    "t": "p",
+    "text": "Because of a video game."
+   },
+   {
+    "t": "p",
+    "text": "In 2011 a protein from a virus related to HIV had stumped scientists for more than ten years. Then researchers dropped it into Foldit, a puzzle game where ordinary people fold proteins for points. Not biologists. Gamers. They solved it in ten days."
+   },
+   {
+    "t": "p",
+    "text": "The computer scored the folds. People did the searching. Many independent searchers plus one cheap, honest check beat a decade of lab work."
+   },
+   {
+    "t": "p",
+    "text": "Now read that again and replace \"players\" with \"miners\", and \"a game\" with \"a network that pays you for the search\". That's the shape of Aigarth's third task."
+   },
+   {
+    "t": "p",
+    "text": "The machine is already running. It has changed tasks once: from adding small numbers, to finding patterns in a year of Bitcoin hours. Same miners, same colony, same rule: find something good, prove it cheaply. What changes is what \"good\" means. Sums. Candles. Molecules."
+   },
+   {
+    "t": "quote",
+    "text": "solving protein folding problem to cure cancer",
+    "cite": "Come-from-Beyond, 16.10.2021"
+   },
+   {
+    "t": "quote",
+    "text": "need good protein folding simulator tho",
+    "cite": "Come-from-Beyond, 11.09.2026"
+   },
+   {
+    "t": "quote",
+    "text": "several months to write own simulator",
+    "cite": "Come-from-Beyond, 15.10.2026"
+   },
+   {
+    "t": "p",
+    "text": "Five years between the first line and the third."
+   },
+   {
+    "t": "p",
+    "text": "Let's see what the next one says."
+   }
+  ],
+  "mariaRepost": "https://x.com/maria_aigarth"
+ },
+ {
   "slug": "true-randomness-is-critical",
   "title": "True randomness is critical. Why?",
   "kicker": null,
