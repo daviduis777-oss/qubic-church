@@ -66,7 +66,8 @@ export function rankFor(xp: number, fixedLevel?: number): Rank {
 /** Next rank and how much weight is still missing; null at the top. */
 export function nextRank(xp: number, fixedLevel?: number): { rank: Rank; missing: number } | null {
   if (fixedLevel) return null
-  const r = RANKS.find(r => Number.isFinite(r.min) && r.min > xp)
+  const cur = rankFor(xp).level
+  const r = RANKS.find(r => Number.isFinite(r.min) && r.level > cur)
   return r ? { rank: r, missing: r.min - xp } : null
 }
 

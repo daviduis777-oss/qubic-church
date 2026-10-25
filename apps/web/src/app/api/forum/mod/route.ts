@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic'
 
 /** Queue (when FORUM_MODERATION=queue), recent forum posts, and links. */
 export async function GET(req: Request) {
-  const key = new URL(req.url).searchParams.get('key')
+  const key = req.headers.get('x-mod-key')
   if (!modKeyOk(key)) return NextResponse.json({ error: 'no' }, { status: 401 })
   try {
     const { articles, replies, links } = await loadAll()
@@ -29,7 +29,7 @@ type Body = { key?: string; action?: 'approve' | 'reject' | 'remove' | 'link'; n
 
 export async function POST(req: Request) {
   const b = (await req.json().catch(() => null)) as Body | null
-  if (!b || !modKeyOk(b.key)) return NextResponse.json({ error: 'no' }, { status: 401 })
+  if (!b || !modKeyOk(b.key ?? req.headers.get('x-mod-key'))) return NextResponse.json({ error: 'no' }, { status: 401 })
   try {
     if (b.action === 'remove') return NextResponse.json({ ok: true, ...(await remove({ slug: b.slug, reply: b.reply })) })
     if (b.action === 'link') {

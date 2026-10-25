@@ -14,7 +14,7 @@ export async function POST(req: Request) {
   if (body.method === 'qubic') {
     const identity = (body.identity ?? '').toUpperCase()
     if (!QUBIC_ID.test(identity)) return NextResponse.json({ error: 'Not a Qubic ID.' }, { status: 400 })
-    const nonce = verifyToken<{ nonce: string }>(body.token)
+    const nonce = verifyToken<{ nonce: string }>('nonce', body.token)
     if (!nonce) return NextResponse.json({ error: 'Login challenge expired. Try again.' }, { status: 400 })
     const ok = await verifyQubicSignature(identity, loginMessage(nonce.nonce), body.signature ?? '')
     if (!ok) return NextResponse.json({ error: 'Signature does not match this ID.' }, { status: 401 })

@@ -13,15 +13,9 @@ export default async function ModPage(props: { params: Promise<{ locale: string 
   return (
     <ForumShell crumbs={[{ label: 'The Crypt', href: '/articles' }, { label: 'Moderation queue' }]}>
       <h1 className="sr-only">Moderation queue</h1>
-      {key ? (
-        <ModQueue modKey={key} />
-      ) : (
-        <div className="qcf-box qcf-win" style={{ padding: 12 }}>
-          Moderators only. Open this page with your key: <code>/articles/mod?key=…</code>
-        </div>
-      )}
+      <ModQueue modKey={key} />
       <p className="qcf-small qcf-muted" style={{ margin: '10px 2px' }}>
-        Approve commits the post to the archive and the site redeploys in about two minutes. Reject closes it without publishing.
+        Every change here is a commit; the site redeploys in about two minutes.
       </p>
     </ForumShell>
   )

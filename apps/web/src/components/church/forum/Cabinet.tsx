@@ -40,6 +40,7 @@ async function squareJpeg(file: File, size = 128): Promise<string> {
 export function Cabinet() {
   const [me, setMe] = useState<Me | null | undefined>(undefined)
   const [handle, setHandle] = useState('')
+  const [member, setMember] = useState<{ name: string; exists: boolean } | null>(null)
   const [p, setP] = useState<Profile>({})
   const [avatar, setAvatar] = useState<string | undefined>(undefined)
   const [removeAvatar, setRemoveAvatar] = useState(false)
@@ -54,6 +55,7 @@ export function Cabinet() {
     const j = await r.json()
     if (!r.ok) return setErr(j.error)
     setHandle(j.handle)
+    setMember({ name: j.name, exists: Boolean(j.exists) })
     setP(j.profile ?? {})
   }
   useEffect(() => {
@@ -115,12 +117,15 @@ export function Cabinet() {
       <div className="qcf-cat">My cabinet · {me.name}</div>
       <div className="qcf-win" style={{ padding: '10px 14px' }}>
         <p className="qcf-small qcf-muted" style={{ margin: '0 0 12px' }}>
-          Logged in with {me.auth === 'qubic' ? 'a Qubic wallet' : 'a tripcode'} as <b>{me.name}</b>
-          {handle && (
+          Logged in with {me.auth === 'qubic' ? 'a Qubic wallet' : 'a tripcode'} as <b>{member?.name ?? me.name}</b>
+          {member?.name && member.name !== me.name && <> (this login is linked to that member)</>}
+          {handle && member?.exists ? (
             <>
               {' · '}
               <Link href={`/articles/profile/${handle.toLowerCase()}`}>public profile</Link>
             </>
+          ) : (
+            <> · your profile page appears with your first post</>
           )}
           . Everything here is public. Nothing here is required.
         </p>

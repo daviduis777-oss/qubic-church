@@ -32,12 +32,22 @@ export const ARTICLES: Article[] = (data as Article[]).slice().sort((a, b) => b.
 
 export const getArticle = (slug: string) => ARTICLES.find(a => a.slug === slug)
 export const articleHandle = (a: Article) => a.handle ?? 'usetesserai'
-export const authorUrl = (a: Article) => `https://x.com/${articleHandle(a)}`
+/** Where the author can be found: X for X authors, the explorer for wallet authors, nothing for tripcodes. */
+export const authorUrl = (a: Article): string | undefined => {
+  if (a.auth === 'qubic') return a.identity ? `https://explorer.qubic.org/network/address/${a.identity}` : undefined
+  if (a.auth === 'trip') return undefined
+  return `https://x.com/${articleHandle(a)}`
+}
+/** The X original, when the issue was first published there. Direct forum posts have none. */
+export const originalUrl = (a: Article): string | undefined => (/^https?:\/\/(?:www\.)?(?:x|twitter)\.com\//.test(a.url) ? a.url : undefined)
 /** What this issue adds to its author: an issue, plus Maria's repost when there is one. */
 export const articleWeight = (a: Article) => WEIGHT.issue + (a.mariaRepost ? WEIGHT.maria : 0)
 export const articleWeightLabel = (a: Article) => (a.mariaRepost ? 'an issue · reposted by Maria' : 'an issue')
 /** Issue number: the first article published is No. 1. */
-export const issueNumber = (a: Article) => ARTICLES.length - ARTICLES.indexOf(a)
+export const issueNumber = (a: Article) => {
+  const same = ARTICLES.filter(x => Boolean(x.guest) === Boolean(a.guest))
+  return same.length - same.indexOf(a)
+}
 /** New for two weeks after publication. */
 export const isNew = (a: Article, now = new Date()) => now.getTime() - new Date(`${a.date}T12:00:00Z`).getTime() < 14 * 864e5
 export const ARTICLES_FEED = `${SITE_URL}/articles/feed.xml`
@@ -55,7 +65,7 @@ export const formatDate = (d: string) =>
   new Date(`${d}T12:00:00Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })
 
 export function articleMarkdown(a: Article) {
-  const out = [`# ${a.title}`, '', `By ${a.author} (@${articleHandle(a)}) · ${a.date} · Original: ${a.url}`, `Source page: ${articleUrl(a)}`, '']
+  const out = [`# ${a.title}`, '', `By ${a.author}${a.auth === 'x' || !a.auth ? ` (@${articleHandle(a)})` : ''} · ${a.date}${originalUrl(a) ? ` · Original: ${originalUrl(a)}` : ''}`, `Source page: ${articleUrl(a)}`, '']
   for (const b of a.blocks) {
     if (b.t === 'h') out.push(`## ${b.text}`, '')
     else if (b.t === 'quote') out.push(`> ${b.text}${b.cite ? `\n> — ${b.cite}` : ''}`, '')

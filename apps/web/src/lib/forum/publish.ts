@@ -18,6 +18,19 @@ export type Known = { author: string; handle: string; auth: string; identity?: s
 
 export const moderationQueue = () => process.env.FORUM_MODERATION === 'queue'
 
+/** Static routes under /articles that a topic slug must never collide with. */
+export const RESERVED_SLUGS = new Set(['me', 'new', 'mod', 'board', 'cfb', 'profile', 'feed.xml', 'rss'])
+
+/** Names compared after folding case, accents and the usual Cyrillic look-alikes, so "TesserAІ" cannot pass as new. */
+const LOOKALIKE: Record<string, string> = { а: 'a', е: 'e', о: 'o', р: 'p', с: 'c', у: 'y', х: 'x', і: 'i', к: 'k', т: 't', м: 'm', н: 'h', в: 'b', ѕ: 's', ј: 'j', ԁ: 'd', ɡ: 'g', ӏ: 'l' }
+export const skeleton = (s: string) =>
+  s
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[\s_.'-]/g, '')
+    .replace(/./g, ch => LOOKALIKE[ch] ?? ch)
+
 /** Daily cap per identity when posting goes straight to the archive. */
 export const DAILY_CAP = 5
 
@@ -51,14 +64,16 @@ export function resolveAuthor(author: Pending['author'], known: Known[], links: 
   }
   const seen = known.find(k => (identity && k.identity === identity) || k.handle === author.handle)
   if (seen) return { author: seen.author, handle: seen.handle }
-  const taken = known.find(k => k.author.toLowerCase() === author.name.toLowerCase())
+  const taken = known.find(k => skeleton(k.author) === skeleton(author.name))
   if (taken) return { error: `The name "${taken.author}" belongs to a member already. Pick another name, or ask a moderator to link your login to that member.` }
   return { author: author.name, handle: author.handle }
 }
 
-export function postsToday(author: Pending['author'], known: Known[], articles: Article[], replies: Reply[], date: string): number {
+export function postsToday(author: Pending['author'], known: Known[], links: Link[], articles: Article[], replies: Reply[], date: string): number {
   const identity = author.auth === 'qubic' ? author.id : undefined
-  const mine = (x: { identity?: string; handle: string; date: string }) => x.date === date && ((identity && x.identity === identity) || x.handle === author.handle)
+  const who = resolveAuthor(author, known, links)
+  const asHandle = 'error' in who ? author.handle : who.handle
+  const mine = (x: { identity?: string; handle: string; date: string }) => x.date === date && ((identity && x.identity === identity) || x.handle === author.handle || x.handle === asHandle)
   return articles.filter(a => mine({ identity: a.identity, handle: a.handle ?? '', date: a.date })).length + replies.filter(mine).length
 }
 
@@ -71,7 +86,7 @@ export async function publish(p: Pending, opts: { as?: string; mariaRepost?: str
     const arts = articles.data
     let slug = slugify(p.title)
     const base = slug
-    for (let i = 2; arts.some(a => a.slug === slug); i++) slug = `${base}-${i}`
+    for (let i = 2; RESERVED_SLUGS.has(slug) || arts.some(a => a.slug === slug); i++) slug = `${base}-${i}`
     const blocks = blocksFromText(p.text, p.title)
     const entry: Article = {
       slug,
@@ -141,15 +156,28 @@ export async function link(author: Pending['author'], member: string): Promise<{
   const rest = links.data.filter(l => !(l.identity && l.identity === entry.identity) && !(l.handle && l.handle === entry.handle))
   const sha = links.sha || (await readJson<Link[]>(MEMBERS_PATH).catch(() => ({ sha: '' }))).sha
   await writeJson(MEMBERS_PATH, [...rest, entry], sha, `forum: link a login to ${target.handle}`)
+  // What the login set in its cabinet moves over to the member.
+  const from = author.handle.toLowerCase()
+  const to = target.handle.toLowerCase()
+  const profiles = await readJson<Record<string, Profile>>(PROFILES_PATH).catch(() => null)
+  if (profiles && profiles.data[from] && from !== to) {
+    const merged = { ...(profiles.data[to] ?? {}), ...profiles.data[from] }
+    if (merged.x && merged.x.toLowerCase() === to) delete merged.x
+    delete profiles.data[from]
+    profiles.data[to] = merged
+    await writeJson(PROFILES_PATH, profiles.data, profiles.sha, `forum: profile of ${from} moves to ${to}`)
+  }
   return { member: target.handle }
 }
 
 export const PROFILES_PATH = 'apps/web/src/data/articles/profiles.json'
 export type Profile = { x?: string; signature?: string; bio?: string; avatar?: string }
 
-/** The member handle a login posts as (its own, or the member it is linked to). */
-export async function memberHandleOf(author: Pending['author']): Promise<string> {
+/** The member a login posts as (itself, or the member it is linked to), and whether that member has any post yet. */
+export async function memberOfLogin(author: Pending['author']): Promise<{ handle: string; name: string; exists: boolean; known: Known[] }> {
   const { known, links } = await loadAll()
   const who = resolveAuthor(author, known, links.data)
-  return 'error' in who ? author.handle : who.handle
+  const handle = 'error' in who ? author.handle : who.handle
+  const name = 'error' in who ? author.name : who.author
+  return { handle, name, exists: known.some(k => k.handle.toLowerCase() === handle.toLowerCase()), known }
 }

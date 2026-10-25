@@ -8,7 +8,27 @@ type ReplyRow = { id: string; topic: string; author: string; handle: string; dat
 type Me = { auth: string; id: string; name: string; handle: string } | null
 type State = { queue: boolean; pending: Pending[]; topics: TopicRow[]; replies: ReplyRow[]; links: { identity?: string; handle?: string; member: string }[]; me: Me }
 
-export function ModQueue({ modKey }: { modKey: string }) {
+const KEY = 'qcf_mod_key'
+
+/** The key arrives once in the URL, moves to sessionStorage, and the URL is cleaned so the key stays out of history and logs. */
+function useModKey(initial?: string): string {
+  const [key, setKey] = useState(initial ?? '')
+  useEffect(() => {
+    try {
+      if (initial) {
+        sessionStorage.setItem(KEY, initial)
+        if (location.search.includes('key=')) history.replaceState(null, '', location.pathname)
+      } else {
+        const k = sessionStorage.getItem(KEY)
+        if (k) setKey(k)
+      }
+    } catch {}
+  }, [initial])
+  return key
+}
+
+export function ModQueue({ modKey: initial }: { modKey?: string }) {
+  const modKey = useModKey(initial)
   const [st, setSt] = useState<State | null>(null)
   const [err, setErr] = useState('')
   const [msg, setMsg] = useState('')
@@ -19,7 +39,8 @@ export function ModQueue({ modKey }: { modKey: string }) {
   const [member, setMember] = useState('')
 
   const load = useCallback(async () => {
-    const r = await fetch(`/api/forum/mod?key=${encodeURIComponent(modKey)}`, { cache: 'no-store' })
+    if (!modKey) return setErr('Moderators only. Open this page with your key once: /articles/mod?key=…')
+    const r = await fetch('/api/forum/mod', { cache: 'no-store', headers: { 'x-mod-key': modKey } })
     const j = await r.json()
     if (!r.ok) return setErr(j.error ?? 'error')
     setSt(j)
@@ -32,7 +53,7 @@ export function ModQueue({ modKey }: { modKey: string }) {
     setBusy(id)
     setErr('')
     setMsg('')
-    const r = await fetch('/api/forum/mod', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: modKey, ...body }) })
+    const r = await fetch('/api/forum/mod', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-mod-key': modKey }, body: JSON.stringify(body) })
     const j = await r.json()
     setBusy('')
     if (!r.ok) return setErr(j.error ?? 'error')
