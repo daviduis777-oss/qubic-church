@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation'
 import { setRequestLocale } from 'next-intl/server'
 import { locales } from '@/config/i18n'
 import { SITE_URL } from '@/lib/books'
-import { BIO, BOARDS, MEMBERS, memberByHandle, postsOf, profileHref } from '@/lib/forum'
+import { BIO, BOARDS, MEMBERS, homeOf, memberByHandle, postsOf, profileHref } from '@/lib/forum'
 import { ForumShell, Stars } from '@/components/church/forum/ForumUI'
 
 export function generateStaticParams() {
@@ -32,7 +32,7 @@ export default async function ProfilePage(props: { params: Promise<{ locale: str
   const staff = m.role === 'Founder' ? '#b8860b' : m.role ? '#8b1a8b' : undefined
   const rows: [string, React.ReactNode][] = [
     ['Name', <b key="n">{m.name}</b>],
-    [m.name === 'Maria' ? 'Reposts' : 'Posts', m.activity],
+    [m.name === 'Maria' ? 'Reposts' : 'Posts', m.name === 'Maria' ? m.activity : `${m.activity}${m.replies ? ` (${m.replies} replies)` : ''}`],
     ['Merit', m.rank.level === 10 ? '∞' : m.merit],
     ['Weight', m.weight],
     [
@@ -46,10 +46,14 @@ export default async function ProfilePage(props: { params: Promise<{ locale: str
     [m.name === 'Maria' ? 'Member since' : 'Writing since', m.since],
     ['Last active', last ? last.dateLabel : 'not yet'],
     [
-      'X',
-      <a href={`https://x.com/${m.handle}`} key="x" rel="noopener noreferrer">
-        @{m.handle}
-      </a>,
+      m.auth === 'qubic' ? 'Qubic ID' : m.auth === 'trip' ? 'Tripcode' : 'X',
+      homeOf(m).href ? (
+        <a href={homeOf(m).href} key="home" rel="noopener noreferrer" style={{ wordBreak: 'break-all' }}>
+          {m.auth === 'qubic' ? m.identity : homeOf(m).label}
+        </a>
+      ) : (
+        <span key="home">{homeOf(m).label}</span>
+      ),
     ],
   ]
 

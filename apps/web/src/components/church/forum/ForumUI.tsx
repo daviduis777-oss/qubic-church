@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import type { ReactNode } from 'react'
-import { profileHref, type Member } from '@/lib/forum'
+import { homeOf, profileHref, type Member } from '@/lib/forum'
+import { LoginStatus } from './LoginStatus'
 
 export type Crumb = { label: string; href?: string }
 
@@ -20,10 +21,12 @@ export function ForumShell({ crumbs, children }: { crumbs: Crumb[]; children: Re
           <Link href="/articles/board/founder">Founder&apos;s Archive</Link>
           <Link href="/articles/board/chronicle">Chronicle</Link>
           <Link href="/articles/board/open">Open Board</Link>
-          <Link href="/articles#write">Write a topic</Link>
+          <Link href="/articles/new">New topic</Link>
           <Link href="/articles#ranks">Ranks</Link>
           <a href="/articles/feed.xml">RSS</a>
-          <span className="qcf-hello">Welcome, Guest. Please login on X and start with “hey @maria_aigarth”.</span>
+          <span className="qcf-hello">
+            <LoginStatus />
+          </span>
         </div>
         <nav aria-label="Breadcrumb" className="qcf-crumbs">
           {crumbs.map((c, i) => (
@@ -75,10 +78,14 @@ export function Postbit({ m }: { m: Member }) {
       </div>
       <div style={{ marginTop: 6 }}>
         <Link href={profileHref(m.handle)}>View profile</Link>
-        {' · '}
-        <a href={`https://x.com/${m.handle}`} rel="noopener noreferrer">
-          X
-        </a>
+        {homeOf(m).href && (
+          <>
+            {' · '}
+            <a href={homeOf(m).href} rel="noopener noreferrer">
+              {m.auth === 'qubic' ? 'Qubic ID' : 'X'}
+            </a>
+          </>
+        )}
       </div>
     </div>
   )

@@ -3,12 +3,20 @@
  * One list of topics (TesserAI issues, guest articles, the Come-from-Beyond archive),
  * three boards, and members with forum ranks.
  */
+import repliesData from '@/data/articles/replies.json'
 import { ARTICLES, articleHandle, articleMinutes, articleWeight, formatDate, isNew, issueNumber } from '@/lib/articles'
 import { CFB_ARTICLES, archiveId, archivedUrl, formatArchiveDate } from '@/lib/archive'
 import { AUTHORS, WEIGHT, nextRank, rankFor, type Rank } from '@/lib/ranks'
 
+export type Auth = 'x' | 'qubic' | 'trip'
+export type Reply = { id: string; topic: string; date: string; author: string; handle: string; auth: Auth; identity?: string; text: string; xUrl?: string }
+export const REPLIES: Reply[] = (repliesData as Reply[]).slice().sort((a, b) => a.date.localeCompare(b.date))
+export const repliesTo = (slug: string) => REPLIES.filter(r => r.topic === slug)
+
 export type Topic = {
   id: string
+  auth: Auth
+  identity?: string
   title: string
   kicker?: string | null
   date: string
@@ -51,6 +59,8 @@ export const TOPICS: Topic[] = [
     dateLabel: formatDate(a.date),
     author: a.author,
     handle: articleHandle(a),
+    auth: a.auth ?? 'x',
+    identity: a.identity,
     href: `/articles/${a.slug}`,
     summary: a.summary,
     board: (a.guest ? 'open' : 'chronicle') as BoardId,
@@ -67,6 +77,7 @@ export const TOPICS: Topic[] = [
     dateLabel: formatArchiveDate(a.date),
     author: 'Come-from-Beyond',
     handle: 'c___f___b',
+    auth: 'x' as Auth,
     href: `/articles/cfb/${archiveId(a)}`,
     summary: a.summary,
     board: 'founder' as BoardId,
@@ -84,6 +95,9 @@ export const topicsIn = (b: BoardId) => TOPICS.filter(t => t.board === b)
 export type Member = {
   name: string
   handle: string
+  auth: Auth
+  identity?: string
+  replies: number
   activity: number
   activityLabel: string
   merit: number
@@ -104,22 +118,27 @@ const SIGNATURES: Record<string, string> = {
 }
 
 function buildMembers(): Member[] {
-  const authors = Array.from(new Set(TOPICS.map(t => t.author)))
+  const authors = Array.from(new Set([...TOPICS.map(t => t.author), ...REPLIES.map(r => r.author)]))
   const list: Member[] = authors.map(a => {
     const items = TOPICS.filter(t => t.author === a)
+    const replies = REPLIES.filter(r => r.author === a)
     const weight = items.reduce((s, t) => s + t.weight, 0)
     const fixed = AUTHORS[a]?.fixedLevel
+    const any = items[0] ?? replies[0]
     return {
       name: a,
-      handle: items[0]?.handle ?? '',
-      activity: items.length,
+      handle: any?.handle ?? '',
+      auth: any?.auth ?? 'x',
+      identity: any?.identity,
+      replies: replies.length,
+      activity: items.length + replies.length,
       activityLabel: 'Activity',
       merit: items.reduce((s, t) => s + t.merit, 0),
       weight,
       rank: rankFor(weight, fixed),
       next: nextRank(weight, fixed),
       role: ROLE[a],
-      since: items.map(t => t.date.slice(0, 4)).sort()[0] ?? '2026',
+      since: [...items, ...replies].map(t => t.date.slice(0, 4)).sort()[0] ?? '2026',
       signature: SIGNATURES[a],
     }
   })
@@ -129,6 +148,8 @@ function buildMembers(): Member[] {
   list.push({
     name: 'Maria',
     handle: 'maria_aigarth',
+    auth: 'x',
+    replies: 0,
     activity: reposts,
     activityLabel: 'Reposts',
     merit: 0,
@@ -144,6 +165,13 @@ function buildMembers(): Member[] {
 
 export const MEMBERS = buildMembers()
 export const memberOf = (name: string) => MEMBERS.find(m => m.name === name)
+
+/** Where a member's public home is: X profile, the Qubic explorer, or nowhere (tripcode). */
+export function homeOf(m: Pick<Member, 'auth' | 'handle' | 'identity'>): { label: string; href?: string } {
+  if (m.auth === 'qubic') return { label: `${m.identity?.slice(0, 6)}…${m.identity?.slice(-4)}`, href: m.identity ? `https://explorer.qubic.org/network/address/${m.identity}` : undefined }
+  if (m.auth === 'trip') return { label: `!${m.handle.replace(/^t-/, '')}` }
+  return { label: `@${m.handle}`, href: `https://x.com/${m.handle}` }
+}
 
 /** Forum profile URL, by X handle. */
 export const profileHref = (handle: string) => `/articles/profile/${handle.toLowerCase()}`

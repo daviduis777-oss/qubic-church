@@ -6,7 +6,7 @@ export default function robots(): MetadataRoute.Robots {
   if (!INDEXING) return { rules: [{ userAgent: '*', disallow: '/' }] }
   return {
     rules: [
-      { userAgent: '*', allow: '/', disallow: ['/api/'] },
+      { userAgent: '*', allow: '/', disallow: ['/api/', '/articles/mod', '/articles/new'] },
       // AI crawlers are welcome: the point is to be read and cited.
       { userAgent: ['GPTBot', 'OAI-SearchBot', 'ChatGPT-User', 'ClaudeBot', 'Claude-User', 'Claude-SearchBot', 'PerplexityBot', 'Perplexity-User', 'Google-Extended', 'Applebot-Extended', 'CCBot'], allow: '/' },
     ],

@@ -6,7 +6,7 @@ import { SITE_URL } from '@/lib/books'
 import { ARTICLES, articleUrl } from '@/lib/articles'
 import { CFB_ARTICLES } from '@/lib/archive'
 import { RANKS, WEIGHT } from '@/lib/ranks'
-import { BOARDS, MEMBERS, TOPICS, profileHref, topicsIn } from '@/lib/forum'
+import { BOARDS, MEMBERS, TOPICS, homeOf, profileHref, topicsIn } from '@/lib/forum'
 import { ForumShell, Quote, Stars } from '@/components/church/forum/ForumUI'
 
 const TITLE = 'Qubic Church Forum: articles on Qubic, Aigarth and Come-from-Beyond'
@@ -131,27 +131,26 @@ export default async function ArticlesPage(props: { params: Promise<{ locale: st
           <p>This forum is an archive. What you write stays here, under your name.</p>
           <p>Write it the way you talk. Text with no LLM in it has a different vibe, and that vibe is the point.</p>
           <p>
-            <b>How:</b>
+            <b>Two ways in:</b>
           </p>
           <ol style={{ paddingLeft: 22, margin: '0 0 12px', listStyle: 'decimal' }}>
             <li>
-              Post it on X. Start with <b>hey @maria_aigarth</b>, add <b>#Qubic #Aigarth</b>.
+              <Link href="/articles/new">Start a topic here</Link>. Login is a signature from your Qubic wallet or a tripcode: no email, no password, nothing personal. A moderator reads it, then it appears on the Open Board under your name.
             </li>
             <li>
+              Or post on X starting with <b>hey @maria_aigarth</b> and <b>#Qubic #Aigarth</b>. Put the tag in the post itself, not only inside an X Article: mentions inside articles do not notify anyone.{' '}
               <a href="https://x.com/maria_aigarth" rel="noopener noreferrer">
                 Maria
               </a>{' '}
-              reposts you.
+              reposts you, and her repost adds merit to your topic once it is in the archive.
             </li>
-            <li>It goes into the Open Board with your name and a link to your profile. You keep all rights. We fix typos only.</li>
           </ol>
           <p>
-            <a
-              className="qcf-btn qcf-btn-main"
-              href={`https://x.com/intent/post?text=${encodeURIComponent('hey @maria_aigarth \n\n\n#Qubic #Aigarth')}`}
-              rel="noopener noreferrer"
-            >
-              Post a new topic on X
+            <Link className="qcf-btn qcf-btn-main" href="/articles/new">
+              Start new topic
+            </Link>{' '}
+            <a className="qcf-btn" href={`https://x.com/intent/post?text=${encodeURIComponent('hey @maria_aigarth \n\n\n#Qubic #Aigarth')}`} rel="noopener noreferrer">
+              Post on X instead
             </a>{' '}
             <Link className="qcf-btn" href="/articles/board/open">
               Open Board
@@ -170,8 +169,8 @@ export default async function ArticlesPage(props: { params: Promise<{ locale: st
           </p>
           <p>
             An article weighs {WEIGHT.issue}. A primary source, an article by the person who built the thing we write about,
-            weighs {WEIGHT.primary}. The thresholds roughly double at every step: the first ranks come in a week, Legendary
-            takes years.
+            weighs {WEIGHT.primary}. Replies count as activity but carry no weight. The thresholds roughly double at every
+            step: the first ranks come in a week, Legendary takes years.
           </p>
           <p>
             Rank 10, Founder, cannot be reached by weight. It belongs to Come-from-Beyond. Maria is the Global Moderator: she
@@ -222,9 +221,13 @@ export default async function ArticlesPage(props: { params: Promise<{ locale: st
                     {m.name}
                   </Link>
                   <div className="qcf-small">
-                    <a href={`https://x.com/${m.handle}`} rel="noopener noreferrer">
-                      @{m.handle}
-                    </a>
+                    {homeOf(m).href ? (
+                      <a href={homeOf(m).href} rel="noopener noreferrer">
+                        {homeOf(m).label}
+                      </a>
+                    ) : (
+                      <span className="qcf-muted">{homeOf(m).label}</span>
+                    )}
                   </div>
                 </td>
                 <td style={{ fontSize: 12 }}>
@@ -243,7 +246,7 @@ export default async function ArticlesPage(props: { params: Promise<{ locale: st
                     </div>
                   )}
                 </td>
-                <td style={{ textAlign: 'center' }}>{m.activityLabel === 'Reposts' ? `${m.activity} reposts` : m.activity}</td>
+                <td style={{ textAlign: 'center' }}>{m.activityLabel === 'Reposts' ? `${m.activity} reposts` : m.replies ? `${m.activity} (${m.replies} replies)` : m.activity}</td>
                 <td style={{ textAlign: 'center' }}>{m.rank.level === 10 ? '∞' : m.merit}</td>
                 <td style={{ textAlign: 'center' }}>{m.weight}</td>
               </tr>

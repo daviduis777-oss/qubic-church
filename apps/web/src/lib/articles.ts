@@ -18,6 +18,10 @@ export type Article = {
   mariaRepost?: string
   /** editor's note shown above the post */
   note?: string
+  /** how the author signed in: x (default), qubic wallet, or tripcode */
+  auth?: 'x' | 'qubic' | 'trip'
+  /** full Qubic ID for wallet authors */
+  identity?: string
   summary: string
   words: number
   blocks: ArticleBlock[]
