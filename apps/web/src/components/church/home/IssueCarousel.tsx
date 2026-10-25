@@ -39,17 +39,17 @@ export function IssueCarousel({ children, count }: { children: ReactNode; count:
   return (
     <div className="relative">
       <ol
-        aria-label={`${count} issues`}
+        aria-label={`${count} topics`}
         className="-mx-4 flex snap-x snap-mandatory gap-px overflow-x-auto border-y border-border bg-border px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:border sm:px-0 [&::-webkit-scrollbar]:hidden"
         ref={ref}
       >
         {children}
       </ol>
       <div className="mt-3 flex items-center justify-between gap-3">
-        <p className="font-mono text-xs uppercase tracking-[0.25em] text-fg-2">Scroll for all {count} issues</p>
+        <p className="font-mono text-xs uppercase tracking-[0.25em] text-fg-2">Scroll for all {count} topics</p>
         <div className="flex gap-1">
           <button
-            aria-label="Previous issues"
+            aria-label="Previous topics"
             className="inline-flex size-10 items-center justify-center border border-border text-fg-2 hover:text-foreground disabled:opacity-30"
             disabled={at.start}
             onClick={() => go(-1)}
@@ -58,7 +58,7 @@ export function IssueCarousel({ children, count }: { children: ReactNode; count:
             <ChevronLeft className="size-4" />
           </button>
           <button
-            aria-label="Next issues"
+            aria-label="Next topics"
             className="inline-flex size-10 items-center justify-center border border-border text-fg-2 hover:text-foreground disabled:opacity-30"
             disabled={at.end}
             onClick={() => go(1)}
