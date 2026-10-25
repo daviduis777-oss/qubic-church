@@ -6,7 +6,7 @@ import { siteConfig } from '@/config/site'
 const FOOTER_LINKS = [
   { href: '/books', label: 'Books' },
   { href: '/docs', label: 'Research' },
-  { href: '/articles', label: 'Articles' },
+  { href: '/articles', label: 'The Crypt' },
   { href: '/cfb', label: 'Come-from-Beyond' },
   { href: '/timeline#satoshi', label: 'Satoshi Nakamoto' },
   { href: '/maria-aigarth', label: 'Maria' },

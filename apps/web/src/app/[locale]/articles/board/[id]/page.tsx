@@ -16,7 +16,7 @@ export async function generateMetadata(props: { params: Promise<{ id: string }> 
   const b = getBoard(id)
   if (!b) return {}
   return {
-    title: { absolute: `${b.name} · Qubic Church Forum` },
+    title: { absolute: `${b.name} · The Crypt` },
     description: b.desc,
     alternates: { canonical: `${SITE_URL}/articles/board/${b.id}` },
   }
@@ -30,7 +30,7 @@ export default async function BoardPage(props: { params: Promise<{ locale: strin
   const topics = topicsIn(b.id)
 
   return (
-    <ForumShell crumbs={[{ label: 'Qubic Church Forum', href: '/articles' }, { label: b.name }]}>
+    <ForumShell crumbs={[{ label: 'The Crypt', href: '/articles' }, { label: b.name }]}>
       <h1 className="sr-only">{b.name}</h1>
       <p className="qcf-small qcf-muted" style={{ margin: '0 2px 8px' }}>
         {b.desc}

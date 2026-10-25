@@ -3,14 +3,14 @@ import { setRequestLocale } from 'next-intl/server'
 import { Cabinet } from '@/components/church/forum/Cabinet'
 import { ForumShell } from '@/components/church/forum/ForumUI'
 
-export const metadata: Metadata = { title: { absolute: 'My cabinet · Qubic Church Forum' }, robots: { index: false, follow: false } }
+export const metadata: Metadata = { title: { absolute: 'My cabinet · The Crypt' }, robots: { index: false, follow: false } }
 export const dynamic = 'force-dynamic'
 
 export default async function MePage(props: { params: Promise<{ locale: string }> }) {
   const { locale } = await props.params
   setRequestLocale(locale)
   return (
-    <ForumShell crumbs={[{ label: 'Qubic Church Forum', href: '/articles' }, { label: 'My cabinet' }]}>
+    <ForumShell crumbs={[{ label: 'The Crypt', href: '/articles' }, { label: 'My cabinet' }]}>
       <h1 className="sr-only">My cabinet</h1>
       <Cabinet />
       <div className="qcf-box">
