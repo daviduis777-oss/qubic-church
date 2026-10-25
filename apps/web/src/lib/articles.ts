@@ -16,6 +16,8 @@ export type Article = {
   guest?: boolean
   /** URL of Maria's repost; adds weight */
   mariaRepost?: string
+  /** editor's note shown above the post */
+  note?: string
   summary: string
   words: number
   blocks: ArticleBlock[]

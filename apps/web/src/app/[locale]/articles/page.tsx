@@ -25,6 +25,12 @@ export default async function ArticlesPage(props: { params: Promise<{ locale: st
   setRequestLocale(locale)
   const latest = TOPICS.slice(0, 8)
   const newest = TOPICS[0]
+  // the member whose first topic is the most recent one; Maria until a guest arrives
+  const newestMember =
+    MEMBERS.filter(m => m.name !== 'Maria')
+      .map(m => ({ m, first: TOPICS.filter(t => t.author === m.name).map(t => t.date).sort()[0] ?? '' }))
+      .sort((x, y) => y.first.localeCompare(x.first))
+      .find(x => x.m.role === undefined && x.first >= '2026-10-01')?.m ?? MEMBERS.find(m => m.name === 'Maria')!
 
   const ld = {
     '@context': 'https://schema.org',
@@ -69,7 +75,7 @@ export default async function ArticlesPage(props: { params: Promise<{ locale: st
                     </div>
                   </td>
                   <td className="qcf-muted" style={{ width: 100, fontSize: 12, whiteSpace: 'nowrap' }}>
-                    {items.length} Topics
+                    {items.length} {items.length === 1 ? 'Topic' : 'Topics'}
                   </td>
                   <td className="qcf-small qcf-muted" style={{ width: 270 }}>
                     {last ? (
@@ -251,8 +257,8 @@ export default async function ArticlesPage(props: { params: Promise<{ locale: st
         <div className="qcf-cat">Qubic Church Forum · Info Center</div>
         <div className="qcf-win" style={{ padding: '8px 10px', fontSize: 12 }}>
           <b>Forum stats:</b> {TOPICS.length} posts in {BOARDS.length} boards by {MEMBERS.length} members. Latest member:{' '}
-          <Link className="qcf-strong" href={profileHref('maria_aigarth')}>
-            Maria
+          <Link className="qcf-strong" href={profileHref(newestMember.handle)}>
+            {newestMember.name}
           </Link>
           .
           {newest && (
