@@ -27,7 +27,7 @@ export function LoginStatus() {
     )
   return (
     <>
-      Hello, <Link href={`/articles/profile/${me.handle}`}>{me.name}</Link>.{' '}
+      Hello, <Link href="/articles/me">{me.name}</Link>. <Link href="/articles/me">My cabinet</Link> ·{' '}
       <button
         onClick={async () => {
           await fetch('/api/forum/logout', { method: 'POST' })

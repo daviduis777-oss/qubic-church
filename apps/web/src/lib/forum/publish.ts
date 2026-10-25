@@ -143,3 +143,13 @@ export async function link(author: Pending['author'], member: string): Promise<{
   await writeJson(MEMBERS_PATH, [...rest, entry], sha, `forum: link a login to ${target.handle}`)
   return { member: target.handle }
 }
+
+export const PROFILES_PATH = 'apps/web/src/data/articles/profiles.json'
+export type Profile = { x?: string; signature?: string; bio?: string; avatar?: string }
+
+/** The member handle a login posts as (its own, or the member it is linked to). */
+export async function memberHandleOf(author: Pending['author']): Promise<string> {
+  const { known, links } = await loadAll()
+  const who = resolveAuthor(author, known, links.data)
+  return 'error' in who ? author.handle : who.handle
+}

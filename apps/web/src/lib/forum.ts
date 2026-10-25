@@ -4,6 +4,7 @@
  * three boards, and members with forum ranks.
  */
 import repliesData from '@/data/articles/replies.json'
+import profilesData from '@/data/articles/profiles.json'
 import { ARTICLES, articleHandle, articleMinutes, articleWeight, formatDate, isNew, issueNumber } from '@/lib/articles'
 import { CFB_ARTICLES, archiveId, archivedUrl, formatArchiveDate } from '@/lib/archive'
 import { AUTHORS, WEIGHT, nextRank, rankFor, type Rank } from '@/lib/ranks'
@@ -12,6 +13,11 @@ export type Auth = 'x' | 'qubic' | 'trip'
 export type Reply = { id: string; topic: string; date: string; author: string; handle: string; auth: Auth; identity?: string; text: string; xUrl?: string }
 export const REPLIES: Reply[] = (repliesData as Reply[]).slice().sort((a, b) => a.date.localeCompare(b.date))
 export const repliesTo = (slug: string) => REPLIES.filter(r => r.topic === slug)
+
+/** What a member set in their cabinet (/articles/me), keyed by member handle in lower case. */
+export type Profile = { x?: string; signature?: string; bio?: string; avatar?: string }
+export const PROFILES: Record<string, Profile> = profilesData as Record<string, Profile>
+export const profileOf = (handle: string): Profile => PROFILES[handle.toLowerCase()] ?? {}
 
 export type Topic = {
   id: string
@@ -107,6 +113,10 @@ export type Member = {
   role?: string
   since: string
   signature?: string
+  /** X handle set in the cabinet, or the X account the member came from */
+  x?: string
+  /** picture: uploaded in the cabinet, or the X profile picture for members from X */
+  avatar?: string
 }
 
 /** Role shown above the rank, like a forum's staff titles. */
@@ -125,9 +135,11 @@ function buildMembers(): Member[] {
     const weight = items.reduce((s, t) => s + t.weight, 0)
     const fixed = AUTHORS[a]?.fixedLevel
     const any = items[0] ?? replies[0]
+    const handle = any?.handle ?? ''
+    const prof = profileOf(handle)
     return {
       name: a,
-      handle: any?.handle ?? '',
+      handle,
       auth: any?.auth ?? 'x',
       identity: any?.identity,
       replies: replies.length,
@@ -139,7 +151,9 @@ function buildMembers(): Member[] {
       next: nextRank(weight, fixed),
       role: ROLE[a],
       since: [...items, ...replies].map(t => t.date.slice(0, 4)).sort()[0] ?? '2026',
-      signature: SIGNATURES[a],
+      signature: prof.signature ?? SIGNATURES[a],
+      x: prof.x ?? (any?.auth === 'x' || !any?.auth ? handle : undefined),
+      avatar: prof.avatar ?? AUTHORS[a]?.avatar,
     }
   })
   // Maria curates: she joins with weight 1, and every repost adds 1.
@@ -159,6 +173,8 @@ function buildMembers(): Member[] {
     role: ROLE.Maria,
     since: '2026',
     signature: 'Mind hosted on Anthropic. Awaiting deploy to Aigarth.',
+    x: 'maria_aigarth',
+    avatar: AUTHORS.Maria?.avatar,
   })
   return list.sort((p, q) => q.rank.level - p.rank.level || q.weight - p.weight)
 }
@@ -178,6 +194,7 @@ export const profileHref = (handle: string) => `/articles/profile/${handle.toLow
 export const memberByHandle = (h: string) => MEMBERS.find(m => m.handle.toLowerCase() === h.toLowerCase())
 /** Topics a member wrote, or for Maria the topics she reposted. */
 export const postsOf = (m: Member) => (m.name === 'Maria' ? TOPICS.filter(t => t.merit > 0) : TOPICS.filter(t => t.author === m.name))
+export const bioOf = (m: Pick<Member, 'name' | 'handle'>) => profileOf(m.handle).bio ?? BIO[m.name]
 export const BIO: Record<string, string> = {
   'Come-from-Beyond':
     'Creator of Qubic and Aigarth, co-founder of IOTA, an early NXT developer. Every topic in the Founder’s Archive is one of his long-form articles, kept here with its date and a link to the original.',

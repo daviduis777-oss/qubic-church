@@ -1,6 +1,6 @@
 import { ARTICLES, articleUrl } from '@/lib/articles'
 import { CFB_ARTICLES, archiveId } from '@/lib/archive'
-import { BIO, BOARDS, MEMBERS, profileHref, topicsIn } from '@/lib/forum'
+import { bioOf, BOARDS, MEMBERS, profileHref, topicsIn } from '@/lib/forum'
 import { RANKS, WEIGHT } from '@/lib/ranks'
 import { allDocs } from 'contentlayer/generated'
 import { AUTHOR, BOOKS, bookUrl, chapterExcerpt, chapterUrl, SITE_URL } from '@/lib/books'
@@ -47,7 +47,7 @@ export function GET() {
     '',
     ...MEMBERS.map(
       m =>
-        `- [${m.name}](${SITE_URL}${profileHref(m.handle)}) (@${m.handle}): ${m.role && m.role !== m.rank.name ? `${m.role}, ` : ''}${m.rank.name}, rank ${m.rank.level}; ${m.activityLabel.toLowerCase()} ${m.activity}, weight ${m.weight}. ${BIO[m.name] ?? ''}`,
+        `- [${m.name}](${SITE_URL}${profileHref(m.handle)}) (@${m.handle}): ${m.role && m.role !== m.rank.name ? `${m.role}, ` : ''}${m.rank.name}, rank ${m.rank.level}; ${m.activityLabel.toLowerCase()} ${m.activity}, weight ${m.weight}. ${bioOf(m) ?? ''}`,
     ),
     '',
     '### Aigarth Chronicle and Open Board (full text on this site)',
