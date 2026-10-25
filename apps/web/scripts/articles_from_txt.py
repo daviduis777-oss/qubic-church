@@ -105,7 +105,7 @@ def main():
         summary = first if len(first) <= 240 else first[:237].rsplit(" ", 1)[0] + "…"
         entry = {"slug": slug, "title": title, "kicker": kicker, "date": date, "url": url,
                  "author": "TesserAI", "handle": "usetesserai", "summary": summary, "words": words, "blocks": blocks}
-        for k in ("mariaRepost", "guest"):
+        for k in ("mariaRepost", "guest", "note"):
             if k in existing.get(slug, {}):
                 entry[k] = existing[slug][k]
         arts.append(entry)

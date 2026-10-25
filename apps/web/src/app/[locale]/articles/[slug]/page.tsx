@@ -100,6 +100,11 @@ export default async function ArticlePage(props: { params: Promise<{ locale: str
                     original on X
                   </a>
                 </div>
+                {a.note && (
+                  <div className="qcf-small" style={{ background: '#fff8dc', border: '1px solid #e0cf8a', padding: '6px 10px', marginBottom: 12 }}>
+                    <b>Note:</b> {a.note}
+                  </div>
+                )}
                 <div className="qcf-post">
                   {a.blocks.map((b, k) =>
                     b.t === 'h' ? (

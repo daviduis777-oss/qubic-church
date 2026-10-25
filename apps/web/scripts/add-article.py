@@ -43,6 +43,7 @@ def main():
     ap.add_argument("--title")
     ap.add_argument("--kicker")
     ap.add_argument("--slug")
+    ap.add_argument("--note", help="editor's note shown above the post, e.g. Not financial advice")
     a = ap.parse_args()
 
     text = Path(a.draft).read_text(encoding="utf-8")
@@ -72,6 +73,8 @@ def main():
     }
     if a.maria:
         entry["mariaRepost"] = a.maria
+    if a.note:
+        entry["note"] = a.note
     arts.insert(0, entry)
     arts.sort(key=lambda x: x["date"], reverse=True)
     OUT.write_text(json.dumps(arts, ensure_ascii=False, indent=1), encoding="utf-8")
