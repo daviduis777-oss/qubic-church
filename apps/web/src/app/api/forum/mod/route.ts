@@ -21,8 +21,26 @@ export async function GET(req: Request) {
   }
 }
 
+type Known = { author: string; handle: string; auth: string; identity?: string }
+
+/** Who this post is published as. An identity seen before keeps its member; a moderator can link it to an existing member with `as`;
+ *  a new identity cannot take the name of an existing member on its own. */
+function resolveAuthor(p: { author: { name: string; handle: string; auth: string; id: string } }, known: Known[], as?: string): { author: string; handle: string } | { error: string } {
+  const identity = p.author.auth === 'qubic' ? p.author.id : undefined
+  const sameIdentity = known.find(k => (identity && k.identity === identity) || k.handle === p.author.handle)
+  if (as) {
+    const target = known.find(k => k.handle.toLowerCase() === as.toLowerCase())
+    if (!target) return { error: `No member with handle "${as}".` }
+    return { author: target.author, handle: target.handle }
+  }
+  if (sameIdentity) return { author: sameIdentity.author, handle: sameIdentity.handle }
+  const taken = known.find(k => k.author.toLowerCase() === p.author.name.toLowerCase())
+  if (taken) return { error: `The name "${taken.author}" belongs to member ${taken.handle}. Fill "Publish as" with ${taken.handle} to link this identity to them, or reject.` }
+  return { author: p.author.name, handle: p.author.handle }
+}
+
 export async function POST(req: Request) {
-  const b = (await req.json().catch(() => null)) as { key?: string; number?: number; action?: 'approve' | 'reject'; mariaRepost?: string; note?: string } | null
+  const b = (await req.json().catch(() => null)) as { key?: string; number?: number; action?: 'approve' | 'reject'; mariaRepost?: string; note?: string; as?: string } | null
   if (!b || !modKeyOk(b.key)) return NextResponse.json({ error: 'no' }, { status: 401 })
   const n = Number(b.number)
   const item = await getPending(n)
@@ -33,8 +51,17 @@ export async function POST(req: Request) {
       await closePending(n, LABEL_REJECTED, 'Not published.')
       return NextResponse.json({ ok: true })
     }
+    const { data: arts, sha } = await readJson<Article[]>(ARTICLES_PATH)
+    const { data: replies, sha: rsha } = await readJson<Reply[]>(REPLIES_PATH)
+    const known: Known[] = [
+      { author: 'Come-from-Beyond', handle: 'c___f___b', auth: 'x' },
+      { author: 'Maria', handle: 'maria_aigarth', auth: 'x' },
+      ...arts.map(a => ({ author: a.author, handle: a.handle ?? 'usetesserai', auth: a.auth ?? 'x', identity: a.identity })),
+      ...replies.map(r => ({ author: r.author, handle: r.handle, auth: r.auth, identity: r.identity })),
+    ]
+    const who = resolveAuthor(p, known, b.as?.trim() || undefined)
+    if ('error' in who) return NextResponse.json({ error: who.error }, { status: 409 })
     if (p.kind === 'topic') {
-      const { data: arts, sha } = await readJson<Article[]>(ARTICLES_PATH)
       let slug = slugify(p.title)
       const base = slug
       for (let i = 2; arts.some(a => a.slug === slug); i++) slug = `${base}-${i}`
@@ -45,8 +72,8 @@ export async function POST(req: Request) {
         kicker: null,
         date: p.date,
         url: p.xUrl ?? `https://qubic.church/articles/${slug}`,
-        author: p.author.name,
-        handle: p.author.handle,
+        author: who.author,
+        handle: who.handle,
         guest: true,
         auth: p.author.auth,
         identity: p.author.auth === 'qubic' ? p.author.id : undefined,
@@ -58,24 +85,23 @@ export async function POST(req: Request) {
       if (b.note) entry.note = b.note
       arts.unshift(entry)
       arts.sort((x, y) => y.date.localeCompare(x.date))
-      await writeJson(ARTICLES_PATH, arts, sha, `forum: topic "${p.title.slice(0, 60)}" by ${p.author.name} (#${n})`)
+      await writeJson(ARTICLES_PATH, arts, sha, `forum: topic "${p.title.slice(0, 60)}" by ${who.author} (#${n})`)
       await closePending(n, LABEL_APPROVED, `Published: https://qubic.church/articles/${slug}`)
       return NextResponse.json({ ok: true, slug })
     }
-    const { data: replies, sha } = await readJson<Reply[]>(REPLIES_PATH)
     const reply: Reply = {
       id: `${p.topic}-${n}`,
       topic: p.topic!,
       date: p.date,
-      author: p.author.name,
-      handle: p.author.handle,
+      author: who.author,
+      handle: who.handle,
       auth: p.author.auth,
       identity: p.author.auth === 'qubic' ? p.author.id : undefined,
       text: p.text,
       xUrl: p.xUrl,
     }
     replies.push(reply)
-    await writeJson(REPLIES_PATH, replies, sha, `forum: reply by ${p.author.name} in ${p.topic} (#${n})`)
+    await writeJson(REPLIES_PATH, replies, rsha, `forum: reply by ${who.author} in ${p.topic} (#${n})`)
     await closePending(n, LABEL_APPROVED, `Published under https://qubic.church/articles/${p.topic}`)
     return NextResponse.json({ ok: true })
   } catch (e) {
