@@ -100,6 +100,15 @@ export function BooksHome({ locale = 'en' }: { locale?: Locale }) {
                 What we build
               </Link>
               <Link
+                className="bpp-home-btn group inline-flex h-12 items-center gap-3 rounded-md border border-[#3dff9a]/70 bg-[#3dff9a]/10 px-6 font-mono text-sm font-bold uppercase tracking-widest text-[#3dff9a]"
+                href="/bpp9000"
+                title="BPP-9000: the Bitcoin price predictor of Aigarth"
+              >
+                <span aria-hidden className="h-2 w-2 rounded-full bg-[#3dff9a] shadow-[0_0_10px_#3dff9a]" />
+                BPP-9000
+              </Link>
+              <style>{`@keyframes bpp-home{0%,100%{box-shadow:0 0 18px -4px rgba(61,255,154,.55)}50%{box-shadow:0 0 34px 2px rgba(61,255,154,.85)}} .bpp-home-btn{animation:bpp-home 2.2s ease-in-out infinite} .bpp-home-btn:hover{background:rgba(61,255,154,.2)} @media (prefers-reduced-motion: reduce){.bpp-home-btn{animation:none}}`}</style>
+              <Link
                 className="group inline-flex h-12 items-center gap-3 border border-[#7f9cba] bg-[linear-gradient(#6f92b3,#476c8e)] px-6 text-sm font-semibold uppercase tracking-widest text-white shadow-[0_0_30px_-6px_rgba(111,146,179,0.9)] hover:shadow-[0_0_40px_-4px_rgba(160,190,220,1)]"
                 href="/articles"
                 title="The Crypt: the forum of Qubic Church, in the style of 2009"
