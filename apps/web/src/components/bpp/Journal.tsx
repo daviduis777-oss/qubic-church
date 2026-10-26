@@ -66,9 +66,16 @@ export function Journal({ initialCount }: { initialCount: number }) {
     setCount(j.count ?? 0)
     setReady(j.ready !== false)
   }
+  const [justJoined, setJustJoined] = useState(false)
   useEffect(() => {
     load()
     setT(x => ({ ...x, at: nowLocal() }))
+    const open = () => {
+      if (location.hash === '#join') setShowLogin(true)
+    }
+    open()
+    window.addEventListener('hashchange', open)
+    return () => window.removeEventListener('hashchange', open)
   }, [])
 
   const call = async (body: Record<string, unknown>, ok?: string) => {
@@ -82,6 +89,7 @@ export function Journal({ initialCount }: { initialCount: number }) {
       setP(j.participant)
       setS(j.stats)
       if (j.count != null) setCount(j.count)
+      window.dispatchEvent(new CustomEvent('bpp:changed', { detail: { count: j.count } }))
       setMsg(ok ?? (j.imported != null ? `Imported ${j.imported} trades${j.skipped ? `, ${j.skipped} already there` : ''}${j.errors?.length ? `, ${j.errors.length} rows skipped` : ''}.` : 'Saved.'))
       return true
     } catch (e) {
@@ -99,21 +107,18 @@ export function Journal({ initialCount }: { initialCount: number }) {
 
   if (!me)
     return (
-      <section className="panel" style={{ padding: 24, textAlign: 'center' }}>
-        <div className="label">the experiment</div>
-        <div className="big glow-g" style={{ fontSize: 'clamp(40px, 7vw, 64px)', fontWeight: 700, marginTop: 10 }}>
-          {count}
-        </div>
-        <div style={{ color: 'var(--dim)', fontSize: 13 }}>{count === 1 ? 'person has' : 'people have'} joined before the live feed</div>
-        <p style={{ maxWidth: 560, margin: '16px auto 0', fontSize: 13, lineHeight: 1.6 }}>
-          Join now, set your starting capital, and log the trades you make on BPP-9000 calls. Your stats, your journal and a card to post every day. We only show calls and statistics: you trade where you like, with your own money.
+      <section className="panel" style={{ padding: 'clamp(20px, 3vw, 30px)' }}>
+        <div className="label">Join the experiment</div>
+        <p className="mute" style={{ maxWidth: 640, margin: '8px 0 0', fontSize: 14, lineHeight: 1.6 }}>
+          Follow BPP-9000 and keep a journal of the trades you make on its calls: your stats, your record and a card to post every day. We only show calls and statistics. You trade where you like, with your own money.
         </p>
+        <Steps at={1} />
         {!showLogin ? (
           <button className="btn btn-main" onClick={() => setShowLogin(true)} style={{ marginTop: 18 }} type="button">
-            Join the experiment →
+            Log in to join
           </button>
         ) : (
-          <div className="qcf" style={{ maxWidth: 560, margin: '18px auto 0', textAlign: 'left', borderRadius: 10, overflow: 'hidden' }}>
+          <div className="qcf" style={{ maxWidth: 560, marginTop: 18, textAlign: 'left', borderRadius: 10, overflow: 'hidden' }}>
             <LoginBox
               onLogin={() => {
                 load()
@@ -121,18 +126,23 @@ export function Journal({ initialCount }: { initialCount: number }) {
             />
           </div>
         )}
-        <div style={{ fontSize: 11, color: 'var(--dim)', marginTop: 12 }}>Same login as The Crypt: a Qubic wallet signature or a tripcode. No email, no password.</div>
+        <div className="mute" style={{ fontSize: 12.5, marginTop: 12 }}>
+          Same login as The Crypt. A Qubic wallet is optional: a name and a secret code work too. No email, no password.
+        </div>
       </section>
     )
 
   if (!p)
     return (
       <section className="panel" style={{ padding: 24 }}>
-        <div className="label">join · {me.name}</div>
-        <div style={{ fontSize: 15, marginTop: 10 }}>Your starting capital for the journal</div>
+        <div className="label">Join the experiment · {me.name}</div>
+        <Steps at={2} />
+        <div style={{ fontSize: 15, marginTop: 16 }}>Your starting capital for the journal, in $</div>
         <div style={{ display: 'flex', gap: 10, marginTop: 10, maxWidth: 420 }}>
           <input inputMode="decimal" onChange={e => setStart(e.target.value)} placeholder="100" value={start} />
-          <button className="btn btn-main" disabled={busy || !ready} onClick={() => call({ action: 'join', start }, 'You are in.')} type="button">
+          <button className="btn btn-main" disabled={busy || !ready} onClick={async () => {
+              if (await call({ action: 'join', start }, '')) setJustJoined(true)
+            }} type="button">
             Join
           </button>
         </div>
@@ -144,9 +154,19 @@ export function Journal({ initialCount }: { initialCount: number }) {
 
   return (
     <section className="panel" style={{ padding: 'clamp(16px, 3vw, 26px)' }}>
+      {justJoined && (
+        <div style={{ marginBottom: 20, padding: '16px 18px', borderRadius: 14, background: 'rgba(255,196,107,.1)', border: '1px solid rgba(255,196,107,.45)' }}>
+          <div className="nx" style={{ fontSize: 30, color: 'var(--hot)', lineHeight: 1.1 }}>
+            You are in{count ? `, participant #${count}` : ''}.
+          </div>
+          <div className="mute" style={{ fontSize: 14, marginTop: 6, lineHeight: 1.55 }}>
+            Day 1 of your journal starts now. When you trade on a BPP-9000 call, log it below: your stats and card update by themselves. Live calls start 18 November.
+          </div>
+        </div>
+      )}
       <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10, alignItems: 'baseline' }}>
         <div>
-          <div className="label">your journal</div>
+          <div className="label">Your journal · you are a participant</div>
           <div style={{ fontSize: 'clamp(20px, 3vw, 28px)', fontWeight: 700, marginTop: 4 }}>
             {p.name} <span className="glow-g">×</span> BPP-9000 <span style={{ color: 'var(--dim)', fontWeight: 400 }}>· Day {s?.day ?? 1}</span>
           </div>
@@ -334,5 +354,50 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
       </span>
       {children}
     </label>
+  )
+}
+
+function Steps({ at }: { at: 1 | 2 }) {
+  const steps = ['Log in: wallet, or a name and a secret code', 'Set your starting capital', 'You are in: log trades, get your card']
+  return (
+    <ol style={{ listStyle: 'none', padding: 0, margin: '18px 0 0', display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+      {steps.map((t, i) => {
+        const n = i + 1
+        const state = n < at ? 'done' : n === at ? 'now' : 'next'
+        return (
+          <li
+            key={t}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+              padding: '8px 14px 8px 8px',
+              borderRadius: 999,
+              border: `1px solid ${state === 'now' ? 'rgba(255,196,107,.6)' : 'var(--line)'}`,
+              background: state === 'now' ? 'rgba(255,196,107,.08)' : 'transparent',
+              color: state === 'next' ? 'var(--dim)' : 'var(--ink)',
+              fontSize: 13.5,
+            }}
+          >
+            <span
+              style={{
+                width: 24,
+                height: 24,
+                borderRadius: '50%',
+                display: 'grid',
+                placeItems: 'center',
+                fontWeight: 700,
+                fontSize: 12,
+                background: state === 'next' ? 'rgba(255,255,255,.06)' : 'var(--fil)',
+                color: state === 'next' ? 'var(--dim)' : '#2a1404',
+              }}
+            >
+              {state === 'done' ? '✓' : n}
+            </span>
+            {t}
+          </li>
+        )
+      })}
+    </ol>
   )
 }

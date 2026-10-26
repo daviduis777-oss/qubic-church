@@ -104,7 +104,7 @@ export function BppLive({ liveAt }: { liveAt: string }) {
         </div>
 
         <div style={{ display: 'flex', gap: 10, marginTop: 28, flexWrap: 'wrap' }}>
-          <a className="btn btn-main" href="#journal">
+          <a className="btn btn-main" href="#join">
             Join the experiment
           </a>
           <a className="btn" href="#how">

@@ -9,13 +9,17 @@ export function Crowd({ initial }: { initial: C }) {
   const [c, setC] = useState<C>(initial)
   useEffect(() => {
     const load = () =>
-      fetch('/api/bpp/crowd')
+      fetch('/api/bpp/crowd', { cache: 'no-store' })
         .then(r => r.json())
         .then(j => typeof j.signedUp === 'number' && setC({ signedUp: j.signedUp, trades: j.trades, total: j.total }))
         .catch(() => {})
     load()
     const t = setInterval(() => !document.hidden && load(), 120_000)
-    return () => clearInterval(t)
+    window.addEventListener('bpp:changed', load)
+    return () => {
+      clearInterval(t)
+      window.removeEventListener('bpp:changed', load)
+    }
   }, [])
   return (
     <section className="panel" style={{ padding: 'clamp(18px, 3vw, 26px)', background: 'linear-gradient(180deg, rgba(255,205,110,.05), rgba(255,205,110,.015))' }}>
@@ -42,5 +46,49 @@ function Num({ big, small }: { big: string; small: string }) {
         {small}
       </span>
     </div>
+  )
+}
+
+/** Top-right of the page: participants and the one button that fits you (join, or your journal once you are in). */
+export function HeaderNav({ count: initial }: { count: number }) {
+  const [count, setCount] = useState(initial)
+  const [joined, setJoined] = useState(false)
+  useEffect(() => {
+    const load = () =>
+      fetch('/api/bpp', { cache: 'no-store' })
+        .then(r => r.json())
+        .then(j => {
+          if (typeof j.count === 'number') setCount(j.count)
+          setJoined(Boolean(j.participant))
+        })
+        .catch(() => {})
+    load()
+    window.addEventListener('bpp:changed', load)
+    return () => window.removeEventListener('bpp:changed', load)
+  }, [])
+  return (
+    <nav aria-label="BPP-9000" style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+      <span className="mute bpp-hide-sm" style={{ fontSize: 14, marginRight: 4 }}>
+        {count > 0 ? (
+          <>
+            <b className="nx" style={{ fontWeight: 500, fontSize: 24, color: 'var(--hot)', marginRight: 4 }}>
+              {count.toLocaleString('en-US')}
+            </b>
+            {count === 1 ? 'participant' : 'participants'}
+          </>
+        ) : (
+          'Be among the first participants'
+        )}
+      </span>
+      {joined ? (
+        <a className="btn btn-main" href="#journal">
+          My journal
+        </a>
+      ) : (
+        <a className="btn btn-main" href="#join">
+          Join the experiment
+        </a>
+      )}
+    </nav>
   )
 }
