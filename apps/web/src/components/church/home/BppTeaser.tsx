@@ -88,7 +88,7 @@ export function BppTeaser() {
   const [signed, setSigned] = useState<number | null>(null)
   const [days, setDays] = useState<number | null>(null)
   useEffect(() => {
-    setDays(Math.max(0, Math.ceil((LIVE_AT - Date.now()) / 86400000)))
+    setDays(Math.max(0, Math.floor((LIVE_AT - Date.now()) / 86400000)))
     fetch('/api/bpp/crowd')
       .then(r => r.json())
       .then(j => typeof j.signedUp === 'number' && setSigned(j.signedUp))
