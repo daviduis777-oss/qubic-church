@@ -13,5 +13,5 @@ export async function GET() {
     total += p.trades.length
     for (const t of p.trades) if (t.at.slice(0, 13) === hour) trades++
   }
-  return NextResponse.json({ signedUp, total, trades }, { headers: { 'Cache-Control': 'public, s-maxage=60' } })
+  return NextResponse.json({ signedUp, total, trades }, { headers: { 'Cache-Control': 'no-store' } })
 }

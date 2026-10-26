@@ -6,7 +6,7 @@ import { market } from '@/lib/bpp/market'
 import { participantCount } from '@/lib/bpp/store'
 import { BppStyles } from '@/components/bpp/BppStyles'
 import { BppLive } from '@/components/bpp/BppLive'
-import { Crowd } from '@/components/bpp/Crowd'
+import { Crowd, HeaderNav } from '@/components/bpp/Crowd'
 import { Journal } from '@/components/bpp/Journal'
 import { bppFonts } from '@/components/bpp/fonts'
 
@@ -40,26 +40,7 @@ export default async function BppPage(props: { params: Promise<{ locale: string 
             <span aria-hidden className="pilot" />
             BPP-9000
           </h1>
-          <nav aria-label="BPP-9000" style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
-            <span className="mute bpp-hide-sm" style={{ fontSize: 14, marginRight: 4 }}>
-              {count > 0 ? (
-                <>
-                  <b className="nx" style={{ fontWeight: 500, fontSize: 24, color: 'var(--hot)', marginRight: 4 }}>
-                    {count.toLocaleString('en-US')}
-                  </b>
-                  {count === 1 ? 'participant' : 'participants'}
-                </>
-              ) : (
-                'Be among the first participants'
-              )}
-            </span>
-            <a className="btn bpp-hide-sm" href="#journal">
-              My journal
-            </a>
-            <a className="btn btn-main" href="#journal">
-              Join the experiment
-            </a>
-          </nav>
+          <HeaderNav count={count} />
         </header>
 
         <BppLive liveAt={liveAt} />
@@ -76,6 +57,7 @@ export default async function BppPage(props: { params: Promise<{ locale: string 
         </section>
 
         <div id="journal" style={{ scrollMarginTop: 80 }}>
+          <span id="join" style={{ display: 'block', position: 'relative', top: -80 }} />
           <Journal initialCount={count} />
         </div>
 
