@@ -236,26 +236,28 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
     let lastH = -1
     let raf = 0
 
-    // Calm display: the picture moves to the network's current state once every STEP ms and fades into it.
-    const STEP = 1400
+    // Smooth display: every tick is real, but each neuron's colour glides toward its state with inertia,
+    // and pulses start staggered and travel slowly, so the picture flows instead of flickering.
+    const PULSE = 1100
+    const TAU = 240
+    const wt = Array.from({ length: N }, () => [0, 0, 1])
     let shown: Uint8Array = sim.states[0]!
-    let before: Uint8Array = sim.states[0]!
-    let stepAt = -1e9
-    const tickTo = (T: number, now: number) => {
+    let lastFrame = 0
+    const tickTo = (T: number, now: number, first = false) => {
       const s = sim.states[T]!
       const p = shown
-      before = shown
       shown = s
-      stepAt = now
-      for (let n = 0; n < N; n++)
-        if (s[n] !== p[n]) {
-          pop[n] = 1
-          for (let k = 0; k < d.k; k++) {
-            const c = links[n * d.k + k]
-            if (c) pulses.push({ c, t0: now, lit: p[sim.w.nb[n * d.k + k]!] !== 2 })
+      if (first) for (let n = 0; n < N; n++) wt[n] = [0, 0, 0].map((_, i) => (i === s[n] ? 1 : 0))
+      else
+        for (let n = 0; n < N; n++)
+          if (s[n] !== p[n]) {
+            pop[n] = 1
+            for (let k = 0; k < d.k; k++) {
+              const c = links[n * d.k + k]
+              if (c) pulses.push({ c, t0: now + Math.random() * tickMs * 0.9, lit: p[sim.w.nb[n * d.k + k]!] !== 2 })
+            }
           }
-        }
-      if (pulses.length > 400) pulses = pulses.slice(-400)
+      if (pulses.length > 180) pulses = pulses.slice(-180)
       const h = emitsUpTo(T)
       if (h !== lastH) {
         ansFade = 0
@@ -314,10 +316,11 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
         g.stroke()
       }
       // pulses into neurons that just changed
-      pulses = pulses.filter(q => now - q.t0 < STEP * 0.85)
+      pulses = pulses.filter(q => now - q.t0 < PULSE)
       g.lineCap = 'round'
       for (const q of pulses) {
-        const t = ease((now - q.t0) / (STEP * 0.85))
+        if (now < q.t0) continue
+        const t = ease((now - q.t0) / PULSE)
         const tail = Math.max(0, t - 0.16)
         g.strokeStyle = 'rgba(255,205,110,.16)'
         g.lineWidth = 1
@@ -406,18 +409,17 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
         const big = n === CT || n === OUT
         const r = big ? S * 0.027 : S * 0.0195
         const v = s[n]!
-        const was = before[n]!
-        const k = v === was ? 1 : ease(Math.min(1, (now - stepAt) / 900))
-        const mix = (a: number[], b: number[]) => a.map((x0, i) => x0 + (b[i]! - x0) * k)
+        const w = wt[n]!
         const F = [[42, 29, 16], [255, 214, 138], [18, 16, 20]]
         const L = [[255, 205, 110, 0.75], [255, 240, 207, 1], [255, 255, 255, 0.16]]
-        const glow = (was === 1 ? 1 - k : 0) + (v === 1 ? k : 0)
+        const blend = (M: number[][]) => M[0]!.map((_, i) => w[0]! * M[0]![i]! + w[1]! * M[1]![i]! + w[2]! * M[2]![i]!)
+        const glow = w[1]!
         if (glow > 0.02) {
           g.shadowColor = `rgba(255,190,80,${0.9 * glow})`
           g.shadowBlur = 14 * glow
         }
-        const f = mix(F[was]!, F[v]!)
-        const l = mix(L[was]!, L[v]!)
+        const f = blend(F).map(Math.round)
+        const l = blend(L)
         g.beginPath()
         g.arc(x, y, r, 0, 7)
         g.fillStyle = `rgb(${f[0]},${f[1]},${f[2]})`
@@ -430,12 +432,12 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
         g.textBaseline = 'middle'
         const ink = (t: number) => (t === 1 ? 'rgba(58,34,6,' : t === 0 ? 'rgba(255,196,107,' : 'rgba(236,223,203,')
         const sym = (t: number) => (t === 1 ? '+' : t === 0 ? '−' : '?')
-        if (k < 1) {
-          g.fillStyle = `${ink(was)}${(1 - k) * (was === 2 ? 0.4 : 1)})`
-          g.fillText(sym(was), x, y + 0.5)
+        for (let t = 0; t < 3; t++) {
+          if (w[t]! < 0.04) continue
+          g.fillStyle = `${ink(t)}${w[t]! * (t === 2 ? 0.4 : 1)})`
+          g.fillText(sym(t), x, y + 0.5)
         }
-        g.fillStyle = `${ink(v)}${k * (v === 2 ? 0.4 : 1)})`
-        g.fillText(sym(v), x, y + 0.5)
+        void v
       }
       g.font = `600 ${Math.max(8, S * 0.015)}px ${SANS}`
       g.fillStyle = 'rgba(236,223,203,.7)'
@@ -445,13 +447,18 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
 
     const frame = () => {
       const now = performance.now()
-      if (now - stepAt >= STEP || lastT < 0) {
-        const T = tickOf(Date.now())
-        if (T !== lastT) {
-          tickTo(T, lastT < 0 || reduce.current ? now - STEP : now)
-          if (lastT < 0) before = shown
-          lastT = T
-        }
+      const T = tickOf(Date.now())
+      if (T !== lastT) {
+        tickTo(T, now, lastT < 0 || reduce.current)
+        lastT = T
+      }
+      // colours glide toward the current state (frame-rate independent)
+      const dt = lastFrame ? Math.min(100, now - lastFrame) : 16
+      lastFrame = now
+      const a = 1 - Math.exp(-dt / TAU)
+      for (let n = 0; n < N; n++) {
+        const st = shown[n]!
+        for (let t = 0; t < 3; t++) wt[n]![t]! += ((t === st ? 1 : 0) - wt[n]![t]!) * a
       }
       draw(lastT, now)
       raf = requestAnimationFrame(frame)
