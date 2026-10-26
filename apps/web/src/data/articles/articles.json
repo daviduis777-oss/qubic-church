@@ -1,5 +1,100 @@
 [
  {
+  "slug": "from-peer-to-peer-cash-to-emergent-intelligence",
+  "title": "From Peer-to-Peer Cash to Emergent Intelligence",
+  "kicker": null,
+  "date": "2026-10-26",
+  "url": "https://qubic.church/articles/from-peer-to-peer-cash-to-emergent-intelligence",
+  "author": "ThatsNotMyCode",
+  "handle": "t-kfrbwbj3tb",
+  "guest": true,
+  "auth": "trip",
+  "summary": "Satoshi Nakamoto opened the Bitcoin white paper and the early announcements with a direct rejection of trusted intermediaries. \"I’ve been working on a new electronic cash system that’s fully peer-to-peer, with no trusted third party.\"…",
+  "words": 1108,
+  "blocks": [
+   {
+    "t": "p",
+    "text": "Satoshi Nakamoto opened the Bitcoin white paper and the early announcements with a direct rejection of trusted intermediaries. \"I’ve been working on a new electronic cash system that’s fully peer-to-peer, with no trusted third party.\" The same impulse appears in the longer explanation posted to the P2P Foundation in February 2009:"
+   },
+   {
+    "t": "quote",
+    "text": "The root problem with conventional currency is all the trust that’s required to make it work. The central bank must be trusted not to debase the currency, but the history of fiat currencies is full of breaches of that trust. Banks must be trusted to hold our money and transfer it electronically, but they lend it out in waves of credit bubbles with barely a fraction in reserve. We have to trust them with our privacy, trust them not to let identity thieves drain our accounts. … A generation ago, multi-user time-sharing computer systems had a similar problem. Before strong encryption, users had to rely on password protection to secure their files, placing trust in the system administrator to keep their information private. … Then strong encryption became available to the masses, and trust was no longer required. … It’s time we had the same thing for money. With e-currency based on cryptographic proof, without the need to trust a third party middleman, money can be secure and transactions effortless."
+   },
+   {
+    "t": "p",
+    "text": "The white paper itself states the design goal cleanly: \"A purely peer-to-peer version of electronic cash would allow online payments to be sent directly from one party to another without going through a financial institution.\" Satoshi later noted that pure peer-to-peer networks are harder for governments to shut down than centrally controlled ones, describing the project as a way to \"gain a new territory of freedom for several years.\" The operating principle is consistent across the writings: replace institutional trust with cryptographic proof and distributed computation so that the system continues even if any single participant is dishonest, captured, or removed."
+   },
+   {
+    "t": "p",
+    "text": "That principle does not stop at money. Once a critical function of society can be coordinated without a trusted center, the same logic applies to the next function that concentrates power. Artificial intelligence is now the clearest candidate. A handful of organizations control the largest training runs, the dominant models, the data pipelines, and the inference platforms. Users and developers must trust those organizations not to debase the capability, not to insert hidden preferences, not to withhold access, and not to retain the data. The historical pattern Satoshi described for currency -repeated breaches of trust, overhead that makes certain uses impossible, and the absence of a mechanism that removes the need for the middleman- maps onto the present structure of AI."
+   },
+   {
+    "t": "p",
+    "text": "Come-from-beyond (Sergey Ivancheglo), the confirmed developer behind NXT (earliest pure proof-of-stake system), co-founder of IOTA (a directed-acyclic-graph ledger), and the founder of Qubic, has pursued the same line of attack for decades. Qubic runs Useful Proof of Work: the energy that would otherwise be spent solely on securing a ledger is directed into training artificial neural networks. The long-term project is Aigarth, an attempt to grow intelligence across the network rather than inside a single laboratory. In May 2024 he wrote:"
+   },
+   {
+    "t": "quote",
+    "text": "#Aigarth's main goal is to discover a new paradigm allowing to create true #AI, I have just seen the wireframe of this paradigm. And I have realized that Artificial Intelligence will not be created, it will emerge. With help of #Qubic miners."
+   },
+   {
+    "t": "p",
+    "text": "https://x.com/c___f___b/status/1790183387803930999"
+   },
+   {
+    "t": "p",
+    "text": "In a later post he restated the economic framing: \"#Qubic tokens have always been representing units of energy, to run #AI, not controlled by corporations.\" Years earlier, while working on IOTA, he described a primitive AI he had built that itself produced the Curl-P hash function; an improved version was already working on the next iteration. The pattern is continuous: remove a central requirement (trusted mint, chain of blocks, trusted trainer), replace it with a distributed process, and treat the resulting system as a substrate from which further capability can arise."
+   },
+   {
+    "t": "p",
+    "text": "The move from decentralized currency to decentralized AI is likely for structural reasons, not because any single individual must personally make the transition. First, the core failure mode is identical. Both money and advanced intelligence are coordination technologies whose centralization creates single points of failure, censorship, and misaligned incentives. Cryptographic proof, open verification, and economic incentives that reward contribution rather than gatekeeping address that failure mode in either domain. Second, the hardware and energy already deployed for proof-of-work can be redirected. Traditional mining burns energy solely for consensus; Useful Proof of Work converts the same expenditure into model training and evaluation, turning an existing decentralized resource into the substrate for intelligence. Third, the cypherpunk sequence itself points in this direction. Strong encryption removed the need to trust system administrators with data; Bitcoin removed the need to trust banks and central banks with money. Intelligence is the next layer that currently requires trust in a small set of organizations. The same toolkit -peer-to-peer networks, cryptographic verification, and open participation- applies, and the people who already know how to build systems that survive without trusted parties are the natural ones to attempt it."
+   },
+   {
+    "t": "p",
+    "text": "Satoshi’s own framing makes the continuity explicit. He treated the shift from password-protected files to strong encryption as the precedent for money. The same sentence structure works for the next step: before decentralized training and inference, users and developers had to rely on a handful of laboratories; after it, trust in any single laboratory is no longer required. Come-from-beyond’s emphasis on emergence rather than top-down creation matches the earlier insight that a peer-to-peer network can produce a reliable public history without a mint. In both cases the goal is not to invent a better central authority but to make the authority unnecessary."
+   },
+   {
+    "t": "p",
+    "text": "Whether Qubic and Aigarth ultimately produce the first practical decentralized general intelligence, or whether other networks arrive earlier, is secondary to the architectural claim. Once money can function without a trusted third party, the same proof-based, distributed approach becomes the obvious candidate for any other system whose failure or capture would be costly. Intelligence is now that system. The quotes from 2008–2009 and from 2024 describe the same project at different stages: replace required trust with verifiable computation distributed across participants who do not need to trust one another."
+   },
+   {
+    "t": "p",
+    "text": "We can't deny that there are striking similarities between Satoshi and CFB (and by the way; much more crypto-related innovations). Let's just leave this here for the believers:"
+   },
+   {
+    "t": "p",
+    "text": "15ubicBBWFnvoZLT7GiU2qxjRaKJPdkDMG"
+   },
+   {
+    "t": "p",
+    "text": "4th block."
+   },
+   {
+    "t": "p",
+    "text": "Use Base58-alphabet indexes."
+   },
+   {
+    "t": "h",
+    "text": "15 = [Q]ubic"
+   },
+   {
+    "t": "h",
+    "text": "BB WF [2][2] April [21][6] 27"
+   },
+   {
+    "t": "h",
+    "text": "Digital root: 2+2+2+1+6 = 13 April 2027"
+   },
+   {
+    "t": "p",
+    "text": "nvoZLT = novo Zoloto = ново золото = new gold."
+   },
+   {
+    "t": "p",
+    "text": "Qubic - 13 April 2027 - new gold"
+   }
+  ]
+ },
+ {
   "slug": "the-death-of-the-greater-fool",
   "title": "The Death of the \"Greater Fool\"",
   "kicker": null,
