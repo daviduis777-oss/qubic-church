@@ -1,4 +1,4 @@
-import { BOOKS, chapterMarkdown, getBook, getChapter } from '@/lib/books'
+import { BOOKS, chapterMarkdown, chapterUrl, getBook, getChapter } from '@/lib/books'
 
 export const dynamic = 'force-static'
 
@@ -12,6 +12,6 @@ export async function GET(_req: Request, ctx: { params: Promise<{ book: string; 
   const r = b && getChapter(b, chapter.replace(/\.md$/, ''))
   if (!b || !r) return new Response('Not found', { status: 404 })
   return new Response(`# ${b.title} (QC, Qubic Church)\n\n${chapterMarkdown(b, r.chapter)}`, {
-    headers: { 'Content-Type': 'text/markdown; charset=utf-8' },
+    headers: { 'Content-Type': 'text/markdown; charset=utf-8', Link: `<${chapterUrl(b, r.chapter)}>; rel="canonical"` },
   })
 }
