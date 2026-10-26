@@ -6,7 +6,7 @@ import { SITE_URL } from '@/lib/books'
 import { ARTICLES, articleUrl } from '@/lib/articles'
 import { CFB_ARTICLES } from '@/lib/archive'
 import { RANKS, WEIGHT } from '@/lib/ranks'
-import { BOARDS, MEMBERS, TOPICS, homeOf, profileHref, topicsIn } from '@/lib/forum'
+import { BOARDS, MEMBERS, TOPICS, homeOf, profileHref, topicsIn, cryptOg } from '@/lib/forum'
 import { ForumShell, Quote, Stars } from '@/components/church/forum/ForumUI'
 
 const TITLE = 'The Crypt: the forum of Qubic Church. Articles on Qubic, Aigarth and Come-from-Beyond'
@@ -17,7 +17,8 @@ export const metadata: Metadata = {
   title: { absolute: TITLE },
   description: DESC,
   alternates: { canonical: `${SITE_URL}/articles` },
-  openGraph: { type: 'website', title: TITLE, description: DESC, url: `${SITE_URL}/articles` },
+  openGraph: { type: 'website', title: TITLE, description: DESC, url: `${SITE_URL}/articles`, images: cryptOg('home', 'The Crypt').images },
+  twitter: cryptOg('home', 'The Crypt').twitter,
 }
 
 export default async function ArticlesPage(props: { params: Promise<{ locale: string }> }) {

@@ -7,7 +7,7 @@ import { setRequestLocale } from 'next-intl/server'
 import { locales } from '@/config/i18n'
 import { SITE_URL } from '@/lib/books'
 import { ARTICLES, articleKeywords, articleMinutes, articleUrl, articleWeight, authorUrl, formatDate, getArticle, issueNumber, originalUrl } from '@/lib/articles'
-import { memberOf, repliesTo } from '@/lib/forum'
+import { memberOf, repliesTo, cryptOg } from '@/lib/forum'
 import { Compose } from '@/components/church/forum/Compose'
 import { blocksFromText } from '@/lib/forum/text'
 import { ForumShell, Postbit, Quote } from '@/components/church/forum/ForumUI'
@@ -29,7 +29,8 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
     description: seoDescription(a.summary),
     alternates: { canonical: articleUrl(a) },
     authors: [{ name: a.author, url: authorUrl(a) }],
-    openGraph: { type: 'article', title: seoTitleText(a.title), description: seoDescription(a.summary), url: articleUrl(a), publishedTime: a.date },
+    openGraph: { type: 'article', title: seoTitleText(a.title), description: seoDescription(a.summary), url: articleUrl(a), publishedTime: a.date, images: cryptOg(`t-${a.slug}`, a.title).images },
+    twitter: cryptOg(`t-${a.slug}`, a.title).twitter,
   }
 }
 
