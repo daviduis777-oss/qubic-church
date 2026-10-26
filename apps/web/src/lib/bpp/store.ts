@@ -110,20 +110,3 @@ export async function allParticipants(): Promise<Participant[]> {
   const raws = await cmd<(string | null)[]>('MGET', ...handles.map(KEY))
   return raws.filter(Boolean).map(r => JSON.parse(r!) as Participant)
 }
-
-/** Who has the page open: one member per browser session, kept for two minutes after its last ping. */
-const SEEN = 'bpp:seen'
-export async function ping(sid: string): Promise<number> {
-  const now = Date.now()
-  await cmd('ZADD', SEEN, now, sid.slice(0, 40))
-  await cmd('ZREMRANGEBYSCORE', SEEN, 0, now - 120_000)
-  return cmd<number>('ZCARD', SEEN)
-}
-export async function watching(): Promise<number> {
-  try {
-    await cmd('ZREMRANGEBYSCORE', SEEN, 0, Date.now() - 120_000)
-    return await cmd<number>('ZCARD', SEEN)
-  } catch {
-    return 0
-  }
-}

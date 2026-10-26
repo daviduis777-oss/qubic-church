@@ -108,7 +108,7 @@ export function BppTeaser() {
         <span className="mt-1 text-lg font-semibold leading-snug text-[#FFE3B0]">Watch the Bitcoin predictor Qubic miners grow</span>
         <span className="mt-1 text-sm text-fg-2">
           {days == null ? 'Live calls from 18 November' : days > 0 ? `First live call in ${days} ${days === 1 ? 'day' : 'days'}` : 'Live calls are on'}
-          {signed != null && signed > 0 ? ` · ${signed.toLocaleString('en-US')} signed up` : ''}
+          {signed != null && signed > 0 ? ` · ${signed.toLocaleString('en-US')} ${signed === 1 ? 'participant' : 'participants'}` : ''}
         </span>
       </span>
       <span aria-hidden className="ml-auto text-2xl text-[#FFC46B] transition-transform group-hover:translate-x-1">
