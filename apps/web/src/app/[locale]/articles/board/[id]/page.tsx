@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation'
 import { setRequestLocale } from 'next-intl/server'
 import { locales } from '@/config/i18n'
 import { SITE_URL } from '@/lib/books'
-import { BOARDS, getBoard, memberOf, profileHref, topicsIn } from '@/lib/forum'
+import { BOARDS, getBoard, memberOf, profileHref, topicsIn, cryptOg } from '@/lib/forum'
 import { ForumShell } from '@/components/church/forum/ForumUI'
 
 export function generateStaticParams() {
@@ -19,6 +19,8 @@ export async function generateMetadata(props: { params: Promise<{ id: string }> 
     title: { absolute: `${b.name} · The Crypt` },
     description: b.desc,
     alternates: { canonical: `${SITE_URL}/articles/board/${b.id}` },
+    openGraph: { type: 'website', title: `${b.name} · The Crypt`, description: b.desc, url: `${SITE_URL}/articles/board/${b.id}`, images: cryptOg(`b-${b.id}`, b.name).images },
+    twitter: cryptOg(`b-${b.id}`, b.name).twitter,
   }
 }
 

@@ -5,7 +5,7 @@ import { setRequestLocale } from 'next-intl/server'
 import { locales } from '@/config/i18n'
 import { SITE_URL } from '@/lib/books'
 import { jsonLd } from '@/lib/json-ld'
-import { BOARDS, MEMBERS, bioOf, homeOf, memberByHandle, postsOf, profileHref } from '@/lib/forum'
+import { BOARDS, MEMBERS, bioOf, homeOf, memberByHandle, postsOf, profileHref, cryptOg } from '@/lib/forum'
 import { ForumShell, Stars } from '@/components/church/forum/ForumUI'
 import { Avatar } from '@/components/church/forum/Avatar'
 
@@ -21,6 +21,8 @@ export async function generateMetadata(props: { params: Promise<{ handle: string
     title: { absolute: `View the profile of ${m.name} · The Crypt` },
     description: `${m.name} (@${m.handle}) in The Crypt, the forum of Qubic Church: ${m.role ? `${m.role}, ` : ''}${m.rank.name}, rank ${m.rank.level}. ${bioOf(m) ?? ''}`.slice(0, 160),
     alternates: { canonical: `${SITE_URL}${profileHref(m.handle)}` },
+    openGraph: { type: 'profile', title: `${m.name} · The Crypt`, url: `${SITE_URL}${profileHref(m.handle)}`, images: cryptOg(`p-${m.handle.toLowerCase()}`, m.name).images },
+    twitter: cryptOg(`p-${m.handle.toLowerCase()}`, m.name).twitter,
   }
 }
 

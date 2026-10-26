@@ -7,7 +7,7 @@ import { SITE_URL } from '@/lib/books'
 import { jsonLd } from '@/lib/json-ld'
 import { seoDescription, seoTitle, seoTitleText } from '@/lib/seo'
 import { CFB_ARTICLES, archiveId, archivedUrl, formatArchiveDate, getArchiveEntry } from '@/lib/archive'
-import { memberOf } from '@/lib/forum'
+import { memberOf, cryptOg } from '@/lib/forum'
 import { ForumShell, Postbit } from '@/components/church/forum/ForumUI'
 
 export function generateStaticParams() {
@@ -23,7 +23,8 @@ export async function generateMetadata(props: { params: Promise<{ id: string }> 
     title: seoTitle(`${a.title} · Come-from-Beyond`),
     description: seoDescription(a.summary),
     alternates: { canonical: url },
-    openGraph: { type: 'article', title: seoTitleText(a.title), description: seoDescription(a.summary), url },
+    openGraph: { type: 'article', title: seoTitleText(a.title), description: seoDescription(a.summary), url, images: cryptOg(`t-${id}`, a.title).images },
+    twitter: cryptOg(`t-${id}`, a.title).twitter,
   }
 }
 
