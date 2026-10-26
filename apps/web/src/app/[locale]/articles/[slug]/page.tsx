@@ -11,6 +11,10 @@ import { memberOf, repliesTo } from '@/lib/forum'
 import { Compose } from '@/components/church/forum/Compose'
 import { blocksFromText } from '@/lib/forum/text'
 import { ForumShell, Postbit, Quote } from '@/components/church/forum/ForumUI'
+import { Linkify } from '@/components/church/forum/Linkify'
+
+/** Shown on every post written by a member: the forum publishes as is and never edits. */
+const USER_NOTE = "Written by a member and published as is: we don't edit or delete. Author's view, not ours. Not financial advice. Claims about people and identities are the author's."
 
 export function generateStaticParams() {
   return locales.flatMap(locale => ARTICLES.map(a => ({ locale, slug: a.slug })))
@@ -107,21 +111,26 @@ export default async function ArticlePage(props: { params: Promise<{ locale: str
                     </>
                   )}
                 </div>
-                {a.note && (
+                {(a.guest || a.note) && (
                   <div className="qcf-small" style={{ background: '#fff8dc', border: '1px solid #e0cf8a', padding: '6px 10px', marginBottom: 12 }}>
-                    <b>Note:</b> {a.note}
+                    <b>Note:</b> {a.guest ? USER_NOTE : ''}
+                    {a.note && a.note !== USER_NOTE && <>{a.guest ? ' ' : ''}{a.note}</>}
                   </div>
                 )}
                 <div className="qcf-post">
                   {a.blocks.map((b, k) =>
                     b.t === 'h' ? (
-                      <h3 key={k}>{b.text}</h3>
+                      <h3 key={k}>
+                        <Linkify text={b.text} />
+                      </h3>
                     ) : b.t === 'quote' ? (
                       <Quote from={b.cite} key={k}>
-                        {b.text}
+                        <Linkify text={b.text} />
                       </Quote>
                     ) : (
-                      <p key={k}>{b.text}</p>
+                      <p key={k}>
+                        <Linkify text={b.text} />
+                      </p>
                     ),
                   )}
                 </div>
@@ -157,10 +166,12 @@ export default async function ArticlePage(props: { params: Promise<{ locale: str
                       {blocksFromText(r.text).map((b, i) =>
                         b.t === 'quote' ? (
                           <Quote from={b.cite} key={i}>
-                            {b.text}
+                            <Linkify text={b.text} />
                           </Quote>
                         ) : (
-                          <p key={i}>{b.text}</p>
+                          <p key={i}>
+                            <Linkify text={b.text} />
+                          </p>
                         ),
                       )}
                     </div>
