@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { usePathname } from '@/navigation'
 
 const LINKS = [
+  ['/bpp9000', 'BPP-9000'],
   ['/articles', 'Crypt'],
   ['/books', 'Books'],
   ['/docs', 'Research'],
