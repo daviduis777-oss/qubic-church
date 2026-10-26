@@ -60,7 +60,7 @@ function MiniNet({ size = 84 }: { size?: number }) {
         }
         g.fill()
         g.shadowBlur = 0
-        glow[n]! *= 0.97
+        glow[n]! *= 0.95
       }
     }
     draw()
@@ -69,7 +69,7 @@ function MiniNet({ size = 84 }: { size?: number }) {
       const nx = step(c, w, s)
       for (let n = 0; n < c.n; n++) if (nx[n] !== s[n]) glow[n] = 1
       s = nx
-    }, 1400)
+    }, 700)
     let raf = 0
     const loop = () => {
       draw()
