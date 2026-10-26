@@ -236,9 +236,17 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
     let lastH = -1
     let raf = 0
 
+    // Calm display: the picture moves to the network's current state once every STEP ms and fades into it.
+    const STEP = 1400
+    let shown: Uint8Array = sim.states[0]!
+    let before: Uint8Array = sim.states[0]!
+    let stepAt = -1e9
     const tickTo = (T: number, now: number) => {
       const s = sim.states[T]!
-      const p = sim.states[Math.max(0, T - 1)]!
+      const p = shown
+      before = shown
+      shown = s
+      stepAt = now
       for (let n = 0; n < N; n++)
         if (s[n] !== p[n]) {
           pop[n] = 1
@@ -306,10 +314,10 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
         g.stroke()
       }
       // pulses into neurons that just changed
-      pulses = pulses.filter(q => now - q.t0 < tickMs * 0.95)
+      pulses = pulses.filter(q => now - q.t0 < STEP * 0.85)
       g.lineCap = 'round'
       for (const q of pulses) {
-        const t = ease((now - q.t0) / (tickMs * 0.95))
+        const t = ease((now - q.t0) / (STEP * 0.85))
         const tail = Math.max(0, t - 0.16)
         g.strokeStyle = 'rgba(255,205,110,.16)'
         g.lineWidth = 1
@@ -344,7 +352,7 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
       g.fill()
       const ans = h ? sim.emitVal[h - 1]! : 2
       const ok = h > 0 && sim.emitVal[h - 1] === sim.exp[h - 1]
-      ansFade = Math.min(1, ansFade + 0.08)
+      ansFade = Math.min(1, ansFade + 0.04)
       g.textAlign = 'center'
       g.fillStyle = 'rgba(236,223,203,.55)'
       g.font = `600 ${Math.max(8, S * 0.015)}px ${SANS}`
@@ -396,32 +404,38 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
       for (let n = 0; n < N; n++) {
         const [x, y] = P[n]!
         const big = n === CT || n === OUT
-        pop[n]! *= 0.9
-        const r = (big ? S * 0.027 : S * 0.0195) * (1 + 0.18 * pop[n]!)
-        const v = s[n]
-        if (v === 1) {
-          g.shadowColor = 'rgba(255,190,80,.9)'
-          g.shadowBlur = 14 + 10 * pop[n]!
+        const r = big ? S * 0.027 : S * 0.0195
+        const v = s[n]!
+        const was = before[n]!
+        const k = v === was ? 1 : ease(Math.min(1, (now - stepAt) / 900))
+        const mix = (a: number[], b: number[]) => a.map((x0, i) => x0 + (b[i]! - x0) * k)
+        const F = [[42, 29, 16], [255, 214, 138], [18, 16, 20]]
+        const L = [[255, 205, 110, 0.75], [255, 240, 207, 1], [255, 255, 255, 0.16]]
+        const glow = (was === 1 ? 1 - k : 0) + (v === 1 ? k : 0)
+        if (glow > 0.02) {
+          g.shadowColor = `rgba(255,190,80,${0.9 * glow})`
+          g.shadowBlur = 14 * glow
         }
+        const f = mix(F[was]!, F[v]!)
+        const l = mix(L[was]!, L[v]!)
         g.beginPath()
         g.arc(x, y, r, 0, 7)
-        g.fillStyle = v === 1 ? '#FFD68A' : v === 0 ? '#2a1d10' : '#121014'
+        g.fillStyle = `rgb(${f[0]},${f[1]},${f[2]})`
         g.fill()
         g.shadowBlur = 0
         g.lineWidth = 1.3
-        g.strokeStyle = v === 1 ? '#fff0cf' : v === 0 ? 'rgba(255,205,110,.75)' : 'rgba(255,255,255,.16)'
+        g.strokeStyle = `rgba(${l[0]},${l[1]},${l[2]},${l[3]})`
         g.stroke()
-        if (pop[n]! > 0.3) {
-          g.strokeStyle = `rgba(255,227,176,${pop[n]! * 0.7})`
-          g.lineWidth = 1
-          g.beginPath()
-          g.arc(x, y, r + 4 + (1 - pop[n]!) * 8, 0, 7)
-          g.stroke()
-        }
-        g.fillStyle = v === 1 ? '#3a2206' : v === 0 ? '#FFC46B' : 'rgba(236,223,203,.4)'
         g.font = `700 ${big ? S * 0.024 : S * 0.019}px ${SANS}`
         g.textBaseline = 'middle'
-        g.fillText(v === 1 ? '+' : v === 0 ? '−' : '?', x, y + 0.5)
+        const ink = (t: number) => (t === 1 ? 'rgba(58,34,6,' : t === 0 ? 'rgba(255,196,107,' : 'rgba(236,223,203,')
+        const sym = (t: number) => (t === 1 ? '+' : t === 0 ? '−' : '?')
+        if (k < 1) {
+          g.fillStyle = `${ink(was)}${(1 - k) * (was === 2 ? 0.4 : 1)})`
+          g.fillText(sym(was), x, y + 0.5)
+        }
+        g.fillStyle = `${ink(v)}${k * (v === 2 ? 0.4 : 1)})`
+        g.fillText(sym(v), x, y + 0.5)
       }
       g.font = `600 ${Math.max(8, S * 0.015)}px ${SANS}`
       g.fillStyle = 'rgba(236,223,203,.7)'
@@ -431,13 +445,15 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
 
     const frame = () => {
       const now = performance.now()
-      const T = tickOf(Date.now())
-      if (T !== lastT) {
-        if (lastT >= 0 && !reduce.current) tickTo(T, now)
-        else tickTo(T, now - tickMs)
-        lastT = T
+      if (now - stepAt >= STEP || lastT < 0) {
+        const T = tickOf(Date.now())
+        if (T !== lastT) {
+          tickTo(T, lastT < 0 || reduce.current ? now - STEP : now)
+          if (lastT < 0) before = shown
+          lastT = T
+        }
       }
-      draw(T, now)
+      draw(lastT, now)
       raf = requestAnimationFrame(frame)
     }
     raf = requestAnimationFrame(frame)

@@ -77,6 +77,7 @@ export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> 
   const handle = id.replace(/\.png$/, '')
   const p = handle === 'home' ? null : await getParticipant(handle).catch(() => null)
   const opts = { width: 1200, height: 630, fonts: await fonts(), headers: { 'Cache-Control': 'public, max-age=300' } }
+  const gun = `data:image/png;base64,${(await readFile(path.join(process.cwd(), 'public', 'bpp', 'bpp9000.png'))).toString('base64')}`
   const RING = 560
   const ring = ringSvg(RING, 5400)
   const bg = 'radial-gradient(900px 600px at 82% 50%, #1a130b, #0B0A0E 65%)'
@@ -107,7 +108,11 @@ export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> 
     <div style={{ display: 'flex', width: '100%', height: '100%', background: bg, color: INK, fontFamily: 'Geist', position: 'relative' }}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img alt="" height={RING} src={ring} style={{ position: 'absolute', right: 20, top: 35 }} width={RING} />
-      <div style={{ position: 'absolute', right: 20, top: 35, width: RING, height: RING, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Eng', fontSize: 18, letterSpacing: 4, color: FIL }}>BPP-9000</div>
+      <div style={{ position: 'absolute', right: 20, top: 35, width: RING, height: RING, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img alt="" height={96} src={gun} style={{ marginTop: 6 }} width={148} />
+        <span style={{ fontFamily: 'Eng', fontSize: 15, letterSpacing: 4, color: FIL, marginTop: 8 }}>BPP-9000</span>
+      </div>
       <span style={{ position: 'absolute', right: 40, bottom: 14, fontSize: 15, color: '#7d7064' }}>Experiment. Not financial advice.</span>
       <div style={{ display: 'flex', flexDirection: 'column', padding: '56px 64px 40px', width: 700, height: '100%' }}>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
