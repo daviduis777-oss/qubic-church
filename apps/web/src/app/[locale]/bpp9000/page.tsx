@@ -3,7 +3,7 @@ import { setRequestLocale } from 'next-intl/server'
 import { SITE_URL } from '@/lib/books'
 import { LIVE_FEED_EPOCH, epochStart } from '@/lib/bpp/network'
 import { market } from '@/lib/bpp/market'
-import { participantCount, watching } from '@/lib/bpp/store'
+import { participantCount } from '@/lib/bpp/store'
 import { BppStyles } from '@/components/bpp/BppStyles'
 import { BppLive } from '@/components/bpp/BppLive'
 import { Crowd } from '@/components/bpp/Crowd'
@@ -29,7 +29,7 @@ const fngWord = (v: number) => (v < 25 ? 'extreme fear' : v < 45 ? 'fear' : v < 
 export default async function BppPage(props: { params: Promise<{ locale: string }> }) {
   const { locale } = await props.params
   setRequestLocale(locale)
-  const [m, count, seen] = await Promise.all([market(), participantCount(), watching()])
+  const [m, count] = await Promise.all([market(), participantCount()])
   const liveAt = epochStart(LIVE_FEED_EPOCH).toISOString()
   return (
     <div className={`bpp ${bppFonts}`} style={{ minHeight: '100vh' }}>
@@ -47,10 +47,10 @@ export default async function BppPage(props: { params: Promise<{ locale: string 
                   <b className="nx" style={{ fontWeight: 500, fontSize: 24, color: 'var(--hot)', marginRight: 4 }}>
                     {count.toLocaleString('en-US')}
                   </b>
-                  signed up
+                  {count === 1 ? 'participant' : 'participants'}
                 </>
               ) : (
-                'Be among the first to sign up'
+                'Be among the first participants'
               )}
             </span>
             <a className="btn bpp-hide-sm" href="#journal">
@@ -64,7 +64,7 @@ export default async function BppPage(props: { params: Promise<{ locale: string 
 
         <BppLive liveAt={liveAt} />
 
-        <Crowd initial={{ signedUp: count, watching: seen, trades: 0, long: 0, short: 0 }} />
+        <Crowd initial={{ signedUp: count, trades: 0, total: 0 }} />
 
         <section id="how" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'clamp(18px, 3vw, 32px)', paddingTop: 24, borderTop: '1px solid var(--line)', scrollMarginTop: 80 }}>
           <Mood big={m.fng ? String(m.fng.value) : '—'} small={m.fng ? `Fear & greed: ${fngWord(m.fng.value)}` : 'Fear & greed'} />
