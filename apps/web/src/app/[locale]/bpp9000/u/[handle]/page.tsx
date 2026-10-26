@@ -6,6 +6,7 @@ import { SITE_URL } from '@/lib/books'
 import { getParticipant } from '@/lib/bpp/store'
 import { statsOf } from '@/lib/bpp/stats'
 import { BppStyles } from '@/components/bpp/BppStyles'
+import { bppFonts } from '@/components/bpp/fonts'
 
 export const dynamic = 'force-dynamic'
 
@@ -32,14 +33,14 @@ export default async function BppUser(props: { params: Promise<{ locale: string;
   if (!p) notFound()
   const s = statsOf(p.trades, p.start, p.joined)
   return (
-    <div className="bpp" style={{ minHeight: '100vh', background: '#04070f' }}>
+    <div className={`bpp ${bppFonts}`} style={{ minHeight: '100vh' }}>
       <BppStyles />
       <div style={{ maxWidth: 900, margin: '0 auto', padding: '96px 16px 48px', textAlign: 'center' }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img alt={`${p.name} × BPP-9000`} src={`/og/bpp/${handle.toLowerCase()}.png?v=${s.trades}-${s.day}`} style={{ width: '100%', borderRadius: 14, border: '1px solid var(--line)' }} />
         <p style={{ marginTop: 20 }}>
           <Link className="btn btn-main" href="/bpp9000">
-            Open BPP-9000 →
+            Open BPP-9000
           </Link>
         </p>
         <p style={{ fontSize: 12, color: 'var(--dim)' }}>Experiment. If you trade with real money, the responsibility is yours.</p>

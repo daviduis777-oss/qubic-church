@@ -37,7 +37,7 @@ function Equity({ eq }: { eq: number[] }) {
   const up = eq.at(-1)! >= eq[0]!
   return (
     <svg aria-hidden preserveAspectRatio="none" viewBox={`0 0 100 ${H}`} width="100%" height={H}>
-      <polyline fill="none" points={pts} stroke={up ? '#3dff9a' : '#ff4d6d'} strokeWidth="1.2" vectorEffect="non-scaling-stroke" />
+      <polyline fill="none" points={pts} stroke={up ? '#FFC46B' : '#d9776a'} strokeWidth="1.2" vectorEffect="non-scaling-stroke" />
     </svg>
   )
 }

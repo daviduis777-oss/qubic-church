@@ -65,6 +65,7 @@ export function GlobalNavTrigger() {
                 href={href}
                 key={href}
               >
+                {href === '/bpp9000' && <span aria-hidden className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-[#FFC46B] shadow-[0_0_8px_#FFC46B]" />}
                 {label}
               </Link>
             ))}
@@ -105,6 +106,7 @@ export function GlobalNavTrigger() {
                 href={href}
                 key={href}
               >
+                {href === '/bpp9000' && <span aria-hidden className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-[#FFC46B] shadow-[0_0_8px_#FFC46B]" />}
                 {label}
               </Link>
             ))}

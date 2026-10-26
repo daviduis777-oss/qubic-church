@@ -13,6 +13,7 @@ export const storeReady = () => Boolean(URL_ && TOKEN) || MEMORY
 
 const mem = new Map<string, string>()
 const memSets = new Map<string, Set<string>>()
+const memZ = new Map<string, Map<string, number>>()
 
 async function cmd<T>(...args: (string | number)[]): Promise<T> {
   if (!URL_ || !TOKEN) {
@@ -37,6 +38,19 @@ async function cmd<T>(...args: (string | number)[]): Promise<T> {
         return [...(memSets.get(k!) ?? [])] as T
       case 'MGET':
         return [k!, ...rest].map(x => mem.get(x) ?? null) as T
+      case 'ZADD': {
+        const z = memZ.get(k!) ?? new Map<string, number>()
+        z.set(rest[1]!, Number(rest[0]))
+        memZ.set(k!, z)
+        return 1 as T
+      }
+      case 'ZREMRANGEBYSCORE': {
+        const z = memZ.get(k!)
+        if (z) for (const [m, sc] of z) if (sc <= Number(rest[1])) z.delete(m)
+        return 0 as T
+      }
+      case 'ZCARD':
+        return (memZ.get(k!)?.size ?? 0) as T
       default:
         throw new Error(`mem: ${c}`)
     }
@@ -95,4 +109,21 @@ export async function allParticipants(): Promise<Participant[]> {
   if (!handles.length) return []
   const raws = await cmd<(string | null)[]>('MGET', ...handles.map(KEY))
   return raws.filter(Boolean).map(r => JSON.parse(r!) as Participant)
+}
+
+/** Who has the page open: one member per browser session, kept for two minutes after its last ping. */
+const SEEN = 'bpp:seen'
+export async function ping(sid: string): Promise<number> {
+  const now = Date.now()
+  await cmd('ZADD', SEEN, now, sid.slice(0, 40))
+  await cmd('ZREMRANGEBYSCORE', SEEN, 0, now - 120_000)
+  return cmd<number>('ZCARD', SEEN)
+}
+export async function watching(): Promise<number> {
+  try {
+    await cmd('ZREMRANGEBYSCORE', SEEN, 0, Date.now() - 120_000)
+    return await cmd<number>('ZCARD', SEEN)
+  } catch {
+    return 0
+  }
 }
