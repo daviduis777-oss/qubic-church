@@ -21,6 +21,7 @@ export const metadata: Metadata = {
   title: 'Research Lab',
   description:
     'What the Anna Matrix is, how we know it, and the tools to check it yourself.',
+  alternates: { canonical: 'https://qubic.church/evidence' },
 }
 
 export const dynamicParams = true

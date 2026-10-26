@@ -55,6 +55,7 @@ export async function generateMetadata(
       title,
       description,
       keywords: Array.from(tags),
+      alternates: { canonical: absoluteUrl('/blog') },
 
       openGraph: {
         title,
@@ -98,6 +99,7 @@ export async function generateMetadata(
     title: seoTitle(blogPost.title),
     description: seoDescription(blogPost.excerpt),
     keywords: blogPost.tags || [],
+    alternates: { canonical: absoluteUrl(`/blog/${blogSlug}`) },
 
     authors: {
       url: postAuthorUrl,
