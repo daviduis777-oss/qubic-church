@@ -1,31 +1,40 @@
-/** The BPP-9000 terminal look: dark glass, mono type, neon green/red, one gold accent. */
+/** BPP-9000 in Aigarth's official "vacuum tubes" colours: warm filament amber on near-black. */
 export function BppStyles() {
   return (
     <style>{`
-.bpp { --g:#3dff9a; --r:#ff4d6d; --c:#5ee7ff; --gold:#ffd24a; --ink:#e8f1ff; --dim:#8a97ad; --line:rgba(94,231,255,.16); --panel:rgba(8,14,28,.78);
-  color: var(--ink); font-family: ui-monospace, 'JetBrains Mono', 'SFMono-Regular', Menlo, monospace; }
-.bpp .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; backdrop-filter: blur(8px); }
-.bpp .label { font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: var(--dim); }
+.bpp { --bg:#0B0A0E; --amber:#E8912E; --fil:#FFC46B; --hot:#FFE3B0; --g:#FFC46B; --r:#d9776a; --c:#ecdfcb; --gold:#FFC46B;
+  --ink:#ecdfcb; --dim:#93857a; --line:rgba(255,200,140,.14); --panel:rgba(255,205,110,.03);
+  color: var(--ink); background: var(--bg); font-family: var(--bpp-sans), system-ui, sans-serif; }
+.bpp .nx { font-family: var(--bpp-nx), sans-serif; font-variant-numeric: tabular-nums; }
+.bpp .eng { font-family: var(--bpp-eng), sans-serif; letter-spacing: .12em; }
+.bpp .lit { color: var(--hot); text-shadow: 0 0 4px #ffd08a, 0 0 14px var(--fil), 0 0 40px rgba(232,145,46,.7), 0 0 90px rgba(232,145,46,.35); }
+.bpp .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; }
+.bpp .label { font-size: 13px; font-weight: 600; color: var(--ink); }
+.bpp .mute { color: var(--dim); }
 .bpp .big { font-variant-numeric: tabular-nums; }
-.bpp .glow-g { color: var(--g); text-shadow: 0 0 18px rgba(61,255,154,.55); }
-.bpp .glow-r { color: var(--r); text-shadow: 0 0 18px rgba(255,77,109,.55); }
-.bpp .glow-c { color: var(--c); text-shadow: 0 0 18px rgba(94,231,255,.5); }
-.bpp .btn { display:inline-flex; align-items:center; gap:8px; padding: 10px 16px; border-radius: 10px; border: 1px solid var(--line); background: rgba(94,231,255,.06); color: var(--ink); font: inherit; font-size: 13px; cursor: pointer; transition: background .15s, border-color .15s; }
-.bpp .btn:hover { background: rgba(94,231,255,.12); border-color: rgba(94,231,255,.4); }
-.bpp .btn-main { background: linear-gradient(180deg, rgba(61,255,154,.25), rgba(61,255,154,.08)); border-color: rgba(61,255,154,.55); color: #eafff3; box-shadow: 0 0 24px -6px rgba(61,255,154,.6); }
-.bpp input, .bpp select, .bpp textarea { background: rgba(0,0,0,.35); border: 1px solid var(--line); border-radius: 8px; color: var(--ink); font: inherit; font-size: 13px; padding: 8px 10px; width: 100%; box-sizing: border-box; }
-.bpp input:focus, .bpp select:focus, .bpp textarea:focus { outline: none; border-color: rgba(94,231,255,.6); }
-.bpp .scan { position: relative; overflow: hidden; }
-.bpp .scan::after { content:''; position:absolute; inset:0; background: linear-gradient(180deg, transparent 0%, rgba(94,231,255,.08) 50%, transparent 100%); height: 40%; animation: bpp-scan 3.2s linear infinite; pointer-events:none; }
-@keyframes bpp-scan { from { transform: translateY(-100%) } to { transform: translateY(260%) } }
-@keyframes bpp-pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(61,255,154,.0), 0 0 40px -10px rgba(61,255,154,.5) } 50% { box-shadow: 0 0 0 10px rgba(61,255,154,.06), 0 0 70px -6px rgba(61,255,154,.75) } }
-@keyframes bpp-blink { 0%,100% { opacity: 1 } 50% { opacity: .25 } }
-.bpp .blink { animation: bpp-blink 1.4s ease-in-out infinite; }
-.bpp .cannon { animation: bpp-pulse 2.4s ease-in-out infinite; }
-.bpp table { width: 100%; border-collapse: collapse; font-size: 12px; }
-.bpp th { text-align: left; font-weight: 500; color: var(--dim); padding: 6px 8px; border-bottom: 1px solid var(--line); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; }
-.bpp td { padding: 7px 8px; border-bottom: 1px solid rgba(94,231,255,.07); font-variant-numeric: tabular-nums; }
-@media (prefers-reduced-motion: reduce) { .bpp .scan::after, .bpp .cannon, .bpp .blink { animation: none } }
+.bpp .glow-g { color: var(--fil); text-shadow: 0 0 16px rgba(232,145,46,.5); }
+.bpp .glow-r { color: var(--r); }
+.bpp .glow-c { color: var(--ink); }
+.bpp .btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height: 44px; padding: 10px 18px; border-radius: 999px; border: 1px solid rgba(255,200,140,.3); background: transparent; color: var(--ink); font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none; transition: background .15s, border-color .15s; }
+.bpp .btn:hover { background: rgba(255,200,140,.08); border-color: rgba(255,200,140,.55); }
+.bpp .btn-main { background: var(--fil); color: #2a1404; border-color: var(--fil); box-shadow: 0 0 18px rgba(232,145,46,.45); }
+.bpp .btn-main:hover { background: var(--hot); }
+.bpp .btn:focus-visible { outline: 2px solid var(--hot); outline-offset: 3px; }
+.bpp input, .bpp select, .bpp textarea { background: rgba(0,0,0,.35); border: 1px solid var(--line); border-radius: 10px; color: var(--ink); font: inherit; font-size: 14px; padding: 9px 11px; width: 100%; box-sizing: border-box; }
+.bpp input:focus, .bpp select:focus, .bpp textarea:focus { outline: none; border-color: rgba(255,200,140,.6); }
+.bpp table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.bpp th { text-align: left; font-weight: 500; color: var(--dim); padding: 6px 8px; border-bottom: 1px solid var(--line); font-size: 12px; }
+.bpp td { padding: 7px 8px; border-bottom: 1px solid rgba(255,200,140,.07); font-variant-numeric: tabular-nums; }
+.bpp .lamps { display: grid; grid-template-columns: repeat(24, minmax(0,1fr)); gap: 4px; }
+.bpp .lamps i { height: 34px; border-radius: 10px 10px 4px 4px; display: grid; place-items: center; font-style: normal; font-size: 12px; font-weight: 700; }
+.bpp .lamps i.hit { background: radial-gradient(circle at 50% 65%, rgba(255,227,176,.95), rgba(232,145,46,.75) 45%, rgba(232,145,46,.15)); color: #3a1a04; box-shadow: 0 0 12px rgba(232,145,46,.45); }
+.bpp .lamps i.miss { background: rgba(255,255,255,.035); box-shadow: inset 0 0 0 1px rgba(255,255,255,.08); color: #6a5f66; }
+.bpp .lamps i.off { background: rgba(255,255,255,.02); }
+@media (max-width: 640px) { .bpp .bpp-hide-sm { display: none !important } .bpp .lamps { gap: 2px } .bpp .lamps i { height: 26px; font-size: 9px; border-radius: 7px 7px 3px 3px } }
+@keyframes bpp-dot { 50% { opacity: .45 } }
+.bpp .pilot { display:inline-block; width:8px; height:8px; border-radius:50%; background: var(--fil); box-shadow: 0 0 8px var(--fil), 0 0 18px var(--amber); animation: bpp-dot 2.4s ease-in-out infinite; }
+.bpp .live-dot { display:inline-block; width:7px; height:7px; border-radius:50%; background:#7CFFA0; box-shadow:0 0 8px #7CFFA0; }
+@media (prefers-reduced-motion: reduce) { .bpp .pilot { animation: none } }
 `}</style>
   )
 }
