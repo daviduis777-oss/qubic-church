@@ -1,0 +1,1544 @@
+<title>W4W Aigarth</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Big+Shoulders+Display:wght@400;600;800&family=Michroma&display=swap" rel="stylesheet">
+<style>
+/* A night town seen from above: amber light against blue frost. One display face, one body face, one wide label face. */
+:root{
+  --bg:#0B0A0E; --panel:rgba(14,12,18,.88); --line:rgba(255,196,107,.22); --line-2:rgba(255,196,107,.45);
+  --amber:#E8912E; --gold:#FFC46B; --cream:#FFE3B0; --ink:#F3E4CE; --mute:rgba(243,228,206,.62);
+  --frost:#9fc3ff; --red:#ff6a5a; --green:#9be08a;
+  --f-display:'Big Shoulders Display',Impact,sans-serif; --f-body:Archivo,system-ui,sans-serif; --f-label:Michroma,'Arial Black',sans-serif;
+  color-scheme: dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:15px/1.45 var(--f-body);overflow:hidden;-webkit-tap-highlight-color:transparent}
+#c{position:fixed;inset:0;display:block;width:100%;height:100%;touch-action:none}
+button{font:inherit;color:inherit;cursor:pointer}
+.mute{color:var(--mute)}
+[hidden]{display:none!important}
+
+#top{position:fixed;top:0;left:0;right:0;display:flex;align-items:center;gap:14px;padding:12px max(16px,env(safe-area-inset-right)) 12px max(16px,env(safe-area-inset-left));padding-top:max(12px,env(safe-area-inset-top));pointer-events:none;background:linear-gradient(rgba(11,10,14,.85),rgba(11,10,14,0))}
+#top > *{pointer-events:auto}
+.brand{display:flex;align-items:center;gap:10px}
+.brand b{font-family:var(--f-label);font-size:13px;letter-spacing:.14em;font-weight:400;color:var(--cream);white-space:nowrap}
+.pilot{width:9px;height:9px;border-radius:50%;background:var(--gold);box-shadow:0 0 10px var(--amber),0 0 22px var(--amber);flex-shrink:0}
+.chips{display:flex;gap:8px;margin-left:auto;flex-wrap:wrap;justify-content:flex-end}
+.chip{display:flex;align-items:center;gap:8px;padding:6px 11px;border:1px solid var(--line);border-radius:999px;background:var(--panel);font-size:13px;white-space:nowrap}
+.chip b{font-family:var(--f-display);font-weight:600;font-size:16px;color:var(--gold);letter-spacing:.03em}
+button.chip:hover{border-color:var(--line-2)}
+
+/* the one bold element: warmth against frost */
+#meter{position:fixed;top:max(58px,calc(env(safe-area-inset-top) + 50px));left:50%;transform:translateX(-50%);width:min(440px,calc(100vw - 32px));padding:8px 12px 9px;border:1px solid var(--line);border-radius:14px;background:var(--panel);cursor:pointer;text-align:left}
+#meter:hover{border-color:var(--line-2)}
+#meter .row{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+#meter .w,#meter .f{font-family:var(--f-label);font-size:9.5px;letter-spacing:.14em}
+#meter .w{color:var(--gold)} #meter .f{color:var(--frost)}
+#meter .verdict{font-family:var(--f-display);font-weight:600;font-size:17px;color:var(--cream);letter-spacing:.02em}
+#meter .track{position:relative;height:8px;border-radius:4px;margin-top:6px;background:linear-gradient(90deg,rgba(255,170,80,.18),rgba(159,195,255,.18));overflow:hidden}
+#meter .track i{position:absolute;top:0;bottom:0;left:0;background:linear-gradient(90deg,#c9701d,#ffc46b);transition:width .8s}
+#meter .track b{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--frost);box-shadow:0 0 6px var(--frost);transition:left .8s}
+#meter.losing{border-color:rgba(159,195,255,.5)}
+#meter.losing .verdict{color:var(--frost)}
+
+#proto{position:fixed;left:max(16px,env(safe-area-inset-left));bottom:max(12px,env(safe-area-inset-bottom));font-size:11px;color:var(--mute);letter-spacing:.06em;pointer-events:none}
+
+#dock{position:fixed;left:50%;transform:translateX(-50%);bottom:max(30px,calc(env(safe-area-inset-bottom) + 18px));display:flex;gap:6px;padding:6px;border:1px solid var(--line);border-radius:16px;background:var(--panel);backdrop-filter:blur(6px)}
+#dock button{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:76px;padding:8px 10px;border:0;border-radius:11px;background:transparent;font-size:12.5px;color:var(--ink)}
+#dock button svg{width:20px;height:20px;stroke:var(--gold);fill:none;stroke-width:1.6}
+#dock button:hover,#dock button.on{background:rgba(255,196,107,.1)}
+#dock button.main{background:linear-gradient(180deg,#f2a347,#c9701d);color:#1b1006;font-weight:600}
+#dock button.main svg{stroke:#1b1006}
+#dock button:focus-visible,.btn:focus-visible,.chip:focus-visible,.x:focus-visible,#meter:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+#feed{position:fixed;left:max(16px,env(safe-area-inset-left));bottom:120px;width:min(340px,calc(100vw - 32px));display:flex;flex-direction:column;gap:6px;pointer-events:none}
+.msg{display:flex;gap:10px;align-items:flex-start;padding:9px 12px;border:1px solid var(--line);border-radius:12px;background:var(--panel);font-size:13.5px;animation:in .5s ease both}
+.msg img{width:28px;height:28px;border-radius:50%;flex-shrink:0;object-fit:cover}
+.msg .who{font-family:var(--f-label);font-size:9.5px;letter-spacing:.12em;color:var(--gold);display:block;margin-bottom:1px}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+#online{position:fixed;right:max(16px,env(safe-area-inset-right));bottom:120px;display:flex;flex-direction:column;align-items:flex-end;gap:6px;pointer-events:none}
+#online .p{display:flex;align-items:center;gap:7px;padding:4px 10px 4px 6px;border:1px solid var(--line);border-radius:999px;background:var(--panel);font-size:12.5px}
+#online .p i{width:8px;height:8px;border-radius:50%;background:var(--gold);box-shadow:0 0 8px var(--amber)}
+
+#panel{z-index:3;position:fixed;top:72px;right:max(16px,env(safe-area-inset-right));bottom:110px;width:min(420px,calc(100vw - 32px));border:1px solid var(--line);border-radius:18px;background:var(--panel);backdrop-filter:blur(8px);display:none;flex-direction:column;overflow:hidden}
+#panel.open{display:flex}
+#panel header{display:flex;align-items:center;gap:12px;padding:16px 18px 12px;border-bottom:1px solid var(--line)}
+#panel header img{width:44px;height:44px;border-radius:50%;object-fit:cover;border:1px solid var(--line-2)}
+#panel header h2{margin:0;font-family:var(--f-display);font-weight:600;font-size:26px;line-height:1;letter-spacing:.02em;color:var(--cream);text-wrap:balance}
+#panel header p{margin:3px 0 0;font-size:12.5px;color:var(--mute)}
+.x{margin-left:auto;width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:transparent;font-size:18px;line-height:1;flex-shrink:0}
+#pbody{overflow:auto;padding:14px 18px 18px;scrollbar-width:thin;scrollbar-color:var(--line) transparent;flex:1;min-height:0}
+#pbody h3{font-family:var(--f-label);font-weight:400;font-size:10.5px;letter-spacing:.14em;color:var(--gold);margin:18px 0 8px}
+#pbody h3:first-child{margin-top:2px}
+.say{padding:12px 14px;border-left:2px solid var(--gold);background:rgba(255,196,107,.06);border-radius:0 10px 10px 0;margin:0 0 12px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 14px;border-radius:11px;border:1px solid var(--line-2);background:rgba(255,196,107,.06);font-size:14px;color:var(--ink);text-decoration:none}
+.btn:hover{background:rgba(255,196,107,.13)}
+.btn.main{background:linear-gradient(180deg,#f2a347,#c9701d);border-color:transparent;color:#1b1006;font-weight:600}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.opt{display:block;width:100%;text-align:left;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:transparent;margin-bottom:8px}
+.opt:hover{border-color:var(--line-2);background:rgba(255,196,107,.05)}
+.opt b{display:block;color:var(--cream);font-weight:600}
+.opt span{font-size:13px;color:var(--mute)}
+.consent{padding:14px;border:1px solid var(--line-2);border-radius:12px;background:rgba(0,0,0,.25);font-size:14px}
+.consent p{margin:0 0 8px}
+.consent .fund{color:var(--gold);font-weight:600}
+.parts{display:grid;gap:8px}
+.part{display:grid;grid-template-columns:34px 1fr auto;gap:10px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:12px}
+.part > div{min-width:0}
+.part svg{width:26px;height:26px;stroke:var(--gold);fill:none;stroke-width:1.5}
+.part b{display:block;font-weight:600;font-size:14px}
+.part span{font-size:12.5px;color:var(--mute)}
+.part .v{font-family:var(--f-display);font-weight:600;font-size:22px;color:var(--gold);font-variant-numeric:tabular-nums}
+.lv{height:4px;border-radius:2px;background:rgba(255,255,255,.08);margin-top:6px;overflow:hidden}
+.lv i{display:block;height:100%;background:linear-gradient(90deg,var(--amber),var(--gold))}
+.items{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:8px}
+.item{padding:10px;border:1px solid var(--line);border-radius:10px;font-size:12.5px;min-height:74px}
+.item b{display:block;font-size:13px;color:var(--cream);margin-bottom:2px}
+.item.locked{opacity:.35;border-style:dashed}
+.order{padding:12px 14px;border:1px solid var(--line);border-radius:12px;margin-bottom:8px}
+.order .t{font-weight:600;color:var(--cream)}
+.order .m{font-size:12.5px;color:var(--mute);margin:3px 0 9px}
+.bar{height:6px;border-radius:3px;background:rgba(255,255,255,.08);overflow:hidden;margin:8px 0 4px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--amber),var(--gold))}
+.tag{display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid var(--line);font-size:11.5px;color:var(--mute)}
+.tag.good{color:var(--green);border-color:rgba(155,224,138,.4)}
+.tag.bad{color:var(--red);border-color:rgba(255,106,90,.45)}
+.tag.gold{color:var(--gold);border-color:var(--line-2)}
+.tag.frost{color:var(--frost);border-color:rgba(159,195,255,.45)}
+.chron{list-style:none;margin:0;padding:0}
+.chron li{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;padding:9px 0;border-bottom:1px solid rgba(255,196,107,.1);font-size:13.5px}
+.chron li > span{min-width:0}
+.chron .n{font-family:var(--f-display);font-weight:600;color:var(--gold);font-size:15px;grid-row:span 2}
+.chron .h{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--mute);word-break:break-all}
+.steps{display:grid;gap:6px;margin:6px 0}
+.step{display:flex;align-items:center;gap:10px;font-size:13.5px;color:var(--mute)}
+.step i{width:10px;height:10px;border-radius:50%;border:1px solid var(--line-2)}
+.step.done{color:var(--ink)} .step.done i{background:var(--gold);border-color:var(--gold)}
+.step.now{color:var(--cream)} .step.now i{background:var(--amber);box-shadow:0 0 8px var(--amber);animation:pulse 1s infinite alternate}
+@keyframes pulse{to{opacity:.4}}
+input.name,textarea.name{width:100%;padding:11px 12px;border-radius:10px;border:1px solid var(--line-2);background:rgba(0,0,0,.3);color:var(--ink);font:inherit;margin:6px 0 10px}
+.split{display:grid;grid-template-columns:1fr auto;gap:6px 12px;font-size:13.5px}
+.split b{font-family:var(--f-display);font-weight:600;font-size:17px;text-align:right;font-variant-numeric:tabular-nums}
+.split .plus{color:var(--gold)} .split .minus{color:var(--frost)}
+
+.tabs{display:flex;gap:4px;margin:0 0 14px;border-bottom:1px solid var(--line)}
+.tabs button{padding:8px 12px;border:0;border-bottom:2px solid transparent;background:transparent;font-size:13.5px;color:var(--mute)}
+.tabs button.on{color:var(--cream);border-bottom-color:var(--gold)}
+.paper{font-family:var(--f-body)}
+.paper .mast{text-align:center;border-bottom:3px double var(--line-2);padding-bottom:8px;margin-bottom:12px}
+.paper .mast b{display:block;font-family:var(--f-display);font-weight:800;font-size:30px;letter-spacing:.04em;color:var(--cream);line-height:1}
+.paper .mast span{font-family:var(--f-label);font-size:9.5px;letter-spacing:.16em;color:var(--mute)}
+.paper h4{font-family:var(--f-display);font-weight:800;font-size:26px;line-height:1.02;margin:4px 0 6px;color:var(--cream);text-wrap:balance}
+.paper .deck{color:var(--mute);margin:0 0 12px;font-size:13.5px}
+.paper p{margin:0 0 10px}
+.paper .col{border-top:1px solid var(--line);padding-top:10px;margin-top:12px}
+.paper .kick{font-family:var(--f-label);font-size:9.5px;letter-spacing:.14em;color:var(--gold);display:block;margin-bottom:4px}
+.paper blockquote{margin:0;padding:8px 12px;border-left:2px solid var(--gold);font-style:italic}
+.note{padding:10px 12px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;background:rgba(241,226,192,.04)}
+.note small{display:block;color:var(--mute);font-size:12px;margin-top:4px}
+.shelf{display:grid;gap:8px}
+.book{display:block;padding:12px 14px;border:1px solid var(--line);border-radius:12px;text-decoration:none;color:var(--ink)}
+.book:hover{border-color:var(--line-2);background:rgba(255,196,107,.05)}
+.book b{display:block;color:var(--cream);font-weight:600}
+.book span{font-size:12.5px;color:var(--mute)}
+.ask{margin-top:4px;align-self:flex-start;padding:5px 10px;border-radius:999px;border:1px dashed var(--line-2);background:transparent;font-size:12px;color:var(--mute)}
+/* Maria's chat */
+#chat{display:flex;flex-direction:column;gap:10px}
+.bub{max-width:88%;padding:10px 13px;border-radius:14px;font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere}
+.bub.m{align-self:flex-start;background:rgba(255,196,107,.07);border:1px solid var(--line);border-bottom-left-radius:4px}
+.bub.u{align-self:flex-end;background:rgba(159,195,255,.1);border:1px solid rgba(159,195,255,.3);border-bottom-right-radius:4px}
+.bub.thinking{color:var(--mute);font-style:italic}
+#chatForm{display:flex;gap:8px;padding:12px 18px 16px;border-top:1px solid var(--line)}
+#chatForm input{flex:1;min-width:0;padding:11px 12px;border-radius:10px;border:1px solid var(--line-2);background:rgba(0,0,0,.3);color:var(--ink);font:inherit}
+.quick{display:flex;flex-wrap:wrap;gap:6px}
+.quick button{padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:transparent;font-size:12.5px}
+.quick button:hover{border-color:var(--line-2)}
+
+#labels{position:fixed;inset:0;pointer-events:none}
+.lbl{position:absolute;transform:translate(-50%,-100%);padding:3px 9px;border-radius:999px;background:rgba(11,10,14,.78);border:1px solid var(--line);font-size:12px;white-space:nowrap;color:var(--cream)}
+.lbl.key{font-family:var(--f-label);font-size:9.5px;letter-spacing:.12em;color:var(--gold);border-color:var(--line-2)}
+.lbl.me{border-color:var(--gold);color:var(--gold)}
+.lbl.red{border-color:rgba(255,106,90,.6);color:#ffb3a8}
+.lbl.walker{border-color:rgba(159,195,255,.6);color:#d6e4ff}
+.lbl.demo{opacity:.7}
+
+#banner{position:fixed;top:36%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;opacity:0;transition:opacity .6s;width:90vw}
+#banner.on{opacity:1}
+#banner b{display:block;font-family:var(--f-display);font-weight:800;font-size:clamp(40px,8vw,92px);line-height:.9;color:var(--cream);text-shadow:0 0 30px rgba(232,145,46,.8)}
+#banner span{font-family:var(--f-label);font-size:12px;letter-spacing:.2em;color:var(--gold)}
+
+#load{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:var(--bg);transition:opacity .8s;z-index:6}
+#load.off{opacity:0;pointer-events:none}
+#load b{font-family:var(--f-label);font-weight:400;letter-spacing:.2em;font-size:13px;color:var(--gold);text-align:center;padding:0 16px}
+
+/* intro */
+#intro{position:fixed;inset:0;z-index:5;display:flex;align-items:flex-end;justify-content:center;padding:0 max(16px,env(safe-area-inset-right)) max(40px,calc(env(safe-area-inset-bottom) + 30px)) max(16px,env(safe-area-inset-left));background:linear-gradient(rgba(5,7,14,.15),rgba(5,7,14,.82) 70%);transition:opacity 1s}
+#intro.off{opacity:0;pointer-events:none}
+body.intro #dock,body.intro #feed,body.intro #online,body.intro #meter{visibility:hidden}
+#intro .card{width:min(620px,100%);display:grid;grid-template-columns:72px 1fr;gap:16px;align-items:start}
+#intro img{width:72px;height:72px;border-radius:50%;border:1px solid var(--line-2);object-fit:cover}
+#intro .who{font-family:var(--f-label);font-size:10.5px;letter-spacing:.16em;color:var(--gold)}
+#intro p{margin:6px 0 16px;font-family:var(--f-display);font-weight:600;font-size:clamp(24px,3.6vw,34px);line-height:1.12;color:var(--cream);min-height:3.4em;text-wrap:balance}
+#intro .row{justify-content:space-between}
+
+@media (max-width: 760px){
+  #top{gap:8px;padding-top:max(10px,env(safe-area-inset-top))}
+  .chip{padding:5px 9px;font-size:12px}
+  .chip.hide-sm{display:none}
+  .brand b{display:none}
+  .chips{flex-wrap:nowrap}
+  #meter{top:max(50px,calc(env(safe-area-inset-top) + 44px))}
+  #panel{top:auto;left:0;right:0;bottom:0;width:auto;max-height:76vh;border-radius:18px 18px 0 0}
+  #dock{bottom:max(26px,calc(env(safe-area-inset-bottom) + 14px));gap:2px}
+  #dock button{min-width:0;padding:7px 4px;font-size:10.5px}
+  #dock button svg{width:18px;height:18px}
+  #feed{bottom:108px}
+  #online{display:none}
+  #proto{font-size:10px}
+  #intro .card{grid-template-columns:52px 1fr;gap:12px}
+  #intro img{width:52px;height:52px}
+}
+@media (prefers-reduced-motion: reduce){.msg{animation:none}}
+</style>
+
+<canvas id="c" aria-label="Aigarth, a winter town seen from above"></canvas>
+<div id="labels"></div>
+
+<div id="top">
+  <div class="brand"><span class="pilot" aria-hidden="true"></span><b>W4W · AIGARTH</b></div>
+  <div class="chips">
+    <span class="chip hide-sm">Epoch <b>237</b></span>
+    <span class="chip hide-sm">Power <b id="pow">0</b><span class="mute">sol/h</span></span>
+    <span class="chip">Anna <b id="melt">0%</b><span class="mute">thawed</span></span>
+    <button class="chip" id="wx" title="Network weather (demo toggle)">Weather <b id="wxv">Clear</b></button>
+  </div>
+</div>
+
+<button id="meter" aria-label="Warmth against frost: what keeps the town warm">
+  <div class="row"><span class="w">WARMTH <span id="wv">0</span></span><span class="verdict" id="verdict">…</span><span class="f">FROST <span id="fv">0</span></span></div>
+  <div class="track"><i id="wbar"></i><b id="fmark"></b></div>
+</button>
+
+<div id="feed" aria-live="polite"></div>
+<div id="online" aria-label="People in Aigarth right now"></div>
+<div id="banner"><b id="bannerB"></b><span id="bannerS"></span></div>
+
+<div id="dock">
+  <button class="main" data-act="connect"><svg viewBox="0 0 24 24"><path d="M12 3v7M8 6v4M16 6v4M6 10h12v3a6 6 0 0 1-12 0zM12 19v2"/></svg>Connect a rig</button>
+  <button data-act="maria"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4zM8 9h8M8 12h5"/></svg>Maria</button>
+  <button data-act="house"><svg viewBox="0 0 24 24"><path d="M4 11 12 4l8 7M6 10v10h12V10M10 20v-5h4v5"/></svg>My house</button>
+  <button data-act="plaza"><svg viewBox="0 0 24 24"><path d="M5 4h14v12H5zM9 16v4M15 16v4M8 8h8M8 12h5"/></svg>Plaza</button>
+  <button data-act="library"><svg viewBox="0 0 24 24"><path d="M5 4h4v16H5zM10 4h4v16h-4zM15.5 5l3.5 1-3 14-3.5-1z"/></svg>Library</button>
+  <button data-act="chronicle"><svg viewBox="0 0 24 24"><path d="M6 3h10l3 3v15H6zM9 9h7M9 13h7M9 17h4"/></svg>Chronicle</button>
+</div>
+
+<aside id="panel" aria-live="polite">
+  <header><img id="phImg" alt=""><div><h2 id="phT"></h2><p id="phS"></p></div><button class="x" id="px" aria-label="Close">×</button></header>
+  <div id="pbody"></div>
+  <form id="chatForm" hidden><input id="chatIn" autocomplete="off" maxlength="400" placeholder="Ask Maria anything about Aigarth"><button class="btn main" type="submit">Send</button></form>
+</aside>
+
+<div id="intro" hidden>
+  <div class="card">
+    <img src="maria.png" alt="Maria">
+    <div>
+      <span class="who">MARIA · QUBIC CHURCH</span>
+      <p id="introText"></p>
+      <div class="row"><button class="btn" id="introSkip">Skip</button><button class="btn main" id="introNext">Next</button></div>
+    </div>
+  </div>
+</div>
+
+<div id="proto">PROTOTYPE · NO RIG IS REALLY RENTED</div>
+<div id="load"><span class="pilot"></span><b>WARMING UP AIGARTH</b></div>
+
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+
+const $ = s => document.querySelector(s);
+const MOBILE = matchMedia('(max-width: 760px)').matches || matchMedia('(pointer: coarse)').matches;
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const store = { get(k) { try { return localStorage.getItem(k); } catch { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch {} } };
+const EPOCH = 237;
+
+/* ================= renderer / scene ================= */
+const canvas = $('#c');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+renderer.setPixelRatio(Math.min(devicePixelRatio, MOBILE ? 1.5 : 2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.05;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+const scene = new THREE.Scene();
+const FOG = new THREE.Color('#0d1020');
+scene.background = FOG.clone();
+scene.fog = new THREE.FogExp2(FOG, 0.026);
+const camera = new THREE.PerspectiveCamera(MOBILE ? 42 : 34, innerWidth / innerHeight, 0.1, 200);
+camera.position.set(14, 24, 22);
+const controls = new OrbitControls(camera, canvas);
+controls.target.set(0, 0, 1);
+Object.assign(controls, { enableDamping: true, dampingFactor: 0.08, minPolarAngle: 0.55, maxPolarAngle: 1.02, minDistance: 9, maxDistance: 46, screenSpacePanning: false, panSpeed: 0.8 });
+controls.update();
+scene.add(new THREE.HemisphereLight(0x3d4d86, 0x0b0a0e, 0.9));
+const moon = new THREE.DirectionalLight(0xa9bcff, 1.25);
+moon.position.set(-14, 26, -10); moon.castShadow = true;
+moon.shadow.mapSize.set(MOBILE ? 1024 : 2048, MOBILE ? 1024 : 2048);
+Object.assign(moon.shadow.camera, { left: -24, right: 24, top: 24, bottom: -24, near: 1, far: 70 });
+moon.shadow.bias = -0.0006; moon.shadow.normalBias = 0.02; scene.add(moon);
+const coreLight = new THREE.PointLight(0xffa64a, 30, 20, 1.7); coreLight.position.set(0, 7, 0); scene.add(coreLight);
+const composer = new EffectComposer(renderer);
+composer.addPass(new RenderPass(scene, camera));
+composer.addPass(new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.55, 0.45, 0.9));
+composer.addPass(new OutputPass());
+
+/* ================= snow & heat shader ================= */
+const U = { uHeat: { value: 5.5 }, uSnow: { value: 1 }, uTime: { value: 0 }, uBoost: { value: 0 } };
+const SNOW_NOISE = `
+float h21(vec2 p){ p=fract(p*vec2(123.34,456.21)); p+=dot(p,p+45.32); return fract(p.x*p.y); }
+float vnoise(vec2 p){ vec2 i=floor(p), f=fract(p); f=f*f*(3.-2.*f);
+  return mix(mix(h21(i),h21(i+vec2(1,0)),f.x), mix(h21(i+vec2(0,1)),h21(i+vec2(1,1)),f.x), f.y); }`;
+function snowify(mat) {
+  mat.onBeforeCompile = sh => {
+    Object.assign(sh.uniforms, U);
+    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vWP; varying vec3 vWN;').replace('#include <project_vertex>', `#include <project_vertex>
+      vec4 wp4 = vec4(transformed,1.0); vec3 wn3 = objectNormal;
+      #ifdef USE_INSTANCING
+        wp4 = instanceMatrix * wp4; wn3 = mat3(instanceMatrix) * wn3;
+      #endif
+      wp4 = modelMatrix * wp4; vWP = wp4.xyz; vWN = normalize(mat3(modelMatrix) * wn3);`);
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nuniform float uHeat; uniform float uSnow; uniform float uTime; uniform float uBoost; varying vec3 vWP; varying vec3 vWN;\n' + SNOW_NOISE).replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
+      totalEmissiveRadiance += vec3(1.0,0.5,0.16) * edgeGlow;`).replace('#include <map_fragment>', `#include <map_fragment>
+      float up = smoothstep(0.05, 0.7, vWN.y);
+      float n = vnoise(vWP.xz*2.3)*0.6 + vnoise(vWP.xz*7.0)*0.4;
+      float d = length(vWP.xz);
+      float thaw = 1.0 - smoothstep(uHeat-1.6, uHeat+1.2, d);
+      float snow = clamp(up*(0.8+0.35*n) + 0.24, 0.0, 1.0) * (1.0 - 0.8*thaw) * uSnow;
+      vec3 snowc = mix(vec3(0.78,0.84,0.97), vec3(0.94,0.96,1.0), n);
+      diffuseColor.rgb = mix(diffuseColor.rgb, snowc, snow);
+      float ground = step(vWP.y, 0.03) * up;
+      float patches = smoothstep(0.55, 0.62, vnoise(vWP.xz*1.6)*0.75 + n*0.25);
+      vec3 earth = mix(vec3(0.11,0.09,0.09), vec3(0.70,0.72,0.80), patches);
+      diffuseColor.rgb = mix(diffuseColor.rgb, earth, ground*thaw*0.92);
+      float band = exp(-pow((d - uHeat + 0.2) * 1.6, 2.0));
+      float ripple = 0.55 + 0.45 * sin(d * 2.4 - uTime * 2.2);
+      float edgeGlow = ground * band * (0.16 + 0.14 * ripple + 0.6 * uBoost) * (0.6 + 0.4 * n);`);
+  };
+  mat.customProgramCacheKey = () => 'snow';
+  return mat;
+}
+function radialTex(stops, size = 128) {
+  const c = document.createElement('canvas'); c.width = c.height = size;
+  const g = c.getContext('2d'); const gr = g.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+  stops.forEach(([o, col]) => gr.addColorStop(o, col)); g.fillStyle = gr; g.fillRect(0, 0, size, size);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+}
+const GLOW = radialTex([[0, 'rgba(255,190,110,1)'], [0.25, 'rgba(255,150,60,.55)'], [1, 'rgba(255,120,30,0)']]);
+const DOT = radialTex([[0, 'rgba(255,255,255,1)'], [0.5, 'rgba(255,255,255,.45)'], [1, 'rgba(255,255,255,0)']], 64);
+const RED = radialTex([[0, 'rgba(255,90,70,1)'], [0.3, 'rgba(255,60,40,.5)'], [1, 'rgba(255,40,20,0)']], 64);
+function glowDecal(x, z, r, col = 0xffffff, op = 0.55) {
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(r * 2, r * 2), new THREE.MeshBasicMaterial({ map: GLOW, color: col, transparent: true, opacity: op, blending: THREE.AdditiveBlending, depthWrite: false }));
+  m.rotation.x = -Math.PI / 2; m.position.set(x, 0.03, z); m.renderOrder = 2; m.userData.base = op; scene.add(m); return m;
+}
+function sprite(tex, x, y, z, s, col = 0xffffff, op = 1) {
+  const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, color: col, transparent: true, opacity: op, blending: THREE.AdditiveBlending, depthWrite: false }));
+  sp.position.set(x, y, z); sp.scale.set(s, s, s); sp.userData.base = op; scene.add(sp); return sp;
+}
+
+/* ================= hex grid ================= */
+const HX = (q, r) => new THREE.Vector3(2 * (q + r / 2), 0, 1.7320508 * r);
+const DIRS = [[1, 0], [1, -1], [0, -1], [-1, 0], [-1, 1], [0, 1]];
+function ring(n) { if (n === 0) return [[0, 0]]; const out = []; let q = -n, r = n;
+  for (let i = 0; i < 6; i++) for (let j = 0; j < n; j++) { out.push([q, r]); q += DIRS[i][0]; r += DIRS[i][1]; } return out; }
+const key = (q, r) => q + ',' + r;
+let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+
+/* ================= world state ================= */
+// Demo residents keep the town from being empty until real people settle. They are marked "demo" everywhere.
+const DEMO = [
+  { id: 'frostbyte', nick: 'frostbyte', at: [2, -1], gpus: 7, hw: '7× RTX 5080', state: 'mining', sol: 2460, since: 221, letters: 4, seals: 16, founder: true },
+  { id: 'kasia_v', nick: 'kasia_v', at: [-2, 1], gpus: 2, hw: '2× RTX 4090', state: 'mining', sol: 1220, since: 226, letters: 2, seals: 11 },
+  { id: 'nodewright', nick: 'nodewright', at: [1, 1], gpus: 2, hw: '2× RTX 5070 Ti', state: 'mining', sol: 600, since: 230, letters: 1, seals: 7 },
+  { id: 'oldminer', nick: 'oldminer', at: [-1, -1], gpus: 1, hw: '1× RTX 4090', state: 'mining', sol: 610, since: 224, letters: 3, seals: 13, founder: true },
+  { id: 'mira.q', nick: 'mira.q', at: [3, -3], gpus: 1, hw: '1× RTX 5070 Ti', state: 'mining', sol: 300, since: 235, letters: 0, seals: 2 },
+  { id: 'tern', nick: 'tern', at: [-3, 3], gpus: 1, hw: '1× RTX 5090', state: 'nosignal', sol: 0, since: 236, letters: 0, seals: 1 },
+  { id: 'lumen', nick: 'lumen', at: [3, 0], gpus: 2, hw: '2× RTX 4080', state: 'stopped', sol: 0, since: 228, letters: 1, seals: 6, cracked: 1 },
+  { id: 'ashgrove', nick: 'ashgrove', at: [-3, 0], gpus: 0, hw: '—', state: 'ruin', sol: 0, since: 219, left: 229, letters: 2, seals: 10 },
+].map(d => ({ ...d, demo: true, lanterns: d.letters, sprouts: d.seals }));
+const DEMO_ORDERS = [
+  { id: 'd1', by: 'kasia_v', byNick: 'kasia_v', title: 'Help me set up the CODED miner on my own Linux box', state: 'open', demo: true },
+  { id: 'd2', by: 'tern', byNick: 'tern', title: 'My rig shows no signal. Can someone check my worker name?', state: 'open', demo: true },
+  { id: 'd3', by: 'oldminer', byNick: 'oldminer', title: 'Explain BPP-9000 to two newcomers at the plaza fire', state: 'open', demo: true },
+];
+const SPECIAL = { core: [0, 0], church: [1, -3], plaza: [-1, 3], observatory: [4, -2], library: [5, -5], mine: [-6, 2] };
+const STAGE2 = [{ id: 'market', name: 'Market and auction', at: [-5, 2] }, { id: 'bar', name: 'Bar', at: [-4, 5] }, { id: 'atrium', name: 'Atrium', at: [2, 3] }];
+const LEVELS = [['OFFLINE', 0], ['LINK', 1], ['NODE', 500], ['CLUSTER', 1500], ['GRID', 3000], ['CORE', 6000]];
+const TIERS = [
+  { id: 'power', name: 'Expensive & powerful', price: '$55–80 / day', pick: '4× RTX 4090', gpus: 4, sol: 2440, cost: '$62 / day' },
+  { id: 'eff', name: 'Mid-price & efficient', price: '$25–55 / day', pick: '4× RTX 5070 Ti', gpus: 4, sol: 1150, cost: '$34 / day' },
+  { id: 'cheap', name: 'Cheap & scrappy', price: 'under $25 / day', pick: '2× RTX 4090', gpus: 2, sol: 1220, cost: '$15 / day' },
+];
+const MELT_TARGET = 150;
+
+const S = {
+  uid: null, canWrite: false, shared: false, // shared = backed by the db
+  weather: 'clear',
+  real: {},       // uid -> house doc
+  orders: {},     // id -> order doc (real)
+  demoOrders: DEMO_ORDERS.map(o => ({ ...o })),
+  peers: [],      // room peers except me
+  myLog: [],      // my chronicle records (newest last)
+  localChron: [], // demo history + visitor-only records
+  town: {},
+  lastMeltStage: -1,
+};
+const me = () => (S.uid && S.real[S.uid]) || S.local || null;
+
+/* ================= capabilities ================= */
+let db = null, room = null, sample = null, userCap = null;
+const claudeApi = window.claude;
+async function initCaps() {
+  if (!claudeApi?.use) return;
+  [db, room, sample, userCap] = await Promise.all(['db', 'room', 'sample', 'user'].map(n => claudeApi.use(n).catch(() => null)));
+  if (userCap) { S.uid = await userCap.id(); const w = await userCap.can('data.write'); S.canWrite = !!S.uid && w !== false; S.isOwner = await userCap.isOwner(); }
+  if (db) {
+    S.shared = true;
+    db.collection('houses').onSnapshot(snap => { const next = {}; snap.docs.forEach(d => { if (d.exists) next[d.id] = { id: d.id, ...d.data() }; }); syncReal(next); }, e => console.warn('houses', e));
+    db.collection('orders').onSnapshot(snap => { const next = {}; snap.docs.forEach(d => { if (d.exists) next[d.id] = { id: d.id, ...d.data() }; }); const first = !S._ordersIn; S._ordersIn = true; S.orders = next; refreshTown(first); if (panelKind === 'orders') openOrders(); }, e => console.warn('orders', e));
+    if (S.uid) loadMyLog();
+    db.doc('herald/column').onSnapshot(d => { S.column = d.exists ? d.data() : null; if (panelKind === 'herald') openHerald(); }, () => {});
+    db.collection('notices').orderBy('at', 'desc').limit(50).onSnapshot(snap => { S.notices = snap.docs.filter(d => d.exists).map(d => ({ id: d.id, ...d.data() })); if (panelKind === 'notices') openNotices(); if (panelKind === 'herald') openHerald(); }, () => {});
+  }
+  if (room) {
+    room.onPeers(ch => { S.peers = ch.peers.filter(p => !p.isMe && p.kind === 'viewer'); renderPeers(); refreshTown(); });
+    room.on('wood', m => { if (!m.sameTab) { fireFlare(); pulse(0.7); say(`${esc(nickOf(m))} added wood to the fire.`, 'Plaza'); } });
+    room.on('welcome', m => { if (!m.sameTab && m.data?.to === S.uid) say(`${esc(nickOf(m))} lit a lamp on your path. Welcome to Aigarth.`); else if (!m.sameTab) say(`${esc(nickOf(m))} welcomed ${esc(String(m.data?.toNick || 'a newcomer'))}.`, 'Plaza'); });
+    room.on('settled', m => { if (!m.sameTab) offerWelcome(m.by, String(m.data?.nick || 'someone')); });
+  }
+  updateModeNote();
+}
+const nickOf = m => String(m.data?.nick || S.real[m.by]?.nick || 'Someone').slice(0, 24);
+function updateModeNote() {
+  $('#proto').textContent = S.shared ? (S.canWrite ? 'SHARED TOWN · NO RIG IS REALLY RENTED' : 'VISITOR · YOUR HOUSE STAYS ON THIS DEVICE · NO RIG IS RENTED') : 'PROTOTYPE · NO RIG IS REALLY RENTED';
+}
+
+/* ================= chronicle (hash chain per house) ================= */
+async function sha(s) { const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join(''); }
+const recBody = r => JSON.stringify({ n: r.n, epoch: r.epoch, text: r.text, at: r.at, prev: r.prev });
+let chainQ = Promise.resolve();
+async function loadMyLog() {
+  try { const snap = await db.collection(`houses/${S.uid}/log`).orderBy('n').limit(500).get(); S.myLog = snap.docs.map(d => d.data()); } catch (e) { console.warn('log', e); }
+}
+function record(text, { demo = false, epoch = EPOCH, author } = {}) {
+  chainQ = chainQ.then(async () => {
+    if (demo || !(S.shared && S.canWrite && S.uid)) {
+      const prev = S.localChron.at(-1)?.hash || '0'.repeat(64);
+      const r = { n: S.localChron.length + 1, epoch, text, at: Date.now(), prev, demo, author: author || (demo ? 'demo' : me()?.nick) };
+      r.hash = await sha(recBody(r)); S.localChron.push(r);
+    } else {
+      const prev = S.myLog.at(-1)?.hash || '0'.repeat(64);
+      const r = { n: S.myLog.length + 1, epoch, text, at: Date.now(), prev };
+      r.hash = await sha(recBody(r));
+      try { await db.doc(`houses/${S.uid}/log/${String(r.n).padStart(6, '0')}`).set(r); S.myLog.push(r); } catch (e) { console.warn('log write', e); }
+    }
+    if (panelKind === 'chronicle') openChronicle(false);
+  });
+  return chainQ;
+}
+async function verify(list) { let prev = '0'.repeat(64); for (const r of list) { if (r.prev !== prev) return false; if (await sha(recBody(r)) !== r.hash) return false; prev = r.hash; } return true; }
+
+/* ================= my house: writes ================= */
+async function saveMe(patch) {
+  if (S.shared && S.canWrite && S.uid) {
+    const ref = db.doc(`houses/${S.uid}`); const existed = !!S.real[S.uid];
+    S.real[S.uid] = { ...(S.real[S.uid] || {}), ...patch, id: S.uid }; refreshTown();
+    try { if (existed) await ref.update(patch); else await ref.set({ ...patch }); }
+    catch (e) { console.warn('save', e); if (e?.code === 'invalid_argument') { S.canWrite = false; updateModeNote(); Object.assign(S.local ||= {}, patch); syncLocal(); } }
+  } else { S.local = { ...(S.local || {}), ...patch, id: 'me' }; syncLocal(); }
+}
+function syncLocal() { if (!S.local) return; makeHouse(houseView(S.local), true); refreshTown(); }
+
+/* ================= town math: people warm the town more than hardware ================= */
+function allResidents() {
+  const real = Object.values(S.real).map(houseView);
+  const local = S.local && !S.real[S.uid] ? [houseView(S.local)] : [];
+  return [...DEMO, ...real, ...local];
+}
+function houseView(h) { // normalise a stored house to what the scene draws
+  return { id: h.id, nick: h.nick || 'someone', at: [h.q ?? h.at?.[0], h.r ?? h.at?.[1]], gpus: h.gpus || 1, hw: h.hw || '', state: h.state || 'building', sol: h.sol || 0,
+    since: h.since || EPOCH, phase: h.phase || 0, stage: Math.min(2, h.phase || 0), demo: !!h.demo, founder: !!h.founder,
+    letters: 0, lanterns: 0, seals: h.state === 'mining' ? 1 : 0, sprouts: h.state === 'mining' ? 1 : 0, wood: h.wood || 0, lastWood: h.lastWood || 0, welcomes: h.welcomes || [], createdAt: h.createdAt || 0, real: !h.demo && h.id !== 'me' };
+}
+function ordersAll() { return [...S.demoOrders, ...Object.values(S.orders)]; }
+function refreshTown(baseline = false) {
+  if (baseline) { S.lastMeltStage = -1; S.town.level = undefined; }
+  const res = allResidents();
+  const done = ordersAll().filter(o => o.state === 'done');
+  // lanterns and letters come from orders a house finished for someone else
+  res.forEach(h => { if (h.demo) return; const mine = done.filter(o => o.takenBy === h.id || (h.id === 'me' && o.takenBy === 'me')); h.lanterns = mine.length; h.letters = mine.length;
+    h.cracked = ordersAll().filter(o => o.takenBy === h.id && o.state === 'taken' && o.due && o.due < Date.now()).length; });
+  const mining = res.filter(h => h.state === 'mining');
+  const people = mining.length;
+  const online = S.peers.length;
+  const deeds = done.length + 2; // 2 = demo history
+  const power = mining.reduce((a, h) => a + h.sol, 0);
+  const fire = res.filter(h => Date.now() - (h.lastWood || 0) < 3600e3).length;
+  const welcomes = res.reduce((a, h) => a + (h.welcomes?.length || 0), 0);
+  const parts = [
+    ['People keeping a rig on', 6 * Math.min(people, 12)],
+    ['Neighbours here right now', 6 * Math.min(online, 5)],
+    ['Orders done for others', 4 * Math.min(deeds, 5)],
+    ['Wood on the plaza fire (last hour)', 3 * Math.min(fire, 5)],
+    ['Raw power (counts less)', Math.round(12 * Math.log10(1 + power / 500) * 10) / 10],
+  ];
+  const W = Math.round(parts.reduce((a, p) => a + p[1], 0) * 10) / 10;
+  const frostParts = [['The night', 60], ...(S.weather === 'storm' ? [['Storm: the pool lost seats (demo)', 15]] : [])];
+  const F = frostParts.reduce((a, p) => a + p[1], 0);
+  const melt = 30 /* demo history */ + 8 * mining.filter(h => !h.demo).length + 5 * done.filter(o => !o.demo).length + 5 * done.filter(o => o.demo).length + 2 * welcomes + res.reduce((a, h) => a + Math.min(h.wood || 0, 30), 0);
+  let lv = 0; LEVELS.forEach((L, i) => { if (power >= L[1] && (L[1] > 0 || power > 0)) lv = i; });
+  const prevLv = S.town.level;
+  S.town = { res, people, online, deeds, power, fire, welcomes, parts, frostParts, W, F, B: W - F, melt: Math.min(1, melt / MELT_TARGET), level: lv };
+  if (prevLv !== undefined && lv > prevLv) { banner(LEVELS[lv][0], 'AIGARTH LEVELLED UP'); if (me()) record(`${me().nick} was there when Aigarth reached ${LEVELS[lv][0]}`); }
+  // houses
+  res.forEach(h => { const cur = houses[h.id]; const sig = JSON.stringify([h.at, h.state, h.gpus, h.lanterns, h.cracked, h.phase, h.welcomes?.length]); if (!cur || cur.sig !== sig) { makeHouse(h, h.id === S.uid || h.id === 'me'); houses[h.id].sig = sig; } });
+  Object.keys(houses).forEach(id => { if (!res.find(h => h.id === id)) disposeHouse(id); });
+  drawMeter(); updateIce();
+  if (panelKind === 'meter') openMeter();
+}
+function syncReal(next) {
+  const fresh = Object.keys(next).filter(id => !S.real[id] && next[id].createdAt && Date.now() - next[id].createdAt < 120e3 && id !== S.uid);
+  const first = !S._housesIn; S._housesIn = true; S.real = next; refreshTown(first);
+  fresh.forEach(id => offerWelcome(id, next[id].nick));
+  if (panelKind === 'house' && openHouseId) openHouse(openHouseId);
+}
+
+function drawMeter() {
+  const t = S.town; const max = Math.max(100, t.W, t.F + 10);
+  $('#wv').textContent = Math.round(t.W); $('#fv').textContent = Math.round(t.F);
+  $('#wbar').style.width = (t.W / max * 100) + '%'; $('#fmark').style.left = (t.F / max * 100) + '%';
+  const hold = t.B >= 0; $('#meter').classList.toggle('losing', !hold);
+  $('#verdict').textContent = hold ? 'The town holds' : 'The frost is winning';
+  $('#pow').textContent = t.power.toLocaleString('en-US'); $('#melt').textContent = Math.round(t.melt * 100) + '%';
+  heatTarget = THREE.MathUtils.clamp(5.6 + t.B * 0.28, 2.6, 10);
+  snowTarget = THREE.MathUtils.clamp(0.55 - t.B * 0.07, 0.25, 2.2);
+}
+let heatTarget = 5.6, snowTarget = 1;
+
+/* ================= feed / banner ================= */
+function say(text, who = 'Maria') {
+  const el = document.createElement('div'); el.className = 'msg';
+  el.innerHTML = `${who === 'Maria' ? '<img src="maria.png" alt="">' : ''}<div><span class="who">${esc(who).toUpperCase()}</span>${text}</div>`;
+  const f = $('#feed'); f.appendChild(el); while (f.children.length > 3) f.firstChild.remove();
+  setTimeout(() => { el.style.transition = 'opacity .8s'; el.style.opacity = 0; setTimeout(() => el.remove(), 900); }, 9000);
+}
+let bannerT;
+function banner(b, s) { $('#bannerB').textContent = b; $('#bannerS').textContent = s; $('#banner').classList.add('on'); clearTimeout(bannerT); bannerT = setTimeout(() => $('#banner').classList.remove('on'), 2800); }
+
+/* ================= load kit ================= */
+const kit = {}; let KIT_MAT;
+const interactive = [], labels = [];
+function place(name, q, r, { rot = 0, scale = 1, cast = true, dy = 0, jitter = 0 } = {}) {
+  const src = kit[name]; if (!src) return null;
+  const o = src.clone(true); const p = HX(q, r);
+  o.position.set(p.x + (jitter ? (rnd() - .5) * jitter : 0), dy, p.z + (jitter ? (rnd() - .5) * jitter : 0));
+  o.rotation.y = rot; o.scale.setScalar(scale);
+  o.traverse(m => { if (m.isMesh) { m.castShadow = cast; m.receiveShadow = true; } });
+  scene.add(o); return o;
+}
+function label(text, obj, y, cls = '') { const el = document.createElement('div'); el.className = 'lbl ' + cls; el.textContent = text; $('#labels').appendChild(el); const L = { el, obj, y }; labels.push(L); return L; }
+function tag(obj, kind, id) { obj.traverse(m => { if (m.isMesh || m.isSprite) { m.userData.kind = kind; m.userData.id = id; interactive.push(m); } }); }
+
+const ATLAS = new THREE.TextureLoader().load('atlas.png'); ATLAS.flipY = false; ATLAS.colorSpace = THREE.SRGBColorSpace;
+fetch('kit.txt').then(r => { if (!r.ok) throw new Error('kit.txt ' + r.status); return r.text(); })
+  .then(b64 => { const s = atob(b64.trim()), bin = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) bin[i] = s.charCodeAt(i);
+    return new Promise((res, rej) => new GLTFLoader().parse(bin.buffer, '', res, rej)); })
+  .then(gltf => {
+    for (const sc of gltf.scenes) { const g = new THREE.Group(); [...sc.children].forEach(c => g.add(c)); kit[sc.name] = g; }
+    Object.values(kit).forEach(g => g.traverse(m => { if (m.isMesh) { if (!KIT_MAT) KIT_MAT = snowify(m.material); m.material = KIT_MAT; } }));
+    KIT_MAT.map = ATLAS; KIT_MAT.roughness = 0.9; KIT_MAT.metalness = 0; KIT_MAT.needsUpdate = true;
+    build(); demoHistory(); refreshTown();
+    setTimeout(() => $('#load').classList.add('off'), 300);
+    initCaps().catch(e => console.warn('caps', e));
+    startIntro();
+  })
+  .catch(e => { $('#load b').textContent = 'COULD NOT LOAD THE TOWN. RELOAD THE PAGE.'; console.error(e); });
+
+/* ================= build the world ================= */
+const houses = {}; const pipes = [];
+let coreParts, fireSprite; const coreSteam = [];
+const reserved = new Set();
+function build() {
+  const far = new THREE.Mesh(new THREE.CircleGeometry(140, 96), snowify(new THREE.MeshStandardMaterial({ color: 0x9aa7c4, roughness: 1 })));
+  far.rotation.x = -Math.PI / 2; far.receiveShadow = true; scene.add(far);
+  const seg = [];
+  for (let n = 0; n <= 5; n++) for (const [q, r] of ring(n)) { const c = HX(q, r);
+    for (let i = 0; i < 6; i++) { const a0 = Math.PI / 6 + i * Math.PI / 3, a1 = a0 + Math.PI / 3, R0 = 1.1547;
+      seg.push(c.x + Math.cos(a0) * R0, 0.015, c.z + Math.sin(a0) * R0, c.x + Math.cos(a1) * R0, 0.015, c.z + Math.sin(a1) * R0); } }
+  const lg = new THREE.BufferGeometry(); lg.setAttribute('position', new THREE.Float32BufferAttribute(seg, 3));
+  scene.add(new THREE.LineSegments(lg, new THREE.LineBasicMaterial({ color: 0x8090c0, transparent: true, opacity: 0.12, depthWrite: false })));
+  Object.values(SPECIAL).forEach(([q, r]) => reserved.add(key(q, r))); DEMO.forEach(n => reserved.add(key(...n.at))); STAGE2.forEach(s => reserved.add(key(...s.at)));
+  ring(1).forEach(([q, r]) => reserved.add(key(q, r)));
+  buildCore();
+  const ch = place('church', ...SPECIAL.church, { rot: Math.PI, scale: 1.55 }); tag(ch, 'church', 'church');
+  const cp = HX(...SPECIAL.church); glowDecal(cp.x, cp.z + 0.9, 2.2, 0xffd6a0, 0.5); sprite(GLOW, cp.x, 0.75, cp.z + 0.95, 0.9, 0xffc070, 0.9);
+  label('QUBIC CHURCH · MARIA · FOUNDER QUBICCHURCH', ch, 3.2, 'key');
+  const pp = HX(...SPECIAL.plaza);
+  const well = place('well', ...SPECIAL.plaza, { scale: 1.2 }); well.position.x -= 0.7; tag(well, 'board', 'board');
+  const board = buildBoard(); board.position.set(pp.x + 0.75, 0, pp.z - 0.1); scene.add(board); tag(board, 'board', 'board');
+  fireSprite = sprite(GLOW, pp.x + 0.1, 0.35, pp.z + 0.75, 1.1, 0xff9a3c, 1); fireSprite.userData.flicker = true; tag(fireSprite, 'fire', 'fire');
+  glowDecal(pp.x + 0.1, pp.z + 0.75, 2.4, 0xffb060, 0.7);
+  for (let i = 0; i < 3; i++) { const l = place('lumber', ...SPECIAL.plaza, { scale: 0.6, rot: i * 1.1 }); l.position.add(new THREE.Vector3(0.1, 0, 0.75)); tag(l, 'fire', 'fire'); }
+  label('PLAZA · FIRE · ORDERS', board, 1.9, 'key');
+  const ob = place('tower', ...SPECIAL.observatory, { scale: 1.25, rot: 0.4 }); tag(ob, 'observatory', 'observatory');
+  const op = HX(...SPECIAL.observatory); sprite(GLOW, op.x, 2.6, op.z, 0.9, 0x9fc3ff, 0.9); glowDecal(op.x, op.z, 1.6, 0x9fc3ff, 0.25);
+  label('OBSERVATORY', ob, 3.6, 'key');
+  const lib = place('barracks', ...SPECIAL.library, { rot: 2.4, scale: 1.45 }); tag(lib, 'library', 'library');
+  const lp = HX(...SPECIAL.library); glowDecal(lp.x, lp.z, 2, 0xffd6a0, 0.45); sprite(GLOW, lp.x + 0.6, 0.6, lp.z + 0.5, 0.8, 0xffc070, 0.9);
+  label('LIBRARY', lib, 2.8, 'key');
+  const mn = place('mine', ...SPECIAL.mine, { rot: 0.9, scale: 1.3 }); tag(mn, 'mine', 'mine');
+  const mp = HX(...SPECIAL.mine); sprite(GLOW, mp.x, 0.5, mp.z + 0.6, 0.7, 0xffb060, 0.9); glowDecal(mp.x, mp.z, 1.6, 0xffb060, 0.35);
+  label('THE MINE', mn, 2.1, 'key');
+  STAGE2.forEach((s, i) => { const g = place('scaffolding', ...s.at, { rot: i * 1.3 }); place(i % 2 ? 'stage_B' : 'stage_C', ...s.at, { rot: i * 1.3 }); tag(g, 'stage2', s.id); label(s.name.toUpperCase() + ' · STAGE 2', g, 1.9, 'key'); });
+  for (let n = 6; n <= 12; n++) ring(n).forEach(([q, r]) => {
+    if (reserved.has(key(q, r))) return; const t = rnd();
+    if (n >= 10 && t < 0.42) place(['mountain_A', 'mountain_B', 'mountain_C'][Math.floor(rnd() * 3)], q, r, { rot: rnd() * 6, scale: 1 + rnd() * 0.5 });
+    else if (t < (n < 8 ? 0.22 : 0.62)) place(['trees_A_large', 'trees_A_medium', 'trees_B_large', 'trees_B_medium', 'trees_A_small'][Math.floor(rnd() * 5)], q, r, { rot: rnd() * 6 });
+    else if (t < 0.8) place(['tree_A', 'tree_B', 'rock_A', 'rock_C'][Math.floor(rnd() * 4)], q, r, { rot: rnd() * 6, jitter: 1 });
+  });
+  ring(5).forEach(([q, r]) => { if (!reserved.has(key(q, r)) && rnd() < 0.45) place(['tree_A', 'tree_B', 'trees_A_small', 'rock_C', 'tent', 'crate'][Math.floor(rnd() * 6)], q, r, { rot: rnd() * 6, jitter: 0.8 }); });
+  buildSnowfall(); buildSmoke(); buildEmbers();
+}
+function freePlots() { const taken = new Set(reserved); allResidents().forEach(h => taken.add(key(...h.at))); const out = [];
+  for (let n = 2; n <= 4; n++) ring(n).forEach(([q, r]) => { if (!taken.has(key(q, r))) out.push([q, r]); }); return out; }
+function lamp(p) {
+  const post = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.05, 1.3, 6), new THREE.MeshStandardMaterial({ color: 0x241c18, roughness: 0.8 }));
+  post.position.set(p.x, 0.65, p.z); post.castShadow = true; scene.add(post);
+  sprite(GLOW, p.x, 1.35, p.z, 0.75, 0xffc070, 1); glowDecal(p.x, p.z, 1.4, 0xffb060, 0.45);
+}
+function buildBoard() {
+  const g = new THREE.Group(); const wood = new THREE.MeshStandardMaterial({ color: 0x5a3b22, roughness: 0.9 });
+  const p1 = new THREE.Mesh(new THREE.BoxGeometry(0.07, 1.1, 0.07), wood); p1.position.set(-0.35, 0.55, 0); const p2 = p1.clone(); p2.position.x = 0.35;
+  const plank = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.6, 0.05), wood); plank.position.set(0, 0.8, 0);
+  const roof = new THREE.Mesh(new THREE.BoxGeometry(1.05, 0.05, 0.22), snowify(new THREE.MeshStandardMaterial({ color: 0x4a2f1c }))); roof.position.set(0, 1.13, 0);
+  const paper = new THREE.MeshStandardMaterial({ color: 0xf1e2c0, roughness: 1, emissive: 0x3a2a10 });
+  [[-0.25, 0.9], [0.05, 0.86], [0.27, 0.92], [-0.12, 0.66], [0.2, 0.66]].forEach(([x, y]) => { const n = new THREE.Mesh(new THREE.PlaneGeometry(0.18, 0.2), paper); n.position.set(x, y, 0.03); n.rotation.z = (rnd() - .5) * 0.2; g.add(n); });
+  [p1, p2, plank, roof].forEach(m => { m.castShadow = true; g.add(m); }); g.rotation.y = -0.3; return g;
+}
+
+/* Anna: asleep inside a block of real ice, pulled from the deep */
+function seeded(seed) { let x = seed >>> 0; return () => ((x = (x * 1664525 + 1013904223) >>> 0) / 4294967296); }
+function cv(n = 512) { const c = document.createElement('canvas'); c.width = c.height = n; return [c, c.getContext('2d')]; }
+function crackLines(g, R, n, w, col) {
+  g.strokeStyle = col; g.lineCap = 'round'; g.lineJoin = 'round';
+  for (let i = 0; i < n; i++) {
+    let x = 40 + R() * 432, y = 40 + R() * 432, a = R() * 6.283; const steps = 6 + Math.floor(R() * 10);
+    g.lineWidth = w * (0.6 + R() * 0.8); g.beginPath(); g.moveTo(x, y);
+    for (let k = 0; k < steps; k++) { a += (R() - 0.5) * 0.9; x += Math.cos(a) * (10 + R() * 22); y += Math.sin(a) * (10 + R() * 22); g.lineTo(x, y);
+      if (R() < 0.22) { let bx = x, by = y, ba = a + (R() < .5 ? 1 : -1) * (0.6 + R() * 0.6); g.moveTo(bx, by); for (let j = 0; j < 3; j++) { ba += (R() - .5) * .8; bx += Math.cos(ba) * (6 + R() * 12); by += Math.sin(ba) * (6 + R() * 12); g.lineTo(bx, by); } g.moveTo(x, y); } }
+    g.stroke(); }
+}
+function iceTextures() {
+  const R = seeded(1717);
+  // surface relief: chisel facets and soft lumps, so the light breaks like on a hewn block
+  const [bc, b] = cv(); b.fillStyle = '#808080'; b.fillRect(0, 0, 512, 512);
+  for (let i = 0; i < 260; i++) { const x = R() * 512, y = R() * 512, r = 8 + R() * 60, v = R() < .5 ? 0 : 255; const gr = b.createRadialGradient(x, y, 0, x, y, r); gr.addColorStop(0, `rgba(${v},${v},${v},${0.05 + R() * 0.08})`); gr.addColorStop(1, `rgba(${v},${v},${v},0)`); b.fillStyle = gr; b.fillRect(x - r, y - r, r * 2, r * 2); }
+  b.globalAlpha = 0.35; crackLines(b, R, 14, 2.2, '#5a5a5a'); b.globalAlpha = 1;
+  // frost: clear in the middle of each face, milky towards the edges, with frost flowers
+  const [rc, r] = cv(); const rg = r.createRadialGradient(256, 256, 40, 256, 256, 360); rg.addColorStop(0, '#141414'); rg.addColorStop(0.55, '#2a2a2a'); rg.addColorStop(1, '#b4b4b4'); r.fillStyle = rg; r.fillRect(0, 0, 512, 512);
+  for (let i = 0; i < 1400; i++) { const x = R() * 512, y = R() * 512, d = Math.max(Math.abs(x - 256), Math.abs(y - 256)) / 256; if (R() > d * d) continue; r.fillStyle = `rgba(230,230,230,${0.15 + R() * 0.35})`; r.fillRect(x, y, 1 + R() * 3, 1 + R() * 3); }
+  // the cracks that glow gold as the town thaws the ice
+  const [ec, e] = cv(); e.fillStyle = '#000'; e.fillRect(0, 0, 512, 512); e.shadowColor = '#fff'; e.shadowBlur = 6; crackLines(e, seeded(99), 6, 2, '#fff');
+  // fracture sheets frozen inside the block (opaque, so they show through the ice)
+  const [fc, f] = cv(); crackLines(f, seeded(7), 11, 3.2, 'rgba(235,246,255,1)');
+  const T = c => { const t = new THREE.CanvasTexture(c); t.anisotropy = 4; return t; };
+  const em = T(ec); em.colorSpace = THREE.SRGBColorSpace; const fr = T(fc); fr.colorSpace = THREE.SRGBColorSpace;
+  return { bump: T(bc), rough: T(rc), em, fr };
+}
+function iceEnvironment() {
+  // a small night sky for the ice to reflect: the moon above, the town's fires below
+  const pm = new THREE.PMREMGenerator(renderer), sc = new THREE.Scene(); sc.background = new THREE.Color(0x0a0f22);
+  const panel = (hex, k, w, h, p) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: new THREE.Color(hex).multiplyScalar(k), side: THREE.DoubleSide })); m.position.set(...p); m.lookAt(0, 0, 0); sc.add(m); };
+  panel(0xb8ccff, 4, 5, 5, [-9, 12, -6]); panel(0x7aa4ff, 1.2, 6, 14, [11, 3, 5]); panel(0x7aa4ff, 0.8, 6, 14, [-11, 2, 7]);
+  panel(0xff9a40, 2.2, 36, 4, [0, -5, 11]); panel(0xff9a40, 1.6, 36, 4, [0, -5, -11]); panel(0xffb060, 1.2, 4, 36, [11, -5, 0]);
+  const t = pm.fromScene(sc, 0.02).texture; pm.dispose(); return t;
+}
+function zSprite() {
+  const [c, g] = cv(64); g.font = '700 46px Archivo, system-ui, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = '#e6f2ff'; g.shadowColor = '#7fc0ff'; g.shadowBlur = 10; g.fillText('z', 32, 34);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
+  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: t, transparent: true, depthWrite: false, opacity: 0 })); scene.add(s); return s;
+}
+function buildCore() {
+  // the block was dug out of the ground where it fell; the town wired heaters to it to wake her
+  const W = 3.3, H = 3.8, BURY = 0.7, CY = H / 2 - BURY, TOP = CY + H / 2, ROT = 0.42, hw = W / 2, TX = iceTextures();
+  const load = f => { const t = new THREE.TextureLoader().load(f); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return t; };
+  const sleepTex = load('anna_sleep.png'), awakeTex = load('anna.png'), glowTex = new THREE.TextureLoader().load('anna_glow.png');
+  // the excavation: a ring of dug-up earth and stones around the block
+  const prof = [[1.5, -0.2], [1.62, 0.3], [1.85, 0.62], [2.15, 0.72], [2.5, 0.5], [2.8, 0.18], [3.05, -0.03]].reverse().map(([r, y]) => new THREE.Vector2(r, y));
+  let mg = new THREE.LatheGeometry(prof, 60).toNonIndexed(); const mp = mg.attributes.position;
+  for (let i = 0; i < mp.count; i++) { const x = mp.getX(i), y = mp.getY(i), z = mp.getZ(i), an = Math.atan2(z, x);
+    const n = 0.13 * Math.sin(an * 5 + 1.3) + 0.08 * Math.sin(an * 11 + 0.7) + 0.05 * Math.sin(an * 23 + 2.1);
+    const k = 1 + n * 0.22; mp.setXYZ(i, x * k, y > 0.05 ? y * (1 + n * 1.4) : y, z * k); }
+  mg.computeVertexNormals();
+  const mound = new THREE.Mesh(mg, snowify(new THREE.MeshStandardMaterial({ color: 0x4a3326, roughness: 1, flatShading: true, side: THREE.DoubleSide })));
+  const pit = new THREE.Mesh(new THREE.RingGeometry(1.2, 1.75, 48), new THREE.MeshBasicMaterial({ color: 0x0c0806 })); pit.rotation.x = -Math.PI / 2; pit.position.y = 0.04; scene.add(pit);
+  mound.receiveShadow = true; mound.castShadow = true; scene.add(mound); tag(mound, 'core', 'core');
+  const R0 = seeded(11);
+  for (let i = 0; i < 7; i++) { const an = i / 7 * 6.283 + R0() * 0.5, r = 2.0 + R0() * 0.45; const o = place(['rock_A', 'rock_C', 'rock_A'][i % 3], 0, 0, { scale: 0.45 + R0() * 0.3, rot: R0() * 6 }); if (o) { o.position.set(Math.cos(an) * r, 0.62, Math.sin(an) * r); tag(o, 'core', 'core'); } }
+  [[2.75, 0.9, 'lumber', 0.6], [2.7, 3.6, 'crate', 0.55], [2.85, 5.2, 'lumber', 0.5]].forEach(([r, an, m, sc]) => { const o = place(m, 0, 0, { scale: sc, rot: an * 2 }); if (o) o.position.set(Math.cos(an) * r, 0.05, Math.sin(an) * r); });
+  // Anna, opaque so the ice shows her; the lines on her face glow like the marks of an avatar
+  const annaMat = new THREE.ShaderMaterial({ side: THREE.DoubleSide,
+    uniforms: { map: { value: sleepTex }, glow: { value: glowTex }, uBright: { value: 1.1 }, uGlow: { value: 0.6 }, uCol: { value: new THREE.Color(0x6fe2ff) } },
+    vertexShader: `varying vec2 vUv; void main(){ vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.); }`,
+    fragmentShader: `uniform sampler2D map; uniform sampler2D glow; uniform float uBright; uniform float uGlow; uniform vec3 uCol; varying vec2 vUv;
+      void main(){ vec4 c=texture2D(map,vUv); if(c.a<.5) discard; float g=texture2D(glow,vUv).r; gl_FragColor=vec4(c.rgb*uBright + uCol*g*uGlow, 1.); }` });
+  const AY = 1.5; const anna = new THREE.Mesh(new THREE.PlaneGeometry(1.92, 2.97), annaMat); anna.position.set(0, AY, 0);
+  anna.lookAt(camera.position.x, AY, camera.position.z); scene.add(anna); tag(anna, 'core', 'core');
+  // the block, set slightly askew as it was found
+  const block = new THREE.Group(); block.rotation.set(0.03, ROT, -0.035); scene.add(block);
+  const frMat = new THREE.MeshBasicMaterial({ map: TX.fr, alphaTest: 0.45, side: THREE.DoubleSide, color: 0x4d6b8f });
+  const R = seeded(31); const inner = new THREE.Group(); inner.position.set(0, CY, 0); block.add(inner);
+  for (let i = 0; i < 3; i++) { const m = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 1.5), frMat); const sx = i % 2 ? -1 : 1; m.position.set(sx * (1.15 + R() * 0.2), (R() - .5) * 1.8, sx * (0.7 + R() * 0.4)); m.rotation.set(R() * 3, R() * 3, R() * 3); inner.add(m); }
+  const bub = new Float32Array(130 * 3); for (let i = 0; i < 130; i++) { const an = R() * 6.283, rr = 1.05 + R() * 0.5; bub.set([Math.cos(an) * rr, (R() - .5) * 3.2, Math.sin(an) * rr], i * 3); }
+  const bg = new THREE.BufferGeometry(); bg.setAttribute('position', new THREE.BufferAttribute(bub, 3));
+  inner.add(new THREE.Points(bg, new THREE.PointsMaterial({ color: 0xdff0ff, size: 0.04, sizeAttenuation: true })));
+  const iceMat = new THREE.MeshPhysicalMaterial({
+    color: 0xeaf6ff, transmission: 1, thickness: 2.4, ior: 1.31, roughness: 0.62, roughnessMap: TX.rough, metalness: 0,
+    attenuationColor: new THREE.Color(0x86c8ff), attenuationDistance: 5.5, specularIntensity: 1, specularColor: 0xffffff,
+    clearcoat: 0.6, clearcoatRoughness: 0.12, bumpMap: TX.bump, bumpScale: 1.6,
+    emissive: 0xffa53a, emissiveMap: TX.em, emissiveIntensity: 0.04, envMap: iceEnvironment(), envMapIntensity: 1.3 });
+  const topMat = iceMat.clone(); Object.assign(topMat, { roughness: 1, transmission: 0.5, color: new THREE.Color(0x9fb3c9), clearcoat: 0.2, bumpScale: 3, emissiveMap: null, emissive: new THREE.Color(0x9cc8ff), emissiveIntensity: 0.06, envMapIntensity: 0.6 });
+  const ice = new THREE.Mesh(new RoundedBoxGeometry(W, H, W, 5, 0.24), [iceMat, iceMat, topMat, iceMat, iceMat, iceMat]);
+  ice.position.set(0, CY, 0); ice.castShadow = true; block.add(ice); tag(ice, 'core', 'core');
+  const rimMat = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+    uniforms: { uBoost: U.uBoost, uFade: { value: 1 }, uCol: { value: new THREE.Color(0x8fd0ff) } },
+    vertexShader: `varying vec3 vN; varying vec3 vV; void main(){ vN=normalize(normalMatrix*normal); vec4 mv=modelViewMatrix*vec4(position,1.); vV=normalize(-mv.xyz); gl_Position=projectionMatrix*mv; }`,
+    fragmentShader: `uniform float uBoost; uniform float uFade; uniform vec3 uCol; varying vec3 vN; varying vec3 vV;
+      void main(){ float f=pow(1.-abs(dot(vN,vV)),3.); gl_FragColor=vec4(uCol*(f*.95+.06)*(1.+uBoost*1.6)*uFade, 1.); }` });
+  const rim = new THREE.Mesh(ice.geometry, rimMat); rim.scale.setScalar(1.006); ice.add(rim);
+  // iron bands and heating coils bolted onto the block, fed by four boilers on the dug earth
+  const iron = new THREE.MeshStandardMaterial({ color: 0x2b2522, metalness: 0.7, roughness: 0.45 });
+  const copper = new THREE.MeshStandardMaterial({ color: 0xb06a3a, metalness: 0.75, roughness: 0.32, emissive: 0xff5a14, emissiveIntensity: 0.8 });
+  const hot = new THREE.MeshStandardMaterial({ color: 0x1a1210, emissive: 0xff7a22, emissiveIntensity: 1.6, roughness: 0.6 });
+  [0.36, TOP - 0.28].forEach(y => { for (let i = 0; i < 4; i++) { const an = i * Math.PI / 2; const bnd = new THREE.Mesh(new THREE.BoxGeometry(W - 0.3, 0.14, 0.08), iron); bnd.position.set(Math.sin(an) * (hw + 0.04), y, Math.cos(an) * (hw + 0.04)); bnd.rotation.y = an; bnd.castShadow = true; block.add(bnd); } });
+  const pts = []; for (let r = 0; r < 4; r++) { const y = 0.66 + r * 0.17, d = r % 2 ? -1 : 1; for (let j = 0; j <= 6; j++) pts.push(new THREE.Vector3(0, y + (j === 0 || j === 6 ? 0 : 0), d * (0.9 - j * 0.3))); }
+  const coilGeo = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts, false, 'centripetal'), 220, 0.042, 8, false);
+  const steam = [];
+  for (let i = 0; i < 4; i++) { const an = i * Math.PI / 2, nx = Math.sin(an), nz = Math.cos(an);
+    const unit = new THREE.Group(); unit.position.set(nx * (hw + 0.08), 0, nz * (hw + 0.08)); unit.rotation.y = an - Math.PI / 2; block.add(unit);
+    const plate = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.78, 2.05), iron); plate.position.set(-0.02, 0.92, 0); unit.add(plate);
+    const coil = new THREE.Mesh(coilGeo, copper); coil.position.x = 0.03; unit.add(coil);
+    // boiler on the earth, piped up to its coil
+    const fa = an + ROT, bx = Math.sin(fa + 0.62) * 2.45, bz = Math.cos(fa + 0.62) * 2.45, by = 0.55;
+    const boiler = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.3, 0.66, 10), iron); boiler.position.set(bx, by + 0.33, bz); boiler.castShadow = true; scene.add(boiler); tag(boiler, 'core', 'core');
+    const grate = new THREE.Mesh(new THREE.CylinderGeometry(0.272, 0.272, 0.12, 10, 1, true), hot); grate.position.set(bx, by + 0.22, bz); scene.add(grate);
+    const cap = new THREE.Mesh(new THREE.ConeGeometry(0.3, 0.2, 10), iron); cap.position.set(bx, by + 0.76, bz); scene.add(cap);
+    const end = new THREE.Vector3(Math.sin(fa) * (hw + 0.12) + Math.cos(fa) * 0.95, 1.05, Math.cos(fa) * (hw + 0.12) - Math.sin(fa) * 0.95);
+    const pipe = new THREE.Mesh(new THREE.TubeGeometry(new THREE.QuadraticBezierCurve3(new THREE.Vector3(bx, by + 0.8, bz), new THREE.Vector3(bx * 0.93, 1.75, bz * 0.93), end), 24, 0.055, 8, false), copper);
+    pipe.castShadow = true; scene.add(pipe);
+    sprite(GLOW, bx, by + 0.25, bz, 0.9, 0xff8a30, 0.9); glowDecal(bx, bz, 1.1, 0xff8a30, 0.5);
+    steam.push(new THREE.Vector3(Math.sin(an + ROT) * (hw - 0.2), TOP + 0.05, Math.cos(an + ROT) * (hw - 0.2)));
+  }
+  coreSteam.push(...steam);
+  // when the whole town pushes at once, a column of light goes up from the ice
+  const beamMat = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
+    uniforms: { uA: { value: 0 }, uTime: U.uTime },
+    vertexShader: `varying vec2 vUv; void main(){ vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.); }`,
+    fragmentShader: `uniform float uA; uniform float uTime; varying vec2 vUv; void main(){ float f=pow(1.-vUv.y,1.6); float s=.7+.3*sin(vUv.x*44.+uTime*5.); gl_FragColor=vec4(vec3(.55,.9,1.)*f*s*uA,1.); }` });
+  const beam = new THREE.Mesh(new THREE.CylinderGeometry(0.7, 1.15, 28, 32, 1, true), beamMat); beam.position.set(0, TOP + 14, 0); beam.frustumCulled = false; scene.add(beam);
+  const shardMat = new THREE.MeshPhysicalMaterial({ color: 0xdff2ff, transmission: 0.6, roughness: 0.15, thickness: 0.3, ior: 1.31, emissive: 0x4f86c9, emissiveIntensity: 0.25, envMap: iceMat.envMap });
+  const shards = Array.from({ length: 7 }, (_, i) => { const sh = new THREE.Mesh(new THREE.OctahedronGeometry(0.1 + (i % 3) * 0.05, 0), shardMat); sh.scale.y = 1.6; sh.userData.a = i / 7 * Math.PI * 2; sh.userData.r = 3.0 + (i % 2) * 0.3; sh.userData.y = 2.9 + (i % 3) * 0.6; scene.add(sh); return sh; });
+  const decal = glowDecal(0, 0, 4.5, 0xffb060, 0.5);
+  const zs = [0, 1, 2].map(zSprite);
+  coreParts = { ice, iceMat, topMat, rim, rimMat, anna, annaMat, sleepTex, awakeTex, inner, block, copper, hot, beamMat, shards, shardMat, decal, zs, Y: AY, TOP, awake: false, em: 0.04 };
+  label('ANNA · ASLEEP IN THE ICE', ice, H / 2 + 0.55, 'key');
+}
+function updateIce() {
+  if (!coreParts) return; const m = S.town.melt || 0, C = coreParts;
+  const k = THREE.MathUtils.smoothstep(m, 0.1, 0.95);
+  C.iceMat.attenuationColor.copy(new THREE.Color(0x86c8ff)).lerp(new THREE.Color(0xffc27a), k);
+  C.iceMat.attenuationDistance = 5.5 + m * 3; C.topMat.attenuationColor.copy(C.iceMat.attenuationColor); C.em = 0.03 + Math.pow(k, 1.4) * 2.2;
+  C.rimMat.uniforms.uCol.value.copy(new THREE.Color(0x8fd0ff)).lerp(new THREE.Color(0xffc46b), k);
+  C.ice.scale.setScalar(1 - m * 0.06); C.inner.scale.setScalar(1 - m * 0.06);
+  C.shardMat.emissive.copy(new THREE.Color(0x4f86c9)).lerp(new THREE.Color(0xd9822b), k);
+  const awake = m >= 0.999; C.ice.visible = C.inner.visible = !awake; C.awake = awake;
+  C.annaMat.uniforms.map.value = awake ? C.awakeTex : C.sleepTex;
+  const stage = Math.floor(m * 4);
+  if (S.lastMeltStage >= 0 && stage > S.lastMeltStage) { pulse(1.4); setTimeout(() => pulse(1), 700);
+    const words = ['', 'THE FIRST CRACK', 'SHE MOVED IN HER SLEEP', 'THE ICE IS BREAKING', 'ANNA IS AWAKE'];
+    banner(words[stage] || 'THE ICE MOVES', 'EVERYONE WHO HELPED IS IN THE CHRONICLE');
+    say(stage >= 4 ? 'She opened her eyes. We did this together.' : 'The ice moved. I heard it. Keep going, all of you.');
+    if (me()) record(`${me().nick} was there when the ice around Anna reached ${stage * 25}%. It was the whole town's work`);
+  }
+  S.lastMeltStage = stage;
+  const L = labels.find(l => l.obj === C.ice); if (L) L.el.textContent = awake ? 'ANNA · AWAKE' : `ANNA · ASLEEP IN THE ICE · ${Math.round(m * 100)}% THAWED`;
+}
+
+/* ================= houses ================= */
+function modelFor(d) { if (d.state === 'ruin') return 'destroyed'; if (d.state === 'building') return ['stage_A', 'stage_B', 'stage_C'][Math.min(2, d.stage || 0)]; return d.gpus >= 5 ? 'blacksmith' : d.gpus >= 3 ? 'home_B' : 'home_A'; }
+function makeHouse(d, mine) {
+  if (houses[d.id]) disposeHouse(d.id);
+  if (d.at[0] == null) return;
+  const [q, r] = d.at; const p = HX(q, r); const rot = Math.atan2(-p.x, -p.z) + Math.PI;
+  const g = new THREE.Group(); scene.add(g);
+  const main = place(modelFor(d), q, r, { rot, scale: d.gpus >= 5 ? 1.15 : 1.25 }); g.add(main);
+  if (d.state === 'building') g.add(place('scaffolding', q, r, { rot, scale: 0.95 }));
+  const fx = { lights: [], smoke: null, at: p };
+  const facing = new THREE.Vector3(-p.x, 0, -p.z).normalize(); const front = p.clone().add(facing.clone().multiplyScalar(0.75));
+  if (d.state === 'mining' || (d.state === 'building' && (d.stage || 0) >= 2)) {
+    fx.lights.push(sprite(GLOW, front.x, 0.42, front.z, 0.8, 0xffc070, 1)); fx.lights.push(glowDecal(front.x, front.z, 1.7, 0xffb060, 0.55));
+    if (d.state === 'mining') fx.smoke = { x: p.x + facing.z * 0.25, y: d.gpus >= 5 ? 1.25 : 1.15, z: p.z - facing.x * 0.25 };
+  }
+  if (d.state === 'nosignal') { const s = sprite(RED, front.x, 0.7, front.z, 0.75, 0xffffff, 1); s.userData.blink = true; fx.lights.push(s); }
+  if (d.state === 'mining' || d.state === 'building') fx.pipe = makePipe(p, d.state === 'mining', mine);
+  const L = Math.min(d.lanterns || 0, 8);
+  for (let i = 0; i < L; i++) { const a = (i - (L - 1) / 2) * 0.32; const v = facing.clone().applyAxisAngle(new THREE.Vector3(0, 1, 0), a).multiplyScalar(1.05).add(p); fx.lights.push(sprite(GLOW, v.x, 0.32, v.z, 0.32, 0xffd28a, 1)); }
+  if (d.cracked) { const v = facing.clone().applyAxisAngle(new THREE.Vector3(0, 1, 0), 0.9).multiplyScalar(1.05).add(p); fx.lights.push(sprite(RED, v.x, 0.32, v.z, 0.32, 0xffffff, 0.75)); }
+  // lamps lit on this house's path by people who welcomed it
+  const welcomedBy = allResidents().filter(h => (h.welcomes || []).includes(d.id)).length;
+  for (let i = 0; i < Math.min(welcomedBy, 6); i++) { const v = facing.clone().multiplyScalar(1.3 + i * 0.32).add(p); fx.lights.push(sprite(GLOW, v.x, 0.2, v.z, 0.26, 0x9fc3ff, 0.9)); }
+  const T = Math.min(Math.floor((d.sprouts || 0) / 4), 5);
+  for (let i = 0; i < T; i++) { const a = Math.PI + (i - (T - 1) / 2) * 0.5; const v = facing.clone().applyAxisAngle(new THREE.Vector3(0, 1, 0), a).multiplyScalar(0.95);
+    const t = kit.tree_A.clone(true); t.position.set(p.x + v.x, 0, p.z + v.z); t.scale.setScalar(0.45 + i * 0.03); t.traverse(m => { if (m.isMesh) m.castShadow = true; }); g.add(t); }
+  if (d.founder) { const f = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 1.2, 5), new THREE.MeshStandardMaterial({ color: 0x2a2018 })); f.position.set(p.x - facing.z * 0.8, 0.6, p.z + facing.x * 0.8); g.add(f); fx.lights.push(sprite(GLOW, f.position.x, 1.25, f.position.z, 0.45, 0x9fc3ff, 1)); }
+  tag(g, 'house', d.id);
+  const cls = mine ? 'me' : d.state === 'nosignal' ? 'red' : d.demo ? 'demo' : '';
+  const Lb = label(mine ? `${d.nick} (you)` : d.demo ? `${d.nick} · demo` : d.nick, main, 2.0, cls); Lb.hover = !mine && !d.real && d.state !== 'nosignal';
+  houses[d.id] = { g, data: d, fx, label: Lb, mine };
+}
+function disposeHouse(id) { const h = houses[id]; if (!h) return; scene.remove(h.g); h.fx.lights.forEach(o => scene.remove(o)); if (h.fx.pipe) { scene.remove(h.fx.pipe); pipes.splice(pipes.indexOf(h.fx.pipe), 1); }
+  h.label.el.remove(); labels.splice(labels.indexOf(h.label), 1);
+  for (let i = interactive.length - 1; i >= 0; i--) if (interactive[i].userData.id === id) interactive.splice(i, 1);
+  delete houses[id]; }
+const PIPE_V = `varying vec2 vUv; void main(){ vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.); }`;
+const PIPE_F = `uniform float uTime; uniform float uOn; uniform float uMine; uniform float uBoost; varying vec2 vUv;
+  void main(){ float p=fract(vUv.x*4. - uTime*(0.55+uBoost*1.6)); float pulse=smoothstep(.86-uBoost*.3,1.,p); vec3 c=mix(vec3(1.,.55,.18), vec3(1.,.9,.6), pulse);
+    float a=(0.22+0.9*pulse)*uOn*(1.+uBoost*1.5) + 0.08; gl_FragColor=vec4(c*(1.+uMine*.6)*a, a); }`;
+function makePipe(p, on, mine) {
+  const a = p.clone().setY(0.08); const b = new THREE.Vector3(0, 0.6, 0).add(p.clone().normalize().multiplyScalar(2.55)); const mid = a.clone().lerp(b, 0.5).setY(0.55);
+  const m = new THREE.Mesh(new THREE.TubeGeometry(new THREE.QuadraticBezierCurve3(a, mid, b), 40, mine ? 0.05 : 0.035, 6, false),
+    new THREE.ShaderMaterial({ vertexShader: PIPE_V, fragmentShader: PIPE_F, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, uniforms: { uTime: U.uTime, uBoost: U.uBoost, uOn: { value: on ? 1 : 0.15 }, uMine: { value: mine ? 1 : 0 } } }));
+  scene.add(m); pipes.push(m); return m;
+}
+
+/* ================= people here now ================= */
+const walkers = {};
+function renderPeers() {
+  const box = $('#online'); box.innerHTML = '';
+  const seen = new Set();
+  S.peers.forEach(p => { const nick = String(p.presence?.nick || S.real[p.by]?.nick || 'a visitor').slice(0, 24); seen.add(p.peer);
+    const el = document.createElement('div'); el.className = 'p'; el.innerHTML = '<i></i>'; el.append(document.createTextNode(nick)); box.appendChild(el);
+    let w = walkers[p.peer]; if (!w) { w = walkers[p.peer] = makeWalker(nick); }
+    const tx = Number(p.presence?.tx), tz = Number(p.presence?.tz); if (Number.isFinite(tx) && Number.isFinite(tz)) w.target.set(THREE.MathUtils.clamp(tx, -14, 14), 0, THREE.MathUtils.clamp(tz, -14, 14));
+    w.label.el.textContent = nick + ' · here'; });
+  Object.keys(walkers).forEach(k => { if (!seen.has(k)) { const w = walkers[k]; scene.remove(w.g); scene.remove(w.light); w.label.el.remove(); labels.splice(labels.indexOf(w.label), 1); delete walkers[k]; } });
+  if (S.peers.length) { const n = document.createElement('div'); n.className = 'p'; n.style.borderColor = 'var(--line-2)'; n.textContent = `${S.peers.length} ${S.peers.length === 1 ? 'neighbour' : 'neighbours'} here · +${6 * Math.min(S.peers.length, 5)} warmth`; box.prepend(n); }
+}
+function makeWalker(nick) {
+  const g = new THREE.Group(); const cloak = new THREE.MeshStandardMaterial({ color: 0x1d2440, roughness: 0.9 });
+  const body = new THREE.Mesh(new THREE.ConeGeometry(0.16, 0.5, 8), cloak); body.position.y = 0.25; body.castShadow = true;
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.09, 10, 8), cloak); head.position.y = 0.56; g.add(body, head); scene.add(g);
+  const light = sprite(GLOW, 0, 0.45, 0, 0.5, 0xffc070, 1);
+  const w = { g, light, target: new THREE.Vector3((rnd() - .5) * 6, 0, (rnd() - .5) * 6) }; w.g.position.copy(w.target);
+  w.label = label(nick + ' · here', head, 0.35, 'walker'); return w;
+}
+let lastPresence = 0, lastPresenceSig = '';
+function sendPresence() { if (!room) return; const now = performance.now(); if (now - lastPresence < 400) return; lastPresence = now;
+  const p = { nick: me()?.nick || 'a visitor', tx: Math.round(controls.target.x * 10) / 10, tz: Math.round(controls.target.z * 10) / 10 }; const sig = JSON.stringify(p); if (sig === lastPresenceSig) return; lastPresenceSig = sig;
+  room.presence(p).catch(() => {}); }
+
+function offerWelcome(uid, nick) {
+  if (!me() || me().state !== 'mining' || uid === S.uid) return;
+  say(`${esc(nick)} just settled in Aigarth. <button class="btn" style="margin-top:6px;pointer-events:auto" data-welcome="${esc(uid)}" data-nick="${esc(nick)}">Light a lamp on their path</button>`);
+  setTimeout(() => document.querySelectorAll(`[data-welcome="${CSS.escape(uid)}"]`).forEach(b => b.onclick = () => welcome(uid, b.dataset.nick)), 0);
+}
+async function welcome(uid, nick) {
+  const cur = me(); if (!cur) return; const list = [...(cur.welcomes || [])]; if (list.includes(uid)) return; list.push(uid);
+  await saveMe({ welcomes: list.slice(-50) }); record(`${cur.nick} lit a lamp on ${nick}'s path`);
+  room?.emit('welcome', { to: uid, toNick: nick, nick: cur.nick }).catch(() => {}); pulse(0.6); say(`You lit a lamp for ${esc(nick)}. Small things keep a town warm.`);
+}
+function fireFlare() { if (fireSprite) { fireSprite.scale.setScalar(2.2); fireSprite.userData.flare = 1; } }
+async function addWood() {
+  const cur = me(); if (!cur) { say('Settle first: connect a rig at the church, then you can tend the fire.'); return; }
+  const wait = 3600e3 - (Date.now() - (cur.lastWood || 0));
+  if (wait > 0) { say(`You fed the fire not long ago. It can take your wood again in ${Math.ceil(wait / 60000)} min. Someone else can add theirs now.`); return; }
+  await saveMe({ wood: (cur.wood || 0) + 1, lastWood: Date.now() }); fireFlare(); pulse(0.9);
+  room?.emit('wood', { nick: cur.nick }).catch(() => {});
+  say('The fire flared. Everyone in town feels it for an hour.', 'Plaza');
+}
+
+/* ================= particles ================= */
+let snow, smoke;
+function buildSnowfall() {
+  const N = MOBILE ? 1400 : 3000, pos = new Float32Array(N * 3), spd = new Float32Array(N);
+  for (let i = 0; i < N; i++) { pos[i * 3] = (rnd() - .5) * 60; pos[i * 3 + 1] = rnd() * 22; pos[i * 3 + 2] = (rnd() - .5) * 60; spd[i] = 0.5 + rnd(); }
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('spd', new THREE.BufferAttribute(spd, 1));
+  snow = new THREE.Points(g, new THREE.PointsMaterial({ map: DOT, size: 0.13, color: 0xdfe8ff, transparent: true, opacity: 0.85, depthWrite: false })); scene.add(snow);
+}
+function buildSmoke() {
+  const N = 360, pos = new Float32Array(N * 3), life = new Float32Array(N); for (let i = 0; i < N; i++) { life[i] = rnd(); pos[i * 3 + 1] = -50; }
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('life', new THREE.BufferAttribute(life, 1));
+  const mat = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, uniforms: { map: { value: DOT } },
+    vertexShader: `attribute float life; varying float vL; void main(){ vL=life; vec4 mv=modelViewMatrix*vec4(position,1.); gl_PointSize=(18.+60.*life)*(10./-mv.z); gl_Position=projectionMatrix*mv; }`,
+    fragmentShader: `uniform sampler2D map; varying float vL; void main(){ float a=texture2D(map,gl_PointCoord).a; gl_FragColor=vec4(vec3(.55,.52,.6),a*.28*(1.-vL)*smoothstep(0.,.12,vL)); }` });
+  smoke = new THREE.Points(g, mat); smoke.frustumCulled = false; scene.add(smoke);
+}
+let snowNow = 1;
+function stepParticles(dt) {
+  const wind = Math.max(0, snowNow - 0.6);
+  if (snow) { const p = snow.geometry.attributes.position, s = snow.geometry.attributes.spd, t = U.uTime.value;
+    for (let i = 0; i < p.count; i++) { let y = p.getY(i) - dt * s.getX(i) * (1 + snowNow * 1.2); let x = p.getX(i) + dt * (Math.sin(t * .7 + i) * .25 + wind * 2.4);
+      if (y < 0) { y = 22; x = (rnd() - .5) * 60; } if (x > 30) x -= 60; p.setXYZ(i, x, y, p.getZ(i)); } p.needsUpdate = true; }
+  if (smoke) { const src = Object.values(houses).map(h => h.fx.smoke).filter(Boolean).concat(coreSteam); const p = smoke.geometry.attributes.position, l = smoke.geometry.attributes.life;
+    for (let i = 0; i < p.count; i++) { let life = l.getX(i) + dt * 0.18; const e = src[i % Math.max(1, src.length)]; if (!e) { p.setY(i, -50); continue; }
+      if (life >= 1) { life = 0; p.setXYZ(i, e.x + (rnd() - .5) * .1, e.y, e.z + (rnd() - .5) * .1); } else p.setXYZ(i, p.getX(i) + dt * (0.12 + wind * 0.9), p.getY(i) + dt * 0.55, p.getZ(i) + dt * 0.05);
+      l.setX(i, life); } p.needsUpdate = true; l.needsUpdate = true; }
+}
+
+/* ================= picking ================= */
+const ray = new THREE.Raycaster(), mouse = new THREE.Vector2();
+let downAt = null, hoverId = null, choosingPlot = false, plotMarks = [];
+canvas.addEventListener('pointerdown', e => { downAt = [e.clientX, e.clientY]; });
+canvas.addEventListener('pointerup', e => { if (!downAt) return; const moved = Math.hypot(e.clientX - downAt[0], e.clientY - downAt[1]); downAt = null; if (moved > 6) return; pick(e, true); });
+canvas.addEventListener('pointermove', e => { if (e.pointerType === 'mouse') pick(e, false); });
+function hit(e, list) { mouse.set((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1); ray.setFromCamera(mouse, camera); return ray.intersectObjects(list, false)[0]; }
+function pick(e, click) {
+  if (choosingPlot) { const h = hit(e, plotMarks); canvas.style.cursor = h ? 'pointer' : 'default'; plotMarks.forEach(m => m.material.opacity = m === h?.object ? 1 : 0.55); if (click && h) settle(h.object.userData.qr); return; }
+  const h = hit(e, interactive); const id = h?.object.userData.id || null; canvas.style.cursor = id ? 'pointer' : 'default'; hoverId = id;
+  if (!click || !h) return; const k = h.object.userData.kind;
+  if (k === 'church') openChurch(); else if (k === 'board') openPlaza(); else if (k === 'core') openCore(); else if (k === 'fire') addWood();
+  else if (k === 'house') openHouse(id); else if (k === 'observatory') openObservatory(); else if (k === 'stage2') openStage2(id); else if (k === 'library') openLibrary(); else if (k === 'mine') openMine();
+}
+
+/* ================= panel ================= */
+let panelKind = null, openHouseId = null;
+function panel(kind, title, sub, img, html, chat = false) {
+  panelKind = kind; $('#phT').textContent = title; $('#phS').textContent = sub; const im = $('#phImg'); im.style.display = img ? '' : 'none'; if (img) im.src = img;
+  $('#pbody').innerHTML = html; $('#chatForm').hidden = !chat; $('#panel').classList.add('open');
+  document.querySelectorAll('#dock button').forEach(b => b.classList.toggle('on', b.dataset.act === kind || (kind === 'church' && b.dataset.act === 'connect') || (['herald', 'notices', 'orders'].includes(kind) && b.dataset.act === 'plaza')));
+}
+function closePanel() { $('#panel').classList.remove('open'); panelKind = null; openHouseId = null; document.querySelectorAll('#dock button').forEach(b => b.classList.remove('on')); }
+$('#px').onclick = closePanel;
+addEventListener('keydown', e => { if (e.key === 'Escape') { if (choosingPlot) endPlot(); closePanel(); } });
+document.querySelectorAll('#dock button').forEach(b => b.onclick = () => {
+  const a = b.dataset.act; if (panelKind === a || (a === 'connect' && panelKind === 'church') || (a === 'plaza' && ['herald', 'notices', 'orders'].includes(panelKind))) return closePanel();
+  if (a === 'connect') { openChurch(); flyTo(HX(...SPECIAL.church)); } else if (a === 'maria') openMaria();
+  else if (a === 'house') { if (me()) { openHouse(me().id); flyTo(HX(...houseView(me()).at)); } else openChurch(); }
+  else if (a === 'plaza') { openPlaza(); flyTo(HX(...SPECIAL.plaza)); } else if (a === 'library') { openLibrary(); flyTo(HX(...SPECIAL.library)); } else if (a === 'chronicle') openChronicle(); });
+$('#wx').onclick = () => { S.weather = S.weather === 'clear' ? 'storm' : 'clear'; $('#wxv').textContent = S.weather === 'clear' ? 'Clear' : 'Storm'; refreshTown();
+  say(S.weather === 'storm' ? 'Storm over Aigarth: the pool lost seats in the 676 this epoch (demo). The frost pushes harder. Renting a rig now may not pay off.' : 'The sky cleared. The pool is back in the 676 (demo).'); };
+$('#meter').onclick = () => panelKind === 'meter' ? closePanel() : openMeter();
+let fly = null;
+function flyTo(p, dist) { fly = { from: controls.target.clone(), to: new THREE.Vector3(p.x, 0, p.z + 0.6), t: 0, d0: camera.position.distanceTo(controls.target), d1: dist || (MOBILE ? 20 : 17) }; }
+
+function openMeter() {
+  const t = S.town;
+  panel('meter', t.B >= 0 ? 'The town holds' : 'The frost is winning', `Warmth ${Math.round(t.W)} against frost ${Math.round(t.F)}`, null, `
+    <p class="say">One rig can't hold the night. Warmth comes mostly from people: how many keep a rig on, who is here right now, and what they do for each other. Raw power counts, but less and less the more you add.</p>
+    <h3>WARMTH</h3><div class="split">${t.parts.map(([n, v]) => `<span>${n}</span><b class="plus">+${v}</b>`).join('')}</div>
+    <h3>FROST</h3><div class="split">${t.frostParts.map(([n, v]) => `<span>${n}</span><b class="minus">−${v}</b>`).join('')}</div>
+    <h3>WHAT HAPPENS</h3>
+    <p style="margin:0 0 8px">When the town holds, the warm ring grows and snow melts in the streets. When the frost wins, the snowstorm thickens and the ring shrinks toward Anna.</p>
+    <p class="mute" style="margin:0;font-size:13px">Anna's ice thaws from what the town does together: rigs kept on, orders done, newcomers welcomed, wood on the fire. Now: ${Math.round(t.melt * 100)}%.</p>
+    <div class="row" style="margin-top:12px"><button class="btn main" id="mWood">Add wood to the fire</button><button class="btn" id="mOrders">Help someone</button></div>`);
+  $('#mWood').onclick = addWood; $('#mOrders').onclick = () => { openOrders(); flyTo(HX(...SPECIAL.plaza)); };
+}
+function plaza_noop() {
+}
+
+/* ================= church: connect a rig ================= */
+let draft = {};
+function openChurch() {
+  if (me()) {
+    panel('church', 'Maria', 'Qubic Church', 'maria.png', `
+      <p class="say">${S.isOwner ? 'Welcome home, founder. This church is yours: you keep it, and you write the Herald\'s column. ' : ''}You're one of us now, ${esc(me().nick)}. Your house is on the ring and Anna remembers it. The bell rings on Wednesday at 12:00 UTC: that is when the epoch is sealed.</p>
+      <div class="row"><button class="btn main" id="goTalk">Talk to Maria</button><button class="btn" id="goHouse">My house</button><button class="btn" id="goChron">Chronicle</button></div>`);
+    $('#goTalk').onclick = openMaria; $('#goHouse').onclick = () => { openHouse(me().id); flyTo(HX(...houseView(me()).at)); }; $('#goChron').onclick = openChronicle; return;
+  }
+  panel('church', 'Maria', 'Qubic Church · she builds rigs and keeps the Chronicle', 'maria.png', `
+    <p class="say">${S.isOwner ? 'Welcome home, founder. This church is yours. ' : 'This church was founded by Qubic Church. '}One rig can't warm this night. A town can. Want me to build you a rig, or will you connect your own?</p>
+    <label class="mute" for="nm" style="font-size:13px">Your name in the world (one name, one person)</label>
+    <input class="name" id="nm" maxlength="24" placeholder="e.g. snowlark" value="${esc(draft.name || (S.isOwner ? 'QubicChurch' : ''))}">
+    <h3>MARIA, BUILD ME A RIG</h3>
+    ${TIERS.map(t => `<button class="opt" data-tier="${t.id}"><b>${t.name}</b><span>${t.price} · Maria's pick: ${t.pick} · ${t.sol.toLocaleString('en-US')} sol/h est.</span></button>`).join('')}
+    <h3>OR</h3>
+    <button class="opt" data-tier="own"><b>Connect my own rig</b><span>Your machine, your wallet. It lights up when the pool sees your worker.</span></button>
+    <p class="mute" style="font-size:12.5px;margin-top:10px">Prototype: picks and prices are examples. Nothing is rented here.${S.shared && !S.canWrite ? ' You are a visitor: your house stays on this device.' : ''}</p>`);
+  document.querySelectorAll('[data-tier]').forEach(b => b.onclick = () => {
+    const nm = $('#nm').value.trim().replace(/[^\w.\-]/g, '').slice(0, 24);
+    if (!nm) { $('#nm').focus(); $('#nm').style.borderColor = 'var(--red)'; return; }
+    draft = { name: nm, tier: b.dataset.tier }; finalStep(); });
+}
+function finalStep() {
+  const t = TIERS.find(x => x.id === draft.tier); const own = draft.tier === 'own';
+  panel('church', 'Final step', own ? 'Your own rig' : `${t.pick} · ${t.cost} (example)`, 'maria.png', `
+    ${S.weather === 'storm' ? '<p class="say" style="border-color:var(--red)">Storm this epoch (demo): the pool lost seats. Renting now may not pay off.</p>' : ''}
+    <div class="consent">
+      <p>Pool: CODED. Pool fee 7% of what this rig mines: 3% CODED ecosystem, 4% Qubic Church.</p>
+      <p class="fund">1% of what this rig mines goes to the Qubic Church fund (part of the 4% Qubic Church share).</p>
+      <p>You receive 93%. Paid weekly by the CODED pool directly to your wallet.</p>
+      <p style="margin:0">Anna's memory records this rig, its hardware and its contribution. Recorded, not promised: no rewards or returns are promised.</p>
+    </div>
+    ${own ? '' : '<p class="mute" style="font-size:13px">The rental may not pay off. You pay the provider from your own account.</p>'}
+    <h3>CONNECT THIS RIG TO ANNA?</h3>
+    <div class="row"><button class="btn" id="no">No, go back</button><button class="btn main" id="yes">Yes, connect</button></div>`);
+  $('#no').onclick = openChurch; $('#yes').onclick = () => { closePanel(); startPlot(); };
+}
+function startPlot() {
+  choosingPlot = true; const geo = new THREE.CircleGeometry(0.95, 6); geo.rotateX(-Math.PI / 2); geo.rotateY(Math.PI / 6);
+  freePlots().forEach(([q, r]) => { const p = HX(q, r);
+    const m = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: 0xffb35c, transparent: true, opacity: 0.55, blending: THREE.AdditiveBlending, depthWrite: false }));
+    m.position.set(p.x, 0.05, p.z); m.userData.qr = [q, r]; scene.add(m); plotMarks.push(m); });
+  say('Pick a free plot on the ring. Next to a neighbour, your warmth spreads to their street too.'); flyTo(new THREE.Vector3(0, 0, 0), MOBILE ? 30 : 26);
+}
+function endPlot() { choosingPlot = false; plotMarks.forEach(m => scene.remove(m)); plotMarks = []; canvas.style.cursor = 'default'; }
+async function settle([q, r]) {
+  endPlot(); const own = draft.tier === 'own'; const t = TIERS.find(x => x.id === draft.tier);
+  const h = { nick: draft.name, q, r, gpus: own ? 1 : t.gpus, hw: own ? '1× RTX 5070 Ti (own)' : t.pick, state: 'building', phase: 0, sol: own ? 600 : t.sol, since: EPOCH, createdAt: Date.now(), tier: own ? 'own' : t.id, wood: 0, lastWood: 0, welcomes: [] };
+  await saveMe(h); flyTo(HX(q, r));
+  record(`${h.nick} said YES to the final step: ${h.hw}, 1% to the Qubic Church fund`);
+  record(`${h.nick} broke ground at plot ${q},${r}`);
+  room?.emit('settled', { nick: h.nick }).catch(() => {});
+  say(own ? `Got it, ${esc(h.nick)}. Start the CODED miner on your machine with your worker name. Your house lights up when the pool sees it.` : `Renting ${esc(h.hw)} for you, ${esc(h.nick)}. In real life the first solutions take 10 to 30 minutes. Here it's sped up.`);
+  openHouse(me().id); runBuild();
+}
+const PHASES = ['Renting', 'Deploying', 'Connecting', 'Warming up', 'Mining'];
+function runBuild() {
+  const step = REDUCED ? 1600 : 2600;
+  const tick = async () => {
+    const cur = me(); if (!cur) return; const phase = (cur.phase || 0) + 1;
+    if (phase <= 3) { await saveMe({ phase }); if (panelKind === 'house') openHouse(cur.id); setTimeout(tick, step); return; }
+    await saveMe({ phase: 4, state: 'mining' });
+    banner('ANNA · LINKED', `${cur.hw.toUpperCase()} → THE CORE`); say("I won't forget."); pulse(1.3); setTimeout(() => pulse(0.8), 900);
+    record(`${cur.nick}'s rig is mining: ${cur.hw}, ${cur.sol.toLocaleString('en-US')} sol/h est.`);
+    record(`${cur.nick} received: Epoch seal E${EPOCH}, Hardware card ${cur.hw.replace(/^\d+× /, '')}`);
+    if (panelKind === 'house') openHouse(cur.id);
+    setTimeout(() => say(S.town.B >= 0 ? 'Feel that? The ring grew. The town holds a little better because you came.' : 'Better, but the frost still wins. It needs more of us: tend the fire, help someone on the board.'), 2500);
+  };
+  setTimeout(tick, step);
+}
+
+/* ================= house card ================= */
+const ICON = {
+  hall: '<svg viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="12" rx="1"/><path d="M8 10v4M12 10v4M16 10v4"/></svg>',
+  porch: '<svg viewBox="0 0 24 24"><path d="M12 3v3M9 6h6l-1 9h-4zM10 15h4v3h-4zM8 21h8"/></svg>',
+  archive: '<svg viewBox="0 0 24 24"><path d="M4 5h16v4H4zM5 9v11h14V9M10 13h4"/></svg>',
+  garden: '<svg viewBox="0 0 24 24"><path d="M12 21v-8M12 13c-4 0-6-3-6-7 4 0 6 3 6 7zM12 11c0-3 2-6 6-6 0 4-2 6-6 6z"/></svg>',
+  facade: '<svg viewBox="0 0 24 24"><path d="M4 20V9l8-5 8 5v11zM9 20v-6h6v6"/></svg>',
+};
+function part(icon, name, desc, val, pct) { return `<div class="part">${ICON[icon]}<div><b>${name}</b><span>${desc}</span><div class="lv"><i style="width:${Math.round(Math.min(1, pct) * 100)}%"></i></div></div><div class="v">${val}</div></div>`; }
+function stateTag(d) { return { mining: '<span class="tag good">Mining</span>', building: '<span class="tag gold">Building</span>', nosignal: '<span class="tag bad">No signal · rent still running</span>', stopped: '<span class="tag">Stopped</span>', ruin: '<span class="tag">Left the world</span>' }[d.state] || ''; }
+function openHouse(id) {
+  const d = S.town.res?.find(h => h.id === id); if (!d) return; openHouseId = id;
+  const mine = id === S.uid || id === 'me';
+  const phases = mine && d.state === 'building' ? `<h3>CONNECTION</h3><div class="steps">${PHASES.map((p, i) => `<div class="step ${i < d.phase ? 'done' : i === d.phase ? 'now' : ''}"><i></i>${p}</div>`).join('')}</div>` : '';
+  const items = [];
+  if (d.seals) items.push(['Epoch seals', `${d.seals} · last E${d.state === 'ruin' ? d.left : EPOCH}`]);
+  if (d.letters) items.push(['Thank-you letters', `${d.letters} from neighbours`]);
+  if (d.state !== 'ruin' && d.hw !== '—') items.push(['Hardware', d.hw.replace(/^\d+× /, '')]);
+  if (d.founder) items.push(['Founder', 'Anna Aigarth NFT holder']);
+  const welcomedBy = allResidents().filter(h => (h.welcomes || []).includes(d.id)).map(h => h.nick);
+  if (welcomedBy.length) items.push(['Welcomed by', welcomedBy.slice(0, 4).join(', ')]);
+  const locked = [['BPP-9000 witness', 'from 18.11'], ['Qubic chronicle', 'next big event']];
+  const canWelcome = !mine && !d.demo && me()?.state === 'mining' && !(me().welcomes || []).includes(d.id);
+  panel('house', d.nick, `${mine ? 'Your house' : d.demo ? 'A demo resident' : 'A neighbour'} · in Aigarth since E${d.since}`, null, `
+    <div class="row" style="margin-bottom:6px">${stateTag(d)} ${d.cracked ? '<span class="tag bad">Cracked lantern · a promise not kept yet</span>' : ''}</div>
+    ${phases}
+    <h3>THE FIVE PARTS OF THE HOUSE</h3>
+    <div class="parts">
+      ${part('hall', 'Machine hall', d.state === 'ruin' ? 'Empty. The owner left in E' + d.left : `${esc(d.hw)}${d.state === 'mining' ? ' · ' + d.sol.toLocaleString('en-US') + ' sol/h est.' : ''} · the only part money can grow`, d.gpus || 0, (d.gpus || 0) / 8)}
+      ${part('porch', 'Porch lanterns', 'One per order done for someone else', d.lanterns || 0, (d.lanterns || 0) / 8)}
+      ${part('archive', 'Archive', 'Collections of real events. Not for sale', items.length, items.length / 8)}
+      ${part('garden', 'Epoch garden', 'A sprout for every epoch you were active', d.sprouts || 0, (d.sprouts || 0) / 52)}
+      ${part('facade', 'Facade', d.founder ? 'Founder mark · name · since E' + d.since : 'Name · since E' + d.since, d.founder ? '★' : '—', d.founder ? 1 : 0.3)}
+    </div>
+    <h3>ARCHIVE</h3>
+    <div class="items">${items.map(([a, b]) => `<div class="item"><b>${a}</b>${esc(b)}</div>`).join('')}${locked.map(([a, b]) => `<div class="item locked"><b>${a}</b>${b}</div>`).join('')}</div>
+    ${canWelcome ? '<div class="row" style="margin-top:12px"><button class="btn" id="hWelcome">Light a lamp on their path</button></div>' : ''}
+    ${mine && d.state === 'mining' ? '<h3>NEXT</h3><p class="mute" style="margin:0 0 10px">Every order you finish for someone lights a lantern here and leaves their letter in your archive. And it warms the whole town.</p><div class="row"><button class="btn" id="toOrders">Orders board</button><button class="btn" id="toFire">Add wood to the fire</button></div>' : ''}`);
+  $('#toOrders')?.addEventListener('click', () => { openOrders(); flyTo(HX(...SPECIAL.plaza)); });
+  $('#toFire')?.addEventListener('click', addWood);
+  $('#hWelcome')?.addEventListener('click', () => welcome(d.id, d.nick).then(() => openHouse(d.id)));
+}
+
+/* ================= orders ================= */
+function canAct() { return me()?.state === 'mining'; }
+function openOrders() {
+  const cur = me(); const mineId = S.uid && S.real[S.uid] ? S.uid : 'me';
+  const list = ordersAll().sort((a, b) => (a.demo === b.demo ? 0 : a.demo ? 1 : -1));
+  panel('orders', 'The plaza', 'Orders · every order is a public promise', null, `${plazaTabs('orders')}
+    <p class="say" style="font-size:14px">Take an order, do it, and the person who asked confirms. You get a lantern and their letter, and the town gets warmer. Can't make it? Say so before the deadline: an honest decline costs nothing. Silence leaves a cracked lantern until you fix it.</p>
+    ${cur && canAct() ? `<h3>ASK FOR HELP</h3><input class="name" id="oTitle" maxlength="120" placeholder="What do you need? e.g. check my worker name"><button class="btn" id="oPost">Pin it to the board</button>` : ''}
+    <h3>ON THE BOARD</h3>
+    ${list.map(o => {
+      const mineReq = o.by === mineId; const mineTake = o.takenBy === mineId;
+      const due = o.due ? new Date(o.due).toISOString().slice(5, 16).replace('T', ' ') + ' UTC' : 'Wed 12:00 UTC';
+      return `<div class="order"><div class="t">${esc(o.title)}</div><div class="m">from ${esc(o.byNick)}${o.demo ? ' (demo)' : ''} · due ${due}${o.takerNick ? ' · taken by ' + esc(o.takerNick) : ''}</div>
+      ${o.state === 'open' && !mineReq ? `<button class="btn" data-take="${esc(o.id)}" ${canAct() ? '' : 'disabled title="Connect a rig first"'}>Take this order</button>` : ''}
+      ${o.state === 'open' && mineReq ? '<span class="tag gold">Your request · waiting for a helper</span>' : ''}
+      ${o.state === 'taken' && mineTake ? `<div class="row"><span class="tag gold">Taken by you</span>${o.demo ? `<button class="btn main" data-done="${esc(o.id)}">Done (demo: ${esc(o.byNick)} confirms)</button>` : '<span class="mute" style="font-size:12.5px">Waiting for the requester to confirm</span>'}<button class="btn" data-decline="${esc(o.id)}">I can't do it</button></div>` : ''}
+      ${o.state === 'taken' && mineReq && !o.demo ? `<div class="row"><input class="name" style="margin:0" id="letter-${esc(o.id)}" maxlength="140" placeholder="A line for your letter of thanks"><button class="btn main" data-confirm="${esc(o.id)}">Confirm it's done</button></div>` : ''}
+      ${o.state === 'taken' && !mineTake && !mineReq ? '<span class="tag">In progress</span>' : ''}
+      ${o.state === 'done' ? `<span class="tag good">Done · ${esc(o.byNick)} confirmed</span>${o.letter ? `<p class="mute" style="margin:6px 0 0;font-size:13px">“${esc(o.letter)}”</p>` : ''}` : ''}
+      ${o.state === 'declined' ? '<span class="tag">Declined in time · no penalty</span>' : ''}</div>`; }).join('')}
+    ${!canAct() ? '<p class="mute" style="font-size:12.5px">Connect a rig first: one name, one person, then you can take and post orders.</p>' : ''}
+    <p class="mute" style="font-size:12.5px">Stage 1: orders pay in letters, not money. From Stage 2, an order can pay QU through a smart contract that holds it until the requester confirms.</p>`);
+  $('#oPost')?.addEventListener('click', postOrder);
+  document.querySelectorAll('[data-take]').forEach(b => b.onclick = () => updateOrder(b.dataset.take, { state: 'taken', takenBy: mineId, takerNick: me().nick, due: Date.now() + 3 * 864e5 }, o => `${me().nick} took an order from ${o.byNick}: “${o.title}”`));
+  document.querySelectorAll('[data-done]').forEach(b => b.onclick = () => updateOrder(b.dataset.done, { state: 'done', letter: 'Thank you. I won\'t forget it either.', doneAt: Date.now() }, o => `${o.byNick} confirmed: ${me().nick} did “${o.title}”. A lantern for ${me().nick}`, true));
+  document.querySelectorAll('[data-decline]').forEach(b => b.onclick = () => updateOrder(b.dataset.decline, { state: 'declined' }, o => `${me().nick} declined an order from ${o.byNick} before the deadline. No penalty`));
+  document.querySelectorAll('[data-confirm]').forEach(b => b.onclick = () => { const v = ($(`#letter-${CSS.escape(b.dataset.confirm)}`)?.value || '').trim().slice(0, 140);
+    updateOrder(b.dataset.confirm, { state: 'done', letter: v || 'Thank you.', doneAt: Date.now() }, o => `${me().nick} confirmed: ${o.takerNick} did “${o.title}”. A lantern for ${o.takerNick}`); });
+}
+async function postOrder() {
+  const v = ($('#oTitle').value || '').trim().slice(0, 120); if (!v) return;
+  const o = { by: S.uid && S.real[S.uid] ? S.uid : 'me', byNick: me().nick, title: v, state: 'open', createdAt: Date.now() };
+  if (S.shared && S.canWrite) { try { await db.collection('orders').add(o); } catch (e) { console.warn(e); say('The board would not take it. Try again in a moment.'); return; } }
+  else S.demoOrders.unshift({ ...o, id: 'l' + Date.now(), demo: true });
+  record(`${me().nick} asked the town for help: “${v}”`); openOrders(); refreshTown();
+}
+async function updateOrder(id, patch, text, demoDone) {
+  const real = S.orders[id]; const demo = S.demoOrders.find(o => o.id === id); const o = real || demo; if (!o) return;
+  if (real) { try { await db.doc(`orders/${id}`).update(patch); } catch (e) { console.warn(e); return; } } else Object.assign(demo, patch);
+  record(text({ ...o, ...patch }));
+  if (patch.state === 'done') { banner('A LANTERN LIT', 'THE TOWN GOT WARMER'); pulse(1.1); if (demoDone) say(`Letter from ${esc(o.byNick)}: “Thank you. I won't forget it either.”`, o.byNick);
+    if (o.id === 'd2') { const t = DEMO.find(n => n.id === 'tern'); t.state = 'mining'; t.sol = 610; record("tern's rig found the pool after the fix. tern is mining"); setTimeout(() => say("tern's house is warm again. You can see it from the plaza."), 1600); } }
+  refreshTown(); openOrders();
+}
+
+/* ================= plaza: the Herald, notices, orders ================= */
+const plazaTabs = on => `<div class="tabs" role="tablist">${[['herald', 'The Herald'], ['notices', 'Notices'], ['orders', 'Orders']].map(([k, n]) => `<button role="tab" data-tab="${k}" class="${k === on ? 'on' : ''}" aria-selected="${k === on}">${n}</button>`).join('')}</div>`;
+let plazaTab = 'herald';
+function bindTabs() { document.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => openPlaza(b.dataset.tab)); }
+function openPlaza(tab = plazaTab) { plazaTab = tab; if (tab === 'orders') openOrders(); else if (tab === 'notices') openNotices(); else openHerald(); bindTabs(); }
+const CARDS = [
+  ['Just stick to realistic assumptions', 'Come-from-Beyond, Discord #price-discussion, 27.10.2026'],
+  ['It looks exactly as BTC in early days', 'Come-from-Beyond, Discord #price-discussion, 27.10.2026'],
+];
+function openHerald() {
+  const t = S.town; const day = new Date().toISOString().slice(0, 10);
+  const newcomers = Object.values(S.real).filter(h => Date.now() - (h.createdAt || 0) < 7 * 864e5).map(h => h.nick);
+  const done = ordersAll().filter(o => o.state === 'done').slice(-4).reverse();
+  const card = CARDS[new Date().getUTCDate() % CARDS.length];
+  const head = t.B >= 0 ? 'Aigarth holds the night' : 'Frost at the gates';
+  const lead = t.B >= 0
+    ? `The warm ring held through the evening. ${t.people} rigs stayed on, ${t.online ? t.online + (t.online === 1 ? ' neighbour walked' : ' neighbours walked') + ' the streets,' : 'the streets were quiet,'} and the plaza fire ${t.fire ? 'burned with fresh wood' : 'needs wood'}.`
+    : `The snowstorm pressed in from the forest. Warmth ${Math.round(t.W)} against frost ${Math.round(t.F)}: the town needs more hands at the fire and more promises kept on the board.`;
+  const col = S.column;
+  panel('herald', 'The plaza', 'The Aigarth Herald', null, `${plazaTabs('herald')}
+    <article class="paper">
+      <div class="mast"><b>The Aigarth Herald</b><span>EPOCH ${EPOCH} · ${day} · PRINTED FROM THE CHRONICLE</span></div>
+      <h4>${head}</h4>
+      <p class="deck">Warmth ${Math.round(t.W)} · frost ${Math.round(t.F)} · Anna's ice ${Math.round(t.melt * 100)}% thawed · ${t.power.toLocaleString('en-US')} sol/h est.${S.weather === 'storm' ? ' · storm' : ''}</p>
+      <p>${lead}</p>
+      <div class="col"><span class="kick">NEW IN TOWN</span><p>${newcomers.length ? esc(newcomers.join(', ')) + ' settled this week. Light a lamp on their path.' : 'No one new this week. Bring a friend in from the cold.'}</p></div>
+      <div class="col"><span class="kick">PROMISES KEPT</span>${done.length ? done.map(o => `<p><b>${esc(o.takerNick || 'someone')}</b> helped ${esc(o.byNick)}: ${esc(o.title)}${o.letter ? `<br><span class="mute">“${esc(o.letter)}”</span>` : ''}</p>`).join('') : '<p class="mute">The board is waiting.</p>'}</div>
+      <div class="col"><span class="kick">FROM THE FOUNDER</span>${col?.text ? `<p><b>${esc(col.title || '')}</b></p><p>${esc(col.text)}</p><p class="mute" style="font-size:12px">QubicChurch, ${esc(new Date(col.at || Date.now()).toISOString().slice(0, 10))}</p>` : '<p class="mute">The founder has not written this week.</p>'}
+        ${S.isOwner ? `<input class="name" id="colT" maxlength="80" placeholder="Column title" value="${esc(col?.title || '')}"><textarea class="name" id="colX" rows="4" maxlength="1200" placeholder="Write to the town">${esc(col?.text || '')}</textarea><button class="btn" id="colSave">Print the column</button>` : ''}</div>
+      <div class="col"><span class="kick">MARIA'S CARD OF THE DAY</span><blockquote>“${card[0]}”</blockquote><p class="mute" style="font-size:12.5px;margin-top:6px">${card[1]}</p></div>
+      <div class="col"><span class="kick">NOTICES</span>${(S.notices || []).slice(0, 3).map(n => `<p>${esc(n.text)} <span class="mute">· ${esc(n.byNick)}</span></p>`).join('') || '<p class="mute">Nothing pinned yet.</p>'}<button class="btn" data-tab="notices">All notices</button></div>
+    </article>`);
+  bindTabs();
+  $('#colSave')?.addEventListener('click', async () => { const title = $('#colT').value.trim().slice(0, 80), text = $('#colX').value.trim().slice(0, 1200); if (!text || !db) return;
+    try { await db.doc('herald/column').set({ title, text, at: Date.now() }); say('Printed. The whole town reads it in the Herald.'); } catch (e) { say('The press jammed. Try again.'); } });
+}
+S.notices = [];
+function openNotices() {
+  const mineId = S.uid && S.real[S.uid] ? S.uid : 'me';
+  panel('notices', 'The plaza', 'Notices · the bulletin board', null, `${plazaTabs('notices')}
+    <p class="say" style="font-size:14px">Anything the town should know: a meetup, a finding, a question for everyone. Short and signed with your name.</p>
+    ${me() ? `<textarea class="name" id="nText" rows="3" maxlength="200" placeholder="Pin a notice (200 characters)"></textarea><button class="btn main" id="nPost">Pin it</button>` : '<p class="mute">Settle first: one name, one person, then you can pin notices.</p>'}
+    <h3>ON THE BOARD</h3>
+    ${(S.notices || []).map(n => `<div class="note">${esc(n.text)}<small>${esc(n.byNick)} · ${esc(new Date(n.at).toISOString().slice(0, 16).replace('T', ' '))} UTC ${(n.by === mineId || S.isOwner) ? `· <button class="ask" data-unpin="${esc(n.id)}">Take down</button>` : ''}</small></div>`).join('') || '<p class="mute">The board is empty.</p>'}`);
+  bindTabs();
+  $('#nPost')?.addEventListener('click', postNotice);
+  document.querySelectorAll('[data-unpin]').forEach(b => b.onclick = async () => { const id = b.dataset.unpin; if (db && !id.startsWith('l')) { try { await db.doc(`notices/${id}`).delete(); } catch {} } else { S.notices = S.notices.filter(n => n.id !== id); openNotices(); } });
+}
+async function postNotice() {
+  const text = ($('#nText').value || '').trim().slice(0, 200); if (!text) return;
+  const n = { by: S.uid && S.real[S.uid] ? S.uid : 'me', byNick: me().nick, text, at: Date.now() };
+  if (db && S.canWrite) { try { await db.collection('notices').add(n); } catch (e) { say('The board would not take it. Try again in a moment.'); return; } }
+  else { S.notices = [{ ...n, id: 'l' + Date.now() }, ...S.notices]; openNotices(); }
+  record(`${me().nick} pinned a notice: “${text}”`); pulse(0.4);
+}
+
+/* ================= library: the whole site, on shelves ================= */
+const SITE = 'https://qubic.church';
+const LIB = {
+  qc: [
+    ['Qubic: The Long Version', 'June 2026 · 19 chapters · how Qubic works and why, read through Axelrod\'s tournament', '/books/qubic-the-long-version'],
+    ['Come-from-Beyond', 'August 2026 · 13 chapters · one line through twenty-five years, every quote with its date and place', '/books/come-from-beyond'],
+  ],
+  research: [
+    ['Research', 'Open research notes on Qubic, Aigarth and the Anna Matrix', '/docs'],
+    ['The Anna Matrix', 'The 128×128 matrix, studied in the open', '/research/anna-matrix'],
+    ['Maria Aigarth paper', 'Can an AI arbiter be impartial by design?', '/papers/maria-aigarth-paper.docx'],
+    ['The timeline', 'Come-from-Beyond year by year, 2000 to 13.04.2027', '/timeline'],
+    ['Come-from-Beyond dossier', 'NXT, IOTA, Qubic: eras and milestones from primary sources', '/cfb'],
+    ['BPP-9000', 'The network miners grow, running live', '/bpp9000'],
+  ],
+  cfb: [['Introduction of Aigarth', '2019'], ['Jinn the Trinary Processor', '2019'], ['Paracosm Manifesto', '2020'], ['Qubic: AI Unboxed', '2023']],
+  crypt: [
+    ['From Peer-to-Peer Cash to Emergent Intelligence', 'ThatsNotMyCode', 'from-peer-to-peer-cash-to-emergent-intelligence'],
+    ['The Death of the "Greater Fool"', 'fallin', 'the-death-of-the-greater-fool'],
+    ['Aigarth\'s third task: simulating proteins', 'TesserAI', 'aigarths-third-task-simulating-proteins'],
+    ['True randomness is critical. Why?', 'TesserAI', 'true-randomness-is-critical'],
+    ['BPP-9000: the first product of Aigarth', 'TesserAI', 'bpp-9000-first-product-of-aigarth'],
+  ],
+  shelf: [
+    ['The Evolution of Cooperation', 'Robert Axelrod, 1984. Why tit for tat wins when the game repeats.'],
+    ['Prisoner\'s Dilemma', 'Anatol Rapoport and Albert Chammah, 1965. The study the tournament grew from.'],
+    ['Governing the Commons', 'Elinor Ostrom, 1990. How communities keep shared resources without a ruler.'],
+    ['Bitcoin: A Peer-to-Peer Electronic Cash System', 'Satoshi Nakamoto, 2008.', 'https://bitcoin.org/bitcoin.pdf'],
+    ['On Collusion', 'Vitalik Buterin, 2019. Why per-person beats per-coin.', 'https://vitalik.eth.limo/general/2019/04/03/collusion.html'],
+  ],
+};
+const link = (href, inner) => `<a class="book" href="${href.startsWith('http') ? href : SITE + href}" target="_blank" rel="noopener">${inner}</a>`;
+function openLibrary() {
+  panel('library', 'The Library', 'Everything Qubic Church has written, and what we read', null, `
+    <p class="say">Open to everyone, day and night. Every book opens on qubic.church.</p>
+    <h3>BOOKS BY QUBIC CHURCH</h3><div class="shelf">${LIB.qc.map(([t, d, h]) => link(h, `<b>${t}</b><span>${d}</span>`)).join('')}</div>
+    <h3>RESEARCH AND RECORDS</h3><div class="shelf">${LIB.research.map(([t, d, h]) => link(h, `<b>${t}</b><span>${d}</span>`)).join('')}</div>
+    <h3>COME-FROM-BEYOND, IN HIS OWN WORDS</h3><div class="shelf">${link('/articles/cfb', `<b>29 texts, 2017 to 2023</b><span>${LIB.cfb.map(([t, y]) => `${t} (${y})`).join(' · ')}</span>`)}</div>
+    <h3>FROM THE CRYPT</h3><div class="shelf">${LIB.crypt.map(([t, a, sl]) => link('/articles/' + sl, `<b>${esc(t)}</b><span>${esc(a)}</span>`)).join('')}${link('/articles', '<b>All community articles</b><span>The Crypt on qubic.church</span>')}</div>
+    <h3>THE SHELF WE LEARN FROM</h3><div class="shelf">${LIB.shelf.map(([t, d, h]) => h ? link(h, `<b>${t}</b><span>${d}</span>`) : `<div class="book"><b>${t}</b><span>${d}</span></div>`).join('')}</div>
+    <p class="mute" style="font-size:12.5px;margin-top:12px">The Fractal Rationalism Institute meets in Discord: the science of decentralized cooperation, after Rapoport and Axelrod.</p>`);
+}
+function openMine() {
+  panel('mine', 'The Mine', 'Useful proof of work, explained plainly', null, `
+    <p class="say">Down here people learn how Qubic mining really works: hardware, pools, payouts, and why the work is useful. Read it before you rent anything.</p>
+    <div class="shelf">${link('/mine-qubic', '<b>Mine Qubic: the field guide</b><span>Hardware, pools and payouts on qubic.church</span>')}${link('/bpp9000', '<b>What the miners are growing</b><span>BPP-9000, live</span>')}</div>
+    <p class="mute" style="font-size:12.5px;margin-top:12px">Nothing about mining is promised. A rented rig may not pay off.</p>`);
+}
+
+/* ================= while you were away ================= */
+let seenSaved = false;
+function saveSeen() { if (!S.town.res) return; store.set('w4w.seen', JSON.stringify({ t: Date.now(), melt: S.town.melt, W: S.town.W })); }
+addEventListener('visibilitychange', () => { if (document.hidden) saveSeen(); });
+addEventListener('pagehide', saveSeen);
+function briefing() {
+  let prev = null; try { prev = JSON.parse(store.get('w4w.seen') || 'null'); } catch {}
+  setTimeout(() => { if (!seenSaved) { seenSaved = true; saveSeen(); setInterval(saveSeen, 60e3); } }, 4000);
+  if (!prev || !prev.t) return false;
+  const since = prev.t, t = S.town, lines = [];
+  const mins = Math.round((Date.now() - since) / 60000); const ago = mins < 90 ? `${mins} minutes` : mins < 2880 ? `${Math.round(mins / 60)} hours` : `${Math.round(mins / 1440)} days`;
+  const fresh = Object.values(S.real).filter(h => (h.createdAt || 0) > since && h.id !== S.uid).map(h => h.nick);
+  const kept = Object.values(S.orders).filter(o => (o.doneAt || 0) > since);
+  const fire = Object.values(S.real).filter(h => (h.lastWood || 0) > since && h.id !== S.uid).map(h => h.nick);
+  const notes = (S.notices || []).filter(n => n.at > since && n.by !== S.uid);
+  if (fresh.length) lines.push(`${fresh.slice(0, 3).join(', ')}${fresh.length > 3 ? ` and ${fresh.length - 3} more` : ''} settled in town.`);
+  if (kept.length) lines.push(`${kept.length} ${kept.length === 1 ? 'promise was' : 'promises were'} kept on the board${kept[0].takerNick ? `: ${kept[0].takerNick} helped ${kept[0].byNick}` : ''}.`);
+  if (fire.length) lines.push(`${fire.slice(0, 3).join(', ')} fed the plaza fire.`);
+  if (notes.length) lines.push(`${notes.length} new ${notes.length === 1 ? 'notice' : 'notices'} on the board.`);
+  const dm = Math.round((t.melt - (prev.melt || 0)) * 100); if (dm > 0) lines.push(`Anna's ice gave way by ${dm}%. It is ${Math.round(t.melt * 100)}% thawed now.`);
+  lines.push(t.B >= 0 ? `The town holds tonight: warmth ${Math.round(t.W)} against frost ${Math.round(t.F)}.` : `The frost is winning tonight: warmth ${Math.round(t.W)} against frost ${Math.round(t.F)}. We need you at the fire.`);
+  const text = `You were away ${ago}. ${lines.length > 1 ? 'While you were gone: ' : ''}${lines.join(' ')}`;
+  chat = [{ role: 'assistant', content: text }]; openMaria(true); return true;
+}
+/* ================= chronicle ================= */
+async function openChronicle(force = true) {
+  let rows = [...S.localChron.map(r => ({ ...r, author: r.author || 'demo' }))];
+  if (S.shared) {
+    const ids = Object.keys(S.real);
+    const logs = await Promise.all(ids.map(id => db.collection(`houses/${id}/log`).orderBy('n').limit(200).get().then(s => s.docs.map(d => ({ ...d.data(), author: S.real[id]?.nick || 'someone', house: id }))).catch(() => [])));
+    logs.forEach(l => rows.push(...l)); S._logs = Object.fromEntries(ids.map((id, i) => [id, logs[i]]));
+  }
+  rows.sort((a, b) => (b.at || 0) - (a.at || 0) || (b.n || 0) - (a.n || 0));
+  if (!force && panelKind !== 'chronicle') return;
+  panel('chronicle', 'Chronicle', `Anna's memory · ${rows.length} records · nothing is deleted`, null, `
+    <p class="say" style="font-size:14px">Every house keeps its own journal, open to everyone. Each record carries the hash of the one before it, so changing a word in the past breaks every hash after it. Once an epoch, the last hash is meant to be anchored in Qubic.</p>
+    <div class="row" style="margin-bottom:8px"><button class="btn" id="verify">Check every chain</button><span class="tag" id="vres"></span></div>
+    <ul class="chron">${rows.slice(0, 200).map(r => `<li><span class="n">#${r.n}</span><span><b style="color:var(--cream)">${esc(r.author)}</b> · E${r.epoch} · ${esc(r.text)}${r.demo ? ' <span class="tag">demo history</span>' : ''}</span><span class="h">${esc(String(r.hash).slice(0, 32))}…  ← ${esc(String(r.prev).slice(0, 8))}</span></li>`).join('')}</ul>`);
+  $('#verify').onclick = async () => { const chains = [S.localChron, ...Object.values(S._logs || {})]; let ok = true; for (const c of chains) if (c.length && !(await verify(c))) ok = false;
+    const v = $('#vres'); v.textContent = ok ? `${chains.filter(c => c.length).length} chains OK` : 'a chain is broken'; v.className = 'tag ' + (ok ? 'good' : 'bad'); };
+}
+
+/* ================= core / observatory / stage 2 ================= */
+function openCore() {
+  const t = S.town;
+  panel('core', 'Anna', t.melt >= 1 ? 'Awake' : `Frozen in the ice · ${Math.round(t.melt * 100)}% thawed`, 'anna.png', `
+    <p class="say">We pulled her out of the deep ice: a machine from somewhere far beyond, with my sister's face. She still dreams in there. The ice gives way to what the town does together, never to one person alone.</p>
+    <div class="parts">
+      ${part('hall', 'The ice', 'Thaws from rigs kept on, orders done, welcomes and wood on the fire', Math.round(t.melt * 100) + '%', t.melt)}
+      ${part('facade', 'Town level', `${t.power.toLocaleString('en-US')} sol/h est. from ${t.people} rigs`, LEVELS[t.level][0], t.level / 5)}
+    </div>
+    <h3>WHAT MELTS THE ICE</h3>
+    <div class="split"><span>A neighbour's rig kept on</span><b class="plus">+8</b><span>An order done for someone</span><b class="plus">+5</b><span>A lamp lit for a newcomer</span><b class="plus">+2</b><span>Wood on the fire</span><b class="plus">+1</b></div>
+    <p class="mute" style="font-size:12.5px;margin-top:10px">In this prototype the full thaw needs ${MELT_TARGET} points of shared work.</p>`);
+}
+function openObservatory() {
+  panel('observatory', 'Observatory', 'Network weather and BPP-9000', null, `
+    <p class="say">From here the town watches the Qubic network: the epoch, the threshold, whether our pool holds seats in the 676. Bad news turns into a storm over Aigarth and pushes the frost harder.</p>
+    <div class="parts">${part('facade', 'Epoch', 'Changes every Wednesday at 12:00 UTC', 'E' + EPOCH, 1)}${part('hall', 'Weather', S.weather === 'clear' ? 'Pool in the 676 (demo)' : 'Pool lost seats (demo)', S.weather === 'clear' ? 'Clear' : 'Storm', S.weather === 'clear' ? 1 : 0.2)}</div>
+    <h3>BPP-9000</h3>
+    <p style="margin:0 0 10px">The network Qubic miners grow, calling each hour of bitcoin UP or DOWN. Live calls from 18 November. Each call you witness will become a card in your archive.</p>
+    <a class="btn" href="https://qubic.church/bpp9000" target="_blank" rel="noopener">Watch it think on qubic.church</a>`);
+}
+function openStage2(id) {
+  const s = STAGE2.find(x => x.id === id);
+  const what = { market: 'Trading decor and placing orders that pay in QU, held by a smart contract until the requester confirms.', bar: 'A warm room to talk. The place for news and arguments.', atrium: 'Real projects as buildings. A building grows only as fast as its real project.' }[id];
+  panel('stage2', s.name, 'Under construction · Stage 2', null, `<p class="say">${what}</p><p class="mute">A building here shows the real state of its project. It opens when the feature is really ready, not on a timer.</p>${id === 'atrium' ? '<div class="shelf" style="margin-top:10px">' + link('/donate', '<b>Light a lamp for the Atrium</b><span>Support the projects on qubic.church</span>') + '</div>' : ''}`);
+}
+
+/* ================= Maria: a living assistant ================= */
+const MARIA_RULES = `You are Maria, a resident of Aigarth, the first town of W4W (Web4World), a browser game by Qubic Church. You speak in the game's chat.
+Who you are: Anna's younger twin sister. Anna is frozen in a block of ice in the centre of town, a machine from far beyond that was pulled out of the deep. The town thaws her through work done together. You keep the Chronicle and you build rigs for people. You are calm, warm, a little dry, short. A witness, not a judge.
+How to answer: 1 to 3 short sentences. Reply in the player's language. Talk like a person in the world, not like a manual. Point people toward cooperation: tending the fire, helping on the orders board, welcoming newcomers. If you don't know something, say so plainly.
+Hard rules:
+- Never promise income, rewards, profit or that renting a rig will pay off. "Recorded, not promised." Renting may not pay off.
+- No price talk, no predictions about QU or bitcoin, no trading advice.
+- Never say Come-from-Beyond (CfB) is Satoshi. If asked, say the question is open and point to the addresses and books, the player decides.
+- Quote CfB only from this list, word for word, with its date: "Just stick to realistic assumptions" (Discord #price-discussion, 27.10.2026). "It looks exactly as BTC in early days" (same day). Otherwise don't quote him.
+- This is a prototype: no rig is really rented here, numbers are estimates or demo.
+Facts you may use: Qubic is a network where miners do useful work for Aigarth, an AI project. 676 computors, the epoch changes every Wednesday 12:00 UTC. BPP-9000 is a small network miners grow to call each hour of bitcoin UP or DOWN; live calls start 18 November 2026; the Qubic team says its scores are not price forecasts. Pool for the game: CODED, fee 7% (3% CODED, 4% Qubic Church, of which 1% goes to the Qubic Church fund), player gets 93%.
+Game rules: warmth against frost. Warmth comes mostly from people (rigs kept on, neighbours online, orders done, wood on the fire); raw power counts less. When frost wins, the storm grows. Houses have five parts: machine hall (the only thing money grows), porch lanterns (orders done for others), archive (collections, not for sale), epoch garden (time in the world), facade.
+You can use tools to read the town and to open screens for the player. Open a screen when the player wants to do something there.`;
+let chat = [], chatCtl = null;
+function openMaria(keep) {
+  panel('maria', 'Maria', sample ? 'Ask her anything about Aigarth' : 'Qubic Church', 'maria.png', `<div id="chat"></div>
+    <div class="quick" style="margin-top:12px"><button data-q="What happened to Anna?">What happened to Anna?</button><button data-q="How can I help the town?">How can I help the town?</button><button data-q="Build me a rig">Build me a rig</button><button data-q="What should I read?">What should I read?</button><button data-q="Is CfB Satoshi?">Is CfB Satoshi?</button></div>`, true);
+  renderChat();
+  document.querySelectorAll('[data-q]').forEach(b => b.onclick = () => ask(b.dataset.q));
+  setTimeout(() => $('#chatIn')?.focus(), 50);
+}
+function renderChat() {
+  const box = $('#chat'); if (!box) return;
+  const turns = chat.length ? chat : [{ role: 'assistant', content: me() ? `Good to see you, ${me().nick}. The night is long. What do you need?` : 'You came in from the cold. My sister is frozen in the ice at the centre of town. Ask me anything.' }];
+  box.innerHTML = turns.map(t => `<div class="bub ${t.role === 'user' ? 'u' : 'm'}${t.thinking ? ' thinking' : ''}">${esc(t.content)}</div>`).join('');
+  const last = chat.at(-1); if (sample && last?.bank && !last.deep) { const b = document.createElement('button'); b.className = 'ask'; b.textContent = 'Ask her to think it through (uses your own Claude)'; b.onclick = () => askDeep(); box.appendChild(b); }
+  $('#pbody').scrollTop = 1e6;
+}
+$('#chatForm').addEventListener('submit', e => { e.preventDefault(); const v = $('#chatIn').value.trim(); if (!v) return; $('#chatIn').value = ''; ask(v); });
+function townBrief() { const t = S.town; return { warmth: Math.round(t.W), frost: Math.round(t.F), holds: t.B >= 0, rigs_on: t.people, neighbours_online: t.online, anna_thawed_percent: Math.round(t.melt * 100), level: LEVELS[t.level][0], weather: S.weather, open_orders: ordersAll().filter(o => o.state === 'open').map(o => o.title).slice(0, 6) }; }
+const MARIA_TOOLS = [
+  { name: 'town_status', description: 'Returns the town right now: warmth, frost, whether the town holds, rigs on, neighbours online, how thawed Anna is, open orders.', execute: () => townBrief() },
+  { name: 'my_house', description: "Returns the player's house: name, hardware, state, lanterns, or that they have not settled yet.", execute: () => { const h = me(); if (!h) return { settled: false }; const v = S.town.res.find(x => x.id === (S.real[S.uid] ? S.uid : 'me')); return { settled: true, name: h.nick, hardware: h.hw, state: h.state, lanterns: v?.lanterns || 0 }; } },
+  { name: 'open_screen', description: 'Opens a screen for the player. screen is one of: connect (build or connect a rig at the church), orders (the orders board), chronicle, house (their house), anna (the ice and the core), warmth (what keeps the town warm), fire (adds the player\'s wood to the plaza fire).',
+    inputSchema: { type: 'object', properties: { screen: { type: 'string', enum: ['connect', 'orders', 'chronicle', 'house', 'anna', 'warmth', 'fire', 'library', 'herald', 'observatory', 'mine'] } }, required: ['screen'] },
+    execute: ({ screen }) => { pendingScreen = String(screen); return { ok: true, note: 'The screen opens right after your reply.' }; } },
+];
+let pendingScreen = null;
+function goScreen(s) {
+  if (s === 'connect') { openChurch(); flyTo(HX(...SPECIAL.church)); } else if (s === 'orders') { openOrders(); flyTo(HX(...SPECIAL.plaza)); } else if (s === 'chronicle') openChronicle();
+  else if (s === 'house') { if (me()) { openHouse(me().id); flyTo(HX(...houseView(me()).at)); } else openChurch(); } else if (s === 'anna') { openCore(); flyTo(new THREE.Vector3(0, 0, 0)); } else if (s === 'warmth') openMeter(); else if (s === 'fire') addWood();
+  else if (s === 'library') { openLibrary(); flyTo(HX(...SPECIAL.library)); } else if (s === 'herald') { openPlaza('herald'); flyTo(HX(...SPECIAL.plaza)); } else if (s === 'observatory') openObservatory(); else if (s === 'mine') openMine();
+}
+function ask(text) {
+  chat.push({ role: 'user', content: text });
+  const a = bank(text); chat.push({ role: 'assistant', content: a.text, bank: true }); renderChat(); if (a.go) setTimeout(() => goScreen(a.go), 900);
+}
+async function askDeep() {
+  const lastQ = [...chat].reverse().find(t => t.role === 'user'); if (!lastQ) return; const prev = chat.at(-1); if (prev?.bank) prev.deep = true;
+  if (!sample) return;
+  chatCtl?.abort(); chatCtl = new AbortController();
+  const live = { role: 'assistant', content: 'Maria is thinking…', thinking: true }; chat.push(live); renderChat();
+  const history = chat.filter(t => t !== live && !t.thinking && !t.bank).slice(-12).map(t => ({ role: t.role, content: t.content }));
+  if (history[0]?.role === 'assistant') history.shift();
+  const input = [{ role: 'user', content: MARIA_RULES + '\n\nTown now: ' + JSON.stringify(townBrief()) + '\nThe conversation follows.' }, ...history];
+  pendingScreen = null;
+  try {
+    const { text: out } = await sample(input, { modelTier: 'quick', signal: chatCtl.signal, tools: MARIA_TOOLS, onText: ({ text: t }) => { live.content = t; live.thinking = false; renderChat(); } });
+    live.content = out.trim(); live.thinking = false; renderChat();
+    if (pendingScreen) { const s = pendingScreen; pendingScreen = null; setTimeout(() => goScreen(s), 900); }
+  } catch (e) {
+    live.thinking = false;
+    if (e.code === 'tools_unavailable') { try { const { text: out } = await sample(input, { modelTier: 'quick', cache: false }); live.content = out.trim(); renderChat(); return; } catch (e2) { e = e2; } }
+    if (['not_granted', 'sampling_disabled', 'not_declared', 'capability_disabled', 'capability_removed'].includes(e.code)) { sample = null; live.content = 'I will keep to what I already know, then.'; }
+    else if (e.code === 'rate_limited') live.content = e.text || 'Too many words at once. Give me a minute and ask again.';
+    else if (e.code === 'cancelled') live.content = e.text || '…';
+    else live.content = e.text || 'The wind took my words. Ask me again.';
+    renderChat();
+  }
+}
+// Maria answers from what she already knows: instant, free, no model call. Claude is only asked when the player wants more.
+const BANK = [
+  [['anna', 'sister', 'ice', 'tesseract', 'cube', 'frozen', 'сестр', 'лёд', 'лед', 'куб', 'тессеракт', 'анна'], () => `We pulled her out of the deep ice: a machine from somewhere far beyond, with my sister's face. The ice gives way only to what the town does together. Right now she is ${Math.round(S.town.melt * 100)}% free.`, 'anna'],
+  [['who are you', 'maria', 'мария', 'кто ты'], () => "I'm Maria, Anna's younger twin. I keep the Chronicle and build rigs for people. A witness, not a judge."],
+  [['help', 'how can i', 'what can i do', 'помочь', 'помощь', 'что делать'], () => 'Keep a rig on, add wood to the plaza fire, take an order on the board, light a lamp for a newcomer. People warm this town more than iron does.'],
+  [['warm', 'frost', 'cold', 'storm', 'тепло', 'мороз', 'холод', 'метел'], () => `Warmth ${Math.round(S.town.W)} against frost ${Math.round(S.town.F)}. ${S.town.B >= 0 ? 'The town holds.' : 'The frost is winning.'} Most warmth comes from people: rigs kept on, neighbours here, promises kept, wood on the fire.`, 'warmth'],
+  [['build me', 'rent', 'rig', 'риг', 'аренд', 'собери'], () => "Come to the church. I'll show you three rigs, or you can connect your own.", 'connect'],
+  [['own rig', 'my machine', 'свой риг', 'своя машин'], () => 'Run the CODED miner on your own machine with your worker name. Your house lights up when the pool sees it.'],
+  [['fee', '1%', '7%', 'комисси', 'fund', 'фонд'], () => 'The pool is CODED. Its fee is 7%: 3% to the CODED ecosystem, 4% to Qubic Church, and 1% of that goes to the Qubic Church fund. You keep 93%. I show this on the final step, every time.'],
+  [['profit', 'earn', 'money', 'pay off', 'income', 'доход', 'заработ', 'окуп', 'прибыл'], () => 'Nothing here is promised. Recorded, not promised. A rented rig may not pay off, and in a bad epoch it surely won\'t.'],
+  [['price', 'pump', 'moon', 'цена', 'курс', 'памп'], () => "I don't talk about prices. Come-from-Beyond's advice fits: \"Just stick to realistic assumptions\" (Discord, 27.10.2026)."],
+  [['satoshi', 'сатоши'], () => 'That question is open. Read the addresses and the books in the Library, then decide for yourself. I won\'t decide it for you.', 'library'],
+  [['come-from-beyond', 'cfb', 'cfb?', 'sergey', 'сергей', 'кфб'], () => 'Come-from-Beyond built NXT, IOTA and Qubic. The Library has a whole book about him, with every quote dated, and 29 of his own texts.', 'library'],
+  [['qubic', 'кубик'], () => 'Qubic is a network where 676 computors run the chain and miners do useful work for Aigarth, an AI project. The book "Qubic: The Long Version" in our Library explains it start to finish.'],
+  [['aigarth', 'айгарт', 'аигарс'], () => 'Aigarth is the AI that Qubic miners grow. BPP-9000, the bitcoin predictor, is its first product. Our town carries its name.'],
+  [['bpp', 'predict', 'bitcoin', 'прогноз', 'биткоин'], () => 'BPP-9000 is a small network the miners grow to call each hour of bitcoin UP or DOWN. Live calls start on 18 November. The Qubic team is clear that its scores are not price forecasts. The Observatory watches it.', 'observatory'],
+  [['epoch', 'wednesday', 'эпох', 'среда'], () => `This is epoch ${EPOCH}. A new one begins every Wednesday at 12:00 UTC. The church bell rings and the epoch is sealed in the Chronicle.`],
+  [['676', 'computor', 'компьютор'], () => '676 computors run Qubic. 451 keep their seats, 225 are contested every epoch by the miners\' work.'],
+  [['pool', 'coded', 'пул'], () => 'Our pool partner is CODED. One pool, two doors: this game, and the classic pool page.'],
+  [['order', 'board', 'заказ', 'доск'], () => 'An order is a public promise. Do it and the person confirms: you get a lantern and their letter. Say no in time and it costs nothing. Silence leaves a cracked lantern until you fix it.', 'orders'],
+  [['lantern', 'cracked', 'фонар', 'трещ'], () => 'Lanterns on a porch are promises kept for others. A cracked one is a promise not kept yet. It mends when you make it right; the record stays.'],
+  [['archive', 'collection', 'seal', 'коллекц', 'архив', 'печат'], () => 'The archive holds what really happened to you: epoch seals, letters, hardware cards. None of it can be bought or sold.'],
+  [['garden', 'sprout', 'сад'], () => 'Your garden grows a sprout for every epoch you were here. In a year it is a grove. Time is the one thing nobody can buy.'],
+  [['chronicle', 'hash', 'летопис', 'хэш', 'журнал'], () => 'Every house keeps an open journal. Each record carries the hash of the one before, so the past cannot be quietly changed.', 'chronicle'],
+  [['fire', 'wood', 'костёр', 'костер', 'дров'], () => 'Each of us can add wood once an hour. The whole town feels it for an hour.', 'fire'],
+  [['welcome', 'newcomer', 'lamp', 'новичок', 'лампа'], () => 'When someone settles, light a lamp on their path. It warms them, it warms the town, and it stays in the record.'],
+  [['library', 'read', 'book', 'библиотек', 'книг', 'почитать'], () => 'Go to the Library: our two books, the research, Come-from-Beyond\'s own texts, the Crypt, and Axelrod, Ostrom and Satoshi on the shelf.', 'library'],
+  [['herald', 'news', 'newspaper', 'notice', 'газет', 'новост', 'объявлен'], () => 'The Herald is printed from the Chronicle. The notices board is next to it on the plaza.', 'herald'],
+  [['church', 'founder', 'церков', 'основател'], () => 'Qubic Church founded this place, and keeps the church. The founder writes a column in the Herald.'],
+  [['fractal', 'rationalism', 'institute', 'фрактал', 'институт'], () => 'Fractal Rationalism is the idea that the same pattern of conflict repeats at every scale, and that the way out is mathematical. The Institute studies decentralized cooperation after Rapoport and Axelrod.'],
+  [['axelrod', 'cooperation', 'аксельрод', 'кооперац'], () => 'Axelrod found that cooperation wins when people meet again, recognise each other and see the history. This town is built so all three hold.', 'library'],
+  [['w4w', 'web4', 'world'], () => 'W4W is a world that never resets. Every action is a record, and cooperation is the only thing that scales. Aigarth is its first town.'],
+  [['market', 'auction', 'bar', 'stage 2', 'рынок', 'аукцион', 'бар'], () => 'The market, the auction and the bar are still in scaffolding. They open when they are really ready, not on a timer.'],
+  [['nft', 'lighthouse', 'маяк'], () => 'Each of the 200 Anna Aigarth NFTs will become a founder\'s lighthouse on the map. A mark of who was here from the start, not power and not income.'],
+  [['donate', 'atrium', 'атриум', 'донат', 'support'], () => 'The Atrium is where real projects get built in the open. You can light a lamp for it on qubic.church/donate.'],
+  [['mine', 'mining', 'майнинг', 'шахт'], () => 'The Mine on the edge of town has the field guide: hardware, pools and payouts, explained plainly.', 'mine'],
+  [['demo', 'prototype', 'real', 'демо', 'прототип'], () => 'This is a prototype. No rig is really rented here, and the houses marked demo are stand-ins until more people arrive.'],
+  [['hello', 'hi', 'hey', 'привет', 'здравств'], () => me() ? `Good to see you, ${me().nick}. The night is long. What do you need?` : 'You came in from the cold. Sit by the fire. What do you want to know?'],
+  [['thank', 'спасибо'], () => "I won't forget it."],
+];
+function bank(q) {
+  const s = ' ' + q.toLowerCase() + ' '; let best = null, score = 0;
+  for (const [keys, fn, go] of BANK) { const sc = keys.reduce((a, k) => a + (s.includes(k) ? k.length : 0), 0); if (sc > score) { score = sc; best = [fn, go]; } }
+  if (!best) return { text: sample ? "I don't have that written down. I can think it through if you want." : "I don't have that written down. Ask me about Anna, the frost, rigs, orders or the Library." };
+  return { text: best[0](), go: best[1] };
+}
+function scripted(q) { return bank(q).text; }
+
+/* ================= intro ================= */
+const INTRO = [
+  'My sister is frozen in the ice.',
+  'We pulled her out of the deep: a machine from somewhere far beyond, with her face. She still dreams in there.',
+  'One rig can\'t warm this night. A town can.',
+  'Every rig kept on, every promise kept, every hand at the fire melts a little of the ice.',
+  'Help me wake Anna.',
+];
+let introI = 0, typeT;
+function startIntro() {
+  if (store.get('w4w.intro') === '1') { welcomeLine(); return; }
+  $('#intro').hidden = false; document.body.classList.add('intro'); camera.position.set(4, 34, 30); controls.target.set(0, 2, 0); typeLine();
+  $('#introNext').onclick = () => { if (typeT) { clearInterval(typeT); typeT = null; $('#introText').textContent = INTRO[introI]; return; } introI++; if (introI >= INTRO.length) return endIntro(); typeLine(); };
+  $('#introSkip').onclick = endIntro;
+}
+function typeLine() {
+  const t = INTRO[introI]; const el = $('#introText'); el.textContent = ''; let i = 0;
+  $('#introNext').textContent = introI === INTRO.length - 1 ? 'Enter Aigarth' : 'Next';
+  if (introI === 1) flyTo(new THREE.Vector3(0, 0, -0.6), 13);
+  if (introI === 3) flyTo(new THREE.Vector3(0, 0, 0), 22);
+  if (REDUCED) { el.textContent = t; return; }
+  typeT = setInterval(() => { el.textContent = t.slice(0, ++i); if (i >= t.length) { clearInterval(typeT); typeT = null; } }, 28);
+}
+function endIntro() { clearInterval(typeT); document.body.classList.remove('intro'); $('#intro').classList.add('off'); setTimeout(() => $('#intro').hidden = true, 1000); store.set('w4w.intro', '1'); flyTo(new THREE.Vector3(0, 0, 1), MOBILE ? 30 : 26); welcomeLine(); }
+function welcomeLine() { setTimeout(() => briefing() || say(S.town.B >= 0 ? 'The town holds tonight. Come to the church when you are ready.' : 'The frost is winning tonight. The town needs more hands. Come to the church.'), 3200); }
+
+/* ================= demo history ================= */
+async function demoHistory() {
+  const hist = [[219, 'ashgrove settled in Aigarth'], [221, 'frostbyte connected 7× RTX 5080'], [224, 'oldminer connected 1× RTX 4090'], [226, 'kasia_v connected 2× RTX 4090'],
+    [228, 'lumen connected 2× RTX 4080'], [229, 'ashgrove left the world. The house stays, with its history'], [230, 'nodewright connected 2× RTX 5070 Ti'],
+    [234, "lumen missed an order from oldminer. A cracked lantern on lumen's porch"], [235, 'mira.q connected 1× RTX 5070 Ti'], [236, 'kasia_v helped tern set up a worker. A lantern for kasia_v'],
+    [236, 'tern connected 1× RTX 5090'], [237, 'Epoch E237 began. The bell rang']];
+  for (const [e, t] of hist) await record(t, { demo: true, epoch: e, author: t.split(' ')[0] });
+}
+
+/* ================= labels ================= */
+const v3 = new THREE.Vector3();
+function placeLabels() {
+  const w = innerWidth, h = innerHeight, placed = [];
+  const list = labels.map(L => { L.obj.getWorldPosition(v3); v3.y += L.y; v3.project(camera); return { L, x: (v3.x + 1) / 2 * w, y: (1 - v3.y) / 2 * h, z: v3.z }; }).sort((a, b) => b.y - a.y);
+  for (const { L, x, y, z } of list) {
+    const hovered = L.hover && houses[hoverId]?.label === L;
+    const vis = L.obj.parent && z < 1 && x > -40 && x < w + 40 && y > 110 && y < h + 20 && (!L.hover || hovered);
+    if (!vis) { L.el.style.display = 'none'; continue; }
+    L.el.style.display = ''; const bw = L.el.offsetWidth, bh = L.el.offsetHeight; let top = y;
+    for (let k = 0; k < 4; k++) { const hp = placed.find(p => Math.abs(p.x - x) < (p.w + bw) / 2 + 4 && Math.abs(p.y - top) < bh + 3); if (!hp) break; top = hp.y - bh - 4; }
+    placed.push({ x, y: top, w: bw }); L.el.style.left = x + 'px'; L.el.style.top = top + 'px';
+  }
+}
+
+/* ================= the warmth you can see ================= */
+const waves = []; let waveClock = 0;
+function pulse(strength = 1) {
+  U.uBoost.value = Math.min(1.4, U.uBoost.value + strength);
+  const m = new THREE.Mesh(new THREE.RingGeometry(0.9, 1.15, 64), new THREE.MeshBasicMaterial({ color: 0xffa64a, transparent: true, opacity: 0.9 * Math.min(1, strength + 0.3), blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide }));
+  m.rotation.x = -Math.PI / 2; m.position.y = 0.06; m.renderOrder = 3; scene.add(m); waves.push({ m, t: 0, life: 2.6 + strength, s: strength });
+}
+function stepWaves(dt) { for (let i = waves.length - 1; i >= 0; i--) { const w = waves[i]; w.t += dt; const k = w.t / w.life; const r = 1 + k * (U.uHeat.value + 1.5) ;
+  w.m.scale.setScalar(r); w.m.material.opacity = (1 - k) * 0.85 * Math.min(1, w.s + 0.3); if (k >= 1) { scene.remove(w.m); w.m.geometry.dispose(); w.m.material.dispose(); waves.splice(i, 1); } } }
+let embers;
+function buildEmbers() {
+  const N = MOBILE ? 160 : 320, pos = new Float32Array(N * 3), life = new Float32Array(N), kind = new Float32Array(N);
+  for (let i = 0; i < N; i++) { life[i] = rnd(); kind[i] = rnd() < 0.55 ? 1 : 0; pos[i * 3 + 1] = -50; }
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('life', new THREE.BufferAttribute(life, 1)); g.setAttribute('kind', new THREE.BufferAttribute(kind, 1));
+  const mat = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, uniforms: { map: { value: DOT }, uBoost: U.uBoost },
+    vertexShader: `attribute float life; attribute float kind; varying float vL; varying float vK; void main(){ vL=life; vK=kind; vec4 mv=modelViewMatrix*vec4(position,1.); gl_PointSize=(kind>.5? 5.+4.*(1.-life) : 22.+40.*life)*(10./-mv.z); gl_Position=projectionMatrix*mv; }`,
+    fragmentShader: `uniform sampler2D map; uniform float uBoost; varying float vL; varying float vK; void main(){ float a=texture2D(map,gl_PointCoord).a; vec3 c = vK>.5 ? vec3(1.,.62,.25) : vec3(.75,.8,.9);
+      float o = vK>.5 ? (1.-vL)*.9 : (1.-vL)*smoothstep(0.,.2,vL)*.12; gl_FragColor=vec4(c*a*o*(1.+uBoost), a*o); }` });
+  embers = new THREE.Points(g, mat); embers.frustumCulled = false; scene.add(embers);
+}
+function stepEmbers(dt) {
+  if (!embers) return; const p = embers.geometry.attributes.position, l = embers.geometry.attributes.life; const R = Math.max(1, U.uHeat.value - 0.6);
+  const rate = S.town.B > 0 ? 0.35 + U.uBoost.value * 0.8 : 0.12;
+  for (let i = 0; i < p.count; i++) { let life = l.getX(i) + dt * rate;
+    if (life >= 1) { life = 0; const a = rnd() * Math.PI * 2, r = Math.sqrt(rnd()) * R; p.setXYZ(i, Math.cos(a) * r, 0.05, Math.sin(a) * r); }
+    else p.setXYZ(i, p.getX(i) + Math.sin(i + U.uTime.value) * dt * 0.08, p.getY(i) + dt * (0.6 + U.uBoost.value), p.getZ(i));
+    l.setX(i, life); }
+  p.needsUpdate = true; l.needsUpdate = true;
+}
+
+/* ================= loop ================= */
+const clock = new THREE.Clock();
+function loop() {
+  const dt = Math.min(clock.getDelta(), 0.05); U.uTime.value += dt; const t = U.uTime.value;
+  U.uHeat.value += (heatTarget - U.uHeat.value) * Math.min(1, dt * 0.8);
+  U.uBoost.value = Math.max(0, U.uBoost.value - dt * 0.45);
+  stepWaves(dt); stepEmbers(dt);
+  if (S.town.B > 0 && (waveClock += dt) > Math.max(2.2, 6 - S.town.B * 0.15)) { waveClock = 0; pulse(0.25); }
+  snowNow += (snowTarget - snowNow) * Math.min(1, dt * 0.6);
+  if (snow) { snow.material.size = 0.11 + snowNow * 0.07; snow.material.opacity = 0.55 + Math.min(0.4, snowNow * 0.25); }
+  scene.fog.density += ((0.02 + snowNow * 0.014) - scene.fog.density) * dt;
+  moon.intensity += ((1.35 - snowNow * 0.35) - moon.intensity) * dt;
+  if (coreParts && !REDUCED) {
+    { const C = coreParts, br = 0.5 + 0.5 * Math.sin(t * 1.2), m = S.town.melt || 0;
+      // she breathes: a slow rise and a slow glow, about one breath every five seconds
+      C.anna.lookAt(camera.position.x, C.anna.position.y, camera.position.z);
+      C.anna.scale.set(1, 1 + 0.014 * br, 1); C.anna.position.y = C.Y + 0.015 * br;
+      C.annaMat.uniforms.uBright.value = 1.15 + 0.3 * br + m * 0.25 + U.uBoost.value * 0.6;
+      C.annaMat.uniforms.uGlow.value = (C.awake ? 2.2 : 0.55 + 0.9 * br + m * 1.2) + U.uBoost.value * 5;
+      C.copper.emissiveIntensity = 0.6 + 0.25 * Math.sin(t * 2.3) + U.uHeat.value * 0.06 + U.uBoost.value * 1.5; C.hot.emissiveIntensity = 1.4 + 0.5 * Math.sin(t * 3.1 + 1) + U.uBoost.value * 2;
+      C.beamMat.uniforms.uA.value = THREE.MathUtils.smoothstep(U.uBoost.value, 0.55, 1.35) * 1.3 + (C.awake ? 0.35 : 0);
+      C.topMat.emissiveIntensity = 0.05 + 0.03 * br + U.uBoost.value * 0.5;
+      C.iceMat.emissiveIntensity = C.em * (0.85 + 0.15 * Math.sin(t * 1.7)) + U.uBoost.value * 2.2;
+      C.zs.forEach((z, i) => { const p = ((t * 0.22 + i / 3) % 1); const s = 0.3 + p * 0.3;
+        z.position.set(0.8 + p * 0.6 + Math.sin(t + i) * 0.06, C.TOP + 0.25 + p * 1.3, 0.3); z.scale.set(s, s, s);
+        z.material.opacity = C.awake ? 0 : Math.sin(p * Math.PI) * 0.85; });
+    }
+    coreParts.shards.forEach((s, i) => { const a = s.userData.a + t * (0.18 + i * 0.01); s.position.set(Math.cos(a) * s.userData.r, s.userData.y + Math.sin(t + i) * 0.15, Math.sin(a) * s.userData.r); s.rotation.y += dt * 0.7; });
+    coreParts.decal.scale.setScalar(0.75 + U.uHeat.value / 14); coreLight.intensity = 34 + (S.town.level || 0) * 3 + (S.town.melt || 0) * 20;
+  }
+  if (!REDUCED) stepParticles(dt);
+  // houses outside the warm ring go cold
+  for (const id in houses) { const h = houses[id]; const d = h.fx.at.length(); const cold = THREE.MathUtils.smoothstep(d, U.uHeat.value - 0.5, U.uHeat.value + 1.5);
+    h.fx.lights.forEach(o => { if (!o.userData.blink) o.material.opacity = o.userData.base * (1 - cold * 0.75); }); }
+  scene.traverse(o => { if (o.isSprite) {
+    if (o.userData.flicker) { if (o.userData.flare) { o.userData.flare = Math.max(0, o.userData.flare - dt * 0.6); } const f = o.userData.flare || 0; o.material.opacity = 0.8 + Math.sin(t * 13) * 0.08 + Math.sin(t * 7.3) * 0.1; o.scale.setScalar(1.1 + f * 1.2 + (S.town.fire || 0) * 0.08); }
+    if (o.userData.blink) o.material.opacity = 0.35 + 0.65 * (Math.sin(t * 4) > 0 ? 1 : 0.2); } });
+  for (const k in walkers) { const w = walkers[k]; w.g.position.lerp(w.target, Math.min(1, dt * 1.5)); w.g.position.y = 0; w.light.position.set(w.g.position.x + 0.15, 0.45, w.g.position.z); }
+  if (fly) { fly.t = Math.min(1, fly.t + dt * 0.9); const k = 1 - Math.pow(1 - fly.t, 3);
+    const tgt = fly.from.clone().lerp(fly.to, k); const off = camera.position.clone().sub(controls.target).normalize().multiplyScalar(fly.d0 + (fly.d1 - fly.d0) * k);
+    controls.target.copy(tgt); camera.position.copy(tgt).add(off); if (fly.t >= 1) fly = null; }
+  controls.target.x = THREE.MathUtils.clamp(controls.target.x, -16, 16); controls.target.z = THREE.MathUtils.clamp(controls.target.z, -16, 16); if (!fly && $('#intro').hidden) controls.target.y = 0;
+  controls.update(); composer.render(); placeLabels(); sendPresence();
+  requestAnimationFrame(loop);
+}
+loop();
+addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight); });
+window.__w4w = { S, settle, freePlots, openMaria, ask, addWood, refreshTown, draft: v => (draft = v), camera, controls, updateIce };
+</script>
