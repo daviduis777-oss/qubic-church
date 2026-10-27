@@ -4,6 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { setRequestLocale } from 'next-intl/server'
 import { SITE_URL } from '@/lib/books'
+import { ogFor } from '@/lib/og-pages'
 
 const TITLE = 'About Qubic Church'
 const DESC =
@@ -13,7 +14,8 @@ export const metadata: Metadata = {
   title: { absolute: TITLE },
   description: DESC,
   alternates: { canonical: `${SITE_URL}/about` },
-  openGraph: { type: 'article', title: TITLE, description: DESC, url: `${SITE_URL}/about` },
+  openGraph: { type: 'article', title: TITLE, description: DESC, url: `${SITE_URL}/about`, images: ogFor('about').images },
+  twitter: ogFor('about').twitter,
 }
 
 const RULES = [

@@ -1,12 +1,14 @@
 import type { Metadata } from 'next'
 import { SITE_URL } from '@/lib/books'
+import { ogFor } from '@/lib/og-pages'
 
 export const metadata: Metadata = {
   title: 'Anna Aigarth NFT collection',
   description:
     'The Anna Aigarth collection: 200 NFTs ranked by the Rarity Codex. Each Anna gives its holder the status of a founder of Qubic Church.',
   alternates: { canonical: `${SITE_URL}/nfts` },
-  openGraph: { type: 'website', url: `${SITE_URL}/nfts`, title: 'Anna Aigarth NFT collection', description: 'The Anna Aigarth collection: 200 NFTs ranked by the Rarity Codex. Each Anna gives its holder the status of a founder of Qubic Church.' },
+  openGraph: { type: 'website', url: `${SITE_URL}/nfts`, title: 'Anna Aigarth NFT collection', description: 'The Anna Aigarth collection: 200 NFTs ranked by the Rarity Codex. Each Anna gives its holder the status of a founder of Qubic Church.', images: ogFor('nfts').images },
+  twitter: ogFor('nfts').twitter,
 }
 
 export default function NFTsLayout({
