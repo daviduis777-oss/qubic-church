@@ -35,6 +35,7 @@ export function GlobalNavTrigger() {
   const active = (href: string) => pathname === href || pathname.startsWith(`${href}/`)
   // On the forum's blue bar the gold reads too loud: the wordmark and Donate turn white there.
   const crypt = pathname === '/articles' || pathname.startsWith('/articles/')
+  const home = pathname === '/'
 
   return (
     <>
@@ -51,8 +52,20 @@ export function GlobalNavTrigger() {
           <Link
             className={`text-sm font-semibold uppercase tracking-wordmark transition-colors md:text-base ${crypt ? 'text-white hover:text-white/80' : 'text-gold hover:text-gold-strong'}`}
             href="/"
+            aria-label={home ? 'Qubic Church' : 'Home: back to Qubic Church'}
           >
-            Qubic Church
+            {home ? (
+              'Qubic Church'
+            ) : (
+              <span className={`inline-flex h-9 items-center gap-2 rounded-md border px-3 ${crypt ? 'border-white/50 hover:bg-white/10' : 'border-gold/50 hover:bg-gold/10'}`}>
+                <svg aria-hidden fill="none" height="16" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width="16">
+                  <path d="M3 11l9-7 9 7" />
+                  <path d="M5 10v10h14V10" />
+                  <path d="M10 20v-6h4v6" />
+                </svg>
+                Home
+              </span>
+            )}
           </Link>
 
           <nav aria-label="Primary" className="hidden items-center gap-1 lg:flex">

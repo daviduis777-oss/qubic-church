@@ -154,12 +154,23 @@ function DiagramTall() {
 
 export function BppHow() {
   return (
-    <section aria-labelledby="bpp-how" id="how" style={{ scrollMarginTop: 80, display: 'grid', gap: 26, paddingTop: 28, borderTop: '1px solid var(--line)' }}>
+    <section aria-label="How BPP-9000 works" id="how" style={{ scrollMarginTop: 80, paddingTop: 28, borderTop: '1px solid var(--line)' }}>
+      <details className="bpp-how" id="bpp-how-d">
+        <summary className="bpp-how-btn">
+          <span aria-hidden className="bpp-how-ico">?</span>
+          <span style={{ display: 'grid', gap: 4 }}>
+            <span className="nx" id="bpp-how" style={{ fontWeight: 300, fontSize: 'clamp(30px, 4.4vw, 46px)', lineHeight: 1, color: 'var(--hot)' }}>
+              How BPP-9000 works
+            </span>
+            <span className="mute" style={{ fontSize: 14.5 }}>
+              From a year of bitcoin to an hourly call: miners, the colony, every node, the Oracle Machine. Tap to open.
+            </span>
+          </span>
+          <span aria-hidden className="bpp-how-chev">⌄</span>
+        </summary>
+        <div style={{ display: 'grid', gap: 26, marginTop: 26 }}>
       <div style={{ maxWidth: 760 }}>
-        <h2 className="nx" id="bpp-how" style={{ fontWeight: 300, fontSize: 'clamp(38px, 5vw, 56px)', lineHeight: 1, margin: 0, color: 'var(--hot)' }}>
-          How BPP-9000 works
-        </h2>
-        <p style={{ fontSize: 17, lineHeight: 1.6, margin: '14px 0 0', color: 'var(--ink)' }}>
+        <p style={{ fontSize: 17, lineHeight: 1.6, margin: 0, color: 'var(--ink)' }}>
           BPP-9000 is a Bitcoin price predictor grown, not programmed. Qubic miners breed small neural networks for Aigarth, the network checks every one of them, and the best is set to call the next hour of bitcoin: up or down. The work that secures Qubic is the same work that trains it.
         </p>
       </div>
@@ -237,6 +248,19 @@ export function BppHow() {
         </a>
         .
       </p>
+        </div>
+      </details>
+      <style>{`
+.bpp-how-btn { list-style: none; cursor: pointer; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 18px; padding: clamp(18px, 3vw, 26px); border-radius: 20px; border: 1px solid rgba(255,196,107,.5); background: linear-gradient(120deg, rgba(255,196,107,.12), rgba(255,196,107,.02) 70%); box-shadow: 0 0 30px -12px rgba(232,145,46,.6); transition: border-color .15s, background .15s; }
+.bpp-how-btn::-webkit-details-marker { display: none }
+.bpp-how-btn:hover { border-color: #FFC46B; background: linear-gradient(120deg, rgba(255,196,107,.18), rgba(255,196,107,.04) 70%); }
+.bpp-how-btn:focus-visible { outline: 2px solid #FFE3B0; outline-offset: 3px; }
+.bpp-how-ico { width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; font-size: 26px; font-weight: 700; color: #2a1404; background: #FFC46B; box-shadow: 0 0 18px rgba(232,145,46,.55); }
+.bpp-how-chev { font-size: 30px; color: #FFC46B; transition: transform .2s; line-height: 1; }
+.bpp-how[open] .bpp-how-chev { transform: rotate(180deg); }
+@media (max-width: 520px) { .bpp-how-ico { width: 40px; height: 40px; font-size: 20px } .bpp-how-btn { gap: 12px } }
+`}</style>
+      <script dangerouslySetInnerHTML={{ __html: "(function(){function o(){if(location.hash==='#how'){var d=document.getElementById('bpp-how-d');if(d)d.open=true}}o();addEventListener('hashchange',o)})()" }} />
     </section>
   )
 }
