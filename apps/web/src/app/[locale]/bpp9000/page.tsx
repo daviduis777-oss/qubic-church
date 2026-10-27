@@ -9,6 +9,7 @@ import { BppLive } from '@/components/bpp/BppLive'
 import { Crowd, HeaderNav } from '@/components/bpp/Crowd'
 import { Journal } from '@/components/bpp/Journal'
 import { BppHow } from '@/components/bpp/BppHow'
+import { BPP_FAQ, BPP_MD_URL, BPP_SUMMARY, BPP_URL } from '@/lib/bpp/explainer'
 import { bppFonts } from '@/components/bpp/fonts'
 
 // Market is cached for minutes on its own; the page stays live for the counts.
@@ -20,7 +21,7 @@ const DESC = 'The network Qubic miners grow to call each hour of bitcoin, UP or 
 export const metadata: Metadata = {
   title: { absolute: TITLE },
   description: DESC,
-  alternates: { canonical: `${SITE_URL}/bpp9000` },
+  alternates: { canonical: `${SITE_URL}/bpp9000`, types: { 'text/markdown': BPP_MD_URL } },
   openGraph: { type: 'website', title: 'BPP-9000', description: DESC, url: `${SITE_URL}/bpp9000`, images: [{ url: `${SITE_URL}/og/bpp/home.png`, width: 1200, height: 630 }] },
   twitter: { card: 'summary_large_image', title: 'BPP-9000', description: DESC, images: [`${SITE_URL}/og/bpp/home.png`] },
 }
@@ -35,6 +36,15 @@ export default async function BppPage(props: { params: Promise<{ locale: string 
   return (
     <div className={`bpp ${bppFonts}`} style={{ minHeight: '100vh' }}>
       <BppStyles />
+      <script
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify([
+            { '@context': 'https://schema.org', '@type': 'WebApplication', name: 'BPP-9000', url: BPP_URL, description: BPP_SUMMARY, applicationCategory: 'FinanceApplication', operatingSystem: 'Web', isAccessibleForFree: true, publisher: { '@type': 'Organization', name: 'Qubic Church', url: SITE_URL } },
+            { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: BPP_FAQ.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })) },
+          ]).replace(/</g, '\\u003c'),
+        }}
+        type="application/ld+json"
+      />
       <div style={{ maxWidth: 1340, margin: '0 auto', padding: 'clamp(76px, 9vw, 96px) clamp(16px, 4vw, 48px) 48px', display: 'grid', gap: 'clamp(28px, 4vw, 40px)' }}>
         <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
           <h1 className="eng" style={{ fontSize: 'clamp(18px, 2.4vw, 22px)', fontWeight: 400, margin: 0, color: '#f3e4ce', display: 'flex', alignItems: 'center', gap: 14 }}>
