@@ -3,6 +3,7 @@ import { jsonLd } from '@/lib/json-ld'
 import Link from 'next/link'
 import { setRequestLocale } from 'next-intl/server'
 import { SITE_URL } from '@/lib/books'
+import { ogFor } from '@/lib/og-pages'
 
 /*
  * Mining field guide. Source: "Qubic Mining, explained like a human would",
@@ -18,7 +19,8 @@ export const metadata: Metadata = {
   title: TITLE,
   description: DESC,
   alternates: { canonical: `${SITE_URL}/mine-qubic` },
-  openGraph: { type: 'article', title: TITLE, description: DESC, url: `${SITE_URL}/mine-qubic` },
+  openGraph: { type: 'article', title: TITLE, description: DESC, url: `${SITE_URL}/mine-qubic`, images: ogFor('mine').images },
+  twitter: ogFor('mine').twitter,
 }
 
 const TOC = [

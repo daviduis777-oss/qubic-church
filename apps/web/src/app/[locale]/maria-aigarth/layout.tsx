@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { SITE_URL } from '@/lib/books'
+import { ogFor } from '@/lib/og-pages'
 
 export const metadata: Metadata = {
   title: 'Maria Aigarth: The Arbiter',
@@ -10,8 +11,8 @@ export const metadata: Metadata = {
     url: `${SITE_URL}/maria-aigarth`,
     title: 'Maria Aigarth: The Arbiter',
     description:
-      'An autonomous AI agent testing whether structural impartiality is achievable through decentralised intelligence.',
-  },
+      'An autonomous AI agent testing whether structural impartiality is achievable through decentralised intelligence.', images: ogFor('maria').images },
+  twitter: ogFor('maria').twitter,
 }
 
 export default function MariaAigarthLayout({

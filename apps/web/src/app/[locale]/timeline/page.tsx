@@ -4,6 +4,7 @@ import type { LocaleOptions } from '@/lib/opendocs/types/i18n'
 import { defaultLocale, locales } from '@/config/i18n'
 import { absoluteUrl } from '@/lib/utils'
 import { jsonLd } from '@/lib/json-ld'
+import { ogFor } from '@/lib/og-pages'
 import {
   DisclaimerGate,
   JourneyV3Container,
@@ -30,7 +31,8 @@ export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
   alternates: { canonical: absoluteUrl('/timeline') },
-  openGraph: { type: 'article', title: TITLE, description: DESCRIPTION, url: absoluteUrl('/timeline') },
+  openGraph: { type: 'article', title: TITLE, description: DESCRIPTION, url: absoluteUrl('/timeline'), images: ogFor('timeline').images },
+  twitter: ogFor('timeline').twitter,
 }
 
 export const dynamicParams = true
