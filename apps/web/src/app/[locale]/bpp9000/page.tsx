@@ -8,13 +8,14 @@ import { BppStyles } from '@/components/bpp/BppStyles'
 import { BppLive } from '@/components/bpp/BppLive'
 import { Crowd, HeaderNav } from '@/components/bpp/Crowd'
 import { Journal } from '@/components/bpp/Journal'
+import { BppHow } from '@/components/bpp/BppHow'
 import { bppFonts } from '@/components/bpp/fonts'
 
 // Market is cached for minutes on its own; the page stays live for the counts.
 export const dynamic = 'force-dynamic'
 
 const TITLE = 'BPP-9000: watch the Bitcoin predictor Qubic miners grow'
-const DESC = 'The network Qubic miners grow to call each hour of bitcoin, UP or DOWN, running live in your browser. Live calls from 18 November. Join the experiment and keep a public journal.'
+const DESC = 'The network Qubic miners grow to call each hour of bitcoin, UP or DOWN, running live in your browser. Live calls from 18 November. Join the experiment and keep your own journal.'
 
 export const metadata: Metadata = {
   title: { absolute: TITLE },
@@ -47,13 +48,12 @@ export default async function BppPage(props: { params: Promise<{ locale: string 
 
         <Crowd initial={{ signedUp: count, trades: 0, total: 0 }} />
 
-        <section id="how" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'clamp(18px, 3vw, 32px)', paddingTop: 24, borderTop: '1px solid var(--line)', scrollMarginTop: 80 }}>
+        <BppHow />
+
+        <section aria-label="Market mood" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'clamp(18px, 3vw, 32px)', paddingTop: 24, borderTop: '1px solid var(--line)' }}>
           <Mood big={m.fng ? String(m.fng.value) : '—'} small={m.fng ? `Fear & greed: ${fngWord(m.fng.value)}` : 'Fear & greed'} />
           <Mood big={m.dominance ? `${m.dominance.btc.toFixed(1)}%` : '—'} small="BTC dominance" />
           <Mood big={m.altseason ? String(m.altseason.index) : '—'} small={m.altseason ? `Altseason: ${m.altseason.beat} of ${m.altseason.of} top coins beat BTC in 30 days` : 'Altseason'} />
-          <p className="mute" style={{ margin: 0, fontSize: 14, lineHeight: 1.6, gridColumn: 'span 2', minWidth: 'min(100%, 420px)' }}>
-            <b style={{ color: 'var(--ink)' }}>How it works.</b> The network never sees the price. It is a rhythm of ternary neurons: miners mutate it millions of times a week until its beat matches a real year of bitcoin, hour by hour. The best one is scored by every Qubic node. Here it replays that year once an hour, timed to finish as the candle closes. From epoch {LIVE_FEED_EPOCH} it gets live data and calls the next hour.
-          </p>
         </section>
 
         <div id="journal" style={{ scrollMarginTop: 80 }}>
