@@ -269,6 +269,7 @@ import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 
 const $ = s => document.querySelector(s);
 const MOBILE = matchMedia('(max-width: 760px)').matches || matchMedia('(pointer: coarse)').matches;
@@ -280,12 +281,14 @@ const EPOCH = 237;
 /* ================= renderer / scene ================= */
 const canvas = $('#c');
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
-renderer.setPixelRatio(Math.min(devicePixelRatio, MOBILE ? 1.5 : 2));
+// quality: never more than 1.5x pixels; drops further on its own if frames run slow
+let DPR = Math.min(devicePixelRatio, 1.5); renderer.setPixelRatio(DPR);
 renderer.setSize(innerWidth, innerHeight);
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.05;
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.shadowMap.autoUpdate = false; renderer.shadowMap.needsUpdate = true;
 const scene = new THREE.Scene();
 const FOG = new THREE.Color('#0d1020');
 scene.background = FOG.clone();
@@ -615,6 +618,7 @@ function build() {
   const mp = HX(...SPECIAL.mine); sprite(GLOW, mp.x, 0.5, mp.z + 0.6, 0.7, 0xffb060, 0.9); glowDecal(mp.x, mp.z, 1.6, 0xffb060, 0.35);
   label('THE MINE', mn, 2.1, 'key');
   STAGE2.forEach((s, i) => { const g = place('scaffolding', ...s.at, { rot: i * 1.3 }); place(i % 2 ? 'stage_B' : 'stage_C', ...s.at, { rot: i * 1.3 }); tag(g, 'stage2', s.id); label(s.name.toUpperCase() + ' · STAGE 2', g, 1.9, 'key'); });
+  const before = new Set(scene.children);
   for (let n = 6; n <= 12; n++) ring(n).forEach(([q, r]) => {
     if (reserved.has(key(q, r))) return; const t = rnd();
     if (n >= 10 && t < 0.42) place(['mountain_A', 'mountain_B', 'mountain_C'][Math.floor(rnd() * 3)], q, r, { rot: rnd() * 6, scale: 1 + rnd() * 0.5 });
@@ -622,7 +626,18 @@ function build() {
     else if (t < 0.8) place(['tree_A', 'tree_B', 'rock_A', 'rock_C'][Math.floor(rnd() * 4)], q, r, { rot: rnd() * 6, jitter: 1 });
   });
   ring(5).forEach(([q, r]) => { if (!reserved.has(key(q, r)) && rnd() < 0.45) place(['tree_A', 'tree_B', 'trees_A_small', 'rock_C', 'tent', 'crate'][Math.floor(rnd() * 6)], q, r, { rot: rnd() * 6, jitter: 0.8 }); });
+  mergeScenery(scene.children.filter(o => !before.has(o)));
   buildSnowfall(); buildSmoke(); buildEmbers();
+}
+/* forest, rocks and mountains never move: bake them into one mesh, one draw call instead of hundreds */
+function mergeScenery(objs) {
+  const groups = new Map();
+  objs.forEach(o => { o.updateMatrixWorld(true); o.traverse(m => { if (!m.isMesh) return;
+    const g = m.geometry.index ? m.geometry.toNonIndexed() : m.geometry.clone(); g.applyMatrix4(m.matrixWorld);
+    const sig = Object.keys(g.attributes).sort().join(',') + '|' + m.material.uuid;
+    if (!groups.has(sig)) groups.set(sig, { mat: m.material, list: [] }); groups.get(sig).list.push(g); }); scene.remove(o); });
+  groups.forEach(({ mat, list }) => { const g = mergeGeometries(list, false); list.forEach(x => x.dispose()); if (!g) return;
+    const mesh = new THREE.Mesh(g, mat); mesh.castShadow = true; mesh.receiveShadow = true; mesh.matrixAutoUpdate = false; scene.add(mesh); });
 }
 function freePlots() { const taken = new Set(reserved); allResidents().forEach(h => taken.add(key(...h.at))); const out = [];
   for (let n = 2; n <= 4; n++) ring(n).forEach(([q, r]) => { if (!taken.has(key(q, r))) out.push([q, r]); }); return out; }
@@ -1457,7 +1472,7 @@ function placeLabels() {
     const hovered = L.hover && houses[hoverId]?.label === L;
     const vis = L.obj.parent && z < 1 && x > -40 && x < w + 40 && y > 110 && y < h + 20 && (!L.hover || hovered);
     if (!vis) { L.el.style.display = 'none'; continue; }
-    L.el.style.display = ''; const bw = L.el.offsetWidth, bh = L.el.offsetHeight; let top = y;
+    if (L.el.style.display === 'none') { L.el.style.display = ''; L.sz = null; } if (!L.sz || L.sz.t !== L.el.textContent) L.sz = { w: L.el.offsetWidth, h: L.el.offsetHeight, t: L.el.textContent }; const bw = L.sz.w, bh = L.sz.h; let top = y;
     for (let k = 0; k < 4; k++) { const hp = placed.find(p => Math.abs(p.x - x) < (p.w + bw) / 2 + 4 && Math.abs(p.y - top) < bh + 3); if (!hp) break; top = hp.y - bh - 4; }
     placed.push({ x, y: top, w: bw }); L.el.style.left = x + 'px'; L.el.style.top = top + 'px';
   }
@@ -1495,8 +1510,21 @@ function stepEmbers(dt) {
 
 /* ================= loop ================= */
 const clock = new THREE.Clock();
-function loop() {
-  const dt = Math.min(clock.getDelta(), 0.05); U.uTime.value += dt; const t = U.uTime.value;
+let lastFrame = 0, lastInput = performance.now(), shadowClock = 0, spriteCache = [], spriteClock = 99, slow = 0, frames = 0, sampleT = 0;
+['pointerdown', 'pointermove', 'wheel', 'keydown', 'touchstart'].forEach(ev => addEventListener(ev, () => { lastInput = performance.now(); }, { passive: true }));
+function loop(now = performance.now()) {
+  requestAnimationFrame(loop);
+  // 60 frames a second while you play, 30 when the town is just being watched; nothing at all in a hidden tab
+  const busy = now - lastInput < 8000 || fly || U.uBoost.value > 0.05 || !$('#intro').hidden;
+  const minGap = busy && document.hasFocus() ? 1000 / 60 : 1000 / 30;
+  if (now - lastFrame < minGap - 2) return;
+  lastFrame = now;
+  const dt = Math.min(clock.getDelta(), 0.05);
+  // if frames come in slow for a few seconds, render fewer pixels
+  frames++; sampleT += dt; if (sampleT > 3) { const fps = frames / sampleT; frames = 0; sampleT = 0;
+    if (fps < 1000 / minGap * 0.8 && DPR > 1) { if (++slow >= 2) { DPR = Math.max(1, DPR - 0.25); renderer.setPixelRatio(DPR); composer.setPixelRatio?.(DPR); composer.setSize(innerWidth, innerHeight); slow = 0; } } else slow = 0; }
+  if ((shadowClock += dt) > 0.5) { shadowClock = 0; renderer.shadowMap.needsUpdate = true; }
+  if ((spriteClock += dt) > 1) { spriteClock = 0; spriteCache = []; scene.traverse(o => { if (o.isSprite && (o.userData.flicker || o.userData.blink)) spriteCache.push(o); }); } U.uTime.value += dt; const t = U.uTime.value;
   U.uHeat.value += (heatTarget - U.uHeat.value) * Math.min(1, dt * 0.8);
   U.uBoost.value = Math.max(0, U.uBoost.value - dt * 0.45);
   stepWaves(dt); stepEmbers(dt);
@@ -1527,7 +1555,7 @@ function loop() {
   // houses outside the warm ring go cold
   for (const id in houses) { const h = houses[id]; const d = h.fx.at.length(); const cold = THREE.MathUtils.smoothstep(d, U.uHeat.value - 0.5, U.uHeat.value + 1.5);
     h.fx.lights.forEach(o => { if (!o.userData.blink) o.material.opacity = o.userData.base * (1 - cold * 0.75); }); }
-  scene.traverse(o => { if (o.isSprite) {
+  spriteCache.forEach(o => { {
     if (o.userData.flicker) { if (o.userData.flare) { o.userData.flare = Math.max(0, o.userData.flare - dt * 0.6); } const f = o.userData.flare || 0; o.material.opacity = 0.8 + Math.sin(t * 13) * 0.08 + Math.sin(t * 7.3) * 0.1; o.scale.setScalar(1.1 + f * 1.2 + (S.town.fire || 0) * 0.08); }
     if (o.userData.blink) o.material.opacity = 0.35 + 0.65 * (Math.sin(t * 4) > 0 ? 1 : 0.2); } });
   for (const k in walkers) { const w = walkers[k]; w.g.position.lerp(w.target, Math.min(1, dt * 1.5)); w.g.position.y = 0; w.light.position.set(w.g.position.x + 0.15, 0.45, w.g.position.z); }
@@ -1536,9 +1564,8 @@ function loop() {
     controls.target.copy(tgt); camera.position.copy(tgt).add(off); if (fly.t >= 1) fly = null; }
   controls.target.x = THREE.MathUtils.clamp(controls.target.x, -16, 16); controls.target.z = THREE.MathUtils.clamp(controls.target.z, -16, 16); if (!fly && $('#intro').hidden) controls.target.y = 0;
   controls.update(); composer.render(); placeLabels(); sendPresence();
-  requestAnimationFrame(loop);
 }
-loop();
+requestAnimationFrame(loop);
 addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight); });
-window.__w4w = { S, settle, freePlots, openMaria, ask, addWood, refreshTown, draft: v => (draft = v), camera, controls, updateIce };
+window.__w4w = { S, settle, freePlots, openMaria, ask, addWood, refreshTown, draft: v => (draft = v), camera, controls, updateIce, renderer, scene };
 </script>
