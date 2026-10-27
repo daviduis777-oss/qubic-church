@@ -17,6 +17,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     page('', 1),
     page('/about', 0.9),
+    page('/bpp9000', 0.9),
     page('/books', 0.9),
     ...BOOKS.flatMap(b => [
       page(`/books/${b.slug}`, 0.9, b.published),
