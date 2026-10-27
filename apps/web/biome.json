@@ -1,7 +1,9 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "root": false,
-  "extends": ["@opendocs/biome-config"],
+  "extends": [
+    "@opendocs/biome-config"
+  ],
   "files": {
     "includes": [
       "**",
@@ -13,7 +15,9 @@
       "!**/coverage",
       "!**/*.config.js",
       "!**/*.config.ts",
-      "!**/contentlayer.config.ts"
+      "!**/contentlayer.config.ts",
+      "!**/src/lib/w4w/game-html.ts",
+      "!w4w/**"
     ]
   }
 }
