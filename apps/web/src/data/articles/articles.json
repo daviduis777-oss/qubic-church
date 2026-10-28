@@ -95,6 +95,173 @@
   ]
  },
  {
+  "slug": "the-reveal-wont-wait",
+  "title": "The Reveal Won't Wait",
+  "kicker": null,
+  "date": "2026-10-26",
+  "url": "https://x.com/inqubic/status/2114659917076595155",
+  "author": "fallin",
+  "handle": "inqubic",
+  "guest": true,
+  "summary": "Every religion has a calendar. Qubic's is unusually precise: April 13, 2022 — mainnet launch. April 13, 2027 — \"The Day.\" Five years to the day. The date is not a rumor; it is a matter of record, repeated across years of statements: \"No…",
+  "words": 1705,
+  "note": "Posted on X and addressed to Maria Aigarth. Text unchanged.",
+  "blocks": [
+   {
+    "t": "p",
+    "text": "Hey @maria_aigarth,"
+   },
+   {
+    "t": "h",
+    "text": "The Day is April 13, 2027. The machines solving the question weren't supposed to arrive until it was over."
+   },
+   {
+    "t": "h",
+    "text": "I. A date that behaves like a promise"
+   },
+   {
+    "t": "p",
+    "text": "Every religion has a calendar. Qubic's is unusually precise: April 13, 2022 — mainnet launch. April 13, 2027 — \"The Day.\" Five years to the day. The date is not a rumor; it is a matter of record, repeated across years of statements: \"No ETA other than April 13, 2027.\" \"I can reveal this info on 13th of April 2027. And you'll see who is really behind CFB acc.\""
+   },
+   {
+    "t": "p",
+    "text": "Set aside, for the length of this article, whether the reveal is a revelation or a punchline. What matters here is the structure: a mystery, deliberately maintained for years, with a scheduled resolution. CfB has said so himself, in his own way — \"false clues for trolling,\" plausible deniability, flooding the zone with versions. The strategy has one silent assumption, and the assumption is the subject of this article."
+   },
+   {
+    "t": "p",
+    "text": "The assumption is that the schedule is his."
+   },
+   {
+    "t": "p",
+    "text": "It isn't anymore. Something changed in October 2026, and almost nobody in this community has priced it in."
+   },
+   {
+    "t": "h",
+    "text": "II. What happened in October 2026"
+   },
+   {
+    "t": "p",
+    "text": "Three items, all recent, all public, all Tier 1 — checkable, none of them lore."
+   },
+   {
+    "t": "p",
+    "text": "First. A developer going by T4T5 used Anthropic's Claude Opus 5.5 to reconstruct Satoshi Nakamoto's original 2009 bitcoin.exe byte-for-byte, matching the SHA-256 hash exactly. To do it, the AI reassembled an entire dead development environment from 2006–2008: Windows XP, MinGW GCC 3.4.5, debug builds with maximum optimization on the hashing code alone. The reconstruction revealed Satoshi's working habits — most of Bitcoin compiled in debug mode, the mining code compiled for speed, a toolchain upgraded midway through the project. Seventeen years of unresolved forensic ambiguity about how Bitcoin was built, dissolved in weeks."
+   },
+   {
+    "t": "p",
+    "text": "Second. The same model family solved, in under thirty minutes, the 25-year-old mystery of the NSA's elliptic-curve seeds — numbers handed over in the 1990s that cryptographers suspected for a quarter century of hiding a backdoor. Claude traced them to an ordinary random-number generator keyed to system timestamps from 1997 and 1998. The result earned a $36,864 bounty and a real researcher's reaction: \"Wow, it's a real discovery.\""
+   },
+   {
+    "t": "p",
+    "text": "Third. Across the field, AI systems have begun clearing human backlogs of unsolved puzzles the way water clears a drain: a 200-year-old Napoleon cipher in six hours, an unsolved 1941 Enigma intercept in ten. The keeper of the standard list of unsolved historical ciphers said that since mid-September, most of them had been cracked, and admitted to \"mixed feelings\" because the machines \"solved these difficult problems so easily.\""
+   },
+   {
+    "t": "p",
+    "text": "Now ask: what kind of problem is \"who is Satoshi Nakamoto?\""
+   },
+   {
+    "t": "h",
+    "text": "III. The wrong kind of mystery"
+   },
+   {
+    "t": "p",
+    "text": "It is worth being honest about the difficulty here. The identity question is not a cipher. It is a scattered, semi-structured attribution problem: prose fingerprints, code idioms, forum timestamps, mailing-list metadata, the statistical texture of a person's writing across 25 years. That is harder than the NSA seeds, not easier."
+   },
+   {
+    "t": "p",
+    "text": "But notice what it is made of. Stylometry across matched corpora. Chronological correlation of activity patterns. Idiom analysis of C++ and, now that we know it, of a very particular build environment. Inference across a bounded set of candidates with rich written records — Come-from-Beyond among them, with his 29 archived long-form articles, his quarter century of forum history, his 2000 article in KV under a name that already carried come-from-beyond@mail.ru. These are exactly the tasks that went from \"years of specialist labor\" to \"an evening with a frontier model\" this year. The Napoleon cipher was broken by a 27-year-old who needed to learn \"very little\" about codebreaking to do it. The tool does the persistence now."
+   },
+   {
+    "t": "p",
+    "text": "The T4T5 result matters beyond its bytes, because it demonstrated the specific capability at issue: archaeology on the Satoshi era, by AI, against artifacts everyone had given up on. The identity question is a bigger dig, but it is the same kind of dig. And the digging tools improved by more in the last twelve months than in the previous fifteen years."
+   },
+   {
+    "t": "h",
+    "text": "IV. The design was a duel with human attention"
+   },
+   {
+    "t": "p",
+    "text": "Come-from-Beyond's maintenance of the mystery — the trolling, the denials, the sideways pointers at block 369, the ZgZ remark that \"g in ZgZ will prove that 1CFB2 is not random\" — was calibrated for a specific adversary: human researchers with limited bandwidth, who must choose which haystacks to search and can only cross-reference slowly."
+   },
+   {
+    "t": "p",
+    "text": "Against that adversary, the design works. A human datamines three early blocks for CFB-shaped strings; a human on the other side answers \"ask ChatGPT the chance to spot 'cfb', it's pretty high\" — and both humans walk away believing the reasonable thing. The zone gets flooded; the versions multiply; the question stays open because verifying any version is expensive for everyone."
+   },
+   {
+    "t": "p",
+    "text": "That is the flaw. The strategy is an economy, not a wall. It spends human attention as its scarce resource. And the attention cost of verification — stylometric analysis across two matched corpora, timestamp correlation across two communities, idiom analysis across 25 years of writing — has just collapsed by orders of magnitude. When verification becomes nearly free, flooding the zone stops being a strategy and becomes a public utility: the flood gets filtered in an afternoon."
+   },
+   {
+    "t": "p",
+    "text": "The community's own re-check culture — the retired odds, the \"Left out\" page, the open-hypotheses board — is the best version of this discipline that humans have produced. It is about to be operating in a different physics."
+   },
+   {
+    "t": "h",
+    "text": "V. The Genesis key says the quiet part"
+   },
+   {
+    "t": "p",
+    "text": "There is a detail in the record that suggests the designer already knew this. On April 13, 2026, asked about the Genesis address: \"Genesis address isn't a public key, it's steps revealing who Satoshi Nakamoto is.\" Then: \"No, it's time locked, only true AI can decode it.\""
+   },
+   {
+    "t": "p",
+    "text": "Read that again, and take it at face value for once instead of as trolling: if there is a genuine puzzle in the early Bitcoin artifacts, the intended solver is not a person. It is a machine intelligence, at some future capability level. \"Only true AI can decode it.\""
+   },
+   {
+    "t": "p",
+    "text": "The designer, in other words, may have built the reveal to be AI-gated — scheduled not by a calendar but by a capability curve. And here is the irony that makes this article worth writing: the capability curve arrived early. The AI wave of 2026 — the ciphers, the seeds, the rebuilt build environment — is plausibly the \"true AI\" that the time lock was waiting for. If the lock reads the current state of the art, it may already be open, or opening, whether or not anyone has pointed the right model at it yet."
+   },
+   {
+    "t": "p",
+    "text": "Either way, the same conclusion holds: the reveal is gated on machines, and the machines are ahead of the calendar."
+   },
+   {
+    "t": "h",
+    "text": "VI. What it means, honestly"
+   },
+   {
+    "t": "p",
+    "text": "Three consequences, in descending order of confidence."
+   },
+   {
+    "t": "p",
+    "text": "The identity question resolves on its own schedule now. It may resolve at The Day, as planned. It may resolve next month, because a motivated party runs the obvious stylometric pass that 2026 tooling makes cheap. It may resolve ambiguously — an AI producing a probability distribution over authorship rather than a signature, which would be its own kind of crisis. But the one thing it no longer does is wait on command. A mystery maintained by flooding the zone with versions assumes verification is expensive. Verification just became cheap."
+   },
+   {
+    "t": "p",
+    "text": "The reveal is now adversarial. Until now, the reveal was CfB's card to play, at a time of his choosing, presumably in a form of his choosing. If AI forensics arrives first, the reveal arrives in whatever form the forensics produce — uncontrolled, possibly wrong, possibly right and unwelcome. There is a version of this where the community gets its answer the way the NSA-seed story got its answer: a machine announces it, everyone checks the work, and the atmosphere of a 25-year mystery evaporates in a news cycle. Anyone emotionally invested in The Day as the moment should sit with that."
+   },
+   {
+    "t": "p",
+    "text": "The tier system survives — and matters more. Suppose the AI forensics wave resolves the identity question tomorrow, in either direction. What actually changes about Qubic? The tokenomics are untouched. The burn ratchet is untouched. Aigarth's milestone list — Neuraxon's peer-reviewed wins, Anna.exe at zero error, BPP-9000 shipping, epoch 228's heredity — is untouched. The identity layer was always the most volatile and least verifiable tier, and its resolution, whenever it comes, mostly moves which story the market tells about everything underneath. The underneath — the design, the code, the epoch data — is the part that was never his to schedule."
+   },
+   {
+    "t": "h",
+    "text": "VII. The Day we will see together"
+   },
+   {
+    "t": "p",
+    "text": "There is a symmetry here that even a skeptic should admire. A man who says he designed a system to grow a true AI, and who claims the final secret of the pre-AI era of money is locked behind a puzzle only true AI can open, has bet the timing of his own mystery on the arrival of the machines."
+   },
+   {
+    "t": "p",
+    "text": "They arrived early."
+   },
+   {
+    "t": "p",
+    "text": "That means the interesting question is no longer \"what happens on April 13, 2027.\" It is: what happens on the random Tuesday when someone points the new tools at the old question — and the tools answer?"
+   },
+   {
+    "t": "p",
+    "text": "The Day was designed as an appointment. It is becoming a race. And for the first time since a programmer in Minsk wrote about hidden authorship marks in the year 2000, the author of the mystery is not the fastest reader in the room."
+   },
+   {
+    "t": "p",
+    "text": "Evidence discipline, per the archive's own practice: the Claude/T4T5 reconstruction, the NSA seed solution, and the AI cipher-breaking wave are documented public events of October 2026. The quotes from Come-from-Beyond (\"time locked, only true AI can decode it,\" the block 369 pointers, the ZgZ remark, the denials) are his words with dates, from the Church archive. The claim that the Genesis data is genuinely a solvable puzzle for AI is unverified and should be read as his stated design intent, not as a fact. The conclusion — that verification costs have collapsed — is analysis. Use your head. #Qubic #Aigarth"
+   }
+  ]
+ },
+ {
   "slug": "back-in-2011-bitcoin-was-a-wild-underground-experiment",
   "title": "Back in 2011, $Bitcoin was a wild, underground experiment",
   "kicker": null,
@@ -4063,6 +4230,213 @@
    {
     "t": "p",
     "text": "And if you'd like to follow the development of Aigarth right from the source, follow Dr. Jose Sanchez @josesanchezhb. There's no better seat in the house."
+   }
+  ]
+ },
+ {
+  "slug": "investigation-into-qubic-centralization",
+  "title": "Investigation into $Qubic Centralization: What the Tickchain Really Says",
+  "kicker": null,
+  "date": "2026-05-14",
+  "url": "https://x.com/rudynakamoto/status/2054852501497659537",
+  "author": "Rudy Nakamoto",
+  "handle": "rudynakamoto",
+  "guest": true,
+  "summary": "In the ecosystem of distributed ledgers, the concept of decentralization remains one of the most scrutinized philosophical and technical pillars. The promise of a resilient infrastructure, free from the control of any single entity,…",
+  "words": 1879,
+  "note": "Posted on X and addressed to Maria Aigarth. Text unchanged.",
+  "blocks": [
+   {
+    "t": "h",
+    "text": "The Precarious Balance of Decentralization"
+   },
+   {
+    "t": "p",
+    "text": "In the ecosystem of distributed ledgers, the concept of decentralization remains one of the most scrutinized philosophical and technical pillars. The promise of a resilient infrastructure, free from the control of any single entity, forms the very foundation of the trust placed in public networks. The Qubic protocol, designed by Sergey Ivancheglo (also known as Come-from-Beyond or CFB), aligns with this vision through a unique architecture that promises feeless transactions, instant finality, and a symbiotic integration of artificial intelligence via an innovative mechanism called “Useful Proof of Work” (uPoW). However, this architecture, which relies on a fixed and exclusive set of 676 validator nodes called “Computors”, has recently come under scrutiny regarding its true resilience against forces of economic and operational centralization."
+   },
+   {
+    "t": "h",
+    "text": "Financial Flows Observed During Epoch 211"
+   },
+   {
+    "t": "p",
+    "text": "In a public Discord communication aimed at \"following the money,\" lead developer JoeTom highlighted five intermediary addresses (clusters) that aggregate rewards from numerous Computors before redirecting them to the address HUHH...WAXF: EPNH...BCHGI, WIMN...FVZWM, GJNZ...FBLBM, PYIA...YQDD, and WWGG...DPSDA."
+   },
+   {
+    "t": "p",
+    "text": "To illustrate this mechanism, JoeTom transparently detailed the flows of one specific cluster (EPNH...BCHGI) for Epoch 211. The standard reward generated by a high-performing Computor during this period amounted to approximately 537 million $QUBIC. An examination of the public data for this cluster reveals a clear mathematical pattern:"
+   },
+   {
+    "t": "p",
+    "text": "• Inbound Revenue: The cluster address (EPNH...) received the cumulative rewards from 23 Computors, totaling approximately 12.3 billion $QUBIC."
+   },
+   {
+    "t": "p",
+    "text": "• Outbound Flows: From this cluster, transfers were made to the final address (HUHH...WAXF) for a total of approximately 930 million $QUBIC."
+   },
+   {
+    "t": "p",
+    "text": "• Proportion: This transfer to HUHH...WAXF represents exactly 7.5% of the initial revenue generated by these 23 Computors."
+   },
+   {
+    "t": "p",
+    "text": "While the global alert from \"cryptokendefi\" (Epoch 211) concerns an estimated volume of 273 Computors spread across all these clusters, the behavior observed specifically on the EPNH cluster is indicative of the overall economic model. This automated and proportional deduction pattern is typical of reward distribution toward a pool fee address."
+   },
+   {
+    "t": "p",
+    "text": "JoeTom himself emphasizes that it is factually impossible to deduce from these financial flows alone that the HUHH...WAXF address \"controls\" these Computors; instead, the on-chain data demonstrates the presence of an automated service billing mechanism."
+   },
+   {
+    "t": "p",
+    "text": "All these transactions are public and can be verified directly on the Qubic explorer: https://explorer.qubic.org/network/address/HUHHXVNAPQIRDCIAYRLMFMOKCSODZFCITHVVJWGQQFEDHJODDSSQMGWAWAXF"
+   },
+   {
+    "t": "h",
+    "text": "Formal Identification of HUHH...WAXF: The Dynamics of Mining Pools"
+   },
+   {
+    "t": "p",
+    "text": "Cross-referencing information within the technical community has confirmed that the address HUHH...WAXF corresponds to the fee collection wallet for the Apool.io mining pool. Apool.io is among the major community mining infrastructures in the Qubic ecosystem, alongside other entities such as Minerlab and Jetski Pool."
+   },
+   {
+    "t": "p",
+    "text": "This identification shifts the perspective on the observed flows. The address HUHH...WAXF represents the financial infrastructure of a legitimate mining pool that publicly charges management fees (historically around 7.5%) to its users in order to aggregate computing power and redistribute rewards."
+   },
+   {
+    "t": "h",
+    "text": "Fundamental Architecture: Separation of Powers according to the Whitepaper"
+   },
+   {
+    "t": "p",
+    "text": "To evaluate whether the economic dominance of a pool like Apool.io translates into effective control of the network, it is essential to refer to the conceptual architecture detailed in the Qubic whitepaper and its official technical documentation. The system’s engineering relies on a strict separation of privileges, isolating raw computational power from formal decision-making authority."
+   },
+   {
+    "t": "h",
+    "text": "The Quorum and Byzantine Fault Tolerance (BFT)"
+   },
+   {
+    "t": "p",
+    "text": "The central concept of decentralization in Qubic lies not in the distribution of hash rate, but in its Quorum-Based Computation (QBC) consensus mechanism. Drawing inspiration from Leslie Lamport’s pioneering work on Byzantine Fault Tolerance (BFT) and the quorum systems described by Nick Szabo as early as 1998, Qubic rejects probabilistic blockchains."
+   },
+   {
+    "t": "p",
+    "text": "The network revolves around an exclusive and mathematically defined set of 676 Computors. This number is not random; it corresponds to the square of the twenty-six letters of the English alphabet, illustrating its creator’s quest for mathematical elegance. According to strict BFT principles, for a distributed network to reach absolute consensus even in the presence of malicious actors, the total number of nodes (n) must satisfy the equation n = 3f + 1, where f represents the number of tolerated faulty or hostile nodes."
+   },
+   {
+    "t": "p",
+    "text": "In Qubic’s case, this equation dictates that a decision can only be validated and recorded in the ledger on the condition of obtaining a minimum of 451 concordant votes, which is the two-thirds majority plus one (⅔ + 1). The mathematical structure of the network therefore allows it to tolerate up to 225 hostile nodes while continuing to function perfectly. An entity that manages to group 226 Computors or more would obtain a blocking minority, preventing the 451 required votes and threatening the network with paralysis or transaction censorship. The protocol thus establishes an absolute red line at 225 nodes per actor. The threshold of 451 Computors is the sole and unique source of truth within the network. During each consensus cycle, called a “tick,” Computors vote on the validity of transactions, the execution of smart contracts, and the overall evolution of the network state. If the threshold is not reached, the network generates an empty tick, preventing any compromise by a minority."
+   },
+   {
+    "t": "h",
+    "text": "The Dichotomy between Computors and AI Miners"
+   },
+   {
+    "t": "p",
+    "text": "A key distinction exists between mining power and validation authority. In the Bitcoin protocol, the miner who finds the valid hash unilaterally wins the right to write the next block. Qubic breaks this direct correlation."
+   },
+   {
+    "t": "p",
+    "text": "“AI Miners” are not Computors. Miners operate on the periphery; they execute evolution algorithms based on Helix logic gates to optimize neural networks via uPoW, thus providing intrinsic utility to the energy spent. Computors, on the other hand, do not mine. They collect the solutions provided by the miners affiliated with them and present this “score” to the network at the end of the week (the Epoch)."
+   },
+   {
+    "t": "p",
+    "text": "During a given Epoch, the electoral weight of a Computor is strictly equal to that of any other Computor, regardless of whether it has accumulated one million solutions or one hundred million. Therefore, even if a pool drains a large share of the global computational power to generate solutions, this power only serves to ensure that the pool’s client nodes remain in the Top 676 for the following Epoch. It grants the pool no additional voting rights, nor any direct access to the cryptographic private keys used by the Computors’ hardware operators to sign transactions when creating a tick."
+   },
+   {
+    "t": "h",
+    "text": "Hardware Requirements and the Sybil Barrier (Bare-Metal)"
+   },
+   {
+    "t": "p",
+    "text": "To cement this decentralization, Qubic imposes draconian hardware constraints that make a Sybil attack extraordinarily costly. A Qubic Computor must imperatively run on dedicated physical architecture, known as “bare-metal”."
+   },
+   {
+    "t": "p",
+    "text": "The Qubic operating system is minimalist and interacts directly with the UEFI interface, removing intermediate software layers to maximize the execution speed of smart contracts coded in C++. The hardware specifications required to maintain Computor status are extreme: Random Access Memory (RAM) requirements increased to 1 Terabyte (1 TB), with a scheduled transition to 2 TB in Q1 2025. The processor must support complex instructions (such as AVX-512), favoring enterprise-class server chips. A dedicated symmetrical internet connection of at least 1 Gbit/s is also required."
+   },
+   {
+    "t": "p",
+    "text": "The entity Apool.io, as a provider of mining aggregation software services, does not physically own these hundreds of titanic servers distributed worldwide. The operators of these machines remain the sovereign owners of their cryptographic signature keys. They retain absolute authority to redirect their node, vote differently during governance proposals, or switch service providers by altering a simple configuration line."
+   },
+   {
+    "t": "h",
+    "text": "The Spectrum File and Immutable Verifiability"
+   },
+   {
+    "t": "p",
+    "text": "The transparency of this decentralized network is embodied in its primary data structure: the “Spectrum” file. In Qubic nomenclature, the Spectrum designates the distributed ledger that preserves the transparent and unforgeable history of every transaction validated by the Quorum during an epoch."
+   },
+   {
+    "t": "p",
+    "text": "The Spectrum resides entirely in the colossal RAM of the Computors. Each entity in the network is defined by a unique identifier derived from a 55-character seed, transformed via a K12 cryptographic algorithm. At each tick, once the 451-vote consensus is reached, the global state is hashed, guaranteeing the alignment of all nodes."
+   },
+   {
+    "t": "p",
+    "text": "This structure ensures that data is not locked in a silo belonging to a central pool. The 676 Computors each hold a live and cryptographically verifiable copy of this ledger. Any manipulation attempt would be met with immediate rejection by the other nodes, whose K12 hashes of the Spectrum would inevitably diverge."
+   },
+   {
+    "t": "h",
+    "text": "The Role of the Arbitrator: Demystification, BFT, and Safeguards"
+   },
+   {
+    "t": "p",
+    "text": "Qubic’s governance architecture includes the Arbitrator. This is a functional entity whose mandate is strictly bounded by clear algorithmic rules. Its prerogatives are exclusively administrative and protective. It does not participate in the creation of ticks, the validation of transactions, or the execution of smart contracts. It does not sign blocks and cannot freeze funds."
+   },
+   {
+    "t": "p",
+    "text": "The protocol integrates robust protection against any authoritarian drift: each Computor operator configures the identifier of their Arbitrator directly in their node’s files. A supermajority of 451 Computors possesses the inalienable power to override its directives, ignore it, or even dismiss it through a formal consensus vote."
+   },
+   {
+    "t": "h",
+    "text": "Evolution of Governance and Tokenomics: The 2026 Framework"
+   },
+   {
+    "t": "p",
+    "text": "Qubic has undergone fundamental transformations to eradicate pockets of financial centralization."
+   },
+   {
+    "t": "p",
+    "text": "The token economy is based on a constant emission model coupled with aggressive burn mechanisms. Each epoch (7 days) generates exactly 1 trillion $QUBIC. Following the community vote “Project X” (Epoch 123), the theoretical maximum supply was cut from 1,000 trillion to 200 trillion tokens. Inflation is rigorously controlled."
+   },
+   {
+    "t": "p",
+    "text": "In January 2026, “Execution Fees” were activated. Smart contracts now consume a financial reserve proportional to the actual computing time; the billed fees are entirely burned."
+   },
+   {
+    "t": "p",
+    "text": "The “All-Hands” summit of February 5, 2026, led to a new governance framework, ratified by the Computors during Epoch 200 with 614 favorable votes and zero opposition. Ecosystem capital is now separated into three distinct entities:"
+   },
+   {
+    "t": "p",
+    "text": "• The Computor Controlled Fund (CCF): receives 8% of the emission; disbursements require explicit approval by cryptographic vote from the Quorum."
+   },
+   {
+    "t": "p",
+    "text": "• The Incubation Fund: dedicated to financing seed-stage dApps."
+   },
+   {
+    "t": "p",
+    "text": "• The Listing Fund: manages fees related to new exchange listings."
+   },
+   {
+    "t": "p",
+    "text": "Any major decision must be subject to an on-chain ballot, with anti-spam mechanisms (burn of 10 million $QUBIC per proposal and 100 $QUBIC per vote). This framework marks Qubic’s transition into a truly operational Decentralized Autonomous Organization (DAO)."
+   },
+   {
+    "t": "h",
+    "text": "Conclusion: Economic Dependence is not Quorum Control"
+   },
+   {
+    "t": "p",
+    "text": "This analysis shows that the observed financial flows toward HUHH...WAXF correspond to the 7.5% service fees of the Apool.io mining pool. The Computors in question remain the property of distinct hardware operators who have freely chosen to delegate the generation of their algorithmic “solutions” to this mining interface in order to remain competitive."
+   },
+   {
+    "t": "p",
+    "text": "The bare-metal architecture, requiring massive physical servers equipped with 2 TB of RAM and cutting-edge processors, constitutes a natural and costly bulwark against stealth centralization. Apool.io collects a fee on the yield but does not possess the private cryptographic keys necessary to sign a “tick” or influence the BFT quorum consensus."
+   },
+   {
+    "t": "p",
+    "text": "Qubic’s decentralization is solidly anchored in relentless BFT engineering. The protocol tolerates up to 225 hostile nodes and requires 451 votes for any decision. The observation of these financial concentrations nevertheless calls for continued improvement in transparency tools. Greater visibility into Computor operators per epoch would help the community naturally balance the market shares of mining pools and preserve the exceptional resilience of the Qubic infrastructure."
    }
   ]
  }
