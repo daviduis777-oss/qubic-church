@@ -47,17 +47,14 @@ const css = `
 .w4w-cell span{display:block;margin-top:6px;font-size:12px;color:#a8835e}
 .w4w-snow{position:fixed;inset:0;width:100vw;height:100vh;z-index:2;pointer-events:none}
 .w4w-wisps{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden}
-.w4w-wisps{opacity:calc(1 - .85 * var(--w4w-thaw,0))}
 .w4w-wisps i{position:absolute;border-radius:50%;opacity:.55;will-change:transform}
-/* the thaw: warm light rises from below as you read down, the cold gives way */
-.w4w-warm{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:var(--w4w-warmth,0);background:radial-gradient(90% 60% at 50% 78%,#ff8a2a55 0%,#ff6a1a22 40%,transparent 72%),radial-gradient(45% 30% at 50% 72%,#ffc46b30,transparent 70%)}
 .w4w-wisps i:nth-child(1){width:46vw;height:22vw;left:38%;top:18%;background:radial-gradient(closest-side,#5fc4ff30,transparent 70%);animation:w4w-drift 26s ease-in-out infinite alternate}
 .w4w-wisps i:nth-child(2){width:38vw;height:16vw;left:52%;top:58%;background:radial-gradient(closest-side,#9fe2ff26,transparent 70%);animation:w4w-drift 34s ease-in-out -9s infinite alternate-reverse}
 .w4w-wisps i:nth-child(3){width:52vw;height:20vw;left:-8%;top:62%;background:radial-gradient(closest-side,#3f8fd82a,transparent 70%);animation:w4w-drift 40s ease-in-out -16s infinite alternate}
 @keyframes w4w-drift{0%{transform:translate3d(-6%,2%,0) scale(1) rotate(-4deg)}100%{transform:translate3d(8%,-4%,0) scale(1.18) rotate(5deg)}}
-.w4w-frost{position:fixed;inset:0;z-index:3;pointer-events:none;opacity:calc(.75 * var(--w4w-frost,1));background:radial-gradient(ellipse at 50% 45%,transparent 52%,#9fd8ff14 70%,#bfe8ff3d 100%),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1600' height='1000' preserveAspectRatio='none'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .04' numOctaves='5' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .8 0 0 0 0 .92 0 0 0 0 1 0 0 0 2.4 -1.25'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E");background-size:100% 100%;-webkit-mask-image:radial-gradient(ellipse at 50% 45%,transparent 48%,#000 96%);mask-image:radial-gradient(ellipse at 50% 45%,transparent 48%,#000 96%)}
+.w4w-frost{position:fixed;inset:0;z-index:3;pointer-events:none;opacity:.75;background:radial-gradient(ellipse at 50% 45%,transparent 52%,#9fd8ff14 70%,#bfe8ff3d 100%),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1600' height='1000' preserveAspectRatio='none'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .04' numOctaves='5' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .8 0 0 0 0 .92 0 0 0 0 1 0 0 0 2.4 -1.25'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E");background-size:100% 100%;-webkit-mask-image:radial-gradient(ellipse at 50% 45%,transparent 48%,#000 96%);mask-image:radial-gradient(ellipse at 50% 45%,transparent 48%,#000 96%)}
 .w4w-art img{filter:saturate(.9) contrast(1.04)}
-.w4w-signal{position:relative;width:14px;height:14px;margin:0 auto 40px;border-radius:50%;background:#bfeaff;box-shadow:0 0 14px #7fd8ff,0 0 40px #4fb8ff88;opacity:calc(.35 + .65 * var(--w4w-thaw,0))}
+.w4w-signal{position:relative;width:14px;height:14px;margin:0 auto 40px;border-radius:50%;background:#bfeaff;box-shadow:0 0 14px #7fd8ff,0 0 40px #4fb8ff88;opacity:.85}
 .w4w-signal::before,.w4w-signal::after{content:"";position:absolute;inset:-6px;border-radius:50%;border:1px solid #9fdcff88;animation:w4w-ping 4.2s ease-out infinite}
 .w4w-signal::after{animation-delay:2.1s}
 @keyframes w4w-ping{0%{transform:scale(.6);opacity:.9}100%{transform:scale(6);opacity:0}}
@@ -134,7 +131,6 @@ export default async function W4WPage(props: { params: Promise<{ locale: string 
       <style>{css}</style>
 
       <W4WFrost />
-      <div aria-hidden className="w4w-warm" />
       <section className="w4w-hero">
         <div aria-hidden className="w4w-wisps">
           <i />

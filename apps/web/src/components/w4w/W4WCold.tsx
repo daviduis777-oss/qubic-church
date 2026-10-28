@@ -51,8 +51,7 @@ export function W4WSnow() {
     let last = performance.now()
     let t = 0
     const draw = () => {
-      // the snow eases off as you read further down: the thaw
-      const fade = 1 - 0.75 * (Number(document.documentElement.style.getPropertyValue('--w4w-thaw')) || 0)
+      const fade = 1
       g.clearRect(0, 0, w, h)
       for (const f of flakes) {
         const img = SP[f.s]!
