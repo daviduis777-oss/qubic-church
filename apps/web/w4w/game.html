@@ -750,7 +750,7 @@ function buildCore() {
   const iron = new THREE.MeshStandardMaterial({ color: 0x2b2522, metalness: 0.7, roughness: 0.45 });
   const copper = new THREE.MeshStandardMaterial({ color: 0xb06a3a, metalness: 0.75, roughness: 0.32, emissive: 0xff5a14, emissiveIntensity: 0.8 });
   const hot = new THREE.MeshStandardMaterial({ color: 0x1a1210, emissive: 0xff7a22, emissiveIntensity: 1.6, roughness: 0.6 });
-  [0.36, TOP - 0.28].forEach(y => { for (let i = 0; i < 4; i++) { const an = i * Math.PI / 2; const bnd = new THREE.Mesh(new THREE.BoxGeometry(W - 0.3, 0.14, 0.08), iron); bnd.position.set(Math.sin(an) * (hw + 0.04), y, Math.cos(an) * (hw + 0.04)); bnd.rotation.y = an; bnd.castShadow = true; block.add(bnd); } });
+  [0.36].forEach(y => { for (let i = 0; i < 4; i++) { const an = i * Math.PI / 2; const bnd = new THREE.Mesh(new THREE.BoxGeometry(W - 0.3, 0.14, 0.08), iron); bnd.position.set(Math.sin(an) * (hw + 0.04), y, Math.cos(an) * (hw + 0.04)); bnd.rotation.y = an; bnd.castShadow = true; block.add(bnd); } });
   const pts = []; for (let r = 0; r < 4; r++) { const y = 0.66 + r * 0.17, d = r % 2 ? -1 : 1; for (let j = 0; j <= 6; j++) pts.push(new THREE.Vector3(0, y + (j === 0 || j === 6 ? 0 : 0), d * (0.9 - j * 0.3))); }
   const coilGeo = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts, false, 'centripetal'), 220, 0.042, 8, false);
   const steam = [];
@@ -836,7 +836,7 @@ function makeHouse(d, mine) {
   const Lb = label(mine ? `${d.nick} (you)` : d.demo ? `${d.nick} · demo` : d.nick, main, 2.0, cls); Lb.hover = !mine && !d.real && d.state !== 'nosignal';
   houses[d.id] = { g, data: d, fx, label: Lb, mine };
 }
-function disposeHouse(id) { const h = houses[id]; if (!h) return; scene.remove(h.g); h.fx.lights.forEach(o => scene.remove(o)); if (h.fx.pipe) { scene.remove(h.fx.pipe); pipes.splice(pipes.indexOf(h.fx.pipe), 1); }
+function disposeHouse(id) { const h = houses[id]; if (!h) return; if (hoverOn === id) { hoverMeshes.length = 0; hoverOn = null; } scene.remove(h.g); h.fx.lights.forEach(o => scene.remove(o)); if (h.fx.pipe) { scene.remove(h.fx.pipe); pipes.splice(pipes.indexOf(h.fx.pipe), 1); }
   h.label.el.remove(); labels.splice(labels.indexOf(h.label), 1);
   for (let i = interactive.length - 1; i >= 0; i--) if (interactive[i].userData.id === id) interactive.splice(i, 1);
   delete houses[id]; }
@@ -932,9 +932,20 @@ canvas.addEventListener('pointerdown', e => { downAt = [e.clientX, e.clientY]; }
 canvas.addEventListener('pointerup', e => { if (!downAt) return; const moved = Math.hypot(e.clientX - downAt[0], e.clientY - downAt[1]); downAt = null; if (moved > 6) return; pick(e, true); });
 canvas.addEventListener('pointermove', e => { if (e.pointerType === 'mouse') pick(e, false); });
 function hit(e, list) { mouse.set((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1); ray.setFromCamera(mouse, camera); return ray.intersectObjects(list, false)[0]; }
+/* the building under the cursor glows warm: same snow shader, plus an ember tint */
+let HOVER_MAT = null, hoverOn = null;
+const hoverMeshes = [];
+function setHover(id) {
+  if (id === hoverOn) return;
+  hoverMeshes.splice(0).forEach(m => { m.material = m.userData.baseMat; });
+  hoverOn = id; if (!id || !KIT_MAT) return;
+  if (!HOVER_MAT) { HOVER_MAT = snowify(KIT_MAT.clone()); HOVER_MAT.map = ATLAS; HOVER_MAT.emissive = new THREE.Color(0xff9a3c); HOVER_MAT.emissiveIntensity = 0.3; }
+  interactive.forEach(m => { if (m.isMesh && m.userData.id === id && m.userData.kind !== 'core' && m.material === KIT_MAT) { m.userData.baseMat = m.material; m.material = HOVER_MAT; hoverMeshes.push(m); } });
+}
+canvas.addEventListener('pointerleave', () => setHover(null));
 function pick(e, click) {
   if (choosingPlot) { const h = hit(e, plotMarks); canvas.style.cursor = h ? 'pointer' : 'default'; plotMarks.forEach(m => m.material.opacity = m === h?.object ? 1 : 0.55); if (click && h) settle(h.object.userData.qr); return; }
-  const h = hit(e, interactive); const id = h?.object.userData.id || null; canvas.style.cursor = id ? 'pointer' : 'default'; hoverId = id;
+  const h = hit(e, interactive); const id = h?.object.userData.id || null; canvas.style.cursor = id ? 'pointer' : 'default'; hoverId = id; setHover(id);
   if (!click || !h) return; const k = h.object.userData.kind;
   if (k === 'church') openChurch(); else if (k === 'board') openPlaza(); else if (k === 'core') openCore(); else if (k === 'fire') addWood();
   else if (k === 'house') openHouse(id); else if (k === 'observatory') openObservatory(); else if (k === 'stage2') openStage2(id); else if (k === 'library') openLibrary(); else if (k === 'mine') openMine();
@@ -1523,6 +1534,7 @@ function loop(now = performance.now()) {
   // if frames come in slow for a few seconds, render fewer pixels
   frames++; sampleT += dt; if (sampleT > 3) { const fps = frames / sampleT; frames = 0; sampleT = 0;
     if (fps < 1000 / minGap * 0.8 && DPR > 1) { if (++slow >= 2) { DPR = Math.max(1, DPR - 0.25); renderer.setPixelRatio(DPR); composer.setPixelRatio?.(DPR); composer.setSize(innerWidth, innerHeight); slow = 0; } } else slow = 0; }
+  if (HOVER_MAT) HOVER_MAT.emissiveIntensity = 0.26 + 0.1 * Math.sin(U.uTime.value * 4);
   if ((shadowClock += dt) > 0.5) { shadowClock = 0; renderer.shadowMap.needsUpdate = true; }
   if ((spriteClock += dt) > 1) { spriteClock = 0; spriteCache = []; scene.traverse(o => { if (o.isSprite && (o.userData.flicker || o.userData.blink)) spriteCache.push(o); }); } U.uTime.value += dt; const t = U.uTime.value;
   U.uHeat.value += (heatTarget - U.uHeat.value) * Math.min(1, dt * 0.8);
