@@ -88,6 +88,8 @@ const css = `
 .w4w-acct{display:inline-block;margin-top:28px;font-size:14.5px;color:var(--mute);text-decoration:underline;text-underline-offset:4px}
 .w4w-acct:hover,.w4w-acct:focus-visible{color:var(--ink)}
 .w4w-gatebox{margin-top:36px}
+.w4w-beta{display:inline-block;margin-top:18px;padding:6px 10px;font-size:13px;line-height:1;color:#2c3440;text-decoration:none;border-radius:6px}
+.w4w-beta:hover,.w4w-beta:focus-visible{color:#8f9aa8;outline:none;background:#ffffff08}
 .w4w-link{background:none;border:0;color:#b9c3d0;font:inherit;font-size:14px;text-decoration:underline;text-underline-offset:4px;cursor:pointer;padding:8px 0}
 .w4w-panel{width:min(520px,100%);display:grid;gap:12px;text-align:left}
 .w4w-note{font-size:14px;color:#c3ccd8;margin:0;line-height:1.55}
@@ -216,6 +218,12 @@ export default async function W4WPage(props: { params: Promise<{ locale: string 
         <Link className="w4w-acct" href="/account">
           One Qubic Church account, no personal data. How it works
         </Link>
+        <div>
+          {/* Quiet door for the beta testers: opens the invite gate at the top of the page. */}
+          <a aria-label="Beta testers: enter with an invite" className="w4w-beta" href="/w4w?invite" title="Beta">
+            β
+          </a>
+        </div>
       </section>
     </main>
   )
