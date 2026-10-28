@@ -52,7 +52,7 @@ export function W4WSnow() {
     let t = 0
     const draw = () => {
       // the snow eases off as you read further down: the thaw
-      const fade = 1 - 0.6 * Math.min(1, scrollY / Math.max(1, document.body.scrollHeight - innerHeight))
+      const fade = 1 - 0.75 * (Number(document.documentElement.style.getPropertyValue('--w4w-thaw')) || 0)
       g.clearRect(0, 0, w, h)
       for (const f of flakes) {
         const img = SP[f.s]!
@@ -91,15 +91,18 @@ export function W4WFrost() {
   useEffect(() => {
     const root = document.documentElement
     const on = () => {
-      const max = Math.max(1, document.body.scrollHeight - innerHeight)
-      const k = Math.min(1, scrollY / max)
-      root.style.setProperty('--w4w-frost', String(1 - k * 0.7))
+      const main = document.querySelector('.w4w') as HTMLElement | null
+      const end = main ? main.offsetTop + main.offsetHeight : document.body.scrollHeight
+      const k = Math.min(1, Math.max(0, scrollY / Math.max(1, end - innerHeight)))
+      root.style.setProperty('--w4w-frost', String(1 - k * 0.85))
       root.style.setProperty('--w4w-thaw', String(k))
+      // warmth comes late: nothing in the first third, full at the end
+      root.style.setProperty('--w4w-warmth', String(Math.min(1, Math.max(0, (k - 0.3) / 0.6)) ** 1.3))
     }
     on()
     addEventListener('scroll', on, { passive: true })
     addEventListener('resize', on)
-    return () => { removeEventListener('scroll', on); removeEventListener('resize', on); root.style.removeProperty('--w4w-frost'); root.style.removeProperty('--w4w-thaw') }
+    return () => { removeEventListener('scroll', on); removeEventListener('resize', on); root.style.removeProperty('--w4w-frost'); root.style.removeProperty('--w4w-thaw'); root.style.removeProperty('--w4w-warmth') }
   }, [])
   return <div aria-hidden className="w4w-frost" />
 }

@@ -25,7 +25,7 @@ export const metadata: Metadata = {
 
 const css = `
 /* cold is the enemy (blue, snow, frost); the only warm light is the tube glow of energy */
-.w4w{--bg:color-mix(in srgb,#06080c,#0e131a calc(var(--w4w-thaw,0)*100%));--ink:#e8edf4;--mute:#8d97a7;--frost:#a6e6ff;--warm:#ffb35a;--line:#1c222c;background:var(--bg);color:var(--ink);font-family:var(--bpp-sans),system-ui,sans-serif;overflow:hidden;position:relative}
+.w4w{--bg:#06080c;clip-path:inset(0);--ink:#e8edf4;--mute:#8d97a7;--frost:#a6e6ff;--warm:#ffb35a;--line:#1c222c;background:var(--bg);color:var(--ink);font-family:var(--bpp-sans),system-ui,sans-serif;overflow:hidden;position:relative}
 .w4w *{box-sizing:border-box}
 .w4w::after{content:"";position:fixed;inset:0;pointer-events:none;opacity:.07;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 .w4w-hero{isolation:isolate;position:relative;min-height:100vh;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);align-items:center;max-width:1360px;margin:0 auto;padding:96px clamp(16px,4vw,48px) 48px;gap:clamp(16px,3vw,48px)}
@@ -47,7 +47,10 @@ const css = `
 .w4w-cell span{display:block;margin-top:6px;font-size:12px;color:#a8835e}
 .w4w-snow{position:fixed;inset:0;width:100vw;height:100vh;z-index:2;pointer-events:none}
 .w4w-wisps{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+.w4w-wisps{opacity:calc(1 - .85 * var(--w4w-thaw,0))}
 .w4w-wisps i{position:absolute;border-radius:50%;opacity:.55;will-change:transform}
+/* the thaw: warm light rises from below as you read down, the cold gives way */
+.w4w-warm{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:var(--w4w-warmth,0);background:radial-gradient(90% 60% at 50% 78%,#ff8a2a55 0%,#ff6a1a22 40%,transparent 72%),radial-gradient(45% 30% at 50% 72%,#ffc46b30,transparent 70%)}
 .w4w-wisps i:nth-child(1){width:46vw;height:22vw;left:38%;top:18%;background:radial-gradient(closest-side,#5fc4ff30,transparent 70%);animation:w4w-drift 26s ease-in-out infinite alternate}
 .w4w-wisps i:nth-child(2){width:38vw;height:16vw;left:52%;top:58%;background:radial-gradient(closest-side,#9fe2ff26,transparent 70%);animation:w4w-drift 34s ease-in-out -9s infinite alternate-reverse}
 .w4w-wisps i:nth-child(3){width:52vw;height:20vw;left:-8%;top:62%;background:radial-gradient(closest-side,#3f8fd82a,transparent 70%);animation:w4w-drift 40s ease-in-out -16s infinite alternate}
@@ -78,8 +81,12 @@ const css = `
 .w4w-stage-row{display:flex;justify-content:space-between;gap:16px;margin-top:14px;font-size:14px;color:var(--mute)}
 .w4w-stage-row b{color:var(--frost);font-weight:600}
 .w4w-stage p{font-size:17px;line-height:1.65;color:#c3ccd8;max-width:640px;margin:28px 0 0}
-.w4w-end{max-width:680px;margin:96px auto 0;padding:0 clamp(16px,4vw,32px) 96px;text-align:center}
+.w4w-end{position:relative;z-index:5;max-width:680px;margin:96px auto 0;padding:0 clamp(16px,4vw,32px) 160px;text-align:center}
+.w4w::before{content:"";position:absolute;left:0;right:0;bottom:0;height:220px;z-index:4;pointer-events:none;background:linear-gradient(to bottom,transparent,#101010 96%)}
 .w4w-end .tag{font-family:var(--bpp-nx),sans-serif;font-size:clamp(30px,4vw,44px);line-height:1.15;margin:0;color:var(--ink)}
+.w4w-word{display:block;font-family:var(--bpp-nx),sans-serif;font-weight:500;font-size:clamp(56px,9vw,112px);line-height:.9;letter-spacing:.01em;margin:0 0 18px;color:#c9d3df}
+.w4w-word b{font-weight:500;color:var(--ink);text-shadow:0 0 18px #ffb35a88,0 0 50px #ff7a1a44}
+.w4w-word b.f{color:#ffc27a}
 .w4w-end .tag span{color:var(--warm)}
 .w4w-acct{display:inline-block;margin-top:28px;font-size:14.5px;color:var(--mute);text-decoration:underline;text-underline-offset:4px}
 .w4w-acct:hover,.w4w-acct:focus-visible{color:var(--ink)}
@@ -127,6 +134,7 @@ export default async function W4WPage(props: { params: Promise<{ locale: string 
       <style>{css}</style>
 
       <W4WFrost />
+      <div aria-hidden className="w4w-warm" />
       <section className="w4w-hero">
         <div aria-hidden className="w4w-wisps">
           <i />
@@ -203,9 +211,10 @@ export default async function W4WPage(props: { params: Promise<{ locale: string 
       <section className="w4w-end">
         <div aria-hidden className="w4w-signal" />
         <p className="w4w-listen">The first signal comes on 11.11.2026, when the epoch turns.</p>
+        <p aria-label="W4W: Web4World, a survival" className="w4w-word">
+          <b>W</b>eb<b className="f">4</b><b>W</b>orld
+        </p>
         <p className="tag">
-          A Web4 world survival.
-          <br />
           <span>Survive together,</span> or not at all.
         </p>
         <Link className="w4w-acct" href="/account">
