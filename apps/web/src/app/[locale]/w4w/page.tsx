@@ -79,7 +79,8 @@ const css = `
 .w4w-stage-row b{color:var(--frost);font-weight:600}
 .w4w-stage p{font-size:17px;line-height:1.65;color:#c3ccd8;max-width:640px;margin:28px 0 0}
 .w4w-end{position:relative;z-index:5;max-width:680px;margin:96px auto 0;padding:0 clamp(16px,4vw,32px) 160px;text-align:center}
-.w4w::before{content:"";position:absolute;left:0;right:0;bottom:0;height:220px;z-index:4;pointer-events:none;background:linear-gradient(to bottom,transparent,#101010 96%)}
+/* the page (snow and frost included: they are clipped to it) melts into the site background instead of ending on a hard line */
+.w4w{-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 150px),transparent);mask-image:linear-gradient(to bottom,#000 calc(100% - 150px),transparent)}
 .w4w-end .tag{font-family:var(--bpp-nx),sans-serif;font-size:clamp(30px,4vw,44px);line-height:1.15;margin:0;color:var(--ink)}
 .w4w-word{display:block;font-family:var(--bpp-nx),sans-serif;font-weight:500;font-size:clamp(56px,9vw,112px);line-height:.9;letter-spacing:.01em;margin:0 0 18px;color:#c9d3df}
 .w4w-word b{font-weight:500;color:var(--ink);text-shadow:0 0 18px #ffb35a88,0 0 50px #ff7a1a44}
