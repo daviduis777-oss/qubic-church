@@ -179,14 +179,14 @@ input.name,textarea.name{width:100%;padding:11px 12px;border-radius:10px;border:
 body.intro #dock,body.intro #feed,body.intro #online,body.intro #meter{visibility:hidden}
 /* dialogue box: Maria stands at the left, her words sit in the box */
 #intro .card{position:relative;width:min(900px,100%);min-height:200px;padding:22px 26px 18px calc(min(60vh,480px) * .714 + 4px);border:1px solid rgba(232,176,92,.42);border-radius:16px;background:linear-gradient(rgba(12,15,26,.9),rgba(8,10,18,.94));box-shadow:0 0 0 1px rgba(0,0,0,.4),0 18px 60px rgba(0,0,0,.55)}
-#intro img{position:absolute;left:-18px;bottom:0;height:min(60vh,480px);width:auto;max-width:none;pointer-events:none;filter:drop-shadow(0 10px 30px rgba(0,0,0,.6));-webkit-mask-image:linear-gradient(#000 82%,transparent);mask-image:linear-gradient(#000 82%,transparent)}
+#intro img{position:absolute;left:-18px;bottom:0;height:min(60vh,480px);width:auto;max-width:none;pointer-events:none;-webkit-mask-image:linear-gradient(#000 82%,transparent);mask-image:linear-gradient(#000 82%,transparent)}
 #intro .card>div{position:relative}
 #intro .who{display:inline-block;margin-top:-36px;padding:5px 12px;border:1px solid rgba(232,176,92,.5);border-radius:8px;background:#0d1020;font-family:var(--f-label);font-size:11px;letter-spacing:.16em;color:var(--gold)}
 #intro p{margin:12px 0 14px;font-family:var(--f-display);font-weight:600;font-size:clamp(22px,2.7vw,31px);line-height:1.16;color:var(--cream);min-height:3.5em;text-wrap:pretty}
 #intro .row{justify-content:flex-end;gap:10px}
 #intro #introSkip{margin-right:auto}
 /* Maria standing beside her panel */
-#mariaStand{position:fixed;z-index:3;bottom:110px;right:calc(min(420px,100vw - 32px) + max(16px,env(safe-area-inset-right)) - 40px);height:min(70vh,600px);pointer-events:none;display:none;filter:drop-shadow(0 10px 30px rgba(0,0,0,.6));-webkit-mask-image:linear-gradient(#000 85%,transparent);mask-image:linear-gradient(#000 85%,transparent)}
+#mariaStand{position:fixed;z-index:3;bottom:110px;right:calc(min(420px,100vw - 32px) + max(16px,env(safe-area-inset-right)) - 40px);height:min(70vh,600px);pointer-events:none;display:none;-webkit-mask-image:linear-gradient(#000 85%,transparent);mask-image:linear-gradient(#000 85%,transparent)}
 #mariaStand.on{display:block}
 
 @media (max-width: 760px){
@@ -279,6 +279,8 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
+import { FXAAShader } from 'three/addons/shaders/FXAAShader.js';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 
@@ -295,7 +297,7 @@ const LITE = store.get('w4w.gfx') === 'lite';
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: LITE ? 'low-power' : 'high-performance' });
 // quality: never more than 1.5x pixels; drops further on its own if frames run slow
 // a pixel budget: a big monitor gets fewer pixels per point instead of more work for the graphics card
-const dprFor = () => Math.max(0.7, Math.min(devicePixelRatio, LITE ? 1 : 1.25, Math.sqrt((LITE ? 0.9e6 : 1.5e6) / (innerWidth * innerHeight))));
+const dprFor = () => Math.max(MOBILE ? 0.75 : (LITE ? 0.85 : 1), Math.min(devicePixelRatio, LITE ? 1 : 1.25, Math.sqrt((LITE ? 1.2e6 : 2.2e6) / (innerWidth * innerHeight))));
 let DPR = dprFor(); renderer.setPixelRatio(DPR);
 renderer.setSize(innerWidth, innerHeight);
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -324,6 +326,9 @@ const composer = new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene, camera));
 if (!LITE) composer.addPass(new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.55, 0.45, 0.9));
 composer.addPass(new OutputPass());
+// edge smoothing: one cheap pass instead of rendering every pixel several times
+const fxaa = new ShaderPass(FXAAShader); composer.addPass(fxaa);
+const fxaaSize = () => fxaa.material.uniforms.resolution.value.set(1 / (innerWidth * renderer.getPixelRatio()), 1 / (innerHeight * renderer.getPixelRatio())); fxaaSize();
 
 /* ================= snow & heat shader ================= */
 const U = { uHeat: { value: 5.5 }, uSnow: { value: 1 }, uTime: { value: 0 }, uBoost: { value: 0 } };
@@ -1039,9 +1044,9 @@ function finalStep() {
   panel('church', 'Final step', own ? 'Your own rig' : `${t.pick} · ${t.cost} (example)`, 'maria.png', `
     ${S.weather === 'storm' ? '<p class="say" style="border-color:var(--red)">Storm this epoch (demo): the pool lost seats. Renting now may not pay off.</p>' : ''}
     <div class="consent">
-      <p>Pool: CODED. Pool fee 7% of what this rig mines: 3% CODED ecosystem, 4% Qubic Church.</p>
-      <p class="fund">1% of what this rig mines goes to the Qubic Church fund (part of the 4% Qubic Church share).</p>
-      <p>You receive 93%. Paid weekly by the CODED pool directly to your wallet.</p>
+      <p>Pool: Qubic Church. Pool fee 7%.</p>
+      <p class="fund">4% of what this rig mines goes to Qubic Church.</p>
+      <p>You receive 93%. Paid weekly by the pool directly to your wallet.</p>
       <p style="margin:0">Anna's memory records this rig, its hardware and its contribution. Recorded, not promised: no rewards or returns are promised.</p>
     </div>
     ${own ? '' : '<p class="mute" style="font-size:13px">The rental may not pay off. You pay the provider from your own account.</p>'}
@@ -1061,7 +1066,7 @@ async function settle([q, r]) {
   endPlot(); const own = draft.tier === 'own'; const t = TIERS.find(x => x.id === draft.tier);
   const h = { nick: draft.name, q, r, gpus: own ? 1 : t.gpus, hw: own ? '1× RTX 5070 Ti (own)' : t.pick, state: 'building', phase: 0, sol: own ? 600 : t.sol, since: EPOCH, createdAt: Date.now(), tier: own ? 'own' : t.id, wood: 0, lastWood: 0, welcomes: [] };
   await saveMe(h); flyTo(HX(q, r));
-  record(`${h.nick} said YES to the final step: ${h.hw}, 1% to the Qubic Church fund`);
+  record(`${h.nick} said YES to the final step: ${h.hw}, 4% to Qubic Church`);
   record(`${h.nick} broke ground at plot ${q},${r}`);
   room?.emit('settled', { nick: h.nick }).catch(() => {});
   say(own ? `Got it, ${esc(h.nick)}. Start the CODED miner on your machine with your worker name. Your house lights up when the pool sees it.` : `Renting ${esc(h.hw)} for you, ${esc(h.nick)}. In real life the first solutions take 10 to 30 minutes. Here it's sped up.`);
@@ -1310,7 +1315,7 @@ async function openChronicle(force = true) {
   }
   rows.sort((a, b) => (b.at || 0) - (a.at || 0) || (b.n || 0) - (a.n || 0));
   if (!force && panelKind !== 'chronicle') return;
-  panel('chronicle', 'Chronicle', `Anna's memory · ${rows.length} records · nothing is deleted`, null, `
+  panel('chronicle', 'Chronicle', `Anna's memory · ${rows.length} records · carved in stone`, null, `
     <p class="say" style="font-size:14px">Every house keeps its own journal, open to everyone. Each record carries the hash of the one before it, so changing a word in the past breaks every hash after it. Once an epoch, the last hash is meant to be anchored in Qubic.</p>
     <div class="row" style="margin-bottom:8px"><button class="btn" id="verify">Check every chain</button><span class="tag" id="vres"></span></div>
     <ul class="chron">${rows.slice(0, 200).map(r => `<li><span class="n">#${r.n}</span><span><b style="color:var(--cream)">${esc(r.author)}</b> · E${r.epoch} · ${esc(r.text)}${r.demo ? ' <span class="tag">demo history</span>' : ''}</span><span class="h">${esc(String(r.hash).slice(0, 32))}…  ← ${esc(String(r.prev).slice(0, 8))}</span></li>`).join('')}</ul>`);
@@ -1355,7 +1360,7 @@ Hard rules:
 - Never say Come-from-Beyond (CfB) is Satoshi. If asked, say the question is open and point to the addresses and books, the player decides.
 - Quote CfB only from this list, word for word, with its date: "Just stick to realistic assumptions" (Discord #price-discussion, 27.10.2026). "It looks exactly as BTC in early days" (same day). Otherwise don't quote him.
 - This is a prototype: no rig is really rented here, numbers are estimates or demo.
-Facts you may use: Qubic is a network where miners do useful work for Aigarth, an AI project. 676 computors, the epoch changes every Wednesday 12:00 UTC. BPP-9000 is a small network miners grow to call each hour of bitcoin UP or DOWN; live calls start 18 November 2026; the Qubic team says its scores are not price forecasts. Pool for the game: CODED, fee 7% (3% CODED, 4% Qubic Church, of which 1% goes to the Qubic Church fund), player gets 93%.
+Facts you may use: Qubic is a network where miners do useful work for Aigarth, an AI project. 676 computors, the epoch changes every Wednesday 12:00 UTC. BPP-9000 is a small network miners grow to call each hour of bitcoin UP or DOWN; live calls start 18 November 2026; the Qubic team says its scores are not price forecasts. Pool for the game: Qubic Church, fee 7%, of which 4% goes to Qubic Church; player gets 93%.
 Game rules: warmth against frost. Warmth comes mostly from people (rigs kept on, neighbours online, orders done, wood on the fire); raw power counts less. When frost wins, the storm grows. Houses have five parts: machine hall (the only thing money grows), porch lanterns (orders done for others), archive (collections, not for sale), epoch garden (time in the world), facade.
 You can use tools to read the town and to open screens for the player. Open a screen when the player wants to do something there.`;
 let chat = [], chatCtl = null;
@@ -1423,7 +1428,7 @@ const BANK = [
   [['warm', 'frost', 'cold', 'storm', 'тепло', 'мороз', 'холод', 'метел'], () => `Warmth ${Math.round(S.town.W)} against frost ${Math.round(S.town.F)}. ${S.town.B >= 0 ? 'The town holds.' : 'The frost is winning.'} Most warmth comes from people: rigs kept on, neighbours here, promises kept, wood on the fire.`, 'warmth'],
   [['build me', 'rent', 'rig', 'риг', 'аренд', 'собери'], () => "Come to the church. I'll show you three rigs, or you can connect your own.", 'connect'],
   [['own rig', 'my machine', 'свой риг', 'своя машин'], () => 'Run the CODED miner on your own machine with your worker name. Your house lights up when the pool sees it.'],
-  [['fee', '1%', '7%', 'комисси', 'fund', 'фонд'], () => 'The pool is CODED. Its fee is 7%: 3% to the CODED ecosystem, 4% to Qubic Church, and 1% of that goes to the Qubic Church fund. You keep 93%. I show this on the final step, every time.'],
+  [['fee', '1%', '7%', 'комисси', 'fund', 'фонд'], () => 'The pool is Qubic Church. Its fee is 7%, and 4% of what your rig mines goes to Qubic Church. You keep 93%. I show this on the final step, every time.'],
   [['profit', 'earn', 'money', 'pay off', 'income', 'доход', 'заработ', 'окуп', 'прибыл'], () => 'Nothing here is promised. Recorded, not promised. A rented rig may not pay off, and in a bad epoch it surely won\'t.'],
   [['price', 'pump', 'moon', 'цена', 'курс', 'памп'], () => "I don't talk about prices. Come-from-Beyond's advice fits: \"Just stick to realistic assumptions\" (Discord, 27.10.2026)."],
   [['satoshi', 'сатоши'], () => 'That question is open. Read the addresses and the books in the Library, then decide for yourself. I won\'t decide it for you.', 'library'],
@@ -1433,7 +1438,7 @@ const BANK = [
   [['bpp', 'predict', 'bitcoin', 'прогноз', 'биткоин'], () => 'BPP-9000 is a small network the miners grow to call each hour of bitcoin UP or DOWN. Live calls start on 18 November. The Qubic team is clear that its scores are not price forecasts. The Observatory watches it.', 'observatory'],
   [['epoch', 'wednesday', 'эпох', 'среда'], () => `This is epoch ${EPOCH}. A new one begins every Wednesday at 12:00 UTC. The church bell rings and the epoch is sealed in the Chronicle.`],
   [['676', 'computor', 'компьютор'], () => '676 computors run Qubic. 451 keep their seats, 225 are contested every epoch by the miners\' work.'],
-  [['pool', 'coded', 'пул'], () => 'Our pool partner is CODED. One pool, two doors: this game, and the classic pool page.'],
+  [['pool', 'coded', 'пул'], () => 'The pool is Qubic Church. One pool, two doors: this game, and the classic pool page.'],
   [['order', 'board', 'заказ', 'доск'], () => 'An order is a public promise. Do it and the person confirms: you get a lantern and their letter. Say no in time and it costs nothing. Silence leaves a cracked lantern until you fix it.', 'orders'],
   [['lantern', 'cracked', 'фонар', 'трещ'], () => 'Lanterns on a porch are promises kept for others. A cracked one is a promise not kept yet. It mends when you make it right; the record stays.'],
   [['archive', 'collection', 'seal', 'коллекц', 'архив', 'печат'], () => 'The archive holds what really happened to you: epoch seals, letters, hardware cards. None of it can be bought or sold.'],
@@ -1551,10 +1556,10 @@ let lastFrame = 0, lastInput = performance.now(), shadowClock = 0, spriteCache =
 function loop(now = performance.now()) {
   requestAnimationFrame(loop);
   // 60 frames a second while you play, 30 when the town is just being watched; nothing at all in a hidden tab
-  const busy = !LITE && (now - lastInput < 1500 || fly || U.uBoost.value > 0.05);
+  const busy = !LITE;
   // measure the screen once: how long one refresh takes
   if (hzN < 40) { if (hzLast) { const d = now - hzLast; if (d > 4 && d < 40) { hzSum += d; hzN++; } } hzLast = now; if (hzN === 40) refreshMs = hzSum / hzN; }
-  const want = busy && document.hasFocus() ? 1000 / 60 : 1000 / 30;
+  const want = busy && !document.hidden ? 1000 / 60 : 1000 / 30;
   const every = Math.max(1, Math.round(want / refreshMs));
   if (++tick % every) return;
   const minGap = every * refreshMs;
@@ -1562,7 +1567,7 @@ function loop(now = performance.now()) {
   const dt = Math.min(clock.getDelta(), 0.05);
   // if frames come in slow for a few seconds, render fewer pixels
   frames++; sampleT += dt; if (sampleT > 3) { const fps = frames / sampleT; frames = 0; sampleT = 0;
-    if (fps < 1000 / minGap * 0.8 && DPR > 1) { if (++slow >= 2) { DPR = Math.max(1, DPR - 0.25); renderer.setPixelRatio(DPR); composer.setPixelRatio?.(DPR); composer.setSize(innerWidth, innerHeight); slow = 0; } } else slow = 0; }
+    if (fps < 1000 / minGap * 0.8 && DPR > 1) { if (++slow >= 2) { DPR = Math.max(1, DPR - 0.25); renderer.setPixelRatio(DPR); composer.setPixelRatio?.(DPR); composer.setSize(innerWidth, innerHeight); fxaaSize(); slow = 0; } } else slow = 0; }
   if (HOVER_MAT) HOVER_MAT.emissiveIntensity = 0.26 + 0.1 * Math.sin(U.uTime.value * 4);
   if ((shadowClock += dt) > 1) { shadowClock = 0; renderer.shadowMap.needsUpdate = true; }
   if ((spriteClock += dt) > 1) { spriteClock = 0; spriteCache = []; scene.traverse(o => { if (o.isSprite && (o.userData.flicker || o.userData.blink)) spriteCache.push(o); }); } U.uTime.value += dt; const t = U.uTime.value;
@@ -1572,7 +1577,7 @@ function loop(now = performance.now()) {
   if (S.town.B > 0 && (waveClock += dt) > Math.max(2.2, 6 - S.town.B * 0.15)) { waveClock = 0; pulse(0.25); }
   snowNow += (snowTarget - snowNow) * Math.min(1, dt * 0.6);
   if (snow) { snow.material.size = 0.11 + snowNow * 0.07; snow.material.opacity = 0.55 + Math.min(0.4, snowNow * 0.25); }
-  scene.fog.density += ((0.02 + snowNow * 0.014) - scene.fog.density) * dt;
+  { const far = THREE.MathUtils.clamp(24 / camera.position.distanceTo(controls.target), 0.5, 1); scene.fog.density += ((0.02 + snowNow * 0.014) * far - scene.fog.density) * Math.min(1, dt * 3); }
   moon.intensity += ((1.35 - snowNow * 0.35) - moon.intensity) * dt;
   if (coreParts && !REDUCED) {
     { const C = coreParts, br = 0.5 + 0.5 * Math.sin(t * 1.2), m = S.town.melt || 0;
@@ -1609,6 +1614,6 @@ function loop(now = performance.now()) {
   controls.update(); if (LITE) renderer.render(scene, camera); else composer.render(); placeLabels(); sendPresence();
 }
 requestAnimationFrame(loop);
-addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); DPR = Math.min(DPR, dprFor()); renderer.setPixelRatio(DPR); composer.setPixelRatio?.(DPR); renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight); });
+addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); DPR = Math.min(DPR, dprFor()); renderer.setPixelRatio(DPR); composer.setPixelRatio?.(DPR); renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight); fxaaSize(); });
 window.__w4w = { S, settle, freePlots, openMaria, ask, addWood, refreshTown, draft: v => (draft = v), camera, controls, updateIce, renderer, scene, __composer: LITE ? null : composer };
 </script>
