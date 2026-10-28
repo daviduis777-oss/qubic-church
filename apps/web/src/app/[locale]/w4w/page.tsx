@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { setRequestLocale } from 'next-intl/server'
 import { bppFonts } from '@/components/bpp/fonts'
+import { W4WFrost, W4WSnow } from '@/components/w4w/W4WCold'
 import { W4WCountdown } from '@/components/w4w/W4WCountdown'
 import { W4WGate } from '@/components/w4w/W4WGate'
 import { getSession } from '@/lib/forum/auth'
@@ -23,14 +24,15 @@ export const metadata: Metadata = {
 }
 
 const css = `
-.w4w{--bg:#07080b;--ink:#e8edf4;--mute:#8d97a7;--frost:#a6e6ff;--warm:#ffb35a;--line:#1c222c;background:var(--bg);color:var(--ink);font-family:var(--bpp-sans),system-ui,sans-serif;overflow:hidden;position:relative}
+/* cold is the enemy (blue, snow, frost); the only warm light is the tube glow of energy */
+.w4w{--bg:color-mix(in srgb,#06080c,#0e131a calc(var(--w4w-thaw,0)*100%));--ink:#e8edf4;--mute:#8d97a7;--frost:#a6e6ff;--warm:#ffb35a;--line:#1c222c;background:var(--bg);color:var(--ink);font-family:var(--bpp-sans),system-ui,sans-serif;overflow:hidden;position:relative}
 .w4w *{box-sizing:border-box}
 .w4w::after{content:"";position:fixed;inset:0;pointer-events:none;opacity:.07;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
-.w4w-hero{position:relative;min-height:100vh;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);align-items:center;max-width:1360px;margin:0 auto;padding:96px clamp(16px,4vw,48px) 48px;gap:clamp(16px,3vw,48px)}
+.w4w-hero{isolation:isolate;position:relative;min-height:100vh;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);align-items:center;max-width:1360px;margin:0 auto;padding:96px clamp(16px,4vw,48px) 48px;gap:clamp(16px,3vw,48px)}
 .w4w-art{position:relative;aspect-ratio:1;width:100%;max-width:680px;justify-self:end}
 .w4w-art img{width:100%;height:100%;object-fit:cover;display:block;-webkit-mask-image:radial-gradient(closest-side,#000 72%,transparent 100%);mask-image:radial-gradient(closest-side,#000 72%,transparent 100%)}
 .w4w-art::before{content:"";position:absolute;inset:12%;background:radial-gradient(circle at 60% 50%,#7fd8ff2e,transparent 65%);filter:blur(30px);z-index:-1}
-.w4w-copy{position:relative;z-index:1}
+.w4w-copy{position:relative;z-index:3}
 .w4w-mark{font-family:var(--bpp-nx),sans-serif;font-weight:500;font-size:clamp(88px,13vw,184px);line-height:.8;letter-spacing:.02em;margin:0;color:var(--ink);text-shadow:0 0 40px #a6e6ff33}
 .w4w-sub{font-family:var(--bpp-eng),sans-serif;font-size:clamp(14px,1.6vw,18px);letter-spacing:.32em;margin:18px 0 0;color:var(--frost)}
 .w4w-pitch{font-size:clamp(17px,1.7vw,20px);line-height:1.55;color:#c9d2de;margin:28px 0 0;max-width:30ch}
@@ -38,9 +40,26 @@ const css = `
 .w4w-date{font-size:15px;color:var(--mute);margin:0}
 .w4w-date b{color:var(--warm);font-weight:600;letter-spacing:.02em}
 .w4w-count{display:flex;gap:10px;min-height:76px}
-.w4w-cell{border:1px solid var(--line);background:#0c0f14cc;border-radius:10px;padding:10px 14px 8px;min-width:84px}
-.w4w-cell b{display:block;font-family:var(--bpp-nx),sans-serif;font-weight:400;font-size:40px;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums}
-.w4w-cell span{font-size:12px;color:var(--mute)}
+.w4w-cell{position:relative;border:1px solid #3a2616;border-radius:22px 22px 10px 10px;padding:14px 16px 10px;min-width:88px;text-align:center;background:radial-gradient(120% 90% at 50% 40%,#2a1607 0%,#120b07 60%,#0a0807 100%);box-shadow:inset 0 0 18px #ff7a1a22,0 0 30px #ff7a1a14}
+.w4w-cell::before{content:"";position:absolute;inset:6px 8px 26px;border-radius:16px 16px 4px 4px;background:repeating-linear-gradient(90deg,#ffffff07 0 1px,transparent 1px 5px),repeating-linear-gradient(0deg,#ffffff06 0 1px,transparent 1px 5px);pointer-events:none}
+.w4w-cell::after{content:"";position:absolute;left:12%;right:55%;top:5px;height:22%;border-radius:20px;background:linear-gradient(#ffffff1c,#ffffff00);pointer-events:none}
+.w4w-cell b{display:block;font-family:var(--bpp-nx),sans-serif;font-weight:400;font-size:44px;line-height:1;color:#ffc27a;font-variant-numeric:tabular-nums;text-shadow:0 0 4px #ff9a3c,0 0 14px #ff7a1acc,0 0 34px #ff6a0077}
+.w4w-cell span{display:block;margin-top:6px;font-size:12px;color:#a8835e}
+.w4w-snow{position:absolute;inset:0;width:100%;height:100%;z-index:2;pointer-events:none}
+.w4w-wisps{position:absolute;inset:-10% -5%;z-index:1;pointer-events:none;overflow:hidden}
+.w4w-wisps i{position:absolute;border-radius:50%;filter:blur(60px);mix-blend-mode:screen;opacity:.5}
+.w4w-wisps i:nth-child(1){width:46vw;height:22vw;left:38%;top:18%;background:radial-gradient(closest-side,#5fc4ff55,transparent);animation:w4w-drift 26s ease-in-out infinite alternate}
+.w4w-wisps i:nth-child(2){width:38vw;height:16vw;left:52%;top:58%;background:radial-gradient(closest-side,#9fe2ff44,transparent);animation:w4w-drift 34s ease-in-out -9s infinite alternate-reverse}
+.w4w-wisps i:nth-child(3){width:52vw;height:20vw;left:-8%;top:62%;background:radial-gradient(closest-side,#3f8fd844,transparent);animation:w4w-drift 40s ease-in-out -16s infinite alternate}
+@keyframes w4w-drift{0%{transform:translate3d(-6%,2%,0) scale(1) rotate(-4deg)}100%{transform:translate3d(8%,-4%,0) scale(1.18) rotate(5deg)}}
+.w4w-frost{position:fixed;inset:0;z-index:3;pointer-events:none;opacity:calc(.75 * var(--w4w-frost,1));background:radial-gradient(ellipse at 50% 45%,transparent 52%,#9fd8ff14 70%,#bfe8ff3d 100%),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1600' height='1000' preserveAspectRatio='none'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .04' numOctaves='5' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .8 0 0 0 0 .92 0 0 0 0 1 0 0 0 2.4 -1.25'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E");background-size:100% 100%;-webkit-mask-image:radial-gradient(ellipse at 50% 45%,transparent 48%,#000 96%);mask-image:radial-gradient(ellipse at 50% 45%,transparent 48%,#000 96%)}
+.w4w-art img{filter:saturate(.9) contrast(1.04)}
+.w4w-signal{position:relative;width:14px;height:14px;margin:0 auto 40px;border-radius:50%;background:#bfeaff;box-shadow:0 0 14px #7fd8ff,0 0 40px #4fb8ff88;opacity:calc(.35 + .65 * var(--w4w-thaw,0))}
+.w4w-signal::before,.w4w-signal::after{content:"";position:absolute;inset:-6px;border-radius:50%;border:1px solid #9fdcff88;animation:w4w-ping 4.2s ease-out infinite}
+.w4w-signal::after{animation-delay:2.1s}
+@keyframes w4w-ping{0%{transform:scale(.6);opacity:.9}100%{transform:scale(6);opacity:0}}
+.w4w-listen{font-size:15px;color:#9fdcff;margin:0 0 40px;letter-spacing:.02em}
+@media (prefers-reduced-motion:reduce){.w4w-wisps i,.w4w-signal::before,.w4w-signal::after{animation:none}}
 .w4w-live{font-family:var(--bpp-nx),sans-serif;font-size:36px;color:var(--warm)}
 .w4w-lore{position:relative;max-width:680px;margin:0 auto;padding:40px clamp(16px,4vw,32px) 24px}
 .w4w-lore h2{font-family:var(--bpp-nx),sans-serif;font-weight:500;font-size:clamp(44px,6vw,64px);line-height:1;margin:0 0 32px;color:var(--ink)}
@@ -107,7 +126,14 @@ export default async function W4WPage(props: { params: Promise<{ locale: string 
     <main className={`w4w ${bppFonts}`}>
       <style>{css}</style>
 
+      <W4WFrost />
       <section className="w4w-hero">
+        <div aria-hidden className="w4w-wisps">
+          <i />
+          <i />
+          <i />
+        </div>
+        <W4WSnow />
         <div className="w4w-copy">
           <h1 className="w4w-mark">W4W</h1>
           <p className="w4w-sub">THE LONG COLD</p>
@@ -131,11 +157,14 @@ export default async function W4WPage(props: { params: Promise<{ locale: string 
 
       <article className="w4w-lore">
         <h2>The cold came and never left.</h2>
-        <p className="open">Seas froze where they stood. Cities went quiet under the snow. What remains of the world is counted in two things: energy and heat.</p>
-        <p>Every spark is spent with care, because a spark spent is gone.</p>
-        <p>Then a desperate expedition crawled back out of the ice. Few of them returned. Deep in a glacier they had found something older than any map, and not made by any hand on Earth. A machine. And inside it, asleep, someone.</p>
+        <p className="open">Seas froze where they stood. Cities went silent under the snow. The old world disappeared one winter at a time.</p>
+        <p>Now everything comes down to two things: energy and heat. Every spark matters, and every night the cold takes a little more.</p>
+        <p>Then a desperate expedition crawled back out of the ice. Few of them returned, with stories nobody believed. Deep in a glacier they had found something older than any map, and not made by any human hand.</p>
+        <p>A machine.</p>
+        <p>And inside it, someone was sleeping.</p>
         <p className="name">Her name is Anna.</p>
-        <p>The ice around her does not answer to one fire. It answers to many. So every survivor in Aigarth faces the same choice, every single night:</p>
+        <p>The machine was never meant to keep one person alive. The ice around her does not answer to one fire. It answers to many. Signals travel through the frozen ground, and something beneath the surface is listening.</p>
+        <p>So every survivor in Aigarth faces the same choice, every single night:</p>
         <p className="choice">Burn your heat to stay alive. Or give it to the ice.</p>
         <p>Alone, you last a few nights. Together, you might wake what sleeps.</p>
       </article>
@@ -143,15 +172,15 @@ export default async function W4WPage(props: { params: Promise<{ locale: string 
       <section aria-label="How the town survives" className="w4w-laws">
         <div className="w4w-law">
           <h3>Heat is life</h3>
-          <p>Your stove keeps you alive. What you can spare, you can give: to the fire on the plaza, to a neighbour, to the ice.</p>
+          <p>Your stove keeps you alive. What you can spare, you can give: to the fire on the plaza, to a neighbour, to the ice. Nothing is free when the world is frozen.</p>
         </div>
         <div className="w4w-law">
-          <h3>The ice answers to many</h3>
-          <p>No single fire ever moved it. A town might. The more of us keep warm, the wider the ring of light. Too few, and the storm comes in.</p>
+          <h3>No fire survives alone</h3>
+          <p>A single flame cannot hold back an endless winter. The more of us keep the fire alive, the wider the ring of light. Too few, and the storm comes in.</p>
         </div>
         <div className="w4w-law">
           <h3>The cold remembers</h3>
-          <p>Every gift and every silence goes into the Chronicle, chained so it cannot be rewritten. Your name stays there.</p>
+          <p>Every gift and every silence goes into the Chronicle, chained so it cannot be rewritten. The world may forget your face. The record will not forget your name.</p>
         </div>
       </section>
 
@@ -168,9 +197,12 @@ export default async function W4WPage(props: { params: Promise<{ locale: string 
           <span>Stages after this: unknown</span>
         </div>
         <p>The old records speak of phases. The world passes through them the way a body passes through a fever. Each one ends. Each one is followed by something the records never name. Nobody wrote down what comes after the last.</p>
+        <p>Perhaps the machine knows.</p>
       </section>
 
       <section className="w4w-end">
+        <div aria-hidden className="w4w-signal" />
+        <p className="w4w-listen">The first signal comes on 11.11.2026, when the epoch turns.</p>
         <p className="tag">
           A Web4 world survival.
           <br />
