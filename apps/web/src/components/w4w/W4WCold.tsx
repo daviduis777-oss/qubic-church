@@ -11,78 +11,77 @@ export function W4WSnow() {
   useEffect(() => {
     const c = ref.current
     if (!c) return
-    const g = c.getContext('2d')
+    const g = c.getContext('2d', { alpha: true })
     if (!g) return
     const still = matchMedia('(prefers-reduced-motion: reduce)').matches
-    const small = matchMedia('(max-width: 760px)').matches
+    // flakes are drawn from three ready sprites (no gradients per frame), at 1x pixels: snow needs no retina
+    const sprite = (r: number, soft: boolean) => {
+      const s = document.createElement('canvas')
+      const n = Math.ceil(r * 2 + 4)
+      s.width = s.height = n
+      const x = s.getContext('2d')!
+      const gr = x.createRadialGradient(n / 2, n / 2, 0, n / 2, n / 2, n / 2)
+      gr.addColorStop(0, 'rgba(232,244,255,1)')
+      gr.addColorStop(soft ? 0.15 : 0.55, soft ? 'rgba(232,244,255,.55)' : 'rgba(232,244,255,.9)')
+      gr.addColorStop(1, 'rgba(232,244,255,0)')
+      x.fillStyle = gr
+      x.fillRect(0, 0, n, n)
+      return s
+    }
+    const SP = [sprite(1.6, false), sprite(3, false), sprite(9, true)]
     let w = 0
     let h = 0
-    let dpr = 1
-    const N = still ? 70 : small ? 110 : 220
-    type F = { x: number; y: number; z: number; r: number; vy: number; ph: number }
-    const flakes: F[] = []
-    const seed = (f: Partial<F>, top: boolean): F => {
-      const z = Math.random() // 0 far .. 1 near
-      return { x: Math.random() * w, y: top ? -20 - Math.random() * h * 0.2 : Math.random() * h, z, r: 0.6 + z * z * 3.6, vy: 18 + z * 70, ph: Math.random() * 6.28, ...f }
+    type F = { x: number; y: number; z: number; s: number; vy: number; ph: number }
+    let flakes: F[] = []
+    const make = (top: boolean): F => {
+      const z = Math.random()
+      return { x: Math.random() * w, y: top ? -30 : Math.random() * h, z, s: z > 0.97 ? 2 : z > 0.5 ? 1 : 0, vy: 22 + z * 80, ph: Math.random() * 6.28 }
     }
     const size = () => {
-      dpr = Math.min(devicePixelRatio || 1, 1.5)
-      const b = c.getBoundingClientRect()
-      w = b.width
-      h = b.height
-      c.width = Math.round(w * dpr)
-      c.height = Math.round(h * dpr)
-      g.setTransform(dpr, 0, 0, dpr, 0, 0)
+      w = innerWidth
+      h = innerHeight
+      c.width = w
+      c.height = h
+      const want = Math.min(still ? 80 : 260, Math.round((w * h) / 8000))
+      while (flakes.length < want) flakes.push(make(false))
+      flakes = flakes.slice(0, want)
     }
     size()
-    for (let i = 0; i < N; i++) flakes.push(seed({}, false))
-    let visible = true
     let raf = 0
     let last = performance.now()
     let t = 0
-    const io = new IntersectionObserver(([e]) => { visible = !!e?.isIntersecting })
-    io.observe(c)
     const draw = () => {
+      // the snow eases off as you read further down: the thaw
+      const fade = 1 - 0.6 * Math.min(1, scrollY / Math.max(1, document.body.scrollHeight - innerHeight))
       g.clearRect(0, 0, w, h)
       for (const f of flakes) {
-        const a = 0.25 + f.z * 0.6
-        if (f.z > 0.85) {
-          // near flakes are big and out of focus, like snow right in front of your eyes
-          const gr = g.createRadialGradient(f.x, f.y, 0, f.x, f.y, f.r * 2.4)
-          gr.addColorStop(0, `rgba(225,240,255,${a * 0.55})`)
-          gr.addColorStop(1, 'rgba(225,240,255,0)')
-          g.fillStyle = gr
-          g.beginPath()
-          g.arc(f.x, f.y, f.r * 2.4, 0, 6.283)
-          g.fill()
-        } else {
-          g.fillStyle = `rgba(222,238,255,${a})`
-          g.beginPath()
-          g.arc(f.x, f.y, f.r, 0, 6.283)
-          g.fill()
-        }
+        const img = SP[f.s]!
+        const k = f.s === 2 ? 1 + (f.z - 0.97) * 10 : 0.6 + f.z * 0.6
+        const d = img.width * k
+        g.globalAlpha = (f.s === 2 ? 0.28 : 0.3 + f.z * 0.6) * fade
+        g.drawImage(img, f.x - d / 2, f.y - d / 2, d, d)
       }
+      g.globalAlpha = 1
     }
     const step = (now: number) => {
       raf = requestAnimationFrame(step)
-      if (!visible || document.hidden) { last = now; return }
-      if (now - last < 1000 / 40) return
       const dt = Math.min(0.05, (now - last) / 1000)
       last = now
+      if (document.hidden) return
       t += dt
-      const gust = 26 + Math.sin(t * 0.35) * 22 + Math.max(0, Math.sin(t * 0.11)) * 60
+      const gust = 24 + Math.sin(t * 0.35) * 20 + Math.max(0, Math.sin(t * 0.11)) * 55
       for (const f of flakes) {
         f.y += f.vy * dt
         f.x += (gust * (0.4 + f.z) + Math.sin(t * 1.3 + f.ph) * 12) * dt
-        if (f.y > h + 10 || f.x > w + 30) Object.assign(f, seed({ x: f.x > w + 30 ? -20 : Math.random() * w }, f.y > h + 10))
+        if (f.y > h + 30) Object.assign(f, make(true))
+        else if (f.x > w + 30) f.x = -30
       }
       draw()
     }
-    const ro = new ResizeObserver(() => { size(); draw() })
-    ro.observe(c)
+    addEventListener('resize', size)
     if (still) draw()
     else raf = requestAnimationFrame(step)
-    return () => { cancelAnimationFrame(raf); io.disconnect(); ro.disconnect() }
+    return () => { cancelAnimationFrame(raf); removeEventListener('resize', size) }
   }, [])
   return <canvas aria-hidden className="w4w-snow" ref={ref} />
 }
