@@ -19,8 +19,8 @@ export const metadata: Metadata = {
   title: { absolute: 'W4W: The Long Cold · live 11.11.2026' },
   description: DESC,
   alternates: { canonical: `${SITE_URL}/w4w` },
-  openGraph: { type: 'website', title: 'W4W: The Long Cold', description: DESC, url: `${SITE_URL}/w4w`, images: [{ url: `${SITE_URL}/w4w-assets/og-art.jpg`, width: 1200, height: 630 }] },
-  twitter: { card: 'summary_large_image', title: 'W4W: The Long Cold', description: DESC, images: [`${SITE_URL}/w4w-assets/og-art.jpg`] },
+  openGraph: { type: 'website', title: 'W4W: The Long Cold', description: DESC, url: `${SITE_URL}/w4w`, images: [{ url: `${SITE_URL}/w4w-assets/og-w4w.jpg`, width: 1200, height: 630 }] },
+  twitter: { card: 'summary_large_image', title: 'W4W: The Long Cold', description: DESC, images: [`${SITE_URL}/w4w-assets/og-w4w.jpg`] },
 }
 
 const css = `
