@@ -221,7 +221,8 @@ body.intro #dock,body.intro #feed,body.intro #online,body.intro #meter{visibilit
     <span class="chip hide-sm">Epoch <b>237</b></span>
     <span class="chip hide-sm">Power <b id="pow">0</b><span class="mute">sol/h</span></span>
     <span class="chip">Anna <b id="melt">0%</b><span class="mute">thawed</span></span>
-    <button class="chip" id="wx" title="Network weather (demo toggle)">Weather <b id="wxv">Clear</b></button>
+    <button class="chip hide-sm" id="wx" title="Network weather (demo toggle)">Weather <b id="wxv">Clear</b></button>
+    <button class="chip" id="gfx" title="Light graphics: quieter fans, less glow">Graphics <b id="gfxv">Full</b></button>
   </div>
 </div>
 
@@ -290,15 +291,16 @@ const EPOCH = 237;
 
 /* ================= renderer / scene ================= */
 const canvas = $('#c');
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: 'high-performance' });
+const LITE = store.get('w4w.gfx') === 'lite';
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: LITE ? 'low-power' : 'high-performance' });
 // quality: never more than 1.5x pixels; drops further on its own if frames run slow
 // a pixel budget: a big monitor gets fewer pixels per point instead of more work for the graphics card
-const dprFor = () => Math.max(0.7, Math.min(devicePixelRatio, 1.25, Math.sqrt(1.5e6 / (innerWidth * innerHeight))));
+const dprFor = () => Math.max(0.7, Math.min(devicePixelRatio, LITE ? 1 : 1.25, Math.sqrt((LITE ? 0.9e6 : 1.5e6) / (innerWidth * innerHeight))));
 let DPR = dprFor(); renderer.setPixelRatio(DPR);
 renderer.setSize(innerWidth, innerHeight);
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.05;
-renderer.shadowMap.enabled = true;
+renderer.shadowMap.enabled = !LITE;
 renderer.shadowMap.type = THREE.PCFShadowMap;
 renderer.shadowMap.autoUpdate = false; renderer.shadowMap.needsUpdate = true;
 const scene = new THREE.Scene();
@@ -314,13 +316,13 @@ controls.update();
 scene.add(new THREE.HemisphereLight(0x3d4d86, 0x0b0a0e, 0.9));
 const moon = new THREE.DirectionalLight(0xa9bcff, 1.25);
 moon.position.set(-14, 26, -10); moon.castShadow = true;
-moon.shadow.mapSize.set(MOBILE ? 1024 : 2048, MOBILE ? 1024 : 2048);
+moon.shadow.mapSize.set(1024, 1024);
 Object.assign(moon.shadow.camera, { left: -24, right: 24, top: 24, bottom: -24, near: 1, far: 70 });
 moon.shadow.bias = -0.0006; moon.shadow.normalBias = 0.02; scene.add(moon);
 const coreLight = new THREE.PointLight(0xffa64a, 30, 20, 1.7); coreLight.position.set(0, 7, 0); scene.add(coreLight);
 const composer = new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene, camera));
-composer.addPass(new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.55, 0.45, 0.9));
+if (!LITE) composer.addPass(new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.55, 0.45, 0.9));
 composer.addPass(new OutputPass());
 
 /* ================= snow & heat shader ================= */
@@ -986,6 +988,8 @@ document.querySelectorAll('#dock button').forEach(b => b.onclick = () => {
   if (a === 'connect') { openChurch(); flyTo(HX(...SPECIAL.church)); } else if (a === 'maria') openMaria();
   else if (a === 'house') { if (me()) { openHouse(me().id); flyTo(HX(...houseView(me()).at)); } else openChurch(); }
   else if (a === 'plaza') { openPlaza(); flyTo(HX(...SPECIAL.plaza)); } else if (a === 'library') { openLibrary(); flyTo(HX(...SPECIAL.library)); } else if (a === 'chronicle') openChronicle(); });
+$('#gfxv').textContent = LITE ? 'Light' : 'Full';
+$('#gfx').onclick = () => { store.set('w4w.gfx', LITE ? 'full' : 'lite'); location.reload(); };
 $('#wx').onclick = () => { S.weather = S.weather === 'clear' ? 'storm' : 'clear'; $('#wxv').textContent = S.weather === 'clear' ? 'Clear' : 'Storm'; refreshTown();
   say(S.weather === 'storm' ? 'Storm over Aigarth: the pool lost seats in the 676 this epoch (demo). The frost pushes harder. Renting a rig now may not pay off.' : 'The sky cleared. The pool is back in the 676 (demo).'); };
 $('#meter').onclick = () => panelKind === 'meter' ? closePanel() : openMeter();
@@ -1480,7 +1484,7 @@ function typeLine() {
   if (introI === 1) flyTo(new THREE.Vector3(0, 0, -0.6), 13);
   if (introI === 3) flyTo(new THREE.Vector3(0, 0, 0), 22);
   if (REDUCED) { el.textContent = t; return; }
-  typeT = setInterval(() => { el.textContent = t.slice(0, ++i); if (i >= t.length) { clearInterval(typeT); typeT = null; } }, 28);
+  typeT = setInterval(() => { el.textContent = t.slice(0, ++i); if (i >= t.length) { clearInterval(typeT); typeT = null; } }, 12);
 }
 function endIntro() { clearInterval(typeT); document.body.classList.remove('intro'); $('#intro').classList.add('off'); setTimeout(() => $('#intro').hidden = true, 1000); store.set('w4w.intro', '1'); flyTo(new THREE.Vector3(0, 0, 1), MOBILE ? 30 : 26); welcomeLine(); }
 function welcomeLine() { setTimeout(() => briefing() || say(S.town.B >= 0 ? 'The town holds tonight. Come to the church when you are ready.' : 'The frost is winning tonight. The town needs more hands. Come to the church.'), 3200); }
@@ -1543,11 +1547,11 @@ function stepEmbers(dt) {
 const clock = new THREE.Clock(); const _v3 = new THREE.Vector3();
 let tick = 0, hzN = 0, hzSum = 0, hzLast = 0, refreshMs = 1000 / 60;
 let lastFrame = 0, lastInput = performance.now(), shadowClock = 0, spriteCache = [], spriteClock = 99, slow = 0, frames = 0, sampleT = 0;
-['pointerdown', 'pointermove', 'wheel', 'keydown', 'touchstart'].forEach(ev => addEventListener(ev, () => { lastInput = performance.now(); }, { passive: true }));
+['pointerdown', 'pointermove', 'wheel', 'keydown', 'touchstart'].forEach(ev => addEventListener(ev, e => { if (ev !== 'pointermove' || e.buttons) lastInput = performance.now(); }, { passive: true }));
 function loop(now = performance.now()) {
   requestAnimationFrame(loop);
   // 60 frames a second while you play, 30 when the town is just being watched; nothing at all in a hidden tab
-  const busy = now - lastInput < 8000 || fly || U.uBoost.value > 0.05 || !$('#intro').hidden;
+  const busy = !LITE && (now - lastInput < 1500 || fly || U.uBoost.value > 0.05);
   // measure the screen once: how long one refresh takes
   if (hzN < 40) { if (hzLast) { const d = now - hzLast; if (d > 4 && d < 40) { hzSum += d; hzN++; } } hzLast = now; if (hzN === 40) refreshMs = hzSum / hzN; }
   const want = busy && document.hasFocus() ? 1000 / 60 : 1000 / 30;
@@ -1560,7 +1564,7 @@ function loop(now = performance.now()) {
   frames++; sampleT += dt; if (sampleT > 3) { const fps = frames / sampleT; frames = 0; sampleT = 0;
     if (fps < 1000 / minGap * 0.8 && DPR > 1) { if (++slow >= 2) { DPR = Math.max(1, DPR - 0.25); renderer.setPixelRatio(DPR); composer.setPixelRatio?.(DPR); composer.setSize(innerWidth, innerHeight); slow = 0; } } else slow = 0; }
   if (HOVER_MAT) HOVER_MAT.emissiveIntensity = 0.26 + 0.1 * Math.sin(U.uTime.value * 4);
-  if ((shadowClock += dt) > 0.5) { shadowClock = 0; renderer.shadowMap.needsUpdate = true; }
+  if ((shadowClock += dt) > 1) { shadowClock = 0; renderer.shadowMap.needsUpdate = true; }
   if ((spriteClock += dt) > 1) { spriteClock = 0; spriteCache = []; scene.traverse(o => { if (o.isSprite && (o.userData.flicker || o.userData.blink)) spriteCache.push(o); }); } U.uTime.value += dt; const t = U.uTime.value;
   U.uHeat.value += (heatTarget - U.uHeat.value) * Math.min(1, dt * 0.8);
   U.uBoost.value = Math.max(0, U.uBoost.value - dt * 0.45);
@@ -1602,9 +1606,9 @@ function loop(now = performance.now()) {
     const tgt = fly.from.clone().lerp(fly.to, k); const off = camera.position.clone().sub(controls.target).normalize().multiplyScalar(fly.d0 + (fly.d1 - fly.d0) * k);
     controls.target.copy(tgt); camera.position.copy(tgt).add(off); if (fly.t >= 1) fly = null; }
   controls.target.x = THREE.MathUtils.clamp(controls.target.x, -16, 16); controls.target.z = THREE.MathUtils.clamp(controls.target.z, -16, 16); if (!fly && $('#intro').hidden) controls.target.y = 0;
-  controls.update(); composer.render(); placeLabels(); sendPresence();
+  controls.update(); if (LITE) renderer.render(scene, camera); else composer.render(); placeLabels(); sendPresence();
 }
 requestAnimationFrame(loop);
 addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); DPR = Math.min(DPR, dprFor()); renderer.setPixelRatio(DPR); composer.setPixelRatio?.(DPR); renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight); });
-window.__w4w = { S, settle, freePlots, openMaria, ask, addWood, refreshTown, draft: v => (draft = v), camera, controls, updateIce, renderer, scene };
+window.__w4w = { S, settle, freePlots, openMaria, ask, addWood, refreshTown, draft: v => (draft = v), camera, controls, updateIce, renderer, scene, __composer: LITE ? null : composer };
 </script>
