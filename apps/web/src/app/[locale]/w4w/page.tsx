@@ -125,7 +125,7 @@ export default async function W4WPage(props: { params: Promise<{ locale: string 
       </div>
     )
 
-  // Testers reach the gate through a link they are given (/w4w?invite); everyone else sees the announcement.
+  // Testers reach the gate through a link they are given (/w4w?invite=1; an empty ?invite is dropped on the way); everyone else sees the announcement.
   const gate = sp.invite !== undefined
 
   return (
@@ -220,7 +220,7 @@ export default async function W4WPage(props: { params: Promise<{ locale: string 
         </Link>
         <div>
           {/* Quiet door for the beta testers: opens the invite gate at the top of the page. */}
-          <a aria-label="Beta testers: enter with an invite" className="w4w-beta" href="/w4w?invite" title="Beta">
+          <a aria-label="Beta testers: enter with an invite" className="w4w-beta" href="/w4w?invite=1" title="Beta">
             β
           </a>
         </div>
