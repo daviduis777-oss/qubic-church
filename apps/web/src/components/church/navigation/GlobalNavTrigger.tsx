@@ -73,7 +73,7 @@ export function GlobalNavTrigger() {
             {LINKS.map(([href, label]) => (
               <Link
                 aria-current={active(href) ? 'page' : undefined}
-                className={`inline-flex h-10 items-center px-3 text-sm font-medium transition-colors hover:text-foreground ${
+                className={`inline-flex h-10 items-center whitespace-nowrap px-1.5 text-[13px] font-medium transition-colors hover:text-foreground xl:px-3 xl:text-sm ${
                   active(href) ? 'text-foreground' : 'text-fg-2'
                 }`}
                 href={href}
@@ -84,7 +84,17 @@ export function GlobalNavTrigger() {
               </Link>
             ))}
             <Link
-              className={`ml-2 inline-flex h-9 items-center border px-3 text-sm font-medium transition-colors ${crypt ? 'border-white/50 text-white hover:border-white hover:bg-white/10' : 'border-gold/50 text-gold hover:border-gold hover:bg-gold/10'}`}
+              aria-current={active('/account') ? 'page' : undefined}
+              aria-label="Account: one key, no personal data"
+              className={`inline-flex h-10 items-center gap-1.5 whitespace-nowrap px-1.5 text-sm font-medium xl:px-3 transition-colors hover:text-foreground ${active('/account') ? 'text-foreground' : 'text-fg-2'}`}
+              href="/account"
+              title="One account for the Crypt, BPP-9000 and W4W. No personal data."
+            >
+              <svg aria-hidden fill="none" height="15" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width="15"><circle cx="7.5" cy="15.5" r="4.5" /><path d="M10.7 12.3L20 3M16 7l3 3M14 9l2 2" /></svg>
+              <span className="hidden xl:inline">Account</span>
+            </Link>
+            <Link
+              className={`ml-1 inline-flex h-9 items-center whitespace-nowrap border px-2.5 text-[13px] font-medium xl:ml-2 xl:px-3 xl:text-sm transition-colors ${crypt ? 'border-white/50 text-white hover:border-white hover:bg-white/10' : 'border-gold/50 text-gold hover:border-gold hover:bg-gold/10'}`}
               href="/donate"
             >
               Donate
@@ -124,6 +134,10 @@ export function GlobalNavTrigger() {
                 {label}
               </Link>
             ))}
+            <Link className="flex h-12 items-center gap-2 border-b border-border/60 text-lg text-foreground" href="/account">
+              <svg aria-hidden fill="none" height="18" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width="18"><circle cx="7.5" cy="15.5" r="4.5" /><path d="M10.7 12.3L20 3M16 7l3 3M14 9l2 2" /></svg>
+              Account
+            </Link>
             <Link
               className="mt-4 inline-flex h-11 items-center border border-gold/60 px-4 text-sm font-medium text-gold"
               href="/donate"
