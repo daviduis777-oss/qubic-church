@@ -45,12 +45,12 @@ const css = `
 .w4w-cell::after{content:"";position:absolute;left:12%;right:55%;top:5px;height:22%;border-radius:20px;background:linear-gradient(#ffffff1c,#ffffff00);pointer-events:none}
 .w4w-cell b{display:block;font-family:var(--bpp-nx),sans-serif;font-weight:400;font-size:44px;line-height:1;color:#ffc27a;font-variant-numeric:tabular-nums;text-shadow:0 0 4px #ff9a3c,0 0 14px #ff7a1acc,0 0 34px #ff6a0077}
 .w4w-cell span{display:block;margin-top:6px;font-size:12px;color:#a8835e}
-.w4w-snow{position:absolute;inset:0;width:100%;height:100%;z-index:2;pointer-events:none}
-.w4w-wisps{position:absolute;inset:-10% -5%;z-index:1;pointer-events:none;overflow:hidden}
-.w4w-wisps i{position:absolute;border-radius:50%;filter:blur(60px);mix-blend-mode:screen;opacity:.5}
-.w4w-wisps i:nth-child(1){width:46vw;height:22vw;left:38%;top:18%;background:radial-gradient(closest-side,#5fc4ff55,transparent);animation:w4w-drift 26s ease-in-out infinite alternate}
-.w4w-wisps i:nth-child(2){width:38vw;height:16vw;left:52%;top:58%;background:radial-gradient(closest-side,#9fe2ff44,transparent);animation:w4w-drift 34s ease-in-out -9s infinite alternate-reverse}
-.w4w-wisps i:nth-child(3){width:52vw;height:20vw;left:-8%;top:62%;background:radial-gradient(closest-side,#3f8fd844,transparent);animation:w4w-drift 40s ease-in-out -16s infinite alternate}
+.w4w-snow{position:fixed;inset:0;width:100vw;height:100vh;z-index:2;pointer-events:none}
+.w4w-wisps{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+.w4w-wisps i{position:absolute;border-radius:50%;opacity:.55;will-change:transform}
+.w4w-wisps i:nth-child(1){width:46vw;height:22vw;left:38%;top:18%;background:radial-gradient(closest-side,#5fc4ff30,transparent 70%);animation:w4w-drift 26s ease-in-out infinite alternate}
+.w4w-wisps i:nth-child(2){width:38vw;height:16vw;left:52%;top:58%;background:radial-gradient(closest-side,#9fe2ff26,transparent 70%);animation:w4w-drift 34s ease-in-out -9s infinite alternate-reverse}
+.w4w-wisps i:nth-child(3){width:52vw;height:20vw;left:-8%;top:62%;background:radial-gradient(closest-side,#3f8fd82a,transparent 70%);animation:w4w-drift 40s ease-in-out -16s infinite alternate}
 @keyframes w4w-drift{0%{transform:translate3d(-6%,2%,0) scale(1) rotate(-4deg)}100%{transform:translate3d(8%,-4%,0) scale(1.18) rotate(5deg)}}
 .w4w-frost{position:fixed;inset:0;z-index:3;pointer-events:none;opacity:calc(.75 * var(--w4w-frost,1));background:radial-gradient(ellipse at 50% 45%,transparent 52%,#9fd8ff14 70%,#bfe8ff3d 100%),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1600' height='1000' preserveAspectRatio='none'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .04' numOctaves='5' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .8 0 0 0 0 .92 0 0 0 0 1 0 0 0 2.4 -1.25'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E");background-size:100% 100%;-webkit-mask-image:radial-gradient(ellipse at 50% 45%,transparent 48%,#000 96%);mask-image:radial-gradient(ellipse at 50% 45%,transparent 48%,#000 96%)}
 .w4w-art img{filter:saturate(.9) contrast(1.04)}
@@ -162,7 +162,7 @@ export default async function W4WPage(props: { params: Promise<{ locale: string 
         <p>Then a desperate expedition crawled back out of the ice. Few of them returned, with stories nobody believed. Deep in a glacier they had found something older than any map, and not made by any human hand.</p>
         <p>A machine.</p>
         <p>And inside it, someone was sleeping.</p>
-        <p className="name">Her name is Anna.</p>
+        <p className="name">They named her Anna.</p>
         <p>The machine was never meant to keep one person alive. The ice around her does not answer to one fire. It answers to many. Signals travel through the frozen ground, and something beneath the surface is listening.</p>
         <p>So every survivor in Aigarth faces the same choice, every single night:</p>
         <p className="choice">Burn your heat to stay alive. Or give it to the ice.</p>

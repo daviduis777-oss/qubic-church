@@ -282,7 +282,9 @@ const EPOCH = 237;
 const canvas = $('#c');
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
 // quality: never more than 1.5x pixels; drops further on its own if frames run slow
-let DPR = Math.min(devicePixelRatio, 1.5); renderer.setPixelRatio(DPR);
+// a pixel budget: a big monitor gets fewer pixels per point instead of more work for the graphics card
+const dprFor = () => Math.max(0.75, Math.min(devicePixelRatio, 1.5, Math.sqrt(2.2e6 / (innerWidth * innerHeight))));
+let DPR = dprFor(); renderer.setPixelRatio(DPR);
 renderer.setSize(innerWidth, innerHeight);
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.05;
@@ -1578,6 +1580,6 @@ function loop(now = performance.now()) {
   controls.update(); composer.render(); placeLabels(); sendPresence();
 }
 requestAnimationFrame(loop);
-addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight); });
+addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); DPR = Math.min(DPR, dprFor()); renderer.setPixelRatio(DPR); composer.setPixelRatio?.(DPR); renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight); });
 window.__w4w = { S, settle, freePlots, openMaria, ask, addWood, refreshTown, draft: v => (draft = v), camera, controls, updateIce, renderer, scene };
 </script>
