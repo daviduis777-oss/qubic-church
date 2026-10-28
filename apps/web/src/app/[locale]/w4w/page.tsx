@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { setRequestLocale } from 'next-intl/server'
 import { bppFonts } from '@/components/bpp/fonts'
+import { W4WCountdown } from '@/components/w4w/W4WCountdown'
 import { W4WGate } from '@/components/w4w/W4WGate'
 import { getSession } from '@/lib/forum/auth'
 import { SITE_URL } from '@/lib/books'
@@ -8,40 +10,84 @@ import { accessOf } from '@/lib/w4w/access'
 
 export const dynamic = 'force-dynamic'
 
-const DESC = 'W4W: a town in the snow, kept warm by the people who live in it. Coming soon to Qubic Church.'
+/** Stage 1 opens with the Qubic epoch change on Wednesday 11 November 2026. */
+const LAUNCH = '2026-11-11T12:00:00Z'
+const DESC = 'The cold came and never left. An expedition found a machine frozen in the ice, and someone asleep inside it. W4W is a Web4 world survival: alone you freeze, together you might wake her. Live 11.11.2026.'
 
 export const metadata: Metadata = {
-  title: 'W4W · Soon',
+  title: { absolute: 'W4W: The Long Cold · live 11.11.2026' },
   description: DESC,
   alternates: { canonical: `${SITE_URL}/w4w` },
-  openGraph: { type: 'website', title: 'W4W', description: DESC, url: `${SITE_URL}/w4w` },
+  openGraph: { type: 'website', title: 'W4W: The Long Cold', description: DESC, url: `${SITE_URL}/w4w`, images: [{ url: `${SITE_URL}/w4w-assets/og-art.jpg`, width: 1200, height: 630 }] },
+  twitter: { card: 'summary_large_image', title: 'W4W: The Long Cold', description: DESC, images: [`${SITE_URL}/w4w-assets/og-art.jpg`] },
 }
 
 const css = `
-.w4w{box-sizing:border-box;min-height:100vh;background:radial-gradient(120% 80% at 50% 110%,#3a1d0c 0%,#140d10 38%,#0B0A0E 70%);color:#FFE3B0;display:grid;place-items:center;padding:96px 16px 64px;font-family:var(--bpp-sans),system-ui,sans-serif;overflow:hidden;position:relative}
-.w4w::before{content:"";position:absolute;inset:0;background-image:radial-gradient(1.4px 1.4px at 20% 30%,#cfe0ff88 50%,transparent 51%),radial-gradient(1.2px 1.2px at 70% 20%,#cfe0ff66 50%,transparent 51%),radial-gradient(1.6px 1.6px at 40% 70%,#cfe0ff55 50%,transparent 51%),radial-gradient(1.1px 1.1px at 85% 60%,#cfe0ff77 50%,transparent 51%),radial-gradient(1.3px 1.3px at 10% 80%,#cfe0ff55 50%,transparent 51%);background-size:340px 340px;animation:w4w-snow 26s linear infinite;pointer-events:none;opacity:.8}
-@keyframes w4w-snow{to{background-position:60px 340px}}
-@media (prefers-reduced-motion:reduce){.w4w::before{animation:none}}
-.w4w-in{position:relative;text-align:center;max-width:560px;display:grid;justify-items:center;gap:18px}
-.w4w-mark{font-family:var(--bpp-nx),sans-serif;font-weight:500;font-size:clamp(96px,22vw,200px);line-height:.82;letter-spacing:.04em;margin:0;color:#FFC46B;text-shadow:0 0 24px #E8912E88,0 0 80px #E8912E44}
-.w4w-soon{font-family:var(--bpp-eng),sans-serif;font-size:clamp(13px,1.8vw,16px);letter-spacing:.5em;margin:0 0 0 .5em;color:#9fc3ff}
-.w4w-line{font-size:16px;line-height:1.6;color:#d8c6a8;margin:8px 0 0;max-width:42ch}
-.w4w-link{background:none;border:0;color:#b9a888;font:inherit;font-size:14px;text-decoration:underline;text-underline-offset:4px;cursor:pointer;margin-top:18px;padding:8px}
-.w4w-link:hover,.w4w-link:focus-visible{color:#FFE3B0}
-.w4w-panel{width:min(520px,calc(100vw - 32px));margin-top:18px;display:grid;gap:12px;text-align:left}
-.w4w-note{font-size:14px;color:#cdbb9c;margin:0;line-height:1.55}
+.w4w{--bg:#07080b;--ink:#e8edf4;--mute:#8d97a7;--frost:#a6e6ff;--warm:#ffb35a;--line:#1c222c;background:var(--bg);color:var(--ink);font-family:var(--bpp-sans),system-ui,sans-serif;overflow:hidden;position:relative}
+.w4w *{box-sizing:border-box}
+.w4w::after{content:"";position:fixed;inset:0;pointer-events:none;opacity:.07;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.w4w-hero{position:relative;min-height:100vh;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);align-items:center;max-width:1360px;margin:0 auto;padding:96px clamp(16px,4vw,48px) 48px;gap:clamp(16px,3vw,48px)}
+.w4w-art{position:relative;aspect-ratio:1;width:100%;max-width:680px;justify-self:end}
+.w4w-art img{width:100%;height:100%;object-fit:cover;display:block;-webkit-mask-image:radial-gradient(closest-side,#000 72%,transparent 100%);mask-image:radial-gradient(closest-side,#000 72%,transparent 100%)}
+.w4w-art::before{content:"";position:absolute;inset:12%;background:radial-gradient(circle at 60% 50%,#7fd8ff2e,transparent 65%);filter:blur(30px);z-index:-1}
+.w4w-copy{position:relative;z-index:1}
+.w4w-mark{font-family:var(--bpp-nx),sans-serif;font-weight:500;font-size:clamp(88px,13vw,184px);line-height:.8;letter-spacing:.02em;margin:0;color:var(--ink);text-shadow:0 0 40px #a6e6ff33}
+.w4w-sub{font-family:var(--bpp-eng),sans-serif;font-size:clamp(14px,1.6vw,18px);letter-spacing:.32em;margin:18px 0 0;color:var(--frost)}
+.w4w-pitch{font-size:clamp(17px,1.7vw,20px);line-height:1.55;color:#c9d2de;margin:28px 0 0;max-width:30ch}
+.w4w-when{margin:40px 0 0;display:grid;gap:14px}
+.w4w-date{font-size:15px;color:var(--mute);margin:0}
+.w4w-date b{color:var(--warm);font-weight:600;letter-spacing:.02em}
+.w4w-count{display:flex;gap:10px;min-height:76px}
+.w4w-cell{border:1px solid var(--line);background:#0c0f14cc;border-radius:10px;padding:10px 14px 8px;min-width:84px}
+.w4w-cell b{display:block;font-family:var(--bpp-nx),sans-serif;font-weight:400;font-size:40px;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums}
+.w4w-cell span{font-size:12px;color:var(--mute)}
+.w4w-live{font-family:var(--bpp-nx),sans-serif;font-size:36px;color:var(--warm)}
+.w4w-lore{position:relative;max-width:680px;margin:0 auto;padding:40px clamp(16px,4vw,32px) 24px}
+.w4w-lore h2{font-family:var(--bpp-nx),sans-serif;font-weight:500;font-size:clamp(44px,6vw,64px);line-height:1;margin:0 0 32px;color:var(--ink)}
+.w4w-lore p{font-size:18px;line-height:1.7;color:#c3ccd8;margin:0 0 22px}
+.w4w-lore .open{font-size:clamp(22px,2.6vw,28px);line-height:1.4;color:var(--ink)}
+.w4w-lore .name{font-family:var(--bpp-nx),sans-serif;font-size:clamp(34px,4.4vw,48px);color:var(--frost);margin:36px 0;line-height:1;text-shadow:0 0 30px #a6e6ff55}
+.w4w-lore .choice{border-left:2px solid var(--warm);padding-left:18px;color:var(--ink)}
+.w4w-laws{max-width:1100px;margin:40px auto 0;padding:0 clamp(16px,4vw,32px);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(16px,2.5vw,32px)}
+.w4w-law{border-top:1px solid var(--line);padding-top:20px}
+.w4w-law h3{font-family:var(--bpp-nx),sans-serif;font-weight:500;font-size:28px;margin:0 0 10px;color:var(--ink)}
+.w4w-law p{font-size:15.5px;line-height:1.6;color:var(--mute);margin:0}
+.w4w-stage{max-width:1100px;margin:88px auto 0;padding:0 clamp(16px,4vw,32px)}
+.w4w-track{display:flex;gap:6px;align-items:flex-end}
+.w4w-track i{flex:1;height:10px;border-radius:2px;background:#151a22}
+.w4w-track i:first-child{background:var(--frost);box-shadow:0 0 18px #a6e6ff88;height:14px}
+.w4w-stage-row{display:flex;justify-content:space-between;gap:16px;margin-top:14px;font-size:14px;color:var(--mute)}
+.w4w-stage-row b{color:var(--frost);font-weight:600}
+.w4w-stage p{font-size:17px;line-height:1.65;color:#c3ccd8;max-width:640px;margin:28px 0 0}
+.w4w-end{max-width:680px;margin:96px auto 0;padding:0 clamp(16px,4vw,32px) 96px;text-align:center}
+.w4w-end .tag{font-family:var(--bpp-nx),sans-serif;font-size:clamp(30px,4vw,44px);line-height:1.15;margin:0;color:var(--ink)}
+.w4w-end .tag span{color:var(--warm)}
+.w4w-acct{display:inline-block;margin-top:28px;font-size:14.5px;color:var(--mute);text-decoration:underline;text-underline-offset:4px}
+.w4w-acct:hover,.w4w-acct:focus-visible{color:var(--ink)}
+.w4w-gatebox{margin-top:36px}
+.w4w-link{background:none;border:0;color:#b9c3d0;font:inherit;font-size:14px;text-decoration:underline;text-underline-offset:4px;cursor:pointer;padding:8px 0}
+.w4w-panel{width:min(520px,100%);display:grid;gap:12px;text-align:left}
+.w4w-note{font-size:14px;color:#c3ccd8;margin:0;line-height:1.55}
 .w4w-row{display:flex;gap:8px}
-.w4w-row input{flex:1;min-width:0;background:#0b0a0e;border:1px solid #4a3a2e;border-radius:8px;color:#FFE3B0;padding:11px 12px;font:600 16px ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase}
-.w4w-row input:focus-visible{outline:2px solid #E8912E;outline-offset:1px}
-.w4w-row button{background:#E8912E;color:#1a1008;border:0;border-radius:8px;padding:0 16px;font:600 14px inherit;cursor:pointer}
+.w4w-row input{flex:1;min-width:0;background:#0b0d12;border:1px solid #2a3240;border-radius:8px;color:var(--ink);padding:11px 12px;font:600 16px ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase}
+.w4w-row input:focus-visible,.w4w-row button:focus-visible{outline:2px solid var(--frost);outline-offset:1px}
+.w4w-row button{background:var(--frost);color:#06121a;border:0;border-radius:8px;padding:0 16px;font:600 14px inherit;cursor:pointer}
 .w4w-row button:disabled{opacity:.5;cursor:default}
 .w4w-err{color:#ff9a7a;font-size:14px;margin:0}
 .w4w-play{position:fixed;inset:0;z-index:100;background:#0B0A0E}
 .w4w-play iframe{border:0;width:100%;height:100%;display:block}
+@media (max-width:900px){
+  .w4w-hero{grid-template-columns:1fr;padding-top:76px;min-height:0}
+  .w4w-art{order:-1;justify-self:center;max-width:520px;margin-bottom:-24px}
+  .w4w-pitch{max-width:none}
+  .w4w-laws{grid-template-columns:1fr}
+}
+@media (max-width:420px){.w4w-cell{min-width:0;flex:1;padding:10px}.w4w-cell b{font-size:32px}}
 `
 
-export default async function W4WPage(props: { params: Promise<{ locale: string }> }) {
+export default async function W4WPage(props: { params: Promise<{ locale: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const { locale } = await props.params
+  const sp = await props.searchParams
   setRequestLocale(locale)
   const user = await getSession()
   const acc = await accessOf(user)
@@ -54,15 +100,86 @@ export default async function W4WPage(props: { params: Promise<{ locale: string 
       </div>
     )
 
+  // Testers reach the gate through a link they are given (/w4w?invite); everyone else sees the announcement.
+  const gate = sp.invite !== undefined
+
   return (
     <main className={`w4w ${bppFonts}`}>
       <style>{css}</style>
-      <div className="w4w-in">
-        <h1 className="w4w-mark">W4W</h1>
-        <p className="w4w-soon">SOON</p>
-        <p className="w4w-line">A town in the snow, kept warm by the people who live in it.</p>
-        <W4WGate name={user?.name ?? null} />
-      </div>
+
+      <section className="w4w-hero">
+        <div className="w4w-copy">
+          <h1 className="w4w-mark">W4W</h1>
+          <p className="w4w-sub">THE LONG COLD</p>
+          <p className="w4w-pitch">A frozen world. A machine in the ice. A town that lives only if it lives together.</p>
+          <div className="w4w-when">
+            <p className="w4w-date">
+              Goes live <b>11.11.2026 · 12:00 UTC</b>, with the Qubic epoch change.
+            </p>
+            <W4WCountdown at={LAUNCH} />
+          </div>
+          {gate && (
+            <div className="w4w-gatebox">
+              <W4WGate name={user?.name ?? null} />
+            </div>
+          )}
+        </div>
+        <figure className="w4w-art" style={{ margin: 0 }}>
+          <img alt="Anna, blue-skinned with glowing circuit lines on her face, holding a heavy glowing machine" height={1400} src="/w4w-assets/anna-cold.webp" srcSet="/w4w-assets/anna-cold-900.webp 900w, /w4w-assets/anna-cold.webp 1400w" sizes="(max-width: 900px) 92vw, 50vw" width={1400} />
+        </figure>
+      </section>
+
+      <article className="w4w-lore">
+        <h2>The cold came and never left.</h2>
+        <p className="open">Seas froze where they stood. Cities went quiet under the snow. What remains of the world is counted in two things: energy and heat.</p>
+        <p>Every spark is spent with care, because a spark spent is gone.</p>
+        <p>Then a desperate expedition crawled back out of the ice. Few of them returned. Deep in a glacier they had found something older than any map, and not made by any hand on Earth. A machine. And inside it, asleep, someone.</p>
+        <p className="name">Her name is Anna.</p>
+        <p>The ice around her does not answer to one fire. It answers to many. So every survivor in Aigarth faces the same choice, every single night:</p>
+        <p className="choice">Burn your heat to stay alive. Or give it to the ice.</p>
+        <p>Alone, you last a few nights. Together, you might wake what sleeps.</p>
+      </article>
+
+      <section aria-label="How the town survives" className="w4w-laws">
+        <div className="w4w-law">
+          <h3>Heat is life</h3>
+          <p>Your stove keeps you alive. What you can spare, you can give: to the fire on the plaza, to a neighbour, to the ice.</p>
+        </div>
+        <div className="w4w-law">
+          <h3>The ice answers to many</h3>
+          <p>No single fire ever moved it. A town might. The more of us keep warm, the wider the ring of light. Too few, and the storm comes in.</p>
+        </div>
+        <div className="w4w-law">
+          <h3>The cold remembers</h3>
+          <p>Every gift and every silence goes into the Chronicle, chained so it cannot be rewritten. Your name stays there.</p>
+        </div>
+      </section>
+
+      <section aria-label="Stages of the world" className="w4w-stage">
+        <div aria-hidden className="w4w-track">
+          {Array.from({ length: 12 }, (_, i) => (
+            <i key={i} />
+          ))}
+        </div>
+        <div className="w4w-stage-row">
+          <span>
+            <b>Stage 1</b> · the thaw begins
+          </span>
+          <span>Stages after this: unknown</span>
+        </div>
+        <p>The old records speak of phases. The world passes through them the way a body passes through a fever. Each one ends. Each one is followed by something the records never name. Nobody wrote down what comes after the last.</p>
+      </section>
+
+      <section className="w4w-end">
+        <p className="tag">
+          A Web4 world survival.
+          <br />
+          <span>Survive together,</span> or not at all.
+        </p>
+        <Link className="w4w-acct" href="/account">
+          One Qubic Church account, no personal data. How it works
+        </Link>
+      </section>
     </main>
   )
 }
