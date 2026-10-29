@@ -8,6 +8,15 @@ import { fileURLToPath } from 'node:url'
 const here = path.dirname(fileURLToPath(import.meta.url))
 const root = path.resolve(here, '..')
 let game = fs.readFileSync(path.join(root, 'w4w/game.html'), 'utf8')
+// the world rules the server enforces, compiled from src/lib/w4w/world.ts and inlined so both sides agree
+{
+  const { buildSync } = await import('esbuild')
+  const js = buildSync({ entryPoints: [path.join(root, 'src/lib/w4w/world.ts')], bundle: false, format: 'iife', globalName: 'W4W', write: false, target: 'es2020' }).outputFiles[0].text
+  const re = /\/\*W4W_WORLD_START\*\/[\s\S]*?\/\*W4W_WORLD_END\*\//
+  if (!re.test(game)) throw new Error('w4w-build: world marker missing')
+  game = game.replace(re, () => `/*W4W_WORLD_START*/\n${js}/*W4W_WORLD_END*/`)
+  fs.writeFileSync(path.join(root, 'w4w/game.html'), game)
+}
 const shim = fs.readFileSync(path.join(root, 'w4w/site-shim.js'), 'utf8')
 
 const swap = (from, to) => {

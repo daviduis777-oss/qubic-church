@@ -327,6 +327,37 @@ body.intro #dock,body.intro #feed,body.intro #online,body.intro #meter{visibilit
   #mariaStand{display:none!important}
 }
 @media (prefers-reduced-motion: reduce){.msg{animation:none}}
+/* the character out in the cold */
+#hud{position:fixed;z-index:3;left:max(16px,env(safe-area-inset-left));top:max(58px,calc(env(safe-area-inset-top) + 50px));width:250px;padding:10px 12px 10px;border:1px solid var(--line);border-radius:14px;background:var(--panel);backdrop-filter:blur(6px);display:grid;gap:6px;pointer-events:none}
+#hud .hz b{display:block;font-family:var(--f-display);font-weight:700;font-size:20px;line-height:1;color:var(--cream)}
+#hud .hz span{display:block;margin-top:3px;font-size:12px;color:var(--mute)}
+.hb{position:relative;height:18px;border-radius:6px;background:rgba(255,255,255,.05);overflow:hidden}
+.hb b{position:absolute;inset:0 auto 0 0;border-radius:6px;transition:width .4s}
+.hb i,.hb span{position:absolute;z-index:1;top:0;line-height:18px;font-style:normal;font-size:11px;color:var(--cream);text-shadow:0 1px 2px #000}
+.hb i{left:8px;letter-spacing:.06em} .hb span{right:8px;font-variant-numeric:tabular-nums}
+.hb.w b{background:linear-gradient(90deg,#c9701d,#f2a347)} .hb.h b{background:linear-gradient(90deg,#8c2a22,#e0574a)}
+.hb.e b{background:linear-gradient(90deg,#3d6b45,#8fcf86)} .hb.l b{background:linear-gradient(90deg,#4a5672,#93a6cf)} .hb.l.over b{background:linear-gradient(90deg,#8c2a22,#ff6a5a)}
+.hinv{display:flex;gap:6px} .hinv span{flex:1;padding:3px 0;border:1px solid var(--line);border-radius:8px;text-align:center;font-size:13px;color:var(--cream);font-variant-numeric:tabular-nums}
+.hinv i{display:block;font-style:normal;font-size:9.5px;color:var(--mute)}
+.hwx{display:flex;flex-wrap:wrap;gap:4px} .hwx span{padding:2px 7px;border-radius:999px;background:rgba(255,255,255,.05);font-size:11px;color:var(--ink)}
+.hwx .wind{color:#cfe6ff} .hwx .blizzard,.hwx .bad{color:#ff9a8c;background:rgba(255,106,90,.1)} .hwx .good{color:var(--green)}
+#xact{position:fixed;z-index:4;left:50%;transform:translateX(-50%);bottom:max(104px,calc(env(safe-area-inset-bottom) + 92px));max-width:calc(100vw - 32px);display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--line);border-radius:14px;background:var(--panel);backdrop-filter:blur(6px)}
+#xact .xt{font-size:13px;color:var(--ink);padding:0 4px}
+#xact .btn{padding:7px 12px;font-size:13px}
+body:has(#hud:not([hidden])) #feed{bottom:170px}
+#frostfx{position:fixed;inset:0;z-index:2;pointer-events:none;opacity:0;transition:opacity 1.5s;background:radial-gradient(ellipse at center,transparent 45%,rgba(150,190,255,.28) 75%,rgba(220,235,255,.6) 100%);box-shadow:inset 0 0 120px rgba(200,225,255,.45)}
+body.delir #frostfx{animation:delir 2.6s infinite steps(1)}
+@keyframes delir{0%,100%{filter:none}37%{filter:blur(2px) brightness(1.4)}41%{filter:none}73%{filter:hue-rotate(40deg)}76%{filter:none}}
+#died{position:fixed;inset:0;z-index:8;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0);transition:background 2.4s}
+#died.on{background:rgba(0,0,0,.78)}
+#died .dwrap{text-align:center;max-width:560px;padding:0 20px;opacity:0;animation:dfade 3.2s 0.6s forwards}
+#died h1{margin:0 0 18px;white-space:nowrap;font-family:Georgia,'Times New Roman',serif;font-weight:400;font-size:clamp(40px,8vw,92px);letter-spacing:.08em;color:#a8221a;text-shadow:0 0 24px rgba(168,34,26,.45);animation:dglitch 4s 1.2s infinite steps(1)}
+#died .dsub{margin:6px 0;font-size:15px;line-height:1.55;color:#d8d0c4}
+#died .btn{margin-top:20px}
+@keyframes dfade{to{opacity:1}}
+@keyframes dglitch{0%,100%{transform:none;opacity:1}61%{transform:translateX(2px) skewX(-4deg);opacity:.75}63%{transform:none;opacity:1}88%{transform:translateX(-3px);opacity:.6}90%{transform:none;opacity:1}}
+@media (prefers-reduced-motion: reduce){#died .dwrap,#died h1,body.delir #frostfx{animation:none;opacity:1}}
+@media (max-width: 760px){#hud{width:auto;right:max(16px,env(safe-area-inset-right));grid-template-columns:1fr 1fr;padding:8px 10px;gap:4px}#hud .hz,#hud .hinv,#hud .hwx{grid-column:1/-1}#hud .hz b{font-size:16px}#xact{bottom:max(96px,calc(env(safe-area-inset-bottom) + 86px))}}
 </style>
 
 <canvas id="c" aria-label="Aigarth, a winter town seen from above"></canvas>
@@ -386,6 +417,464 @@ body.intro #dock,body.intro #feed,body.intro #online,body.intro #meter{visibilit
 <div id="proto">PROTOTYPE · NO RIG IS REALLY RENTED</div>
 <div id="load"><span class="pilot"></span><b>WARMING UP AIGARTH</b></div>
 
+<script>/*W4W_WORLD_START*/
+"use strict";
+var W4W = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key2 of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key2) && key2 !== except)
+          __defProp(to, key2, { get: () => from[key2], enumerable: !(desc = __getOwnPropDesc(from, key2)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+  var world_exports = {};
+  __export(world_exports, {
+    BAG_MS: () => BAG_MS,
+    CAPACITY: () => CAPACITY,
+    DEMO_CELLS: () => DEMO_CELLS,
+    DEMO_TOWN: () => DEMO_TOWN,
+    DIRS: () => DIRS,
+    FREEZE_MS: () => FREEZE_MS,
+    GATHER_MS: () => GATHER_MS,
+    HEARTH_COST: () => HEARTH_COST,
+    HEARTH_MAX_MS: () => HEARTH_MAX_MS,
+    HEARTH_START_MS: () => HEARTH_START_MS,
+    HEARTH_WOOD_MS: () => HEARTH_WOOD_MS,
+    INSULATION_T1: () => INSULATION_T1,
+    LOSS_K: () => LOSS_K,
+    MAX_RING: () => MAX_RING,
+    NODE_COOLDOWN_MS: () => NODE_COOLDOWN_MS,
+    OVERLOAD: () => OVERLOAD,
+    SPECIAL: () => SPECIAL,
+    STEP_MS: () => STEP_MS,
+    WEIGHT: () => WEIGHT,
+    ZONES: () => ZONES,
+    action: () => action,
+    advance: () => advance,
+    bellAt: () => bellAt,
+    cellAt: () => cellAt,
+    coldAt: () => coldAt,
+    ctxOf: () => ctxOf,
+    dist: () => dist,
+    emptyInv: () => emptyInv,
+    findPath: () => findPath,
+    greyAt: () => greyAt,
+    key: () => key,
+    newChar: () => newChar,
+    newDirty: () => newDirty,
+    passable: () => passable,
+    resourceOf: () => resourceOf,
+    ringOf: () => ringOf,
+    sourceAt: () => sourceAt,
+    stepAll: () => stepAll,
+    stepChar: () => stepChar,
+    terrain: () => terrain,
+    townOfState: () => townOfState,
+    townShelters: () => townShelters,
+    townWarmth: () => townWarmth,
+    viewOf: () => viewOf,
+    weatherAt: () => weatherAt,
+    weightOf: () => weightOf,
+    worldXZ: () => worldXZ,
+    zoneName: () => zoneName,
+    zoneOf: () => zoneOf
+  });
+  const STEP_MS = 2e4;
+  const MAX_RING = 16;
+  const FREEZE_MS = 24 * 36e5;
+  const BAG_MS = 24 * 36e5;
+  const GATHER_MS = 45e3;
+  const NODE_COOLDOWN_MS = 20 * 6e4;
+  const LOSS_K = 0.6;
+  const INSULATION_T1 = 22;
+  const WEIGHT = { wood: 2, stone: 3, flint: 0.2, resin: 0.3 };
+  const CAPACITY = 14;
+  const OVERLOAD = 1.3;
+  const HEARTH_COST = { wood: 6, stone: 4, flint: 1, resin: 0 };
+  const HEARTH_START_MS = 6 * 36e5;
+  const HEARTH_WOOD_MS = 3 * 36e5;
+  const HEARTH_MAX_MS = 24 * 36e5;
+  const DEMO_TOWN = { people: 5, power: 5190, deeds: 2 };
+  const SPECIAL = { core: [0, 0], church: [1, -3], plaza: [-1, 3], observatory: [4, -2], library: [5, -5], mine: [-6, 2] };
+  const DEMO_CELLS = [[2, -1], [-2, 1], [1, 1], [-1, -1], [3, -3], [-3, 3], [3, 0]];
+  const ZONES = [
+    { name: "Aigarth", cold: 12 },
+    { name: "The Edge", cold: 15 },
+    { name: "Black Pines", cold: 22 },
+    { name: "Stone Teeth", cold: 28 }
+  ];
+  const DIRS = [[1, 0], [1, -1], [0, -1], [-1, 0], [-1, 1], [0, 1]];
+  const key = (q, r) => `${q},${r}`;
+  const ringOf = (q, r) => (Math.abs(q) + Math.abs(r) + Math.abs(q + r)) / 2;
+  const dist = (a, b) => ringOf(a[0] - b[0], a[1] - b[1]);
+  const worldXZ = (q, r) => [2 * (q + r / 2), 1.7320508 * r];
+  function zoneOf(q, r) {
+    const n = ringOf(q, r);
+    return n <= 5 ? 0 : n <= 8 ? 1 : n <= 12 ? 2 : n <= MAX_RING ? 3 : 4;
+  }
+  function hash(a, b, s = 0) {
+    let h = Math.imul(a | 0, 374761393) + Math.imul(b | 0, 668265263) + Math.imul(s | 0, 2147483647) | 0;
+    h = Math.imul(h ^ h >>> 13, 1274126177);
+    h ^= h >>> 16;
+    return (h >>> 0) / 4294967296;
+  }
+  function terrain(q, r) {
+    const n = ringOf(q, r);
+    if (n <= 5) return "town";
+    if (n > MAX_RING) return "void";
+    const h = hash(q, r, 7);
+    if (n <= 8) return h < 0.22 ? "tree" : h < 0.3 ? "rock" : "open";
+    if (n <= 12) return n >= 10 && h < 0.12 ? "mountain" : h < 0.62 ? "forest" : h < 0.7 ? "rock" : "open";
+    return h < 0.22 ? "mountain" : h < 0.52 ? "rock" : h < 0.6 ? "tree" : "open";
+  }
+  const passable = (q, r) => {
+    const t = terrain(q, r);
+    return t !== "mountain" && t !== "void";
+  };
+  function resourceOf(q, r) {
+    const t = terrain(q, r), z = zoneOf(q, r), h = hash(q, r, 11);
+    if (t === "tree" || t === "forest") return z === 2 && h < 0.25 ? "resin" : "wood";
+    if (t === "rock") return z === 3 && h < 0.3 ? "flint" : "stone";
+    return null;
+  }
+  function weatherAt(t, netStorm = false) {
+    const h = hash(Math.floor(t / 72e5), 5, 3);
+    const [calm, wind] = netStorm ? [0.25, 0.75] : [0.5, 0.85];
+    return h < calm ? { id: "calm", name: "Calm", mult: 1 } : h < wind ? { id: "wind", name: "Wind", mult: 1.4 } : { id: "blizzard", name: "Blizzard", mult: 2 };
+  }
+  const greyAt = (t) => Math.floor(t / 36e5) % 6 >= 4;
+  function bellAt(t) {
+    const d = new Date(t);
+    return d.getUTCDay() === 3 && d.getUTCHours() >= 12 && d.getUTCHours() < 14;
+  }
+  function coldAt(q, r, t, ctx) {
+    const [x, z] = worldXZ(q, r);
+    if (Math.hypot(x, z) <= ctx.heatR) return 0;
+    const zone = zoneOf(q, r);
+    if (zone > 3) return 999;
+    let c = ZONES[zone].cold;
+    if (ctx.holds) {
+      if (zone <= 2) c -= 5;
+    } else c += zone === 0 ? 10 : 5;
+    if (greyAt(t)) c -= 5;
+    if (bellAt(t)) c += 10;
+    return Math.max(0, c) * weatherAt(t, ctx.netStorm).mult;
+  }
+  function sourceAt(q, r, t, ctx) {
+    const k = key(q, r);
+    if ((ctx.hearths[k] ?? 0) > t) return 8;
+    const s = ctx.shelters[k];
+    if (s === "fire") return 8;
+    if (s) return 6;
+    const [x, z] = worldXZ(q, r);
+    return Math.hypot(x, z) <= ctx.heatR ? 4 : 0;
+  }
+  const weightOf = (inv) => Object.keys(WEIGHT).reduce((a, k) => a + (inv[k] || 0) * WEIGHT[k], 0);
+  const emptyInv = () => ({ wood: 0, stone: 0, flint: 0, resin: 0 });
+  function findPath(a, b, limit = 4e3) {
+    if (a[0] === b[0] && a[1] === b[1]) return [];
+    if (!passable(b[0], b[1])) return null;
+    const open = [[dist(a, b), 0, a]];
+    const came = /* @__PURE__ */ new Map(), g = /* @__PURE__ */ new Map([[key(...a), 0]]);
+    let n = 0;
+    while (open.length && n++ < limit) {
+      open.sort((x, y) => x[0] - y[0]);
+      const [, gc, cur] = open.shift();
+      if (cur[0] === b[0] && cur[1] === b[1]) {
+        const out = [];
+        let k = key(...cur);
+        while (k !== key(...a)) {
+          const [q, r] = k.split(",").map(Number);
+          out.unshift([q, r]);
+          k = came.get(k);
+        }
+        return out;
+      }
+      for (const [dq, dr] of DIRS) {
+        const nq = cur[0] + dq, nr = cur[1] + dr, nk = key(nq, nr);
+        if (!passable(nq, nr)) continue;
+        const ng = gc + 1;
+        if (ng < (g.get(nk) ?? Infinity)) {
+          g.set(nk, ng);
+          came.set(nk, key(...cur));
+          open.push([ng + dist([nq, nr], b), ng, [nq, nr]]);
+        }
+      }
+    }
+    return null;
+  }
+  function newChar(home, now) {
+    return { v: 1, q: home[0], r: home[1], path: [], t0: now, stepMs: STEP_MS, warmth: 100, health: 100, energy: 100, simT: now, frozenUntil: 0, home, inv: emptyInv(), act: null, died: null };
+  }
+  function cellAt(c, t) {
+    if (!c.path.length) return [c.q, c.r];
+    const i = Math.floor((t - c.t0) / c.stepMs);
+    if (i <= 0) return [c.q, c.r];
+    return c.path[Math.min(i, c.path.length) - 1];
+  }
+  function advance(c0, now, ctx) {
+    const c = JSON.parse(JSON.stringify(c0));
+    const events = [];
+    if (c.frozenUntil) {
+      if (now < c.frozenUntil) {
+        c.simT = now;
+        return { c, events };
+      }
+      const t = c.frozenUntil;
+      Object.assign(c, { frozenUntil: 0, warmth: 60, health: 50, energy: 50, simT: t, q: c.home[0], r: c.home[1], path: [], act: null });
+      events.push({ kind: "thawed", t });
+    }
+    const busy = () => c.path.length > 0 || !!c.act;
+    let steps = c.path.length ? Math.max(0, Math.min(c.path.length, Math.floor((c.simT - c.t0) / c.stepMs))) : 0;
+    for (let t = c.simT, DT = 5e3; t < now; t += DT) {
+      DT = busy() ? 5e3 : 6e4;
+      const t1 = Math.min(now, t + DT), mins = (t1 - t) / 6e4;
+      if (c.path.length) {
+        const done = Math.max(0, Math.min(c.path.length, Math.floor((t1 - c.t0) / c.stepMs)));
+        if (done > steps) {
+          const over = weightOf(c.inv) > CAPACITY ? 2 : 1;
+          c.energy = Math.max(0, c.energy - (done - steps) * over);
+          steps = done;
+        }
+        if (done >= c.path.length) {
+          const [q2, r2] = c.path.at(-1);
+          c.q = q2;
+          c.r = r2;
+          c.path = [];
+          steps = 0;
+          events.push({ kind: "arrived", t: t1, q: q2, r: r2 });
+        }
+      }
+      if (c.act && t1 >= c.act.until) {
+        const a = c.act;
+        c.act = null;
+        c.inv[a.res] = (c.inv[a.res] || 0) + 1;
+        events.push({ kind: "gathered", t: a.until, q: a.q, r: a.r, res: a.res });
+      }
+      const [q, r] = cellAt(c, t1);
+      const cold = coldAt(q, r, t1, ctx), src = sourceAt(q, r, t1, ctx);
+      const tired = c.energy <= 0 ? 1.25 : 1;
+      const loss = Math.max(0, cold - ctx.insulation) * LOSS_K * tired;
+      c.warmth = Math.min(100, Math.max(0, c.warmth + (src - loss) * mins));
+      if (c.warmth < 25) c.health = Math.max(0, c.health - 1 * mins);
+      const atHome = key(q, r) === ctx.home;
+      if (atHome && !c.path.length) c.health = Math.min(100, c.health + 0.1 * mins);
+      if (src > 0 && !c.path.length) c.energy = Math.min(100, c.energy + (src >= 6 ? 10 : 5) / 60 * mins);
+      if (!busy() && src > 0 && c.warmth >= 100 && c.health >= 100 && c.energy >= 100) break;
+      if (c.warmth <= 0 || c.health <= 0) {
+        const zone = zoneOf(q, r), w = weatherAt(t1, ctx.netStorm);
+        const cause = c.health <= 0 && c.warmth > 0 ? "frostbite" : `cold ${Math.round(cold)} against clothing ${ctx.insulation}${w.id === "calm" ? "" : `, ${w.name.toLowerCase()} \xD7${w.mult}`}`;
+        events.push({ kind: "froze", t: t1, q, r, cause, zone, inv: { ...c.inv } });
+        c.died = { t: t1, q, r, cause, zone };
+        Object.assign(c, { frozenUntil: t1 + FREEZE_MS, warmth: 0, path: [], act: null, q: c.home[0], r: c.home[1], inv: emptyInv(), simT: now });
+        return { c, events };
+      }
+    }
+    c.simT = now;
+    if (c.path.length === 0) {
+      c.t0 = now;
+    }
+    return { c, events };
+  }
+  function townShelters(houseCells) {
+    const out = {};
+    for (const [q, r] of [...DEMO_CELLS, ...houseCells]) out[key(q, r)] = "house";
+    for (const [k, [q, r]] of Object.entries(SPECIAL)) if (k !== "core") out[key(q, r)] = k === "church" ? "church" : k === "plaza" ? "fire" : "house";
+    return out;
+  }
+  function townWarmth(o) {
+    const W = 6 * Math.min(o.people, 12) + 6 * Math.min(o.online, 5) + 4 * Math.min(o.deeds, 5) + 3 * Math.min(o.fire, 5) + Math.round(12 * Math.log10(1 + o.power / 500) * 10) / 10;
+    const F = 60 + (o.storm ? 15 : 0);
+    const B = W - F;
+    return { W, F, B, holds: B >= 0, heatR: Math.min(10, Math.max(2.6, 5.6 + B * 0.28)) };
+  }
+  const newDirty = () => ({ chars: /* @__PURE__ */ new Set(), hearths: /* @__PURE__ */ new Set(), bags: /* @__PURE__ */ new Set(), bagsGone: /* @__PURE__ */ new Set(), nodes: /* @__PURE__ */ new Set(), feed: [] });
+  function townOfState(ws) {
+    const real = Object.values(ws.houses);
+    const mining = real.filter((x) => x.state === "mining");
+    const fire = real.filter((x) => ws.now - (x.lastWood ?? 0) < 36e5).length;
+    return townWarmth({ people: DEMO_TOWN.people + mining.length, online: ws.online, deeds: DEMO_TOWN.deeds + ws.doneOrders, fire, power: DEMO_TOWN.power + mining.reduce((a, x) => a + (x.sol ?? 0), 0), storm: false });
+  }
+  function ctxOf(ws, uid) {
+    const t = townOfState(ws);
+    const cells = Object.values(ws.houses).filter((x) => x.q != null && x.r != null).map((x) => [x.q, x.r]);
+    const home = ws.chars[uid]?.home ?? [ws.houses[uid]?.q ?? 0, ws.houses[uid]?.r ?? 0];
+    return { heatR: t.heatR, holds: t.holds, netStorm: false, shelters: townShelters(cells), home: key(home[0], home[1]), hearths: Object.fromEntries(Object.entries(ws.hearths).map(([k, v]) => [k, v.until])), insulation: INSULATION_T1 };
+  }
+  const nickIn = (ws, uid) => ws.houses[uid]?.nick ?? "someone";
+  const zoneName = (z) => ZONES[z]?.name ?? "the far cold";
+  function stepChar(ws, uid, d) {
+    const c0 = ws.chars[uid];
+    if (!c0) return [];
+    const { c, events } = advance(c0, ws.now, ctxOf(ws, uid));
+    for (const e of events) {
+      if (e.kind !== "froze") continue;
+      const has = Object.values(e.inv).some((v) => v > 0);
+      if (has) {
+        const id = `${uid}:${e.t}`;
+        ws.bags[id] = { id, owner: uid, nick: nickIn(ws, uid), q: e.q, r: e.r, inv: e.inv, until: e.t + BAG_MS };
+        d.bags.add(id);
+      }
+      d.feed.push({ id: `fz${uid}${e.t}`, t: e.t, topic: "froze", by: uid, data: { nick: nickIn(ws, uid), zone: zoneName(e.zone), q: e.q, r: e.r, bag: has } });
+    }
+    ws.chars[uid] = c;
+    if (events.length || c.simT - c0.simT > 6e5) d.chars.add(uid);
+    return events;
+  }
+  function stepAll(ws, d) {
+    for (const uid of Object.keys(ws.chars)) {
+      const c = ws.chars[uid];
+      if (c.path.length || c.act || c.frozenUntil || c.warmth < 100 || c.health < 100 || c.energy < 100) stepChar(ws, uid, d);
+    }
+  }
+  function viewOf(ws, uid, events = []) {
+    const forecast = Array.from({ length: 7 }, (_, i) => {
+      const at = Math.floor(ws.now / 72e5) * 72e5 + i * 72e5;
+      const x = weatherAt(at);
+      return { at, id: x.id, name: x.name, mult: x.mult };
+    });
+    const others = Object.fromEntries(Object.entries(ws.chars).filter(([k]) => k !== uid).map(([k, c]) => [k, { q: c.q, r: c.r, path: c.path, t0: c.t0, stepMs: c.stepMs, frozenUntil: c.frozenUntil, home: c.home, nick: nickIn(ws, k), act: c.act ? { kind: c.act.kind, until: c.act.until } : null }]));
+    return {
+      now: ws.now,
+      town: townOfState(ws),
+      forecast,
+      grey: greyAt(ws.now),
+      bell: bellAt(ws.now),
+      me: ws.chars[uid] ?? null,
+      others,
+      hearths: ws.hearths,
+      bags: Object.values(ws.bags).filter((b) => b.until > ws.now).map((b) => ({ id: b.id, nick: b.nick, q: b.q, r: b.r, until: b.until, mine: b.owner === uid, items: b.owner === uid ? null : b.inv })),
+      nodes: Object.fromEntries(Object.entries(ws.nodes).filter(([, v]) => v > ws.now)),
+      events
+    };
+  }
+  function action(ws, uid, op, b, d) {
+    const now = ws.now, house = ws.houses[uid];
+    if (!ws.chars[uid]) {
+      if (!house || house.q == null || house.r == null) return { ok: false, error: "Settle in town first: your character lives in your house.", status: 403 };
+      ws.chars[uid] = newChar([house.q, house.r], now);
+      d.chars.add(uid);
+    }
+    stepAll(ws, d);
+    const events = stepChar(ws, uid, d);
+    const c = ws.chars[uid];
+    d.chars.add(uid);
+    const ok = () => ({ ok: true, events });
+    const fail = (error, status = 400) => ({ ok: false, error, status });
+    if (op === "char") return ok();
+    if (c.frozenUntil > now) return fail("You are frozen. Nothing thaws you faster.", 403);
+    const here = cellAt(c, now);
+    const cellArg = (v) => Array.isArray(v) && v.length === 2 && v.every((n) => Number.isInteger(n)) ? [v[0], v[1]] : null;
+    const near = (a) => dist(here, a) <= 1;
+    switch (op) {
+      case "move": {
+        const to = cellArg(b.to);
+        if (!to) return fail("Where to?");
+        if (ringOf(...to) > MAX_RING) return fail("Beyond here the cold has no edge. Not yet.");
+        const path = findPath(here, to);
+        if (!path) return fail("No way through from here.");
+        if (path.length > 90) return fail("Too far for one walk. Go in stages.");
+        Object.assign(c, { q: here[0], r: here[1], path, t0: now, act: null });
+        return ok();
+      }
+      case "stop":
+        Object.assign(c, { q: here[0], r: here[1], path: [], t0: now });
+        return ok();
+      case "gather": {
+        const at = cellArg(b.at);
+        if (!at) return fail("Gather what?");
+        if (c.path.length) return fail("Stop walking first.");
+        if (!near(at)) return fail("Too far. Stand next to it.");
+        if (c.act) return fail("You are busy.");
+        const res = resourceOf(...at);
+        if (!res) return fail("Nothing to take here.");
+        const k = key(...at);
+        if ((ws.nodes[k] ?? 0) > now) return fail("Already picked clean. It comes back in a while.");
+        if (weightOf(c.inv) + WEIGHT[res] > CAPACITY * OVERLOAD) return fail("You cannot carry more.");
+        c.act = { kind: "gather", q: at[0], r: at[1], res, until: now + GATHER_MS };
+        ws.nodes[k] = now + GATHER_MS + NODE_COOLDOWN_MS;
+        d.nodes.add(k);
+        return ok();
+      }
+      case "hearth": {
+        if (c.path.length) return fail("Stop walking first.");
+        if (zoneOf(...here) < 1) return fail("The town has its own fire. Build out in the cold.");
+        const k = key(...here);
+        if (ws.hearths[k]) return fail("There is a hearth here already.");
+        for (const [res, n] of Object.entries(HEARTH_COST)) if ((c.inv[res] || 0) < n) return fail(`A hearth takes ${HEARTH_COST.wood} wood, ${HEARTH_COST.stone} stone and ${HEARTH_COST.flint} flint.`);
+        for (const [res, n] of Object.entries(HEARTH_COST)) c.inv[res] -= n;
+        ws.hearths[k] = { by: uid, nick: nickIn(ws, uid), at: now, until: now + HEARTH_START_MS };
+        d.hearths.add(k);
+        d.feed.push({ id: `hb${uid}${now}`, t: now, topic: "hearth", by: uid, data: { nick: nickIn(ws, uid), zone: zoneName(zoneOf(...here)), q: here[0], r: here[1] } });
+        return ok();
+      }
+      case "feed": {
+        const at = cellArg(b.at) ?? here, k = key(...at), h = ws.hearths[k];
+        if (!h) return fail("No hearth there.");
+        if (!near(at)) return fail("Too far. Stand next to it.");
+        if ((c.inv.wood || 0) < 1) return fail("You have no wood.");
+        c.inv.wood -= 1;
+        h.until = Math.min(now + HEARTH_MAX_MS, Math.max(now, h.until) + HEARTH_WOOD_MS);
+        d.hearths.add(k);
+        return ok();
+      }
+      case "take": {
+        const bag = ws.bags[String(b.id ?? "")];
+        if (!bag || bag.until <= now) return fail("That pack is gone.");
+        if (bag.owner === uid) return fail("Your own frozen pack will not open for you. Someone else has to carry it.");
+        if (!near([bag.q, bag.r])) return fail("Too far. Stand next to it.");
+        const took = emptyInv();
+        for (const res of Object.keys(WEIGHT)) while (bag.inv[res] > 0 && weightOf(c.inv) + WEIGHT[res] <= CAPACITY * OVERLOAD) {
+          bag.inv[res]--;
+          c.inv[res]++;
+          took[res]++;
+        }
+        if (!Object.values(bag.inv).some((v) => v > 0)) {
+          delete ws.bags[bag.id];
+          d.bagsGone.add(bag.id);
+        } else d.bags.add(bag.id);
+        d.feed.push({ id: `tk${uid}${now}`, t: now, topic: "took", by: uid, data: { nick: nickIn(ws, uid), owner: bag.nick, took } });
+        return ok();
+      }
+      case "unload": {
+        if (key(...here) !== key(...c.home)) return fail("Unload at your own house.");
+        c.stash = c.stash ?? emptyInv();
+        for (const res of Object.keys(WEIGHT)) {
+          c.stash[res] += c.inv[res];
+          c.inv[res] = 0;
+        }
+        return ok();
+      }
+      case "pack": {
+        if (key(...here) !== key(...c.home)) return fail("Pack at your own house.");
+        const res = String(b.res ?? ""), n = Math.max(1, Math.min(50, Number(b.n) || 1));
+        if (!(res in WEIGHT)) return fail("Pack what?");
+        c.stash = c.stash ?? emptyInv();
+        let moved = 0;
+        while (moved < n && c.stash[res] > 0 && weightOf(c.inv) + WEIGHT[res] <= CAPACITY) {
+          c.stash[res]--;
+          c.inv[res]++;
+          moved++;
+        }
+        return ok();
+      }
+      default:
+        return fail("unknown action");
+    }
+  }
+  return __toCommonJS(world_exports);
+})();
+/*W4W_WORLD_END*/</script>
 <script type="importmap">
 { "imports": {
   "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
@@ -404,6 +893,7 @@ import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { FXAAShader } from 'three/addons/shaders/FXAAShader.js';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+import { clone as cloneSkinned } from 'three/addons/utils/SkeletonUtils.js';
 
 const $ = s => document.querySelector(s);
 const MOBILE = matchMedia('(max-width: 760px)').matches || matchMedia('(pointer: coarse)').matches;
@@ -723,7 +1213,7 @@ fetch('kit.txt').then(r => { if (!r.ok) throw new Error('kit.txt ' + r.status); 
     KIT_MAT.map = ATLAS; KIT_MAT.roughness = 0.9; KIT_MAT.metalness = 0; KIT_MAT.needsUpdate = true;
     build(); demoHistory(); refreshTown();
     setTimeout(() => $('#load').classList.add('off'), 300);
-    initCaps().catch(e => console.warn('caps', e));
+    initCaps().catch(e => console.warn('caps', e)).finally(() => { try { startX(); } catch (e) { console.warn('wastes', e); } });
     startIntro();
   })
   .catch(e => { $('#load b').textContent = 'COULD NOT LOAD THE TOWN. RELOAD THE PAGE.'; console.error(e); });
@@ -765,14 +1255,19 @@ function build() {
   label('THE MINE', mn, 2.1, 'key');
   STAGE2.forEach((s, i) => { const g = place('scaffolding', ...s.at, { rot: i * 1.3 }); place(i % 2 ? 'stage_B' : 'stage_C', ...s.at, { rot: i * 1.3 }); tag(g, 'stage2', s.id); label(s.name.toUpperCase() + ' · STAGE 2', g, 1.9, 'key'); });
   const before = new Set(scene.children);
-  for (let n = 6; n <= 12; n++) ring(n).forEach(([q, r]) => {
-    if (reserved.has(key(q, r))) return; const t = rnd();
-    if (n >= 10 && t < 0.42) place(['mountain_A', 'mountain_B', 'mountain_C'][Math.floor(rnd() * 3)], q, r, { rot: rnd() * 6, scale: 1 + rnd() * 0.5 });
-    else if (t < (n < 8 ? 0.22 : 0.62)) place(['trees_A_large', 'trees_A_medium', 'trees_B_large', 'trees_B_medium', 'trees_A_small'][Math.floor(rnd() * 5)], q, r, { rot: rnd() * 6 });
-    else if (t < 0.8) place(['tree_A', 'tree_B', 'rock_A', 'rock_C'][Math.floor(rnd() * 4)], q, r, { rot: rnd() * 6, jitter: 1 });
+  // the same map the server walks: world.ts decides what stands on every cell, the kit only dresses it
+  const TREES = ['trees_A_large', 'trees_A_medium', 'trees_B_large', 'trees_B_medium', 'trees_A_small'], MTS = ['mountain_A', 'mountain_B', 'mountain_C'];
+  for (let n = 6; n <= W4W.MAX_RING + 2; n++) ring(n).forEach(([q, r]) => {
+    if (reserved.has(key(q, r))) return; const t = n > W4W.MAX_RING ? 'mountain' : W4W.terrain(q, r), v = rnd();
+    if (t === 'mountain') place(MTS[Math.floor(v * 3)], q, r, { rot: rnd() * 6, scale: (n > W4W.MAX_RING ? 1.5 : 1) + rnd() * 0.5 });
+    else if (t === 'forest') place(TREES[Math.floor(v * 5)], q, r, { rot: rnd() * 6 });
+    else if (t === 'tree') place(n > 12 ? 'tree_B' : ['tree_A', 'tree_B', 'trees_A_small'][Math.floor(v * 3)], q, r, { rot: rnd() * 6, jitter: 0.6 });
+    else if (t === 'rock') place(n > 12 ? (v < 0.5 ? 'rock_A' : 'hills_trees') : ['rock_A', 'rock_C'][Math.floor(v * 2)], q, r, { rot: rnd() * 6, jitter: 0.5 });
   });
   ring(5).forEach(([q, r]) => { if (!reserved.has(key(q, r)) && rnd() < 0.45) place(['tree_A', 'tree_B', 'trees_A_small', 'rock_C', 'tent', 'crate'][Math.floor(rnd() * 6)], q, r, { rot: rnd() * 6, jitter: 0.8 }); });
   mergeScenery(scene.children.filter(o => !before.has(o)));
+  // where the zones begin: a quiet sign in the snow
+  [[7, 'THE EDGE'], [10, 'BLACK PINES'], [14, 'STONE TEETH']].forEach(([n, name]) => [0, 2, 4].forEach(side => { const [q, r] = ring(n)[side * n + Math.floor(n / 2)]; const a = new THREE.Object3D(); a.position.copy(HX(q, r)); scene.add(a); label(name, a, 0.4, 'demo'); }));
   buildSnowfall(); buildSmoke(); buildEmbers();
 }
 /* forest, rocks and mountains never move: bake them into one mesh, one draw call instead of hundreds */
@@ -1133,7 +1628,10 @@ canvas.addEventListener('pointerleave', () => setHover(null));
 function pick(e, click) {
   if (choosingPlot) { const h = hit(e, plotMarks); canvas.style.cursor = h ? 'pointer' : 'default'; plotMarks.forEach(m => m.material.opacity = m === h?.object ? 1 : 0.55); if (click && h) settle(h.object.userData.qr); return; }
   const h = hit(e, interactive); const id = h?.object.userData.id || null; canvas.style.cursor = id ? 'pointer' : 'default'; hoverId = id; setHover(id);
-  if (!click || !h) return; const k = h.object.userData.kind;
+  if (!click) return;
+  if (!h) { clickGround(e); return; }
+  const k = h.object.userData.kind;
+  if (walkTo(k, id)) return;
   if (k === 'church') openChurch(); else if (k === 'board') openPlaza(); else if (k === 'core') openCore(); else if (k === 'fire') addWood();
   else if (k === 'house') openHouse(id); else if (k === 'observatory') openObservatory(); else if (k === 'stage2') openStage2(id); else if (k === 'library') openLibrary(); else if (k === 'mine') openMine();
 }
@@ -1151,9 +1649,9 @@ addEventListener('keydown', e => { if (e.key === 'Escape') { if (choosingPlot) e
 document.querySelectorAll('#dock button').forEach(b => b.onclick = () => {
   const a = b.dataset.act; if (a === 'connect') { talkEnd(); return $('#hub').hidden ? openHub() : closeHub(); } closeHub(); if (panelKind === a || (a === 'connect' && panelKind === 'church') || (a === 'plaza' && ['herald', 'notices', 'orders'].includes(panelKind))) return closePanel();
   if (a === 'connect') { openChurch(); flyTo(HX(...SPECIAL.church)); } else if (a === 'maria') openMaria();
-  else if (a === 'house') { if (me()) { openHouse(me().id); flyTo(HX(...houseView(me()).at)); } else openChurch(); }
+  else if (a === 'house') { if (me()) { if (!walkTo('house', me().id)) openHouse(me().id); flyTo(HX(...houseView(me()).at)); } else openChurch(); }
   else if (a === 'faq') openFaq();
-  else if (a === 'plaza') { openPlaza(); flyTo(HX(...SPECIAL.plaza)); } else if (a === 'library') { openLibrary(); flyTo(HX(...SPECIAL.library)); } else if (a === 'chronicle') openChronicle(); });
+  else if (a === 'plaza') { if (!walkTo('board', 'board')) openPlaza(); flyTo(HX(...SPECIAL.plaza)); } else if (a === 'library') { if (!walkTo('library', 'library')) openLibrary(); flyTo(HX(...SPECIAL.library)); } else if (a === 'chronicle') openChronicle(); });
 $('#gfxv').textContent = LITE ? 'Light' : 'Full';
 $('#epochV').textContent = EPOCH;
 /* which browser, and where its graphics switch lives */
@@ -1187,6 +1685,14 @@ function faqLag() {
   </details>`;
 }
 const FAQ = [
+  ['The cold beyond the town', [
+    ['How do I walk?', 'Once your house stands, you have a character who lives in it. Click the ground to walk there, one cell every 20 seconds, in real time. Buildings open only when you are standing at their door: click one and you walk there first.'],
+    ['What do the bars mean?', 'Warmth drops wherever the cold is stronger than your clothing, faster in wind and blizzards. Below 25 warmth the frost starts taking health. Energy goes on walking and comes back by a fire. Load is what you carry: past the limit every step costs double.'],
+    ['Is the town always safe?', 'No. When the town holds, its warm circle keeps you safe. When the frost is winning, even the streets between houses bite, and the Library at the edge is a cold walk. Houses, the church and the plaza fire always warm you.'],
+    ['What can I do out there?', 'Gather wood and stone in The Edge and the Black Pines, resin among the pines and flint in the Stone Teeth. With 6 wood, 4 stone and 1 flint you can build a hearth out in the cold. Anyone can warm up at it and feed it with wood; it burns out unless someone does.'],
+    ['I froze. What now?', 'You lie frozen at your own house for 24 hours. Nothing makes it faster: not money, not mining, not anyone. Your rig keeps working the whole time. What you carried stays where you fell for 24 hours.'],
+    ['Can I get my pack back?', 'Not yourself. Only someone else can pick up a frozen pack and carry it to town. Post where it lies on the board and make a deal with whoever goes for it. After 24 hours the snow takes it.'],
+  ]],
   ['Getting started', [
     ['What is this place?', 'Aigarth is a shared winter town. Anna sleeps frozen in the ice at its centre; the town stays warm only if people keep their machines on, help each other and feed the fire. Maria, her twin, keeps the Chronicle and helps you set up.'],
     ['Do I need a rig to play?', 'No. You can walk the town, talk to Maria, read the Library and add wood to the fire. Taking orders and lighting lamps for newcomers need a rig that is on: that is what makes you a resident.'],
@@ -1986,6 +2492,274 @@ async function demoHistory() {
   for (const [e, t] of hist) await record(t, { demo: true, epoch: e, author: t.split(' ')[0] });
 }
 
+/* ================= the character, the cold and the Wastes ================= */
+// The server walks every character and counts the cold (world.ts rules, inlined as W4W). The game asks, predicts
+// with the same rules between answers, and draws. In the prototype (no server) the same rules run locally.
+let XW = null;
+let XV = null, XT = 0, pendingOpen = null, lastDeathSeen = Number(store.get('w4w.deathSeen') || 0), xBusy = false;
+const xnow = () => (XV ? XV.now + (performance.now() - XT) : Date.now());
+const myUid = () => (S.uid && S.real[S.uid] ? S.uid : 'me');
+const hasChar = () => !!XV?.me;
+function localWorld() {
+  // the prototype keeps the whole expedition world in this browser, with the very same rules
+  let st = null; try { st = JSON.parse(store.get('w4w.xworld') || 'null'); } catch {}
+  st ||= { chars: {}, hearths: {}, bags: {}, nodes: {} };
+  const subs = [];
+  const wsNow = () => { const h = me(); const houses = {}; if (h) houses.me = { q: h.q, r: h.r, nick: h.nick, state: h.state, sol: h.sol, lastWood: h.lastWood };
+    return { now: Date.now(), houses, chars: st.chars, hearths: st.hearths, bags: st.bags, nodes: st.nodes, online: 1, doneOrders: 0 }; };
+  const keep = () => store.set('w4w.xworld', JSON.stringify(st));
+  const emit = v => subs.forEach(f => { try { f(v); } catch (e) { console.warn(e); } });
+  const view = (events = []) => { const ws = wsNow(); const d = W4W.newDirty(); W4W.stepAll(ws, d); keep(); return W4W.viewOf(ws, 'me', events); };
+  setInterval(() => { if (me()) emit(view()); }, 4000);
+  return {
+    get: () => (me() ? view() : null),
+    on(cb) { subs.push(cb); if (me()) cb(view()); return () => {}; },
+    // for tests of the prototype only: let time pass for the whole little world
+    warp(ms) { const sh = o => { for (const k of ['t0', 'simT', 'until', 'at', 'frozenUntil']) if (o && typeof o[k] === 'number' && o[k] > 0) o[k] -= ms; };
+      Object.values(st.chars).forEach(c => { sh(c); sh(c.act); if (c.died) c.died.t -= ms; }); Object.values(st.hearths).forEach(sh); Object.values(st.bags).forEach(sh);
+      for (const k in st.nodes) st.nodes[k] -= ms; keep(); emit(view()); },
+    async act(name, body = {}) { const ws = wsNow(); const d = W4W.newDirty(); const r = W4W.action(ws, 'me', name, body, d); keep(); if (!r.ok) { const e = new Error(r.error); e.status = r.status; throw e; } const v = W4W.viewOf(ws, 'me', r.events); emit(v); return v; },
+  };
+}
+/** Called once the town is built and the capabilities are up. */
+function startX() { if (XW) return; XW = window.W4W_X || localWorld(); hookFeed(); XW.on(v => takeView(v)); controls.addEventListener('start', () => { follow = false; }); }
+let follow = true, freezeAsk = 0;
+function takeView(v) {
+  if (!v || v.error) return;
+  XV = v; XT = performance.now();
+  if (!v.me) ensureChar();
+  syncAvatars(); syncHearths(); syncBags(); hud(true);
+  for (const e of v.events || []) if (e.kind === 'gathered') { banner(`+1 ${e.res}`, `${W4W.weightOf(v.me?.inv || W4W.emptyInv()).toFixed(1)} / ${W4W.CAPACITY} carried`); }
+  checkDeath();
+}
+async function xact(name, body) {
+  if (xBusy) return null; xBusy = true;
+  try { const v = await XW.act(name, body); takeView(v); return v; }
+  catch (e) { say(esc(e.message || 'The cold took your words.'), 'Wastes'); return null; }
+  finally { xBusy = false; }
+}
+// when your house appears, your character is born in it
+function ensureChar() { if (XW && me() && me().q != null && XV && !XV.me && !xBusy) xact('char'); }
+
+/* ---------- the rules, run locally between server answers ---------- */
+function xctx() {
+  const t = XV.town, cells = allResidents().filter(h => !h.demo && h.at[0] != null).map(h => h.at);
+  return { heatR: t.heatR, holds: t.holds, netStorm: false, shelters: W4W.townShelters(cells), home: W4W.key(...XV.me.home), hearths: Object.fromEntries(Object.entries(XV.hearths).map(([k, v]) => [k, v.until])), insulation: W4W.INSULATION_T1 };
+}
+function predicted() { if (!XV?.me) return null; return W4W.advance(XV.me, xnow(), xctx()); }
+
+/* ---------- avatars ---------- */
+let HERO = null, heroClips = {}, heroScale = 1;
+const avatars = {};
+new GLTFLoader().load('hero.glb', g => {
+  HERO = g; heroClips = Object.fromEntries(g.animations.map(a => [a.name, a]));
+  const box = new THREE.Box3().setFromObject(g.scene); heroScale = 0.9 / Math.max(0.01, box.max.y - box.min.y);
+  syncAvatars();
+}, undefined, e => console.warn('hero', e));
+function makeAvatar(uid, nick, mine) {
+  const g = new THREE.Group(); const body = cloneSkinned(HERO.scene); body.scale.setScalar(heroScale);
+  body.traverse(m => { if (m.isMesh) { m.castShadow = true; m.frustumCulled = false; } }); g.add(body); scene.add(g);
+  const mixer = new THREE.AnimationMixer(body); const actions = {}; for (const [n, c] of Object.entries(heroClips)) actions[n] = mixer.clipAction(c);
+  const glow = sprite(GLOW, 0, 0.5, 0, mine ? 0.75 : 0.45, mine ? 0xffc070 : 0x9fc3ff, mine ? 0.85 : 0.55); scene.remove(glow); g.add(glow);
+  const L = label(mine ? 'you' : nick, g, 1.05, mine ? 'me' : 'walker');
+  const a = { g, body, mixer, actions, cur: null, label: L, mine, ice: null, uid };
+  play(a, 'Idle'); return a;
+}
+function play(a, name, once = false) {
+  if (a.cur === name) return; const next = a.actions[name]; if (!next) return; const prev = a.cur && a.actions[a.cur];
+  next.reset(); next.setLoop(once ? THREE.LoopOnce : THREE.LoopRepeat); next.clampWhenFinished = once; next.fadeIn(0.25).play(); if (prev) prev.fadeOut(0.25); a.cur = name;
+}
+function dropAvatar(uid) { const a = avatars[uid]; if (!a) return; scene.remove(a.g); a.label.el.remove(); labels.splice(labels.indexOf(a.label), 1); delete avatars[uid]; }
+function syncAvatars() {
+  if (!HERO || !XV) return;
+  const want = {};
+  if (XV.me) want[myUid()] = { ...XV.me, nick: me()?.nick || 'you', mine: true };
+  for (const [uid, o] of Object.entries(XV.others || {})) if (uid !== myUid()) want[uid] = { ...o, mine: false };
+  for (const uid of Object.keys(avatars)) if (!want[uid]) dropAvatar(uid);
+  for (const [uid, d] of Object.entries(want)) { if (!avatars[uid]) avatars[uid] = makeAvatar(uid, d.nick, d.mine); avatars[uid].data = d; }
+}
+function posOf(d, t) {
+  if (!d.path?.length) return { p: HX(d.q, d.r), walking: false, dir: null };
+  const e = (t - d.t0) / d.stepMs;
+  if (e <= 0) return { p: HX(d.q, d.r), walking: true, dir: HX(...d.path[0]).sub(HX(d.q, d.r)) };
+  const i = Math.floor(e); if (i >= d.path.length) { const [q, r] = d.path.at(-1); return { p: HX(q, r), walking: false, dir: null, end: [q, r] }; }
+  const a = i === 0 ? HX(d.q, d.r) : HX(...d.path[i - 1]), b = HX(...d.path[i]);
+  return { p: a.clone().lerp(b, e - i), walking: true, dir: b.clone().sub(a) };
+}
+const ICE_MAT = new THREE.MeshPhysicalMaterial({ color: 0xcfe6ff, transparent: true, opacity: 0.55, roughness: 0.2, metalness: 0, clearcoat: 1, emissive: 0x6aa0ff, emissiveIntensity: 0.15 });
+function stepAvatars(dt) {
+  const t = xnow();
+  for (const a of Object.values(avatars)) {
+    const d = a.data; if (!d) continue;
+    a.mixer.update(dt);
+    const frozen = d.frozenUntil && d.frozenUntil > t;
+    if (frozen) {
+      const hp = HX(...d.home); a.g.position.set(hp.x + 0.55, 0, hp.z + 0.35); play(a, 'Lie_Idle');
+      if (!a.ice) { a.ice = new THREE.Mesh(new RoundedBoxGeometry(0.9, 0.32, 0.45, 2, 0.08), ICE_MAT); a.ice.position.set(0, 0.16, 0); a.g.add(a.ice); }
+      a.label.el.textContent = `${a.mine ? 'you' : d.nick} · frozen ${hms(d.frozenUntil - t)}`; continue;
+    }
+    if (a.ice) { a.g.remove(a.ice); a.ice = null; a.label.el.textContent = a.mine ? 'you' : d.nick; }
+    const { p, walking, dir } = posOf(d, t);
+    // standing at a building: wait at its door, a step toward the middle of town, not inside the walls
+    const cell = walking ? null : W4W.key(d.q, d.r), inside = cell && (Object.values(SPECIAL).some(([q, r]) => W4W.key(q, r) === cell) || allResidents().some(h => h.at[0] != null && W4W.key(...h.at) === cell));
+    const off = inside && p.lengthSq() > 0.01 ? new THREE.Vector3(-p.x, 0, -p.z).normalize().multiplyScalar(0.95) : new THREE.Vector3();
+    a.g.position.lerp(p.clone().add(off), Math.min(1, dt * 12));
+    if (dir && dir.lengthSq() > 0) a.g.rotation.y = Math.atan2(dir.x, dir.z);
+    const busy = d.act && d.act.until > t;
+    play(a, walking ? 'Walking_A' : busy ? 'PickUp' : sittingAt(d) ? 'Sit_Floor_Idle' : 'Idle');
+  }
+  // the camera walks with you until you take it
+  const mine = avatars[myUid()];
+  if (follow && mine?.data?.path?.length && !fly) { const tg = mine.g.position; controls.target.x += (tg.x - controls.target.x) * Math.min(1, dt * 2); controls.target.z += (tg.z - controls.target.z) * Math.min(1, dt * 2); }
+}
+const sittingAt = d => !!XV?.hearths?.[W4W.key(d.q, d.r)] && XV.hearths[W4W.key(d.q, d.r)].until > xnow();
+const hms = ms => { ms = Math.max(0, ms); const h = Math.floor(ms / 36e5), m = Math.floor(ms % 36e5 / 6e4), s = Math.floor(ms % 6e4 / 1e3); return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`; };
+
+/* ---------- hearths and frozen packs on the map ---------- */
+const hearthFx = {}, bagFx = {};
+function syncHearths() {
+  const now = xnow();
+  const drop = k => { hearthFx[k].forEach(o => scene.remove(o)); labels.splice(labels.indexOf(hearthFx[k].L), 1); hearthFx[k].L.el.remove(); delete hearthFx[k]; };
+  for (const k of Object.keys(hearthFx)) if (!XV.hearths[k]) drop(k);
+  for (const [k, h] of Object.entries(XV.hearths)) {
+    const lit = h.until > now, sig = lit ? 'lit' : 'ash';
+    if (hearthFx[k]?.sig === sig) { hearthFx[k].L.el.textContent = `${h.nick}'s hearth · ${lit ? hms(h.until - now).slice(0, 5) : 'ash'}`; continue; }
+    if (hearthFx[k]) drop(k);
+    const [q, r] = k.split(',').map(Number), p = HX(q, r), objs = [];
+    for (let i = 0; i < 6; i++) { const a = i / 6 * Math.PI * 2; const s = place('rock_C', q, r, { scale: 0.22, rot: a }); s.position.set(p.x + Math.cos(a) * 0.32, 0, p.z + Math.sin(a) * 0.32); objs.push(s); }
+    const wood = place('lumber', q, r, { scale: 0.45 }); objs.push(wood);
+    if (lit) { const f = sprite(GLOW, p.x, 0.32, p.z, 1.0, 0xff9a3c, 1); f.userData.flicker = true; objs.push(f, glowDecal(p.x, p.z, 2.2, 0xffb060, 0.6)); }
+    objs.L = label(`${h.nick}'s hearth`, wood, 0.9, lit ? 'key' : 'demo'); objs.sig = sig; hearthFx[k] = objs;
+  }
+}
+function syncBags() {
+  const seen = new Set();
+  for (const b of XV.bags || []) {
+    seen.add(b.id); if (bagFx[b.id]) continue;
+    const p = HX(b.q, b.r), sack = place('sack', b.q, b.r, { scale: 0.6, rot: 1.3 }); sack.position.set(p.x + 0.35, 0, p.z - 0.2);
+    const g = sprite(GLOW, p.x + 0.35, 0.4, p.z - 0.2, 0.6, 0x9fc3ff, 0.9); g.userData.blink = true;
+    const L = label(`${b.nick}'s frozen pack`, sack, 0.7, 'red'); bagFx[b.id] = { objs: [sack, g], L };
+  }
+  for (const id of Object.keys(bagFx)) if (!seen.has(id)) { bagFx[id].objs.forEach(o => scene.remove(o)); bagFx[id].L.el.remove(); labels.splice(labels.indexOf(bagFx[id].L), 1); delete bagFx[id]; }
+}
+
+/* ---------- walking by click: everything opens on foot ---------- */
+const groundPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0), gp = new THREE.Vector3();
+function hexAt(x, z) {
+  const r = z / 1.7320508, q = x / 2 - r / 2, s = -q - r;
+  let rq = Math.round(q), rr = Math.round(r), rs = Math.round(s); const dq = Math.abs(rq - q), dr = Math.abs(rr - r), ds = Math.abs(rs - s);
+  if (dq > dr && dq > ds) rq = -rr - rs; else if (dr > ds) rr = -rq - rs; return [rq, rr];
+}
+function groundHex(e) { mouse.set((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1); ray.setFromCamera(mouse, camera); return ray.ray.intersectPlane(groundPlane, gp) ? hexAt(gp.x, gp.z) : null; }
+const KIND_CELL = { church: SPECIAL.church, board: SPECIAL.plaza, fire: SPECIAL.plaza, core: SPECIAL.core, observatory: SPECIAL.observatory, library: SPECIAL.library, mine: SPECIAL.mine };
+function cellOfKind(k, id) {
+  if (KIND_CELL[k]) return KIND_CELL[k];
+  if (k === 'house') { const h = allResidents().find(x => x.id === id); return h?.at; }
+  if (k === 'stage2') return STAGE2.find(s => s.id === id)?.at;
+  return null;
+}
+function openKind(k, id) {
+  if (k === 'church') openChurch(); else if (k === 'board') openPlaza(); else if (k === 'core') openCore(); else if (k === 'fire') addWood();
+  else if (k === 'house') openHouse(id); else if (k === 'observatory') openObservatory(); else if (k === 'stage2') openStage2(id); else if (k === 'library') openLibrary(); else if (k === 'mine') openMine();
+}
+/** With a character, a click on a building walks you there and opens it on arrival. Returns true when handled. */
+function walkTo(k, id) {
+  if (!hasChar()) return false;
+  const cell = cellOfKind(k, id); if (!cell) return false;
+  const pr = predicted(); if (!pr) return false;
+  if (pr.c.frozenUntil > xnow()) { say('You are frozen. Your body lies at home until it thaws.', 'Wastes'); return true; }
+  const here = W4W.cellAt(pr.c, xnow());
+  if (!pr.c.path.length && W4W.dist(here, cell) <= 1) { openKind(k, id); return true; }
+  pendingOpen = { kind: k, id, cell }; closePanel(); follow = true; xact('move', { to: cell }); say(`Walking there. It opens when you arrive.`, 'Wastes'); return true;
+}
+function clickGround(e) {
+  if (!hasChar()) return false; const c = groundHex(e); if (!c) return false;
+  const pr = predicted(); const here = W4W.cellAt(pr.c, xnow());
+  if (pr.c.frozenUntil > xnow()) { say('You are frozen. Nothing thaws you faster.', 'Wastes'); return true; }
+  if (!pr.c.path.length && W4W.dist(here, c) <= 1 && W4W.resourceOf(...c) && !(XV.nodes[W4W.key(...c)] > xnow())) { xact('gather', { at: c }); return true; }
+  if (c[0] === here[0] && c[1] === here[1]) return true;
+  if (W4W.ringOf(...c) > W4W.MAX_RING) { say('Beyond the Stone Teeth the cold has no edge. Not yet.', 'Wastes'); return true; }
+  pendingOpen = null; follow = true; xact('move', { to: c }); return true;
+}
+
+/* ---------- the survival HUD and the actions where you stand ---------- */
+const hudEl = document.createElement('div'); hudEl.id = 'hud'; hudEl.hidden = true; document.body.appendChild(hudEl);
+const actEl = document.createElement('div'); actEl.id = 'xact'; actEl.hidden = true; document.body.appendChild(actEl);
+const frostEl = document.createElement('div'); frostEl.id = 'frostfx'; document.body.appendChild(frostEl);
+const diedEl = document.createElement('div'); diedEl.id = 'died'; diedEl.hidden = true; document.body.appendChild(diedEl);
+let hudT = 0, actSig = '';
+const bar = (n, v, max, cls) => `<div class="hb ${cls}"><i>${n}</i><b style="width:${Math.max(0, Math.min(100, v / max * 100))}%"></b><span>${Math.round(v)}</span></div>`;
+function hud(force) {
+  const now = performance.now(); if (!force && now - hudT < 250) return; hudT = now;
+  if (!XV?.me) { hudEl.hidden = true; actEl.hidden = true; frostEl.style.opacity = 0; return; }
+  const pr = predicted(), c = pr.c, t = xnow();
+  const here = W4W.cellAt(c, t), zone = W4W.zoneOf(...here), ctx = xctx();
+  const cold = W4W.coldAt(...here, t, ctx), wx = W4W.weatherAt(t), deficit = Math.max(0, cold - ctx.insulation);
+  const kg = W4W.weightOf(c.inv), frozen = c.frozenUntil > t;
+  hudEl.hidden = false;
+  hudEl.innerHTML = `<div class="hz"><b>${esc(W4W.ZONES[zone]?.name || 'The far cold')}</b><span>${frozen ? 'frozen' : cold === 0 ? 'inside the warm circle' : `cold ${Math.round(cold)} · clothing ${ctx.insulation}${deficit ? ` · −${(deficit * W4W.LOSS_K).toFixed(1)}/min` : ''}`}</span></div>
+    ${bar('Warmth', c.warmth, 100, 'w')}${bar('Health', c.health, 100, 'h')}${bar('Energy', c.energy, 100, 'e')}${bar('Load', kg, W4W.CAPACITY, kg > W4W.CAPACITY ? 'l over' : 'l')}
+    <div class="hinv">${['wood', 'stone', 'flint', 'resin'].map(k => `<span><i>${k}</i>${c.inv[k] || 0}</span>`).join('')}</div>
+    <div class="hwx"><span class="${wx.id}">${wx.name} ×${wx.mult}</span>${XV.grey ? '<span>grey light −5</span>' : ''}${XV.bell ? '<span class="bad">night of the bell +10</span>' : ''}<span class="${XV.town.holds ? 'good' : 'bad'}">${XV.town.holds ? 'town holds' : 'frost wins'}</span></div>`;
+  // the cold you feel on the screen
+  const fx = frozen ? 0 : Math.max(0, (50 - c.warmth) / 50); frostEl.style.opacity = fx.toFixed(2);
+  document.body.classList.toggle('delir', !frozen && c.warmth < 10);
+  actions(c, here, t, frozen);
+  if (pendingOpen && !c.path.length && !frozen) { const k = pendingOpen; pendingOpen = null; if (W4W.dist(here, k.cell) <= 1) openKind(k.kind, k.id); }
+  // the screen thinks you just froze: ask the server, it has the last word
+  if (pr.events.some(e => e.kind === 'froze' || e.kind === 'thawed') && performance.now() - freezeAsk > 5000) { freezeAsk = performance.now(); xact('char'); }
+}
+function actions(c, here, t, frozen) {
+  const btns = [];
+  if (frozen) btns.push(`<span class="xt">Frozen. Thaws in ${hms(c.frozenUntil - t)}. Nothing makes it faster.</span>`);
+  else if (c.path.length) btns.push('<span class="xt">Walking…</span><button class="btn" data-x="stop">Stop</button>');
+  else if (c.act && c.act.until > t) btns.push(`<span class="xt">Gathering ${c.act.res}… ${Math.ceil((c.act.until - t) / 1000)}s</span>`);
+  else {
+    const near = [here, ...W4W.DIRS.map(([dq, dr]) => [here[0] + dq, here[1] + dr])];
+    const kinds = new Set();
+    for (const cell of near) { const res = W4W.resourceOf(...cell); if (res && !(XV.nodes[W4W.key(...cell)] > t) && !kinds.has(res)) { kinds.add(res); btns.push(`<button class="btn" data-x="gather" data-at="${cell.join(',')}">Gather ${res}</button>`); } }
+    const hk = near.map(cell => W4W.key(...cell)).find(k => XV.hearths[k]);
+    if (hk && (c.inv.wood || 0) > 0) btns.push(`<button class="btn" data-x="feed" data-at="${hk}">Feed the hearth (+3h)</button>`);
+    const cost = W4W.HEARTH_COST;
+    if (W4W.zoneOf(...here) >= 1 && !XV.hearths[W4W.key(...here)]) btns.push(`<button class="btn ${c.inv.wood >= cost.wood && c.inv.stone >= cost.stone && c.inv.flint >= cost.flint ? 'main' : ''}" data-x="hearth">Build a hearth (${cost.wood} wood, ${cost.stone} stone, ${cost.flint} flint)</button>`);
+    for (const b of XV.bags || []) if (!b.mine && W4W.dist(here, [b.q, b.r]) <= 1) btns.push(`<button class="btn main" data-x="take" data-id="${esc(b.id)}">Take ${esc(b.nick)}'s frozen pack</button>`);
+    if (W4W.key(...here) === W4W.key(...c.home)) { if (W4W.weightOf(c.inv) > 0) btns.push('<button class="btn" data-x="unload">Unload at home</button>'); const st = c.stash || {}; for (const r of ['wood', 'stone', 'flint']) if ((st[r] || 0) > 0) btns.push(`<button class="btn" data-x="pack" data-res="${r}">Pack ${r} (${st[r]} home)</button>`); }
+    if (!btns.length) btns.push(`<span class="xt">${W4W.zoneOf(...here) === 0 ? 'Click the ground to walk. Out past the forest the cold begins.' : 'Click a tree or a rock next to you to gather. Click the ground to walk.'}</span>`);
+  }
+  const sig = btns.join(''); if (sig === actSig) return; actSig = sig;
+  actEl.hidden = false; actEl.innerHTML = sig;
+  actEl.querySelectorAll('[data-x]').forEach(b => b.onclick = () => {
+    const x = b.dataset.x, body = {};
+    if (b.dataset.at) body.at = b.dataset.at.split(',').map(Number);
+    if (b.dataset.id) body.id = b.dataset.id; if (b.dataset.res) body.res = b.dataset.res;
+    xact(x, body);
+  });
+}
+
+/* ---------- you died ---------- */
+function checkDeath() {
+  const d = XV?.me?.died; if (!d || d.t <= lastDeathSeen) return;
+  const fresh = XV.me.frozenUntil > xnow();
+  lastDeathSeen = d.t; store.set('w4w.deathSeen', String(d.t));
+  const zone = typeof d.zone === 'number' ? (W4W.ZONES[d.zone]?.name || 'the far cold') : d.zone;
+  record(`${me()?.nick || 'Someone'} froze in ${zone}: ${d.cause}`);
+  if (!fresh) return;
+  diedEl.hidden = false; diedEl.className = 'on';
+  diedEl.innerHTML = `<div class="dwrap"><h1>YOU DIED</h1><p class="dsub">Frozen in ${esc(zone)}. ${esc(d.cause.charAt(0).toUpperCase() + d.cause.slice(1))}.</p>
+    <p class="dsub">You lie at home in the ice for 24 hours. Nothing thaws you faster. Your rig keeps working.</p>
+    <p class="dsub">Your pack stays where you fell for 24 hours. You cannot open it; someone else can carry it home.</p>
+    <button class="btn" id="dOk">Back to town</button></div>`;
+  $('#dOk').onclick = () => { diedEl.hidden = true; diedEl.className = ''; };
+}
+
+/* ---------- the town hears about the Wastes ---------- */
+function hookFeed() {
+  if (!room) return;
+  room.on('froze', m => { const x = m.data || {}; if (m.by !== S.uid) say(`${esc(x.nick || 'Someone')} froze in ${esc(x.zone || 'the Wastes')}.${x.bag ? ' Their pack lies there for 24 hours.' : ''}`, 'Wastes'); });
+  room.on('hearth', m => { const x = m.data || {}; if (m.by !== S.uid) say(`${esc(x.nick || 'Someone')} lit a hearth in ${esc(x.zone || 'the Wastes')}. Anyone may warm up there.`, 'Wastes'); });
+  room.on('took', m => { const x = m.data || {}; say(`${esc(x.nick || 'Someone')} picked up ${esc(x.owner || 'someone')}'s frozen pack.`, 'Wastes'); });
+}
+
 /* ================= labels ================= */
 const v3 = new THREE.Vector3();
 function placeLabels() {
@@ -2090,14 +2864,15 @@ function loop(now = performance.now()) {
   spriteCache.forEach(o => { {
     if (o.userData.flicker) { if (o.userData.flare) { o.userData.flare = Math.max(0, o.userData.flare - dt * 0.6); } const f = o.userData.flare || 0; o.material.opacity = 0.8 + Math.sin(t * 13) * 0.08 + Math.sin(t * 7.3) * 0.1; o.scale.setScalar(1.1 + f * 1.2 + (S.town.fire || 0) * 0.08); }
     if (o.userData.blink) o.material.opacity = 0.35 + 0.65 * (Math.sin(t * 4) > 0 ? 1 : 0.2); } });
+  stepAvatars(dt); hud();
   for (const k in walkers) { const w = walkers[k]; w.g.position.lerp(w.target, Math.min(1, dt * 1.5)); w.g.position.y = 0; w.light.position.set(w.g.position.x + 0.15, 0.45, w.g.position.z); }
   if (fly) { fly.t = Math.min(1, fly.t + dt * 0.9); const k = 1 - Math.pow(1 - fly.t, 3);
     const tgt = fly.from.clone().lerp(fly.to, k); const off = camera.position.clone().sub(controls.target).normalize().multiplyScalar(fly.d0 + (fly.d1 - fly.d0) * k);
     controls.target.copy(tgt); camera.position.copy(tgt).add(off); if (fly.t >= 1) fly = null; }
-  controls.target.x = THREE.MathUtils.clamp(controls.target.x, -16, 16); controls.target.z = THREE.MathUtils.clamp(controls.target.z, -16, 16); if (!fly && $('#intro').hidden) controls.target.y = 0;
+  controls.target.x = THREE.MathUtils.clamp(controls.target.x, -36, 36); controls.target.z = THREE.MathUtils.clamp(controls.target.z, -32, 32); if (!fly && $('#intro').hidden) controls.target.y = 0;
   controls.update(); const _g = diagGpuBegin(); if (LITE) renderer.render(scene, camera); else composer.render(); diagGpuEnd(_g); placeLabels(); sendPresence(); diagFrame(performance.now() - now);
 }
 requestAnimationFrame(loop);
 addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); DPR = Math.min(DPR, dprFor()); renderer.setPixelRatio(DPR); composer.setPixelRatio?.(DPR); renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight); fxaaSize(); });
-window.__w4w = { S, settle, freePlots, openMaria, ask, addWood, refreshTown, draft: v => (draft = v), camera, controls, updateIce, renderer, scene, __composer: LITE ? null : composer };
+window.__w4w = { S, settle, X: () => ({ XV, avatars, predicted, xact, hexAt, warp: ms => XW.warp?.(ms) }), freePlots, openMaria, ask, addWood, refreshTown, draft: v => (draft = v), camera, controls, updateIce, renderer, scene, __composer: LITE ? null : composer };
 </script>
