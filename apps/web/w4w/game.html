@@ -381,6 +381,7 @@ body.delir #frostfx{animation:delir 2.6s infinite steps(1)}
     <span class="chip">Anna <b id="melt">0%</b><span class="mute">thawed</span></span>
     <button class="chip hide-sm" id="wx" title="Network weather (demo toggle)">Weather <b id="wxv">Clear</b></button>
     <button class="chip" id="gfx" title="Light graphics: quieter fans, less glow">Graphics <b id="gfxv">Full</b></button>
+    <button class="chip" id="snd" title="Music and sounds">Sound <b id="sndv">On</b></button>
   </div>
 </div>
 
@@ -512,7 +513,7 @@ var W4W = (() => {
     zoneOf: () => zoneOf
   });
   const STEP_MS = 3e3;
-  const ZONE_STEP_MS = [3e3, 15 * 6e4, 20 * 6e4, 30 * 6e4];
+  const ZONE_STEP_MS = [3e3, 8 * 6e4, 12 * 6e4, 18 * 6e4];
   const WX_SLOW = { calm: 1, wind: 1.5, blizzard: 2.5 };
   const DRIFT = { calm: 0, wind: 0.15, blizzard: 0.4 };
   const RIME_MS = 8 * 6e4;
@@ -610,7 +611,7 @@ var W4W = (() => {
   }
   const weightOf = (inv) => Object.keys(WEIGHT).reduce((a, k) => a + (inv[k] || 0) * WEIGHT[k], 0);
   const emptyInv = () => ({ wood: 0, stone: 0, flint: 0, resin: 0 });
-  function findPath(a, b, limit = 4e3) {
+  function findPath(a, b, limit = 4e3, blocked) {
     if (a[0] === b[0] && a[1] === b[1]) return [];
     if (!passable(b[0], b[1])) return null;
     const open = [[dist(a, b), 0, a]];
@@ -632,6 +633,7 @@ var W4W = (() => {
       for (const [dq, dr] of DIRS) {
         const nq = cur[0] + dq, nr = cur[1] + dr, nk = key(nq, nr);
         if (!passable(nq, nr)) continue;
+        if (blocked?.has(nk) && !(nq === b[0] && nr === b[1])) continue;
         const ng = gc + 1;
         if (ng < (g.get(nk) ?? Infinity)) {
           g.set(nk, ng);
@@ -890,7 +892,7 @@ var W4W = (() => {
         const to = cellArg(b.to);
         if (!to) return fail("Where to?");
         if (ringOf(...to) > MAX_RING) return fail("Beyond here the cold has no edge. Not yet.");
-        const path = findPath(here, to);
+        const path = findPath(here, to, 4e3, new Set(Object.keys(ctxOf(ws, uid).shelters)));
         if (!path) return fail("No way through from here.");
         if (path.length > 90) return fail("Too far for one walk. Go in stages.");
         Object.assign(c, { q: here[0], r: here[1], path, t0: now, act: null, lost: false });
@@ -1798,7 +1800,7 @@ function faqLag() {
 const FAQ = [
   ['The cold beyond the town', [
     ['How do I walk?', 'Once your house stands, you have a character who lives in it. Inside the town you run, a few seconds a cell. Buildings open only when you are standing at their door: click one and you walk there first.'],
-    ['How do trips work?', 'Click a place beyond the forest. The route appears in footprints with the arrival time for the weather ahead and the warmth you would arrive with. Click Set out, or the same place again. Trips are real time: about 15 minutes a cell in The Edge, 20 in the Black Pines, 30 in the Stone Teeth, slower in wind and much slower in a blizzard. You can close the game; the trip goes on.'],
+    ['How do trips work?', 'Click a place beyond the forest. The route appears cell by cell with the arrival time for the weather ahead and the warmth you would arrive with. Click Set out, or the same place again. Trips are real time: about 8 minutes a cell in The Edge, 12 in the Black Pines, 18 in the Stone Teeth, slower in wind and much slower in a blizzard. You can close the game; the trip goes on. Move the view with WASD, the arrows, or by pushing the mouse against the edge of the screen.'],
     ['Why did my character stop in the middle of nowhere?', 'In wind, and worse in a blizzard, the trail gets lost: a step takes you somewhere you did not choose and you stop there. Pick a direction again. In calm weather the trail holds.'],
     ['What is the tall dark thing out there?', 'The Library calls it the Rime. It wanders the Wastes and never comes past the forest edge into town. It does not hunt, but now and then it turns toward someone in the snow, and if it reaches you, you fall at once. If you see it near, walk the other way.'],
     ['What do the bars mean?', 'Warmth drops wherever the cold is stronger than your clothing, faster in wind and blizzards. Below 25 warmth the frost starts taking health. Energy goes on walking and comes back by a fire. Load is what you carry: past the limit every step costs double.'],
@@ -2642,6 +2644,7 @@ function localWorld() {
       Object.values(st.chars).forEach(c => { sh(c); sh(c.act); if (c.died) c.died.t -= ms; }); Object.values(st.hearths).forEach(sh); Object.values(st.bags).forEach(sh);
       for (const k in st.nodes) st.nodes[k] -= ms; if (st.rime) st.rime.t -= ms; keep(); emit(view()); },
     admin: () => true,
+    _rime(q, r) { st.rime = { q, r, t: Math.floor(Date.now() / W4W.RIME_MS) * W4W.RIME_MS, d: 0 }; keep(); emit(view()); },
     async act(name, body = {}) {
       if (name === 'revive') { const c = st.chars.me; if (c) Object.assign(c, { frozenUntil: 0, warmth: 100, health: 100, energy: 100, q: c.home[0], r: c.home[1], path: [], act: null, lost: false, t0: Date.now(), simT: Date.now() }); keep(); const v = view(); emit(v); return v; }
       const ws = wsNow(); const d = W4W.newDirty(); const r = W4W.action(ws, 'me', name, body, d); st.rime = ws.rime; keep(); if (!r.ok) { const e = new Error(r.error); e.status = r.status; throw e; } const v = W4W.viewOf(ws, 'me', r.events); emit(v); return v; },
@@ -2684,6 +2687,10 @@ new GLTFLoader().load('hero.glb', g => {
   const box = new THREE.Box3().setFromObject(g.scene); heroScale = 0.42 / Math.max(0.01, box.max.y - box.min.y);
   syncAvatars();
 }, undefined, e => console.warn('hero', e));
+const BLOB_GEO = new THREE.PlaneGeometry(0.62, 0.62).rotateX(-Math.PI / 2);
+const BLOB_MAT = (() => { const cv = document.createElement('canvas'); cv.width = cv.height = 64; const x = cv.getContext('2d'); const g = x.createRadialGradient(32, 32, 0, 32, 32, 32);
+  g.addColorStop(0, 'rgba(0,0,8,.55)'); g.addColorStop(0.6, 'rgba(0,0,8,.25)'); g.addColorStop(1, 'rgba(0,0,8,0)'); x.fillStyle = g; x.fillRect(0, 0, 64, 64);
+  return new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(cv), transparent: true, depthWrite: false }); })();
 const heroMats = new Map();
 function heroMat(src) {
   if (heroMats.has(src)) return heroMats.get(src);
@@ -2692,7 +2699,9 @@ function heroMat(src) {
 }
 function makeAvatar(uid, nick, mine) {
   const g = new THREE.Group(); const body = cloneSkinned(HERO.scene); body.scale.setScalar(heroScale);
-  body.traverse(m => { if (m.isMesh) { m.castShadow = true; m.frustumCulled = false; m.material = heroMat(m.material); } }); g.add(body); scene.add(g);
+  body.traverse(m => { if (m.isMesh) { m.castShadow = false; m.frustumCulled = false; m.material = heroMat(m.material); } }); g.add(body); scene.add(g);
+  // a soft round shadow under the feet instead of the blocky shadow-map one
+  const blob = new THREE.Mesh(BLOB_GEO, BLOB_MAT); blob.position.y = 0.02; blob.renderOrder = 1; g.add(blob);
   const mixer = new THREE.AnimationMixer(body); const actions = {}; for (const [n, c] of Object.entries(heroClips)) actions[n] = mixer.clipAction(c); if (actions.Running_A) actions.Running_A.timeScale = 0.8; if (actions.Walking_A) actions.Walking_A.timeScale = 0.55;
   const glow = sprite(GLOW, 0, 0.22, 0, mine ? 0.38 : 0.26, mine ? 0xffc070 : 0x9fc3ff, mine ? 0.7 : 0.45); scene.remove(glow); g.add(glow);
   const L = label(mine ? 'you' : nick, g, 0.62, mine ? 'me' : 'walker');
@@ -2712,10 +2721,22 @@ function syncAvatars() {
   for (const uid of Object.keys(avatars)) if (!want[uid]) dropAvatar(uid);
   for (const [uid, d] of Object.entries(want)) { if (!avatars[uid]) avatars[uid] = makeAvatar(uid, d.nick, d.mine); avatars[uid].data = d; }
 }
+/* ---------- moving smoothly: one curve through the cell centres, no stop at every cell ---------- */
+const curves = new Map();
+function curveFor(d) {
+  const k = d.q + ',' + d.r + '|' + d.path.map(c => c.join(',')).join(';'); let cv = curves.get(k);
+  if (!cv) { const pts = [HX(d.q, d.r), ...d.path.map(c => HX(...c))]; cv = pts.length > 1 ? new THREE.CatmullRomCurve3(pts, false, 'centripetal', 0.5) : null; curves.clear(); curves.set(k, cv); }
+  return cv;
+}
 function posOf(d, t) {
   if (!d.path?.length) return { p: HX(d.q, d.r), walking: false, dir: null };
-  const a = HX(d.q, d.r), b = HX(...d.path[0]), e = THREE.MathUtils.clamp((t - d.t0) / Math.max(1, d.stepMs), 0, 1);
-  return { p: a.clone().lerp(b, e), walking: true, dir: b.clone().sub(a), out: W4W.zoneOf(...d.path[0]) >= 1 || W4W.zoneOf(d.q, d.r) >= 1 };
+  const out = W4W.zoneOf(...d.path[0]) >= 1 || W4W.zoneOf(d.q, d.r) >= 1;
+  // past the end of this step, keep going at the same pace until the next answer says otherwise
+  const u = Math.max(0, (t - d.t0) / Math.max(1, d.stepMs)), n = d.path.length, s = Math.min(n, u);
+  const cv = d.path.length > 1 || true ? curveFor(d) : null;
+  if (!cv) return { p: HX(...d.path[0]), walking: false, dir: null };
+  const k = s / n, p = cv.getPoint(Math.min(1, k)), tan = cv.getTangent(Math.min(0.999, Math.max(0.001, k)));
+  return { p, walking: s < n, dir: tan, out };
 }
 const ICE_MAT = new THREE.MeshPhysicalMaterial({ color: 0xcfe6ff, transparent: true, opacity: 0.55, roughness: 0.2, metalness: 0, clearcoat: 1, emissive: 0x6aa0ff, emissiveIntensity: 0.15 });
 function stepAvatars(dt) {
@@ -2734,8 +2755,8 @@ function stepAvatars(dt) {
     // standing at a building: wait at its door, a step toward the middle of town, not inside the walls
     const cell = walking ? null : W4W.key(d.q, d.r), inside = cell && (Object.values(SPECIAL).some(([q, r]) => W4W.key(q, r) === cell) || allResidents().some(h => h.at[0] != null && W4W.key(...h.at) === cell));
     const off = inside && p.lengthSq() > 0.01 ? new THREE.Vector3(-p.x, 0, -p.z).normalize().multiplyScalar(0.95) : new THREE.Vector3();
-    a.g.position.lerp(p.clone().add(off), Math.min(1, dt * 12));
-    if (dir && dir.lengthSq() > 0) a.g.rotation.y = Math.atan2(dir.x, dir.z);
+    if (walking) a.g.position.copy(p); else a.g.position.lerp(p.clone().add(off), Math.min(1, dt * 6));
+    if (dir && dir.lengthSq() > 1e-6) { const y = Math.atan2(dir.x, dir.z), r0 = a.g.rotation.y; a.g.rotation.y = r0 + Math.atan2(Math.sin(y - r0), Math.cos(y - r0)) * Math.min(1, dt * 9); }
     const busy = d.act && d.act.until > t;
     play(a, walking ? (out || !a.actions.Running_A ? 'Walking_A' : 'Running_A') : busy ? 'PickUp' : sittingAt(d) ? 'Sit_Floor_Idle' : 'Idle');
   }
@@ -2852,7 +2873,7 @@ function hud(force) {
   const near = frozen ? null : rimeNear(c);
   if (near != null && near <= 3) { hudEl.insertAdjacentHTML('beforeend', `<div class="hrime">${near <= 1 ? 'It is right next to you. Move.' : 'Something tall moves in the snow nearby.'}</div>`); frostEl.style.opacity = Math.max(+frostEl.style.opacity, near <= 1 ? 0.9 : 0.5).toFixed(2); }
   document.body.classList.toggle('rimenear', near != null && near <= 1);
-  if (near != null && near <= 3 && performance.now() - (rimeFx?.warned || 0) > 120000) { if (rimeFx) rimeFx.warned = performance.now(); say('The lights in the dark are close. It does not hunt, they say. Walk the other way.', 'Wastes'); }
+  if (near != null && near <= 3 && performance.now() - (rimeFx?.warned || 0) > 120000) { if (rimeFx) rimeFx.warned = performance.now(); rimeSting(); say('The lights in the dark are close. It does not hunt, they say. Walk the other way.', 'Wastes'); }
   if (c.path.length && performance.now() - etaT > 2000) { etaT = performance.now(); const nx = c.path[0], first = Math.max(0, c.t0 + c.stepMs - t);
     eta = first + (c.path.length > 1 ? W4W.planTrip({ ...c, q: nx[0], r: nx[1] }, c.path.slice(1), c.t0 + c.stepMs, xctx()).eta : 0); }
   if (c.path.length) drawPrintsOnce(c); else if (!trip && prints.length) drawPrints([0, 0], [], false);
@@ -2927,55 +2948,101 @@ function notesHtml() {
     <p class="mute" style="font-size:12.5px">${found.length} of ${NOTES.length} notes found. The rest are still out in the Wastes.</p>`;
 }
 
-/* ---------- the Rime, drawn: a tall dark thing with too many lights in it ---------- */
-function rimeTexture() {
-  const W = 512, H = 832, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d');
-  let seed = 4242; const rr = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
-  const half = k => (k < 0.55 ? 150 - k * 150 : k < 0.8 ? 68 + Math.sin((k - 0.55) / 0.25 * Math.PI) * 40 : 70 - (k - 0.8) * 230); // base, waist, a bowed head
-  const lean = k => Math.sin(k * 4.4) * 22 + k * k * 40;
-  // the solid mass: a hunched shape, too tall, edges that never sit still
-  g.fillStyle = 'rgba(3,5,12,0.93)'; g.beginPath();
-  for (let i = 0; i <= 60; i++) { const k = i / 60, y = H - k * H * 0.9; g.lineTo(W / 2 + lean(k) - half(k) - rr() * 14, y); }
-  for (let i = 60; i >= 0; i--) { const k = i / 60, y = H - k * H * 0.9; g.lineTo(W / 2 + lean(k) + half(k) + rr() * 14, y); }
-  g.closePath(); g.fill();
-  // smoke around it, so the edge is never a line
-  for (let i = 0; i < 520; i++) { const k = rr() * 0.92, y = H - k * H * 0.9, x = W / 2 + lean(k) + (rr() - 0.5) * 2.3 * half(k), rad = 8 + rr() * 30;
-    const grd = g.createRadialGradient(x, y, 0, x, y, rad); grd.addColorStop(0, 'rgba(4,6,14,.28)'); grd.addColorStop(1, 'rgba(4,6,14,0)'); g.fillStyle = grd; g.beginPath(); g.arc(x, y, rad, 0, 7); g.fill(); }
-  // a crown of branches, like antlers grown from ice
-  g.lineCap = 'round';
-  const branch = (x, y, ang, w, depth) => { for (let s = 0; s < 14 && w > 0.6; s++) { const nx = x + Math.cos(ang) * 7, ny = y + Math.sin(ang) * 7; g.strokeStyle = 'rgba(4,7,16,.9)'; g.lineWidth = w; g.beginPath(); g.moveTo(x, y); g.lineTo(nx, ny); g.stroke(); x = nx; y = ny; ang += (rr() - 0.5) * 0.35; w *= 0.9; if (depth < 3 && rr() < 0.16) branch(x, y, ang + (rr() < 0.5 ? -0.6 : 0.6), w * 0.8, depth + 1); } };
-  for (let i = 0; i < 7; i++) branch(W / 2 + lean(0.86) + (i - 3) * 16, H - 0.86 * H * 0.9, -Math.PI / 2 + (i - 3) * 0.22, 9, 0);
-  // tendrils dragging in the snow
-  for (let i = 0; i < 16; i++) { let x = W / 2 + (rr() - 0.5) * 240, y = H * (0.86 + rr() * 0.12), ang = (x < W / 2 ? Math.PI : 0) + (rr() - 0.5) * 0.6, w = 11;
-    for (let s = 0; s < 34 && w > 0.5; s++) { const nx = x + Math.cos(ang) * 6, ny = y + Math.sin(ang) * 3; g.strokeStyle = `rgba(5,8,18,${0.4 + w / 30})`; g.lineWidth = w; g.beginPath(); g.moveTo(x, y); g.lineTo(nx, ny); g.stroke(); x = nx; y = ny; ang += (rr() - 0.5) * 0.4; w *= 0.92; } }
-  // the lights: most in the bowed head, a few lower, three of them large
-  for (let i = 0; i < 44; i++) {
-    const big = i < 3, k = i < 30 ? 0.6 + rr() * 0.22 : 0.2 + rr() * 0.4, y = H - k * H * 0.9, x = W / 2 + lean(k) + (rr() - 0.5) * 1.5 * half(k), rad = big ? 7 + rr() * 5 : 1.5 + rr() * 3.2;
-    const grd = g.createRadialGradient(x, y, 0, x, y, rad * 3); grd.addColorStop(0, 'rgba(235,250,255,1)'); grd.addColorStop(0.3, 'rgba(140,215,255,.85)'); grd.addColorStop(1, 'rgba(80,160,255,0)');
-    g.fillStyle = grd; g.beginPath(); g.arc(x, y, rad * 3, 0, 7); g.fill();
-  }
-  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; return t;
-}
+/* ---------- the Rime, built: too tall, too thin, too many arms, and lights where a face should be ---------- */
 let rimeFx = null;
+const _ra = new THREE.Vector3(), _rb = new THREE.Vector3(), _up = new THREE.Vector3(0, 1, 0), _q = new THREE.Quaternion();
 function buildRime() {
-  const mat = new THREE.SpriteMaterial({ map: rimeTexture(), transparent: true, depthWrite: false, fog: false, opacity: 0.95 });
-  const s = new THREE.Sprite(mat); s.center.set(0.5, 0.02); s.scale.set(5.4, 8.8, 1); s.renderOrder = 4;
-  const mist = sprite(GLOW, 0, 0.15, 0, 2.4, 0x6aa0ff, 0.22); scene.remove(mist);
-  const g = new THREE.Group(); g.add(s, mist); scene.add(g); g.visible = false;
-  rimeFx = { g, s, mist, p: new THREE.Vector3(), warned: 0 };
+  let seed = 913; const rr = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+  const skin = new THREE.MeshStandardMaterial({ color: 0x04060c, roughness: 0.32, metalness: 0.35, emissive: 0x0b1a33, emissiveIntensity: 0.35 });
+  const bone = new THREE.MeshStandardMaterial({ color: 0x8796a8, roughness: 0.5, metalness: 0.1, emissive: 0x1a2a40, emissiveIntensity: 0.25 });
+  const eyeM = new THREE.MeshBasicMaterial({ color: 0xcff0ff }), eyeG = new THREE.SphereGeometry(1, 10, 8);
+  const CYL = new THREE.CylinderGeometry(1, 1, 1, 7, 1, false); CYL.translate(0, 0.5, 0);
+  const g = new THREE.Group(), body = new THREE.Group(); g.add(body); scene.add(g);
+  const limbs = [];
+  // a limb is a tapered rod laid between two points every frame
+  const limb = (r0, r1, mat = skin) => { const geo = new THREE.CylinderGeometry(r1, r0, 1, 7, 1); geo.translate(0, 0.5, 0); const m = new THREE.Mesh(geo, mat); m.castShadow = true; body.add(m); const L = { m }; limbs.push(L); return L; };
+  const lay = (L, a, b) => { _rb.subVectors(b, a); const len = Math.max(0.001, _rb.length()); L.m.position.copy(a); L.m.scale.set(1, len, 1); _q.setFromUnitVectors(_up, _rb.multiplyScalar(1 / len)); L.m.quaternion.copy(_q); };
+  const V = (x, y, z) => new THREE.Vector3(x, y, z);
+  // legs, bent backwards like a deer's, far too long
+  const legs = [-1, 1].map(s => ({ s, thigh: limb(0.16, 0.09), shin: limb(0.09, 0.05), foot: limb(0.05, 0.02) }));
+  // a spine that leans out over you, ribs open like a cage
+  const spine = [limb(0.2, 0.17), limb(0.17, 0.13), limb(0.13, 0.08)];
+  const ribs = [];
+  for (let i = 0; i < 7; i++) for (const s of [-1, 1]) { const tr = new THREE.TorusGeometry(0.42 - i * 0.03, 0.022, 4, 12, Math.PI * 0.85); const m = new THREE.Mesh(tr, bone); m.castShadow = true; body.add(m); ribs.push({ m, i, s }); }
+  // the head: long, faceless, crowned
+  const head = new THREE.Group(); head.scale.setScalar(1.55); body.add(head);
+  const skull = new THREE.Mesh(new THREE.SphereGeometry(1, 14, 10), bone); skull.scale.set(0.3, 0.36, 0.72); skull.position.z = 0.35; skull.castShadow = true; head.add(skull);
+  const jaw = new THREE.Mesh(new THREE.ConeGeometry(0.16, 0.9, 6), skin); jaw.rotation.x = Math.PI * 0.62; jaw.position.set(0, -0.32, 0.55); head.add(jaw);
+  const eyes = [];
+  for (let i = 0; i < 13; i++) { const e = new THREE.Mesh(eyeG, eyeM); const big = i < 3; const a = (rr() - 0.5) * 1.6, b = (rr() - 0.2) * 0.9;
+    e.position.set(Math.sin(a) * 0.29, Math.sin(b) * 0.3, 0.35 + Math.cos(a) * 0.62); e.scale.setScalar(big ? 0.06 : 0.025 + rr() * 0.02); head.add(e); eyes.push({ e, s: e.scale.x, next: rr() * 6 }); }
+  for (let i = 0; i < 6; i++) { const e = new THREE.Mesh(eyeG, eyeM); e.scale.setScalar(0.03 + rr() * 0.025); body.add(e); eyes.push({ e, s: e.scale.x, next: rr() * 6, chest: V((rr() - 0.5) * 0.5, 5.1 + rr() * 1.1, 0.75 + rr() * 0.35) }); }
+  const glow = sprite(GLOW, 0, 0, 0.55, 1.6, 0x8fd4ff, 0.55); scene.remove(glow); head.add(glow);
+  const branch = (p, dir, len, r, depth) => { const q = p.clone().addScaledVector(dir, len); const m = new THREE.Mesh(CYL, bone); m.position.copy(p); m.scale.set(r, len, r); _q.setFromUnitVectors(_up, dir); m.quaternion.copy(_q); head.add(m);
+    if (depth < 3) for (let k = 0; k < 2; k++) { const d = dir.clone().add(V((rr() - 0.5) * 1.2, rr() * 0.6, (rr() - 0.5) * 0.8)).normalize(); branch(q, d, len * (0.55 + rr() * 0.2), r * 0.62, depth + 1); } };
+  for (const s of [-1, 1]) branch(V(s * 0.16, 0.25, 0.1), V(s * 0.6, 1, -0.25).normalize(), 0.9, 0.035, 0);
+  // four arms, the lower pair longer, fingers that drag in the snow
+  const arms = [[-1, 0], [1, 0], [-1, 1], [1, 1]].map(([s, low]) => ({ s, low, up: limb(0.08, 0.05), fore: limb(0.05, 0.03), fingers: Array.from({ length: 4 }, () => limb(0.022, 0.004, bone)), ph: rr() * 6 }));
+  // rags of frozen dark hanging off the shoulders
+  const rags = Array.from({ length: 14 }, (_, i) => ({ L: limb(0.07, 0.004), a: (i / 14) * Math.PI * 2, len: 1.8 + rr() * 1.6, ph: rr() * 6 }));
+  const mist = sprite(GLOW, 0, 0.15, 0, 3.2, 0x5a8fd8, 0.28); scene.remove(mist); g.add(mist);
+  // a shroud of frozen dark hanging from the shoulders, torn at the hem: it gives the thing mass from above
+  const sg = new THREE.CylinderGeometry(0.42, 1.75, 4.6, 20, 8, true), sp = sg.attributes.position;
+  for (let i = 0; i < sp.count; i++) { const y = sp.getY(i), k = (2.3 - y) / 4.6; const j = 1 + (rr() - 0.5) * 0.35 * k; sp.setX(i, sp.getX(i) * j); sp.setZ(i, sp.getZ(i) * j); if (y < -2.2) sp.setY(i, y + rr() * 1.4); }
+  sg.computeVertexNormals();
+  const shroud = new THREE.Mesh(sg, new THREE.MeshStandardMaterial({ color: 0x03050b, roughness: 0.55, metalness: 0.2, emissive: 0x081428, emissiveIntensity: 0.3, side: THREE.DoubleSide })); shroud.castShadow = true; body.add(shroud);
+  // the snow under it goes dark, like a stain
+  const pc = document.createElement('canvas'); pc.width = pc.height = 128; { const x = pc.getContext('2d'), gr = x.createRadialGradient(64, 64, 4, 64, 64, 64); gr.addColorStop(0, 'rgba(0,2,10,.75)'); gr.addColorStop(0.55, 'rgba(0,2,10,.4)'); gr.addColorStop(1, 'rgba(0,2,10,0)'); x.fillStyle = gr; x.fillRect(0, 0, 128, 128); }
+  const pool = new THREE.Mesh(new THREE.PlaneGeometry(7.5, 7.5).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(pc), transparent: true, depthWrite: false })); pool.position.y = 0.025; pool.renderOrder = 1; g.add(pool);
+  // lights scattered over the shroud, as if it were full of eyes; seen from any side
+  const lights = [];
+  for (let i = 0; i < 26; i++) { const a = rr() * Math.PI * 2, y = -1.9 + rr() * 3.9, rad = 0.42 + (1.75 - 0.42) * (2.3 - y) / 4.6 + 0.04;
+    const l = sprite(GLOW, Math.cos(a) * rad, y, Math.sin(a) * rad, i < 4 ? 0.6 : 0.24 + rr() * 0.2, 0x9fdcff, 1); scene.remove(l); shroud.add(l); lights.push({ l, s: l.scale.x, next: rr() * 5 }); }
+  g.scale.setScalar(0.85); g.visible = false;
+  rimeFx = { g, body, head, legs, spine, ribs, eyes, arms, rags, lay, V, shroud, lights, p: new THREE.Vector3(), yaw: 0, twitch: 0, twitchT: 4, warned: 0, walk: 0, look: 0, last: new THREE.Vector3() };
+}
+function poseRime(dt, t) {
+  const R = rimeFx, { lay, V } = R, moving = R.last.distanceTo(R.p) > 0.0005; R.last.copy(R.p);
+  R.walk += dt * (moving ? 0.9 : 0.25);
+  const w = R.walk, sway = Math.sin(t * 0.5) * 0.12;
+  const hip = V(0, 4.3 + Math.sin(w * 2) * 0.06, 0);
+  for (const L of R.legs) { const ph = w + (L.s > 0 ? Math.PI : 0), lift = Math.max(0, Math.sin(ph)) * 0.35;
+    const h = hip.clone().add(V(L.s * 0.32, 0, 0)), foot = V(L.s * 0.55, lift, Math.cos(ph) * 0.7), knee = V(L.s * 0.5, 2.5 + lift * 0.4, -0.75 + Math.cos(ph) * 0.3), toe = foot.clone().add(V(0, 0, 0.45));
+    lay(L.thigh, h, knee); lay(L.shin, knee, foot); lay(L.foot, foot, toe); }
+  const s1 = V(sway * 0.3, 5.5, 0.35), s2 = V(sway * 0.6, 6.5, 1.0), neck = V(sway, 6.9, 1.75);
+  lay(R.spine[0], hip, s1); lay(R.spine[1], s1, s2); lay(R.spine[2], s2, neck);
+  for (const rb of R.ribs) { const k = rb.i / 7, p = s1.clone().lerp(s2, k * 0.9); rb.m.position.copy(p); rb.m.rotation.set(0.4 + k * 0.3, rb.s > 0 ? 0 : Math.PI, Math.PI / 2 + Math.sin(t * 0.8 + rb.i) * 0.04); }
+  // the head hangs, looks at you sometimes, and twitches
+  R.twitchT -= dt; if (R.twitchT < 0) { R.twitch = (Math.random() - 0.5) * 1.4; R.twitchT = 5 + Math.random() * 9; }
+  R.twitch *= Math.pow(0.02, dt);
+  R.head.position.copy(neck); R.head.rotation.set(0.55 + Math.sin(t * 0.4) * 0.08, R.look + R.twitch, Math.sin(t * 0.3) * 0.12 + R.twitch * 0.4);
+  for (const E of R.eyes) { E.next -= dt; if (E.next < 0) { E.next = 1 + Math.random() * 7; E.shut = 0.15 + Math.random() * 0.2; } if (E.shut > 0) E.shut -= dt; E.e.scale.set(E.s, E.shut > 0 ? E.s * 0.08 : E.s, E.s); if (E.chest) E.e.position.copy(E.chest).add(V(sway * 0.5, 0, 0)); }
+  for (const A of R.arms) { const sh = (A.low ? s1.clone().lerp(s2, 0.35) : s2.clone()).add(V(A.s * (A.low ? 0.5 : 0.62), 0, 0.2)), swing = Math.sin(t * 0.7 + A.ph) * 0.25;
+    // the arms come out of the shroud and reach far to the sides, like a spider standing up
+    const elbow = sh.clone().add(V(A.s * (1.5 + swing * 0.3 + A.low * 0.4), 0.5 - A.low * 0.6, 0.5 + swing)), wrist = V(A.s * (2.5 + swing * 0.3 + A.low * 0.5), 0.5 - A.low * 0.3, 1.2 + swing * 0.6 - A.low * 0.6);
+    lay(A.up, sh, elbow); lay(A.fore, elbow, wrist);
+    A.fingers.forEach((F, i) => lay(F, wrist, wrist.clone().add(V(A.s * (i - 1.5) * 0.12, -0.45 - Math.abs(Math.sin(t * 1.3 + i + A.ph)) * 0.1, 0.55 + i * 0.05)))); }
+  for (const L of R.lights) { L.next -= dt; if (L.next < 0) { L.next = 0.6 + Math.random() * 5; L.shut = 0.12 + Math.random() * 0.25; } if (L.shut > 0) L.shut -= dt; L.l.scale.setScalar(L.shut > 0 ? 0.001 : L.s * (0.9 + Math.sin(t * 2 + L.s * 40) * 0.1)); }
+  R.shroud.position.set(sway * 0.5, 4.15, 0.55); R.shroud.rotation.set(0.18, Math.sin(t * 0.2) * 0.1, sway * 0.15);
+  for (const G of R.rags) { const top = s2.clone().add(V(Math.cos(G.a) * 0.45, 0.1, Math.sin(G.a) * 0.35)), wind = Math.sin(t * 0.9 + G.ph) * 0.35;
+    lay(G.L, top, top.clone().add(V(Math.cos(G.a) * 0.25 + wind, -G.len, Math.sin(G.a) * 0.25 - 0.3 + wind * 0.4))); }
 }
 function stepRime(dt) {
   const R = XV?.rime; if (!R) { if (rimeFx) rimeFx.g.visible = false; return; }
   if (!rimeFx) buildRime();
   const t = xnow(), n = R.next || R, e = THREE.MathUtils.clamp((t - R.t) / W4W.RIME_MS, 0, 1);
   const want = HX(R.q, R.r).lerp(HX(n.q, n.r), e * e * (3 - 2 * e));
-  if (!rimeFx.g.visible) { rimeFx.p.copy(want); rimeFx.g.visible = true; } else rimeFx.p.lerp(want, Math.min(1, dt * 0.8));
-  const k = U.uTime.value;
-  rimeFx.g.position.set(rimeFx.p.x + Math.sin(k * 0.37) * 0.25, 0, rimeFx.p.z + Math.cos(k * 0.29) * 0.25);
-  rimeFx.s.material.rotation = Math.sin(k * 0.21) * 0.035;
-  rimeFx.s.scale.set(5.4 + Math.sin(k * 0.6) * 0.18, 8.8 + Math.sin(k * 0.45 + 1) * 0.35, 1);
-  rimeFx.s.material.opacity = 0.82 + Math.sin(k * 3.1) * 0.05 + (Math.sin(k * 17) > 0.97 ? -0.3 : 0);
+  // it never glides across the map: a jump in what the server says is a jump on the screen
+  if (!rimeFx.g.visible || rimeFx.p.distanceTo(want) > 3) { rimeFx.p.copy(want); rimeFx.g.visible = true; } else rimeFx.p.lerp(want, Math.min(1, dt * 0.8));
+  rimeFx.g.position.set(rimeFx.p.x, 0, rimeFx.p.z);
+  // it faces where it drifts; the head turns to whoever is closest
+  const dir = HX(n.q, n.r).sub(HX(R.q, R.r)); if (dir.lengthSq() > 0.01) { const y = Math.atan2(dir.x, dir.z); rimeFx.yaw += Math.atan2(Math.sin(y - rimeFx.yaw), Math.cos(y - rimeFx.yaw)) * Math.min(1, dt * 0.4); }
+  rimeFx.g.rotation.y = rimeFx.yaw;
+  const mine = avatars[myUid()]?.g.position, tgt = mine && mine.distanceTo(rimeFx.p) < 14 ? mine : camera.position;
+  const ly = Math.atan2(tgt.x - rimeFx.p.x, tgt.z - rimeFx.p.z) - rimeFx.yaw; rimeFx.look = THREE.MathUtils.clamp(Math.atan2(Math.sin(ly), Math.cos(ly)), -1.1, 1.1);
+  if (rimeFx.g.position.distanceTo(controls.target) < 40) poseRime(dt, U.uTime.value);
 }
+
 /** How close it is to you, in cells, when you are out in the Wastes; null otherwise. */
 function rimeNear(c) {
   const R = XV?.rime; if (!R || !c || W4W.zoneOf(c.q, c.r) < 1) return null;
@@ -2983,18 +3050,46 @@ function rimeNear(c) {
 }
 
 /* ---------- trips: a route in footprints, an arrival time, and your yes ---------- */
+/* ---------- the cells, shown where they matter: under the cursor, around you, along the route ---------- */
+const HEX_GEO = (() => { const pts = []; for (let i = 0; i <= 6; i++) { const a = Math.PI / 6 + i * Math.PI / 3; pts.push(new THREE.Vector3(Math.cos(a) * 1.08, 0, Math.sin(a) * 1.08)); } return new THREE.BufferGeometry().setFromPoints(pts); })();
+const HEX_FILL = (() => { const g = new THREE.CircleGeometry(1.05, 6); g.rotateX(-Math.PI / 2); g.rotateY(Math.PI / 6); return g; })();
+const hexMats = {};
+const hexMat = (col, op) => (hexMats[col + ':' + op] ||= new THREE.LineBasicMaterial({ color: col, transparent: true, opacity: op, depthWrite: false }));
+const fillMats = {};
+const fillMat = (col, op) => (fillMats[col + ':' + op] ||= new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: op, depthWrite: false }));
+function hexLine(q, r, col, op, y = 0.04) { const m = new THREE.Line(HEX_GEO, hexMat(col, op)); m.position.copy(HX(q, r)); m.position.y = y; m.renderOrder = 2; scene.add(m); return m; }
+function hexFill(q, r, col, op, y = 0.03) { const m = new THREE.Mesh(HEX_FILL, fillMat(col, op)); m.position.copy(HX(q, r)); m.position.y = y; m.renderOrder = 2; scene.add(m); return m; }
 let trip = null; const prints = [];
-const PRINT_GEO = new THREE.CircleGeometry(0.15, 10), PRINT_MAT = new THREE.MeshBasicMaterial({ color: 0xffd6a0, transparent: true, opacity: 0.75, depthWrite: false }), PRINT_COLD = new THREE.MeshBasicMaterial({ color: 0xcfe6ff, transparent: true, opacity: 0.85, depthWrite: false });
+/** The route ahead, cell by cell; nothing behind you. */
 function drawPrints(from, path, cold) {
   prints.splice(0).forEach(m => scene.remove(m));
-  let a = HX(...from);
-  for (const c of path) { const b = HX(...c); for (let i = 1; i <= 3; i++) { const m = new THREE.Mesh(PRINT_GEO, cold ? PRINT_COLD : PRINT_MAT); m.rotation.x = -Math.PI / 2; m.position.copy(a).lerp(b, i / 3); m.position.y = 0.03; m.renderOrder = 2; scene.add(m); prints.push(m); } a = b; }
+  path.forEach(([q, r], i) => { const last = i === path.length - 1, c = W4W.zoneOf(q, r) >= 1 ? 0xbfe0ff : 0xffd6a0;
+    prints.push(hexLine(q, r, c, last ? 1 : 0.8), hexFill(q, r, c, last ? 0.2 : 0.08)); });
 }
+// the cell under the cursor, and a ring of cells around you out in the Wastes
+let hoverHex = null, hoverKey = '', localGrid = null, localKey = '';
+function hoverCell(e) {
+  if (!hasChar()) { if (hoverHex) { scene.remove(hoverHex); hoverHex = null; } return; }
+  const c = groundHex(e); const k = c ? c.join(',') : ''; if (k === hoverKey) return; hoverKey = k;
+  if (hoverHex) { scene.remove(hoverHex); hoverHex = null; }
+  if (!c || W4W.ringOf(...c) > W4W.MAX_RING || !W4W.passable(...c) && W4W.ringOf(...c) > 5) return;
+  hoverHex = hexLine(c[0], c[1], W4W.zoneOf(...c) >= 1 ? 0xdff0ff : 0xffe2b8, 0.7, 0.05);
+}
+function stepLocalGrid(c) {
+  const k = c && W4W.zoneOf(c.q, c.r) >= 1 ? c.q + ',' + c.r : ''; if (k === localKey) return; localKey = k;
+  if (localGrid) { scene.remove(localGrid); localGrid = null; } if (!k) return;
+  const seg = [];
+  for (let n = 0; n <= 3; n++) for (const [dq, dr] of ring(n)) { const q = c.q + dq, r = c.r + dr; if (W4W.ringOf(q, r) > W4W.MAX_RING) continue; const p = HX(q, r);
+    for (let i = 0; i < 6; i++) { const a0 = Math.PI / 6 + i * Math.PI / 3, a1 = a0 + Math.PI / 3; seg.push(p.x + Math.cos(a0) * 1.1547, 0.03, p.z + Math.sin(a0) * 1.1547, p.x + Math.cos(a1) * 1.1547, 0.03, p.z + Math.sin(a1) * 1.1547); } }
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(seg, 3));
+  localGrid = new THREE.LineSegments(g, new THREE.LineBasicMaterial({ color: 0xbfd6ff, transparent: true, opacity: 0.16, depthWrite: false })); scene.add(localGrid);
+}
+
 const dur = ms => { ms = Math.max(0, ms); const h = Math.floor(ms / 36e5), m = Math.round(ms % 36e5 / 6e4); return h ? `${h} h ${String(m).padStart(2, '0')} min` : ms < 60e3 ? `${Math.max(1, Math.round(ms / 1000))} s` : `${m} min`; };
 const clockAt = ms => new Date(ms).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 function planTo(to) {
   const pr = predicted(); const c = pr.c, t = xnow();
-  const path = W4W.findPath([c.q, c.r], to); if (!path) { say('No way through from here.', 'Wastes'); return; }
+  const path = W4W.findPath([c.q, c.r], to, 4000, new Set(Object.keys(xctx().shelters))); if (!path) { say('No way through from here.', 'Wastes'); return; }
   if (!path.length) return;
   if (path.length > 90) { say('Too far for one walk. Go in stages.', 'Wastes'); return; }
   const leaves = path.some(([q, r]) => W4W.zoneOf(q, r) >= 1) || W4W.zoneOf(c.q, c.r) >= 1;
@@ -3034,6 +3129,131 @@ function hookFeed() {
   room.on('hearth', m => { const x = m.data || {}; if (m.by !== S.uid) say(`${esc(x.nick || 'Someone')} lit a hearth in ${esc(x.zone || 'the Wastes')}. Anyone may warm up there.`, 'Wastes'); });
   room.on('took', m => { const x = m.data || {}; say(`${esc(x.nick || 'Someone')} picked up ${esc(x.owner || 'someone')}'s frozen pack.`, 'Wastes'); });
 }
+
+/* ---------- the camera: WASD or the arrows, or push the mouse against the edge of the screen ---------- */
+const keysDown = new Set(); let edgeX = 0, edgeY = 0, overCanvas = false;
+const typing = () => /INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName || '');
+addEventListener('keydown', e => { if (typing() || e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) return; if (['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code)) { keysDown.add(e.code); if (e.code.startsWith('Arrow')) e.preventDefault(); } });
+addEventListener('keyup', e => keysDown.delete(e.code));
+addEventListener('blur', () => { keysDown.clear(); edgeX = edgeY = 0; });
+addEventListener('pointermove', e => { overCanvas = e.target === canvas; const m = 18; edgeX = e.clientX < m ? -1 : e.clientX > innerWidth - m ? 1 : 0; edgeY = e.clientY < m ? -1 : e.clientY > innerHeight - m ? 1 : 0; if (e.target === canvas) hoverCell(e); });
+document.addEventListener('pointerleave', () => { edgeX = edgeY = 0; });
+const _fw = new THREE.Vector3(), _rt = new THREE.Vector3(), _mv = new THREE.Vector3();
+function stepCamera(dt) {
+  let x = 0, y = 0;
+  if (keysDown.has('KeyW') || keysDown.has('ArrowUp')) y += 1; if (keysDown.has('KeyS') || keysDown.has('ArrowDown')) y -= 1;
+  if (keysDown.has('KeyD') || keysDown.has('ArrowRight')) x += 1; if (keysDown.has('KeyA') || keysDown.has('ArrowLeft')) x -= 1;
+  if (overCanvas && document.hasFocus() && !document.body.classList.contains('intro')) { x += edgeX; y -= edgeY; }
+  if (!x && !y) return;
+  camera.getWorldDirection(_fw); _fw.y = 0; _fw.normalize(); _rt.crossVectors(_fw, camera.up).normalize();
+  const speed = camera.position.distanceTo(controls.target) * 0.9;
+  _mv.set(0, 0, 0).addScaledVector(_fw, y).addScaledVector(_rt, x).normalize().multiplyScalar(speed * dt);
+  controls.target.add(_mv); camera.position.add(_mv); follow = false; fly = null; lastInput = performance.now();
+}
+
+/* ================= sound: cold, metal, survival. All of it synthesised here, nothing borrowed ================= */
+const SND = { on: store.get('w4w.sound') !== 'off', ctx: null, master: null, music: null, sfx: null, verb: null, wind: null, windF: null, drone: [], rime: null, started: false };
+function sndBoot() {
+  if (SND.ctx || !SND.on) return;
+  const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
+  const ctx = SND.ctx = new AC();
+  const comp = ctx.createDynamicsCompressor(); comp.threshold.value = -18; comp.ratio.value = 3; comp.connect(ctx.destination);
+  SND.master = ctx.createGain(); SND.master.gain.value = 0; SND.master.connect(comp);
+  SND.master.gain.linearRampToValueAtTime(0.75, ctx.currentTime + 4);
+  // a long cold hall for everything metal to ring in
+  const ir = ctx.createBuffer(2, ctx.sampleRate * 5, ctx.sampleRate);
+  for (let ch = 0; ch < 2; ch++) { const d = ir.getChannelData(ch); for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 3.2); }
+  SND.verb = ctx.createConvolver(); SND.verb.buffer = ir; const vg = ctx.createGain(); vg.gain.value = 0.55; SND.verb.connect(vg); vg.connect(SND.master);
+  SND.music = ctx.createGain(); SND.music.gain.value = 0.9; SND.music.connect(SND.master); SND.music.connect(SND.verb);
+  SND.sfx = ctx.createGain(); SND.sfx.gain.value = 1; SND.sfx.connect(SND.master); SND.sfx.connect(SND.verb);
+  const noise = ctx.createBuffer(1, ctx.sampleRate * 4, ctx.sampleRate); { const d = noise.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; }
+  SND.noise = noise;
+  // wind: noise through a wandering band, louder when the weather turns
+  const src = ctx.createBufferSource(); src.buffer = noise; src.loop = true;
+  SND.windF = ctx.createBiquadFilter(); SND.windF.type = 'bandpass'; SND.windF.frequency.value = 500; SND.windF.Q.value = 0.8;
+  SND.wind = ctx.createGain(); SND.wind.gain.value = 0.12; src.connect(SND.windF); SND.windF.connect(SND.wind); SND.wind.connect(SND.music); src.start();
+  // the drone: two low saws, a little apart, under a dark lowpass
+  const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 220; lp.Q.value = 2; const dg = ctx.createGain(); dg.gain.value = 0.11; lp.connect(dg); dg.connect(SND.music);
+  const lfo = ctx.createOscillator(); lfo.frequency.value = 0.05; const lg = ctx.createGain(); lg.gain.value = 90; lfo.connect(lg); lg.connect(lp.frequency); lfo.start();
+  for (const det of [-7, 6, 1200 - 3]) { const o = ctx.createOscillator(); o.type = 'sawtooth'; o.frequency.value = 36.71; o.detune.value = det; const og = ctx.createGain(); og.gain.value = det > 1000 ? 0.25 : 0.5; o.connect(og); og.connect(lp); o.start(); SND.drone.push(o); }
+  SND.started = true; musicLoop(); rimeVoice();
+}
+// D minor, cold: the drone moves slowly between roots; bells and struck metal far away
+const ROOTS = [36.71, 29.14, 43.65, 32.70, 36.71, 27.50];
+let rootI = 0;
+function musicLoop() {
+  const ctx = SND.ctx; if (!ctx) return; const t = ctx.currentTime;
+  if (Math.random() < 0.5) { rootI = (rootI + 1) % ROOTS.length; SND.drone.forEach(o => o.frequency.setTargetAtTime(ROOTS[rootI], t, 4)); }
+  const r = Math.random();
+  if (r < 0.55) bowedMetal(ROOTS[rootI] * [8, 9.6, 12, 14.4, 16][Math.floor(Math.random() * 5)], 0.05 + Math.random() * 0.04);
+  else if (r < 0.85) clank(0.05 + Math.random() * 0.06);
+  else chain();
+  setTimeout(musicLoop, 7000 + Math.random() * 11000);
+}
+/** A bowed sheet of metal: inharmonic partials, slow swell, slower fade. */
+function bowedMetal(f, vol) {
+  const ctx = SND.ctx, t = ctx.currentTime, g = ctx.createGain(), pan = ctx.createStereoPanner(); pan.pan.value = Math.random() * 1.6 - 0.8;
+  g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + 3 + Math.random() * 2); g.gain.exponentialRampToValueAtTime(0.0001, t + 12);
+  g.connect(pan); pan.connect(SND.music);
+  [[1, 1], [2.76, 0.5], [5.4, 0.25], [8.93, 0.12]].forEach(([m, a]) => { const o = ctx.createOscillator(); o.frequency.value = f * m; o.detune.value = (Math.random() - 0.5) * 12; const og = ctx.createGain(); og.gain.value = a; o.connect(og); og.connect(g); o.start(t); o.stop(t + 12.5); });
+}
+/** Something heavy struck once, far away in the dark. */
+function clank(vol) {
+  const ctx = SND.ctx, t = ctx.currentTime, g = ctx.createGain(), pan = ctx.createStereoPanner(); pan.pan.value = Math.random() * 1.8 - 0.9; g.connect(pan); pan.connect(SND.music);
+  g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 4);
+  const f0 = 90 + Math.random() * 120;
+  [1, 1.58, 2.31, 3.17, 4.43].forEach((m, i) => { const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = f0 * m; bp.Q.value = 40; const n = ctx.createBufferSource(); n.buffer = SND.noise; const ng = ctx.createGain(); ng.gain.setValueAtTime(1.6 / (i + 1), t); ng.gain.exponentialRampToValueAtTime(0.0001, t + 0.08 + 1.5 / (i + 1)); n.connect(bp); bp.connect(ng); ng.connect(g); n.start(t, Math.random() * 3); n.stop(t + 4); });
+}
+/** A chain dragged across stone. */
+function chain() {
+  const ctx = SND.ctx, t = ctx.currentTime;
+  for (let i = 0; i < 14; i++) { const tt = t + i * (0.06 + Math.random() * 0.09), g = ctx.createGain(), hp = ctx.createBiquadFilter(); hp.type = 'bandpass'; hp.frequency.value = 2200 + Math.random() * 2500; hp.Q.value = 8;
+    const n = ctx.createBufferSource(); n.buffer = SND.noise; g.gain.setValueAtTime(0.05, tt); g.gain.exponentialRampToValueAtTime(0.0001, tt + 0.12); n.connect(hp); hp.connect(g); g.connect(SND.music); n.start(tt, Math.random() * 3); n.stop(tt + 0.15); }
+}
+/** Weather and warmth steer the music every frame or so. */
+function stepSound() {
+  if (!SND.ctx) return; const t = SND.ctx.currentTime, wx = W4W.weatherAt(xnow()).id;
+  const w = wx === 'blizzard' ? 0.5 : wx === 'wind' ? 0.28 : 0.12; SND.wind.gain.setTargetAtTime(w, t, 2);
+  SND.windF.frequency.setTargetAtTime(380 + Math.sin(t * 0.13) * 220 + (wx === 'blizzard' ? 500 : 0), t, 1.5);
+  // the Rime is heard before it is seen
+  if (SND.rime && rimeFx?.g.visible) { const d = rimeFx.g.position.distanceTo(controls.target), k = Math.pow(THREE.MathUtils.clamp(1 - d / 26, 0, 1), 1.6);
+    SND.rime.gain.gain.setTargetAtTime(k * 0.9, t, 0.8);
+    const v = rimeFx.g.position.clone(); v.project(camera); SND.rime.pan.pan.setTargetAtTime(THREE.MathUtils.clamp(v.x, -1, 1), t, 0.3); SND.rime.k = k; }
+}
+/** Its voice: a sub groan, a choir that is not quite in tune, ice cracking around it. */
+function rimeVoice() {
+  const ctx = SND.ctx, gain = ctx.createGain(), pan = ctx.createStereoPanner(); gain.gain.value = 0; gain.connect(pan); pan.connect(SND.sfx);
+  SND.rime = { gain, pan, k: 0 };
+  // a choir of wrong intervals, trembling
+  const choir = ctx.createGain(); choir.gain.value = 0.05; choir.connect(gain);
+  [311.1, 329.6, 466.2, 493.9, 622.3].forEach((f, i) => { const o = ctx.createOscillator(); o.type = 'triangle'; o.frequency.value = f; const tr = ctx.createOscillator(); tr.frequency.value = 4 + i * 1.3; const tg = ctx.createGain(); tg.gain.value = f * 0.012; tr.connect(tg); tg.connect(o.frequency); tr.start(); const og = ctx.createGain(); og.gain.value = 0.25; o.connect(og); og.connect(choir); o.start(); });
+  const groan = () => { if (!SND.ctx) return; const t = ctx.currentTime;
+    if (SND.rime.k > 0.02) {
+      const o = ctx.createOscillator(); o.type = 'sawtooth'; const f = 38 + Math.random() * 18; o.frequency.setValueAtTime(f, t); o.frequency.linearRampToValueAtTime(f * (0.7 + Math.random() * 0.2), t + 4);
+      const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = 6; bp.frequency.setValueAtTime(260, t); bp.frequency.linearRampToValueAtTime(140 + Math.random() * 300, t + 4);
+      const g = ctx.createGain(); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.9, t + 1.2); g.gain.linearRampToValueAtTime(0, t + 4.5);
+      o.connect(bp); bp.connect(g); g.connect(gain); o.start(t); o.stop(t + 5);
+      // ice giving way under its weight
+      for (let i = 0; i < 10 + Math.random() * 14; i++) { const tt = t + Math.random() * 3, n = ctx.createBufferSource(); n.buffer = SND.noise; const hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 1800 + Math.random() * 3000; const ng = ctx.createGain(); ng.gain.setValueAtTime(0.35 * Math.random(), tt); ng.gain.exponentialRampToValueAtTime(0.0001, tt + 0.03 + Math.random() * 0.05); n.connect(hp); hp.connect(ng); ng.connect(gain); n.start(tt, Math.random() * 3); n.stop(tt + 0.1); }
+    }
+    setTimeout(groan, 5000 + Math.random() * 9000); };
+  groan();
+}
+/** When it comes within three cells of you: one sound you will remember. */
+function rimeSting() {
+  if (!SND.ctx) return; const ctx = SND.ctx, t = ctx.currentTime;
+  const o = ctx.createOscillator(); o.frequency.setValueAtTime(70, t); o.frequency.exponentialRampToValueAtTime(24, t + 3); const g = ctx.createGain(); g.gain.setValueAtTime(0.9, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 3.5); o.connect(g); g.connect(SND.sfx); o.start(t); o.stop(t + 3.6);
+  const s = ctx.createOscillator(); s.type = 'sawtooth'; s.frequency.setValueAtTime(1900, t + 0.2); s.frequency.linearRampToValueAtTime(2600, t + 2.2); const sb = ctx.createBiquadFilter(); sb.type = 'bandpass'; sb.frequency.value = 2400; sb.Q.value = 12; const sg = ctx.createGain(); sg.gain.setValueAtTime(0, t); sg.gain.linearRampToValueAtTime(0.12, t + 0.6); sg.gain.linearRampToValueAtTime(0, t + 2.4); s.connect(sb); sb.connect(sg); sg.connect(SND.sfx); s.start(t + 0.2); s.stop(t + 2.5);
+}
+function setSound(on) {
+  SND.on = on; store.set('w4w.sound', on ? 'on' : 'off'); $('#sndv').textContent = on ? 'On' : 'Off';
+  if (on) { if (!SND.ctx) sndBoot(); else { SND.ctx.resume(); SND.master.gain.setTargetAtTime(0.75, SND.ctx.currentTime, 0.5); } }
+  else if (SND.ctx) SND.master.gain.setTargetAtTime(0, SND.ctx.currentTime, 0.3);
+}
+// browsers let sound start only after you touch the page
+['pointerdown', 'keydown'].forEach(ev => addEventListener(ev, () => { if (SND.on && !SND.ctx) sndBoot(); else if (SND.ctx?.state === 'suspended' && SND.on) SND.ctx.resume(); }, { passive: true }));
+
+$('#sndv').textContent = SND.on ? 'On' : 'Off'; $('#snd').onclick = () => setSound(!SND.on);
 
 /* ================= labels ================= */
 const v3 = new THREE.Vector3();
@@ -3139,7 +3359,7 @@ function loop(now = performance.now()) {
   spriteCache.forEach(o => { {
     if (o.userData.flicker) { if (o.userData.flare) { o.userData.flare = Math.max(0, o.userData.flare - dt * 0.6); } const f = o.userData.flare || 0; o.material.opacity = 0.8 + Math.sin(t * 13) * 0.08 + Math.sin(t * 7.3) * 0.1; o.scale.setScalar(1.1 + f * 1.2 + (S.town.fire || 0) * 0.08); }
     if (o.userData.blink) o.material.opacity = 0.35 + 0.65 * (Math.sin(t * 4) > 0 ? 1 : 0.2); } });
-  stepAvatars(dt); hud(); if (XV) { stepRime(dt); if ((tick & 15) === 0) stepNotes(); }
+  stepCamera(dt); stepAvatars(dt); hud(); stepSound(); if (XV) { stepRime(dt); if ((tick & 15) === 0) { stepNotes(); stepLocalGrid(predicted()?.c); } }
   for (const k in walkers) { const w = walkers[k]; w.g.position.lerp(w.target, Math.min(1, dt * 1.5)); w.g.position.y = 0; w.light.position.set(w.g.position.x + 0.15, 0.45, w.g.position.z); }
   if (fly) { fly.t = Math.min(1, fly.t + dt * 0.9); const k = 1 - Math.pow(1 - fly.t, 3);
     const tgt = fly.from.clone().lerp(fly.to, k); const off = camera.position.clone().sub(controls.target).normalize().multiplyScalar(fly.d0 + (fly.d1 - fly.d0) * k);
@@ -3149,5 +3369,5 @@ function loop(now = performance.now()) {
 }
 requestAnimationFrame(loop);
 addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); DPR = Math.min(DPR, dprFor()); renderer.setPixelRatio(DPR); composer.setPixelRatio?.(DPR); renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight); fxaaSize(); });
-window.__w4w = { S, settle, X: () => ({ XV, avatars, predicted, xact, hexAt, warp: ms => XW.warp?.(ms), planTo, goTrip, NOTES, rimeFx, openLibrary, trip, prints: prints.length, unfollow: () => { follow = false; } }), freePlots, openMaria, ask, addWood, refreshTown, draft: v => (draft = v), camera, controls, updateIce, renderer, scene, __composer: LITE ? null : composer };
+window.__w4w = { S, settle, X: () => ({ XV, avatars, predicted, xact, hexAt, warp: ms => XW.warp?.(ms), planTo, goTrip, NOTES, rimeFx, openLibrary, trip, prints: prints.length, rimeAt: (q, r) => XW._rime?.(q, r), unfollow: () => { follow = false; } }), freePlots, openMaria, ask, addWood, refreshTown, draft: v => (draft = v), camera, controls, updateIce, renderer, scene, __composer: LITE ? null : composer };
 </script>
