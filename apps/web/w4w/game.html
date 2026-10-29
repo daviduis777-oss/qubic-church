@@ -552,10 +552,63 @@ body.hub #xact{display:none}
 .pitem{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;margin-bottom:6px;border-radius:4px;background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.01));box-shadow:inset 0 1px 0 rgba(200,215,235,.12),inset 0 0 0 1px rgba(0,0,0,.5)}
 .pitem b{display:block;font-family:var(--f-print);font-weight:600;font-size:15.5px;color:#f1e6d0} .pitem span{font-size:12.5px;color:var(--mute)} .pitem .btn{padding:6px 10px;font-size:12.5px}
 .pres{margin:6px 0 2px}
+.hbtns{display:grid;grid-template-columns:1fr 1fr;gap:5px}
 .hpack{pointer-events:auto;margin-top:2px;padding:7px 10px;border:0;border-radius:4px;background:var(--plate);box-shadow:var(--bevel);color:var(--steel-ink);font-family:var(--f-label);font-weight:600;font-size:12.5px;letter-spacing:.04em;text-align:left;display:flex;justify-content:space-between;align-items:center}
 .hpack:hover{filter:brightness(1.2)} .hpack kbd{font:inherit;font-size:11px;padding:1px 6px;border-radius:3px;background:rgba(0,0,0,.4);box-shadow:inset 0 0 0 1px rgba(160,180,205,.25)}
 .lbl.res{font-size:11px;padding:2px 7px 1px;color:#e7f3ff;background:linear-gradient(180deg,#24384f,#132233)}
 .lbl.res.none{color:#ffc3b8;background:linear-gradient(180deg,#3a1d1a,#1d0d0b)}
+/* ---------- the gear frames, in the manner of an old MMO: gold rims, dark wells, coloured by quality ---------- */
+#frames .wf{position:fixed;z-index:6;padding:10px 12px 12px;border-radius:7px;background:radial-gradient(120% 90% at 30% 0%,rgba(40,34,26,.96),rgba(10,10,12,.97) 70%);border:2px solid #6b5426;box-shadow:inset 0 0 0 1px #000,inset 0 0 0 3px #b8923a,inset 0 0 0 4px #2a1f0c,0 10px 40px rgba(0,0,0,.7);color:#e8e2d4;font-family:var(--f-body)}
+#frames .wf header{display:flex;align-items:baseline;gap:10px;margin:2px 4px 10px;padding-bottom:7px;border-bottom:1px solid rgba(184,146,58,.35)}
+#frames .wf header b{font-family:var(--f-display);font-weight:700;font-size:17px;color:#ffd100;text-shadow:0 1px 0 #000,0 0 6px rgba(0,0,0,.8)}
+#frames .wf header span{font-size:12px;color:#a89c84;flex:1}
+#frames .wx{width:22px;height:22px;border:1px solid #000;border-radius:3px;background:linear-gradient(180deg,#9c2a1a,#5a1208);color:#ffd9c9;font-size:15px;line-height:18px;padding:0;box-shadow:inset 0 1px 0 rgba(255,200,180,.4)}
+#frames .slot{position:relative;width:44px;height:44px;border-radius:3px;background:radial-gradient(circle at 50% 40%,#2a2a2e,#0c0c0e);box-shadow:inset 0 0 0 1px #000,inset 0 0 0 2px var(--qc,#3a3a3a),0 1px 0 rgba(255,255,255,.06);cursor:pointer;overflow:hidden;flex-shrink:0}
+#frames .slot svg{display:block;width:40px;height:40px;margin:2px}
+#frames .slot:hover{box-shadow:inset 0 0 0 1px #000,inset 0 0 0 2px var(--qc,#3a3a3a),0 0 10px rgba(255,209,0,.45)}
+#frames .slot.empty{cursor:default;background:radial-gradient(circle at 50% 40%,#1b1b1f,#08080a);box-shadow:inset 0 0 0 1px #000,inset 0 0 0 2px #2a2a2e}
+#frames .slot.empty small{position:absolute;inset:0;display:grid;place-items:center;font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:#5d5a52}
+#frames .slot em{position:absolute;right:3px;bottom:1px;font-style:normal;font-weight:700;font-size:13px;color:#fff;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000}
+#frames .grid{display:grid;grid-template-columns:repeat(4,44px);gap:4px}
+#frames .grid.six{grid-template-columns:repeat(6,44px)}
+#frames .frow{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;align-items:center;margin-top:10px}
+#frames .wbtn{padding:5px 12px;border:1px solid #000;border-radius:3px;background:linear-gradient(180deg,#9c2a1a,#5e1409);color:#ffd100;font-family:var(--f-body);font-weight:600;font-size:12.5px;text-shadow:0 1px 0 #000;box-shadow:inset 0 1px 0 rgba(255,200,160,.35),0 1px 0 rgba(255,255,255,.08)}
+#frames .wbtn:hover{filter:brightness(1.2)} #frames .wbtn[disabled]{filter:grayscale(1) brightness(.6);cursor:not-allowed}
+#frames .wbtn kbd{font:inherit;font-size:10.5px;color:#d8c9a0;margin-left:4px}
+.charf{left:max(300px,calc(50% - 470px));top:84px;width:300px}
+.paper-doll{display:grid;grid-template-columns:44px 1fr 44px;gap:8px;align-items:center}
+.scol{display:grid;gap:10px}
+.doll{height:200px;border-radius:4px;background:radial-gradient(70% 60% at 50% 45%,rgba(120,150,190,.25),transparent 70%),linear-gradient(180deg,#141821,#08090c);box-shadow:inset 0 0 0 1px #000,inset 0 0 20px rgba(0,0,0,.8);display:grid;place-items:center;overflow:hidden}
+.doll img{height:100%;width:auto;filter:drop-shadow(0 6px 8px rgba(0,0,0,.6))}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:10px}
+.stats div{padding:5px 6px;border-radius:3px;background:rgba(0,0,0,.45);box-shadow:inset 0 0 0 1px rgba(184,146,58,.25);text-align:center}
+.stats i{display:block;font-style:normal;font-size:10px;color:#a89c84;text-transform:uppercase;letter-spacing:.05em}
+.stats b{font-size:15px;color:#fff} .stats b.g{color:#1eff00} .stats b.r{color:#ff5a3c}
+.stackR{position:fixed;z-index:6;right:16px;bottom:120px;display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+.stackR .wf{position:static!important}
+.craftf{left:50%;top:90px;transform:translateX(-50%);width:min(640px,calc(100vw - 32px))}
+.cbody{display:grid;grid-template-columns:200px 1fr;gap:12px;height:min(420px,calc(100vh - 300px))}
+.rlist{overflow:auto;padding-right:4px;scrollbar-width:thin;scrollbar-color:#6b5426 transparent;border-right:1px solid rgba(184,146,58,.25)}
+.rlist h4,.rdet h4{margin:8px 0 4px;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#a89c84}
+.rec{display:flex;align-items:center;gap:7px;width:100%;padding:3px 6px;border:0;border-radius:3px;background:none;text-align:left;font-size:13.5px;cursor:pointer}
+.rec svg{flex-shrink:0;border-radius:2px;box-shadow:0 0 0 1px #000} .rec:hover{background:rgba(255,209,0,.08)} .rec.on{background:rgba(255,209,0,.16);box-shadow:inset 2px 0 0 #ffd100} .rec.no span{opacity:.55}
+.rhead{display:flex;gap:10px;align-items:center} .rhead b{display:block;font-size:17px;font-family:var(--f-display)} .rhead span{font-size:12.5px;color:#a89c84}
+.flav{margin:10px 0 0;color:#ffd100;font-style:italic;font-size:13.5px;line-height:1.45}
+.reags{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.reag{display:flex;align-items:center;gap:7px;padding:3px 7px 3px 3px;border-radius:3px;background:rgba(0,0,0,.4);box-shadow:inset 0 0 0 1px rgba(184,146,58,.2);font-size:13px}
+.reag svg{width:30px;height:30px;flex-shrink:0;box-shadow:0 0 0 1px #000} .reag span{flex:1} .reag b{color:#fff} .reag.short b{color:#ff5a3c}
+.why{flex:1;font-size:12.5px;color:#ff8a6a}
+#tip{position:fixed;z-index:9;max-width:260px;padding:8px 11px;border-radius:4px;background:rgba(6,8,26,.95);border:1px solid #9a9a9a;box-shadow:inset 0 0 0 1px #000,0 4px 14px rgba(0,0,0,.6);font-family:var(--f-body);font-size:13px;line-height:1.4;color:#fff;pointer-events:none;display:flex;flex-direction:column}
+#tip b{font-size:15px;margin-bottom:2px} #tip .g{color:#1eff00} #tip i{color:#ffd100;margin-top:4px} #tip .hint{color:#8a8a8a;margin-top:4px;font-size:12px}
+#cast{position:fixed;z-index:5;left:50%;bottom:max(168px,calc(env(safe-area-inset-bottom) + 156px));transform:translateX(-50%);width:270px;height:20px;border-radius:3px;background:#0b0b0d;box-shadow:inset 0 0 0 1px #000,0 0 0 2px #6b5426,0 0 0 3px #000,0 6px 16px rgba(0,0,0,.6);overflow:hidden}
+#cast i{position:absolute;inset:0 auto 0 0;background:linear-gradient(180deg,#ffd76a,#e0a100 60%,#a87100);box-shadow:inset 0 1px 0 rgba(255,255,255,.4)}
+#cast b,#cast span{position:absolute;top:0;line-height:20px;font-family:var(--f-body);font-weight:600;font-size:12px;color:#fff;text-shadow:0 1px 1px #000,0 0 3px #000}
+#cast b{left:10px} #cast span{right:8px}
+@media (max-width: 760px){
+  .charf,.craftf{left:8px!important;right:8px;top:70px;width:auto!important;transform:none!important}
+  .stackR{right:8px;bottom:110px}
+  .cbody{grid-template-columns:1fr;height:auto;max-height:60vh;overflow:auto}
+}
 /* readability first: one serif with real weight, one plain sans; no hairline faces, no handwriting */
 #panel header h2,#hud .hz b,#meter .verdict,.hub-win header h2,#banner b,#died h1,#load b,.brand b{font-weight:600}
 #hud .hz b{font-size:22px} #panel header h2{font-size:26px} .hub-win header h2{font-size:40px} #meter .verdict{font-size:18px}
@@ -669,7 +722,6 @@ var W4W = (() => {
   var world_exports = {};
   __export(world_exports, {
     BAG_MS: () => BAG_MS,
-    CAPACITY: () => CAPACITY,
     CAVE: () => CAVE,
     DEMO_CELLS: () => DEMO_CELLS,
     DEMO_TOWN: () => DEMO_TOWN,
@@ -686,22 +738,27 @@ var W4W = (() => {
     INSULATION_T1: () => INSULATION_T1,
     ITEMS: () => ITEMS,
     LOSS_K: () => LOSS_K,
+    MATS: () => MATS,
     MAX_RING: () => MAX_RING,
     NODE_COOLDOWN_MS: () => NODE_COOLDOWN_MS,
-    OVERLOAD: () => OVERLOAD,
+    POCKETS: () => POCKETS,
+    RECIPES: () => RECIPES,
     RIME_MIN_RING: () => RIME_MIN_RING,
     RIME_MS: () => RIME_MS,
     RIME_PULL: () => RIME_PULL,
+    SIP_WARMTH: () => SIP_WARMTH,
     SPECIAL: () => SPECIAL,
     STEP_MS: () => STEP_MS,
-    WEIGHT: () => WEIGHT,
     WX_SLOW: () => WX_SLOW,
     ZONES: () => ZONES,
     ZONE_STEP_MS: () => ZONE_STEP_MS,
     action: () => action,
     advance: () => advance,
+    bagSize: () => bagSize,
     beginStep: () => beginStep,
     bellAt: () => bellAt,
+    bestTool: () => bestTool,
+    canCraft: () => canCraft,
     cellAt: () => cellAt,
     coldAt: () => coldAt,
     ctxOf: () => ctxOf,
@@ -710,12 +767,14 @@ var W4W = (() => {
     findPath: () => findPath,
     greyAt: () => greyAt,
     guardsAt: () => guardsAt,
+    have: () => have,
     inMouth: () => inMouth,
     insulationOf: () => insulationOf,
     itemsOf: () => itemsOf,
     key: () => key,
     loadOf: () => loadOf,
     mouthCells: () => mouthCells,
+    nameOf: () => nameOf,
     newChar: () => newChar,
     newDirty: () => newDirty,
     passable: () => passable,
@@ -724,7 +783,10 @@ var W4W = (() => {
     rimeAt: () => rimeAt,
     rimeStep: () => rimeStep,
     ringOf: () => ringOf,
+    roomFor: () => roomFor,
+    slotsUsed: () => slotsUsed,
     sourceAt: () => sourceAt,
+    stacksOf: () => stacksOf,
     startItems: () => startItems,
     stepAll: () => stepAll,
     stepChar: () => stepChar,
@@ -732,6 +794,7 @@ var W4W = (() => {
     stepRime: () => stepRime,
     terrain: () => terrain,
     toolFor: () => toolFor,
+    toolsFor: () => toolsFor,
     townOfState: () => townOfState,
     townShelters: () => townShelters,
     townWarmth: () => townWarmth,
@@ -759,27 +822,109 @@ var W4W = (() => {
   const LOSS_K = 0.5;
   const FROSTBITE = 1;
   const INSULATION_T1 = 22;
-  const WEIGHT = { wood: 2, stone: 3, flint: 0.2, resin: 0.3 };
-  const CAPACITY = 14;
-  const OVERLOAD = 1.3;
-  const HEARTH_COST = { wood: 6, stone: 4, flint: 1, resin: 0 };
+  const MATS = {
+    wood: { name: "Wood", stack: 10, q: 0, note: "Cut with a saw or an axe. Burns, builds, holds things together." },
+    stone: { name: "Stone", stack: 10, q: 0, note: "Broken out with a pickaxe." },
+    flint: { name: "Flint", stack: 20, q: 0, note: "Only in the Stone Teeth. Sparks, edges, the start of every hearth." },
+    resin: { name: "Resin", stack: 20, q: 0, note: "Tapped from the Black Pines. Melt it with wood into pitch." },
+    fiber: { name: "Dry grass", stack: 20, q: 0, note: "Pulled by hand from open snow in The Edge and the Black Pines." },
+    cord: { name: "Cord", stack: 10, q: 1, note: "Twisted grass. Ties tools, sews quilts, carries loads." },
+    pitch: { name: "Pine pitch", stack: 10, q: 1, note: "Black, sticky, waterproof. Seals seams and flasks." },
+    charcoal: { name: "Charcoal", stack: 10, q: 1, note: "Burns hot and long. Fills a thermos with heat." },
+    hearth_kit: { name: "Hearth kit", stack: 2, q: 2, note: "A hearth in a bundle: unfold it anywhere out in the cold." }
+  };
+  const HEARTH_COST = { wood: 6, stone: 4, flint: 1 };
   const HEARTH_START_MS = 6 * 36e5;
   const HEARTH_WOOD_MS = 3 * 36e5;
   const HEARTH_MAX_MS = 24 * 36e5;
+  const POCKETS = 4;
+  const SIP_WARMTH = 30;
   const ITEMS = {
-    wool_cap: { name: "Wool cap", slot: "head", ins: 3, w: 0.3 },
-    canvas_coat: { name: "Canvas coat", slot: "body", ins: 9, w: 2 },
-    mittens: { name: "Mittens", slot: "hands", ins: 3, w: 0.2 },
-    wool_trousers: { name: "Wool trousers", slot: "legs", ins: 4, w: 1 },
-    felt_boots: { name: "Felt boots", slot: "feet", ins: 3, w: 1 },
-    saw: { name: "Bow saw", slot: "tool", ins: 0, w: 1.5, for: ["wood", "resin"] },
-    pickaxe: { name: "Pickaxe", slot: "tool", ins: 0, w: 2.5, for: ["stone", "flint"] }
+    wool_cap: { name: "Wool cap", slot: "head", ins: 3, q: 0, note: "Knitted in town. Better than nothing." },
+    canvas_coat: { name: "Canvas coat", slot: "body", ins: 9, q: 0, note: "Stiff with frost by noon." },
+    mittens: { name: "Mittens", slot: "hands", ins: 3, q: 0, note: "Thin at the thumbs." },
+    wool_trousers: { name: "Wool trousers", slot: "legs", ins: 4, q: 0, note: "Patched twice." },
+    felt_boots: { name: "Felt boots", slot: "feet", ins: 3, q: 0, note: "Warm until they are wet." },
+    quilted_cap: { name: "Quilted hood", slot: "head", ins: 5, q: 1, note: "Grass quilted between two layers, sealed with pitch." },
+    quilted_coat: { name: "Quilted coat", slot: "body", ins: 14, q: 1, note: "Heavy, ugly and very warm." },
+    lined_mittens: { name: "Lined mittens", slot: "hands", ins: 5, q: 1, note: "Cord-stitched, grass-lined." },
+    padded_trousers: { name: "Padded trousers", slot: "legs", ins: 7, q: 1, note: "You walk like a bear in them." },
+    bark_boots: { name: "Bark-soled boots", slot: "feet", ins: 5, q: 1, note: "Wooden soles keep the snow away from your feet." },
+    canvas_sack: { name: "Canvas sack", slot: "bag", ins: 0, q: 0, bag: 8, note: "Eight places for eight stacks." },
+    woven_pack: { name: "Woven pack", slot: "bag", ins: 0, q: 1, bag: 12, note: "Grass and cord, tight enough to hold stone." },
+    frame_pack: { name: "Expedition frame", slot: "bag", ins: 0, q: 2, bag: 16, note: "A wooden frame on your back. For the long trips." },
+    saw: { name: "Bow saw", slot: "tool", ins: 0, q: 0, for: ["wood", "resin"], speed: 1, note: "Cuts wood and taps resin." },
+    pickaxe: { name: "Pickaxe", slot: "tool", ins: 0, q: 0, for: ["stone", "flint"], speed: 1, note: "Breaks stone and flint." },
+    flint_axe: { name: "Flint axe", slot: "tool", ins: 0, q: 1, for: ["wood", "resin"], speed: 2, note: "Twice as fast as the saw." },
+    flint_pick: { name: "Flint pick", slot: "tool", ins: 0, q: 1, for: ["stone", "flint"], speed: 2, note: "Twice as fast as the old pickaxe." },
+    thermos: { name: "Stone thermos", slot: "flask", ins: 0, q: 2, note: "Fill it with charcoal heat at home. Each sip gives back 30 warmth, anywhere." }
   };
-  const startItems = () => ({ wool_cap: "worn", canvas_coat: "worn", mittens: "worn", wool_trousers: "worn", felt_boots: "worn", saw: "home", pickaxe: "home" });
-  const itemsOf = (c) => c.items ?? (c.items = startItems());
+  const RECIPES = {
+    cord: { out: "cord", n: 1, in: { fiber: 3 }, ms: 4e3, group: "Materials", field: true },
+    pitch: { out: "pitch", n: 1, in: { resin: 2, wood: 1 }, ms: 8e3, group: "Materials" },
+    charcoal: { out: "charcoal", n: 1, in: { wood: 2 }, ms: 6e3, group: "Materials" },
+    flint_axe: { out: "flint_axe", n: 1, in: { wood: 3, flint: 2, cord: 1 }, ms: 15e3, group: "Tools" },
+    flint_pick: { out: "flint_pick", n: 1, in: { wood: 2, flint: 3, cord: 1 }, ms: 15e3, group: "Tools" },
+    quilted_cap: { out: "quilted_cap", n: 1, in: { fiber: 4, pitch: 1 }, ms: 1e4, group: "Clothing" },
+    quilted_coat: { out: "quilted_coat", n: 1, in: { fiber: 10, pitch: 2, cord: 1 }, ms: 2e4, group: "Clothing" },
+    lined_mittens: { out: "lined_mittens", n: 1, in: { fiber: 4, cord: 1 }, ms: 1e4, group: "Clothing" },
+    padded_trousers: { out: "padded_trousers", n: 1, in: { fiber: 7, pitch: 1 }, ms: 15e3, group: "Clothing" },
+    bark_boots: { out: "bark_boots", n: 1, in: { wood: 2, fiber: 3, pitch: 1 }, ms: 12e3, group: "Clothing" },
+    woven_pack: { out: "woven_pack", n: 1, in: { fiber: 8, cord: 3, pitch: 1 }, ms: 2e4, group: "Bags" },
+    frame_pack: { out: "frame_pack", n: 1, in: { wood: 4, cord: 6, pitch: 2 }, ms: 3e4, group: "Bags" },
+    hearth_kit: { out: "hearth_kit", n: 1, in: { wood: 6, stone: 4, flint: 1 }, ms: 12e3, group: "Survival" },
+    thermos: { out: "thermos", n: 1, in: { stone: 4, flint: 2, pitch: 2 }, ms: 3e4, group: "Survival" }
+  };
+  const nameOf = (id) => MATS[id]?.name ?? ITEMS[id]?.name ?? id;
+  const startItems = () => ({ wool_cap: "worn", canvas_coat: "worn", mittens: "worn", wool_trousers: "worn", felt_boots: "worn", canvas_sack: "worn", saw: "home", pickaxe: "home" });
+  const itemsOf = (c) => {
+    const it = c.items ?? (c.items = startItems());
+    if (!Object.keys(it).some((k) => ITEMS[k]?.slot === "bag")) it.canvas_sack = "worn";
+    return it;
+  };
   const insulationOf = (c) => Object.entries(itemsOf(c)).reduce((a, [id, at]) => a + (at === "worn" ? ITEMS[id]?.ins ?? 0 : 0), 0);
-  const loadOf = (c) => weightOf(c.inv) + Object.entries(itemsOf(c)).reduce((a, [id, at]) => a + (at === "pack" ? ITEMS[id]?.w ?? 0 : 0), 0);
-  const toolFor = (res) => Object.keys(ITEMS).find((id) => ITEMS[id].for?.includes(res));
+  const bagSize = (c) => {
+    const b = Object.entries(itemsOf(c)).find(([id, at]) => at === "worn" && ITEMS[id]?.slot === "bag");
+    return POCKETS + (b ? ITEMS[b[0]].bag ?? 0 : 0);
+  };
+  const stacksOf = (inv) => Object.entries(inv).reduce((a, [k, n]) => a + (n > 0 ? Math.ceil(n / (MATS[k]?.stack ?? 10)) : 0), 0);
+  const slotsUsed = (c) => stacksOf(c.inv) + Object.values(itemsOf(c)).filter((at) => at === "pack").length;
+  function roomFor(c, mat, n = 1) {
+    const free = bagSize(c) - slotsUsed(c), st = MATS[mat]?.stack ?? 10, have2 = c.inv[mat] || 0, inLast = have2 % st ? st - have2 % st : 0;
+    return Math.min(n, inLast + Math.max(0, free) * st);
+  }
+  const loadOf = (c) => slotsUsed(c);
+  const toolsFor = (res) => Object.keys(ITEMS).filter((id) => ITEMS[id].for?.includes(res));
+  const toolFor = (res) => toolsFor(res)[0] ?? "";
+  const bestTool = (c, res) => toolsFor(res).filter((id) => itemsOf(c)[id] === "pack").sort((a, b) => (ITEMS[b].speed ?? 1) - (ITEMS[a].speed ?? 1))[0] ?? null;
+  const have = (c, mat, atHome) => (c.inv[mat] || 0) + (atHome ? c.stash?.[mat] || 0 : 0);
+  function canCraft(c, id, atHome) {
+    const r = RECIPES[id];
+    if (!r) return "No such recipe.";
+    if (!r.field && !atHome) return "That needs the workbench at home.";
+    if (ITEMS[r.out] && itemsOf(c)[r.out]) return `You already have a ${ITEMS[r.out].name.toLowerCase()}.`;
+    for (const [m, n] of Object.entries(r.in)) if (have(c, m, atHome) < n) return `Not enough ${nameOf(m).toLowerCase()}: ${have(c, m, atHome)} of ${n}.`;
+    return null;
+  }
+  function consume(c, inn, atHome) {
+    for (const [m, n] of Object.entries(inn)) {
+      let left = n;
+      const fromBag = Math.min(left, c.inv[m] || 0);
+      c.inv[m] = (c.inv[m] || 0) - fromBag;
+      left -= fromBag;
+      if (left && atHome && c.stash) c.stash[m] = (c.stash[m] || 0) - left;
+      if (!c.inv[m]) delete c.inv[m];
+    }
+  }
+  function give(c, mat, n, atHome) {
+    const fit = roomFor(c, mat, n);
+    if (fit) c.inv[mat] = (c.inv[mat] || 0) + fit;
+    if (n > fit && atHome) {
+      c.stash ?? (c.stash = {});
+      c.stash[mat] = (c.stash[mat] || 0) + (n - fit);
+    }
+    return fit;
+  }
   const DEMO_TOWN = { people: 5, power: 5190, deeds: 2 };
   const SPECIAL = { core: [0, 0], church: [1, -3], plaza: [-1, 3], observatory: [4, -2], library: [5, -5], mine: [-6, 2] };
   const DEMO_CELLS = [[2, -1], [-2, 1], [1, 1], [-1, -1], [3, -3], [-3, 3], [3, 0]];
@@ -821,6 +966,7 @@ var W4W = (() => {
     const t = terrain(q, r), z = zoneOf(q, r), h = hash(q, r, 11);
     if (t === "tree" || t === "forest") return z === 2 && h < 0.25 ? "resin" : "wood";
     if (t === "rock") return z === 3 && h < 0.3 ? "flint" : "stone";
+    if (t === "open" && (z === 1 || z === 2) && h < 0.32) return "fiber";
     return null;
   }
   function weatherAt(t, netStorm = false) {
@@ -857,8 +1003,8 @@ var W4W = (() => {
     const [x, z] = worldXZ(q, r);
     return Math.hypot(x, z) <= ctx.heatR ? 4 : 0;
   }
-  const weightOf = (inv) => Object.keys(WEIGHT).reduce((a, k) => a + (inv[k] || 0) * WEIGHT[k], 0);
-  const emptyInv = () => ({ wood: 0, stone: 0, flint: 0, resin: 0 });
+  const weightOf = (inv) => stacksOf(inv);
+  const emptyInv = () => ({});
   function findPath(a, b, limit = 4e3, blocked) {
     if (a[0] === b[0] && a[1] === b[1]) return [];
     if (!passable(b[0], b[1])) return null;
@@ -901,7 +1047,7 @@ var W4W = (() => {
   function stepDur(to, t, load, netStorm = false) {
     const z = Math.min(3, zoneOf(to[0], to[1])), w = weatherAt(t, netStorm).id;
     const slow = z === 0 ? w === "calm" ? 1 : w === "wind" ? 5 / 3 : 8 / 3 : WX_SLOW[w];
-    return Math.round(ZONE_STEP_MS[z] * slow * (load > CAPACITY ? 1.5 : 1));
+    return Math.round(ZONE_STEP_MS[z] * slow * (load > 1e9 ? 1 : 1));
   }
   function beginStep(c, t, ctx) {
     c.t0 = t;
@@ -972,7 +1118,7 @@ var W4W = (() => {
         const te = c.t0 + c.stepMs, [q2, r2] = c.path.shift();
         c.q = q2;
         c.r = r2;
-        c.energy = Math.max(0, c.energy - (loadOf(c) > CAPACITY ? 2 : 1));
+        c.energy = Math.max(0, c.energy - 1);
         if (c.lost) {
           c.lost = false;
           c.path = [];
@@ -987,8 +1133,19 @@ var W4W = (() => {
       if (c.act && t1 >= c.act.until) {
         const a = c.act;
         c.act = null;
-        c.inv[a.res] = (c.inv[a.res] || 0) + 1;
-        events.push({ kind: "gathered", t: a.until, q: a.q, r: a.r, res: a.res });
+        const home = key(c.q, c.r) === ctx.home && !c.path.length;
+        if (a.kind === "gather") {
+          if (give(c, a.res, 1, home)) events.push({ kind: "gathered", t: a.until, q: a.q, r: a.r, res: a.res });
+        } else if (a.kind === "craft") {
+          const why = canCraft(c, a.recipe, home), r2 = RECIPES[a.recipe];
+          if (why || !r2) events.push({ kind: "crafted", t: a.until, recipe: a.recipe, ok: false, why: why ?? "No such recipe." });
+          else {
+            consume(c, r2.in, home);
+            if (ITEMS[r2.out]) itemsOf(c)[r2.out] = home ? "home" : "pack";
+            else give(c, r2.out, r2.n, home);
+            events.push({ kind: "crafted", t: a.until, recipe: a.recipe, ok: true });
+          }
+        }
       }
       const q = c.q, r = c.r, zone = zoneOf(q, r);
       const cold = coldAt(q, r, t1, ctx), src = sourceAt(q, r, t1, ctx);
@@ -1007,7 +1164,7 @@ var W4W = (() => {
         const cause = pure ? "Pure Cold. The cave is not open yet" : kept ? "the keepers of the Mouth took you" : taken ? "Chthon passed through you" : c.health <= 0 && c.warmth > 0 ? "frostbite" : `cold ${Math.round(cold)} against clothing ${ins}${w.id === "calm" ? "" : `, ${w.name.toLowerCase()} \xD7${w.mult}`}`;
         events.push({ kind: "froze", t: t1, q, r, cause, zone, inv: { ...c.inv } });
         c.died = { t: t1, q, r, cause, zone };
-        Object.assign(c, { frozenUntil: t1 + FREEZE_MS, warmth: 0, path: [], act: null, lost: false, q: c.home[0], r: c.home[1], inv: emptyInv(), simT: now, t0: t1 });
+        Object.assign(c, { frozenUntil: t1 + FREEZE_MS, warmth: 0, path: [], act: null, lost: false, q: c.home[0], r: c.home[1], inv: {}, simT: now, t0: t1 });
         return { c, events };
       }
       t = t1;
@@ -1174,10 +1331,10 @@ var W4W = (() => {
         if (!res) return fail("Nothing to take here.");
         const k = key(...at);
         if ((ws.nodes[k] ?? 0) > now) return fail("Already picked clean. It comes back in a while.");
-        if (loadOf(c) + WEIGHT[res] > CAPACITY * OVERLOAD) return fail("You cannot carry more.");
-        const tool = toolFor(res);
-        if (itemsOf(c)[tool] !== "pack") return fail(`You need the ${ITEMS[tool].name.toLowerCase()} in your pack for ${res}. It is at home.`);
-        c.act = { kind: "gather", q: at[0], r: at[1], res, until: now + GATHER_MS };
+        if (!roomFor(c, res, 1)) return fail("Your bag is full.");
+        const needs = toolsFor(res), tool = bestTool(c, res);
+        if (needs.length && !tool) return fail(`You need a ${ITEMS[needs[0]].name.toLowerCase()} in your bag for ${nameOf(res).toLowerCase()}.`);
+        c.act = { kind: "gather", q: at[0], r: at[1], res, until: now + Math.round(GATHER_MS / (tool ? ITEMS[tool].speed ?? 1 : 1.5)) };
         ws.nodes[k] = now + GATHER_MS + NODE_COOLDOWN_MS;
         d.nodes.add(k);
         return ok();
@@ -1187,8 +1344,13 @@ var W4W = (() => {
         if (zoneOf(...here) < 1) return fail("The town has its own fire. Build out in the cold.");
         const k = key(...here);
         if (ws.hearths[k]) return fail("There is a hearth here already.");
-        for (const [res, n] of Object.entries(HEARTH_COST)) if ((c.inv[res] || 0) < n) return fail(`A hearth takes ${HEARTH_COST.wood} wood, ${HEARTH_COST.stone} stone and ${HEARTH_COST.flint} flint.`);
-        for (const [res, n] of Object.entries(HEARTH_COST)) c.inv[res] -= n;
+        if ((c.inv.hearth_kit || 0) > 0) {
+          c.inv.hearth_kit -= 1;
+          if (!c.inv.hearth_kit) delete c.inv.hearth_kit;
+        } else {
+          for (const [res, n] of Object.entries(HEARTH_COST)) if ((c.inv[res] || 0) < n) return fail(`A hearth takes a hearth kit, or ${HEARTH_COST.wood} wood, ${HEARTH_COST.stone} stone and ${HEARTH_COST.flint} flint.`);
+          consume(c, HEARTH_COST, false);
+        }
         ws.hearths[k] = { by: uid, nick: nickIn(ws, uid), at: now, until: now + HEARTH_START_MS };
         d.hearths.add(k);
         d.feed.push({ id: `hb${uid}${now}`, t: now, topic: "hearth", by: uid, data: { nick: nickIn(ws, uid), zone: zoneName(zoneOf(...here)), q: here[0], r: here[1] } });
@@ -1200,6 +1362,7 @@ var W4W = (() => {
         if (!near(at)) return fail("Too far. Stand next to it.");
         if ((c.inv.wood || 0) < 1) return fail("You have no wood.");
         c.inv.wood -= 1;
+        if (!c.inv.wood) delete c.inv.wood;
         h.until = Math.min(now + HEARTH_MAX_MS, Math.max(now, h.until) + HEARTH_WOOD_MS);
         d.hearths.add(k);
         return ok();
@@ -1209,11 +1372,14 @@ var W4W = (() => {
         if (!bag || bag.until <= now) return fail("That pack is gone.");
         if (bag.owner === uid) return fail("Your own frozen pack will not open for you. Someone else has to carry it.");
         if (!near([bag.q, bag.r])) return fail("Too far. Stand next to it.");
-        const took = emptyInv();
-        for (const res of Object.keys(WEIGHT)) while (bag.inv[res] > 0 && loadOf(c) + WEIGHT[res] <= CAPACITY * OVERLOAD) {
-          bag.inv[res]--;
-          c.inv[res]++;
-          took[res]++;
+        const took = {};
+        for (const res of Object.keys(bag.inv)) {
+          const n = roomFor(c, res, bag.inv[res] || 0);
+          if (!n) continue;
+          bag.inv[res] -= n;
+          c.inv[res] = (c.inv[res] || 0) + n;
+          took[res] = n;
+          if (!bag.inv[res]) delete bag.inv[res];
         }
         if (!Object.values(bag.inv).some((v) => v > 0)) {
           delete ws.bags[bag.id];
@@ -1224,24 +1390,58 @@ var W4W = (() => {
       }
       case "unload": {
         if (key(...here) !== key(...c.home)) return fail("Unload at your own house.");
-        c.stash = c.stash ?? emptyInv();
-        for (const res of Object.keys(WEIGHT)) {
-          c.stash[res] += c.inv[res];
-          c.inv[res] = 0;
+        c.stash = c.stash ?? {};
+        for (const res of Object.keys(c.inv)) {
+          c.stash[res] = (c.stash[res] || 0) + (c.inv[res] || 0);
         }
+        c.inv = {};
         return ok();
       }
       case "pack": {
         if (key(...here) !== key(...c.home)) return fail("Pack at your own house.");
-        const res = String(b.res ?? ""), n = Math.max(1, Math.min(50, Number(b.n) || 1));
-        if (!(res in WEIGHT)) return fail("Pack what?");
-        c.stash = c.stash ?? emptyInv();
-        let moved = 0;
-        while (moved < n && c.stash[res] > 0 && loadOf(c) + WEIGHT[res] <= CAPACITY) {
-          c.stash[res]--;
-          c.inv[res]++;
-          moved++;
-        }
+        const res = String(b.res ?? ""), n = Math.max(1, Math.min(200, Number(b.n) || 1));
+        if (!MATS[res]) return fail("Pack what?");
+        c.stash = c.stash ?? {};
+        const m = Math.min(n, c.stash[res] || 0, roomFor(c, res, n));
+        if (!m) return fail("Your bag is full.");
+        c.stash[res] = (c.stash[res] || 0) - m;
+        if (!c.stash[res]) delete c.stash[res];
+        c.inv[res] = (c.inv[res] || 0) + m;
+        return ok();
+      }
+      case "store": {
+        if (key(...here) !== key(...c.home)) return fail("Store things at your own house.");
+        const res = String(b.res ?? ""), n = Math.max(1, Math.min(200, Number(b.n) || (c.inv[res] || 0)));
+        const m = Math.min(n, c.inv[res] || 0);
+        if (!m) return fail("Nothing to store.");
+        c.stash = c.stash ?? {};
+        c.stash[res] = (c.stash[res] || 0) + m;
+        c.inv[res] = (c.inv[res] || 0) - m;
+        if (!c.inv[res]) delete c.inv[res];
+        return ok();
+      }
+      case "craft": {
+        if (c.path.length) return fail("Stop walking first.");
+        if (c.act) return fail("You are busy.");
+        const id = String(b.recipe ?? ""), atHome = key(...here) === key(...c.home), why = canCraft(c, id, atHome);
+        if (why) return fail(why);
+        c.act = { kind: "craft", recipe: id, until: now + RECIPES[id].ms };
+        return ok();
+      }
+      case "fill": {
+        if (key(...here) !== key(...c.home)) return fail("Fill the thermos at home, from the stove.");
+        if (!itemsOf(c).thermos) return fail("You have no thermos.");
+        if ((c.sips || 0) >= 3) return fail("The thermos is full.");
+        if (have(c, "charcoal", true) < 2) return fail("It takes 2 charcoal to fill.");
+        consume(c, { charcoal: 2 }, true);
+        c.sips = 3;
+        return ok();
+      }
+      case "drink": {
+        if (!itemsOf(c).thermos || itemsOf(c).thermos === "home") return fail("The thermos is not with you.");
+        if (!(c.sips || 0)) return fail("The thermos is empty.");
+        c.sips = (c.sips || 0) - 1;
+        c.warmth = Math.min(100, c.warmth + SIP_WARMTH);
         return ok();
       }
       case "item": {
@@ -1250,8 +1450,14 @@ var W4W = (() => {
         if (!["worn", "pack", "home"].includes(to)) return fail("Where to?");
         const atHome = key(...here) === key(...c.home);
         if ((to === "home" || items[id] === "home") && !atHome) return fail("That stays at home. Go home first.");
-        if (to === "worn" && it.slot === "tool") return fail("Tools go in the pack.");
-        if (to === "pack" && items[id] !== "pack" && loadOf(c) + it.w > CAPACITY * OVERLOAD) return fail("Your pack is full.");
+        if (to === "worn" && (it.slot === "tool" || it.slot === "flask")) return fail("That goes in the bag, not on you.");
+        if (to === "pack" && items[id] !== "pack" && slotsUsed(c) + 1 > bagSize(c)) return fail("Your bag is full.");
+        if (it.slot === "bag" && items[id] === "worn" && to !== "worn") return fail("Put on another bag instead; this one holds everything you carry.");
+        if (it.slot === "bag" && to === "worn") {
+          const cur = Object.keys(items).find((k) => items[k] === "worn" && ITEMS[k]?.slot === "bag");
+          const after = POCKETS + (it.bag ?? 0);
+          if (slotsUsed(c) - (items[id] === "pack" ? 1 : 0) + (cur && items[id] === "pack" ? 1 : 0) > after) return fail("Everything you carry would not fit in that bag.");
+        }
         if (to === "worn") {
           for (const [o, at] of Object.entries(items)) if (o !== id && at === "worn" && ITEMS[o]?.slot === it.slot) items[o] = items[id];
         }
@@ -2084,7 +2290,10 @@ const FAQ = [
     ['What is the tall dark thing out there?', 'The Library calls it Chthon. It wanders the Wastes and never comes past the forest edge into town. It does not hunt, but now and then it turns toward someone in the snow, and if it reaches you, you fall at once. If you see it near, walk the other way.'],
     ['What do the bars mean?', 'Warmth drops wherever the cold is stronger than your clothing, faster in wind and blizzards. Below 25 warmth the frost starts taking health. Energy goes on walking and comes back by a fire. Load is what you carry: past the limit every step costs double.'],
     ['Is the town always safe?', 'Inside any building you are completely safe: you step in and vanish from the map. On the streets, no. When the town holds, its warm circle keeps you safe. When the frost is winning, even the streets between houses bite, and the Library at the edge is a cold walk. Houses, the church and the plaza fire always warm you.'],
-    ['How do I gather?', 'Take your tools from home first: the bow saw for wood and resin, the pickaxe for stone and flint. Open Pack and clothes (key I) at home, or use the Take buttons by your door. Out past the line, stand next to a tree or a rock and press Saw or Break.'],
+    ['How do I gather?', 'Take your tools from home first: the bow saw for wood and resin, the pickaxe for stone and flint. Use the Take buttons by your door, or right-click them in the home chest (key I). Out past the line, stand next to a tree or a rock and press Saw or Break. Dry grass needs no tool: pull it from open snow in The Edge and the Black Pines.'],
+    ['How does the bag work?', 'Your bag has cells: pockets give 4, the canvas sack 8 more. Each stack takes one cell: 10 wood, 10 stone, 20 grass, 20 resin or 20 flint. Tools take a cell each. Better bags come from the workbench. Key I opens the bag with your character, B the bag alone, C the character.'],
+    ['How do I craft?', 'Open the Workbench (key K). At home both the bag and the home chest count; away from home you can only twist cord. Grass makes cord; resin and wood make pitch; wood makes charcoal. From those come flint tools that work twice as fast, quilted clothes that keep you far warmer, bigger bags, hearth kits you can carry, and the stone thermos.'],
+    ['What is the thermos for?', 'It is the hardest thing to make: stone, flint from the Stone Teeth and pine pitch. Fill it at home with 2 charcoal for 3 sips. Each sip gives back 30 warmth wherever you are. The deep trips need it.'],
     ['What can I do out there?', 'Gather wood and stone in The Edge and the Black Pines, resin among the pines and flint in the Stone Teeth. With 6 wood, 4 stone and 1 flint you can build a hearth out in the cold. Anyone can warm up at it and feed it with wood; it burns out unless someone does.'],
     ['I froze. What now?', 'You lie frozen at your own house for 24 hours. Nothing makes it faster: not money, not mining, not anyone. Your rig keeps working the whole time. What you carried stays where you fell for 24 hours.'],
     ['Can I get my pack back?', 'Not yourself. Only someone else can pick up a frozen pack and carry it to town. Post where it lies on the board and make a deal with whoever goes for it. After 24 hours the snow takes it.'],
@@ -2928,6 +3137,7 @@ function localWorld() {
       Object.values(st.chars).forEach(c => { sh(c); sh(c.act); if (c.died) c.died.t -= ms; }); Object.values(st.hearths).forEach(sh); Object.values(st.bags).forEach(sh);
       for (const k in st.nodes) st.nodes[k] -= ms; if (st.rime) st.rime.t -= ms; keep(); emit(view()); },
     admin: () => true,
+    _stash(o) { if (st.chars.me) { st.chars.me.stash = o; keep(); emit(view()); } },
     _rime(q, r) { st.rime = { q, r, t: Math.floor(Date.now() / W4W.RIME_MS) * W4W.RIME_MS, d: 0 }; keep(); emit(view()); },
     async act(name, body = {}) {
       if (name === 'revive') { const c = st.chars.me; if (c) Object.assign(c, { frozenUntil: 0, warmth: 100, health: 100, energy: 100, q: c.home[0], r: c.home[1], path: [], act: null, lost: false, t0: Date.now(), simT: Date.now() }); keep(); const v = view(); emit(v); return v; }
@@ -3165,17 +3375,18 @@ function hud(force) {
   const kg = W4W.loadOf(c), frozen = c.frozenUntil > t, indoors = !c.path.length && !!SHEL[W4W.key(...here)];
   hudEl.hidden = false;
   hudEl.innerHTML = `<div class="hz"><b>${esc(W4W.ZONES[zone]?.name || 'The far cold')}</b><span>${frozen ? 'frozen' : indoors ? 'indoors · the walls keep you' : cold === 0 ? 'inside the warm circle' : `cold ${Math.round(cold)} · clothing ${ins}${deficit ? ` · −${(deficit * W4W.LOSS_K).toFixed(1)}/min` : ''}`}</span></div>
-    ${bar('Warmth', c.warmth, 100, 'w')}${bar('Health', c.health, 100, 'h')}${bar('Energy', c.energy, 100, 'e')}${bar('Load', kg, W4W.CAPACITY, kg > W4W.CAPACITY ? 'l over' : 'l')}
-    <div class="hinv">${['wood', 'stone', 'flint', 'resin'].map(k => `<span><i>${k}</i>${c.inv[k] || 0}</span>`).join('')}</div>
+    ${bar('Warmth', c.warmth, 100, 'w')}${bar('Health', c.health, 100, 'h')}${bar('Energy', c.energy, 100, 'e')}${bar('Bag', kg, W4W.bagSize(c), kg >= W4W.bagSize(c) ? 'l over' : 'l')}
+    <div class="hinv">${['wood', 'stone', 'fiber', 'resin', 'flint'].map(k => `<span><i>${k === 'fiber' ? 'grass' : k}</i>${c.inv[k] || 0}</span>`).join('')}</div>
     <div class="hwx"><span class="${wx.id}">${wx.name} ×${wx.mult}</span>${XV.grey ? '<span>grey light −5</span>' : ''}${XV.bell ? '<span class="bad">night of the bell +10</span>' : ''}<span class="${XV.town.holds ? 'good' : 'bad'}">${XV.town.holds ? 'town holds' : 'frost wins'}</span></div>
-    <button class="hpack" data-pack>Pack and clothes <kbd>I</kbd></button>`;
-  hudEl.querySelector('[data-pack]').onclick = openPack;
+    <div class="hbtns"><button class="hpack" data-pack>Bag and gear <kbd>I</kbd></button><button class="hpack" data-craftk>Workbench <kbd>K</kbd></button></div>`;
+  hudEl.querySelector('[data-pack]').onclick = openPack; hudEl.querySelector('[data-craftk]').onclick = () => { UI.craft = !UI.craft; UI.craft ? sfx.open() : sfx.close(); renderFrames(); };
   // the cold you feel on the screen
   const fx = frozen ? 0 : Math.max(0, (50 - c.warmth) / 50); frostEl.style.opacity = fx.toFixed(2);
   hudEl.style.setProperty('--chill', Math.min(1, deficit / 12 + fx).toFixed(2));
   document.body.classList.toggle('delir', !frozen && c.warmth < 10);
   // what happened on the way, as the screen sees it
   for (const e of pr.events) { const id = e.kind + e.t; if (seenEv.has(id)) continue; seenEv.add(id);
+    if (e.kind === 'crafted') { if (e.ok) { sfx.gathered(); banner(`Created: ${W4W.nameOf(W4W.RECIPES[e.recipe]?.out)}`, 'at the workbench'); } else say(esc(e.why || 'It did not work.'), 'Workbench'); renderFrames(); }
     if (e.kind === 'lost') { banner('The wind took the trail', 'You lost your way. Pick a direction again.'); say('The wind took the trail. You stand somewhere you did not choose. Pick a direction again.', 'Wastes'); }
     if (e.kind === 'arrived' && W4W.zoneOf(e.q, e.r) >= 1) { const n = noteAt(e.q, e.r); if (n) readNote(n); else banner('You made it', W4W.zoneName(W4W.zoneOf(e.q, e.r))); } }
   const near = frozen ? null : rimeNear(c);
@@ -3196,20 +3407,21 @@ function actions(c, here, t, frozen) {
   if (frozen) btns.push(`<span class="xt">Frozen. Thaws in ${hms(c.frozenUntil - t)}. Nothing makes it faster.</span>${XW?.admin?.() ? '<button class="btn" data-x="revive">Revive (admin test)</button>' : ''}`);
   else if (trip) btns.push(tripCard());
   else if (c.path.length) btns.push(`<span class="xt">On the way to ${esc(W4W.zoneName(W4W.zoneOf(...c.path.at(-1))))} · ${c.path.length} cells left${eta > 60e3 ? ` · about ${dur(eta)}, at ${clockAt(t + eta)}` : ''}${c.lost ? ' · the wind is pulling you off the trail' : ''}</span><button class="btn" data-x="stop">Stop</button>`);
-  else if (c.act && c.act.until > t) btns.push(`<span class="xt">Gathering ${c.act.res}… ${Math.ceil((c.act.until - t) / 1000)}s</span>`);
+  else if (c.act && c.act.until > t) btns.push(`<span class="xt">${c.act.kind === 'craft' ? `At the workbench: ${esc(W4W.nameOf(W4W.RECIPES[c.act.recipe]?.out))}` : `Working the ${esc(W4W.nameOf(c.act.res).toLowerCase())}`}…</span>`);
   else {
     const near = [here, ...W4W.DIRS.map(([dq, dr]) => [here[0] + dq, here[1] + dr])];
     const kinds = new Set();
     const items = W4W.itemsOf(c), missing = new Set();
     for (const cell of near) { const res = W4W.resourceOf(...cell); if (res && !(XV.nodes[W4W.key(...cell)] > t) && !kinds.has(res)) { kinds.add(res); const tool = W4W.toolFor(res);
-      if (items[tool] === 'pack') btns.push(`<button class="btn" data-x="gather" data-at="${cell.join(',')}">${res === 'wood' || res === 'resin' ? 'Saw' : 'Break'} ${res}</button>`); else missing.add(W4W.ITEMS[tool].name.toLowerCase()); } }
+      const best = W4W.bestTool(c, res); if (!W4W.toolsFor(res).length || best) btns.push(`<button class="btn" data-x="gather" data-at="${cell.join(',')}">${res === 'fiber' ? 'Pull dry grass' : res === 'wood' || res === 'resin' ? (best === 'flint_axe' ? 'Chop' : 'Saw') + ' ' + res : 'Break ' + res}</button>`); else missing.add(W4W.ITEMS[tool].name.toLowerCase()); } }
     if (missing.size) btns.push(`<span class="xt">No ${[...missing].join(' and no ')} in your pack. Without tools you can only look. They are at home.</span>`);
     const hk = near.map(cell => W4W.key(...cell)).find(k => XV.hearths[k]);
     if (hk && (c.inv.wood || 0) > 0) btns.push(`<button class="btn" data-x="feed" data-at="${hk}">Feed the hearth (+3h)</button>`);
     const cost = W4W.HEARTH_COST;
-    if (W4W.zoneOf(...here) >= 1 && !XV.hearths[W4W.key(...here)]) btns.push(`<button class="btn ${c.inv.wood >= cost.wood && c.inv.stone >= cost.stone && c.inv.flint >= cost.flint ? 'main' : ''}" data-x="hearth">Build a hearth (${cost.wood} wood, ${cost.stone} stone, ${cost.flint} flint)</button>`);
+    if (W4W.zoneOf(...here) >= 1 && !XV.hearths[W4W.key(...here)] && (c.inv.hearth_kit || 0) > 0) btns.push('<button class="btn main" data-x="hearth">Unfold the hearth kit</button>');
+    else if (W4W.zoneOf(...here) >= 1 && !XV.hearths[W4W.key(...here)]) btns.push(`<button class="btn ${c.inv.wood >= cost.wood && c.inv.stone >= cost.stone && c.inv.flint >= cost.flint ? 'main' : ''}" data-x="hearth">Build a hearth (${cost.wood} wood, ${cost.stone} stone, ${cost.flint} flint)</button>`);
     for (const b of XV.bags || []) if (!b.mine && W4W.dist(here, [b.q, b.r]) <= 1) btns.push(`<button class="btn main" data-x="take" data-id="${esc(b.id)}">Take ${esc(b.nick)}'s frozen pack</button>`);
-    if (W4W.key(...here) === W4W.key(...c.home)) { for (const tl of ['saw', 'pickaxe']) if (W4W.itemsOf(c)[tl] === 'home') btns.push(`<button class="btn main" data-x="item" data-id="${tl}" data-to="pack">Take the ${W4W.ITEMS[tl].name.toLowerCase()}</button>`); if (W4W.weightOf(c.inv) > 0) btns.push('<button class="btn" data-x="unload">Unload at home</button>'); const st = c.stash || {}; for (const r of ['wood', 'stone', 'flint']) if ((st[r] || 0) > 0) btns.push(`<button class="btn" data-x="pack" data-res="${r}">Pack ${r} (${st[r]} home)</button>`); }
+    if (W4W.key(...here) === W4W.key(...c.home)) { btns.push('<button class="btn" data-x="bench">Workbench</button>'); for (const tl of ['saw', 'pickaxe']) if (W4W.itemsOf(c)[tl] === 'home') btns.push(`<button class="btn main" data-x="item" data-id="${tl}" data-to="pack">Take the ${W4W.ITEMS[tl].name.toLowerCase()}</button>`); if (W4W.weightOf(c.inv) > 0) btns.push('<button class="btn" data-x="unload">Unload at home</button>'); }
     const nt = noteAt(...here); if (nt) btns.push(`<button class="btn main" data-x="note" data-id="${nt.id}">Read the note</button>`);
     if (!btns.length) btns.push(`<span class="xt">${W4W.zoneOf(...here) === 0 ? 'Click the ground to walk. The bright line is the edge of the warmth: past it the cold begins.' : 'Stand next to a tree or a rock to work it: a saw for wood, a pickaxe for stone. Click the ground to plan the next trip.'}</span>`);
   }
@@ -3220,6 +3432,7 @@ function actions(c, here, t, frozen) {
     if (b.dataset.at) body.at = b.dataset.at.split(',').map(Number);
     if (b.dataset.id) body.id = b.dataset.id; if (b.dataset.res) body.res = b.dataset.res; if (b.dataset.to) body.to = b.dataset.to;
     if (x === 'item') sfx.equip();
+    if (x === 'bench') { UI.craft = true; UI.bag = true; sfx.open(); renderFrames(); return; }
     if (x === 'go') return goTrip(); if (x === 'cancel') return cancelTrip(); if (x === 'note') return readNote(NOTES.find(n => n.id === b.dataset.id));
     if (x === 'stop') { drawPrints([0, 0], [], false); printSig = ''; }
     xact(x, body);
@@ -3444,29 +3657,179 @@ function tripCard() {
     <button class="btn main" data-x="go">Set out</button><button class="btn" data-x="cancel">Cancel</button>`;
 }
 
-/* ---------- the pack: what you wear, what you carry, what waits at home ---------- */
-const SLOTS = [['head', 'Head'], ['body', 'Body'], ['hands', 'Hands'], ['legs', 'Legs'], ['feet', 'Feet']];
-function openPack() {
-  const pr = predicted(); if (!pr) return; const c = pr.c, items = W4W.itemsOf(c), home = W4W.key(c.q, c.r) === W4W.key(...c.home) && !c.path.length;
-  const ins = W4W.insulationOf(c), load = W4W.loadOf(c), cold = W4W.coldAt(c.q, c.r, xnow(), xctx());
-  const btn = (id, to, label) => `<button class="btn" data-pk="${id}" data-to="${to}">${label}</button>`;
-  const worn = SLOTS.map(([slot, name]) => { const id = Object.keys(items).find(k => items[k] === 'worn' && W4W.ITEMS[k].slot === slot);
-    return `<div class="pslot ${id ? '' : 'empty'}"><i>${name}</i>${id ? `<b>${esc(W4W.ITEMS[id].name)}</b><span>warmth +${W4W.ITEMS[id].ins}</span>${btn(id, 'pack', 'Take off')}` : '<b>nothing</b><span>the cold gets in</span>'}</div>`; }).join('');
-  const row = (id, where) => { const it = W4W.ITEMS[id]; const acts = where === 'pack' ? (it.slot === 'tool' ? '' : btn(id, 'worn', 'Put on')) + (home ? btn(id, 'home', 'Leave at home') : '') : where === 'home' ? (home ? btn(id, 'pack', 'Pack it') + (it.slot === 'tool' ? '' : btn(id, 'worn', 'Put on')) : '<span class="mute">at home</span>') : '';
-    return `<div class="pitem"><div><b>${esc(it.name)}</b><span>${it.slot === 'tool' ? 'tool for ' + it.for.join(' and ') : 'warmth +' + it.ins} · ${it.w} kg</span></div><div class="row">${acts}</div></div>`; };
-  const res = ['wood', 'stone', 'flint', 'resin'].filter(k => c.inv[k]).map(k => `<span><i>${k}</i>${c.inv[k]}</span>`).join('');
-  const st = c.stash || {}, stash = ['wood', 'stone', 'flint', 'resin'].filter(k => st[k]).map(k => `<span><i>${k}</i>${st[k]}</span>`).join('');
-  panel('pack', 'Pack and clothes', `clothing ${ins} against cold ${Math.round(cold)} · load ${load.toFixed(1)} of ${W4W.CAPACITY} kg`, null, `
-    <h3>WORN</h3><div class="pslots">${worn}</div>
-    <h3>IN THE PACK</h3>${Object.keys(items).filter(k => items[k] === 'pack').map(k => row(k, 'pack')).join('') || '<p class="mute">Nothing but air. Tools for work go here.</p>'}
-    ${res ? `<div class="hinv pres">${res}</div>` : ''}
-    <h3>AT HOME${home ? '' : ' · go home to reach it'}</h3>${Object.keys(items).filter(k => items[k] === 'home').map(k => row(k, 'home')).join('') || '<p class="mute">Nothing left at home.</p>'}
-    ${stash ? `<div class="hinv pres">${stash}</div>` : ''}
-    <p class="mute" style="font-size:13px;margin-top:12px">Clothing against the cold is what keeps your warmth. Tools let you work: a bow saw for wood and resin, a pickaxe for stone and flint. If you freeze, your clothes and tools stay with you; what you gathered stays in the snow.</p>`);
-  sfx.pack();
-  $('#pbody').querySelectorAll('[data-pk]').forEach(b => b.onclick = async () => { if (b.dataset.to === 'worn' || b.dataset.to === 'pack') sfx.equip(); await xact('item', { id: b.dataset.pk, to: b.dataset.to }); openPack(); });
+/* ---------- icons: drawn here, one small painting per thing ---------- */
+const ICON_BG = { 0: ['#3b3f46', '#16181c'], 1: ['#2f4a2a', '#111a10'], 2: ['#24405e', '#0c1624'] };
+const ICON_ART = {
+  wood: `<g transform="rotate(-25 20 20)"><rect x="6" y="15" width="28" height="10" rx="5" fill="#8a5a32"/><rect x="6" y="15" width="28" height="3" rx="1.5" fill="#a87442"/><ellipse cx="34" cy="20" rx="3.2" ry="5" fill="#e2b77c"/><ellipse cx="34" cy="20" rx="1.4" ry="2.4" fill="#b88650"/></g><g transform="rotate(-25 20 28)"><rect x="9" y="25" width="22" height="8" rx="4" fill="#704624"/><ellipse cx="31" cy="29" rx="2.6" ry="4" fill="#d4a46a"/></g>`,
+  stone: `<path d="M8 28 L12 15 L22 10 L32 15 L34 27 L25 33 L13 33Z" fill="#8f97a3"/><path d="M12 15 L22 10 L32 15 L22 19Z" fill="#c3cad3"/><path d="M22 19 L32 15 L34 27 L25 33Z" fill="#6b727d"/>`,
+  flint: `<path d="M13 31 L16 12 L26 7 L30 20 L22 33Z" fill="#3a3f5a"/><path d="M16 12 L26 7 L23 18Z" fill="#8a94c9"/><path d="M23 18 L30 20 L22 33Z" fill="#232741"/><path d="M19 14 L22 13" stroke="#e8f0ff" stroke-width="1.2"/>`,
+  resin: `<path d="M20 7 C27 17 30 22 30 26 A10 10 0 0 1 10 26 C10 22 13 17 20 7Z" fill="#d18a1c"/><path d="M20 12 C24 18 26 22 26 25 A6 6 0 0 1 16 25" fill="#f6c25a" opacity=".7"/><circle cx="16" cy="24" r="2" fill="#fff4c9" opacity=".8"/>`,
+  fiber: `<g stroke="#cdb46a" stroke-width="2" stroke-linecap="round" fill="none"><path d="M20 34 C19 25 14 16 9 9"/><path d="M20 34 C21 24 24 14 30 7"/><path d="M20 34 C20 24 20 16 19 6"/><path d="M20 34 C17 27 12 22 7 19"/><path d="M20 34 C24 27 28 23 34 20"/></g><rect x="15" y="29" width="10" height="4" rx="1" fill="#8a6a34"/>`,
+  cord: `<g fill="none" stroke-linecap="round"><path d="M10 12 C30 12 30 20 12 20 C30 20 30 28 10 28" stroke="#b08a4c" stroke-width="4"/><path d="M10 12 C30 12 30 20 12 20 C30 20 30 28 10 28" stroke="#e0c07e" stroke-width="1.4" stroke-dasharray="2 2"/></g>`,
+  pitch: `<rect x="11" y="14" width="18" height="18" rx="3" fill="#3b2a1a"/><rect x="11" y="14" width="18" height="5" rx="2" fill="#5a4026"/><path d="M14 14 C14 9 26 9 26 14" stroke="#7a5a36" stroke-width="2" fill="none"/><path d="M15 19 L15 26 M20 19 L20 29 M25 19 L25 24" stroke="#120c06" stroke-width="2.2" stroke-linecap="round"/>`,
+  charcoal: `<path d="M8 29 L13 18 L21 15 L27 19 L32 30 L22 34Z" fill="#1c1c22"/><path d="M13 18 L21 15 L27 19 L19 23Z" fill="#3a3a46"/><path d="M15 26 L18 24 M23 27 L26 25" stroke="#ff7a2a" stroke-width="1.4" stroke-linecap="round"/>`,
+  hearth_kit: `<rect x="8" y="17" width="24" height="15" rx="2" fill="#6a4a2c"/><path d="M8 22 H32 M8 27 H32" stroke="#4a321c" stroke-width="1"/><path d="M20 17 V32" stroke="#c9a46a" stroke-width="2"/><path d="M16 15 C16 9 20 7 20 7 C20 7 24 9 24 15" fill="#ff9a3c"/><path d="M18 15 C18 11 20 10 20 10 C20 10 22 11 22 15" fill="#ffe08a"/>`,
+  wool_cap: `<path d="M9 26 C9 14 31 14 31 26Z" fill="#8a3b34"/><rect x="8" y="24" width="24" height="6" rx="2" fill="#c9c2b6"/><circle cx="20" cy="12" r="3.5" fill="#d9d2c4"/>`,
+  quilted_cap: `<path d="M8 30 C7 14 33 14 32 30 L28 31 C28 22 12 22 12 31Z" fill="#5f6b4a"/><path d="M12 20 L28 20 M10 25 L30 25" stroke="#3c4430" stroke-width="1.2"/><path d="M12 31 C12 24 28 24 28 31" fill="#2a2a24"/>`,
+  canvas_coat: `<path d="M12 9 L20 13 L28 9 L34 15 L30 19 L30 33 L10 33 L10 19 L6 15Z" fill="#9c8a62"/><path d="M20 13 V33" stroke="#6d5f40" stroke-width="1.4"/><circle cx="21.5" cy="19" r="1" fill="#3a3020"/><circle cx="21.5" cy="25" r="1" fill="#3a3020"/>`,
+  quilted_coat: `<path d="M11 8 L20 12 L29 8 L35 15 L31 20 L31 34 L9 34 L9 20 L5 15Z" fill="#4f6a3e"/><path d="M9 20 H31 M9 25 H31 M9 30 H31" stroke="#344a28" stroke-width="1.3"/><path d="M20 12 V34" stroke="#2a3a20" stroke-width="1.6"/><path d="M14 8 C16 12 24 12 26 8" fill="#c9b27a"/>`,
+  mittens: `<path d="M9 30 L9 16 C9 11 17 11 17 16 L17 30Z" fill="#5a6f8a"/><path d="M17 20 C20 18 21 22 18 24" fill="#5a6f8a"/><path d="M21 30 L21 16 C21 11 29 11 29 16 L29 30Z" fill="#4c6078"/><rect x="8" y="27" width="10" height="4" fill="#c9c2b6"/><rect x="20" y="27" width="10" height="4" fill="#c9c2b6"/>`,
+  lined_mittens: `<path d="M8 31 L8 15 C8 9 18 9 18 15 L18 31Z" fill="#7a5a36"/><path d="M22 31 L22 15 C22 9 32 9 32 15 L32 31Z" fill="#6a4c2c"/><rect x="7" y="27" width="12" height="5" rx="1" fill="#e0d2a6"/><rect x="21" y="27" width="12" height="5" rx="1" fill="#e0d2a6"/><path d="M10 18 L16 18 M24 18 L30 18" stroke="#c9a46a" stroke-dasharray="1.5 1.5"/>`,
+  wool_trousers: `<path d="M11 7 H29 L31 34 H23 L20 17 L17 34 H9Z" fill="#5a5048"/><rect x="11" y="7" width="18" height="4" fill="#3e3630"/><path d="M14 20 L15 30 M26 20 L25 30" stroke="#463e38" stroke-width="1"/>`,
+  padded_trousers: `<path d="M10 6 H30 L33 34 H23 L20 17 L17 34 H7Z" fill="#6a5a3a"/><path d="M9 15 H31 M8 22 H18 M22 22 H32 M8 28 H18 M22 28 H32" stroke="#4a3e26" stroke-width="1.3"/>`,
+  felt_boots: `<path d="M10 8 H19 V26 H26 C30 26 31 30 30 33 H10Z" fill="#6c625a"/><path d="M10 29 H30" stroke="#4a423c" stroke-width="2"/><rect x="10" y="8" width="9" height="4" fill="#857a70"/>`,
+  bark_boots: `<path d="M9 7 H19 V25 H27 C31 25 32 29 31 31 H9Z" fill="#5a4c3a"/><rect x="8" y="30" width="24" height="4" rx="1" fill="#8a6a40"/><path d="M11 12 L17 12 M11 17 L17 17" stroke="#c9a46a" stroke-dasharray="1.5 1.5"/>`,
+  canvas_sack: `<path d="M12 13 C9 20 8 31 12 34 H28 C32 31 31 20 28 13Z" fill="#a8916a"/><path d="M13 13 C16 9 24 9 27 13" stroke="#6d5a3a" stroke-width="2.5" fill="none"/><path d="M14 14 H26" stroke="#5a4a2e" stroke-width="2"/>`,
+  woven_pack: `<rect x="9" y="11" width="22" height="23" rx="4" fill="#9c8650"/><path d="M9 17 H31 M9 23 H31 M9 29 H31 M15 11 V34 M21 11 V34 M27 11 V34" stroke="#6d5a30" stroke-width="1.2"/><path d="M14 11 C14 6 26 6 26 11" stroke="#6d5a30" stroke-width="2" fill="none"/>`,
+  frame_pack: `<path d="M10 6 V34 M30 6 V34 M10 10 H30 M10 30 H30" stroke="#8a5a32" stroke-width="2.6"/><rect x="13" y="13" width="14" height="15" rx="2" fill="#5a6f8a"/><path d="M13 18 H27" stroke="#3e4e62" stroke-width="1.4"/><rect x="17" y="20" width="6" height="4" fill="#c9a46a"/>`,
+  saw: `<path d="M8 12 C8 30 32 30 32 12" stroke="#8a5a32" stroke-width="3" fill="none"/><path d="M8 13 L32 13" stroke="#c3cad3" stroke-width="2.2"/><path d="M9 13 l2 2 l2 -2 l2 2 l2 -2 l2 2 l2 -2 l2 2 l2 -2 l2 2 l2 -2 l2 2" stroke="#8f97a3" stroke-width="1" fill="none"/>`,
+  pickaxe: `<path d="M9 31 L27 13" stroke="#8a5a32" stroke-width="3.2" stroke-linecap="round"/><path d="M14 9 C22 6 32 10 34 18 C28 12 22 11 14 9Z" fill="#9aa3ae"/><path d="M14 9 C22 8 27 11 28 14" stroke="#e1e6ec" stroke-width="1" fill="none"/>`,
+  flint_axe: `<path d="M11 33 L25 11" stroke="#7a4e2a" stroke-width="3.2" stroke-linecap="round"/><path d="M21 9 L33 13 L28 23 L19 16Z" fill="#3a3f5a"/><path d="M33 13 L28 23" stroke="#a9b4e8" stroke-width="1.4"/><path d="M19 14 L25 16" stroke="#e0c07e" stroke-width="2"/>`,
+  flint_pick: `<path d="M9 32 L27 14" stroke="#7a4e2a" stroke-width="3.2" stroke-linecap="round"/><path d="M13 10 C21 6 31 9 34 17 L29 15 C25 11 19 10 13 10Z" fill="#3a3f5a"/><path d="M34 17 L29 15" stroke="#a9b4e8" stroke-width="1.4"/><path d="M22 16 L26 19" stroke="#e0c07e" stroke-width="2"/>`,
+  thermos: `<rect x="13" y="10" width="14" height="24" rx="4" fill="#7d8794"/><rect x="13" y="10" width="14" height="24" rx="4" fill="url(#gl)" opacity=".5"/><rect x="15" y="6" width="10" height="5" rx="1.5" fill="#3b2a1a"/><path d="M13 18 H27 M13 26 H27" stroke="#5a636e" stroke-width="1.2"/><path d="M20 21 C22 18 22 16 20 14 C24 16 24 20 20 21Z" fill="#ff9a3c" opacity=".85"/>`,
+};
+function icon(id, size = 40) {
+  const q = (MATS_ITEM(id)?.q) ?? 0, [a, b] = ICON_BG[q] || ICON_BG[0];
+  return `<svg viewBox="0 0 40 40" width="${size}" height="${size}" aria-hidden="true"><defs><radialGradient id="bg${q}" cx="40%" cy="30%" r="80%"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></radialGradient><linearGradient id="gl" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity=".6"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/></linearGradient></defs><rect width="40" height="40" fill="url(#bg${q})"/>${ICON_ART[id] || `<text x="20" y="25" text-anchor="middle" font-size="14" fill="#ccc">?</text>`}<rect x=".5" y=".5" width="39" height="39" fill="none" stroke="rgba(0,0,0,.6)"/></svg>`;
 }
-addEventListener('keydown', e => { if (e.code === 'KeyI' && !typing() && !e.ctrlKey && !e.metaKey && hasChar()) { if (panelKind === 'pack') closePanel(); else openPack(); } });
+const MATS_ITEM = id => W4W.MATS[id] || W4W.ITEMS[id];
+const QCOL = ['#e8e8e8', '#1eff00', '#3b9bff', '#b56cff'];
+
+/* ---------- the gear frames: character, bag, home chest, workbench; a tooltip and a cast bar ---------- */
+const UI = { char: false, bag: false, craft: false, recipe: 'cord', sel: null };
+const frameRoot = document.createElement('div'); frameRoot.id = 'frames'; document.body.appendChild(frameRoot);
+const tipEl = document.createElement('div'); tipEl.id = 'tip'; tipEl.hidden = true; document.body.appendChild(tipEl);
+const castEl = document.createElement('div'); castEl.id = 'cast'; castEl.hidden = true; castEl.innerHTML = '<i></i><b></b><span></span>'; document.body.appendChild(castEl);
+let portraitURL = null;
+function heroPortrait() {
+  if (portraitURL || !HERO) return portraitURL;
+  try {
+    const W = 220, H = 300, rt = new THREE.WebGLRenderTarget(W, H); rt.texture.colorSpace = THREE.SRGBColorSpace;
+    const sc = new THREE.Scene(), cam = new THREE.PerspectiveCamera(26, W / H, 0.01, 10);
+    const body = cloneSkinned(HERO.scene); body.scale.setScalar(heroScale); body.traverse(m => { if (m.isMesh) { m.material = heroMat(m.material); m.frustumCulled = false; } }); sc.add(body);
+    const mx = new THREE.AnimationMixer(body); if (heroClips.Idle) { mx.clipAction(heroClips.Idle).play(); mx.update(0.5); }
+    sc.add(new THREE.HemisphereLight(0xcfe0ff, 0x302a40, 2.2)); const k = new THREE.DirectionalLight(0xffd6a0, 2.4); k.position.set(1, 1.4, 1.5); sc.add(k);
+    // frame the whole figure, head to boots
+    const bb = new THREE.Box3().setFromObject(body), ctr = bb.getCenter(new THREE.Vector3()), hgt = bb.max.y - bb.min.y, dist = hgt * 1.45 / Math.tan(THREE.MathUtils.degToRad(13));
+    cam.position.set(ctr.x + dist * 0.08, ctr.y + hgt * 0.25, ctr.z + dist); cam.lookAt(ctr.x, ctr.y + hgt * 0.12, ctr.z);
+    const prev = renderer.getRenderTarget(); renderer.setRenderTarget(rt); renderer.setClearColor(0x000000, 0); renderer.clear(); renderer.render(sc, cam);
+    const px = new Uint8Array(W * H * 4); renderer.readRenderTargetPixels(rt, 0, 0, W, H, px); renderer.setRenderTarget(prev);
+    const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d'), img = g.createImageData(W, H);
+    for (let y = 0; y < H; y++) img.data.set(px.subarray((H - 1 - y) * W * 4, (H - y) * W * 4), y * W * 4);
+    g.putImageData(img, 0, 0); portraitURL = cv.toDataURL(); rt.dispose();
+  } catch (e) { console.warn('portrait', e); }
+  return portraitURL;
+}
+const LEFT = [['head', 'Head'], ['body', 'Chest'], ['hands', 'Hands']], RIGHT = [['legs', 'Legs'], ['feet', 'Feet'], ['bag', 'Bag']];
+function slotHtml(id, extra = '', count = 0) {
+  if (!id) return `<div class="slot empty" ${extra}></div>`;
+  const q = MATS_ITEM(id)?.q ?? 0;
+  return `<div class="slot" style="--qc:${QCOL[q]}" data-id="${id}" ${extra}>${icon(id)}${count > 1 ? `<em>${count}</em>` : ''}</div>`;
+}
+function myC() { return predicted()?.c || null; }
+const atHomeNow = c => c && !c.path.length && W4W.key(c.q, c.r) === W4W.key(...c.home);
+function renderFrames() {
+  const c = myC(); if (!c) { frameRoot.innerHTML = ''; return; }
+  const items = W4W.itemsOf(c), home = atHomeNow(c), out = [];
+  if (UI.char) {
+    const worn = slot => Object.keys(items).find(k => items[k] === 'worn' && W4W.ITEMS[k]?.slot === slot);
+    const col = list => list.map(([s, n]) => { const id = worn(s); return `<div class="srow">${id ? slotHtml(id, 'data-from="worn"') : `<div class="slot empty"><small>${n}</small></div>`}</div>`; }).join('');
+    const cold = W4W.coldAt(c.q, c.r, xnow(), xctx()), ins = W4W.insulationOf(c);
+    out.push(`<div class="wf charf"><header><b>${esc(me()?.nick || 'You')}</b><span>Expedition member</span><button class="wx" data-close="char">×</button></header>
+      <div class="paper-doll"><div class="scol">${col(LEFT)}</div><div class="doll">${heroPortrait() ? `<img src="${portraitURL}" alt="">` : ''}</div><div class="scol">${col(RIGHT)}</div></div>
+      <div class="stats"><div><i>Clothing</i><b class="${ins >= cold ? 'g' : 'r'}">${ins}</b></div><div><i>Cold here</i><b>${Math.round(cold)}</b></div><div><i>Bag</i><b>${W4W.slotsUsed(c)}/${W4W.bagSize(c)}</b></div><div><i>Thermos</i><b>${items.thermos ? `${c.sips || 0}/3` : '—'}</b></div></div>
+      <div class="frow"><button class="wbtn" data-open="craft">Workbench <kbd>K</kbd></button>${items.thermos && items.thermos !== 'home' && c.sips ? '<button class="wbtn" data-x="drink">Drink (+30)</button>' : ''}${home && items.thermos ? '<button class="wbtn" data-x="fill">Fill thermos (2 charcoal)</button>' : ''}</div></div>`);
+  }
+  const right = [];
+  if (UI.bag) {
+    const size = W4W.bagSize(c), cells = [];
+    for (const [k, n] of Object.entries(c.inv)) { let left = n; const st = W4W.MATS[k]?.stack ?? 10; while (left > 0) { cells.push(slotHtml(k, 'data-from="bag"', Math.min(st, left))); left -= st; } }
+    for (const k of Object.keys(items)) if (items[k] === 'pack') cells.push(slotHtml(k, 'data-from="bag"'));
+    while (cells.length < size) cells.push(slotHtml(null));
+    const bagId = Object.keys(items).find(k => items[k] === 'worn' && W4W.ITEMS[k]?.slot === 'bag');
+    right.push(`<div class="wf bagf"><header><b>${esc(bagId ? W4W.ITEMS[bagId].name : 'Pockets')}</b><span>${W4W.slotsUsed(c)} of ${size}</span><button class="wx" data-close="bag">×</button></header><div class="grid">${cells.join('')}</div>${home ? '<div class="frow"><button class="wbtn" data-x="unload">Store all at home</button></div>' : ''}</div>`);
+    if (home) {
+      const st = c.stash || {}, hc = [];
+      for (const [k, n] of Object.entries(st)) if (n > 0) hc.push(slotHtml(k, 'data-from="home"', n));
+      for (const k of Object.keys(items)) if (items[k] === 'home') hc.push(slotHtml(k, 'data-from="home"'));
+      while (hc.length < 12 || hc.length % 6) hc.push(slotHtml(null));
+      right.unshift(`<div class="wf chestf"><header><b>Home chest</b><span>right-click to take</span></header><div class="grid six">${hc.join('')}</div></div>`);
+    }
+  }
+  if (UI.craft) out.push(craftHtml(c, home));
+  frameRoot.innerHTML = out.join('') + (right.length ? `<div class="stackR">${right.join('')}</div>` : '');
+  wireFrames(c, home);
+}
+function craftHtml(c, home) {
+  const groups = ['Materials', 'Tools', 'Clothing', 'Bags', 'Survival'], R = W4W.RECIPES, sel = R[UI.recipe] ? UI.recipe : 'cord', r = R[sel];
+  const list = groups.map(g => `<h4>${g}</h4>` + Object.entries(R).filter(([, x]) => x.group === g).map(([id, x]) => { const why = W4W.canCraft(c, id, home);
+    return `<button class="rec ${id === sel ? 'on' : ''} ${why ? 'no' : 'yes'}" data-rec="${id}">${icon(x.out, 22)}<span style="color:${QCOL[MATS_ITEM(x.out)?.q ?? 0]}">${esc(W4W.nameOf(x.out))}</span></button>`; }).join('')).join('');
+  const why = W4W.canCraft(c, sel, home), info = MATS_ITEM(r.out);
+  const reag = Object.entries(r.in).map(([m, n]) => { const h = W4W.have(c, m, home); return `<div class="reag ${h >= n ? '' : 'short'}">${icon(m, 30)}<span>${esc(W4W.nameOf(m))}</span><b>${h}/${n}</b></div>`; }).join('');
+  return `<div class="wf craftf"><header><b>Workbench</b><span>${home ? 'at home: the bag and the chest both count' : 'away from home: only simple things, from the bag'}</span><button class="wx" data-close="craft">×</button></header>
+    <div class="cbody"><div class="rlist">${list}</div><div class="rdet">
+      <div class="rhead">${slotHtml(r.out)}<div><b style="color:${QCOL[info?.q ?? 0]}">${esc(W4W.nameOf(r.out))}${r.n > 1 ? ` ×${r.n}` : ''}</b><span>${W4W.ITEMS[r.out] ? descItem(r.out) : 'Material'} · ${(r.ms / 1000).toFixed(0)} s${r.field ? ' · anywhere' : ' · workbench'}</span></div></div>
+      <p class="flav">${esc(info?.note || '')}</p><h4>Reagents</h4><div class="reags">${reag}</div>
+      <div class="frow"><span class="why">${why ? esc(why) : ''}</span><button class="wbtn main" data-craft="${sel}" ${why ? 'disabled' : ''}>Create</button></div></div></div></div>`;
+}
+const descItem = id => { const it = W4W.ITEMS[id]; return it.slot === 'bag' ? `Bag, ${it.bag} slots` : it.slot === 'tool' ? `Tool for ${it.for.join(' and ')}${it.speed > 1 ? ', twice as fast' : ''}` : it.slot === 'flask' ? 'Flask' : `${it.slot === 'body' ? 'Chest' : it.slot[0].toUpperCase() + it.slot.slice(1)}, warmth +${it.ins}`; };
+function tipHtml(id, from) {
+  const it = W4W.ITEMS[id], m = W4W.MATS[id], q = (it || m)?.q ?? 0, c = myC(), home = atHomeNow(c), lines = [];
+  lines.push(`<b style="color:${QCOL[q]}">${esc(W4W.nameOf(id))}</b>`);
+  if (it) { lines.push(`<span>${it.slot === 'body' ? 'Chest' : it.slot === 'tool' ? 'Tool' : it.slot === 'flask' ? 'Flask' : it.slot === 'bag' ? 'Bag' : it.slot[0].toUpperCase() + it.slot.slice(1)}</span>`);
+    if (it.ins) lines.push(`<span>+${it.ins} Warmth</span>`); if (it.bag) lines.push(`<span>${it.bag} slot bag</span>`); if (it.for) lines.push(`<span class="g">Use: work ${it.for.join(' and ')}${it.speed > 1 ? ' twice as fast' : ''}.</span>`);
+    if (id === 'thermos') lines.push(`<span class="g">Use: drink for +30 warmth. ${c?.sips || 0} of 3 sips.</span>`); }
+  else if (m) lines.push(`<span>Stacks to ${m.stack}</span>`);
+  lines.push(`<i>"${esc((it || m)?.note || '')}"</i>`);
+  const act = rightAction(id, from, home); if (act) lines.push(`<span class="hint">Right-click: ${act.label}</span>`);
+  return lines.join('');
+}
+/** What a right-click does on a thing, depending on where it lies. */
+function rightAction(id, from, home) {
+  const it = W4W.ITEMS[id];
+  if (from === 'worn') return it.slot === 'bag' ? null : { label: 'take off', run: () => xact('item', { id, to: 'pack' }) };
+  if (from === 'bag') { if (it && (it.slot === 'tool' || it.slot === 'flask')) return home ? { label: 'leave at home', run: () => xact('item', { id, to: 'home' }) } : (id === 'thermos' ? { label: 'drink', run: () => xact('drink') } : null);
+    if (it) return { label: 'put on', run: () => xact('item', { id, to: 'worn' }) };
+    return home ? { label: 'store at home', run: () => xact('store', { res: id }) } : null; }
+  if (from === 'home') { if (it) return it.slot === 'tool' || it.slot === 'flask' ? { label: 'take', run: () => xact('item', { id, to: 'pack' }) } : { label: 'put on', run: () => xact('item', { id, to: 'worn' }) };
+    return { label: 'take', run: () => xact('pack', { res: id, n: W4W.MATS[id]?.stack ?? 10 }) }; }
+  return null;
+}
+function wireFrames(c, home) {
+  frameRoot.querySelectorAll('[data-close]').forEach(b => b.onclick = () => { UI[b.dataset.close] = false; sfx.close(); renderFrames(); });
+  frameRoot.querySelectorAll('[data-open]').forEach(b => b.onclick = () => { UI[b.dataset.open] = true; sfx.open(); renderFrames(); });
+  frameRoot.querySelectorAll('[data-x]').forEach(b => b.onclick = () => xact(b.dataset.x).then(renderFrames));
+  frameRoot.querySelectorAll('[data-rec]').forEach(b => b.onclick = () => { UI.recipe = b.dataset.rec; renderFrames(); });
+  frameRoot.querySelectorAll('[data-craft]').forEach(b => b.onclick = () => { sfx.equip(); xact('craft', { recipe: b.dataset.craft }).then(renderFrames); });
+  frameRoot.querySelectorAll('.slot[data-id]').forEach(el => {
+    const id = el.dataset.id, from = el.dataset.from;
+    el.onmouseenter = e => { tipEl.innerHTML = tipHtml(id, from); tipEl.hidden = false; placeTip(e); };
+    el.onmousemove = placeTip; el.onmouseleave = () => { tipEl.hidden = true; };
+    el.oncontextmenu = e => { e.preventDefault(); const a = rightAction(id, from, home); if (a) { if (/put on|take off/.test(a.label)) sfx.equip(); else sfx.click(); tipEl.hidden = true; Promise.resolve(a.run()).then(renderFrames); } };
+    // a tap on a touch screen does what a right-click does
+    el.onclick = e => { if (e.pointerType === 'touch' || matchMedia('(hover: none)').matches) el.oncontextmenu(e); };
+  });
+}
+function placeTip(e) { const w = tipEl.offsetWidth, h = tipEl.offsetHeight; tipEl.style.left = Math.min(innerWidth - w - 8, e.clientX + 16) + 'px'; tipEl.style.top = Math.max(8, Math.min(innerHeight - h - 8, e.clientY - h - 10)) + 'px'; }
+function openPack() { UI.char = UI.bag = !(UI.char && UI.bag); if (UI.bag) sfx.pack(); else sfx.close(); renderFrames(); }
+addEventListener('keydown', e => { if (typing() || e.ctrlKey || e.metaKey || !hasChar()) return;
+  if (e.code === 'KeyC') { UI.char = !UI.char; renderFrames(); } else if (e.code === 'KeyB') { UI.bag = !UI.bag; if (UI.bag) sfx.pack(); renderFrames(); }
+  else if (e.code === 'KeyK') { UI.craft = !UI.craft; UI.craft ? sfx.open() : sfx.close(); renderFrames(); } else if (e.code === 'Escape') { UI.char = UI.bag = UI.craft = false; tipEl.hidden = true; renderFrames(); } });
+/** The cast bar: gathering and making, WoW style, above the dock. */
+function stepCast(c) {
+  const t = xnow(), a = c?.act;
+  if (!a || a.until <= t) { castEl.hidden = true; return; }
+  const total = a.kind === 'craft' ? W4W.RECIPES[a.recipe]?.ms || 1 : (a.until - (a.start || (a.start = t))) || 1;
+  if (a.kind === 'gather' && !castEl.dataset.total) castEl.dataset.total = String(a.until - t);
+  const len = a.kind === 'craft' ? total : Number(castEl.dataset.total || total), k = 1 - (a.until - t) / len;
+  castEl.hidden = false; castEl.querySelector('i').style.width = (Math.max(0, Math.min(1, k)) * 100).toFixed(1) + '%';
+  castEl.querySelector('b').textContent = a.kind === 'craft' ? W4W.nameOf(W4W.RECIPES[a.recipe]?.out) : `Gathering ${W4W.nameOf(a.res).toLowerCase()}`;
+  castEl.querySelector('span').textContent = ((a.until - t) / 1000).toFixed(1) + 's';
+}
+let framesT = 0;
+function stepFrames() { const c = myC(); stepCast(c); if (!c?.act) delete castEl.dataset.total; if ((UI.char || UI.bag || UI.craft) && performance.now() - framesT > 1000 && !frameRoot.matches(':hover')) { framesT = performance.now(); renderFrames(); } }
+
+addEventListener('keydown', e => { if (e.code === 'KeyI' && !typing() && !e.ctrlKey && !e.metaKey && hasChar()) openPack(); });
 
 /* ---------- what you can work, marked on the cells around you ---------- */
 const resTags = {};
@@ -3812,7 +4175,7 @@ function loop(now = performance.now()) {
   spriteCache.forEach(o => { {
     if (o.userData.flicker) { if (o.userData.flare) { o.userData.flare = Math.max(0, o.userData.flare - dt * 0.6); } const f = o.userData.flare || 0; o.material.opacity = 0.8 + Math.sin(t * 13) * 0.08 + Math.sin(t * 7.3) * 0.1; o.scale.setScalar(1.1 + f * 1.2 + (S.town.fire || 0) * 0.08); }
     if (o.userData.blink) o.material.opacity = 0.35 + 0.65 * (Math.sin(t * 4) > 0 ? 1 : 0.2); } });
-  stepCamera(dt); stepAvatars(dt); hud(); stepSound(); stepPlaces(dt); if (XV) { stepRime(dt); if ((tick & 15) === 0) { stepNotes(); stepLocalGrid(predicted()?.c); } }
+  stepCamera(dt); stepAvatars(dt); hud(); stepSound(); stepPlaces(dt); if (XV?.me) stepFrames(); if (XV) { stepRime(dt); if ((tick & 15) === 0) { stepNotes(); stepLocalGrid(predicted()?.c); } }
   for (const k in walkers) { const w = walkers[k]; w.g.position.lerp(w.target, Math.min(1, dt * 1.5)); w.g.position.y = 0; w.light.position.set(w.g.position.x + 0.15, 0.45, w.g.position.z); }
   if (fly) { fly.t = Math.min(1, fly.t + dt * 0.9); const k = 1 - Math.pow(1 - fly.t, 3);
     const tgt = fly.from.clone().lerp(fly.to, k); const off = camera.position.clone().sub(controls.target).normalize().multiplyScalar(fly.d0 + (fly.d1 - fly.d0) * k);
@@ -3822,5 +4185,5 @@ function loop(now = performance.now()) {
 }
 requestAnimationFrame(loop);
 addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); DPR = Math.min(DPR, dprFor()); renderer.setPixelRatio(DPR); composer.setPixelRatio?.(DPR); renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight); fxaaSize(); });
-window.__w4w = { S, settle, X: () => ({ XV, avatars, predicted, xact, hexAt, warp: ms => XW.warp?.(ms), planTo, goTrip, NOTES, rimeFx, openLibrary, trip, prints: prints.length, rimeAt: (q, r) => XW._rime?.(q, r), unfollow: () => { follow = false; } }), freePlots, openMaria, ask, addWood, refreshTown, draft: v => (draft = v), camera, controls, updateIce, renderer, scene, __composer: LITE ? null : composer };
+window.__w4w = { S, settle, X: () => ({ XV, avatars, predicted, xact, hexAt, warp: ms => XW.warp?.(ms), planTo, goTrip, NOTES, rimeFx, openLibrary, trip, prints: prints.length, rimeAt: (q, r) => XW._rime?.(q, r), stash: o => XW._stash?.(o), UI, renderFrames, unfollow: () => { follow = false; } }), freePlots, openMaria, ask, addWood, refreshTown, draft: v => (draft = v), camera, controls, updateIce, renderer, scene, __composer: LITE ? null : composer };
 </script>
