@@ -37,6 +37,9 @@ export const CosmicWrapper = memo(function CosmicWrapper({
   const pathname = usePathname()
   const isHomepage = pathname === '/' || pathname === ''
   const forum = pathname === '/articles' || pathname.startsWith('/articles/')
+  // W4W draws its own world; a second animated scene behind the game only heats the graphics card
+  const game = pathname === '/w4w' || pathname.startsWith('/w4w/')
+  if (game) return <div className="relative min-h-screen bg-black">{children}</div>
   if (forum) {
     // The articles section is an old-style forum: plain light page, no starfield
     return <div className="relative min-h-screen" style={{ background: '#e5e5e8' }}>{children}</div>
