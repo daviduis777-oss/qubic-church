@@ -43,7 +43,11 @@ button.chip:hover{border-color:var(--line-2)}
 #meter.losing .verdict{color:var(--frost)}
 
 #diag{position:fixed;z-index:9;left:12px;top:56px;margin:0;padding:10px 12px;border:1px solid var(--line-2);border-radius:10px;background:rgba(5,7,14,.88);color:#cfe6ff;font:12px/1.5 ui-monospace,monospace;white-space:pre;pointer-events:none}
-#panel .faq summary{cursor:pointer;font-family:var(--f-display);font-weight:600;font-size:20px;line-height:1.2;color:var(--cream);padding:4px 0 8px}
+#panel .faq-g{margin:16px 0 4px}
+#panel .faq-g:first-child{margin-top:0}
+#panel .faq{border-bottom:1px solid var(--line);padding:2px 0}
+#panel .faq summary{cursor:pointer;font-family:var(--f-display);font-weight:600;font-size:18px;line-height:1.25;color:var(--cream);padding:8px 0}
+#panel .faq[open] summary{color:var(--gold)}
 #panel .faq p,#panel .faq li{font-size:14px;line-height:1.55;color:var(--ink);margin:0 0 10px}
 #panel .faq ol{margin:0 0 12px;padding-left:20px}
 #panel .faq li{margin-bottom:6px}
@@ -326,7 +330,6 @@ body.intro #dock,body.intro #feed,body.intro #online,body.intro #meter{visibilit
     <span class="chip">Anna <b id="melt">0%</b><span class="mute">thawed</span></span>
     <button class="chip hide-sm" id="wx" title="Network weather (demo toggle)">Weather <b id="wxv">Clear</b></button>
     <button class="chip" id="gfx" title="Light graphics: quieter fans, less glow">Graphics <b id="gfxv">Full</b></button>
-    <button class="chip" id="faqBtn" title="Answers: lag, loud fans and more">FAQ</button>
   </div>
 </div>
 
@@ -346,6 +349,7 @@ body.intro #dock,body.intro #feed,body.intro #online,body.intro #meter{visibilit
   <button data-act="plaza"><svg viewBox="0 0 24 24"><path d="M5 4h14v12H5zM9 16v4M15 16v4M8 8h8M8 12h5"/></svg>Plaza</button>
   <button data-act="library"><svg viewBox="0 0 24 24"><path d="M5 4h4v16H5zM10 4h4v16h-4zM15.5 5l3.5 1-3 14-3.5-1z"/></svg>Library</button>
   <button data-act="chronicle"><svg viewBox="0 0 24 24"><path d="M6 3h10l3 3v15H6zM9 9h7M9 13h7M9 17h4"/></svg>Chronicle</button>
+  <button data-act="faq"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6M12 17h.01"/></svg>FAQ</button>
 </div>
 
 <aside id="panel" aria-live="polite">
@@ -1137,6 +1141,7 @@ document.querySelectorAll('#dock button').forEach(b => b.onclick = () => {
   const a = b.dataset.act; if (a === 'connect') { talkEnd(); return $('#hub').hidden ? openHub() : closeHub(); } closeHub(); if (panelKind === a || (a === 'connect' && panelKind === 'church') || (a === 'plaza' && ['herald', 'notices', 'orders'].includes(panelKind))) return closePanel();
   if (a === 'connect') { openChurch(); flyTo(HX(...SPECIAL.church)); } else if (a === 'maria') openMaria();
   else if (a === 'house') { if (me()) { openHouse(me().id); flyTo(HX(...houseView(me()).at)); } else openChurch(); }
+  else if (a === 'faq') openFaq();
   else if (a === 'plaza') { openPlaza(); flyTo(HX(...SPECIAL.plaza)); } else if (a === 'library') { openLibrary(); flyTo(HX(...SPECIAL.library)); } else if (a === 'chronicle') openChronicle(); });
 $('#gfxv').textContent = LITE ? 'Light' : 'Full';
 $('#epochV').textContent = EPOCH;
@@ -1147,12 +1152,12 @@ const BROWSER = (() => { const ua = navigator.userAgent;
     : /OPR\//.test(ua) ? { name: 'Opera', addr: 'opera://settings/system', opt: 'Use hardware acceleration when available', gpu: 'opera://gpu' }
     : /Firefox/.test(ua) ? { name: 'Firefox', addr: 'about:preferences', opt: 'Performance: untick "Use recommended performance settings", then tick "Use hardware acceleration when available"', gpu: 'about:support' }
     : { name: 'Chrome', addr: 'chrome://settings/system', opt: 'Use graphics acceleration when available', gpu: 'chrome://gpu' }; })();
-if (SOFT && store.get('w4w.intro') === '1') setTimeout(() => say('The town will stutter: your graphics card looks asleep. <b>FAQ</b> at the top right shows how to wake it.'), 6000);
+if (SOFT && store.get('w4w.intro') === '1') setTimeout(() => say('The town will stutter: your graphics card looks asleep. <b>FAQ</b>, at the bottom right, shows how to wake it.'), 6000);
 
 /* ================= FAQ ================= */
 function faqLag() {
   const B = BROWSER, code = (t, id) => `<span class="faq-addr"><code>${esc(t)}</code><button class="btn" data-copy="${esc(t)}">Copy</button></span>`;
-  return `<details class="faq" id="faq-lag" open><summary>My game lags or the fans get loud</summary>
+  return `<h3 class="faq-g">PERFORMANCE</h3><details class="faq" id="faq-lag"><summary>My game lags or the fans get loud</summary>
     <p class="faq-now ${SOFT ? 'bad' : 'good'}">${SOFT ? 'Right now your browser draws without the graphics card' : 'Right now your browser draws with the graphics card'}: <b>${esc(GPU_NAME.replace(/^ANGLE \(|\)$/g, ''))}</b></p>
     <p>Almost always the cause is the browser drawing on the processor instead of the graphics card. The ice loses its light, the town stutters, the fans get loud. Fixing it speeds up every other site too.</p>
     <ol>
@@ -1170,11 +1175,48 @@ function faqLag() {
     <p class="faq-small">Press Shift+D in the game to see which chip draws and how many frames a second you get.</p>
   </details>`;
 }
+const FAQ = [
+  ['Getting started', [
+    ['What is this place?', 'Aigarth is a shared winter town. Anna sleeps frozen in the ice at its centre; the town stays warm only if people keep their machines on, help each other and feed the fire. Maria, her twin, keeps the Chronicle and helps you set up.'],
+    ['Do I need a rig to play?', 'No. You can walk the town, talk to Maria, read the Library and add wood to the fire. Taking orders and lighting lamps for newcomers need a rig that is on: that is what makes you a resident.'],
+    ['Does it cost anything?', 'The town is free and sells nothing. Mining on your own computer costs electricity. A rented rig costs what the provider charges, from your own account, and it may not pay off.'],
+    ['Is my progress saved?', 'Yes. Your house, its record and the Chronicle are kept for the town. If the game says you are a visitor, your house stays on this device only.'],
+  ]],
+  ['Mining', [
+    ['Can my computer mine?', 'Open <b>Mining</b> and look at <b>Your machine</b>: Maria reads your graphics card, threads and system and tells you straight. Most desktop computers can join. Phones cannot.'],
+    ['How much will I earn?', 'Nobody here promises anything. Recorded, not promised. What a machine earns depends on the epoch, on how many others mine and on the network rules, and it changes week to week.'],
+    ['Who pays me, and when?', 'The pool pays you directly, in QUBIC, to your address, once a week: usually about a week after an epoch closes on Wednesday 12:00 UTC. Qubic Church never holds your coins.'],
+    ['What is the 7%?', 'The pool fee: 3% to CODED, the pool that runs the backend, and 4% to Qubic Church. You keep 93%. Maria shows it before every connection.'],
+    ['Will mining hurt my computer?', 'It works your card or processor hard, like a heavy game: warmer and louder. Keep it ventilated, watch laptops, and stop whenever you want. Nothing in the game needs it on all the time.'],
+    ['Is the miner safe to download?', 'Download it only from the pool\'s own Start Mining page; Maria links it. It is CODED\'s software, not ours. Some antivirus programs flag every miner; that is why you should never take one from anywhere else.'],
+    ['I started the miner. Why does it say "pool confirmation pending"?', 'Until the pool reports your worker to the game, your house runs on your word, and the Chronicle says so honestly. When the pool confirms it, the label goes.'],
+    ['Hours in and no solutions?', 'Normal at first: solutions come in their own time. Check the miner runs once, with your own worker name, and leave it. See <b>Mining · When it looks broken</b>.'],
+    ['Can I mine on several computers?', 'Yes, with the same address and a different worker name on each machine. In the town one person keeps one house.'],
+    ['How do I stop?', 'Close the miner on your computer, then press <b>Unplug</b> in Mining. Your house keeps its place and its record.'],
+    ['When can I rent a rig through Maria?', 'At launch. Maria will rent from the live Clore.ai market on your own account, with the price confirmed twice. Until then her picks are examples.'],
+  ]],
+  ['Wallet and safety', [
+    ['Do you need my seed?', 'Never. The seed is 55 small letters and stays on paper. Maria will never ask for it, and if you paste one she wipes it. Anyone asking for a seed is stealing.'],
+    ['Where is my address kept?', 'Only in your browser. The town shows the first four and the last five letters, nothing more.'],
+    ['I lost my seed. Can you help?', 'No one can: not us, not the pool. That is why it lives on paper, in a safe place.'],
+    ['Someone in a DM offers to help me set up', 'Ignore it. Help in this town happens in the open, on the orders board. Nobody here sells mining, places or returns.'],
+  ]],
+  ['The town', [
+    ['What keeps the town warm?', 'Mostly people: rigs kept on, neighbours here right now, orders done for others, wood on the fire. Raw power counts, but less and less the more you add. Tap the warmth meter at the top to see the sum.'],
+    ['What is the Chronicle?', 'Anna\'s memory: everything that happened in town, each record linked to the one before, so nothing can be quietly changed. Carved in stone.'],
+    ['What are orders and lanterns?', 'An order is a public promise to help someone. Do it and they confirm: a lantern lights on your porch and their letter goes in your archive. Decline in time and it costs nothing; silence leaves a cracked lantern until you make it right.'],
+    ['What is an epoch?', 'One Qubic week, from Wednesday 12:00 UTC to the next. The church bell rings and the Chronicle seals it.'],
+    ['Are there rewards, tokens or NFTs?', 'The game promises none and sells none. What you do is recorded, not promised.'],
+  ]],
+];
+function faqAll() {
+  return faqLag() + FAQ.map(([g, qs]) => `<h3 class="faq-g">${g.toUpperCase()}</h3>${qs.map(([q, a]) => `<details class="faq"><summary>${q}</summary><p>${a}</p></details>`).join('')}`).join('')
+    + '<p class="faq-small" style="margin-top:14px">Still stuck? Ask Maria, or pin an order on the plaza board: someone who has done it will help.</p>';
+}
 function openFaq() {
-  panel('faq', 'FAQ', 'Answers to what players ask', null, faqLag());
+  panel('faq', 'FAQ', 'What players ask, answered plainly', null, faqAll());
   $('#pbody').querySelectorAll('[data-copy]').forEach(b => b.onclick = () => navigator.clipboard?.writeText(b.dataset.copy).then(() => { b.textContent = 'Copied'; }).catch(() => {}));
 }
-$('#faqBtn').onclick = () => (panelKind === 'faq' ? closePanel() : openFaq());
 $('#gfx').onclick = () => { store.set('w4w.gfx', LITE ? 'full' : 'lite'); location.reload(); };
 $('#wx').onclick = () => { S.weather = S.weather === 'clear' ? 'storm' : 'clear'; $('#wxv').textContent = S.weather === 'clear' ? 'Clear' : 'Storm'; refreshTown();
   say(S.weather === 'storm' ? 'Storm over Aigarth: the pool lost seats in the 676 this epoch (demo). The frost pushes harder. Renting a rig now may not pay off.' : 'The sky cleared. The pool is back in the 676 (demo).'); };
@@ -1889,7 +1931,7 @@ function perfQuestion() {
   clearInterval(typeT); typeT = null;
   $('#introText').textContent = SOFT ? 'One question before you go in. Your graphics card looks asleep from here. Does the town run smoothly for you?' : 'One question before you go in. Does the town run smoothly for you?';
   $('#introSkip').textContent = 'It lags'; $('#introNext').textContent = 'Runs smoothly';
-  $('#introSkip').onclick = () => { endIntro(); setTimeout(openFaq, 700); };
+  $('#introSkip').onclick = () => { endIntro(); setTimeout(() => { openFaq(); const d = $('#faq-lag'); if (d) d.open = true; }, 700); };
   $('#introNext').onclick = endIntro;
 }
 function endIntro() { clearInterval(typeT); document.body.classList.remove('intro'); $('#intro').classList.add('off'); setTimeout(() => $('#intro').hidden = true, 1000); store.set('w4w.intro', '1'); flyTo(new THREE.Vector3(0, 0, 1), MOBILE ? 30 : 26); welcomeLine(); }
