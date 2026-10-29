@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { getSession } from '@/lib/forum/auth'
 import { accessOf, adminView, dropInvite, makeInvite, redeem, revoke } from '@/lib/w4w/access'
 import { K, pairs, pipe, run } from '@/lib/w4w/store'
-import { act, worldFor } from '@/lib/w4w/expedition'
+import { act, revive, worldFor } from '@/lib/w4w/expedition'
 
 export const dynamic = 'force-dynamic'
 
@@ -148,6 +148,8 @@ export async function POST(req: Request) {
         return NextResponse.json({ ok: true })
       }
       case 'x': {
+        // test tool for the admin only: players can never skip the 24 hours
+        if (b.act === 'revive') { if (!acc.admin) return no('Only the admin can do that.', 403); const r = await revive(me); return r.ok ? NextResponse.json(r.data) : no(r.error, 400) }
         const r = await act(me, String(b.act ?? ''), b)
         return r.ok ? NextResponse.json(r.data) : no(r.error, r.status ?? 400)
       }

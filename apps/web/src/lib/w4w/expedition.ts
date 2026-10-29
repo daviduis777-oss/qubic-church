@@ -42,6 +42,15 @@ export async function worldFor(uid: string) {
   return W.viewOf(ws, uid)
 }
 
+/** Admin test tool: thaw a character now, back home with full bars. Never reachable by players. */
+export async function revive(uid: string) {
+  const ws = await load(); const d = W.newDirty()
+  const c = ws.chars[uid]; if (!c) return { ok: false as const, error: 'No character yet.' }
+  Object.assign(c, { frozenUntil: 0, warmth: 100, health: 100, energy: 100, q: c.home[0], r: c.home[1], path: [], act: null, t0: ws.now, simT: ws.now })
+  d.chars.add(uid); await save(ws, d)
+  return { ok: true as const, data: W.viewOf(ws, uid) }
+}
+
 /** One action from the player; the rules decide, the server writes it down. */
 export async function act(uid: string, op: string, b: Record<string, unknown>) {
   const ws = await load(); const d = W.newDirty()

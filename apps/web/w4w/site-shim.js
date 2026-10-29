@@ -121,6 +121,7 @@
   // the expedition world: the server walks, counts the cold and freezes; the game only asks and draws
   window.W4W_X = {
     get: () => state?.x ?? null,
+    admin: () => !!me?.admin,
     on(cb) { subs.x.push(cb); if (state?.x && !state.x.error) try { cb(state.x) } catch (e) { console.warn(e) }; return () => { subs.x = subs.x.filter(f => f !== cb) } },
     async act(name, body = {}) {
       const j = await post({ op: 'x', act: name, ...body })
