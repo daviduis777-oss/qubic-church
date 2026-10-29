@@ -1,0 +1,51 @@
+import 'server-only'
+import { K, pairs, pipe } from './store'
+import * as W from './world'
+
+/**
+ * Characters and expeditions on the server. The rules live in world.ts (shared with the game); this file only
+ * loads the world, lets the rules run, and writes back what changed. The server walks every character and
+ * counts the cold even while their tab is closed.
+ */
+export const KX = { chars: 'w4w:c:chars', hearths: 'w4w:c:hearths', bags: 'w4w:c:bags', nodes: 'w4w:c:nodes' }
+
+const safe = (v: string | null | undefined) => { if (!v) return null; try { return JSON.parse(v) } catch { return null } }
+const parseAll = <T>(m: unknown) => Object.fromEntries(Object.entries(pairs(m)).map(([k, v]) => [k, safe(v) as T]).filter(([, v]) => v)) as Record<string, T>
+
+async function load(now = Date.now()): Promise<W.WState> {
+  const [h, c, he, b, n, o, alive] = await pipe([
+    ['HGETALL', K.houses], ['HGETALL', KX.chars], ['HGETALL', KX.hearths], ['HGETALL', KX.bags], ['HGETALL', KX.nodes], ['HGETALL', K.orders],
+    ['ZRANGEBYSCORE', K.presence, now - 30_000, '+inf'],
+  ])
+  const orders = parseAll<{ state?: string }>(o)
+  const nodes = Object.fromEntries(Object.entries(pairs(n)).map(([k, v]) => [k, Number(v)]).filter(([, v]) => (v as number) > now)) as Record<string, number>
+  return { now, houses: parseAll<W.HouseLite>(h), chars: parseAll<W.Char>(c), hearths: parseAll<W.Hearth>(he), bags: parseAll<W.Bag>(b), nodes, online: ((alive as string[]) ?? []).length, doneOrders: Object.values(orders).filter(x => x.state === 'done').length }
+}
+
+async function save(ws: W.WState, d: W.Dirty) {
+  const cmds: (string | number)[][] = []
+  for (const u of d.chars) if (ws.chars[u]) cmds.push(['HSET', KX.chars, u, JSON.stringify(ws.chars[u])])
+  for (const k of d.hearths) if (ws.hearths[k]) cmds.push(['HSET', KX.hearths, k, JSON.stringify(ws.hearths[k])])
+  for (const id of d.bags) if (ws.bags[id]) cmds.push(['HSET', KX.bags, id, JSON.stringify(ws.bags[id])])
+  for (const id of d.bagsGone) cmds.push(['HDEL', KX.bags, id])
+  for (const k of d.nodes) cmds.push(['HSET', KX.nodes, k, ws.nodes[k] ?? 0])
+  for (const f of d.feed) cmds.push(['LPUSH', K.events, JSON.stringify({ ...f, tab: 'server' })])
+  if (d.feed.length) cmds.push(['LTRIM', K.events, 0, 99])
+  if (cmds.length) await pipe(cmds)
+}
+
+/** For the plain GET: walk everyone up to now, then hand the screen what it draws. */
+export async function worldFor(uid: string) {
+  const ws = await load(); const d = W.newDirty()
+  W.stepAll(ws, d)
+  await save(ws, d)
+  return W.viewOf(ws, uid)
+}
+
+/** One action from the player; the rules decide, the server writes it down. */
+export async function act(uid: string, op: string, b: Record<string, unknown>) {
+  const ws = await load(); const d = W.newDirty()
+  const r = W.action(ws, uid, op, b, d)
+  await save(ws, d)
+  return r.ok ? { ok: true as const, data: W.viewOf(ws, uid, r.events) } : { ok: false as const, error: r.error, status: r.status }
+}

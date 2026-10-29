@@ -7,7 +7,7 @@
   let state = null
   let lastEv = Date.now()
   let presenceData = null
-  const subs = { houses: [], orders: [], notices: [], column: [], peers: [] }
+  const subs = { houses: [], orders: [], notices: [], column: [], peers: [], x: [] }
   const topics = {}
   const last = {}
 
@@ -48,6 +48,7 @@
         if (changed('notices', state.notices)) emitTo('notices', noticesSnap)
         if (changed('column', state.column)) emitTo('column', () => doc('column', state.column))
         if (changed('peers', state.peers)) emitTo('peers', () => ({ peers: peersOf() }))
+        if (state.x && !state.x.error) emitTo('x', () => state.x)
         const evs = (state.events || []).slice().reverse()
         for (const ev of evs) {
           if (!(ev.t > lastEv)) continue
@@ -117,6 +118,17 @@
     async presence(data) { presenceData = data; await post({ op: 'presence', data }) },
   }
   const user = { id: async () => me?.uid ?? null, can: async () => true, isOwner: async () => !!me?.admin }
+  // the expedition world: the server walks, counts the cold and freezes; the game only asks and draws
+  window.W4W_X = {
+    get: () => state?.x ?? null,
+    on(cb) { subs.x.push(cb); if (state?.x && !state.x.error) try { cb(state.x) } catch (e) { console.warn(e) }; return () => { subs.x = subs.x.filter(f => f !== cb) } },
+    async act(name, body = {}) {
+      const j = await post({ op: 'x', act: name, ...body })
+      if (state) state.x = j
+      emitTo('x', () => j)
+      return j
+    },
+  }
   window.claude = { use: async name => { await ready; if (!me) return null; return { db, room, user }[name] ?? null } }
 
   /* ---------- the brand goes back to the site; admins get the gate panel ---------- */

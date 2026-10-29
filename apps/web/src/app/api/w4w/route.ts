@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { getSession } from '@/lib/forum/auth'
 import { accessOf, adminView, dropInvite, makeInvite, redeem, revoke } from '@/lib/w4w/access'
 import { K, pairs, pipe, run } from '@/lib/w4w/store'
+import { act, worldFor } from '@/lib/w4w/expedition'
 
 export const dynamic = 'force-dynamic'
 
@@ -42,6 +43,7 @@ export async function GET(req: Request) {
     ['LRANGE', K.events, 0, 99],
   ])
   const presData = parse(pairs(pres))
+  const x = await worldFor(user.handle).catch(e => ({ error: (e as Error).message }))
   const peers = ((alive as string[]) ?? []).map(h => ({ by: h, presence: presData[h] ?? null }))
   return NextResponse.json({
     me: { uid: user.handle, name: user.name, admin: acc.admin },
@@ -51,6 +53,7 @@ export async function GET(req: Request) {
     column: safe(column as string | null),
     peers,
     events: ((events as string[]) ?? []).map(s => safe(s)).filter(Boolean),
+    x,
     now,
   })
 }
@@ -143,6 +146,10 @@ export async function POST(req: Request) {
         const data = plain(b.data) && !tooBig(b.data) ? b.data : {}
         await pipe([['LPUSH', K.events, JSON.stringify({ id: newId(), t: Date.now(), topic, by: me, tab: String(b.tab ?? '').slice(0, 20), data })], ['LTRIM', K.events, 0, 99]])
         return NextResponse.json({ ok: true })
+      }
+      case 'x': {
+        const r = await act(me, String(b.act ?? ''), b)
+        return r.ok ? NextResponse.json(r.data) : no(r.error, r.status ?? 400)
       }
       case 'admin': {
         if (!acc.admin) return no('Admins only.', 403)
