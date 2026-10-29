@@ -218,7 +218,7 @@ export function rimeAt(trail: [number, number, number][] | undefined, t: number)
 
 /* ---------- the Rime ---------- */
 export type Rime = { q: number; r: number; t: number; d: number }
-const rimeOk = (q: number, r: number) => { const n = ringOf(q, r); return n >= RIME_MIN_RING && n <= MAX_RING && passable(q, r) }
+const rimeOk = (q: number, r: number) => { const n = ringOf(q, r); return n >= RIME_MIN_RING && n <= MAX_RING && terrain(q, r) === 'open' }
 /** One move of the Rime. It wanders without a goal; once in a while it turns toward someone out in the cold. */
 export function rimeStep(th: Rime, targets: Cell[]): Rime {
   const s = Math.floor(th.t / RIME_MS) + 1, t = s * RIME_MS
@@ -226,7 +226,7 @@ export function rimeStep(th: Rime, targets: Cell[]): Rime {
   const here: Cell = [th.q, th.r]
   const prey = targets.filter(c => zoneOf(c[0], c[1]) >= 1 && dist(c, here) <= 8).sort((a, b) => dist(a, here) - dist(b, here))[0]
   const opts = DIRS.map(([dq, dr], i) => ({ i, c: [th.q + dq, th.r + dr] as Cell })).filter(o => rimeOk(o.c[0], o.c[1]))
-  if (!opts.length) return { q: 12, r: -6, t, d: th.d }
+  if (!opts.length) return { ...th, t }
   if (prey && h < RIME_PULL) { const o = opts.sort((a, b) => dist(a.c, prey) - dist(b.c, prey))[0]!; return { q: o.c[0], r: o.c[1], t, d: o.i } }
   if (h2 > 0.88) return { ...th, t } // it stops, as if listening
   let d = th.d
@@ -377,7 +377,7 @@ const rimeTargets = (ws: WState) => Object.values(ws.chars).filter(c => !(c.froz
 /** Walk the Rime up to now, one move every RIME_MS, and remember where it stood for the cold to check. */
 export function stepRime(ws: WState, d: Dirty) {
   if (ws.rimeTrail) return
-  let th: Rime = ws.rime ?? { q: 12, r: -6, t: Math.floor(ws.now / RIME_MS) * RIME_MS, d: 2 }
+  let th: Rime = ws.rime ?? { q: 11, r: -6, t: Math.floor(ws.now / RIME_MS) * RIME_MS, d: 2 }
   if (ws.now - th.t > 24 * 3600_000) th = { ...th, t: Math.floor((ws.now - 24 * 3600_000) / RIME_MS) * RIME_MS }
   const trail: [number, number, number][] = [[th.t, th.q, th.r]], targets = rimeTargets(ws)
   while (th.t + RIME_MS <= ws.now) { th = rimeStep(th, targets); trail.push([th.t, th.q, th.r]) }

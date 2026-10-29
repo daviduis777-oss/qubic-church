@@ -1,7 +1,7 @@
 <title>W4W Aigarth</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Big+Shoulders+Display:wght@400;600;800&family=Michroma&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;1,400&family=Barlow+Condensed:wght@500;600;700&family=Caveat:wght@500;700&family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&display=swap" rel="stylesheet">
 <style>
 /* A night town seen from above: amber light against blue frost. One display face, one body face, one wide label face. */
 :root{
@@ -368,6 +368,184 @@ body.delir #frostfx{animation:delir 2.6s infinite steps(1)}
 @keyframes dglitch{0%,100%{transform:none;opacity:1}61%{transform:translateX(2px) skewX(-4deg);opacity:.75}63%{transform:none;opacity:1}88%{transform:translateX(-3px);opacity:.6}90%{transform:none;opacity:1}}
 @media (prefers-reduced-motion: reduce){#died .dwrap,#died h1,body.delir #frostfx{animation:none;opacity:1}}
 @media (max-width: 760px){#hud{width:auto;right:max(16px,env(safe-area-inset-right));grid-template-columns:1fr 1fr;padding:8px 10px;gap:4px}#hud .hz,#hud .hinv,#hud .hwx{grid-column:1/-1}#hud .hz b{font-size:16px}#xact{bottom:max(96px,calc(env(safe-area-inset-bottom) + 86px))}}
+/* ================= THE EXPEDITION KIT =================
+   Three materials, nothing else. Blued steel for the instruments you trust (dock, gauges, tags, buttons).
+   Paper for what people wrote down out there (hints, trips, found notes). Leather and vellum for the books
+   the town keeps (the journal, the library, the field manual). Print in IM Fell, stamping in Barlow
+   Condensed, the field hand in Caveat. Ember is the only warm colour; frost is the only cold one. */
+:root{
+  --tex-brushed:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95 0.012' numOctaves='2' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.75 0 0 0 0 0.82 0 0 0 0 0.9 0 0 0 0.11 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+--tex-grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' seed='8' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.35 0 0 0 0 0.25 0 0 0 0 0.12 0 0 0 0.16 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E");
+--tex-frost:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.035' numOctaves='4' seed='11'/%3E%3CfeColorMatrix values='0 0 0 0 0.85 0 0 0 0 0.93 0 0 0 0 1 0 0 0 1.4 -0.55'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E");
+--tex-leather:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='l'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.5' numOctaves='4' seed='2'/%3E%3CfeColorMatrix values='0 0 0 0 0.12 0 0 0 0 0.06 0 0 0 0 0.03 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23l)'/%3E%3C/svg%3E");
+
+  --steel-0:#0a0e14; --steel-1:#151b24; --steel-2:#232c38; --steel-3:#33404f; --steel-hi:#8396ad; --steel-ink:#c9d5e3;
+  --paper:#e6dcc3; --paper-2:#d2c29f; --ink-d:#2b241b; --pencil:#4d4437;
+  --leather:#2a1810; --leather-2:#46291a; --vellum:#ede2c8; --ember:#f2a347; --ember-2:#c9701d; --blood:#9e2a22;
+  --f-display:'IM Fell English SC',Georgia,serif; --f-print:'IM Fell English',Georgia,serif; --f-label:'Barlow Condensed','Arial Narrow',sans-serif; --f-body:Barlow,system-ui,sans-serif; --f-hand:Caveat,'Segoe Print',cursive;
+  --plate:var(--tex-brushed),linear-gradient(180deg,#232b36 0%,#161c25 55%,#10151c 100%);
+  --bevel:inset 0 1px 0 rgba(200,215,235,.22),inset 0 -1px 0 rgba(0,0,0,.6),inset 0 0 0 1px rgba(0,0,0,.35),0 6px 18px rgba(0,0,0,.45);
+  --rivets:radial-gradient(circle at 9px 9px,#c3cfdc 0 1.2px,#56636f 1.8px,#1a2028 2.6px,transparent 3.2px),radial-gradient(circle at calc(100% - 9px) 9px,#c3cfdc 0 1.2px,#56636f 1.8px,#1a2028 2.6px,transparent 3.2px),radial-gradient(circle at 9px calc(100% - 9px),#c3cfdc 0 1.2px,#56636f 1.8px,#1a2028 2.6px,transparent 3.2px),radial-gradient(circle at calc(100% - 9px) calc(100% - 9px),#c3cfdc 0 1.2px,#56636f 1.8px,#1a2028 2.6px,transparent 3.2px);
+}
+html,body{font-synthesis:none}
+body{font-family:var(--f-body)}
+
+/* ---------- steel: buttons and plates ---------- */
+.btn{border:0;border-radius:4px;background:var(--plate);box-shadow:var(--bevel);color:var(--steel-ink);font-family:var(--f-label);font-weight:600;font-size:15px;letter-spacing:.07em;text-transform:uppercase;padding:9px 15px;transition:transform .08s,filter .15s}
+.btn:hover{filter:brightness(1.18);background:var(--plate)}
+.btn:active{transform:translateY(1px);box-shadow:inset 0 2px 4px rgba(0,0,0,.6),inset 0 0 0 1px rgba(0,0,0,.4)}
+.btn.main{background:var(--tex-brushed),linear-gradient(180deg,#f7b45c 0%,#d9802a 52%,#a85a16 100%);color:#1d1006;box-shadow:inset 0 1px 0 rgba(255,236,200,.6),inset 0 -1px 0 rgba(80,30,0,.6),0 0 18px rgba(242,163,71,.25),0 6px 18px rgba(0,0,0,.45);text-shadow:0 1px 0 rgba(255,220,170,.4)}
+.chip{border:0;border-radius:4px;background:var(--plate);box-shadow:var(--bevel);padding:6px 12px;font-family:var(--f-label);font-weight:500;font-size:14px;letter-spacing:.06em;text-transform:uppercase;color:var(--steel-ink)}
+.chip b{font-family:var(--f-label);font-weight:700;font-size:17px;letter-spacing:.04em;color:var(--ember);text-transform:none}
+.brand b{font-family:var(--f-display);font-size:17px;letter-spacing:.12em}
+.x{border:0;border-radius:4px;background:var(--plate);box-shadow:var(--bevel);color:var(--steel-ink)}
+
+/* the dock: one heavy bar of riveted steel; Mining is the brass plate */
+#dock{border:0;border-radius:6px;padding:9px 14px;gap:4px;background:var(--rivets),var(--plate);box-shadow:inset 0 1px 0 rgba(200,215,235,.25),inset 0 -2px 0 rgba(0,0,0,.6),0 0 0 1px #05080c,0 14px 40px rgba(0,0,0,.6)}
+#dock button{border-radius:4px;min-width:82px;padding:8px 10px 7px;font-family:var(--f-label);font-weight:600;font-size:13.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--steel-ink);text-shadow:0 1px 0 #000}
+#dock button svg{stroke:var(--steel-hi);filter:drop-shadow(0 1px 0 #000)}
+#dock button:hover,#dock button.on{background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,0));box-shadow:inset 0 0 0 1px rgba(160,180,205,.25)}
+#dock button.on svg,#dock button:hover svg{stroke:var(--ember);filter:drop-shadow(0 0 4px rgba(242,163,71,.6))}
+#dock button.main{background:var(--tex-brushed),linear-gradient(180deg,#f7b45c,#c46f20 60%,#9a5414);color:#1d1006;text-shadow:0 1px 0 rgba(255,220,170,.4);box-shadow:inset 0 1px 0 rgba(255,236,200,.55),inset 0 -1px 0 rgba(80,30,0,.6),0 0 16px rgba(242,163,71,.3)}
+#dock button.main svg{stroke:#1d1006;filter:none}
+#dock button.journal{color:var(--steel-ink);background:none;box-shadow:none}
+#dock button.journal svg{stroke:var(--steel-hi)}
+
+/* the warmth meter: a thermometer in a steel case */
+#meter{border:0;border-radius:6px;background:var(--rivets),var(--plate);box-shadow:var(--bevel);padding:9px 22px 11px}
+#meter .w,#meter .f{font-family:var(--f-label);font-weight:600;font-size:12.5px;letter-spacing:.14em}
+#meter .verdict{font-family:var(--f-display);font-weight:400;font-size:20px}
+#meter .track{height:10px;border-radius:5px;background:linear-gradient(180deg,#05070b,#121821);box-shadow:inset 0 1px 3px #000,0 1px 0 rgba(200,215,235,.15)}
+#meter .track i{background:linear-gradient(180deg,#ffd38a,#e8912e 50%,#9a4f12);box-shadow:0 0 10px rgba(242,163,71,.6)}
+
+/* tags in the world: little stamped plates on a wire */
+.lbl{border:0;border-radius:3px;padding:3px 9px 2px;background:linear-gradient(180deg,#1f2732,#11161d);box-shadow:inset 0 1px 0 rgba(200,215,235,.2),0 0 0 1px rgba(0,0,0,.7),0 3px 8px rgba(0,0,0,.5);font-family:var(--f-label);font-weight:600;font-size:13px;letter-spacing:.05em;color:var(--steel-ink)}
+.lbl::after{content:"";position:absolute;left:50%;top:100%;width:1px;height:7px;background:linear-gradient(rgba(160,180,205,.6),transparent)}
+.lbl.key{font-family:var(--f-label);font-weight:600;font-size:12.5px;letter-spacing:.16em;color:#f3d6a6;background:linear-gradient(180deg,#2a2218,#15110c);box-shadow:inset 0 1px 0 rgba(255,220,170,.25),inset 3px 0 0 var(--ember-2),0 0 0 1px rgba(0,0,0,.7),0 3px 8px rgba(0,0,0,.5)}
+.lbl.me{color:#1d1006;background:linear-gradient(180deg,#f7b45c,#c46f20);box-shadow:inset 0 1px 0 rgba(255,236,200,.6),0 0 0 1px rgba(60,25,0,.8),0 0 12px rgba(242,163,71,.4)}
+.lbl.red{color:#ffd3cc;background:linear-gradient(180deg,#3a1512,#1c0907);box-shadow:inset 0 1px 0 rgba(255,160,150,.25),0 0 0 1px #000}
+.lbl.walker{color:#dbe8ff}
+.lbl.demo{opacity:.78}
+
+/* ---------- the instrument plate: warmth, health, energy, load ---------- */
+#hud{border:0;border-radius:6px;width:270px;padding:14px 16px 13px;gap:7px;background:var(--rivets),var(--plate);box-shadow:var(--bevel);overflow:hidden}
+#hud::before{content:"";position:absolute;inset:0;pointer-events:none;background:var(--tex-frost);background-size:200px;opacity:calc(var(--chill,0) * .85);mix-blend-mode:screen;transition:opacity 1.2s;-webkit-mask-image:radial-gradient(ellipse at center,transparent 35%,#000 85%);mask-image:radial-gradient(ellipse at center,transparent 35%,#000 85%)}
+#hud .hz b{font-family:var(--f-display);font-weight:400;font-size:25px;letter-spacing:.03em;color:#f1e6d0;text-shadow:0 1px 0 #000,0 0 14px rgba(159,195,255,.15)}
+#hud .hz span{font-family:var(--f-label);font-weight:500;font-size:13.5px;letter-spacing:.05em;color:var(--steel-hi)}
+.hb{height:20px;border-radius:10px;background:linear-gradient(180deg,#04060a,#0f141b);box-shadow:inset 0 2px 4px #000,0 1px 0 rgba(200,215,235,.14)}
+.hb b{border-radius:10px;box-shadow:inset 0 1px 0 rgba(255,255,255,.45),inset 0 -3px 5px rgba(0,0,0,.35)}
+.hb::after{content:"";position:absolute;inset:0;border-radius:10px;pointer-events:none;background:repeating-linear-gradient(90deg,transparent 0 calc(10% - 1px),rgba(0,0,0,.45) calc(10% - 1px) 10%),linear-gradient(180deg,rgba(255,255,255,.16),transparent 45%)}
+.hb i,.hb span{z-index:2;line-height:20px;font-family:var(--f-label);font-weight:600;font-size:13px;letter-spacing:.08em;text-transform:uppercase;text-shadow:0 1px 2px #000,0 0 4px #000}
+.hb.w b{background:linear-gradient(180deg,#ffd38a,#e8912e 55%,#9a4f12)} .hb.h b{background:linear-gradient(180deg,#ff8a7a,#c0392b 55%,#6e1912)}
+.hb.e b{background:linear-gradient(180deg,#c7f0b0,#5f9c55 55%,#2c5228)} .hb.l b{background:linear-gradient(180deg,#d5e2f5,#7a8daa 55%,#3e4b60)} .hb.l.over b{background:linear-gradient(180deg,#ff8a7a,#c0392b 55%,#6e1912)}
+.hinv{gap:5px} .hinv span{border:0;border-radius:3px;padding:4px 0 3px;background:linear-gradient(180deg,#0b0f15,#151c26);box-shadow:inset 0 1px 3px #000,0 1px 0 rgba(200,215,235,.12);font-family:var(--f-label);font-weight:700;font-size:17px;color:#f1e6d0}
+.hinv i{font-family:var(--f-label);font-weight:500;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--steel-hi)}
+.hwx span{border-radius:3px;padding:2px 8px 1px;background:rgba(0,0,0,.35);box-shadow:inset 0 0 0 1px rgba(160,180,205,.18);font-family:var(--f-label);font-weight:600;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase}
+.hrime{border-radius:3px;font-family:var(--f-hand);font-size:19px;line-height:1.1;background:rgba(20,40,80,.35)}
+
+/* ---------- paper: what people wrote down out there ---------- */
+#xact{border:0;background:none;box-shadow:none;backdrop-filter:none;padding:0;gap:10px}
+#xact .xt{position:relative;display:block;padding:12px 18px 11px;max-width:min(620px,calc(100vw - 40px));background:var(--tex-grain),radial-gradient(120% 140% at 10% 0%,#f1e8d2,#e2d5b6 60%,#cdbb93);color:var(--ink-d);font-family:var(--f-hand);font-size:21px;line-height:1.18;box-shadow:0 1px 0 rgba(255,255,255,.4) inset,0 8px 20px rgba(0,0,0,.5);transform:rotate(-.6deg);clip-path:polygon(0 3%,4% 0,18% 2%,33% 0,49% 2%,66% 0,81% 2%,100% 0,99% 48%,100% 100%,82% 98%,64% 100%,47% 98%,30% 100%,14% 98%,0 100%,1% 52%)}
+#xact .xt.trip{animation:land .35s ease-out both}
+#xact .xt b{color:#1a140c;font-weight:700}
+#xact .xt .bad{color:var(--blood);font-weight:700}
+#xact .xt::before{content:"";position:absolute;top:-6px;left:50%;width:62px;height:16px;transform:translateX(-50%) rotate(2deg);background:rgba(220,210,180,.55);box-shadow:0 1px 2px rgba(0,0,0,.25)}
+#xact .xt.trip{max-width:min(600px,calc(100vw - 40px));font-size:21px}
+@keyframes land{from{opacity:0;transform:translateY(-10px) rotate(-3deg)}to{opacity:1;transform:rotate(-.6deg)}}
+#xact .btn{padding:9px 15px;font-size:15px}
+
+/* ---------- the side panel: an iron case; some kinds open as books or as paper ---------- */
+#panel{border:0;border-radius:6px;background:var(--rivets),var(--tex-brushed),linear-gradient(180deg,rgba(24,30,40,.97),rgba(12,16,22,.98));box-shadow:inset 0 1px 0 rgba(200,215,235,.22),inset 0 0 0 1px rgba(0,0,0,.5),0 0 0 1px #05080c,0 20px 60px rgba(0,0,0,.6);backdrop-filter:none}
+#panel header{border-bottom:0;padding:18px 20px 14px;background:linear-gradient(180deg,rgba(255,255,255,.04),transparent);box-shadow:0 1px 0 rgba(0,0,0,.6),0 2px 0 rgba(200,215,235,.08)}
+#panel header h2{font-family:var(--f-display);font-weight:400;font-size:30px;letter-spacing:.02em;color:#f1e6d0;text-shadow:0 1px 0 #000}
+#panel header p{font-family:var(--f-label);font-weight:500;font-size:14px;letter-spacing:.05em;color:var(--steel-hi)}
+#panel header img{border-radius:4px;border:0;box-shadow:0 0 0 1px #000,0 0 0 3px #3a4552}
+#pbody h3{font-family:var(--f-label);font-weight:700;font-size:13px;letter-spacing:.2em;color:var(--ember);margin:20px 0 9px;display:flex;align-items:center;gap:10px}
+#pbody h3::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,rgba(242,163,71,.45),transparent)}
+#pbody{font-size:15px}
+.say{border-left:0;border-radius:3px;padding:13px 16px;background:var(--tex-grain),linear-gradient(180deg,#e9dfc6,#d8c9a6);color:var(--ink-d);font-family:var(--f-print);font-size:16.5px;line-height:1.45;box-shadow:0 6px 14px rgba(0,0,0,.4)}
+.say b,.say a{color:#1a140c}
+.opt,.order,.book,.item,.part,.note,.jstat,.hcard,details.lore,.consent,.mchips span,.rules{border:0!important;border-radius:4px!important;background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.01))!important;box-shadow:inset 0 1px 0 rgba(200,215,235,.12),inset 0 0 0 1px rgba(0,0,0,.5)}
+.opt:hover,.book:hover{background:linear-gradient(180deg,rgba(242,163,71,.09),rgba(242,163,71,.02))!important}
+.book b,.opt b,.order .t,details.lore summary b{font-family:var(--f-print);font-weight:400;font-size:17.5px;color:#f1e6d0}
+.tag{border-radius:3px;font-family:var(--f-label);font-weight:600;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase}
+
+/* the journal: a thick book, leather outside, vellum inside */
+#panel[data-kind=chronicle]{width:min(520px,calc(100vw - 32px));background:var(--tex-leather),linear-gradient(135deg,#4a2c1c,#2a1810 60%,#1d100a);box-shadow:inset 0 0 0 2px #120a06,inset 0 0 0 7px #3c2416,inset 0 0 0 8px rgba(240,200,150,.18),inset 0 0 40px rgba(0,0,0,.6),0 24px 70px rgba(0,0,0,.65)}
+#panel[data-kind=chronicle] header{background:none;box-shadow:none;padding:20px 26px 10px}
+#panel[data-kind=chronicle] header h2{font-size:34px;color:#e9c99a;text-shadow:0 1px 0 #000,0 0 1px #000}
+#panel[data-kind=chronicle] header p{color:rgba(233,201,154,.7)}
+#panel[data-kind=chronicle] #pbody{margin:0 14px 16px;padding:22px 24px 24px 34px;border-radius:2px;background:var(--tex-grain),linear-gradient(90deg,#c9b78f 0,#e7dcc0 4%,#efe5cc 50%,#e9dec3 100%);color:var(--ink-d);box-shadow:inset 10px 0 18px -10px rgba(60,35,15,.6),0 2px 0 #b8a47c,0 4px 0 #a8946c,0 6px 0 #97835d,0 8px 14px rgba(0,0,0,.5)}
+#panel[data-kind=chronicle] .jtabs{border:0;padding:0;border-bottom:1px solid rgba(60,40,20,.35);border-radius:0;gap:0}
+#panel[data-kind=chronicle] .jtabs button{border-radius:0;color:rgba(43,36,27,.6);font-family:var(--f-display);font-size:18px;letter-spacing:.06em;text-transform:none;padding:6px 0 8px}
+#panel[data-kind=chronicle] .jtabs button.on{background:none;color:var(--ink-d);box-shadow:inset 0 -2px 0 #7a1e16}
+#panel[data-kind=chronicle] .jstat{background:rgba(120,90,50,.08)!important;box-shadow:inset 0 0 0 1px rgba(60,40,20,.22)}
+#panel[data-kind=chronicle] .jstat i{color:#6d5a42;font-family:var(--f-label);font-size:12px}
+#panel[data-kind=chronicle] .jstat b{font-family:var(--f-print);font-weight:400;color:#1d160e}
+#panel[data-kind=chronicle] .jstat span{color:#6d5a42}
+#panel[data-kind=chronicle] #pbody h3{color:#7a1e16;font-family:var(--f-display);font-size:16px;letter-spacing:.1em}
+#panel[data-kind=chronicle] #pbody h3::after{background:linear-gradient(90deg,rgba(122,30,22,.45),transparent)}
+#panel[data-kind=chronicle] .chron li{border-bottom:1px solid rgba(60,40,20,.18);font-family:var(--f-print);font-size:15.5px;line-height:1.4;color:#2b241b}
+#panel[data-kind=chronicle] .chron li b{color:#1a140c!important}
+#panel[data-kind=chronicle] .chron .n{font-family:var(--f-display);color:#7a1e16;font-size:16px}
+#panel[data-kind=chronicle] .chron .h,#panel[data-kind=chronicle] .mute{color:#7a6a52}
+#panel[data-kind=chronicle] .tag{color:#6d5a42;border-color:rgba(60,40,20,.3)}
+#panel[data-kind=chronicle] .x,#panel[data-kind=note] .x{background:none;box-shadow:none;color:#e9c99a}
+/* the field manual (FAQ) and the library: same book, lighter */
+#panel[data-kind=faq] #pbody,#panel[data-kind=library] #pbody{margin:0 12px 14px;border-radius:2px;background:var(--tex-grain),linear-gradient(90deg,#d8c9a6,#ebe1c8 5%,#efe6cf);color:var(--ink-d);box-shadow:inset 10px 0 16px -10px rgba(60,35,15,.5),0 8px 14px rgba(0,0,0,.4)}
+#panel[data-kind=faq] .faq summary{font-family:var(--f-print);font-weight:400;font-size:18.5px;color:#1d160e}
+#panel[data-kind=faq] .faq[open] summary{color:#7a1e16}
+#panel[data-kind=faq] .faq{border-bottom:1px solid rgba(60,40,20,.2)}
+#panel[data-kind=faq] .faq p,#panel[data-kind=faq] .faq li{color:#2b241b;font-size:15px}
+#panel[data-kind=faq] #pbody h3,#panel[data-kind=library] #pbody h3{color:#7a1e16}
+#panel[data-kind=library] .book,#panel[data-kind=library] details.lore{background:rgba(120,90,50,.07)!important;box-shadow:inset 0 0 0 1px rgba(60,40,20,.2)}
+#panel[data-kind=library] .book b,#panel[data-kind=library] details.lore summary b{color:#1d160e}
+#panel[data-kind=library] .book span,#panel[data-kind=library] details.lore summary span,#panel[data-kind=library] .mute{color:#6d5a42}
+#panel[data-kind=library] details.lore p{color:#2b241b;font-family:var(--f-print);font-size:16px}
+#panel[data-kind=library] .say{background:none;box-shadow:none;padding:0 0 4px;font-style:italic}
+/* a found note: a single sheet, handwritten */
+#panel[data-kind=note]{background:var(--tex-grain),radial-gradient(130% 100% at 20% 0%,#f0e6cf,#dccdab 70%,#c9b68c);box-shadow:0 24px 60px rgba(0,0,0,.6);transform:rotate(.7deg)}
+#panel[data-kind=note] header{background:none;box-shadow:none}
+#panel[data-kind=note] header h2{font-family:var(--f-hand);font-size:34px;color:#2b241b;text-shadow:none}
+#panel[data-kind=note] header p{color:#6d5a42}
+#panel[data-kind=note] .x{color:#2b241b}
+#panel[data-kind=note] .say{background:none;box-shadow:none;padding:0;font-family:var(--f-hand)!important;font-size:27px!important;line-height:1.25!important;color:#2b241b}
+/* the thing: no frame at all, only the dark */
+#panel[data-kind=chthon]{background:radial-gradient(120% 90% at 50% 20%,#0a1426,#020407 70%);box-shadow:0 0 0 1px rgba(159,195,255,.15),0 0 80px rgba(80,140,255,.15),0 24px 70px #000}
+#panel[data-kind=chthon] header{background:none;box-shadow:none}
+#panel[data-kind=chthon] header h2{font-family:var(--f-display);font-size:40px;letter-spacing:.3em;color:#9fc3ff;text-shadow:0 0 18px rgba(120,180,255,.6);animation:hr 4s infinite}
+#pbody .say.chthon{background:none;box-shadow:none;color:#9fc3ff;font-family:var(--f-display)}
+
+/* the feed and the dialogue box */
+.msg{border:0;border-radius:4px;background:linear-gradient(180deg,rgba(26,33,43,.94),rgba(14,19,26,.94));box-shadow:inset 0 1px 0 rgba(200,215,235,.15),0 0 0 1px rgba(0,0,0,.6),0 6px 16px rgba(0,0,0,.4);font-size:14.5px}
+.msg .who{font-family:var(--f-label);font-weight:700;font-size:12px;letter-spacing:.16em;color:var(--ember)}
+#talk .card,#intro .card{border:0;border-radius:6px;background:var(--rivets),var(--tex-brushed),linear-gradient(180deg,rgba(22,28,38,.97),rgba(10,14,20,.98));box-shadow:inset 0 1px 0 rgba(200,215,235,.22),inset 0 0 0 1px rgba(0,0,0,.5),0 0 0 1px #05080c,0 24px 70px rgba(0,0,0,.6)}
+#talk .who,#intro .who{border:0;border-radius:3px;background:linear-gradient(180deg,#f7b45c,#c46f20);color:#1d1006;font-family:var(--f-label);font-weight:700;font-size:13px;letter-spacing:.18em;box-shadow:inset 0 1px 0 rgba(255,236,200,.6),0 0 0 1px rgba(60,25,0,.8)}
+#intro .card.anna .who{background:linear-gradient(180deg,#cfe6ff,#6f97c9);color:#08111f}
+#talk #talkText,#intro p{font-family:var(--f-print);font-weight:400;font-size:clamp(22px,2.4vw,30px);line-height:1.22}
+#banner b{font-family:var(--f-display);font-weight:400;letter-spacing:.04em}
+#banner span{font-family:var(--f-label);font-weight:600;font-size:15px;letter-spacing:.24em}
+#load b{font-family:var(--f-display);font-size:18px;letter-spacing:.2em}
+#died h1{font-family:var(--f-display)}
+#online .p{border:0;border-radius:3px;background:var(--plate);box-shadow:var(--bevel);font-family:var(--f-label);font-weight:600;font-size:13.5px;letter-spacing:.05em}
+/* the Mine: the same iron case, larger */
+.hub-win{border:0;border-radius:6px;background:var(--rivets),var(--tex-brushed),linear-gradient(180deg,rgba(22,28,38,.98),rgba(10,14,20,.99));box-shadow:inset 0 1px 0 rgba(200,215,235,.22),0 0 0 1px #05080c,0 24px 80px rgba(0,0,0,.65)}
+.hub-win header h2{font-family:var(--f-display);font-weight:400;font-size:46px}
+.hub-win header .who,.hcard .hk{font-family:var(--f-label);font-weight:700;font-size:13px;letter-spacing:.18em;color:var(--ember)}
+.hub-win nav button{border-radius:3px;font-family:var(--f-label);font-weight:600;font-size:15.5px;letter-spacing:.06em;text-transform:uppercase}
+.hub-win nav button.on{background:linear-gradient(90deg,rgba(242,163,71,.16),transparent);box-shadow:inset 3px 0 0 var(--ember)}
+.hcard .big,.jstat b,.part .v,.split b{font-family:var(--f-label);font-weight:700}
+.jtabs button,.mchips i,.crow i,.rules b,.jstat i{font-family:var(--f-label);font-weight:600;font-size:12.5px}
+.hcard .maria{font-family:var(--f-print);font-style:italic;font-weight:400;font-size:21px}
+body.hub #xact{display:none}
+.bub{border-radius:3px!important;font-size:15px}
+.bub.m{background:var(--tex-grain),linear-gradient(180deg,#e9dfc6,#d8c9a6)!important;border:0!important;color:var(--ink-d);font-family:var(--f-print);font-size:16.5px;line-height:1.4;box-shadow:0 5px 12px rgba(0,0,0,.4)}
+.bub.u{background:var(--plate)!important;border:0!important;box-shadow:var(--bevel);color:var(--steel-ink)}
+.quick button,.ask{border:0!important;border-radius:3px;background:var(--plate);box-shadow:var(--bevel);font-family:var(--f-label);font-weight:600;font-size:13.5px;letter-spacing:.04em;color:var(--steel-ink)}
+#chatForm{border-top:0;box-shadow:0 -1px 0 rgba(0,0,0,.6),0 -2px 0 rgba(200,215,235,.06)}
+#chatForm input,input.name,textarea.name{border:0!important;border-radius:3px;background:linear-gradient(180deg,#05070b,#10151d)!important;box-shadow:inset 0 2px 4px #000,0 1px 0 rgba(200,215,235,.12);color:#f1e6d0}
+@media (max-width: 760px){#hud{width:auto}#dock{padding:7px 8px}#dock button{min-width:0;font-size:11px;letter-spacing:.04em}#xact .xt{font-size:19px}}
+@media (prefers-reduced-motion: reduce){#xact .xt{animation:none}}
 </style>
 
 <canvas id="c" aria-label="Aigarth, a winter town seen from above"></canvas>
@@ -680,7 +858,7 @@ var W4W = (() => {
   }
   const rimeOk = (q, r) => {
     const n = ringOf(q, r);
-    return n >= RIME_MIN_RING && n <= MAX_RING && passable(q, r);
+    return n >= RIME_MIN_RING && n <= MAX_RING && terrain(q, r) === "open";
   };
   function rimeStep(th, targets) {
     const s = Math.floor(th.t / RIME_MS) + 1, t = s * RIME_MS;
@@ -688,7 +866,7 @@ var W4W = (() => {
     const here = [th.q, th.r];
     const prey = targets.filter((c) => zoneOf(c[0], c[1]) >= 1 && dist(c, here) <= 8).sort((a, b) => dist(a, here) - dist(b, here))[0];
     const opts = DIRS.map(([dq, dr], i) => ({ i, c: [th.q + dq, th.r + dr] })).filter((o) => rimeOk(o.c[0], o.c[1]));
-    if (!opts.length) return { q: 12, r: -6, t, d: th.d };
+    if (!opts.length) return { ...th, t };
     if (prey && h < RIME_PULL) {
       const o = opts.sort((a, b) => dist(a.c, prey) - dist(b.c, prey))[0];
       return { q: o.c[0], r: o.c[1], t, d: o.i };
@@ -830,7 +1008,7 @@ var W4W = (() => {
   const rimeTargets = (ws) => Object.values(ws.chars).filter((c) => !(c.frozenUntil > ws.now)).map((c) => [c.q, c.r]);
   function stepRime(ws, d) {
     if (ws.rimeTrail) return;
-    let th = ws.rime ?? { q: 12, r: -6, t: Math.floor(ws.now / RIME_MS) * RIME_MS, d: 2 };
+    let th = ws.rime ?? { q: 11, r: -6, t: Math.floor(ws.now / RIME_MS) * RIME_MS, d: 2 };
     if (ws.now - th.t > 24 * 36e5) th = { ...th, t: Math.floor((ws.now - 24 * 36e5) / RIME_MS) * RIME_MS };
     const trail = [[th.t, th.q, th.r]], targets = rimeTargets(ws);
     while (th.t + RIME_MS <= ws.now) {
@@ -1754,7 +1932,7 @@ function pick(e, click) {
 /* ================= panel ================= */
 let panelKind = null, openHouseId = null;
 function panel(kind, title, sub, img, html, chat = false) {
-  panelKind = kind; $('#mariaStand').classList.toggle('on', img === 'maria.png' && innerWidth > 1100); $('#phT').textContent = title; $('#phS').textContent = sub; const im = $('#phImg'); im.style.display = img ? '' : 'none'; if (img) im.src = img;
+  panelKind = kind; $('#panel').dataset.kind = kind; $('#mariaStand').classList.toggle('on', img === 'maria.png' && innerWidth > 1100); $('#phT').textContent = title; $('#phS').textContent = sub; const im = $('#phImg'); im.style.display = img ? '' : 'none'; if (img) im.src = img;
   $('#pbody').innerHTML = html; $('#chatForm').hidden = !chat; $('#panel').classList.add('open');
   document.querySelectorAll('#dock button').forEach(b => b.classList.toggle('on', b.dataset.act === kind || (kind === 'church' && b.dataset.act === 'connect') || (['herald', 'notices', 'orders'].includes(kind) && b.dataset.act === 'plaza')));
 }
@@ -2867,6 +3045,7 @@ function hud(force) {
     <div class="hwx"><span class="${wx.id}">${wx.name} ×${wx.mult}</span>${XV.grey ? '<span>grey light −5</span>' : ''}${XV.bell ? '<span class="bad">night of the bell +10</span>' : ''}<span class="${XV.town.holds ? 'good' : 'bad'}">${XV.town.holds ? 'town holds' : 'frost wins'}</span></div>`;
   // the cold you feel on the screen
   const fx = frozen ? 0 : Math.max(0, (50 - c.warmth) / 50); frostEl.style.opacity = fx.toFixed(2);
+  hudEl.style.setProperty('--chill', Math.min(1, deficit / 12 + fx).toFixed(2));
   document.body.classList.toggle('delir', !frozen && c.warmth < 10);
   // what happened on the way, as the screen sees it
   for (const e of pr.events) { const id = e.kind + e.t; if (seenEv.has(id)) continue; seenEv.add(id);
@@ -3000,7 +3179,7 @@ function buildRime() {
   const lights = [];
   for (let i = 0; i < 26; i++) { const a = rr() * Math.PI * 2, y = -1.9 + rr() * 3.9, rad = 0.42 + (1.75 - 0.42) * (2.3 - y) / 4.6 + 0.04;
     const l = sprite(GLOW, Math.cos(a) * rad, y, Math.sin(a) * rad, i < 4 ? 0.6 : 0.24 + rr() * 0.2, 0x9fdcff, 1); scene.remove(l); shroud.add(l); lights.push({ l, s: l.scale.x, next: rr() * 5 }); }
-  g.scale.setScalar(0.85); g.visible = false;
+  g.scale.setScalar(0.72); g.visible = false;
   tag(body, 'chthon', 'chthon');
   rimeFx = { g, body, head, legs, spine, ribs, eyes, arms, rags, lay, V, shroud, lights, p: new THREE.Vector3(), yaw: 0, twitch: 0, twitchT: 4, warned: 0, walk: 0, look: 0, last: new THREE.Vector3() };
 }
@@ -3022,7 +3201,7 @@ function poseRime(dt, t) {
   for (const E of R.eyes) { E.next -= dt; if (E.next < 0) { E.next = 1 + Math.random() * 7; E.shut = 0.15 + Math.random() * 0.2; } if (E.shut > 0) E.shut -= dt; E.e.scale.set(E.s, E.shut > 0 ? E.s * 0.08 : E.s, E.s); if (E.chest) E.e.position.copy(E.chest).add(V(sway * 0.5, 0, 0)); }
   for (const A of R.arms) { const sh = (A.low ? s1.clone().lerp(s2, 0.35) : s2.clone()).add(V(A.s * (A.low ? 0.5 : 0.62), 0, 0.2)), swing = Math.sin(t * 0.7 + A.ph) * 0.25;
     // the arms come out of the shroud and reach far to the sides, like a spider standing up
-    const elbow = sh.clone().add(V(A.s * (1.5 + swing * 0.3 + A.low * 0.4), 0.5 - A.low * 0.6, 0.5 + swing)), wrist = V(A.s * (2.5 + swing * 0.3 + A.low * 0.5), 0.5 - A.low * 0.3, 1.2 + swing * 0.6 - A.low * 0.6);
+    const elbow = sh.clone().add(V(A.s * (1.0 + swing * 0.2 + A.low * 0.25), 0.4 - A.low * 0.6, 0.5 + swing)), wrist = V(A.s * (1.45 + swing * 0.2 + A.low * 0.3), 0.55 - A.low * 0.3, 1.0 + swing * 0.5 - A.low * 0.5);
     lay(A.up, sh, elbow); lay(A.fore, elbow, wrist);
     A.fingers.forEach((F, i) => lay(F, wrist, wrist.clone().add(V(A.s * (i - 1.5) * 0.12, -0.45 - Math.abs(Math.sin(t * 1.3 + i + A.ph)) * 0.1, 0.55 + i * 0.05)))); }
   for (const L of R.lights) { L.next -= dt; if (L.next < 0) { L.next = 0.6 + Math.random() * 5; L.shut = 0.12 + Math.random() * 0.25; } if (L.shut > 0) L.shut -= dt; L.l.scale.setScalar(L.shut > 0 ? 0.001 : L.s * (0.9 + Math.sin(t * 2 + L.s * 40) * 0.1)); }
