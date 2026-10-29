@@ -6,8 +6,8 @@
  */
 
 export type Cell = [number, number]
-export type Inv = { wood: number; stone: number; flint: number; resin: number }
-export type Act = { kind: 'gather'; q: number; r: number; res: keyof Inv; until: number } | null
+export type Inv = Record<string, number> // stacks: raw materials and what you make from them
+export type Act = { kind: 'gather'; q: number; r: number; res: string; until: number } | { kind: 'craft'; recipe: string; until: number; q?: number; r?: number; res?: string } | null
 export type Char = {
   stash?: Inv
   v: 1
@@ -27,6 +27,7 @@ export type Char = {
   died?: { t: number; q: number; r: number; cause: string; zone: number } | null
   lost?: boolean // the wind took the trail: this step leads somewhere you did not choose
   items?: Record<string, 'worn' | 'pack' | 'home'> // clothing and tools: on you, in the pack, or at home
+  sips?: number // what is left in the thermos
 }
 export type Ctx = {
   heatR: number // radius of the town's warm circle, world units
@@ -42,7 +43,8 @@ export type Ctx = {
 export type Event =
   | { kind: 'arrived'; t: number; q: number; r: number }
   | { kind: 'froze'; t: number; q: number; r: number; cause: string; zone: number; inv: Inv }
-  | { kind: 'gathered'; t: number; q: number; r: number; res: keyof Inv }
+  | { kind: 'gathered'; t: number; q: number; r: number; res: string }
+  | { kind: 'crafted'; t: number; recipe: string; ok: boolean; why?: string }
   | { kind: 'thawed'; t: number }
   | { kind: 'lost'; t: number; q: number; r: number }
 
@@ -67,30 +69,102 @@ export const NODE_COOLDOWN_MS = 20 * 60_000
 export const LOSS_K = 0.5 // warmth lost per minute per point of cold not covered
 export const FROSTBITE = 1 // health lost per minute below 25 warmth
 export const INSULATION_T1 = 22
-export const WEIGHT: Inv = { wood: 2, stone: 3, flint: 0.2, resin: 0.3 }
-export const CAPACITY = 14 // pockets 6 + canvas sack 8
-export const OVERLOAD = 1.3
-export const HEARTH_COST: Inv = { wood: 6, stone: 4, flint: 1, resin: 0 }
+/* ================= things: what you gather, make, wear and carry ================= */
+/** Stackable things. Each stack takes one cell of the bag. */
+export const MATS: Record<string, { name: string; stack: number; q: number; note: string }> = {
+  wood: { name: 'Wood', stack: 10, q: 0, note: 'Cut with a saw or an axe. Burns, builds, holds things together.' },
+  stone: { name: 'Stone', stack: 10, q: 0, note: 'Broken out with a pickaxe.' },
+  flint: { name: 'Flint', stack: 20, q: 0, note: 'Only in the Stone Teeth. Sparks, edges, the start of every hearth.' },
+  resin: { name: 'Resin', stack: 20, q: 0, note: 'Tapped from the Black Pines. Melt it with wood into pitch.' },
+  fiber: { name: 'Dry grass', stack: 20, q: 0, note: 'Pulled by hand from open snow in The Edge and the Black Pines.' },
+  cord: { name: 'Cord', stack: 10, q: 1, note: 'Twisted grass. Ties tools, sews quilts, carries loads.' },
+  pitch: { name: 'Pine pitch', stack: 10, q: 1, note: 'Black, sticky, waterproof. Seals seams and flasks.' },
+  charcoal: { name: 'Charcoal', stack: 10, q: 1, note: 'Burns hot and long. Fills a thermos with heat.' },
+  hearth_kit: { name: 'Hearth kit', stack: 2, q: 2, note: 'A hearth in a bundle: unfold it anywhere out in the cold.' },
+}
+export const HEARTH_COST: Inv = { wood: 6, stone: 4, flint: 1 }
 export const HEARTH_START_MS = 6 * 3600_000
 export const HEARTH_WOOD_MS = 3 * 3600_000
 export const HEARTH_MAX_MS = 24 * 3600_000
-/** Demo residents that still warm the town in the closed test: five rigs on, 5,190 sol/h. */
-/** What you wear and carry besides raw materials. Clothing keeps you warm; tools are what let you work. */
-export type Item = { name: string; slot: 'head' | 'body' | 'hands' | 'legs' | 'feet' | 'tool'; ins: number; w: number; for?: (keyof Inv)[] }
+export const POCKETS = 4 // without a bag, this is all you can carry
+export const SIP_WARMTH = 30
+/** Things you own one of: clothing, bags, tools, the thermos. q is quality: 0 common, 1 good, 2 rare. */
+export type Item = { name: string; slot: 'head' | 'body' | 'hands' | 'legs' | 'feet' | 'bag' | 'tool' | 'flask'; ins: number; q: number; bag?: number; for?: string[]; speed?: number; note: string }
 export const ITEMS: Record<string, Item> = {
-  wool_cap: { name: 'Wool cap', slot: 'head', ins: 3, w: 0.3 },
-  canvas_coat: { name: 'Canvas coat', slot: 'body', ins: 9, w: 2 },
-  mittens: { name: 'Mittens', slot: 'hands', ins: 3, w: 0.2 },
-  wool_trousers: { name: 'Wool trousers', slot: 'legs', ins: 4, w: 1 },
-  felt_boots: { name: 'Felt boots', slot: 'feet', ins: 3, w: 1 },
-  saw: { name: 'Bow saw', slot: 'tool', ins: 0, w: 1.5, for: ['wood', 'resin'] },
-  pickaxe: { name: 'Pickaxe', slot: 'tool', ins: 0, w: 2.5, for: ['stone', 'flint'] },
+  wool_cap: { name: 'Wool cap', slot: 'head', ins: 3, q: 0, note: 'Knitted in town. Better than nothing.' },
+  canvas_coat: { name: 'Canvas coat', slot: 'body', ins: 9, q: 0, note: 'Stiff with frost by noon.' },
+  mittens: { name: 'Mittens', slot: 'hands', ins: 3, q: 0, note: 'Thin at the thumbs.' },
+  wool_trousers: { name: 'Wool trousers', slot: 'legs', ins: 4, q: 0, note: 'Patched twice.' },
+  felt_boots: { name: 'Felt boots', slot: 'feet', ins: 3, q: 0, note: 'Warm until they are wet.' },
+  quilted_cap: { name: 'Quilted hood', slot: 'head', ins: 5, q: 1, note: 'Grass quilted between two layers, sealed with pitch.' },
+  quilted_coat: { name: 'Quilted coat', slot: 'body', ins: 14, q: 1, note: 'Heavy, ugly and very warm.' },
+  lined_mittens: { name: 'Lined mittens', slot: 'hands', ins: 5, q: 1, note: 'Cord-stitched, grass-lined.' },
+  padded_trousers: { name: 'Padded trousers', slot: 'legs', ins: 7, q: 1, note: 'You walk like a bear in them.' },
+  bark_boots: { name: 'Bark-soled boots', slot: 'feet', ins: 5, q: 1, note: 'Wooden soles keep the snow away from your feet.' },
+  canvas_sack: { name: 'Canvas sack', slot: 'bag', ins: 0, q: 0, bag: 8, note: 'Eight places for eight stacks.' },
+  woven_pack: { name: 'Woven pack', slot: 'bag', ins: 0, q: 1, bag: 12, note: 'Grass and cord, tight enough to hold stone.' },
+  frame_pack: { name: 'Expedition frame', slot: 'bag', ins: 0, q: 2, bag: 16, note: 'A wooden frame on your back. For the long trips.' },
+  saw: { name: 'Bow saw', slot: 'tool', ins: 0, q: 0, for: ['wood', 'resin'], speed: 1, note: 'Cuts wood and taps resin.' },
+  pickaxe: { name: 'Pickaxe', slot: 'tool', ins: 0, q: 0, for: ['stone', 'flint'], speed: 1, note: 'Breaks stone and flint.' },
+  flint_axe: { name: 'Flint axe', slot: 'tool', ins: 0, q: 1, for: ['wood', 'resin'], speed: 2, note: 'Twice as fast as the saw.' },
+  flint_pick: { name: 'Flint pick', slot: 'tool', ins: 0, q: 1, for: ['stone', 'flint'], speed: 2, note: 'Twice as fast as the old pickaxe.' },
+  thermos: { name: 'Stone thermos', slot: 'flask', ins: 0, q: 2, note: 'Fill it with charcoal heat at home. Each sip gives back 30 warmth, anywhere.' },
 }
-export const startItems = (): Record<string, 'worn' | 'pack' | 'home'> => ({ wool_cap: 'worn', canvas_coat: 'worn', mittens: 'worn', wool_trousers: 'worn', felt_boots: 'worn', saw: 'home', pickaxe: 'home' })
-export const itemsOf = (c: { items?: Record<string, 'worn' | 'pack' | 'home'> }) => (c.items ??= startItems())
+/** What you can make. At home on the workbench, or a few simple things anywhere. */
+export type Recipe = { out: string; n: number; in: Inv; ms: number; group: 'Materials' | 'Tools' | 'Clothing' | 'Bags' | 'Survival'; field?: boolean }
+export const RECIPES: Record<string, Recipe> = {
+  cord: { out: 'cord', n: 1, in: { fiber: 3 }, ms: 4_000, group: 'Materials', field: true },
+  pitch: { out: 'pitch', n: 1, in: { resin: 2, wood: 1 }, ms: 8_000, group: 'Materials' },
+  charcoal: { out: 'charcoal', n: 1, in: { wood: 2 }, ms: 6_000, group: 'Materials' },
+  flint_axe: { out: 'flint_axe', n: 1, in: { wood: 3, flint: 2, cord: 1 }, ms: 15_000, group: 'Tools' },
+  flint_pick: { out: 'flint_pick', n: 1, in: { wood: 2, flint: 3, cord: 1 }, ms: 15_000, group: 'Tools' },
+  quilted_cap: { out: 'quilted_cap', n: 1, in: { fiber: 4, pitch: 1 }, ms: 10_000, group: 'Clothing' },
+  quilted_coat: { out: 'quilted_coat', n: 1, in: { fiber: 10, pitch: 2, cord: 1 }, ms: 20_000, group: 'Clothing' },
+  lined_mittens: { out: 'lined_mittens', n: 1, in: { fiber: 4, cord: 1 }, ms: 10_000, group: 'Clothing' },
+  padded_trousers: { out: 'padded_trousers', n: 1, in: { fiber: 7, pitch: 1 }, ms: 15_000, group: 'Clothing' },
+  bark_boots: { out: 'bark_boots', n: 1, in: { wood: 2, fiber: 3, pitch: 1 }, ms: 12_000, group: 'Clothing' },
+  woven_pack: { out: 'woven_pack', n: 1, in: { fiber: 8, cord: 3, pitch: 1 }, ms: 20_000, group: 'Bags' },
+  frame_pack: { out: 'frame_pack', n: 1, in: { wood: 4, cord: 6, pitch: 2 }, ms: 30_000, group: 'Bags' },
+  hearth_kit: { out: 'hearth_kit', n: 1, in: { wood: 6, stone: 4, flint: 1 }, ms: 12_000, group: 'Survival' },
+  thermos: { out: 'thermos', n: 1, in: { stone: 4, flint: 2, pitch: 2 }, ms: 30_000, group: 'Survival' },
+}
+export const nameOf = (id: string) => MATS[id]?.name ?? ITEMS[id]?.name ?? id
+export const startItems = (): Record<string, 'worn' | 'pack' | 'home'> => ({ wool_cap: 'worn', canvas_coat: 'worn', mittens: 'worn', wool_trousers: 'worn', felt_boots: 'worn', canvas_sack: 'worn', saw: 'home', pickaxe: 'home' })
+type Owner = { items?: Record<string, 'worn' | 'pack' | 'home'>; inv: Inv; stash?: Inv }
+export const itemsOf = (c: { items?: Record<string, 'worn' | 'pack' | 'home'> }) => { const it = (c.items ??= startItems()); if (!Object.keys(it).some(k => ITEMS[k]?.slot === 'bag')) it.canvas_sack = 'worn'; return it }
 export const insulationOf = (c: { items?: Record<string, 'worn' | 'pack' | 'home'> }) => Object.entries(itemsOf(c)).reduce((a, [id, at]) => a + (at === 'worn' ? ITEMS[id]?.ins ?? 0 : 0), 0)
-export const loadOf = (c: { inv: Inv; items?: Record<string, 'worn' | 'pack' | 'home'> }) => weightOf(c.inv) + Object.entries(itemsOf(c)).reduce((a, [id, at]) => a + (at === 'pack' ? ITEMS[id]?.w ?? 0 : 0), 0)
-export const toolFor = (res: keyof Inv) => Object.keys(ITEMS).find(id => ITEMS[id]!.for?.includes(res))!
+export const bagSize = (c: { items?: Record<string, 'worn' | 'pack' | 'home'> }) => { const b = Object.entries(itemsOf(c)).find(([id, at]) => at === 'worn' && ITEMS[id]?.slot === 'bag'); return POCKETS + (b ? ITEMS[b[0]]!.bag ?? 0 : 0) }
+export const stacksOf = (inv: Inv) => Object.entries(inv).reduce((a, [k, n]) => a + (n > 0 ? Math.ceil(n / (MATS[k]?.stack ?? 10)) : 0), 0)
+export const slotsUsed = (c: Owner) => stacksOf(c.inv) + Object.values(itemsOf(c)).filter(at => at === 'pack').length
+/** How many of a material still fit in the bag. */
+export function roomFor(c: Owner, mat: string, n = 1) {
+  const free = bagSize(c) - slotsUsed(c), st = MATS[mat]?.stack ?? 10, have = c.inv[mat] || 0, inLast = have % st ? st - (have % st) : 0
+  return Math.min(n, inLast + Math.max(0, free) * st)
+}
+/** Old name kept for the screen: how full the bag is, in cells. */
+export const loadOf = (c: Owner) => slotsUsed(c)
+export const toolsFor = (res: string) => Object.keys(ITEMS).filter(id => ITEMS[id]!.for?.includes(res))
+export const toolFor = (res: string) => toolsFor(res)[0] ?? ''
+export const bestTool = (c: Owner, res: string) => toolsFor(res).filter(id => itemsOf(c)[id] === 'pack').sort((a, b) => (ITEMS[b]!.speed ?? 1) - (ITEMS[a]!.speed ?? 1))[0] ?? null
+/** Count of a material in reach: the bag, plus the home store when you stand at home. */
+export const have = (c: Owner, mat: string, atHome: boolean) => (c.inv[mat] || 0) + (atHome ? c.stash?.[mat] || 0 : 0)
+export function canCraft(c: Owner, id: string, atHome: boolean): string | null {
+  const r = RECIPES[id]; if (!r) return 'No such recipe.'
+  if (!r.field && !atHome) return 'That needs the workbench at home.'
+  if (ITEMS[r.out] && itemsOf(c)[r.out]) return `You already have a ${ITEMS[r.out]!.name.toLowerCase()}.`
+  for (const [m, n] of Object.entries(r.in)) if (have(c, m, atHome) < n) return `Not enough ${nameOf(m).toLowerCase()}: ${have(c, m, atHome)} of ${n}.`
+  return null
+}
+function consume(c: Owner, inn: Inv, atHome: boolean) {
+  for (const [m, n] of Object.entries(inn)) { let left = n; const fromBag = Math.min(left, c.inv[m] || 0); c.inv[m] = (c.inv[m] || 0) - fromBag; left -= fromBag
+    if (left && atHome && c.stash) c.stash[m] = (c.stash[m] || 0) - left; if (!c.inv[m]) delete c.inv[m] }
+}
+/** Put n of a material in the bag; what does not fit goes to the home store if you are home, or is lost. */
+function give(c: Owner, mat: string, n: number, atHome: boolean) {
+  const fit = roomFor(c, mat, n); if (fit) c.inv[mat] = (c.inv[mat] || 0) + fit
+  if (n > fit && atHome) { c.stash ??= {}; c.stash[mat] = (c.stash[mat] || 0) + (n - fit) }
+  return fit
+}
 export const DEMO_TOWN = { people: 5, power: 5190, deeds: 2 }
 
 /** Town buildings: they shelter anyone who reaches them. Same cells as the game's SPECIAL and DEMO houses. */
@@ -134,10 +208,11 @@ export function terrain(q: number, r: number): Terrain {
 }
 export const passable = (q: number, r: number) => { const t = terrain(q, r); return t !== 'mountain' && t !== 'void' }
 /** What a cell gives when you work it, or null. */
-export function resourceOf(q: number, r: number): keyof Inv | null {
+export function resourceOf(q: number, r: number): string | null {
   const t = terrain(q, r), z = zoneOf(q, r), h = hash(q, r, 11)
   if (t === 'tree' || t === 'forest') return z === 2 && h < 0.25 ? 'resin' : 'wood'
   if (t === 'rock') return z === 3 && h < 0.3 ? 'flint' : 'stone'
+  if (t === 'open' && (z === 1 || z === 2) && h < 0.32) return 'fiber'
   return null
 }
 
@@ -178,8 +253,8 @@ export function sourceAt(q: number, r: number, t: number, ctx: Ctx) {
   return Math.hypot(x, z) <= ctx.heatR ? 4 : 0
 }
 
-export const weightOf = (inv: Inv) => (Object.keys(WEIGHT) as (keyof Inv)[]).reduce((a, k) => a + (inv[k] || 0) * WEIGHT[k], 0)
-export const emptyInv = (): Inv => ({ wood: 0, stone: 0, flint: 0, resin: 0 })
+export const weightOf = (inv: Inv) => stacksOf(inv)
+export const emptyInv = (): Inv => ({})
 
 /** Shortest walkable path from a to b (b may be a building cell). Cells after a, a excluded. */
 /** Buildings are walked into, never through: `blocked` cells are only allowed as the destination. */
@@ -218,7 +293,7 @@ export function cellAt(c: Char, _t?: number): Cell { return [c.q, c.r] }
 export function stepDur(to: Cell, t: number, load: number, netStorm = false) {
   const z = Math.min(3, zoneOf(to[0], to[1])), w = weatherAt(t, netStorm).id as keyof typeof WX_SLOW
   const slow = z === 0 ? (w === 'calm' ? 1 : w === 'wind' ? 5 / 3 : 8 / 3) : WX_SLOW[w]
-  return Math.round(ZONE_STEP_MS[z]! * slow * (load > CAPACITY ? 1.5 : 1))
+  return Math.round(ZONE_STEP_MS[z]! * slow * (load > 1e9 ? 1 : 1))
 }
 /** Start the step toward path[0] at time t. In wind and blizzard, out in the Wastes, the trail can be lost. */
 export function beginStep(c: Char, t: number, ctx: Ctx) {
@@ -286,15 +361,21 @@ export function advance(c0: Char, now: number, ctx: Ctx): { c: Char; events: Eve
     while (c.path.length && c.t0 + c.stepMs <= t1) {
       const te = c.t0 + c.stepMs, [q, r] = c.path.shift()!
       c.q = q; c.r = r
-      c.energy = Math.max(0, c.energy - (loadOf(c) > CAPACITY ? 2 : 1))
+      c.energy = Math.max(0, c.energy - 1)
       if (c.lost) { c.lost = false; c.path = []; c.t0 = te; events.push({ kind: 'lost', t: te, q, r }) }
       else if (c.path.length) beginStep(c, te, ctx)
       else { c.t0 = te; events.push({ kind: 'arrived', t: te, q, r }) }
     }
     if (c.act && t1 >= c.act.until) {
       const a = c.act; c.act = null
-      c.inv[a.res] = (c.inv[a.res] || 0) + 1
-      events.push({ kind: 'gathered', t: a.until, q: a.q, r: a.r, res: a.res })
+      const home = key(c.q, c.r) === ctx.home && !c.path.length
+      if (a.kind === 'gather') { if (give(c, a.res, 1, home)) events.push({ kind: 'gathered', t: a.until, q: a.q, r: a.r, res: a.res }) }
+      else if (a.kind === 'craft') {
+        // the work is done; the materials are taken now, so nothing is lost if you walked away
+        const why = canCraft(c, a.recipe, home), r = RECIPES[a.recipe]
+        if (why || !r) events.push({ kind: 'crafted', t: a.until, recipe: a.recipe, ok: false, why: why ?? 'No such recipe.' })
+        else { consume(c, r.in, home); if (ITEMS[r.out]) itemsOf(c)[r.out] = home ? 'home' : 'pack'; else give(c, r.out, r.n, home); events.push({ kind: 'crafted', t: a.until, recipe: a.recipe, ok: true }) }
+      }
     }
     const q = c.q, r = c.r, zone = zoneOf(q, r)
     const cold = coldAt(q, r, t1, ctx), src = sourceAt(q, r, t1, ctx)
@@ -313,7 +394,7 @@ export function advance(c0: Char, now: number, ctx: Ctx): { c: Char; events: Eve
       const cause = pure ? 'Pure Cold. The cave is not open yet' : kept ? 'the keepers of the Mouth took you' : taken ? 'Chthon passed through you' : c.health <= 0 && c.warmth > 0 ? 'frostbite' : `cold ${Math.round(cold)} against clothing ${ins}${w.id === 'calm' ? '' : `, ${w.name.toLowerCase()} ×${w.mult}`}`
       events.push({ kind: 'froze', t: t1, q, r, cause, zone, inv: { ...c.inv } })
       c.died = { t: t1, q, r, cause, zone }
-      Object.assign(c, { frozenUntil: t1 + FREEZE_MS, warmth: 0, path: [], act: null, lost: false, q: c.home[0], r: c.home[1], inv: emptyInv(), simT: now, t0: t1 })
+      Object.assign(c, { frozenUntil: t1 + FREEZE_MS, warmth: 0, path: [], act: null, lost: false, q: c.home[0], r: c.home[1], inv: {}, simT: now, t0: t1 })
       return { c, events }
     }
     t = t1
@@ -472,9 +553,10 @@ export function action(ws: WState, uid: string, op: string, b: Record<string, un
       const res = resourceOf(...at); if (!res) return fail('Nothing to take here.')
       const k = key(...at)
       if ((ws.nodes[k] ?? 0) > now) return fail('Already picked clean. It comes back in a while.')
-      if (loadOf(c) + WEIGHT[res] > CAPACITY * OVERLOAD) return fail('You cannot carry more.')
-      const tool = toolFor(res); if (itemsOf(c)[tool] !== 'pack') return fail(`You need the ${ITEMS[tool]!.name.toLowerCase()} in your pack for ${res}. It is at home.`)
-      c.act = { kind: 'gather', q: at[0], r: at[1], res, until: now + GATHER_MS }
+      if (!roomFor(c, res, 1)) return fail('Your bag is full.')
+      const needs = toolsFor(res), tool = bestTool(c, res)
+      if (needs.length && !tool) return fail(`You need a ${ITEMS[needs[0]!]!.name.toLowerCase()} in your bag for ${nameOf(res).toLowerCase()}.`)
+      c.act = { kind: 'gather', q: at[0], r: at[1], res, until: now + Math.round(GATHER_MS / (tool ? ITEMS[tool]!.speed ?? 1 : 1.5)) }
       ws.nodes[k] = now + GATHER_MS + NODE_COOLDOWN_MS; d.nodes.add(k)
       return ok()
     }
@@ -483,8 +565,9 @@ export function action(ws: WState, uid: string, op: string, b: Record<string, un
       if (zoneOf(...here) < 1) return fail('The town has its own fire. Build out in the cold.')
       const k = key(...here)
       if (ws.hearths[k]) return fail('There is a hearth here already.')
-      for (const [res, n] of Object.entries(HEARTH_COST) as [keyof Inv, number][]) if ((c.inv[res] || 0) < n) return fail(`A hearth takes ${HEARTH_COST.wood} wood, ${HEARTH_COST.stone} stone and ${HEARTH_COST.flint} flint.`)
-      for (const [res, n] of Object.entries(HEARTH_COST) as [keyof Inv, number][]) c.inv[res] -= n
+      if ((c.inv.hearth_kit || 0) > 0) { c.inv.hearth_kit! -= 1; if (!c.inv.hearth_kit) delete c.inv.hearth_kit }
+      else { for (const [res, n] of Object.entries(HEARTH_COST)) if ((c.inv[res] || 0) < n) return fail(`A hearth takes a hearth kit, or ${HEARTH_COST.wood} wood, ${HEARTH_COST.stone} stone and ${HEARTH_COST.flint} flint.`)
+        consume(c, HEARTH_COST, false) }
       ws.hearths[k] = { by: uid, nick: nickIn(ws, uid), at: now, until: now + HEARTH_START_MS }; d.hearths.add(k)
       d.feed.push({ id: `hb${uid}${now}`, t: now, topic: 'hearth', by: uid, data: { nick: nickIn(ws, uid), zone: zoneName(zoneOf(...here)), q: here[0], r: here[1] } })
       return ok()
@@ -494,7 +577,7 @@ export function action(ws: WState, uid: string, op: string, b: Record<string, un
       if (!h) return fail('No hearth there.')
       if (!near(at)) return fail('Too far. Stand next to it.')
       if ((c.inv.wood || 0) < 1) return fail('You have no wood.')
-      c.inv.wood -= 1; h.until = Math.min(now + HEARTH_MAX_MS, Math.max(now, h.until) + HEARTH_WOOD_MS); d.hearths.add(k)
+      c.inv.wood! -= 1; if (!c.inv.wood) delete c.inv.wood; h.until = Math.min(now + HEARTH_MAX_MS, Math.max(now, h.until) + HEARTH_WOOD_MS); d.hearths.add(k)
       return ok()
     }
     case 'take': {
@@ -502,25 +585,55 @@ export function action(ws: WState, uid: string, op: string, b: Record<string, un
       if (!bag || bag.until <= now) return fail('That pack is gone.')
       if (bag.owner === uid) return fail('Your own frozen pack will not open for you. Someone else has to carry it.')
       if (!near([bag.q, bag.r])) return fail('Too far. Stand next to it.')
-      const took = emptyInv()
-      for (const res of Object.keys(WEIGHT) as (keyof Inv)[]) while (bag.inv[res] > 0 && loadOf(c) + WEIGHT[res] <= CAPACITY * OVERLOAD) { bag.inv[res]--; c.inv[res]++; took[res]++ }
+      const took: Inv = {}
+      for (const res of Object.keys(bag.inv)) { const n = roomFor(c, res, bag.inv[res] || 0); if (!n) continue; bag.inv[res]! -= n; c.inv[res] = (c.inv[res] || 0) + n; took[res] = n; if (!bag.inv[res]) delete bag.inv[res] }
       if (!Object.values(bag.inv).some(v => v > 0)) { delete ws.bags[bag.id]; d.bagsGone.add(bag.id) } else d.bags.add(bag.id)
       d.feed.push({ id: `tk${uid}${now}`, t: now, topic: 'took', by: uid, data: { nick: nickIn(ws, uid), owner: bag.nick, took } })
       return ok()
     }
     case 'unload': {
       if (key(...here) !== key(...c.home)) return fail('Unload at your own house.')
-      c.stash = c.stash ?? emptyInv()
-      for (const res of Object.keys(WEIGHT) as (keyof Inv)[]) { c.stash[res] += c.inv[res]; c.inv[res] = 0 }
+      c.stash = c.stash ?? {}
+      for (const res of Object.keys(c.inv)) { c.stash[res] = (c.stash[res] || 0) + (c.inv[res] || 0) }
+      c.inv = {}
       return ok()
     }
     case 'pack': {
       if (key(...here) !== key(...c.home)) return fail('Pack at your own house.')
-      const res = String(b.res ?? '') as keyof Inv, n = Math.max(1, Math.min(50, Number(b.n) || 1))
-      if (!(res in WEIGHT)) return fail('Pack what?')
-      c.stash = c.stash ?? emptyInv()
-      let moved = 0
-      while (moved < n && c.stash[res] > 0 && loadOf(c) + WEIGHT[res] <= CAPACITY) { c.stash[res]--; c.inv[res]++; moved++ }
+      const res = String(b.res ?? ''), n = Math.max(1, Math.min(200, Number(b.n) || 1))
+      if (!MATS[res]) return fail('Pack what?')
+      c.stash = c.stash ?? {}
+      const m = Math.min(n, c.stash[res] || 0, roomFor(c, res, n)); if (!m) return fail('Your bag is full.')
+      c.stash[res] = (c.stash[res] || 0) - m; if (!c.stash[res]) delete c.stash[res]; c.inv[res] = (c.inv[res] || 0) + m
+      return ok()
+    }
+    case 'store': {
+      if (key(...here) !== key(...c.home)) return fail('Store things at your own house.')
+      const res = String(b.res ?? ''), n = Math.max(1, Math.min(200, Number(b.n) || (c.inv[res] || 0)))
+      const m = Math.min(n, c.inv[res] || 0); if (!m) return fail('Nothing to store.')
+      c.stash = c.stash ?? {}; c.stash[res] = (c.stash[res] || 0) + m; c.inv[res] = (c.inv[res] || 0) - m; if (!c.inv[res]) delete c.inv[res]
+      return ok()
+    }
+    case 'craft': {
+      if (c.path.length) return fail('Stop walking first.')
+      if (c.act) return fail('You are busy.')
+      const id = String(b.recipe ?? ''), atHome = key(...here) === key(...c.home), why = canCraft(c, id, atHome)
+      if (why) return fail(why)
+      c.act = { kind: 'craft', recipe: id, until: now + RECIPES[id]!.ms }
+      return ok()
+    }
+    case 'fill': {
+      if (key(...here) !== key(...c.home)) return fail('Fill the thermos at home, from the stove.')
+      if (!itemsOf(c).thermos) return fail('You have no thermos.')
+      if ((c.sips || 0) >= 3) return fail('The thermos is full.')
+      if (have(c, 'charcoal', true) < 2) return fail('It takes 2 charcoal to fill.')
+      consume(c, { charcoal: 2 }, true); c.sips = 3
+      return ok()
+    }
+    case 'drink': {
+      if (!itemsOf(c).thermos || itemsOf(c).thermos === 'home') return fail('The thermos is not with you.')
+      if (!(c.sips || 0)) return fail('The thermos is empty.')
+      c.sips = (c.sips || 0) - 1; c.warmth = Math.min(100, c.warmth + SIP_WARMTH)
       return ok()
     }
     case 'item': {
@@ -529,8 +642,10 @@ export function action(ws: WState, uid: string, op: string, b: Record<string, un
       if (!['worn', 'pack', 'home'].includes(to)) return fail('Where to?')
       const atHome = key(...here) === key(...c.home)
       if ((to === 'home' || items[id] === 'home') && !atHome) return fail('That stays at home. Go home first.')
-      if (to === 'worn' && it.slot === 'tool') return fail('Tools go in the pack.')
-      if (to === 'pack' && items[id] !== 'pack' && loadOf(c) + it.w > CAPACITY * OVERLOAD) return fail('Your pack is full.')
+      if (to === 'worn' && (it.slot === 'tool' || it.slot === 'flask')) return fail('That goes in the bag, not on you.')
+      if (to === 'pack' && items[id] !== 'pack' && slotsUsed(c) + 1 > bagSize(c)) return fail('Your bag is full.')
+      if (it.slot === 'bag' && items[id] === 'worn' && to !== 'worn') return fail('Put on another bag instead; this one holds everything you carry.')
+      if (it.slot === 'bag' && to === 'worn') { const cur = Object.keys(items).find(k => items[k] === 'worn' && ITEMS[k]?.slot === 'bag'); const after = POCKETS + (it.bag ?? 0); if (slotsUsed(c) - (items[id] === 'pack' ? 1 : 0) + (cur && items[id] === 'pack' ? 1 : 0) > after) return fail('Everything you carry would not fit in that bag.') }
       // putting something on takes off whatever was in that slot, back to where the new one came from
       if (to === 'worn') for (const [o, at] of Object.entries(items)) if (o !== id && at === 'worn' && ITEMS[o]?.slot === it.slot) items[o] = items[id]!
       items[id] = to
