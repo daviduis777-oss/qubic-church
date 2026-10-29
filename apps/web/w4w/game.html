@@ -300,9 +300,10 @@ const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, powerPrefer
 const GPU_NAME = (() => { try { const gl = renderer.getContext(), d = gl.getExtension('WEBGL_debug_renderer_info'); return String(d ? gl.getParameter(d.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER)); } catch { return '?'; } })();
 const SOFT = /swiftshader|llvmpipe|softpipe|basic render|software|microsoft basic/i.test(GPU_NAME);
 const LITE = LITE0 || SOFT;
+const SOFT_PX = +(new URLSearchParams(location.search).get('softpx') || 6e5);
 // quality: never more than 1.5x pixels; drops further on its own if frames run slow
 // a pixel budget: a big monitor gets fewer pixels per point instead of more work for the graphics card
-const dprFor = () => Math.max(MOBILE ? 0.75 : (LITE ? 0.85 : 1), Math.min(devicePixelRatio, LITE ? 1 : 1.25, Math.sqrt((LITE ? 1.2e6 : 2.2e6) / (innerWidth * innerHeight))));
+const dprFor = () => SOFT ? Math.max(0.35, Math.min(1, Math.sqrt(SOFT_PX / (innerWidth * innerHeight)))) : Math.max(MOBILE ? 0.75 : (LITE ? 0.85 : 1), Math.min(devicePixelRatio, LITE ? 1 : 1.25, Math.sqrt((LITE ? 1.2e6 : 2.2e6) / (innerWidth * innerHeight))));
 let DPR = dprFor(); renderer.setPixelRatio(DPR);
 renderer.setSize(innerWidth, innerHeight);
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -342,6 +343,7 @@ float h21(vec2 p){ p=fract(p*vec2(123.34,456.21)); p+=dot(p,p+45.32); return fra
 float vnoise(vec2 p){ vec2 i=floor(p), f=fract(p); f=f*f*(3.-2.*f);
   return mix(mix(h21(i),h21(i+vec2(1,0)),f.x), mix(h21(i+vec2(0,1)),h21(i+vec2(1,1)),f.x), f.y); }`;
 function snowify(mat) {
+  if (SOFT && mat.isMeshStandardMaterial) { const o = mat; mat = new THREE.MeshLambertMaterial({ color: o.color, map: o.map, emissive: o.emissive, emissiveMap: o.emissiveMap, emissiveIntensity: o.emissiveIntensity, side: o.side, flatShading: o.flatShading, vertexColors: o.vertexColors, transparent: o.transparent, opacity: o.opacity, alphaTest: o.alphaTest }); }
   mat.onBeforeCompile = sh => {
     Object.assign(sh.uniforms, U);
     sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vWP; varying vec3 vWN;').replace('#include <project_vertex>', `#include <project_vertex>
@@ -1583,7 +1585,7 @@ function loop(now = performance.now()) {
   const busy = !LITE;
   // measure the screen once: how long one refresh takes
   if (hzN < 40) { if (hzLast) { const d = now - hzLast; if (d > 4 && d < 40) { hzSum += d; hzN++; } } hzLast = now; if (hzN === 40) refreshMs = hzSum / hzN; }
-  const want = busy && !document.hidden ? 1000 / 60 : 1000 / 30;
+  const want = SOFT ? (now - lastInput < 1500 || fly ? 1000 / 30 : 1000 / 20) : busy && !document.hidden ? 1000 / 60 : 1000 / 30;
   const every = Math.max(1, Math.round(want / refreshMs));
   if (++tick % every) return;
   const minGap = every * refreshMs;
@@ -1635,9 +1637,9 @@ function loop(now = performance.now()) {
     const tgt = fly.from.clone().lerp(fly.to, k); const off = camera.position.clone().sub(controls.target).normalize().multiplyScalar(fly.d0 + (fly.d1 - fly.d0) * k);
     controls.target.copy(tgt); camera.position.copy(tgt).add(off); if (fly.t >= 1) fly = null; }
   controls.target.x = THREE.MathUtils.clamp(controls.target.x, -16, 16); controls.target.z = THREE.MathUtils.clamp(controls.target.z, -16, 16); if (!fly && $('#intro').hidden) controls.target.y = 0;
-  controls.update(); const _g = diagGpuBegin(); if (LITE) renderer.render(scene, camera); else composer.render(); diagGpuEnd(_g); placeLabels(); sendPresence(); diagFrame(performance.now() - now);
+  controls.update(); const _g = diagGpuBegin(); if (LITE && !SOFT) renderer.render(scene, camera); else composer.render(); diagGpuEnd(_g); placeLabels(); sendPresence(); diagFrame(performance.now() - now);
 }
 requestAnimationFrame(loop);
 addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); DPR = Math.min(DPR, dprFor()); renderer.setPixelRatio(DPR); composer.setPixelRatio?.(DPR); renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight); fxaaSize(); });
-window.__w4w = { S, settle, freePlots, openMaria, ask, addWood, refreshTown, draft: v => (draft = v), camera, controls, updateIce, renderer, scene, __composer: LITE ? null : composer };
+window.__w4w = { S, settle, freePlots, openMaria, ask, addWood, refreshTown, draft: v => (draft = v), camera, controls, updateIce, renderer, scene, __composer: LITE && !SOFT ? null : composer };
 </script>
