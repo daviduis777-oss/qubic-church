@@ -298,6 +298,7 @@ body.intro #dock,body.intro #feed,body.intro #online,body.intro #meter{visibilit
 #intro .card{position:relative;width:min(900px,100%);min-height:200px;padding:22px 26px 18px calc(min(60vh,480px) * .714 + 4px);border:1px solid rgba(232,176,92,.42);border-radius:16px;background:linear-gradient(rgba(12,15,26,.9),rgba(8,10,18,.94));box-shadow:0 0 0 1px rgba(0,0,0,.4),0 18px 60px rgba(0,0,0,.55)}
 #intro img{position:absolute;left:-18px;bottom:0;height:min(60vh,480px);width:auto;max-width:none;pointer-events:none;-webkit-mask-image:linear-gradient(#000 82%,transparent);mask-image:linear-gradient(#000 82%,transparent)}
 #intro .card>div{position:relative}
+#intro .card.anna{border-color:rgba(159,195,255,.5)} #intro .card.anna .who{color:#cfe6ff;border-color:rgba(159,195,255,.5)} #intro .card.anna p{color:#dcecff;font-style:italic}
 #intro .who{display:inline-block;margin-top:-36px;padding:5px 12px;border:1px solid rgba(232,176,92,.5);border-radius:8px;background:#0d1020;font-family:var(--f-label);font-size:11px;letter-spacing:.16em;color:var(--gold)}
 #intro p{margin:12px 0 14px;font-family:var(--f-display);font-weight:600;font-size:clamp(22px,2.7vw,31px);line-height:1.16;color:var(--cream);min-height:3.5em;text-wrap:pretty}
 #intro .row{justify-content:flex-end;gap:10px}
@@ -343,6 +344,14 @@ body.intro #dock,body.intro #feed,body.intro #online,body.intro #meter{visibilit
 .hwx .wind{color:#cfe6ff} .hwx .blizzard,.hwx .bad{color:#ff9a8c;background:rgba(255,106,90,.1)} .hwx .good{color:var(--green)}
 #xact{position:fixed;z-index:4;left:50%;transform:translateX(-50%);bottom:max(104px,calc(env(safe-area-inset-bottom) + 92px));max-width:calc(100vw - 32px);display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--line);border-radius:14px;background:var(--panel);backdrop-filter:blur(6px)}
 #xact .xt{font-size:13px;color:var(--ink);padding:0 4px}
+#xact .xt.trip{max-width:560px;line-height:1.45} #xact .xt b{color:var(--cream)} #xact .xt .bad{color:#ff9a8c}
+.hrime{padding:6px 8px;border-radius:8px;background:rgba(80,140,255,.12);border:1px solid rgba(140,190,255,.35);color:#cfe6ff;font-size:12.5px;animation:hr 1.6s infinite}
+@keyframes hr{50%{opacity:.55}}
+body.rimenear #frostfx{animation:delir 1.1s infinite steps(1)}
+details.lore{margin:6px 0;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:rgba(159,195,255,.03)}
+details.lore summary{cursor:pointer;display:flex;flex-direction:column;gap:2px;list-style:none}
+details.lore summary b{color:var(--cream)} details.lore summary span{font-size:12.5px;color:var(--mute)}
+details.lore p{margin:8px 0 0;font-size:14.5px;line-height:1.55;color:var(--ink)}
 #xact .btn{padding:7px 12px;font-size:13px}
 body:has(#hud:not([hidden])) #feed{bottom:170px}
 #frostfx{position:fixed;inset:0;z-index:2;pointer-events:none;opacity:0;transition:opacity 1.5s;background:radial-gradient(ellipse at center,transparent 45%,rgba(150,190,255,.28) 75%,rgba(220,235,255,.6) 100%);box-shadow:inset 0 0 120px rgba(200,225,255,.45)}
@@ -444,7 +453,9 @@ var W4W = (() => {
     DEMO_CELLS: () => DEMO_CELLS,
     DEMO_TOWN: () => DEMO_TOWN,
     DIRS: () => DIRS,
+    DRIFT: () => DRIFT,
     FREEZE_MS: () => FREEZE_MS,
+    FROSTBITE: () => FROSTBITE,
     GATHER_MS: () => GATHER_MS,
     HEARTH_COST: () => HEARTH_COST,
     HEARTH_MAX_MS: () => HEARTH_MAX_MS,
@@ -455,12 +466,18 @@ var W4W = (() => {
     MAX_RING: () => MAX_RING,
     NODE_COOLDOWN_MS: () => NODE_COOLDOWN_MS,
     OVERLOAD: () => OVERLOAD,
+    RIME_MIN_RING: () => RIME_MIN_RING,
+    RIME_MS: () => RIME_MS,
+    RIME_PULL: () => RIME_PULL,
     SPECIAL: () => SPECIAL,
     STEP_MS: () => STEP_MS,
     WEIGHT: () => WEIGHT,
+    WX_SLOW: () => WX_SLOW,
     ZONES: () => ZONES,
+    ZONE_STEP_MS: () => ZONE_STEP_MS,
     action: () => action,
     advance: () => advance,
+    beginStep: () => beginStep,
     bellAt: () => bellAt,
     cellAt: () => cellAt,
     coldAt: () => coldAt,
@@ -473,11 +490,16 @@ var W4W = (() => {
     newChar: () => newChar,
     newDirty: () => newDirty,
     passable: () => passable,
+    planTrip: () => planTrip,
     resourceOf: () => resourceOf,
+    rimeAt: () => rimeAt,
+    rimeStep: () => rimeStep,
     ringOf: () => ringOf,
     sourceAt: () => sourceAt,
     stepAll: () => stepAll,
     stepChar: () => stepChar,
+    stepDur: () => stepDur,
+    stepRime: () => stepRime,
     terrain: () => terrain,
     townOfState: () => townOfState,
     townShelters: () => townShelters,
@@ -490,12 +512,19 @@ var W4W = (() => {
     zoneOf: () => zoneOf
   });
   const STEP_MS = 3e3;
+  const ZONE_STEP_MS = [3e3, 15 * 6e4, 20 * 6e4, 30 * 6e4];
+  const WX_SLOW = { calm: 1, wind: 1.5, blizzard: 2.5 };
+  const DRIFT = { calm: 0, wind: 0.15, blizzard: 0.4 };
+  const RIME_MS = 8 * 6e4;
+  const RIME_MIN_RING = 7;
+  const RIME_PULL = 0.05;
   const MAX_RING = 16;
   const FREEZE_MS = 24 * 36e5;
   const BAG_MS = 24 * 36e5;
-  const GATHER_MS = 45e3;
+  const GATHER_MS = 2 * 6e4;
   const NODE_COOLDOWN_MS = 20 * 6e4;
-  const LOSS_K = 0.6;
+  const LOSS_K = 0.15;
+  const FROSTBITE = 0.5;
   const INSULATION_T1 = 22;
   const WEIGHT = { wood: 2, stone: 3, flint: 0.2, resin: 0.3 };
   const CAPACITY = 14;
@@ -614,13 +643,58 @@ var W4W = (() => {
     return null;
   }
   function newChar(home, now) {
-    return { v: 1, q: home[0], r: home[1], path: [], t0: now, stepMs: STEP_MS, warmth: 100, health: 100, energy: 100, simT: now, frozenUntil: 0, home, inv: emptyInv(), act: null, died: null };
+    return { v: 1, q: home[0], r: home[1], path: [], t0: now, stepMs: STEP_MS, lost: false, warmth: 100, health: 100, energy: 100, simT: now, frozenUntil: 0, home, inv: emptyInv(), act: null, died: null };
   }
-  function cellAt(c, t) {
-    if (!c.path.length) return [c.q, c.r];
-    const i = Math.floor((t - c.t0) / c.stepMs);
-    if (i <= 0) return [c.q, c.r];
-    return c.path[Math.min(i, c.path.length) - 1];
+  function cellAt(c, _t) {
+    return [c.q, c.r];
+  }
+  function stepDur(to, t, load, netStorm = false) {
+    const z = Math.min(3, zoneOf(to[0], to[1])), w = weatherAt(t, netStorm).id;
+    const slow = z === 0 ? w === "calm" ? 1 : w === "wind" ? 5 / 3 : 8 / 3 : WX_SLOW[w];
+    return Math.round(ZONE_STEP_MS[z] * slow * (load > CAPACITY ? 1.5 : 1));
+  }
+  function beginStep(c, t, ctx) {
+    c.t0 = t;
+    if (!c.path.length) return;
+    const w = weatherAt(t, ctx.netStorm).id, next = c.path[0];
+    if (!ctx.noDrift && Math.max(zoneOf(c.q, c.r), zoneOf(next[0], next[1])) >= 1 && hash(Math.floor(t / 1e3), c.q * 131 + c.r, 17) < DRIFT[w]) {
+      const opts = DIRS.map(([dq, dr]) => [c.q + dq, c.r + dr]).filter((x) => passable(x[0], x[1]) && !(x[0] === next[0] && x[1] === next[1]));
+      if (opts.length) {
+        c.path = [opts[Math.floor(hash(Math.floor(t / 1e3), 3, 19) * opts.length)]];
+        c.lost = true;
+      }
+    }
+    c.stepMs = stepDur(c.path[0], t, weightOf(c.inv), ctx.netStorm);
+  }
+  function rimeAt(trail, t) {
+    if (!trail?.length) return null;
+    let cur = trail[0];
+    for (const e of trail) {
+      if (e[0] <= t) cur = e;
+      else break;
+    }
+    return [cur[1], cur[2]];
+  }
+  const rimeOk = (q, r) => {
+    const n = ringOf(q, r);
+    return n >= RIME_MIN_RING && n <= MAX_RING && passable(q, r);
+  };
+  function rimeStep(th, targets) {
+    const s = Math.floor(th.t / RIME_MS) + 1, t = s * RIME_MS;
+    const h = hash(s, 1, 101), h2 = hash(s, 2, 103), h3 = hash(s, 3, 107);
+    const here = [th.q, th.r];
+    const prey = targets.filter((c) => zoneOf(c[0], c[1]) >= 1 && dist(c, here) <= 8).sort((a, b) => dist(a, here) - dist(b, here))[0];
+    const opts = DIRS.map(([dq, dr], i) => ({ i, c: [th.q + dq, th.r + dr] })).filter((o) => rimeOk(o.c[0], o.c[1]));
+    if (!opts.length) return { q: 12, r: -6, t, d: th.d };
+    if (prey && h < RIME_PULL) {
+      const o = opts.sort((a, b) => dist(a.c, prey) - dist(b.c, prey))[0];
+      return { q: o.c[0], r: o.c[1], t, d: o.i };
+    }
+    if (h2 > 0.88) return { ...th, t };
+    let d = th.d;
+    if (h3 < 0.3) d = (d + (h3 < 0.15 ? 1 : 5)) % 6;
+    const ahead = opts.find((o) => o.i === d) ?? opts[Math.floor(h3 * opts.length)];
+    return { q: ahead.c[0], r: ahead.c[1], t, d: ahead.i };
   }
   function advance(c0, now, ctx) {
     const c = JSON.parse(JSON.stringify(c0));
@@ -630,29 +704,28 @@ var W4W = (() => {
         c.simT = now;
         return { c, events };
       }
-      const t = c.frozenUntil;
-      Object.assign(c, { frozenUntil: 0, warmth: 60, health: 50, energy: 50, simT: t, q: c.home[0], r: c.home[1], path: [], act: null });
-      events.push({ kind: "thawed", t });
+      const t2 = c.frozenUntil;
+      Object.assign(c, { frozenUntil: 0, warmth: 60, health: 50, energy: 50, simT: t2, q: c.home[0], r: c.home[1], path: [], act: null, lost: false, t0: t2 });
+      events.push({ kind: "thawed", t: t2 });
     }
-    const busy = () => c.path.length > 0 || !!c.act;
-    let steps = c.path.length ? Math.max(0, Math.min(c.path.length, Math.floor((c.simT - c.t0) / c.stepMs))) : 0;
-    for (let t = c.simT, DT = 5e3; t < now; t += DT) {
-      DT = busy() ? 2e3 : 6e4;
+    let t = c.simT;
+    while (t < now) {
+      const DT = c.path.length ? Math.min(3e4, Math.max(1e3, c.stepMs / 6)) : c.act ? 5e3 : 6e4;
       const t1 = Math.min(now, t + DT), mins = (t1 - t) / 6e4;
-      if (c.path.length) {
-        const done = Math.max(0, Math.min(c.path.length, Math.floor((t1 - c.t0) / c.stepMs)));
-        if (done > steps) {
-          const over = weightOf(c.inv) > CAPACITY ? 2 : 1;
-          c.energy = Math.max(0, c.energy - (done - steps) * over);
-          steps = done;
-        }
-        if (done >= c.path.length) {
-          const [q2, r2] = c.path.at(-1);
-          c.q = q2;
-          c.r = r2;
+      while (c.path.length && c.t0 + c.stepMs <= t1) {
+        const te = c.t0 + c.stepMs, [q2, r2] = c.path.shift();
+        c.q = q2;
+        c.r = r2;
+        c.energy = Math.max(0, c.energy - (weightOf(c.inv) > CAPACITY ? 2 : 1));
+        if (c.lost) {
+          c.lost = false;
           c.path = [];
-          steps = 0;
-          events.push({ kind: "arrived", t: t1, q: q2, r: r2 });
+          c.t0 = te;
+          events.push({ kind: "lost", t: te, q: q2, r: r2 });
+        } else if (c.path.length) beginStep(c, te, ctx);
+        else {
+          c.t0 = te;
+          events.push({ kind: "arrived", t: te, q: q2, r: r2 });
         }
       }
       if (c.act && t1 >= c.act.until) {
@@ -661,30 +734,50 @@ var W4W = (() => {
         c.inv[a.res] = (c.inv[a.res] || 0) + 1;
         events.push({ kind: "gathered", t: a.until, q: a.q, r: a.r, res: a.res });
       }
-      const [q, r] = cellAt(c, t1);
+      const q = c.q, r = c.r, zone = zoneOf(q, r);
       const cold = coldAt(q, r, t1, ctx), src = sourceAt(q, r, t1, ctx);
       const tired = c.energy <= 0 ? 1.25 : 1;
       const loss = Math.max(0, cold - ctx.insulation) * LOSS_K * tired;
       c.warmth = Math.min(100, Math.max(0, c.warmth + (src - loss) * mins));
-      if (c.warmth < 25) c.health = Math.max(0, c.health - 1 * mins);
+      if (c.warmth < 25) c.health = Math.max(0, c.health - FROSTBITE * mins);
       const atHome = key(q, r) === ctx.home;
       if (atHome && !c.path.length) c.health = Math.min(100, c.health + 0.1 * mins);
       if (src > 0 && !c.path.length) c.energy = Math.min(100, c.energy + (src >= 6 ? 10 : 5) / 60 * mins);
-      if (!busy() && src > 0 && c.warmth >= 100 && c.health >= 100 && c.energy >= 100) break;
-      if (c.warmth <= 0 || c.health <= 0) {
-        const zone = zoneOf(q, r), w = weatherAt(t1, ctx.netStorm);
-        const cause = c.health <= 0 && c.warmth > 0 ? "frostbite" : `cold ${Math.round(cold)} against clothing ${ctx.insulation}${w.id === "calm" ? "" : `, ${w.name.toLowerCase()} \xD7${w.mult}`}`;
+      const rime = zone >= 1 ? rimeAt(ctx.rime, t1) : null;
+      const taken = !!rime && rime[0] === q && rime[1] === r;
+      if (taken || c.warmth <= 0 || c.health <= 0) {
+        const w = weatherAt(t1, ctx.netStorm);
+        const cause = taken ? "the Rime passed through you" : c.health <= 0 && c.warmth > 0 ? "frostbite" : `cold ${Math.round(cold)} against clothing ${ctx.insulation}${w.id === "calm" ? "" : `, ${w.name.toLowerCase()} \xD7${w.mult}`}`;
         events.push({ kind: "froze", t: t1, q, r, cause, zone, inv: { ...c.inv } });
         c.died = { t: t1, q, r, cause, zone };
-        Object.assign(c, { frozenUntil: t1 + FREEZE_MS, warmth: 0, path: [], act: null, q: c.home[0], r: c.home[1], inv: emptyInv(), simT: now });
+        Object.assign(c, { frozenUntil: t1 + FREEZE_MS, warmth: 0, path: [], act: null, lost: false, q: c.home[0], r: c.home[1], inv: emptyInv(), simT: now, t0: t1 });
         return { c, events };
       }
+      t = t1;
+      if (!c.path.length && !c.act && src > 0 && c.warmth >= 100 && c.health >= 100 && c.energy >= 100) break;
     }
     c.simT = now;
-    if (c.path.length === 0) {
-      c.t0 = now;
-    }
     return { c, events };
+  }
+  function planTrip(c0, path, now, ctx) {
+    const c = JSON.parse(JSON.stringify(c0));
+    const cx = { ...ctx, noDrift: true, rime: void 0 };
+    c.path = path.slice();
+    c.act = null;
+    c.lost = false;
+    c.simT = now;
+    beginStep(c, now, cx);
+    let t = now, out = { eta: 0, warmth: c.warmth, health: c.health, froze: false, cause: "" };
+    for (let i = 0; i < 96 && c.path.length; i++) {
+      t += 36e5;
+      const r = advance(c, t, cx);
+      Object.assign(c, r.c);
+      const f = r.events.find((e) => e.kind === "froze");
+      if (f && f.kind === "froze") return { ...out, eta: f.t - now, froze: true, cause: f.cause };
+      const a = r.events.find((e) => e.kind === "arrived");
+      if (a) return { eta: a.t - now, warmth: c.warmth, health: c.health, froze: false, cause: "" };
+    }
+    return { ...out, eta: t - now };
   }
   function townShelters(houseCells) {
     const out = {};
@@ -709,7 +802,7 @@ var W4W = (() => {
     const t = townOfState(ws);
     const cells = Object.values(ws.houses).filter((x) => x.q != null && x.r != null).map((x) => [x.q, x.r]);
     const home = ws.chars[uid]?.home ?? [ws.houses[uid]?.q ?? 0, ws.houses[uid]?.r ?? 0];
-    return { heatR: t.heatR, holds: t.holds, netStorm: false, shelters: townShelters(cells), home: key(home[0], home[1]), hearths: Object.fromEntries(Object.entries(ws.hearths).map(([k, v]) => [k, v.until])), insulation: INSULATION_T1 };
+    return { heatR: t.heatR, holds: t.holds, netStorm: false, shelters: townShelters(cells), home: key(home[0], home[1]), hearths: Object.fromEntries(Object.entries(ws.hearths).map(([k, v]) => [k, v.until])), insulation: INSULATION_T1, rime: ws.rimeTrail };
   }
   const nickIn = (ws, uid) => ws.houses[uid]?.nick ?? "someone";
   const zoneName = (z) => ZONES[z]?.name ?? "the far cold";
@@ -731,10 +824,25 @@ var W4W = (() => {
     if (events.length || c.simT - c0.simT > 6e5) d.chars.add(uid);
     return events;
   }
+  const rimeTargets = (ws) => Object.values(ws.chars).filter((c) => !(c.frozenUntil > ws.now)).map((c) => [c.q, c.r]);
+  function stepRime(ws, d) {
+    if (ws.rimeTrail) return;
+    let th = ws.rime ?? { q: 12, r: -6, t: Math.floor(ws.now / RIME_MS) * RIME_MS, d: 2 };
+    if (ws.now - th.t > 3 * 24 * 36e5) th = { ...th, t: Math.floor((ws.now - 3 * 24 * 36e5) / RIME_MS) * RIME_MS };
+    const trail = [[th.t, th.q, th.r]], targets = rimeTargets(ws);
+    while (th.t + RIME_MS <= ws.now) {
+      th = rimeStep(th, targets);
+      trail.push([th.t, th.q, th.r]);
+    }
+    if (!ws.rime || th.t !== ws.rime.t) d.rime = true;
+    ws.rime = th;
+    ws.rimeTrail = trail;
+  }
   function stepAll(ws, d) {
+    stepRime(ws, d);
     for (const uid of Object.keys(ws.chars)) {
       const c = ws.chars[uid];
-      if (c.path.length || c.act || c.frozenUntil || c.warmth < 100 || c.health < 100 || c.energy < 100) stepChar(ws, uid, d);
+      if (c.path.length || c.act || c.frozenUntil || zoneOf(c.q, c.r) >= 1 || c.warmth < 100 || c.health < 100 || c.energy < 100) stepChar(ws, uid, d);
     }
   }
   function viewOf(ws, uid, events = []) {
@@ -743,7 +851,7 @@ var W4W = (() => {
       const x = weatherAt(at);
       return { at, id: x.id, name: x.name, mult: x.mult };
     });
-    const others = Object.fromEntries(Object.entries(ws.chars).filter(([k]) => k !== uid).map(([k, c]) => [k, { q: c.q, r: c.r, path: c.path, t0: c.t0, stepMs: c.stepMs, frozenUntil: c.frozenUntil, home: c.home, nick: nickIn(ws, k), act: c.act ? { kind: c.act.kind, until: c.act.until } : null }]));
+    const others = Object.fromEntries(Object.entries(ws.chars).filter(([k]) => k !== uid).map(([k, c]) => [k, { q: c.q, r: c.r, path: c.path.slice(0, 1), t0: c.t0, stepMs: c.stepMs, frozenUntil: c.frozenUntil, home: c.home, nick: nickIn(ws, k), act: c.act ? { kind: c.act.kind, until: c.act.until } : null }]));
     return {
       now: ws.now,
       town: townOfState(ws),
@@ -755,7 +863,8 @@ var W4W = (() => {
       hearths: ws.hearths,
       bags: Object.values(ws.bags).filter((b) => b.until > ws.now).map((b) => ({ id: b.id, nick: b.nick, q: b.q, r: b.r, until: b.until, mine: b.owner === uid, items: b.owner === uid ? null : b.inv })),
       nodes: Object.fromEntries(Object.entries(ws.nodes).filter(([, v]) => v > ws.now)),
-      events
+      events,
+      rime: ws.rime ? { ...ws.rime, next: rimeStep(ws.rime, rimeTargets(ws)) } : null
     };
   }
   function action(ws, uid, op, b, d) {
@@ -784,11 +893,12 @@ var W4W = (() => {
         const path = findPath(here, to);
         if (!path) return fail("No way through from here.");
         if (path.length > 90) return fail("Too far for one walk. Go in stages.");
-        Object.assign(c, { q: here[0], r: here[1], path, t0: now, act: null });
+        Object.assign(c, { q: here[0], r: here[1], path, t0: now, act: null, lost: false });
+        beginStep(c, now, ctxOf(ws, uid));
         return ok();
       }
       case "stop":
-        Object.assign(c, { q: here[0], r: here[1], path: [], t0: now });
+        Object.assign(c, { q: here[0], r: here[1], path: [], t0: now, lost: false });
         return ok();
       case "gather": {
         const at = cellArg(b.at);
@@ -1687,7 +1797,10 @@ function faqLag() {
 }
 const FAQ = [
   ['The cold beyond the town', [
-    ['How do I walk?', 'Once your house stands, you have a character who lives in it. Click the ground and you run there, about three seconds a cell, in real time. Buildings open only when you are standing at their door: click one and you walk there first.'],
+    ['How do I walk?', 'Once your house stands, you have a character who lives in it. Inside the town you run, a few seconds a cell. Buildings open only when you are standing at their door: click one and you walk there first.'],
+    ['How do trips work?', 'Click a place beyond the forest. The route appears in footprints with the arrival time for the weather ahead and the warmth you would arrive with. Click Set out, or the same place again. Trips are real time: about 15 minutes a cell in The Edge, 20 in the Black Pines, 30 in the Stone Teeth, slower in wind and much slower in a blizzard. You can close the game; the trip goes on.'],
+    ['Why did my character stop in the middle of nowhere?', 'In wind, and worse in a blizzard, the trail gets lost: a step takes you somewhere you did not choose and you stop there. Pick a direction again. In calm weather the trail holds.'],
+    ['What is the tall dark thing out there?', 'The Library calls it the Rime. It wanders the Wastes and never comes past the forest edge into town. It does not hunt, but now and then it turns toward someone in the snow, and if it reaches you, you fall at once. If you see it near, walk the other way.'],
     ['What do the bars mean?', 'Warmth drops wherever the cold is stronger than your clothing, faster in wind and blizzards. Below 25 warmth the frost starts taking health. Energy goes on walking and comes back by a fire. Load is what you carry: past the limit every step costs double.'],
     ['Is the town always safe?', 'No. When the town holds, its warm circle keeps you safe. When the frost is winning, even the streets between houses bite, and the Library at the edge is a cold walk. Houses, the church and the plaza fire always warm you.'],
     ['What can I do out there?', 'Gather wood and stone in The Edge and the Black Pines, resin among the pines and flint in the Stone Teeth. With 6 wood, 4 stone and 1 flint you can build a hearth out in the cold. Anyone can warm up at it and feed it with wood; it burns out unless someone does.'],
@@ -2220,6 +2333,7 @@ const link = (href, inner) => `<a class="book" href="${href.startsWith('http') ?
 function openLibrary() {
   panel('library', 'The Library', 'Everything Qubic Church has written, and what we read', null, `
     <p class="say">Open to everyone, day and night. Every book opens on qubic.church.</p>
+    ${notesHtml()}
     <h3>BOOKS BY QUBIC CHURCH</h3><div class="shelf">${LIB.qc.map(([t, d, h]) => link(h, `<b>${t}</b><span>${d}</span>`)).join('')}</div>
     <h3>RESEARCH AND RECORDS</h3><div class="shelf">${LIB.research.map(([t, d, h]) => link(h, `<b>${t}</b><span>${d}</span>`)).join('')}</div>
     <h3>COME-FROM-BEYOND, IN HIS OWN WORDS</h3><div class="shelf">${link('/articles/cfb', `<b>29 texts, 2017 to 2023</b><span>${LIB.cfb.map(([t, y]) => `${t} (${y})`).join(' · ')}</span>`)}</div>
@@ -2454,23 +2568,31 @@ function scripted(q) { return bank(q).text; }
 /* ================= intro ================= */
 const INTRO = [
   'My sister is frozen in the ice.',
+  'The cold came down from the north long ago and never left. Aigarth was built around the one thing it could not freeze: a machine that thinks.',
   'We pulled her out of the deep: a machine from somewhere far beyond, with her face. She still dreams in there.',
+  'Her dreaming makes a light. Inside it, the town lives. Outside it are the Wastes, and something that walks them.',
+  { who: 'ANNA · DREAMING', img: 'anna_sleep.png', text: '...cold... I can hear it walking where my light ends. It is older than the ice. Do not let me go dark.' },
   'One rig can\'t warm this night. A town can.',
   'Every rig kept on, every promise kept, every hand at the fire melts a little of the ice.',
   'Help me wake Anna.',
 ];
+const introText = i => { const x = INTRO[i]; return typeof x === 'string' ? x : x.text; };
 let introI = 0, typeT;
 function startIntro() {
   if (store.get('w4w.intro') === '1') { welcomeLine(); return; }
   $('#intro').hidden = false; document.body.classList.add('intro'); camera.position.set(4, 34, 30); controls.target.set(0, 2, 0); typeLine();
-  $('#introNext').onclick = () => { if (typeT) { clearInterval(typeT); typeT = null; $('#introText').textContent = INTRO[introI]; return; } introI++; if (introI >= INTRO.length) return perfQuestion(); typeLine(); };
+  $('#introNext').onclick = () => { if (typeT) { clearInterval(typeT); typeT = null; $('#introText').textContent = introText(introI); return; } introI++; if (introI >= INTRO.length) return perfQuestion(); typeLine(); };
   $('#introSkip').onclick = perfQuestion;
 }
 function typeLine() {
-  const t = INTRO[introI]; const el = $('#introText'); el.textContent = ''; let i = 0;
+  const t = introText(introI), x = INTRO[introI], el = $('#introText'); el.textContent = ''; let i = 0;
+  { const card = $('#intro .card'), im = card.querySelector('img'), who = card.querySelector('.who'); const anna = typeof x !== 'string';
+    im.src = anna ? x.img : 'maria-full.webp'; im.alt = anna ? 'Anna' : 'Maria'; who.textContent = anna ? x.who : 'MARIA · QUBIC CHURCH'; card.classList.toggle('anna', anna); }
   $('#introNext').textContent = introI === INTRO.length - 1 ? 'Enter Aigarth' : 'Next';
   if (introI === 1) flyTo(new THREE.Vector3(0, 0, -0.6), 13);
-  if (introI === 3) flyTo(new THREE.Vector3(0, 0, 0), 22);
+  if (introI === 3) flyTo(new THREE.Vector3(0, 0, 0), 40);
+  if (introI === 4) flyTo(new THREE.Vector3(0, 0, 0), 14);
+  if (introI === 5) flyTo(new THREE.Vector3(0, 0, 0), 22);
   if (REDUCED) { el.textContent = t; return; }
   typeT = setInterval(() => { el.textContent = t.slice(0, ++i); if (i >= t.length) { clearInterval(typeT); typeT = null; } }, 12);
 }
@@ -2507,10 +2629,10 @@ function localWorld() {
   st ||= { chars: {}, hearths: {}, bags: {}, nodes: {} };
   const subs = [];
   const wsNow = () => { const h = me(); const houses = {}; if (h) houses.me = { q: h.q, r: h.r, nick: h.nick, state: h.state, sol: h.sol, lastWood: h.lastWood };
-    return { now: Date.now(), houses, chars: st.chars, hearths: st.hearths, bags: st.bags, nodes: st.nodes, online: 1, doneOrders: 0 }; };
+    return { now: Date.now(), houses, chars: st.chars, hearths: st.hearths, bags: st.bags, nodes: st.nodes, online: 1, doneOrders: 0, rime: st.rime }; };
   const keep = () => store.set('w4w.xworld', JSON.stringify(st));
   const emit = v => subs.forEach(f => { try { f(v); } catch (e) { console.warn(e); } });
-  const view = (events = []) => { const ws = wsNow(); const d = W4W.newDirty(); W4W.stepAll(ws, d); keep(); return W4W.viewOf(ws, 'me', events); };
+  const view = (events = []) => { const ws = wsNow(); const d = W4W.newDirty(); W4W.stepAll(ws, d); st.rime = ws.rime; keep(); return W4W.viewOf(ws, 'me', events); };
   setInterval(() => { if (me()) emit(view()); }, 4000);
   return {
     get: () => (me() ? view() : null),
@@ -2518,11 +2640,11 @@ function localWorld() {
     // for tests of the prototype only: let time pass for the whole little world
     warp(ms) { const sh = o => { for (const k of ['t0', 'simT', 'until', 'at', 'frozenUntil']) if (o && typeof o[k] === 'number' && o[k] > 0) o[k] -= ms; };
       Object.values(st.chars).forEach(c => { sh(c); sh(c.act); if (c.died) c.died.t -= ms; }); Object.values(st.hearths).forEach(sh); Object.values(st.bags).forEach(sh);
-      for (const k in st.nodes) st.nodes[k] -= ms; keep(); emit(view()); },
+      for (const k in st.nodes) st.nodes[k] -= ms; if (st.rime) st.rime.t -= ms; keep(); emit(view()); },
     admin: () => true,
     async act(name, body = {}) {
-      if (name === 'revive') { const c = st.chars.me; if (c) Object.assign(c, { frozenUntil: 0, warmth: 100, health: 100, energy: 100, q: c.home[0], r: c.home[1], path: [], act: null, t0: Date.now(), simT: Date.now() }); keep(); const v = view(); emit(v); return v; }
-      const ws = wsNow(); const d = W4W.newDirty(); const r = W4W.action(ws, 'me', name, body, d); keep(); if (!r.ok) { const e = new Error(r.error); e.status = r.status; throw e; } const v = W4W.viewOf(ws, 'me', r.events); emit(v); return v; },
+      if (name === 'revive') { const c = st.chars.me; if (c) Object.assign(c, { frozenUntil: 0, warmth: 100, health: 100, energy: 100, q: c.home[0], r: c.home[1], path: [], act: null, lost: false, t0: Date.now(), simT: Date.now() }); keep(); const v = view(); emit(v); return v; }
+      const ws = wsNow(); const d = W4W.newDirty(); const r = W4W.action(ws, 'me', name, body, d); st.rime = ws.rime; keep(); if (!r.ok) { const e = new Error(r.error); e.status = r.status; throw e; } const v = W4W.viewOf(ws, 'me', r.events); emit(v); return v; },
   };
 }
 /** Called once the town is built and the capabilities are up. */
@@ -2530,7 +2652,7 @@ function startX() { if (XW) return; XW = window.W4W_X || localWorld(); hookFeed(
 let follow = true, freezeAsk = 0;
 function takeView(v) {
   if (!v || v.error) return;
-  XV = v; XT = performance.now();
+  XV = v; XT = performance.now(); PR = null;
   if (!v.me) ensureChar();
   syncAvatars(); syncHearths(); syncBags(); hud(true);
   for (const e of v.events || []) if (e.kind === 'gathered') { banner(`+1 ${e.res}`, `${W4W.weightOf(v.me?.inv || W4W.emptyInv()).toFixed(1)} / ${W4W.CAPACITY} carried`); }
@@ -2548,9 +2670,11 @@ function ensureChar() { if (XW && me() && me().q != null && XV && !XV.me && !xBu
 /* ---------- the rules, run locally between server answers ---------- */
 function xctx() {
   const t = XV.town, cells = allResidents().filter(h => !h.demo && h.at[0] != null).map(h => h.at);
-  return { heatR: t.heatR, holds: t.holds, netStorm: false, shelters: W4W.townShelters(cells), home: W4W.key(...XV.me.home), hearths: Object.fromEntries(Object.entries(XV.hearths).map(([k, v]) => [k, v.until])), insulation: W4W.INSULATION_T1 };
+  return { heatR: t.heatR, holds: t.holds, netStorm: false, shelters: W4W.townShelters(cells), home: W4W.key(...XV.me.home), hearths: Object.fromEntries(Object.entries(XV.hearths).map(([k, v]) => [k, v.until])), insulation: W4W.INSULATION_T1,
+    rime: XV.rime ? [[XV.rime.t, XV.rime.q, XV.rime.r], ...(XV.rime.next ? [[XV.rime.next.t, XV.rime.next.q, XV.rime.next.r]] : [])] : undefined };
 }
-function predicted() { if (!XV?.me) return null; return W4W.advance(XV.me, xnow(), xctx()); }
+let PR = null, PRT = 0;
+function predicted() { if (!XV?.me) return null; const n = performance.now(); if (PR && n - PRT < 200) return PR; PR = W4W.advance(XV.me, xnow(), xctx()); PRT = n; return PR; }
 
 /* ---------- avatars ---------- */
 let HERO = null, heroClips = {}, heroScale = 1;
@@ -2569,7 +2693,7 @@ function heroMat(src) {
 function makeAvatar(uid, nick, mine) {
   const g = new THREE.Group(); const body = cloneSkinned(HERO.scene); body.scale.setScalar(heroScale);
   body.traverse(m => { if (m.isMesh) { m.castShadow = true; m.frustumCulled = false; m.material = heroMat(m.material); } }); g.add(body); scene.add(g);
-  const mixer = new THREE.AnimationMixer(body); const actions = {}; for (const [n, c] of Object.entries(heroClips)) actions[n] = mixer.clipAction(c); if (actions.Running_A) actions.Running_A.timeScale = 0.8;
+  const mixer = new THREE.AnimationMixer(body); const actions = {}; for (const [n, c] of Object.entries(heroClips)) actions[n] = mixer.clipAction(c); if (actions.Running_A) actions.Running_A.timeScale = 0.8; if (actions.Walking_A) actions.Walking_A.timeScale = 0.55;
   const glow = sprite(GLOW, 0, 0.22, 0, mine ? 0.38 : 0.26, mine ? 0xffc070 : 0x9fc3ff, mine ? 0.7 : 0.45); scene.remove(glow); g.add(glow);
   const L = label(mine ? 'you' : nick, g, 0.62, mine ? 'me' : 'walker');
   const a = { g, body, mixer, actions, cur: null, label: L, mine, ice: null, uid };
@@ -2590,17 +2714,14 @@ function syncAvatars() {
 }
 function posOf(d, t) {
   if (!d.path?.length) return { p: HX(d.q, d.r), walking: false, dir: null };
-  const e = (t - d.t0) / d.stepMs;
-  if (e <= 0) return { p: HX(d.q, d.r), walking: true, dir: HX(...d.path[0]).sub(HX(d.q, d.r)) };
-  const i = Math.floor(e); if (i >= d.path.length) { const [q, r] = d.path.at(-1); return { p: HX(q, r), walking: false, dir: null, end: [q, r] }; }
-  const a = i === 0 ? HX(d.q, d.r) : HX(...d.path[i - 1]), b = HX(...d.path[i]);
-  return { p: a.clone().lerp(b, e - i), walking: true, dir: b.clone().sub(a) };
+  const a = HX(d.q, d.r), b = HX(...d.path[0]), e = THREE.MathUtils.clamp((t - d.t0) / Math.max(1, d.stepMs), 0, 1);
+  return { p: a.clone().lerp(b, e), walking: true, dir: b.clone().sub(a), out: W4W.zoneOf(...d.path[0]) >= 1 || W4W.zoneOf(d.q, d.r) >= 1 };
 }
 const ICE_MAT = new THREE.MeshPhysicalMaterial({ color: 0xcfe6ff, transparent: true, opacity: 0.55, roughness: 0.2, metalness: 0, clearcoat: 1, emissive: 0x6aa0ff, emissiveIntensity: 0.15 });
 function stepAvatars(dt) {
   const t = xnow();
   for (const a of Object.values(avatars)) {
-    const d = a.data; if (!d) continue;
+    const d = a.mine ? { ...a.data, ...(predicted()?.c || {}) } : a.data; if (!d) continue;
     a.mixer.update(dt);
     const frozen = d.frozenUntil && d.frozenUntil > t;
     if (frozen) {
@@ -2609,18 +2730,18 @@ function stepAvatars(dt) {
       a.label.el.textContent = `${a.mine ? 'you' : d.nick} · frozen ${hms(d.frozenUntil - t)}`; continue;
     }
     if (a.ice) { a.g.remove(a.ice); a.ice = null; a.label.el.textContent = a.mine ? 'you' : d.nick; }
-    const { p, walking, dir } = posOf(d, t);
+    const { p, walking, dir, out } = posOf(d, t);
     // standing at a building: wait at its door, a step toward the middle of town, not inside the walls
     const cell = walking ? null : W4W.key(d.q, d.r), inside = cell && (Object.values(SPECIAL).some(([q, r]) => W4W.key(q, r) === cell) || allResidents().some(h => h.at[0] != null && W4W.key(...h.at) === cell));
     const off = inside && p.lengthSq() > 0.01 ? new THREE.Vector3(-p.x, 0, -p.z).normalize().multiplyScalar(0.95) : new THREE.Vector3();
     a.g.position.lerp(p.clone().add(off), Math.min(1, dt * 12));
     if (dir && dir.lengthSq() > 0) a.g.rotation.y = Math.atan2(dir.x, dir.z);
     const busy = d.act && d.act.until > t;
-    play(a, walking ? (a.actions.Running_A ? 'Running_A' : 'Walking_A') : busy ? 'PickUp' : sittingAt(d) ? 'Sit_Floor_Idle' : 'Idle');
+    play(a, walking ? (out || !a.actions.Running_A ? 'Walking_A' : 'Running_A') : busy ? 'PickUp' : sittingAt(d) ? 'Sit_Floor_Idle' : 'Idle');
   }
   // the camera walks with you until you take it
   const mine = avatars[myUid()];
-  if (follow && mine?.data?.path?.length && !fly) { const tg = mine.g.position; controls.target.x += (tg.x - controls.target.x) * Math.min(1, dt * 2); controls.target.z += (tg.z - controls.target.z) * Math.min(1, dt * 2); }
+  if (follow && predicted()?.c?.path?.length && !fly) { const tg = mine.g.position; controls.target.x += (tg.x - controls.target.x) * Math.min(1, dt * 2); controls.target.z += (tg.z - controls.target.z) * Math.min(1, dt * 2); }
 }
 const sittingAt = d => !!XV?.hearths?.[W4W.key(d.q, d.r)] && XV.hearths[W4W.key(d.q, d.r)].until > xnow();
 const hms = ms => { ms = Math.max(0, ms); const h = Math.floor(ms / 36e5), m = Math.floor(ms % 36e5 / 6e4), s = Math.floor(ms % 6e4 / 1e3); return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`; };
@@ -2641,6 +2762,13 @@ function syncHearths() {
     if (lit) { const f = sprite(GLOW, p.x, 0.32, p.z, 1.0, 0xff9a3c, 1); f.userData.flicker = true; objs.push(f, glowDecal(p.x, p.z, 2.2, 0xffb060, 0.6)); }
     objs.L = label(`${h.nick}'s hearth`, wood, 0.9, lit ? 'key' : 'demo'); objs.sig = sig; hearthFx[k] = objs;
   }
+}
+const noteFx = {};
+function stepNotes() {
+  const c = predicted()?.c; if (!c) return;
+  for (const n of NOTES) { const show = notesFound.includes(n.id) || W4W.dist([c.q, c.r], n.at) <= 3;
+    if (show && !noteFx[n.id]) { const p = HX(...n.at); const g = sprite(GLOW, p.x + 0.3, 0.18, p.z + 0.25, 0.32, 0xe6f2ff, 0.9); g.userData.blink = !notesFound.includes(n.id); noteFx[n.id] = g; }
+    if (noteFx[n.id]) noteFx[n.id].visible = show; }
 }
 function syncBags() {
   const seen = new Set();
@@ -2680,16 +2808,18 @@ function walkTo(k, id) {
   if (pr.c.frozenUntil > xnow()) { say('You are frozen. Your body lies at home until it thaws.', 'Wastes'); return true; }
   const here = W4W.cellAt(pr.c, xnow());
   if (!pr.c.path.length && W4W.dist(here, cell) <= 1) { openKind(k, id); return true; }
-  pendingOpen = { kind: k, id, cell }; closePanel(); follow = true; xact('move', { to: cell }); say(`Walking there. It opens when you arrive.`, 'Wastes'); return true;
+  pendingOpen = { kind: k, id, cell }; closePanel(); follow = true; trip = null; drawPrints([0, 0], [], false); xact('move', { to: cell }); return true;
 }
 function clickGround(e) {
   if (!hasChar()) return false; const c = groundHex(e); if (!c) return false;
   const pr = predicted(); const here = W4W.cellAt(pr.c, xnow());
   if (pr.c.frozenUntil > xnow()) { say('You are frozen. Nothing thaws you faster.', 'Wastes'); return true; }
   if (!pr.c.path.length && W4W.dist(here, c) <= 1 && W4W.resourceOf(...c) && !(XV.nodes[W4W.key(...c)] > xnow())) { xact('gather', { at: c }); return true; }
-  if (c[0] === here[0] && c[1] === here[1]) return true;
+  if (c[0] === here[0] && c[1] === here[1]) { const n = noteAt(...c); if (n && !pr.c.path.length) readNote(n); return true; }
   if (W4W.ringOf(...c) > W4W.MAX_RING) { say('Beyond the Stone Teeth the cold has no edge. Not yet.', 'Wastes'); return true; }
-  pendingOpen = null; follow = true; xact('move', { to: c }); return true;
+  // the second click on the same place is your yes
+  if (trip && trip.to[0] === c[0] && trip.to[1] === c[1]) { goTrip(); return true; }
+  pendingOpen = null; planTo(c); return true;
 }
 
 /* ---------- the survival HUD and the actions where you stand ---------- */
@@ -2697,7 +2827,8 @@ const hudEl = document.createElement('div'); hudEl.id = 'hud'; hudEl.hidden = tr
 const actEl = document.createElement('div'); actEl.id = 'xact'; actEl.hidden = true; document.body.appendChild(actEl);
 const frostEl = document.createElement('div'); frostEl.id = 'frostfx'; document.body.appendChild(frostEl);
 const diedEl = document.createElement('div'); diedEl.id = 'died'; diedEl.hidden = true; document.body.appendChild(diedEl);
-let hudT = 0, actSig = '';
+let hudT = 0, actSig = '', etaT = 0, eta = 0, printSig = ''; const seenEv = new Set();
+function drawPrintsOnce(c) { const sig = c.q + ',' + c.r + ':' + c.path.length; if (sig === printSig) return; printSig = sig; drawPrints([c.q, c.r], c.path, W4W.zoneOf(...c.path.at(-1)) >= 1); }
 const bar = (n, v, max, cls) => `<div class="hb ${cls}"><i>${n}</i><b style="width:${Math.max(0, Math.min(100, v / max * 100))}%"></b><span>${Math.round(v)}</span></div>`;
 function hud(force) {
   const now = performance.now(); if (!force && now - hudT < 250) return; hudT = now;
@@ -2714,6 +2845,17 @@ function hud(force) {
   // the cold you feel on the screen
   const fx = frozen ? 0 : Math.max(0, (50 - c.warmth) / 50); frostEl.style.opacity = fx.toFixed(2);
   document.body.classList.toggle('delir', !frozen && c.warmth < 10);
+  // what happened on the way, as the screen sees it
+  for (const e of pr.events) { const id = e.kind + e.t; if (seenEv.has(id)) continue; seenEv.add(id);
+    if (e.kind === 'lost') { banner('The wind took the trail', 'You lost your way. Pick a direction again.'); say('The wind took the trail. You stand somewhere you did not choose. Pick a direction again.', 'Wastes'); }
+    if (e.kind === 'arrived' && W4W.zoneOf(e.q, e.r) >= 1) { const n = noteAt(e.q, e.r); if (n) readNote(n); else banner('You made it', W4W.zoneName(W4W.zoneOf(e.q, e.r))); } }
+  const near = frozen ? null : rimeNear(c);
+  if (near != null && near <= 3) { hudEl.insertAdjacentHTML('beforeend', `<div class="hrime">${near <= 1 ? 'It is right next to you. Move.' : 'Something tall moves in the snow nearby.'}</div>`); frostEl.style.opacity = Math.max(+frostEl.style.opacity, near <= 1 ? 0.9 : 0.5).toFixed(2); }
+  document.body.classList.toggle('rimenear', near != null && near <= 1);
+  if (near != null && near <= 3 && performance.now() - (rimeFx?.warned || 0) > 120000) { if (rimeFx) rimeFx.warned = performance.now(); say('The lights in the dark are close. It does not hunt, they say. Walk the other way.', 'Wastes'); }
+  if (c.path.length && performance.now() - etaT > 2000) { etaT = performance.now(); const nx = c.path[0], first = Math.max(0, c.t0 + c.stepMs - t);
+    eta = first + (c.path.length > 1 ? W4W.planTrip({ ...c, q: nx[0], r: nx[1] }, c.path.slice(1), c.t0 + c.stepMs, xctx()).eta : 0); }
+  if (c.path.length) drawPrintsOnce(c); else if (!trip && prints.length) drawPrints([0, 0], [], false);
   actions(c, here, t, frozen);
   if (pendingOpen && !c.path.length && !frozen) { const k = pendingOpen; pendingOpen = null; if (W4W.dist(here, k.cell) <= 1) openKind(k.kind, k.id); }
   // the screen thinks you just froze: ask the server, it has the last word
@@ -2722,7 +2864,8 @@ function hud(force) {
 function actions(c, here, t, frozen) {
   const btns = [];
   if (frozen) btns.push(`<span class="xt">Frozen. Thaws in ${hms(c.frozenUntil - t)}. Nothing makes it faster.</span>${XW?.admin?.() ? '<button class="btn" data-x="revive">Revive (admin test)</button>' : ''}`);
-  else if (c.path.length) btns.push('<span class="xt">On the way…</span><button class="btn" data-x="stop">Stop</button>');
+  else if (trip) btns.push(tripCard());
+  else if (c.path.length) btns.push(`<span class="xt">On the way to ${esc(W4W.zoneName(W4W.zoneOf(...c.path.at(-1))))} · ${c.path.length} cells left${eta > 60e3 ? ` · about ${dur(eta)}, at ${clockAt(t + eta)}` : ''}${c.lost ? ' · the wind is pulling you off the trail' : ''}</span><button class="btn" data-x="stop">Stop</button>`);
   else if (c.act && c.act.until > t) btns.push(`<span class="xt">Gathering ${c.act.res}… ${Math.ceil((c.act.until - t) / 1000)}s</span>`);
   else {
     const near = [here, ...W4W.DIRS.map(([dq, dr]) => [here[0] + dq, here[1] + dr])];
@@ -2734,7 +2877,8 @@ function actions(c, here, t, frozen) {
     if (W4W.zoneOf(...here) >= 1 && !XV.hearths[W4W.key(...here)]) btns.push(`<button class="btn ${c.inv.wood >= cost.wood && c.inv.stone >= cost.stone && c.inv.flint >= cost.flint ? 'main' : ''}" data-x="hearth">Build a hearth (${cost.wood} wood, ${cost.stone} stone, ${cost.flint} flint)</button>`);
     for (const b of XV.bags || []) if (!b.mine && W4W.dist(here, [b.q, b.r]) <= 1) btns.push(`<button class="btn main" data-x="take" data-id="${esc(b.id)}">Take ${esc(b.nick)}'s frozen pack</button>`);
     if (W4W.key(...here) === W4W.key(...c.home)) { if (W4W.weightOf(c.inv) > 0) btns.push('<button class="btn" data-x="unload">Unload at home</button>'); const st = c.stash || {}; for (const r of ['wood', 'stone', 'flint']) if ((st[r] || 0) > 0) btns.push(`<button class="btn" data-x="pack" data-res="${r}">Pack ${r} (${st[r]} home)</button>`); }
-    if (!btns.length) btns.push(`<span class="xt">${W4W.zoneOf(...here) === 0 ? 'Click the ground to walk. Out past the forest the cold begins.' : 'Click a tree or a rock next to you to gather. Click the ground to walk.'}</span>`);
+    const nt = noteAt(...here); if (nt) btns.push(`<button class="btn main" data-x="note" data-id="${nt.id}">Read the note</button>`);
+    if (!btns.length) btns.push(`<span class="xt">${W4W.zoneOf(...here) === 0 ? 'Click the ground to walk. Out past the forest the cold begins, and trips take hours.' : 'Click a tree or a rock next to you to gather. Click the ground to plan the next trip.'}</span>`);
   }
   const sig = btns.join(''); if (sig === actSig) return; actSig = sig;
   actEl.hidden = false; actEl.innerHTML = sig;
@@ -2742,8 +2886,129 @@ function actions(c, here, t, frozen) {
     const x = b.dataset.x, body = {};
     if (b.dataset.at) body.at = b.dataset.at.split(',').map(Number);
     if (b.dataset.id) body.id = b.dataset.id; if (b.dataset.res) body.res = b.dataset.res;
+    if (x === 'go') return goTrip(); if (x === 'cancel') return cancelTrip(); if (x === 'note') return readNote(NOTES.find(n => n.id === b.dataset.id));
+    if (x === 'stop') { drawPrints([0, 0], [], false); printSig = ''; }
     xact(x, body);
   });
+}
+
+/* ---------- what the ice remembers ---------- */
+const RIME_LEGEND = [
+  'The first surveyors called it weather. It is not weather. It is where the cold began, and it walks.',
+  'Nobody has drawn its face twice. Those who saw it far off speak of a darkness taller than the pines, with lights in it like eyes that never blink together.',
+  'It does not hunt. It wanders, and it listens. Most nights it comes to the forest edge and turns away, as if something pushed it back. Some say that is Anna\'s light. Some say it is only waiting for the light to fail.',
+  'Once in a long while it turns toward a heartbeat in the snow. Nobody it reached came home the same day.',
+  'The Library asks one thing of travellers: if you see it, walk the other way, and write down what you saw.',
+];
+const NOTES = [
+  { id: 'stake', seed: [2, 6], title: 'Surveyor\'s stake', text: 'Stake 14. Ground frozen two metres down. We drew the town line here: past this, nothing grows. The instruments hum when you point them north. Noted, not explained.' },
+  { id: 'child', seed: [-6, 7], title: 'A note in a child\'s hand', text: 'mum said dont go past the trees. i went a little bit. the snow was warm for one second. then it wasnt.' },
+  { id: 'tally', seed: [7, -9], title: 'Woodcutter\'s tally', text: 'Forty-one pines this winter. The resin smokes blue in the stove. Mira says burn it outside. I burn it outside. T.' },
+  { id: 'page', seed: [-10, 3], title: 'A torn page', text: '...we do not keep the rigs running for the coin. The coin is only how we count it. What they really make is the light, and the light is what keeps the north from walking in...' },
+  { id: 'log', seed: [4, -12], title: 'Expedition log, day three', text: 'The wind took the trail twice. Lost the Ostrava boy for an hour. Found him two cells east, walking in circles, smiling. He said he followed a lamp. We had no lamp.' },
+  { id: 'stone', seed: [-3, 14], title: 'Scratched into a stone', text: 'IT STOPPED WHEN I STOPPED' },
+  { id: 'letter', seed: [13, -2], title: 'A last letter', text: 'If you find this, take my pack to town. Tell them the flint is good here. Tell them the cave is real. Tell them I was not afraid until the lights in the dark began to blink, one by one.' },
+  { id: 'cave', seed: [6, 9], title: 'Words cut into the last tooth', text: 'Below the last tooth there is a mouth in the mountain that breathes out. The air from it is so cold that snow will not fall into it. We call it Pure Cold. Whoever reaches it: leave your name.' },
+];
+// a note lies on the nearest open cell to its seed, the same for everyone
+NOTES.forEach(n => { const z = W4W.zoneOf(...n.seed); for (let k = 0; k <= 3 && !n.at; k++) for (const [q, r] of (k ? ring(k).map(([a, b]) => [n.seed[0] + a, n.seed[1] + b]) : [n.seed])) if (!n.at && W4W.passable(q, r) && W4W.zoneOf(q, r) === z && !W4W.resourceOf(q, r)) n.at = [q, r]; n.at ||= n.seed; });
+let notesFound = (() => { try { return JSON.parse(store.get('w4w.notes') || '[]'); } catch { return []; } })();
+const noteAt = (q, r) => NOTES.find(n => n.at[0] === q && n.at[1] === r);
+function readNote(n) {
+  if (!notesFound.includes(n.id)) { notesFound.push(n.id); store.set('w4w.notes', JSON.stringify(notesFound)); record(`${me()?.nick || 'Someone'} found a note in ${W4W.zoneName(W4W.zoneOf(...n.at))}: ${n.title.toLowerCase()}`); }
+  panel('note', n.title, `Found in ${W4W.zoneName(W4W.zoneOf(...n.at))} · ${notesFound.length} of ${NOTES.length} notes`, null,
+    `<p class="say" style="font-size:19px;line-height:1.5">${esc(n.text)}</p><p class="mute" style="font-size:12.5px">The Library keeps a copy of every note you find.</p>`);
+}
+function notesHtml() {
+  const found = NOTES.filter(n => notesFound.includes(n.id));
+  return `<h3>WHAT THE ICE KEEPS</h3>
+    <details class="lore"><summary><b>The Rime</b><span>What walks the Wastes, as far as anyone knows</span></summary>${RIME_LEGEND.map(p => `<p>${esc(p)}</p>`).join('')}</details>
+    ${found.map(n => `<details class="lore"><summary><b>${esc(n.title)}</b><span>Found in ${W4W.zoneName(W4W.zoneOf(...n.at))}</span></summary><p>${esc(n.text)}</p></details>`).join('')}
+    <p class="mute" style="font-size:12.5px">${found.length} of ${NOTES.length} notes found. The rest are still out in the Wastes.</p>`;
+}
+
+/* ---------- the Rime, drawn: a tall dark thing with too many lights in it ---------- */
+function rimeTexture() {
+  const W = 512, H = 832, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d');
+  let seed = 4242; const rr = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+  const half = k => (k < 0.55 ? 150 - k * 150 : k < 0.8 ? 68 + Math.sin((k - 0.55) / 0.25 * Math.PI) * 40 : 70 - (k - 0.8) * 230); // base, waist, a bowed head
+  const lean = k => Math.sin(k * 4.4) * 22 + k * k * 40;
+  // the solid mass: a hunched shape, too tall, edges that never sit still
+  g.fillStyle = 'rgba(3,5,12,0.93)'; g.beginPath();
+  for (let i = 0; i <= 60; i++) { const k = i / 60, y = H - k * H * 0.9; g.lineTo(W / 2 + lean(k) - half(k) - rr() * 14, y); }
+  for (let i = 60; i >= 0; i--) { const k = i / 60, y = H - k * H * 0.9; g.lineTo(W / 2 + lean(k) + half(k) + rr() * 14, y); }
+  g.closePath(); g.fill();
+  // smoke around it, so the edge is never a line
+  for (let i = 0; i < 520; i++) { const k = rr() * 0.92, y = H - k * H * 0.9, x = W / 2 + lean(k) + (rr() - 0.5) * 2.3 * half(k), rad = 8 + rr() * 30;
+    const grd = g.createRadialGradient(x, y, 0, x, y, rad); grd.addColorStop(0, 'rgba(4,6,14,.28)'); grd.addColorStop(1, 'rgba(4,6,14,0)'); g.fillStyle = grd; g.beginPath(); g.arc(x, y, rad, 0, 7); g.fill(); }
+  // a crown of branches, like antlers grown from ice
+  g.lineCap = 'round';
+  const branch = (x, y, ang, w, depth) => { for (let s = 0; s < 14 && w > 0.6; s++) { const nx = x + Math.cos(ang) * 7, ny = y + Math.sin(ang) * 7; g.strokeStyle = 'rgba(4,7,16,.9)'; g.lineWidth = w; g.beginPath(); g.moveTo(x, y); g.lineTo(nx, ny); g.stroke(); x = nx; y = ny; ang += (rr() - 0.5) * 0.35; w *= 0.9; if (depth < 3 && rr() < 0.16) branch(x, y, ang + (rr() < 0.5 ? -0.6 : 0.6), w * 0.8, depth + 1); } };
+  for (let i = 0; i < 7; i++) branch(W / 2 + lean(0.86) + (i - 3) * 16, H - 0.86 * H * 0.9, -Math.PI / 2 + (i - 3) * 0.22, 9, 0);
+  // tendrils dragging in the snow
+  for (let i = 0; i < 16; i++) { let x = W / 2 + (rr() - 0.5) * 240, y = H * (0.86 + rr() * 0.12), ang = (x < W / 2 ? Math.PI : 0) + (rr() - 0.5) * 0.6, w = 11;
+    for (let s = 0; s < 34 && w > 0.5; s++) { const nx = x + Math.cos(ang) * 6, ny = y + Math.sin(ang) * 3; g.strokeStyle = `rgba(5,8,18,${0.4 + w / 30})`; g.lineWidth = w; g.beginPath(); g.moveTo(x, y); g.lineTo(nx, ny); g.stroke(); x = nx; y = ny; ang += (rr() - 0.5) * 0.4; w *= 0.92; } }
+  // the lights: most in the bowed head, a few lower, three of them large
+  for (let i = 0; i < 44; i++) {
+    const big = i < 3, k = i < 30 ? 0.6 + rr() * 0.22 : 0.2 + rr() * 0.4, y = H - k * H * 0.9, x = W / 2 + lean(k) + (rr() - 0.5) * 1.5 * half(k), rad = big ? 7 + rr() * 5 : 1.5 + rr() * 3.2;
+    const grd = g.createRadialGradient(x, y, 0, x, y, rad * 3); grd.addColorStop(0, 'rgba(235,250,255,1)'); grd.addColorStop(0.3, 'rgba(140,215,255,.85)'); grd.addColorStop(1, 'rgba(80,160,255,0)');
+    g.fillStyle = grd; g.beginPath(); g.arc(x, y, rad * 3, 0, 7); g.fill();
+  }
+  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; return t;
+}
+let rimeFx = null;
+function buildRime() {
+  const mat = new THREE.SpriteMaterial({ map: rimeTexture(), transparent: true, depthWrite: false, fog: false, opacity: 0.95 });
+  const s = new THREE.Sprite(mat); s.center.set(0.5, 0.02); s.scale.set(5.4, 8.8, 1); s.renderOrder = 4;
+  const mist = sprite(GLOW, 0, 0.15, 0, 2.4, 0x6aa0ff, 0.22); scene.remove(mist);
+  const g = new THREE.Group(); g.add(s, mist); scene.add(g); g.visible = false;
+  rimeFx = { g, s, mist, p: new THREE.Vector3(), warned: 0 };
+}
+function stepRime(dt) {
+  const R = XV?.rime; if (!R) { if (rimeFx) rimeFx.g.visible = false; return; }
+  if (!rimeFx) buildRime();
+  const t = xnow(), n = R.next || R, e = THREE.MathUtils.clamp((t - R.t) / W4W.RIME_MS, 0, 1);
+  const want = HX(R.q, R.r).lerp(HX(n.q, n.r), e * e * (3 - 2 * e));
+  if (!rimeFx.g.visible) { rimeFx.p.copy(want); rimeFx.g.visible = true; } else rimeFx.p.lerp(want, Math.min(1, dt * 0.8));
+  const k = U.uTime.value;
+  rimeFx.g.position.set(rimeFx.p.x + Math.sin(k * 0.37) * 0.25, 0, rimeFx.p.z + Math.cos(k * 0.29) * 0.25);
+  rimeFx.s.material.rotation = Math.sin(k * 0.21) * 0.035;
+  rimeFx.s.scale.set(5.4 + Math.sin(k * 0.6) * 0.18, 8.8 + Math.sin(k * 0.45 + 1) * 0.35, 1);
+  rimeFx.s.material.opacity = 0.82 + Math.sin(k * 3.1) * 0.05 + (Math.sin(k * 17) > 0.97 ? -0.3 : 0);
+}
+/** How close it is to you, in cells, when you are out in the Wastes; null otherwise. */
+function rimeNear(c) {
+  const R = XV?.rime; if (!R || !c || W4W.zoneOf(c.q, c.r) < 1) return null;
+  return W4W.dist([c.q, c.r], [R.q, R.r]);
+}
+
+/* ---------- trips: a route in footprints, an arrival time, and your yes ---------- */
+let trip = null; const prints = [];
+const PRINT_GEO = new THREE.CircleGeometry(0.15, 10), PRINT_MAT = new THREE.MeshBasicMaterial({ color: 0xffd6a0, transparent: true, opacity: 0.75, depthWrite: false }), PRINT_COLD = new THREE.MeshBasicMaterial({ color: 0xcfe6ff, transparent: true, opacity: 0.85, depthWrite: false });
+function drawPrints(from, path, cold) {
+  prints.splice(0).forEach(m => scene.remove(m));
+  let a = HX(...from);
+  for (const c of path) { const b = HX(...c); for (let i = 1; i <= 3; i++) { const m = new THREE.Mesh(PRINT_GEO, cold ? PRINT_COLD : PRINT_MAT); m.rotation.x = -Math.PI / 2; m.position.copy(a).lerp(b, i / 3); m.position.y = 0.03; m.renderOrder = 2; scene.add(m); prints.push(m); } a = b; }
+}
+const dur = ms => { ms = Math.max(0, ms); const h = Math.floor(ms / 36e5), m = Math.round(ms % 36e5 / 6e4); return h ? `${h} h ${String(m).padStart(2, '0')} min` : ms < 60e3 ? `${Math.max(1, Math.round(ms / 1000))} s` : `${m} min`; };
+const clockAt = ms => new Date(ms).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+function planTo(to) {
+  const pr = predicted(); const c = pr.c, t = xnow();
+  const path = W4W.findPath([c.q, c.r], to); if (!path) { say('No way through from here.', 'Wastes'); return; }
+  if (!path.length) return;
+  if (path.length > 90) { say('Too far for one walk. Go in stages.', 'Wastes'); return; }
+  const leaves = path.some(([q, r]) => W4W.zoneOf(q, r) >= 1) || W4W.zoneOf(c.q, c.r) >= 1;
+  if (!leaves) { trip = null; drawPrints([c.q, c.r], [], false); follow = true; xact('move', { to }); return; }
+  const p = W4W.planTrip(c, path, t, xctx());
+  trip = { to, path, p, at: t }; drawPrints([c.q, c.r], path, true); actSig = ''; hud(true);
+}
+function goTrip() { if (!trip) return; const to = trip.to; trip = null; follow = true; pendingOpen = null; actSig = ''; xact('move', { to }); }
+function cancelTrip() { trip = null; drawPrints([0, 0], [], false); actSig = ''; hud(true); }
+function tripCard() {
+  const { path, p, to } = trip, zone = W4W.zoneName(W4W.zoneOf(...to)), wx = W4W.weatherAt(xnow());
+  const fate = p.froze ? `<b class="bad">You would freeze on the way</b> (${esc(p.cause)}).` : `You arrive with about <b>${Math.round(p.warmth)} warmth</b>${p.health < 99 ? ` and ${Math.round(p.health)} health` : ''}.`;
+  return `<span class="xt trip"><b>${esc(zone)}</b> · ${path.length} cells · about <b>${dur(p.eta)}</b>, at ${clockAt(xnow() + p.eta)}. ${fate}${wx.id === 'calm' ? ' If the weather turns, it takes longer, and the wind can take the trail.' : ` ${wx.name} now: the trail can be lost.`}</span>
+    <button class="btn main" data-x="go">Set out</button><button class="btn" data-x="cancel">Cancel</button>`;
 }
 
 /* ---------- you died ---------- */
@@ -2755,7 +3020,7 @@ function checkDeath() {
   record(`${me()?.nick || 'Someone'} froze in ${zone}: ${d.cause}`);
   if (!fresh) return;
   diedEl.hidden = false; diedEl.className = 'on';
-  diedEl.innerHTML = `<div class="dwrap"><h1>YOU DIED</h1><p class="dsub">Frozen in ${esc(zone)}. ${esc(d.cause.charAt(0).toUpperCase() + d.cause.slice(1))}.</p>
+  diedEl.innerHTML = `<div class="dwrap"><h1>YOU DIED</h1><p class="dsub">${d.cause.startsWith('the Rime') ? `In ${esc(zone)}, the Rime passed through you. There was no cold to feel; there was nothing at all.` : `Frozen in ${esc(zone)}. ${esc(d.cause.charAt(0).toUpperCase() + d.cause.slice(1))}.`}</p>
     <p class="dsub">You lie at home in the ice for 24 hours. Nothing thaws you faster. Your rig keeps working.</p>
     <p class="dsub">Your pack stays where you fell for 24 hours. You cannot open it; someone else can carry it home.</p>
     <button class="btn" id="dOk">Back to town</button></div>`;
@@ -2874,7 +3139,7 @@ function loop(now = performance.now()) {
   spriteCache.forEach(o => { {
     if (o.userData.flicker) { if (o.userData.flare) { o.userData.flare = Math.max(0, o.userData.flare - dt * 0.6); } const f = o.userData.flare || 0; o.material.opacity = 0.8 + Math.sin(t * 13) * 0.08 + Math.sin(t * 7.3) * 0.1; o.scale.setScalar(1.1 + f * 1.2 + (S.town.fire || 0) * 0.08); }
     if (o.userData.blink) o.material.opacity = 0.35 + 0.65 * (Math.sin(t * 4) > 0 ? 1 : 0.2); } });
-  stepAvatars(dt); hud();
+  stepAvatars(dt); hud(); if (XV) { stepRime(dt); if ((tick & 15) === 0) stepNotes(); }
   for (const k in walkers) { const w = walkers[k]; w.g.position.lerp(w.target, Math.min(1, dt * 1.5)); w.g.position.y = 0; w.light.position.set(w.g.position.x + 0.15, 0.45, w.g.position.z); }
   if (fly) { fly.t = Math.min(1, fly.t + dt * 0.9); const k = 1 - Math.pow(1 - fly.t, 3);
     const tgt = fly.from.clone().lerp(fly.to, k); const off = camera.position.clone().sub(controls.target).normalize().multiplyScalar(fly.d0 + (fly.d1 - fly.d0) * k);
@@ -2884,5 +3149,5 @@ function loop(now = performance.now()) {
 }
 requestAnimationFrame(loop);
 addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); DPR = Math.min(DPR, dprFor()); renderer.setPixelRatio(DPR); composer.setPixelRatio?.(DPR); renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight); fxaaSize(); });
-window.__w4w = { S, settle, X: () => ({ XV, avatars, predicted, xact, hexAt, warp: ms => XW.warp?.(ms) }), freePlots, openMaria, ask, addWood, refreshTown, draft: v => (draft = v), camera, controls, updateIce, renderer, scene, __composer: LITE ? null : composer };
+window.__w4w = { S, settle, X: () => ({ XV, avatars, predicted, xact, hexAt, warp: ms => XW.warp?.(ms), planTo, goTrip, NOTES, rimeFx, openLibrary, trip, prints: prints.length, unfollow: () => { follow = false; } }), freePlots, openMaria, ask, addWood, refreshTown, draft: v => (draft = v), camera, controls, updateIce, renderer, scene, __composer: LITE ? null : composer };
 </script>

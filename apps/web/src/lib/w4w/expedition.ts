@@ -7,19 +7,20 @@ import * as W from './world'
  * loads the world, lets the rules run, and writes back what changed. The server walks every character and
  * counts the cold even while their tab is closed.
  */
-export const KX = { chars: 'w4w:c:chars', hearths: 'w4w:c:hearths', bags: 'w4w:c:bags', nodes: 'w4w:c:nodes' }
+export const KX = { chars: 'w4w:c:chars', hearths: 'w4w:c:hearths', bags: 'w4w:c:bags', nodes: 'w4w:c:nodes', rime: 'w4w:c:rime' }
 
 const safe = (v: string | null | undefined) => { if (!v) return null; try { return JSON.parse(v) } catch { return null } }
 const parseAll = <T>(m: unknown) => Object.fromEntries(Object.entries(pairs(m)).map(([k, v]) => [k, safe(v) as T]).filter(([, v]) => v)) as Record<string, T>
 
 async function load(now = Date.now()): Promise<W.WState> {
-  const [h, c, he, b, n, o, alive] = await pipe([
+  const [h, c, he, b, n, o, alive, rm] = await pipe([
     ['HGETALL', K.houses], ['HGETALL', KX.chars], ['HGETALL', KX.hearths], ['HGETALL', KX.bags], ['HGETALL', KX.nodes], ['HGETALL', K.orders],
     ['ZRANGEBYSCORE', K.presence, now - 30_000, '+inf'],
+    ['GET', KX.rime],
   ])
   const orders = parseAll<{ state?: string }>(o)
   const nodes = Object.fromEntries(Object.entries(pairs(n)).map(([k, v]) => [k, Number(v)]).filter(([, v]) => (v as number) > now)) as Record<string, number>
-  return { now, houses: parseAll<W.HouseLite>(h), chars: parseAll<W.Char>(c), hearths: parseAll<W.Hearth>(he), bags: parseAll<W.Bag>(b), nodes, online: ((alive as string[]) ?? []).length, doneOrders: Object.values(orders).filter(x => x.state === 'done').length }
+  return { now, houses: parseAll<W.HouseLite>(h), chars: parseAll<W.Char>(c), hearths: parseAll<W.Hearth>(he), bags: parseAll<W.Bag>(b), nodes, online: ((alive as string[]) ?? []).length, doneOrders: Object.values(orders).filter(x => x.state === 'done').length, rime: (safe(rm as string | null) as W.Rime | null) ?? undefined }
 }
 
 async function save(ws: W.WState, d: W.Dirty) {
@@ -29,6 +30,7 @@ async function save(ws: W.WState, d: W.Dirty) {
   for (const id of d.bags) if (ws.bags[id]) cmds.push(['HSET', KX.bags, id, JSON.stringify(ws.bags[id])])
   for (const id of d.bagsGone) cmds.push(['HDEL', KX.bags, id])
   for (const k of d.nodes) cmds.push(['HSET', KX.nodes, k, ws.nodes[k] ?? 0])
+  if (d.rime && ws.rime) cmds.push(['SET', KX.rime, JSON.stringify(ws.rime)])
   for (const f of d.feed) cmds.push(['LPUSH', K.events, JSON.stringify({ ...f, tab: 'server' })])
   if (d.feed.length) cmds.push(['LTRIM', K.events, 0, 99])
   if (cmds.length) await pipe(cmds)
@@ -46,7 +48,7 @@ export async function worldFor(uid: string) {
 export async function revive(uid: string) {
   const ws = await load(); const d = W.newDirty()
   const c = ws.chars[uid]; if (!c) return { ok: false as const, error: 'No character yet.' }
-  Object.assign(c, { frozenUntil: 0, warmth: 100, health: 100, energy: 100, q: c.home[0], r: c.home[1], path: [], act: null, t0: ws.now, simT: ws.now })
+  Object.assign(c, { frozenUntil: 0, warmth: 100, health: 100, energy: 100, q: c.home[0], r: c.home[1], path: [], act: null, lost: false, t0: ws.now, simT: ws.now })
   d.chars.add(uid); await save(ws, d)
   return { ok: true as const, data: W.viewOf(ws, uid) }
 }

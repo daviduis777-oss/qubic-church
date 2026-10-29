@@ -25,6 +25,7 @@ export type Char = {
   inv: Inv
   act: Act
   died?: { t: number; q: number; r: number; cause: string; zone: number } | null
+  lost?: boolean // the wind took the trail: this step leads somewhere you did not choose
 }
 export type Ctx = {
   heatR: number // radius of the town's warm circle, world units
@@ -34,20 +35,33 @@ export type Ctx = {
   home: string // key of this character's own house
   hearths: Record<string, number> // key -> burning until (ms)
   insulation: number
+  rime?: [number, number, number][] // where the Rime stood: [since t, q, r], oldest first
+  noDrift?: boolean // planning a trip: no wind luck
 }
 export type Event =
   | { kind: 'arrived'; t: number; q: number; r: number }
   | { kind: 'froze'; t: number; q: number; r: number; cause: string; zone: number; inv: Inv }
   | { kind: 'gathered'; t: number; q: number; r: number; res: keyof Inv }
   | { kind: 'thawed'; t: number }
+  | { kind: 'lost'; t: number; q: number; r: number }
 
-export const STEP_MS = 3_000 // a small figure jogging from one cell to the next
+export const STEP_MS = 3_000 // one cell inside the town, calm weather
+/** How long one cell takes, by the zone you step into: quick between houses, hours across the Wastes. */
+export const ZONE_STEP_MS = [3_000, 15 * 60_000, 20 * 60_000, 30 * 60_000] as const
+export const WX_SLOW = { calm: 1, wind: 1.5, blizzard: 2.5 } as const
+/** Chance per step out in the Wastes that the wind takes the trail and you lose your way. */
+export const DRIFT = { calm: 0, wind: 0.15, blizzard: 0.4 } as const
+/** The Rime: what walks the Wastes. Anna's light keeps it past the forest edge. */
+export const RIME_MS = 8 * 60_000
+export const RIME_MIN_RING = 7
+export const RIME_PULL = 0.05
 export const MAX_RING = 16
 export const FREEZE_MS = 24 * 3600_000
 export const BAG_MS = 24 * 3600_000
-export const GATHER_MS = 45_000
+export const GATHER_MS = 2 * 60_000
 export const NODE_COOLDOWN_MS = 20 * 60_000
-export const LOSS_K = 0.6 // warmth lost per minute per point of cold not covered
+export const LOSS_K = 0.15 // warmth lost per minute per point of cold not covered (trips last hours)
+export const FROSTBITE = 0.5 // health lost per minute below 25 warmth
 export const INSULATION_T1 = 22
 export const WEIGHT: Inv = { wood: 2, stone: 3, flint: 0.2, resin: 0.3 }
 export const CAPACITY = 14 // pockets 6 + canvas sack 8
@@ -171,14 +185,52 @@ export function findPath(a: Cell, b: Cell, limit = 4000): Cell[] | null {
 }
 
 export function newChar(home: Cell, now: number): Char {
-  return { v: 1, q: home[0], r: home[1], path: [], t0: now, stepMs: STEP_MS, warmth: 100, health: 100, energy: 100, simT: now, frozenUntil: 0, home, inv: emptyInv(), act: null, died: null }
+  return { v: 1, q: home[0], r: home[1], path: [], t0: now, stepMs: STEP_MS, lost: false, warmth: 100, health: 100, energy: 100, simT: now, frozenUntil: 0, home, inv: emptyInv(), act: null, died: null }
 }
 /** Where a walking character stands at time t (the cell it last reached). */
-export function cellAt(c: Char, t: number): Cell {
-  if (!c.path.length) return [c.q, c.r]
-  const i = Math.floor((t - c.t0) / c.stepMs)
-  if (i <= 0) return [c.q, c.r]
-  return c.path[Math.min(i, c.path.length) - 1]!
+export function cellAt(c: Char, _t?: number): Cell { return [c.q, c.r] }
+
+/** How long the next step takes, from the weather at the moment you set out on it. */
+export function stepDur(to: Cell, t: number, load: number, netStorm = false) {
+  const z = Math.min(3, zoneOf(to[0], to[1])), w = weatherAt(t, netStorm).id as keyof typeof WX_SLOW
+  const slow = z === 0 ? (w === 'calm' ? 1 : w === 'wind' ? 5 / 3 : 8 / 3) : WX_SLOW[w]
+  return Math.round(ZONE_STEP_MS[z]! * slow * (load > CAPACITY ? 1.5 : 1))
+}
+/** Start the step toward path[0] at time t. In wind and blizzard, out in the Wastes, the trail can be lost. */
+export function beginStep(c: Char, t: number, ctx: Ctx) {
+  c.t0 = t
+  if (!c.path.length) return
+  const w = weatherAt(t, ctx.netStorm).id as keyof typeof DRIFT, next = c.path[0]!
+  if (!ctx.noDrift && Math.max(zoneOf(c.q, c.r), zoneOf(next[0], next[1])) >= 1 && hash(Math.floor(t / 1000), c.q * 131 + c.r, 17) < DRIFT[w]) {
+    const opts = DIRS.map(([dq, dr]) => [c.q + dq, c.r + dr] as Cell).filter(x => passable(x[0], x[1]) && !(x[0] === next[0] && x[1] === next[1]))
+    if (opts.length) { c.path = [opts[Math.floor(hash(Math.floor(t / 1000), 3, 19) * opts.length)]!]; c.lost = true }
+  }
+  c.stepMs = stepDur(c.path[0]!, t, weightOf(c.inv), ctx.netStorm)
+}
+export function rimeAt(trail: [number, number, number][] | undefined, t: number): Cell | null {
+  if (!trail?.length) return null
+  let cur = trail[0]!
+  for (const e of trail) { if (e[0] <= t) cur = e; else break }
+  return [cur[1], cur[2]]
+}
+
+/* ---------- the Rime ---------- */
+export type Rime = { q: number; r: number; t: number; d: number }
+const rimeOk = (q: number, r: number) => { const n = ringOf(q, r); return n >= RIME_MIN_RING && n <= MAX_RING && passable(q, r) }
+/** One move of the Rime. It wanders without a goal; once in a while it turns toward someone out in the cold. */
+export function rimeStep(th: Rime, targets: Cell[]): Rime {
+  const s = Math.floor(th.t / RIME_MS) + 1, t = s * RIME_MS
+  const h = hash(s, 1, 101), h2 = hash(s, 2, 103), h3 = hash(s, 3, 107)
+  const here: Cell = [th.q, th.r]
+  const prey = targets.filter(c => zoneOf(c[0], c[1]) >= 1 && dist(c, here) <= 8).sort((a, b) => dist(a, here) - dist(b, here))[0]
+  const opts = DIRS.map(([dq, dr], i) => ({ i, c: [th.q + dq, th.r + dr] as Cell })).filter(o => rimeOk(o.c[0], o.c[1]))
+  if (!opts.length) return { q: 12, r: -6, t, d: th.d }
+  if (prey && h < RIME_PULL) { const o = opts.sort((a, b) => dist(a.c, prey) - dist(b.c, prey))[0]!; return { q: o.c[0], r: o.c[1], t, d: o.i } }
+  if (h2 > 0.88) return { ...th, t } // it stops, as if listening
+  let d = th.d
+  if (h3 < 0.3) d = (d + (h3 < 0.15 ? 1 : 5)) % 6
+  const ahead = opts.find(o => o.i === d) ?? opts[Math.floor(h3 * opts.length)]!
+  return { q: ahead.c[0], r: ahead.c[1], t, d: ahead.i }
 }
 
 /**
@@ -190,53 +242,65 @@ export function advance(c0: Char, now: number, ctx: Ctx): { c: Char; events: Eve
   if (c.frozenUntil) {
     if (now < c.frozenUntil) { c.simT = now; return { c, events } }
     const t = c.frozenUntil
-    Object.assign(c, { frozenUntil: 0, warmth: 60, health: 50, energy: 50, simT: t, q: c.home[0], r: c.home[1], path: [], act: null })
+    Object.assign(c, { frozenUntil: 0, warmth: 60, health: 50, energy: 50, simT: t, q: c.home[0], r: c.home[1], path: [], act: null, lost: false, t0: t })
     events.push({ kind: 'thawed', t })
   }
-  const busy = () => c.path.length > 0 || !!c.act
-  let steps = c.path.length ? Math.max(0, Math.min(c.path.length, Math.floor((c.simT - c.t0) / c.stepMs))) : 0
-  for (let t = c.simT, DT = 5_000; t < now; t += DT) {
-    DT = busy() ? 2_000 : 60_000
+  let t = c.simT
+  while (t < now) {
+    const DT = c.path.length ? Math.min(30_000, Math.max(1_000, c.stepMs / 6)) : c.act ? 5_000 : 60_000
     const t1 = Math.min(now, t + DT), mins = (t1 - t) / 60_000
-    // walking: count the steps finished in this slice
-    if (c.path.length) {
-      const done = Math.max(0, Math.min(c.path.length, Math.floor((t1 - c.t0) / c.stepMs)))
-      if (done > steps) {
-        const over = weightOf(c.inv) > CAPACITY ? 2 : 1
-        c.energy = Math.max(0, c.energy - (done - steps) * over); steps = done
-      }
-      if (done >= c.path.length) {
-        const [q, r] = c.path.at(-1)!; c.q = q; c.r = r; c.path = []; steps = 0
-        events.push({ kind: 'arrived', t: t1, q, r })
-      }
+    // walking: finish every step that is due, then set out on the next one
+    while (c.path.length && c.t0 + c.stepMs <= t1) {
+      const te = c.t0 + c.stepMs, [q, r] = c.path.shift()!
+      c.q = q; c.r = r
+      c.energy = Math.max(0, c.energy - (weightOf(c.inv) > CAPACITY ? 2 : 1))
+      if (c.lost) { c.lost = false; c.path = []; c.t0 = te; events.push({ kind: 'lost', t: te, q, r }) }
+      else if (c.path.length) beginStep(c, te, ctx)
+      else { c.t0 = te; events.push({ kind: 'arrived', t: te, q, r }) }
     }
     if (c.act && t1 >= c.act.until) {
       const a = c.act; c.act = null
       c.inv[a.res] = (c.inv[a.res] || 0) + 1
       events.push({ kind: 'gathered', t: a.until, q: a.q, r: a.r, res: a.res })
     }
-    const [q, r] = cellAt(c, t1)
+    const q = c.q, r = c.r, zone = zoneOf(q, r)
     const cold = coldAt(q, r, t1, ctx), src = sourceAt(q, r, t1, ctx)
     const tired = c.energy <= 0 ? 1.25 : 1
     const loss = Math.max(0, cold - ctx.insulation) * LOSS_K * tired
     c.warmth = Math.min(100, Math.max(0, c.warmth + (src - loss) * mins))
-    if (c.warmth < 25) c.health = Math.max(0, c.health - 1 * mins)
+    if (c.warmth < 25) c.health = Math.max(0, c.health - FROSTBITE * mins)
     const atHome = key(q, r) === ctx.home
     if (atHome && !c.path.length) c.health = Math.min(100, c.health + 0.1 * mins)
     if (src > 0 && !c.path.length) c.energy = Math.min(100, c.energy + (src >= 6 ? 10 : 5) / 60 * mins)
-    if (!busy() && src > 0 && c.warmth >= 100 && c.health >= 100 && c.energy >= 100) break
-    if (c.warmth <= 0 || c.health <= 0) {
-      const zone = zoneOf(q, r), w = weatherAt(t1, ctx.netStorm)
-      const cause = c.health <= 0 && c.warmth > 0 ? 'frostbite' : `cold ${Math.round(cold)} against clothing ${ctx.insulation}${w.id === 'calm' ? '' : `, ${w.name.toLowerCase()} ×${w.mult}`}`
+    const rime = zone >= 1 ? rimeAt(ctx.rime, t1) : null
+    const taken = !!rime && rime[0] === q && rime[1] === r
+    if (taken || c.warmth <= 0 || c.health <= 0) {
+      const w = weatherAt(t1, ctx.netStorm)
+      const cause = taken ? 'the Rime passed through you' : c.health <= 0 && c.warmth > 0 ? 'frostbite' : `cold ${Math.round(cold)} against clothing ${ctx.insulation}${w.id === 'calm' ? '' : `, ${w.name.toLowerCase()} ×${w.mult}`}`
       events.push({ kind: 'froze', t: t1, q, r, cause, zone, inv: { ...c.inv } })
       c.died = { t: t1, q, r, cause, zone }
-      Object.assign(c, { frozenUntil: t1 + FREEZE_MS, warmth: 0, path: [], act: null, q: c.home[0], r: c.home[1], inv: emptyInv(), simT: now })
+      Object.assign(c, { frozenUntil: t1 + FREEZE_MS, warmth: 0, path: [], act: null, lost: false, q: c.home[0], r: c.home[1], inv: emptyInv(), simT: now, t0: t1 })
       return { c, events }
     }
+    t = t1
+    if (!c.path.length && !c.act && src > 0 && c.warmth >= 100 && c.health >= 100 && c.energy >= 100) break
   }
   c.simT = now
-  if (c.path.length === 0) { c.t0 = now }
   return { c, events }
+}
+
+/** What a trip would cost if the wind leaves you alone: when you arrive, and with how much warmth. */
+export function planTrip(c0: Char, path: Cell[], now: number, ctx: Ctx) {
+  const c: Char = JSON.parse(JSON.stringify(c0)); const cx = { ...ctx, noDrift: true, rime: undefined }
+  c.path = path.slice(); c.act = null; c.lost = false; c.simT = now; beginStep(c, now, cx)
+  let t = now, out = { eta: 0, warmth: c.warmth, health: c.health, froze: false, cause: '' }
+  for (let i = 0; i < 96 && c.path.length; i++) {
+    t += 3_600_000
+    const r = advance(c, t, cx); Object.assign(c, r.c)
+    const f = r.events.find(e => e.kind === 'froze'); if (f && f.kind === 'froze') return { ...out, eta: f.t - now, froze: true, cause: f.cause }
+    const a = r.events.find(e => e.kind === 'arrived'); if (a) return { eta: a.t - now, warmth: c.warmth, health: c.health, froze: false, cause: '' }
+  }
+  return { ...out, eta: t - now }
 }
 
 /** Town warmth on the server, the same sum the game draws on the meter. */
@@ -269,9 +333,11 @@ export type WState = {
   nodes: Record<string, number>
   online: number
   doneOrders: number
+  rime?: Rime
+  rimeTrail?: [number, number, number][] // computed on load, not stored
 }
 export type Feed = { id: string; t: number; topic: 'froze' | 'hearth' | 'took'; by: string; data: Record<string, unknown> }
-export type Dirty = { chars: Set<string>; hearths: Set<string>; bags: Set<string>; bagsGone: Set<string>; nodes: Set<string>; feed: Feed[] }
+export type Dirty = { chars: Set<string>; hearths: Set<string>; bags: Set<string>; bagsGone: Set<string>; nodes: Set<string>; feed: Feed[]; rime?: boolean }
 export const newDirty = (): Dirty => ({ chars: new Set(), hearths: new Set(), bags: new Set(), bagsGone: new Set(), nodes: new Set(), feed: [] })
 
 export function townOfState(ws: WState) {
@@ -284,7 +350,7 @@ export function ctxOf(ws: WState, uid: string): Ctx {
   const t = townOfState(ws)
   const cells = Object.values(ws.houses).filter(x => x.q != null && x.r != null).map(x => [x.q!, x.r!] as Cell)
   const home = ws.chars[uid]?.home ?? [ws.houses[uid]?.q ?? 0, ws.houses[uid]?.r ?? 0]
-  return { heatR: t.heatR, holds: t.holds, netStorm: false, shelters: townShelters(cells), home: key(home[0], home[1]), hearths: Object.fromEntries(Object.entries(ws.hearths).map(([k, v]) => [k, v.until])), insulation: INSULATION_T1 }
+  return { heatR: t.heatR, holds: t.holds, netStorm: false, shelters: townShelters(cells), home: key(home[0], home[1]), hearths: Object.fromEntries(Object.entries(ws.hearths).map(([k, v]) => [k, v.until])), insulation: INSULATION_T1, rime: ws.rimeTrail }
 }
 const nickIn = (ws: WState, uid: string) => ws.houses[uid]?.nick ?? 'someone'
 export const zoneName = (z: number) => (ZONES as readonly { name: string }[])[z]?.name ?? 'the far cold'
@@ -302,17 +368,30 @@ export function stepChar(ws: WState, uid: string, d: Dirty) {
   if (events.length || c.simT - c0.simT > 600_000) d.chars.add(uid)
   return events
 }
+const rimeTargets = (ws: WState) => Object.values(ws.chars).filter(c => !(c.frozenUntil > ws.now)).map(c => [c.q, c.r] as Cell)
+/** Walk the Rime up to now, one move every RIME_MS, and remember where it stood for the cold to check. */
+export function stepRime(ws: WState, d: Dirty) {
+  if (ws.rimeTrail) return
+  let th: Rime = ws.rime ?? { q: 12, r: -6, t: Math.floor(ws.now / RIME_MS) * RIME_MS, d: 2 }
+  if (ws.now - th.t > 3 * 24 * 3600_000) th = { ...th, t: Math.floor((ws.now - 3 * 24 * 3600_000) / RIME_MS) * RIME_MS }
+  const trail: [number, number, number][] = [[th.t, th.q, th.r]], targets = rimeTargets(ws)
+  while (th.t + RIME_MS <= ws.now) { th = rimeStep(th, targets); trail.push([th.t, th.q, th.r]) }
+  if (!ws.rime || th.t !== ws.rime.t) d.rime = true
+  ws.rime = th; ws.rimeTrail = trail
+}
 export function stepAll(ws: WState, d: Dirty) {
-  for (const uid of Object.keys(ws.chars)) { const c = ws.chars[uid]!; if (c.path.length || c.act || c.frozenUntil || c.warmth < 100 || c.health < 100 || c.energy < 100) stepChar(ws, uid, d) }
+  stepRime(ws, d)
+  for (const uid of Object.keys(ws.chars)) { const c = ws.chars[uid]!; if (c.path.length || c.act || c.frozenUntil || zoneOf(c.q, c.r) >= 1 || c.warmth < 100 || c.health < 100 || c.energy < 100) stepChar(ws, uid, d) }
 }
 
 export function viewOf(ws: WState, uid: string, events: Event[] = []) {
   const forecast = Array.from({ length: 7 }, (_, i) => { const at = Math.floor(ws.now / 7_200_000) * 7_200_000 + i * 7_200_000; const x = weatherAt(at); return { at, id: x.id, name: x.name, mult: x.mult } })
-  const others = Object.fromEntries(Object.entries(ws.chars).filter(([k]) => k !== uid).map(([k, c]) => [k, { q: c.q, r: c.r, path: c.path, t0: c.t0, stepMs: c.stepMs, frozenUntil: c.frozenUntil, home: c.home, nick: nickIn(ws, k), act: c.act ? { kind: c.act.kind, until: c.act.until } : null }]))
+  const others = Object.fromEntries(Object.entries(ws.chars).filter(([k]) => k !== uid).map(([k, c]) => [k, { q: c.q, r: c.r, path: c.path.slice(0, 1), t0: c.t0, stepMs: c.stepMs, frozenUntil: c.frozenUntil, home: c.home, nick: nickIn(ws, k), act: c.act ? { kind: c.act.kind, until: c.act.until } : null }]))
   return {
     now: ws.now, town: townOfState(ws), forecast, grey: greyAt(ws.now), bell: bellAt(ws.now), me: ws.chars[uid] ?? null, others, hearths: ws.hearths,
     bags: Object.values(ws.bags).filter(b => b.until > ws.now).map(b => ({ id: b.id, nick: b.nick, q: b.q, r: b.r, until: b.until, mine: b.owner === uid, items: b.owner === uid ? null : b.inv })),
     nodes: Object.fromEntries(Object.entries(ws.nodes).filter(([, v]) => v > ws.now)), events,
+    rime: ws.rime ? { ...ws.rime, next: rimeStep(ws.rime, rimeTargets(ws)) } : null,
   }
 }
 export type View = ReturnType<typeof viewOf>
@@ -341,10 +420,10 @@ export function action(ws: WState, uid: string, op: string, b: Record<string, un
       if (ringOf(...to) > MAX_RING) return fail('Beyond here the cold has no edge. Not yet.')
       const path = findPath(here, to); if (!path) return fail('No way through from here.')
       if (path.length > 90) return fail('Too far for one walk. Go in stages.')
-      Object.assign(c, { q: here[0], r: here[1], path, t0: now, act: null })
+      Object.assign(c, { q: here[0], r: here[1], path, t0: now, act: null, lost: false }); beginStep(c, now, ctxOf(ws, uid))
       return ok()
     }
-    case 'stop': Object.assign(c, { q: here[0], r: here[1], path: [], t0: now }); return ok()
+    case 'stop': Object.assign(c, { q: here[0], r: here[1], path: [], t0: now, lost: false }); return ok()
     case 'gather': {
       const at = cellArg(b.at); if (!at) return fail('Gather what?')
       if (c.path.length) return fail('Stop walking first.')
