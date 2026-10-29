@@ -47,7 +47,7 @@ export type Event =
 
 export const STEP_MS = 3_000 // one cell inside the town, calm weather
 /** How long one cell takes, by the zone you step into: quick between houses, hours across the Wastes. */
-export const ZONE_STEP_MS = [3_000, 15 * 60_000, 20 * 60_000, 30 * 60_000] as const
+export const ZONE_STEP_MS = [3_000, 8 * 60_000, 12 * 60_000, 18 * 60_000] as const
 export const WX_SLOW = { calm: 1, wind: 1.5, blizzard: 2.5 } as const
 /** Chance per step out in the Wastes that the wind takes the trail and you lose your way. */
 export const DRIFT = { calm: 0, wind: 0.15, blizzard: 0.4 } as const
@@ -160,7 +160,8 @@ export const weightOf = (inv: Inv) => (Object.keys(WEIGHT) as (keyof Inv)[]).red
 export const emptyInv = (): Inv => ({ wood: 0, stone: 0, flint: 0, resin: 0 })
 
 /** Shortest walkable path from a to b (b may be a building cell). Cells after a, a excluded. */
-export function findPath(a: Cell, b: Cell, limit = 4000): Cell[] | null {
+/** Buildings are walked into, never through: `blocked` cells are only allowed as the destination. */
+export function findPath(a: Cell, b: Cell, limit = 4000, blocked?: Set<string>): Cell[] | null {
   if (a[0] === b[0] && a[1] === b[1]) return []
   if (!passable(b[0], b[1])) return null
   const open: [number, number, Cell][] = [[dist(a, b), 0, a]]
@@ -177,6 +178,7 @@ export function findPath(a: Cell, b: Cell, limit = 4000): Cell[] | null {
     for (const [dq, dr] of DIRS) {
       const nq = cur[0] + dq, nr = cur[1] + dr, nk = key(nq, nr)
       if (!passable(nq, nr)) continue
+      if (blocked?.has(nk) && !(nq === b[0] && nr === b[1])) continue
       const ng = gc + 1
       if (ng < (g.get(nk) ?? Infinity)) { g.set(nk, ng); came.set(nk, key(...cur)); open.push([ng + dist([nq, nr], b), ng, [nq, nr]]) }
     }
@@ -418,7 +420,7 @@ export function action(ws: WState, uid: string, op: string, b: Record<string, un
     case 'move': {
       const to = cellArg(b.to); if (!to) return fail('Where to?')
       if (ringOf(...to) > MAX_RING) return fail('Beyond here the cold has no edge. Not yet.')
-      const path = findPath(here, to); if (!path) return fail('No way through from here.')
+      const path = findPath(here, to, 4000, new Set(Object.keys(ctxOf(ws, uid).shelters))); if (!path) return fail('No way through from here.')
       if (path.length > 90) return fail('Too far for one walk. Go in stages.')
       Object.assign(c, { q: here[0], r: here[1], path, t0: now, act: null, lost: false }); beginStep(c, now, ctxOf(ws, uid))
       return ok()
