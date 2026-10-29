@@ -47,21 +47,21 @@ export type Event =
 
 export const STEP_MS = 3_000 // one cell inside the town, calm weather
 /** How long one cell takes, by the zone you step into: quick between houses, hours across the Wastes. */
-export const ZONE_STEP_MS = [3_000, 8 * 60_000, 12 * 60_000, 18 * 60_000] as const
+export const ZONE_STEP_MS = [3_000, 30_000, 45_000, 60_000] as const
 export const WX_SLOW = { calm: 1, wind: 1.5, blizzard: 2.5 } as const
 /** Chance per step out in the Wastes that the wind takes the trail and you lose your way. */
 export const DRIFT = { calm: 0, wind: 0.15, blizzard: 0.4 } as const
 /** The Rime: what walks the Wastes. Anna's light keeps it past the forest edge. */
-export const RIME_MS = 8 * 60_000
+export const RIME_MS = 45_000
 export const RIME_MIN_RING = 7
-export const RIME_PULL = 0.05
+export const RIME_PULL = 0.04
 export const MAX_RING = 16
 export const FREEZE_MS = 24 * 3600_000
 export const BAG_MS = 24 * 3600_000
-export const GATHER_MS = 2 * 60_000
+export const GATHER_MS = 60_000
 export const NODE_COOLDOWN_MS = 20 * 60_000
-export const LOSS_K = 0.15 // warmth lost per minute per point of cold not covered (trips last hours)
-export const FROSTBITE = 0.5 // health lost per minute below 25 warmth
+export const LOSS_K = 0.5 // warmth lost per minute per point of cold not covered
+export const FROSTBITE = 1 // health lost per minute below 25 warmth
 export const INSULATION_T1 = 22
 export const WEIGHT: Inv = { wood: 2, stone: 3, flint: 0.2, resin: 0.3 }
 export const CAPACITY = 14 // pockets 6 + canvas sack 8
@@ -278,7 +278,7 @@ export function advance(c0: Char, now: number, ctx: Ctx): { c: Char; events: Eve
     const taken = !!rime && rime[0] === q && rime[1] === r
     if (taken || c.warmth <= 0 || c.health <= 0) {
       const w = weatherAt(t1, ctx.netStorm)
-      const cause = taken ? 'the Rime passed through you' : c.health <= 0 && c.warmth > 0 ? 'frostbite' : `cold ${Math.round(cold)} against clothing ${ctx.insulation}${w.id === 'calm' ? '' : `, ${w.name.toLowerCase()} ×${w.mult}`}`
+      const cause = taken ? 'Chthon passed through you' : c.health <= 0 && c.warmth > 0 ? 'frostbite' : `cold ${Math.round(cold)} against clothing ${ctx.insulation}${w.id === 'calm' ? '' : `, ${w.name.toLowerCase()} ×${w.mult}`}`
       events.push({ kind: 'froze', t: t1, q, r, cause, zone, inv: { ...c.inv } })
       c.died = { t: t1, q, r, cause, zone }
       Object.assign(c, { frozenUntil: t1 + FREEZE_MS, warmth: 0, path: [], act: null, lost: false, q: c.home[0], r: c.home[1], inv: emptyInv(), simT: now, t0: t1 })
@@ -295,14 +295,17 @@ export function advance(c0: Char, now: number, ctx: Ctx): { c: Char; events: Eve
 export function planTrip(c0: Char, path: Cell[], now: number, ctx: Ctx) {
   const c: Char = JSON.parse(JSON.stringify(c0)); const cx = { ...ctx, noDrift: true, rime: undefined }
   c.path = path.slice(); c.act = null; c.lost = false; c.simT = now; beginStep(c, now, cx)
-  let t = now, out = { eta: 0, warmth: c.warmth, health: c.health, froze: false, cause: '' }
-  for (let i = 0; i < 96 && c.path.length; i++) {
-    t += 3_600_000
+  let t = now
+  // a minute at a time, so we know which came first: getting there, or the cold
+  for (let i = 0; i < 720 && c.path.length; i++) {
+    t += 60_000
     const r = advance(c, t, cx); Object.assign(c, r.c)
-    const f = r.events.find(e => e.kind === 'froze'); if (f && f.kind === 'froze') return { ...out, eta: f.t - now, froze: true, cause: f.cause }
-    const a = r.events.find(e => e.kind === 'arrived'); if (a) return { eta: a.t - now, warmth: c.warmth, health: c.health, froze: false, cause: '' }
+    for (const e of r.events) {
+      if (e.kind === 'froze') return { eta: e.t - now, warmth: 0, health: c.health, froze: true, cause: e.cause }
+      if (e.kind === 'arrived') return { eta: e.t - now, warmth: c.warmth, health: c.health, froze: false, cause: '' }
+    }
   }
-  return { ...out, eta: t - now }
+  return { eta: t - now, warmth: c.warmth, health: c.health, froze: false, cause: '' }
 }
 
 /** Town warmth on the server, the same sum the game draws on the meter. */
@@ -375,7 +378,7 @@ const rimeTargets = (ws: WState) => Object.values(ws.chars).filter(c => !(c.froz
 export function stepRime(ws: WState, d: Dirty) {
   if (ws.rimeTrail) return
   let th: Rime = ws.rime ?? { q: 12, r: -6, t: Math.floor(ws.now / RIME_MS) * RIME_MS, d: 2 }
-  if (ws.now - th.t > 3 * 24 * 3600_000) th = { ...th, t: Math.floor((ws.now - 3 * 24 * 3600_000) / RIME_MS) * RIME_MS }
+  if (ws.now - th.t > 24 * 3600_000) th = { ...th, t: Math.floor((ws.now - 24 * 3600_000) / RIME_MS) * RIME_MS }
   const trail: [number, number, number][] = [[th.t, th.q, th.r]], targets = rimeTargets(ws)
   while (th.t + RIME_MS <= ws.now) { th = rimeStep(th, targets); trail.push([th.t, th.q, th.r]) }
   if (!ws.rime || th.t !== ws.rime.t) d.rime = true
