@@ -14,6 +14,7 @@
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:15px/1.45 var(--f-body);overflow:hidden;-webkit-tap-highlight-color:transparent}
 #c{position:fixed;inset:0;display:block;width:100%;height:100%;touch-action:none}
+#snow2d{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}
 button{font:inherit;color:inherit;cursor:pointer}
 .mute{color:var(--mute)}
 [hidden]{display:none!important}
@@ -214,6 +215,7 @@ body.intro #dock,body.intro #feed,body.intro #online,body.intro #meter{visibilit
 </style>
 
 <canvas id="c" aria-label="Aigarth, a winter town seen from above"></canvas>
+<canvas id="snow2d" aria-hidden="true" hidden></canvas>
 <div id="labels"></div>
 
 <div id="top">
@@ -300,10 +302,9 @@ const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, powerPrefer
 const GPU_NAME = (() => { try { const gl = renderer.getContext(), d = gl.getExtension('WEBGL_debug_renderer_info'); return String(d ? gl.getParameter(d.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER)); } catch { return '?'; } })();
 const SOFT = /swiftshader|llvmpipe|softpipe|basic render|software|microsoft basic/i.test(GPU_NAME);
 const LITE = LITE0 || SOFT;
-const SOFT_PX = +(new URLSearchParams(location.search).get('softpx') || 6e5);
 // quality: never more than 1.5x pixels; drops further on its own if frames run slow
 // a pixel budget: a big monitor gets fewer pixels per point instead of more work for the graphics card
-const dprFor = () => SOFT ? Math.max(0.35, Math.min(1, Math.sqrt(SOFT_PX / (innerWidth * innerHeight)))) : Math.max(MOBILE ? 0.75 : (LITE ? 0.85 : 1), Math.min(devicePixelRatio, LITE ? 1 : 1.25, Math.sqrt((LITE ? 1.2e6 : 2.2e6) / (innerWidth * innerHeight))));
+const dprFor = () => SOFT ? Math.min(devicePixelRatio, 1) : Math.max(MOBILE ? 0.75 : (LITE ? 0.85 : 1), Math.min(devicePixelRatio, LITE ? 1 : 1.25, Math.sqrt((LITE ? 1.2e6 : 2.2e6) / (innerWidth * innerHeight))));
 let DPR = dprFor(); renderer.setPixelRatio(DPR);
 renderer.setSize(innerWidth, innerHeight);
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -949,6 +950,20 @@ async function addWood() {
 
 /* ================= particles ================= */
 let snow, smoke;
+/* the snow for browsers without a graphics card: a few hundred dots on a flat layer, 30 frames a second, almost free */
+function startSnow2D() {
+  const c = $('#snow2d'); c.hidden = false; const g = c.getContext('2d'); let W = 0, H = 0;
+  const fit = () => { W = c.width = innerWidth; H = c.height = innerHeight; }; fit(); addEventListener('resize', fit);
+  const F = Array.from({ length: 260 }, () => ({ x: Math.random(), y: Math.random(), r: 0.7 + Math.random() * 1.8, v: 0.03 + Math.random() * 0.05, d: Math.random() * 6 }));
+  let last = 0;
+  const tick = t => { requestAnimationFrame(tick); if (t - last < 33) return; const dt = Math.min(0.1, (t - last) / 1000); last = t;
+    const k = Math.min(1, 0.45 + snowNow * 0.35), n = Math.round(F.length * k), wind = S.weather === 'storm' ? 0.05 : 0.012;
+    g.clearRect(0, 0, W, H); g.fillStyle = 'rgba(225,235,255,.8)'; g.beginPath();
+    for (let i = 0; i < n; i++) { const f = F[i]; f.y += f.v * dt * (1 + snowNow * 0.6); f.x += (wind + Math.sin(t / 1300 + f.d) * 0.004) * dt; if (f.y > 1) { f.y = 0; f.x = Math.random(); } if (f.x > 1) f.x -= 1;
+      g.moveTo(f.x * W + f.r, f.y * H); g.arc(f.x * W, f.y * H, f.r, 0, 6.283); }
+    g.fill(); };
+  requestAnimationFrame(tick);
+}
 function buildSnowfall() {
   const N = MOBILE ? 1400 : 3000, pos = new Float32Array(N * 3), spd = new Float32Array(N);
   for (let i = 0; i < N; i++) { pos[i * 3] = (rnd() - .5) * 60; pos[i * 3 + 1] = rnd() * 22; pos[i * 3 + 2] = (rnd() - .5) * 60; spd[i] = 0.5 + rnd(); }
@@ -1585,7 +1600,7 @@ function loop(now = performance.now()) {
   const busy = !LITE;
   // measure the screen once: how long one refresh takes
   if (hzN < 40) { if (hzLast) { const d = now - hzLast; if (d > 4 && d < 40) { hzSum += d; hzN++; } } hzLast = now; if (hzN === 40) refreshMs = hzSum / hzN; }
-  const want = SOFT ? (now - lastInput < 1500 || fly ? 1000 / 30 : 1000 / 20) : busy && !document.hidden ? 1000 / 60 : 1000 / 30;
+  const want = SOFT ? (now - lastInput < 1200 || fly ? 1000 / 24 : 1000 / 5) : busy && !document.hidden ? 1000 / 60 : 1000 / 30;
   const every = Math.max(1, Math.round(want / refreshMs));
   if (++tick % every) return;
   const minGap = every * refreshMs;
@@ -1602,6 +1617,7 @@ function loop(now = performance.now()) {
   stepWaves(dt); stepEmbers(dt);
   if (S.town.B > 0 && (waveClock += dt) > Math.max(2.2, 6 - S.town.B * 0.15)) { waveClock = 0; pulse(0.25); }
   snowNow += (snowTarget - snowNow) * Math.min(1, dt * 0.6);
+  if (SOFT && snow && snow.visible) { snow.visible = false; startSnow2D(); }
   if (snow) { snow.material.size = 0.11 + snowNow * 0.07; snow.material.opacity = 0.55 + Math.min(0.4, snowNow * 0.25); }
   { const far = THREE.MathUtils.clamp(24 / camera.position.distanceTo(controls.target), 0.5, 1); scene.fog.density += ((0.02 + snowNow * 0.014) * far - scene.fog.density) * Math.min(1, dt * 3); }
   moon.intensity += ((1.35 - snowNow * 0.35) - moon.intensity) * dt;
@@ -1637,9 +1653,9 @@ function loop(now = performance.now()) {
     const tgt = fly.from.clone().lerp(fly.to, k); const off = camera.position.clone().sub(controls.target).normalize().multiplyScalar(fly.d0 + (fly.d1 - fly.d0) * k);
     controls.target.copy(tgt); camera.position.copy(tgt).add(off); if (fly.t >= 1) fly = null; }
   controls.target.x = THREE.MathUtils.clamp(controls.target.x, -16, 16); controls.target.z = THREE.MathUtils.clamp(controls.target.z, -16, 16); if (!fly && $('#intro').hidden) controls.target.y = 0;
-  controls.update(); const _g = diagGpuBegin(); if (LITE && !SOFT) renderer.render(scene, camera); else composer.render(); diagGpuEnd(_g); placeLabels(); sendPresence(); diagFrame(performance.now() - now);
+  controls.update(); const _g = diagGpuBegin(); if (LITE) renderer.render(scene, camera); else composer.render(); diagGpuEnd(_g); placeLabels(); sendPresence(); diagFrame(performance.now() - now);
 }
 requestAnimationFrame(loop);
 addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); DPR = Math.min(DPR, dprFor()); renderer.setPixelRatio(DPR); composer.setPixelRatio?.(DPR); renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight); fxaaSize(); });
-window.__w4w = { S, settle, freePlots, openMaria, ask, addWood, refreshTown, draft: v => (draft = v), camera, controls, updateIce, renderer, scene, __composer: LITE && !SOFT ? null : composer };
+window.__w4w = { S, settle, freePlots, openMaria, ask, addWood, refreshTown, draft: v => (draft = v), camera, controls, updateIce, renderer, scene, __composer: LITE ? null : composer };
 </script>
