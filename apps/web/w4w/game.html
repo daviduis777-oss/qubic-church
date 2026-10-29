@@ -2519,7 +2519,10 @@ function localWorld() {
     warp(ms) { const sh = o => { for (const k of ['t0', 'simT', 'until', 'at', 'frozenUntil']) if (o && typeof o[k] === 'number' && o[k] > 0) o[k] -= ms; };
       Object.values(st.chars).forEach(c => { sh(c); sh(c.act); if (c.died) c.died.t -= ms; }); Object.values(st.hearths).forEach(sh); Object.values(st.bags).forEach(sh);
       for (const k in st.nodes) st.nodes[k] -= ms; keep(); emit(view()); },
-    async act(name, body = {}) { const ws = wsNow(); const d = W4W.newDirty(); const r = W4W.action(ws, 'me', name, body, d); keep(); if (!r.ok) { const e = new Error(r.error); e.status = r.status; throw e; } const v = W4W.viewOf(ws, 'me', r.events); emit(v); return v; },
+    admin: () => true,
+    async act(name, body = {}) {
+      if (name === 'revive') { const c = st.chars.me; if (c) Object.assign(c, { frozenUntil: 0, warmth: 100, health: 100, energy: 100, q: c.home[0], r: c.home[1], path: [], act: null, t0: Date.now(), simT: Date.now() }); keep(); const v = view(); emit(v); return v; }
+      const ws = wsNow(); const d = W4W.newDirty(); const r = W4W.action(ws, 'me', name, body, d); keep(); if (!r.ok) { const e = new Error(r.error); e.status = r.status; throw e; } const v = W4W.viewOf(ws, 'me', r.events); emit(v); return v; },
   };
 }
 /** Called once the town is built and the capabilities are up. */
@@ -2557,9 +2560,15 @@ new GLTFLoader().load('hero.glb', g => {
   const box = new THREE.Box3().setFromObject(g.scene); heroScale = 0.42 / Math.max(0.01, box.max.y - box.min.y);
   syncAvatars();
 }, undefined, e => console.warn('hero', e));
+const heroMats = new Map();
+function heroMat(src) {
+  if (heroMats.has(src)) return heroMats.get(src);
+  const m = src.clone(); m.metalness = 0; m.roughness = 0.75; m.emissive = new THREE.Color(0xffffff); m.emissiveMap = src.map || null; m.emissiveIntensity = 0.38;
+  heroMats.set(src, m); return m;
+}
 function makeAvatar(uid, nick, mine) {
   const g = new THREE.Group(); const body = cloneSkinned(HERO.scene); body.scale.setScalar(heroScale);
-  body.traverse(m => { if (m.isMesh) { m.castShadow = true; m.frustumCulled = false; } }); g.add(body); scene.add(g);
+  body.traverse(m => { if (m.isMesh) { m.castShadow = true; m.frustumCulled = false; m.material = heroMat(m.material); } }); g.add(body); scene.add(g);
   const mixer = new THREE.AnimationMixer(body); const actions = {}; for (const [n, c] of Object.entries(heroClips)) actions[n] = mixer.clipAction(c); if (actions.Running_A) actions.Running_A.timeScale = 0.8;
   const glow = sprite(GLOW, 0, 0.22, 0, mine ? 0.38 : 0.26, mine ? 0xffc070 : 0x9fc3ff, mine ? 0.7 : 0.45); scene.remove(glow); g.add(glow);
   const L = label(mine ? 'you' : nick, g, 0.62, mine ? 'me' : 'walker');
@@ -2712,7 +2721,7 @@ function hud(force) {
 }
 function actions(c, here, t, frozen) {
   const btns = [];
-  if (frozen) btns.push(`<span class="xt">Frozen. Thaws in ${hms(c.frozenUntil - t)}. Nothing makes it faster.</span>`);
+  if (frozen) btns.push(`<span class="xt">Frozen. Thaws in ${hms(c.frozenUntil - t)}. Nothing makes it faster.</span>${XW?.admin?.() ? '<button class="btn" data-x="revive">Revive (admin test)</button>' : ''}`);
   else if (c.path.length) btns.push('<span class="xt">On the way…</span><button class="btn" data-x="stop">Stop</button>');
   else if (c.act && c.act.until > t) btns.push(`<span class="xt">Gathering ${c.act.res}… ${Math.ceil((c.act.until - t) / 1000)}s</span>`);
   else {
