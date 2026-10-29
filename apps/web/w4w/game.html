@@ -489,7 +489,7 @@ var W4W = (() => {
     zoneName: () => zoneName,
     zoneOf: () => zoneOf
   });
-  const STEP_MS = 2e4;
+  const STEP_MS = 3e3;
   const MAX_RING = 16;
   const FREEZE_MS = 24 * 36e5;
   const BAG_MS = 24 * 36e5;
@@ -637,7 +637,7 @@ var W4W = (() => {
     const busy = () => c.path.length > 0 || !!c.act;
     let steps = c.path.length ? Math.max(0, Math.min(c.path.length, Math.floor((c.simT - c.t0) / c.stepMs))) : 0;
     for (let t = c.simT, DT = 5e3; t < now; t += DT) {
-      DT = busy() ? 5e3 : 6e4;
+      DT = busy() ? 2e3 : 6e4;
       const t1 = Math.min(now, t + DT), mins = (t1 - t) / 6e4;
       if (c.path.length) {
         const done = Math.max(0, Math.min(c.path.length, Math.floor((t1 - c.t0) / c.stepMs)));
@@ -1506,6 +1506,7 @@ function renderPeers() {
   const seen = new Set();
   S.peers.forEach(p => { const nick = String(p.presence?.nick || S.real[p.by]?.nick || 'a visitor').slice(0, 24); seen.add(p.peer);
     const el = document.createElement('div'); el.className = 'p'; el.innerHTML = '<i></i>'; el.append(document.createTextNode(nick)); box.appendChild(el);
+    if (avatars[p.by]) { seen.delete(p.peer); return; } // they walk the map in person now
     let w = walkers[p.peer]; if (!w) { w = walkers[p.peer] = makeWalker(nick); }
     const tx = Number(p.presence?.tx), tz = Number(p.presence?.tz); if (Number.isFinite(tx) && Number.isFinite(tz)) w.target.set(THREE.MathUtils.clamp(tx, -14, 14), 0, THREE.MathUtils.clamp(tz, -14, 14));
     w.label.el.textContent = nick + ' · here'; });
@@ -1686,7 +1687,7 @@ function faqLag() {
 }
 const FAQ = [
   ['The cold beyond the town', [
-    ['How do I walk?', 'Once your house stands, you have a character who lives in it. Click the ground to walk there, one cell every 20 seconds, in real time. Buildings open only when you are standing at their door: click one and you walk there first.'],
+    ['How do I walk?', 'Once your house stands, you have a character who lives in it. Click the ground and you run there, about three seconds a cell, in real time. Buildings open only when you are standing at their door: click one and you walk there first.'],
     ['What do the bars mean?', 'Warmth drops wherever the cold is stronger than your clothing, faster in wind and blizzards. Below 25 warmth the frost starts taking health. Energy goes on walking and comes back by a fire. Load is what you carry: past the limit every step costs double.'],
     ['Is the town always safe?', 'No. When the town holds, its warm circle keeps you safe. When the frost is winning, even the streets between houses bite, and the Library at the edge is a cold walk. Houses, the church and the plaza fire always warm you.'],
     ['What can I do out there?', 'Gather wood and stone in The Edge and the Black Pines, resin among the pines and flint in the Stone Teeth. With 6 wood, 4 stone and 1 flint you can build a hearth out in the cold. Anyone can warm up at it and feed it with wood; it burns out unless someone does.'],
@@ -2553,15 +2554,15 @@ let HERO = null, heroClips = {}, heroScale = 1;
 const avatars = {};
 new GLTFLoader().load('hero.glb', g => {
   HERO = g; heroClips = Object.fromEntries(g.animations.map(a => [a.name, a]));
-  const box = new THREE.Box3().setFromObject(g.scene); heroScale = 0.9 / Math.max(0.01, box.max.y - box.min.y);
+  const box = new THREE.Box3().setFromObject(g.scene); heroScale = 0.42 / Math.max(0.01, box.max.y - box.min.y);
   syncAvatars();
 }, undefined, e => console.warn('hero', e));
 function makeAvatar(uid, nick, mine) {
   const g = new THREE.Group(); const body = cloneSkinned(HERO.scene); body.scale.setScalar(heroScale);
   body.traverse(m => { if (m.isMesh) { m.castShadow = true; m.frustumCulled = false; } }); g.add(body); scene.add(g);
-  const mixer = new THREE.AnimationMixer(body); const actions = {}; for (const [n, c] of Object.entries(heroClips)) actions[n] = mixer.clipAction(c);
-  const glow = sprite(GLOW, 0, 0.5, 0, mine ? 0.75 : 0.45, mine ? 0xffc070 : 0x9fc3ff, mine ? 0.85 : 0.55); scene.remove(glow); g.add(glow);
-  const L = label(mine ? 'you' : nick, g, 1.05, mine ? 'me' : 'walker');
+  const mixer = new THREE.AnimationMixer(body); const actions = {}; for (const [n, c] of Object.entries(heroClips)) actions[n] = mixer.clipAction(c); if (actions.Running_A) actions.Running_A.timeScale = 0.8;
+  const glow = sprite(GLOW, 0, 0.22, 0, mine ? 0.38 : 0.26, mine ? 0xffc070 : 0x9fc3ff, mine ? 0.7 : 0.45); scene.remove(glow); g.add(glow);
+  const L = label(mine ? 'you' : nick, g, 0.62, mine ? 'me' : 'walker');
   const a = { g, body, mixer, actions, cur: null, label: L, mine, ice: null, uid };
   play(a, 'Idle'); return a;
 }
@@ -2606,7 +2607,7 @@ function stepAvatars(dt) {
     a.g.position.lerp(p.clone().add(off), Math.min(1, dt * 12));
     if (dir && dir.lengthSq() > 0) a.g.rotation.y = Math.atan2(dir.x, dir.z);
     const busy = d.act && d.act.until > t;
-    play(a, walking ? 'Walking_A' : busy ? 'PickUp' : sittingAt(d) ? 'Sit_Floor_Idle' : 'Idle');
+    play(a, walking ? (a.actions.Running_A ? 'Running_A' : 'Walking_A') : busy ? 'PickUp' : sittingAt(d) ? 'Sit_Floor_Idle' : 'Idle');
   }
   // the camera walks with you until you take it
   const mine = avatars[myUid()];
@@ -2712,7 +2713,7 @@ function hud(force) {
 function actions(c, here, t, frozen) {
   const btns = [];
   if (frozen) btns.push(`<span class="xt">Frozen. Thaws in ${hms(c.frozenUntil - t)}. Nothing makes it faster.</span>`);
-  else if (c.path.length) btns.push('<span class="xt">Walking…</span><button class="btn" data-x="stop">Stop</button>');
+  else if (c.path.length) btns.push('<span class="xt">On the way…</span><button class="btn" data-x="stop">Stop</button>');
   else if (c.act && c.act.until > t) btns.push(`<span class="xt">Gathering ${c.act.res}… ${Math.ceil((c.act.until - t) / 1000)}s</span>`);
   else {
     const near = [here, ...W4W.DIRS.map(([dq, dr]) => [here[0] + dq, here[1] + dr])];

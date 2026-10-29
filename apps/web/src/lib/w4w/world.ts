@@ -41,7 +41,7 @@ export type Event =
   | { kind: 'gathered'; t: number; q: number; r: number; res: keyof Inv }
   | { kind: 'thawed'; t: number }
 
-export const STEP_MS = 20_000
+export const STEP_MS = 3_000 // a small figure jogging from one cell to the next
 export const MAX_RING = 16
 export const FREEZE_MS = 24 * 3600_000
 export const BAG_MS = 24 * 3600_000
@@ -196,7 +196,7 @@ export function advance(c0: Char, now: number, ctx: Ctx): { c: Char; events: Eve
   const busy = () => c.path.length > 0 || !!c.act
   let steps = c.path.length ? Math.max(0, Math.min(c.path.length, Math.floor((c.simT - c.t0) / c.stepMs))) : 0
   for (let t = c.simT, DT = 5_000; t < now; t += DT) {
-    DT = busy() ? 5_000 : 60_000
+    DT = busy() ? 2_000 : 60_000
     const t1 = Math.min(now, t + DT), mins = (t1 - t) / 60_000
     // walking: count the steps finished in this slice
     if (c.path.length) {
