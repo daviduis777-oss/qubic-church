@@ -28,6 +28,7 @@ export type Char = {
   lost?: boolean // the wind took the trail: this step leads somewhere you did not choose
   items?: Record<string, 'worn' | 'pack' | 'home'> // clothing and tools: on you, in the pack, or at home
   sips?: number // what is left in the thermos
+  known?: string[] // recipes this character can make
 }
 export type Ctx = {
   heatR: number // radius of the town's warm circle, world units
@@ -50,8 +51,8 @@ export type Event =
 
 export const STEP_MS = 3_000 // one cell inside the town, calm weather
 /** How long one cell takes, by the zone you step into: quick between houses, hours across the Wastes. */
-export const ZONE_STEP_MS = [3_000, 15_000, 22_000, 30_000] as const
-export const WX_SLOW = { calm: 1, wind: 1.5, blizzard: 2.5 } as const
+export const ZONE_STEP_MS = [3_000, 6_000, 8_000, 10_000] as const
+export const WX_SLOW = { calm: 1, wind: 1.3, blizzard: 1.8 } as const
 /** Chance per step out in the Wastes that the wind takes the trail and you lose your way. */
 export const DRIFT = { calm: 0, wind: 0.15, blizzard: 0.4 } as const
 /** The Rime: what walks the Wastes. Anna's light keeps it past the forest edge. */
@@ -128,6 +129,21 @@ export const RECIPES: Record<string, Recipe> = {
   hearth_kit: { out: 'hearth_kit', n: 1, in: { wood: 6, stone: 4, flint: 1 }, ms: 12_000, group: 'Survival' },
   thermos: { out: 'thermos', n: 1, in: { stone: 4, flint: 2, pitch: 2 }, ms: 30_000, group: 'Survival' },
 }
+/** Everyone knows these; the rest are found out in the Wastes or copied from the Library. */
+export const STARTER_RECIPES = ['cord', 'pitch', 'charcoal', 'hearth_kit']
+/** Where the lost recipes lie: one scrap per recipe, on open snow near its seed. */
+const SCROLL_SEEDS: Record<string, Cell> = { flint_pick: [-4, 8], flint_axe: [7, -1], quilted_cap: [-7, 1], woven_pack: [1, -8], lined_mittens: [10, -3], padded_trousers: [-9, -1], bark_boots: [2, 9], quilted_coat: [-5, -6], frame_pack: [-14, 7], thermos: [7, 9] }
+let scrollCache: Record<string, Cell> | null = null
+export function scrolls(): Record<string, Cell> {
+  if (scrollCache) return scrollCache
+  const out: Record<string, Cell> = {}, used = new Set<string>()
+  for (const [id, seed] of Object.entries(SCROLL_SEEDS)) { const z = zoneOf(seed[0], seed[1])
+    search: for (let k = 0; k <= 4; k++) for (const [dq, dr] of k ? ringCells(k) : [[0, 0] as Cell]) { const q = seed[0] + dq, r = seed[1] + dr
+      if (terrain(q, r) === 'open' && zoneOf(q, r) === z && !used.has(key(q, r)) && !(q === CAVE[0] && r === CAVE[1])) { out[id] = [q, r]; used.add(key(q, r)); break search } } }
+  return (scrollCache = out)
+}
+function ringCells(n: number): Cell[] { const out: Cell[] = []; let q = -n, r = n; for (const [dq, dr] of DIRS) for (let i = 0; i < n; i++) { out.push([q, r]); q += dq; r += dr } return out }
+export const knownOf = (c: { known?: string[] }) => (c.known ??= [...STARTER_RECIPES])
 export const nameOf = (id: string) => MATS[id]?.name ?? ITEMS[id]?.name ?? id
 export const startItems = (): Record<string, 'worn' | 'pack' | 'home'> => ({ wool_cap: 'worn', canvas_coat: 'worn', mittens: 'worn', wool_trousers: 'worn', felt_boots: 'worn', canvas_sack: 'worn', saw: 'home', pickaxe: 'home' })
 type Owner = { items?: Record<string, 'worn' | 'pack' | 'home'>; inv: Inv; stash?: Inv }
@@ -148,8 +164,9 @@ export const toolFor = (res: string) => toolsFor(res)[0] ?? ''
 export const bestTool = (c: Owner, res: string) => toolsFor(res).filter(id => itemsOf(c)[id] === 'pack').sort((a, b) => (ITEMS[b]!.speed ?? 1) - (ITEMS[a]!.speed ?? 1))[0] ?? null
 /** Count of a material in reach: the bag, plus the home store when you stand at home. */
 export const have = (c: Owner, mat: string, atHome: boolean) => (c.inv[mat] || 0) + (atHome ? c.stash?.[mat] || 0 : 0)
-export function canCraft(c: Owner, id: string, atHome: boolean): string | null {
+export function canCraft(c: Owner & { known?: string[] }, id: string, atHome: boolean): string | null {
   const r = RECIPES[id]; if (!r) return 'No such recipe.'
+  if (!knownOf(c).includes(id)) return 'You do not know how to make this yet. Find the recipe in the Wastes, or copy it in the Library.'
   if (!r.field && !atHome) return 'That needs the workbench at home.'
   if (ITEMS[r.out] && itemsOf(c)[r.out]) return `You already have a ${ITEMS[r.out]!.name.toLowerCase()}.`
   for (const [m, n] of Object.entries(r.in)) if (have(c, m, atHome) < n) return `Not enough ${nameOf(m).toLowerCase()}: ${have(c, m, atHome)} of ${n}.`
@@ -451,11 +468,12 @@ export type WState = {
   nodes: Record<string, number>
   online: number
   doneOrders: number
+  library?: Record<string, { by: string; nick: string; at: number }> // recipes written into the town's book
   rime?: Rime
   rimeTrail?: [number, number, number][] // computed on load, not stored
 }
-export type Feed = { id: string; t: number; topic: 'froze' | 'hearth' | 'took'; by: string; data: Record<string, unknown> }
-export type Dirty = { chars: Set<string>; hearths: Set<string>; bags: Set<string>; bagsGone: Set<string>; nodes: Set<string>; feed: Feed[]; rime?: boolean }
+export type Feed = { id: string; t: number; topic: 'froze' | 'hearth' | 'took' | 'library' | 'found'; by: string; data: Record<string, unknown> }
+export type Dirty = { chars: Set<string>; hearths: Set<string>; bags: Set<string>; bagsGone: Set<string>; nodes: Set<string>; feed: Feed[]; rime?: boolean; library?: Set<string> }
 export const newDirty = (): Dirty => ({ chars: new Set(), hearths: new Set(), bags: new Set(), bagsGone: new Set(), nodes: new Set(), feed: [] })
 
 export function townOfState(ws: WState) {
@@ -510,6 +528,7 @@ export function viewOf(ws: WState, uid: string, events: Event[] = []) {
     bags: Object.values(ws.bags).filter(b => b.until > ws.now).map(b => ({ id: b.id, nick: b.nick, q: b.q, r: b.r, until: b.until, mine: b.owner === uid, items: b.owner === uid ? null : b.inv })),
     nodes: Object.fromEntries(Object.entries(ws.nodes).filter(([, v]) => v > ws.now)), events,
     rime: ws.rime ? { ...ws.rime, next: rimeStep(ws.rime, rimeTargets(ws)) } : null,
+    library: ws.library ?? {},
   }
 }
 export type View = ReturnType<typeof viewOf>
@@ -649,6 +668,27 @@ export function action(ws: WState, uid: string, op: string, b: Record<string, un
       // putting something on takes off whatever was in that slot, back to where the new one came from
       if (to === 'worn') for (const [o, at] of Object.entries(items)) if (o !== id && at === 'worn' && ITEMS[o]?.slot === it.slot) items[o] = items[id]!
       items[id] = to
+      return ok()
+    }
+    case 'learn': {
+      const id = String(b.recipe ?? ''), at = scrolls()[id]
+      if (!at) return fail('There is no such recipe out there.')
+      if (here[0] !== at[0] || here[1] !== at[1]) return fail('Stand on the spot where it lies.')
+      const kn = knownOf(c); if (!kn.includes(id)) { kn.push(id); d.feed.push({ id: `fd${uid}${id}`, t: now, topic: 'found', by: uid, data: { nick: nickIn(ws, uid), recipe: id, name: nameOf(RECIPES[id]!.out) } }) }
+      return ok()
+    }
+    case 'donate': {
+      const id = String(b.recipe ?? '')
+      if (key(...here) !== key(SPECIAL.library[0], SPECIAL.library[1])) return fail('Write recipes into the book in the Library.')
+      if (!knownOf(c).includes(id) || STARTER_RECIPES.includes(id)) return fail('You can only write down a recipe you found.')
+      ws.library ??= {}; if (ws.library[id]) return fail('That recipe is already in the book.')
+      ws.library[id] = { by: uid, nick: nickIn(ws, uid), at: now }; (d.library ??= new Set()).add(id)
+      d.feed.push({ id: `lb${uid}${id}`, t: now, topic: 'library', by: uid, data: { nick: nickIn(ws, uid), recipe: id, name: nameOf(RECIPES[id]!.out) } })
+      return ok()
+    }
+    case 'study': {
+      if (key(...here) !== key(SPECIAL.library[0], SPECIAL.library[1])) return fail('The book stays in the Library. Go there to copy it.')
+      const kn = knownOf(c); for (const id of Object.keys(ws.library ?? {})) if (!kn.includes(id)) kn.push(id)
       return ok()
     }
     default: return fail('unknown action')
