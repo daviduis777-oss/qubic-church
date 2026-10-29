@@ -1,7 +1,7 @@
 <title>W4W Aigarth</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;1,400&family=Barlow+Condensed:wght@500;600;700&family=Caveat:wght@500;700&family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
 <style>
 /* A night town seen from above: amber light against blue frost. One display face, one body face, one wide label face. */
 :root{
@@ -371,8 +371,8 @@ body.delir #frostfx{animation:delir 2.6s infinite steps(1)}
 /* ================= THE EXPEDITION KIT =================
    Three materials, nothing else. Blued steel for the instruments you trust (dock, gauges, tags, buttons).
    Paper for what people wrote down out there (hints, trips, found notes). Leather and vellum for the books
-   the town keeps (the journal, the library, the field manual). Print in IM Fell, stamping in Barlow
-   Condensed, the field hand in Caveat. Ember is the only warm colour; frost is the only cold one. */
+   the town keeps (the journal, the library, the field manual). Lora for print and notes, IBM Plex Sans for
+   everything stamped on metal: both chosen to read easily at a glance. Ember is the only warm colour; frost is the only cold one. */
 :root{
   --tex-brushed:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95 0.012' numOctaves='2' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.75 0 0 0 0 0.82 0 0 0 0 0.9 0 0 0 0.11 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 --tex-grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' seed='8' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.35 0 0 0 0 0.25 0 0 0 0 0.12 0 0 0 0.16 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E");
@@ -382,7 +382,7 @@ body.delir #frostfx{animation:delir 2.6s infinite steps(1)}
   --steel-0:#0a0e14; --steel-1:#151b24; --steel-2:#232c38; --steel-3:#33404f; --steel-hi:#8396ad; --steel-ink:#c9d5e3;
   --paper:#e6dcc3; --paper-2:#d2c29f; --ink-d:#2b241b; --pencil:#4d4437;
   --leather:#2a1810; --leather-2:#46291a; --vellum:#ede2c8; --ember:#f2a347; --ember-2:#c9701d; --blood:#9e2a22;
-  --f-display:'IM Fell English SC',Georgia,serif; --f-print:'IM Fell English',Georgia,serif; --f-label:'Barlow Condensed','Arial Narrow',sans-serif; --f-body:Barlow,system-ui,sans-serif; --f-hand:Caveat,'Segoe Print',cursive;
+  --f-display:Lora,Georgia,serif; --f-print:Lora,Georgia,serif; --f-label:'IBM Plex Sans',system-ui,sans-serif; --f-body:'IBM Plex Sans',system-ui,sans-serif; --f-hand:Lora,Georgia,serif;
   --plate:var(--tex-brushed),linear-gradient(180deg,#232b36 0%,#161c25 55%,#10151c 100%);
   --bevel:inset 0 1px 0 rgba(200,215,235,.22),inset 0 -1px 0 rgba(0,0,0,.6),inset 0 0 0 1px rgba(0,0,0,.35),0 6px 18px rgba(0,0,0,.45);
   --rivets:radial-gradient(circle at 9px 9px,#c3cfdc 0 1.2px,#56636f 1.8px,#1a2028 2.6px,transparent 3.2px),radial-gradient(circle at calc(100% - 9px) 9px,#c3cfdc 0 1.2px,#56636f 1.8px,#1a2028 2.6px,transparent 3.2px),radial-gradient(circle at 9px calc(100% - 9px),#c3cfdc 0 1.2px,#56636f 1.8px,#1a2028 2.6px,transparent 3.2px),radial-gradient(circle at calc(100% - 9px) calc(100% - 9px),#c3cfdc 0 1.2px,#56636f 1.8px,#1a2028 2.6px,transparent 3.2px);
@@ -544,6 +544,34 @@ body.hub #xact{display:none}
 .quick button,.ask{border:0!important;border-radius:3px;background:var(--plate);box-shadow:var(--bevel);font-family:var(--f-label);font-weight:600;font-size:13.5px;letter-spacing:.04em;color:var(--steel-ink)}
 #chatForm{border-top:0;box-shadow:0 -1px 0 rgba(0,0,0,.6),0 -2px 0 rgba(200,215,235,.06)}
 #chatForm input,input.name,textarea.name{border:0!important;border-radius:3px;background:linear-gradient(180deg,#05070b,#10151d)!important;box-shadow:inset 0 2px 4px #000,0 1px 0 rgba(200,215,235,.12);color:#f1e6d0}
+/* readability first: one serif with real weight, one plain sans; no hairline faces, no handwriting */
+#panel header h2,#hud .hz b,#meter .verdict,.hub-win header h2,#banner b,#died h1,#load b,.brand b{font-weight:600}
+#hud .hz b{font-size:22px} #panel header h2{font-size:26px} .hub-win header h2{font-size:40px} #meter .verdict{font-size:18px}
+.brand b{font-size:15px;letter-spacing:.08em}
+#dock button{font-weight:600;font-size:12.5px;letter-spacing:.03em;min-width:78px}
+.btn{font-weight:600;font-size:14px;letter-spacing:.03em}
+.chip{font-size:12.5px;letter-spacing:.04em} .chip b{font-size:15px;letter-spacing:0}
+.lbl,.lbl.key{font-weight:600;font-size:12px;letter-spacing:.04em}
+.hb i,.hb span{font-weight:600;font-size:11.5px;letter-spacing:.05em}
+.hinv span{font-size:15px} .hinv i{font-size:10px;letter-spacing:.06em}
+.hwx span{font-weight:600;font-size:11px;letter-spacing:.04em}
+#hud .hz span,#panel header p{font-size:13px;letter-spacing:0}
+#pbody h3{font-weight:700;font-size:11.5px;letter-spacing:.12em}
+#xact .xt,#xact .xt.trip{font-family:var(--f-print);font-style:italic;font-size:16.5px;line-height:1.45;color:#241d14}
+.hrime{font-family:var(--f-print);font-style:italic;font-size:15px}
+.say{font-size:15.5px;line-height:1.5}
+#panel[data-kind=chronicle] .chron li{font-size:14.5px;line-height:1.45}
+#panel[data-kind=chronicle] .jtabs button{font-weight:600;font-size:16px;letter-spacing:.02em}
+#panel[data-kind=chronicle] header h2{font-size:30px}
+#panel[data-kind=note] header h2{font-family:var(--f-print);font-style:italic;font-size:26px}
+#panel[data-kind=note] .say{font-family:var(--f-print)!important;font-style:italic;font-size:20px!important;line-height:1.5!important}
+#panel[data-kind=chthon] header h2{font-size:32px;letter-spacing:.24em}
+#talk #talkText,#intro p{font-weight:500;font-size:clamp(20px,2.2vw,27px);line-height:1.3}
+.book b,.opt b,.order .t,details.lore summary b,#panel[data-kind=faq] .faq summary{font-weight:600;font-size:16px}
+.jtabs button,.mchips i,.crow i,.rules b,.jstat i{font-size:11px;letter-spacing:.08em}
+.hub-win nav button{font-size:13.5px;letter-spacing:.03em}
+.msg .who,.hub-win header .who,.hcard .hk,#talk .who,#intro .who{font-size:11.5px;letter-spacing:.12em}
+#banner span{font-size:13px;letter-spacing:.16em}
 @media (max-width: 760px){#hud{width:auto}#dock{padding:7px 8px}#dock button{min-width:0;font-size:11px;letter-spacing:.04em}#xact .xt{font-size:19px}}
 @media (prefers-reduced-motion: reduce){#xact .xt{animation:none}}
 </style>
@@ -630,6 +658,7 @@ var W4W = (() => {
   __export(world_exports, {
     BAG_MS: () => BAG_MS,
     CAPACITY: () => CAPACITY,
+    CAVE: () => CAVE,
     DEMO_CELLS: () => DEMO_CELLS,
     DEMO_TOWN: () => DEMO_TOWN,
     DIRS: () => DIRS,
@@ -637,6 +666,7 @@ var W4W = (() => {
     FREEZE_MS: () => FREEZE_MS,
     FROSTBITE: () => FROSTBITE,
     GATHER_MS: () => GATHER_MS,
+    GUARD_MS: () => GUARD_MS,
     HEARTH_COST: () => HEARTH_COST,
     HEARTH_MAX_MS: () => HEARTH_MAX_MS,
     HEARTH_START_MS: () => HEARTH_START_MS,
@@ -666,7 +696,10 @@ var W4W = (() => {
     emptyInv: () => emptyInv,
     findPath: () => findPath,
     greyAt: () => greyAt,
+    guardsAt: () => guardsAt,
+    inMouth: () => inMouth,
     key: () => key,
+    mouthCells: () => mouthCells,
     newChar: () => newChar,
     newDirty: () => newDirty,
     passable: () => passable,
@@ -698,6 +731,8 @@ var W4W = (() => {
   const RIME_MS = 45e3;
   const RIME_MIN_RING = 7;
   const RIME_PULL = 0.04;
+  const CAVE = [6, 10];
+  const GUARD_MS = 2e4;
   const MAX_RING = 16;
   const FREEZE_MS = 24 * 36e5;
   const BAG_MS = 24 * 36e5;
@@ -777,6 +812,7 @@ var W4W = (() => {
     } else c += zone === 0 ? 10 : 5;
     if (greyAt(t)) c -= 5;
     if (bellAt(t)) c += 10;
+    if (inMouth(q, r)) c += 20;
     return Math.max(0, c) * weatherAt(t, ctx.netStorm).mult;
   }
   function sourceAt(q, r, t, ctx) {
@@ -856,6 +892,12 @@ var W4W = (() => {
     }
     return [cur[1], cur[2]];
   }
+  const mouthCells = () => [CAVE, ...DIRS.map(([dq, dr]) => [CAVE[0] + dq, CAVE[1] + dr]).filter((c) => passable(c[0], c[1]) && ringOf(c[0], c[1]) <= MAX_RING)];
+  const inMouth = (q, r) => dist([q, r], CAVE) <= 1;
+  function guardsAt(t) {
+    const cells = mouthCells(), s = Math.floor(t / GUARD_MS);
+    return [0, 1].map((i) => cells[Math.floor(hash(s, i + 1, 211) * cells.length)]);
+  }
   const rimeOk = (q, r) => {
     const n = ringOf(q, r);
     return n >= RIME_MIN_RING && n <= MAX_RING && terrain(q, r) === "open";
@@ -926,9 +968,10 @@ var W4W = (() => {
       if (src > 0 && !c.path.length) c.energy = Math.min(100, c.energy + (src >= 6 ? 10 : 5) / 60 * mins);
       const rime = zone >= 1 ? rimeAt(ctx.rime, t1) : null;
       const taken = !!rime && rime[0] === q && rime[1] === r;
-      if (taken || c.warmth <= 0 || c.health <= 0) {
+      const pure = q === CAVE[0] && r === CAVE[1], kept = !pure && inMouth(q, r) && guardsAt(t1).some((g) => g[0] === q && g[1] === r);
+      if (taken || pure || kept || c.warmth <= 0 || c.health <= 0) {
         const w = weatherAt(t1, ctx.netStorm);
-        const cause = taken ? "Chthon passed through you" : c.health <= 0 && c.warmth > 0 ? "frostbite" : `cold ${Math.round(cold)} against clothing ${ctx.insulation}${w.id === "calm" ? "" : `, ${w.name.toLowerCase()} \xD7${w.mult}`}`;
+        const cause = pure ? "Pure Cold. The cave is not open yet" : kept ? "the keepers of the Mouth took you" : taken ? "Chthon passed through you" : c.health <= 0 && c.warmth > 0 ? "frostbite" : `cold ${Math.round(cold)} against clothing ${ctx.insulation}${w.id === "calm" ? "" : `, ${w.name.toLowerCase()} \xD7${w.mult}`}`;
         events.push({ kind: "froze", t: t1, q, r, cause, zone, inv: { ...c.inv } });
         c.died = { t: t1, q, r, cause, zone };
         Object.assign(c, { frozenUntil: t1 + FREEZE_MS, warmth: 0, path: [], act: null, lost: false, q: c.home[0], r: c.home[1], inv: emptyInv(), simT: now, t0: t1 });
@@ -1071,10 +1114,17 @@ var W4W = (() => {
         const to = cellArg(b.to);
         if (!to) return fail("Where to?");
         if (ringOf(...to) > MAX_RING) return fail("Beyond here the cold has no edge. Not yet.");
-        const path = findPath(here, to, 4e3, new Set(Object.keys(ctxOf(ws, uid).shelters)));
-        if (!path) return fail("No way through from here.");
-        if (path.length > 90) return fail("Too far for one walk. Go in stages.");
-        Object.assign(c, { q: here[0], r: here[1], path, t0: now, act: null, lost: false });
+        const from = c.path.length ? c.path[0] : here;
+        const rest = findPath(from, to, 4e3, new Set(Object.keys(ctxOf(ws, uid).shelters)));
+        if (!rest) return fail("No way through from here.");
+        if (rest.length > 90) return fail("Too far for one walk. Go in stages.");
+        if (c.path.length) {
+          c.path = [from, ...rest];
+          c.act = null;
+          c.lost = false;
+          return ok();
+        }
+        Object.assign(c, { q: here[0], r: here[1], path: rest, t0: now, act: null, lost: false });
         beginStep(c, now, ctxOf(ws, uid));
         return ok();
       }
@@ -2902,21 +2952,29 @@ function syncAvatars() {
   for (const [uid, d] of Object.entries(want)) { if (!avatars[uid]) avatars[uid] = makeAvatar(uid, d.nick, d.mine); avatars[uid].data = d; }
 }
 /* ---------- moving smoothly: one curve through the cell centres, no stop at every cell ---------- */
-const curves = new Map();
-function curveFor(d) {
-  const k = d.q + ',' + d.r + '|' + d.path.map(c => c.join(',')).join(';'); let cv = curves.get(k);
-  if (!cv) { const pts = [HX(d.q, d.r), ...d.path.map(c => HX(...c))]; cv = pts.length > 1 ? new THREE.CatmullRomCurve3(pts, false, 'centripetal', 0.5) : null; curves.clear(); curves.set(k, cv); }
-  return cv;
+/** One route per walker, kept for the whole trip: new orders replace only the cells ahead, so nothing jumps. */
+function routeFor(a, d) {
+  const cur = [d.q, d.r], same = (x, y) => x && y && x[0] === y[0] && x[1] === y[1];
+  const R = a.route;
+  if (R) { const base = R.cells.length - 1 - d.path.length;
+    // still the same trip: the cell we stand on and the cells ahead line up with what we drew
+    if (base >= 0 && same(R.cells[base], cur) && d.path.every((c, i) => same(R.cells[base + 1 + i], c))) return R;
+    // a new order mid-step: keep everything up to the step we are on, swap the rest
+    const at = R.cells.findIndex((c, i) => same(c, cur) && same(R.cells[i + 1], d.path[0]));
+    if (at >= 0) { const cells = [...R.cells.slice(0, at + 2), ...d.path.slice(1)]; return (a.route = { cells, cv: new THREE.CatmullRomCurve3(cells.map(c => HX(...c)), false, 'centripetal', 0.5) }); }
+  }
+  const cells = [cur, ...d.path];
+  return (a.route = { cells, cv: new THREE.CatmullRomCurve3(cells.map(c => HX(...c)), false, 'centripetal', 0.5) });
 }
-function posOf(d, t) {
-  if (!d.path?.length) return { p: HX(d.q, d.r), walking: false, dir: null };
+function posOf(d, t, a) {
+  if (!d.path?.length) { if (a) a.route = null; return { p: HX(d.q, d.r), walking: false, dir: null }; }
   const out = W4W.zoneOf(...d.path[0]) >= 1 || W4W.zoneOf(d.q, d.r) >= 1;
-  // past the end of this step, keep going at the same pace until the next answer says otherwise
-  const u = Math.max(0, (t - d.t0) / Math.max(1, d.stepMs)), n = d.path.length, s = Math.min(n, u);
-  const cv = d.path.length > 1 || true ? curveFor(d) : null;
-  if (!cv) return { p: HX(...d.path[0]), walking: false, dir: null };
-  const k = s / n, p = cv.getPoint(Math.min(1, k)), tan = cv.getTangent(Math.min(0.999, Math.max(0.001, k)));
-  return { p, walking: s < n, dir: tan, out };
+  const R = a ? routeFor(a, d) : { cells: [[d.q, d.r], ...d.path], cv: new THREE.CatmullRomCurve3([HX(d.q, d.r), ...d.path.map(c => HX(...c))]) };
+  const n = R.cells.length - 1, base = n - d.path.length;
+  // past the end of this step, keep the same pace until the next answer says otherwise
+  const u = THREE.MathUtils.clamp((t - d.t0) / Math.max(1, d.stepMs), 0, d.path.length);
+  const k = Math.min(1, (base + u) / n), p = R.cv.getPoint(k), tan = R.cv.getTangent(THREE.MathUtils.clamp(k, 0.001, 0.999));
+  return { p, walking: base + u < n, dir: tan, out };
 }
 const ICE_MAT = new THREE.MeshPhysicalMaterial({ color: 0xcfe6ff, transparent: true, opacity: 0.55, roughness: 0.2, metalness: 0, clearcoat: 1, emissive: 0x6aa0ff, emissiveIntensity: 0.15 });
 function stepAvatars(dt) {
@@ -2931,7 +2989,7 @@ function stepAvatars(dt) {
       a.label.el.textContent = `${a.mine ? 'you' : d.nick} · frozen ${hms(d.frozenUntil - t)}`; continue;
     }
     if (a.ice) { a.g.remove(a.ice); a.ice = null; a.label.el.textContent = a.mine ? 'you' : d.nick; }
-    const { p, walking, dir, out } = posOf(d, t);
+    const { p, walking, dir, out } = posOf(d, t, a);
     // standing at a building: wait at its door, a step toward the middle of town, not inside the walls
     const cell = walking ? null : W4W.key(d.q, d.r), inside = cell && (Object.values(SPECIAL).some(([q, r]) => W4W.key(q, r) === cell) || allResidents().some(h => h.at[0] != null && W4W.key(...h.at) === cell));
     const off = inside && p.lengthSq() > 0.01 ? new THREE.Vector3(-p.x, 0, -p.z).normalize().multiplyScalar(0.95) : new THREE.Vector3();
@@ -3132,7 +3190,7 @@ function notesHtml() {
 /* ---------- the Rime, built: too tall, too thin, too many arms, and lights where a face should be ---------- */
 let rimeFx = null;
 const _ra = new THREE.Vector3(), _rb = new THREE.Vector3(), _up = new THREE.Vector3(0, 1, 0), _q = new THREE.Quaternion();
-function buildRime() {
+function buildRime(size = 0.72) {
   let seed = 913; const rr = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
   const skin = new THREE.MeshStandardMaterial({ color: 0x04060c, roughness: 0.32, metalness: 0.35, emissive: 0x0b1a33, emissiveIntensity: 0.35 });
   const bone = new THREE.MeshStandardMaterial({ color: 0x8796a8, roughness: 0.5, metalness: 0.1, emissive: 0x1a2a40, emissiveIntensity: 0.25 });
@@ -3179,12 +3237,12 @@ function buildRime() {
   const lights = [];
   for (let i = 0; i < 26; i++) { const a = rr() * Math.PI * 2, y = -1.9 + rr() * 3.9, rad = 0.42 + (1.75 - 0.42) * (2.3 - y) / 4.6 + 0.04;
     const l = sprite(GLOW, Math.cos(a) * rad, y, Math.sin(a) * rad, i < 4 ? 0.6 : 0.24 + rr() * 0.2, 0x9fdcff, 1); scene.remove(l); shroud.add(l); lights.push({ l, s: l.scale.x, next: rr() * 5 }); }
-  g.scale.setScalar(0.72); g.visible = false;
+  g.scale.setScalar(size); g.visible = false;
   tag(body, 'chthon', 'chthon');
-  rimeFx = { g, body, head, legs, spine, ribs, eyes, arms, rags, lay, V, shroud, lights, p: new THREE.Vector3(), yaw: 0, twitch: 0, twitchT: 4, warned: 0, walk: 0, look: 0, last: new THREE.Vector3() };
+  return { g, body, head, legs, spine, ribs, eyes, arms, rags, lay, V, shroud, lights, p: new THREE.Vector3(), yaw: 0, twitch: 0, twitchT: 4, warned: 0, walk: 0, look: 0, last: new THREE.Vector3() };
 }
-function poseRime(dt, t) {
-  const R = rimeFx, { lay, V } = R, moving = R.last.distanceTo(R.p) > 0.0005; R.last.copy(R.p);
+function poseRime(R, dt, t) {
+  const { lay, V } = R, moving = R.last.distanceTo(R.p) > 0.0005; R.last.copy(R.p);
   R.walk += dt * (moving ? 0.9 : 0.25);
   const w = R.walk, sway = Math.sin(t * 0.5) * 0.12;
   const hip = V(0, 4.3 + Math.sin(w * 2) * 0.06, 0);
@@ -3211,7 +3269,7 @@ function poseRime(dt, t) {
 }
 function stepRime(dt) {
   const R = XV?.rime; if (!R) { if (rimeFx) rimeFx.g.visible = false; return; }
-  if (!rimeFx) buildRime();
+  if (!rimeFx) rimeFx = buildRime();
   const t = xnow(), n = R.next || R, e = THREE.MathUtils.clamp((t - R.t) / W4W.RIME_MS, 0, 1);
   const want = HX(R.q, R.r).lerp(HX(n.q, n.r), e * e * (3 - 2 * e));
   // it never glides across the map: a jump in what the server says is a jump on the screen
@@ -3222,7 +3280,27 @@ function stepRime(dt) {
   rimeFx.g.rotation.y = rimeFx.yaw;
   const mine = avatars[myUid()]?.g.position, tgt = mine && mine.distanceTo(rimeFx.p) < 14 ? mine : camera.position;
   const ly = Math.atan2(tgt.x - rimeFx.p.x, tgt.z - rimeFx.p.z) - rimeFx.yaw; rimeFx.look = THREE.MathUtils.clamp(Math.atan2(Math.sin(ly), Math.cos(ly)), -1.1, 1.1);
-  if (rimeFx.g.position.distanceTo(controls.target) < 40) poseRime(dt, U.uTime.value);
+  if (rimeFx.g.position.distanceTo(controls.target) < 40) poseRime(rimeFx, dt, U.uTime.value);
+  stepMouth(dt);
+}
+/* ---------- the Mouth: the cave under the last tooth, and the two smaller ones that keep it ---------- */
+let mouthFx = null;
+function stepMouth(dt) {
+  const cp = HX(...W4W.CAVE);
+  if (!mouthFx) {
+    const glow = sprite(GLOW, cp.x, 0.6, cp.z, 3.4, 0x7fc4ff, 0.9); glow.userData.flicker = false;
+    const ring = new THREE.Mesh(new THREE.RingGeometry(0.4, 1.05, 40), new THREE.MeshBasicMaterial({ color: 0x9fd8ff, transparent: true, opacity: 0.35, blending: THREE.AdditiveBlending, depthWrite: false })); ring.rotation.x = -Math.PI / 2; ring.position.set(cp.x, 0.05, cp.z); scene.add(ring);
+    const mouth = new THREE.Mesh(new THREE.CircleGeometry(0.75, 24), new THREE.MeshBasicMaterial({ color: 0x010306 })); mouth.rotation.x = -Math.PI / 2; mouth.position.set(cp.x, 0.04, cp.z); scene.add(mouth);
+    const a = new THREE.Object3D(); a.position.copy(cp); scene.add(a); label('THE MOUTH', a, 1.2, 'red');
+    mouthFx = { glow, ring, keepers: [buildRime(0.34), buildRime(0.34)], pos: [new THREE.Vector3(), new THREE.Vector3()] };
+    mouthFx.keepers.forEach(k => k.g.visible = true);
+  }
+  const t = xnow(), k = U.uTime.value; mouthFx.ring.material.opacity = 0.25 + Math.sin(k * 1.3) * 0.1;
+  const now = W4W.guardsAt(t), next = W4W.guardsAt(t + W4W.GUARD_MS), e = ((t % W4W.GUARD_MS) / W4W.GUARD_MS);
+  mouthFx.keepers.forEach((K, i) => { const want = HX(...now[i]).lerp(HX(...next[i]), THREE.MathUtils.smoothstep(e, 0.7, 1));
+    const p = mouthFx.pos[i]; if (p.lengthSq() === 0 || p.distanceTo(want) > 3) p.copy(want); else p.lerp(want, Math.min(1, dt * 2));
+    K.g.position.set(p.x, 0, p.z); K.g.rotation.y += dt * 0.15 * (i ? -1 : 1);
+    if (p.distanceTo(controls.target) < 30) poseRime(K, dt, k + i * 7); });
 }
 
 /** How close it is to you, in cells, when you are out in the Wastes; null otherwise. */
@@ -3274,7 +3352,8 @@ const dur = ms => { ms = Math.max(0, ms); const h = Math.floor(ms / 36e5), m = M
 const clockAt = ms => new Date(ms).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 function planTo(to) {
   const pr = predicted(); const c = pr.c, t = xnow();
-  const path = W4W.findPath([c.q, c.r], to, 4000, new Set(Object.keys(xctx().shelters))); if (!path) { say('No way through from here.', 'Wastes'); return; }
+  const from = c.path.length ? c.path[0] : [c.q, c.r], rest = W4W.findPath(from, to, 4000, new Set(Object.keys(xctx().shelters))); if (!rest) { say('No way through from here.', 'Wastes'); return; }
+  const path = c.path.length ? [from, ...rest] : rest;
   if (!path.length) return;
   if (path.length > 90) { say('Too far for one walk. Go in stages.', 'Wastes'); return; }
   const leaves = path.some(([q, r]) => W4W.zoneOf(q, r) >= 1) || W4W.zoneOf(c.q, c.r) >= 1;
