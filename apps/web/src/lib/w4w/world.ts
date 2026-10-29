@@ -55,6 +55,9 @@ export const DRIFT = { calm: 0, wind: 0.15, blizzard: 0.4 } as const
 export const RIME_MS = 45_000
 export const RIME_MIN_RING = 7
 export const RIME_PULL = 0.04
+/** The Mouth: the cave of Pure Cold under the last tooth, and the two that keep it. */
+export const CAVE: Cell = [6, 10]
+export const GUARD_MS = 20_000
 export const MAX_RING = 16
 export const FREEZE_MS = 24 * 3600_000
 export const BAG_MS = 24 * 3600_000
@@ -143,6 +146,7 @@ export function coldAt(q: number, r: number, t: number, ctx: Ctx) {
   if (ctx.holds) { if (zone <= 2) c -= 5 } else c += zone === 0 ? 10 : 5
   if (greyAt(t)) c -= 5
   if (bellAt(t)) c += 10
+  if (inMouth(q, r)) c += 20 // the cave breathes out
   return Math.max(0, c) * weatherAt(t, ctx.netStorm).mult
 }
 /** Warmth gained per minute from what stands on the cell. */
@@ -216,6 +220,15 @@ export function rimeAt(trail: [number, number, number][] | undefined, t: number)
   return [cur[1], cur[2]]
 }
 
+/* ---------- the Mouth ---------- */
+export const mouthCells = (): Cell[] => [CAVE, ...DIRS.map(([dq, dr]) => [CAVE[0] + dq, CAVE[1] + dr] as Cell).filter(c => passable(c[0], c[1]) && ringOf(c[0], c[1]) <= MAX_RING)]
+export const inMouth = (q: number, r: number) => dist([q, r], CAVE) <= 1
+/** Where the two keepers of the Mouth stand at time t. They never leave it. */
+export function guardsAt(t: number): Cell[] {
+  const cells = mouthCells(), s = Math.floor(t / GUARD_MS)
+  return [0, 1].map(i => cells[Math.floor(hash(s, i + 1, 211) * cells.length)]!)
+}
+
 /* ---------- the Rime ---------- */
 export type Rime = { q: number; r: number; t: number; d: number }
 const rimeOk = (q: number, r: number) => { const n = ringOf(q, r); return n >= RIME_MIN_RING && n <= MAX_RING && terrain(q, r) === 'open' }
@@ -276,9 +289,10 @@ export function advance(c0: Char, now: number, ctx: Ctx): { c: Char; events: Eve
     if (src > 0 && !c.path.length) c.energy = Math.min(100, c.energy + (src >= 6 ? 10 : 5) / 60 * mins)
     const rime = zone >= 1 ? rimeAt(ctx.rime, t1) : null
     const taken = !!rime && rime[0] === q && rime[1] === r
-    if (taken || c.warmth <= 0 || c.health <= 0) {
+    const pure = q === CAVE[0] && r === CAVE[1], kept = !pure && inMouth(q, r) && guardsAt(t1).some(g => g[0] === q && g[1] === r)
+    if (taken || pure || kept || c.warmth <= 0 || c.health <= 0) {
       const w = weatherAt(t1, ctx.netStorm)
-      const cause = taken ? 'Chthon passed through you' : c.health <= 0 && c.warmth > 0 ? 'frostbite' : `cold ${Math.round(cold)} against clothing ${ctx.insulation}${w.id === 'calm' ? '' : `, ${w.name.toLowerCase()} ×${w.mult}`}`
+      const cause = pure ? 'Pure Cold. The cave is not open yet' : kept ? 'the keepers of the Mouth took you' : taken ? 'Chthon passed through you' : c.health <= 0 && c.warmth > 0 ? 'frostbite' : `cold ${Math.round(cold)} against clothing ${ctx.insulation}${w.id === 'calm' ? '' : `, ${w.name.toLowerCase()} ×${w.mult}`}`
       events.push({ kind: 'froze', t: t1, q, r, cause, zone, inv: { ...c.inv } })
       c.died = { t: t1, q, r, cause, zone }
       Object.assign(c, { frozenUntil: t1 + FREEZE_MS, warmth: 0, path: [], act: null, lost: false, q: c.home[0], r: c.home[1], inv: emptyInv(), simT: now, t0: t1 })
@@ -423,9 +437,12 @@ export function action(ws: WState, uid: string, op: string, b: Record<string, un
     case 'move': {
       const to = cellArg(b.to); if (!to) return fail('Where to?')
       if (ringOf(...to) > MAX_RING) return fail('Beyond here the cold has no edge. Not yet.')
-      const path = findPath(here, to, 4000, new Set(Object.keys(ctxOf(ws, uid).shelters))); if (!path) return fail('No way through from here.')
-      if (path.length > 90) return fail('Too far for one walk. Go in stages.')
-      Object.assign(c, { q: here[0], r: here[1], path, t0: now, act: null, lost: false }); beginStep(c, now, ctxOf(ws, uid))
+      // already on the way: finish the step you are on, then turn; no jump back to the last cell
+      const from: Cell = c.path.length ? c.path[0]! : here
+      const rest = findPath(from, to, 4000, new Set(Object.keys(ctxOf(ws, uid).shelters))); if (!rest) return fail('No way through from here.')
+      if (rest.length > 90) return fail('Too far for one walk. Go in stages.')
+      if (c.path.length) { c.path = [from, ...rest]; c.act = null; c.lost = false; return ok() }
+      Object.assign(c, { q: here[0], r: here[1], path: rest, t0: now, act: null, lost: false }); beginStep(c, now, ctxOf(ws, uid))
       return ok()
     }
     case 'stop': Object.assign(c, { q: here[0], r: here[1], path: [], t0: now, lost: false }); return ok()
