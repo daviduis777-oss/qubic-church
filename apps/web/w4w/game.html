@@ -544,6 +544,18 @@ body.hub #xact{display:none}
 .quick button,.ask{border:0!important;border-radius:3px;background:var(--plate);box-shadow:var(--bevel);font-family:var(--f-label);font-weight:600;font-size:13.5px;letter-spacing:.04em;color:var(--steel-ink)}
 #chatForm{border-top:0;box-shadow:0 -1px 0 rgba(0,0,0,.6),0 -2px 0 rgba(200,215,235,.06)}
 #chatForm input,input.name,textarea.name{border:0!important;border-radius:3px;background:linear-gradient(180deg,#05070b,#10151d)!important;box-shadow:inset 0 2px 4px #000,0 1px 0 rgba(200,215,235,.12);color:#f1e6d0}
+.pslots{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}
+.pslot{display:flex;flex-direction:column;gap:2px;padding:10px 12px;border-radius:4px;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.01));box-shadow:inset 0 1px 0 rgba(200,215,235,.12),inset 0 0 0 1px rgba(0,0,0,.5)}
+.pslot i{font-style:normal;font-family:var(--f-label);font-weight:600;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--steel-hi)}
+.pslot b{font-family:var(--f-print);font-weight:600;font-size:15.5px;color:#f1e6d0} .pslot span{font-size:12.5px;color:var(--mute)}
+.pslot .btn{margin-top:6px;padding:6px 10px;font-size:12.5px} .pslot.empty b{color:#ff9a8c}
+.pitem{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;margin-bottom:6px;border-radius:4px;background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.01));box-shadow:inset 0 1px 0 rgba(200,215,235,.12),inset 0 0 0 1px rgba(0,0,0,.5)}
+.pitem b{display:block;font-family:var(--f-print);font-weight:600;font-size:15.5px;color:#f1e6d0} .pitem span{font-size:12.5px;color:var(--mute)} .pitem .btn{padding:6px 10px;font-size:12.5px}
+.pres{margin:6px 0 2px}
+.hpack{pointer-events:auto;margin-top:2px;padding:7px 10px;border:0;border-radius:4px;background:var(--plate);box-shadow:var(--bevel);color:var(--steel-ink);font-family:var(--f-label);font-weight:600;font-size:12.5px;letter-spacing:.04em;text-align:left;display:flex;justify-content:space-between;align-items:center}
+.hpack:hover{filter:brightness(1.2)} .hpack kbd{font:inherit;font-size:11px;padding:1px 6px;border-radius:3px;background:rgba(0,0,0,.4);box-shadow:inset 0 0 0 1px rgba(160,180,205,.25)}
+.lbl.res{font-size:11px;padding:2px 7px 1px;color:#e7f3ff;background:linear-gradient(180deg,#24384f,#132233)}
+.lbl.res.none{color:#ffc3b8;background:linear-gradient(180deg,#3a1d1a,#1d0d0b)}
 /* readability first: one serif with real weight, one plain sans; no hairline faces, no handwriting */
 #panel header h2,#hud .hz b,#meter .verdict,.hub-win header h2,#banner b,#died h1,#load b,.brand b{font-weight:600}
 #hud .hz b{font-size:22px} #panel header h2{font-size:26px} .hub-win header h2{font-size:40px} #meter .verdict{font-size:18px}
@@ -672,6 +684,7 @@ var W4W = (() => {
     HEARTH_START_MS: () => HEARTH_START_MS,
     HEARTH_WOOD_MS: () => HEARTH_WOOD_MS,
     INSULATION_T1: () => INSULATION_T1,
+    ITEMS: () => ITEMS,
     LOSS_K: () => LOSS_K,
     MAX_RING: () => MAX_RING,
     NODE_COOLDOWN_MS: () => NODE_COOLDOWN_MS,
@@ -698,7 +711,10 @@ var W4W = (() => {
     greyAt: () => greyAt,
     guardsAt: () => guardsAt,
     inMouth: () => inMouth,
+    insulationOf: () => insulationOf,
+    itemsOf: () => itemsOf,
     key: () => key,
+    loadOf: () => loadOf,
     mouthCells: () => mouthCells,
     newChar: () => newChar,
     newDirty: () => newDirty,
@@ -709,11 +725,13 @@ var W4W = (() => {
     rimeStep: () => rimeStep,
     ringOf: () => ringOf,
     sourceAt: () => sourceAt,
+    startItems: () => startItems,
     stepAll: () => stepAll,
     stepChar: () => stepChar,
     stepDur: () => stepDur,
     stepRime: () => stepRime,
     terrain: () => terrain,
+    toolFor: () => toolFor,
     townOfState: () => townOfState,
     townShelters: () => townShelters,
     townWarmth: () => townWarmth,
@@ -725,10 +743,10 @@ var W4W = (() => {
     zoneOf: () => zoneOf
   });
   const STEP_MS = 3e3;
-  const ZONE_STEP_MS = [3e3, 3e4, 45e3, 6e4];
+  const ZONE_STEP_MS = [3e3, 15e3, 22e3, 3e4];
   const WX_SLOW = { calm: 1, wind: 1.5, blizzard: 2.5 };
   const DRIFT = { calm: 0, wind: 0.15, blizzard: 0.4 };
-  const RIME_MS = 45e3;
+  const RIME_MS = 2e4;
   const RIME_MIN_RING = 7;
   const RIME_PULL = 0.04;
   const CAVE = [6, 10];
@@ -748,6 +766,20 @@ var W4W = (() => {
   const HEARTH_START_MS = 6 * 36e5;
   const HEARTH_WOOD_MS = 3 * 36e5;
   const HEARTH_MAX_MS = 24 * 36e5;
+  const ITEMS = {
+    wool_cap: { name: "Wool cap", slot: "head", ins: 3, w: 0.3 },
+    canvas_coat: { name: "Canvas coat", slot: "body", ins: 9, w: 2 },
+    mittens: { name: "Mittens", slot: "hands", ins: 3, w: 0.2 },
+    wool_trousers: { name: "Wool trousers", slot: "legs", ins: 4, w: 1 },
+    felt_boots: { name: "Felt boots", slot: "feet", ins: 3, w: 1 },
+    saw: { name: "Bow saw", slot: "tool", ins: 0, w: 1.5, for: ["wood", "resin"] },
+    pickaxe: { name: "Pickaxe", slot: "tool", ins: 0, w: 2.5, for: ["stone", "flint"] }
+  };
+  const startItems = () => ({ wool_cap: "worn", canvas_coat: "worn", mittens: "worn", wool_trousers: "worn", felt_boots: "worn", saw: "home", pickaxe: "home" });
+  const itemsOf = (c) => c.items ?? (c.items = startItems());
+  const insulationOf = (c) => Object.entries(itemsOf(c)).reduce((a, [id, at]) => a + (at === "worn" ? ITEMS[id]?.ins ?? 0 : 0), 0);
+  const loadOf = (c) => weightOf(c.inv) + Object.entries(itemsOf(c)).reduce((a, [id, at]) => a + (at === "pack" ? ITEMS[id]?.w ?? 0 : 0), 0);
+  const toolFor = (res) => Object.keys(ITEMS).find((id) => ITEMS[id].for?.includes(res));
   const DEMO_TOWN = { people: 5, power: 5190, deeds: 2 };
   const SPECIAL = { core: [0, 0], church: [1, -3], plaza: [-1, 3], observatory: [4, -2], library: [5, -5], mine: [-6, 2] };
   const DEMO_CELLS = [[2, -1], [-2, 1], [1, 1], [-1, -1], [3, -3], [-3, 3], [3, 0]];
@@ -803,6 +835,7 @@ var W4W = (() => {
   }
   function coldAt(q, r, t, ctx) {
     const [x, z] = worldXZ(q, r);
+    if (ctx.shelters[key(q, r)]) return 0;
     if (Math.hypot(x, z) <= ctx.heatR) return 0;
     const zone = zoneOf(q, r);
     if (zone > 3) return 999;
@@ -881,7 +914,7 @@ var W4W = (() => {
         c.lost = true;
       }
     }
-    c.stepMs = stepDur(c.path[0], t, weightOf(c.inv), ctx.netStorm);
+    c.stepMs = stepDur(c.path[0], t, loadOf(c), ctx.netStorm);
   }
   function rimeAt(trail, t) {
     if (!trail?.length) return null;
@@ -939,7 +972,7 @@ var W4W = (() => {
         const te = c.t0 + c.stepMs, [q2, r2] = c.path.shift();
         c.q = q2;
         c.r = r2;
-        c.energy = Math.max(0, c.energy - (weightOf(c.inv) > CAPACITY ? 2 : 1));
+        c.energy = Math.max(0, c.energy - (loadOf(c) > CAPACITY ? 2 : 1));
         if (c.lost) {
           c.lost = false;
           c.path = [];
@@ -960,7 +993,7 @@ var W4W = (() => {
       const q = c.q, r = c.r, zone = zoneOf(q, r);
       const cold = coldAt(q, r, t1, ctx), src = sourceAt(q, r, t1, ctx);
       const tired = c.energy <= 0 ? 1.25 : 1;
-      const loss = Math.max(0, cold - ctx.insulation) * LOSS_K * tired;
+      const ins = insulationOf(c), loss = Math.max(0, cold - ins) * LOSS_K * tired;
       c.warmth = Math.min(100, Math.max(0, c.warmth + (src - loss) * mins));
       if (c.warmth < 25) c.health = Math.max(0, c.health - FROSTBITE * mins);
       const atHome = key(q, r) === ctx.home;
@@ -971,7 +1004,7 @@ var W4W = (() => {
       const pure = q === CAVE[0] && r === CAVE[1], kept = !pure && inMouth(q, r) && guardsAt(t1).some((g) => g[0] === q && g[1] === r);
       if (taken || pure || kept || c.warmth <= 0 || c.health <= 0) {
         const w = weatherAt(t1, ctx.netStorm);
-        const cause = pure ? "Pure Cold. The cave is not open yet" : kept ? "the keepers of the Mouth took you" : taken ? "Chthon passed through you" : c.health <= 0 && c.warmth > 0 ? "frostbite" : `cold ${Math.round(cold)} against clothing ${ctx.insulation}${w.id === "calm" ? "" : `, ${w.name.toLowerCase()} \xD7${w.mult}`}`;
+        const cause = pure ? "Pure Cold. The cave is not open yet" : kept ? "the keepers of the Mouth took you" : taken ? "Chthon passed through you" : c.health <= 0 && c.warmth > 0 ? "frostbite" : `cold ${Math.round(cold)} against clothing ${ins}${w.id === "calm" ? "" : `, ${w.name.toLowerCase()} \xD7${w.mult}`}`;
         events.push({ kind: "froze", t: t1, q, r, cause, zone, inv: { ...c.inv } });
         c.died = { t: t1, q, r, cause, zone };
         Object.assign(c, { frozenUntil: t1 + FREEZE_MS, warmth: 0, path: [], act: null, lost: false, q: c.home[0], r: c.home[1], inv: emptyInv(), simT: now, t0: t1 });
@@ -1037,7 +1070,7 @@ var W4W = (() => {
     for (const e of events) {
       if (e.kind !== "froze") continue;
       const has = Object.values(e.inv).some((v) => v > 0);
-      if (has) {
+      {
         const id = `${uid}:${e.t}`;
         ws.bags[id] = { id, owner: uid, nick: nickIn(ws, uid), q: e.q, r: e.r, inv: e.inv, until: e.t + BAG_MS };
         d.bags.add(id);
@@ -1141,7 +1174,9 @@ var W4W = (() => {
         if (!res) return fail("Nothing to take here.");
         const k = key(...at);
         if ((ws.nodes[k] ?? 0) > now) return fail("Already picked clean. It comes back in a while.");
-        if (weightOf(c.inv) + WEIGHT[res] > CAPACITY * OVERLOAD) return fail("You cannot carry more.");
+        if (loadOf(c) + WEIGHT[res] > CAPACITY * OVERLOAD) return fail("You cannot carry more.");
+        const tool = toolFor(res);
+        if (itemsOf(c)[tool] !== "pack") return fail(`You need the ${ITEMS[tool].name.toLowerCase()} in your pack for ${res}. It is at home.`);
         c.act = { kind: "gather", q: at[0], r: at[1], res, until: now + GATHER_MS };
         ws.nodes[k] = now + GATHER_MS + NODE_COOLDOWN_MS;
         d.nodes.add(k);
@@ -1175,7 +1210,7 @@ var W4W = (() => {
         if (bag.owner === uid) return fail("Your own frozen pack will not open for you. Someone else has to carry it.");
         if (!near([bag.q, bag.r])) return fail("Too far. Stand next to it.");
         const took = emptyInv();
-        for (const res of Object.keys(WEIGHT)) while (bag.inv[res] > 0 && weightOf(c.inv) + WEIGHT[res] <= CAPACITY * OVERLOAD) {
+        for (const res of Object.keys(WEIGHT)) while (bag.inv[res] > 0 && loadOf(c) + WEIGHT[res] <= CAPACITY * OVERLOAD) {
           bag.inv[res]--;
           c.inv[res]++;
           took[res]++;
@@ -1202,11 +1237,25 @@ var W4W = (() => {
         if (!(res in WEIGHT)) return fail("Pack what?");
         c.stash = c.stash ?? emptyInv();
         let moved = 0;
-        while (moved < n && c.stash[res] > 0 && weightOf(c.inv) + WEIGHT[res] <= CAPACITY) {
+        while (moved < n && c.stash[res] > 0 && loadOf(c) + WEIGHT[res] <= CAPACITY) {
           c.stash[res]--;
           c.inv[res]++;
           moved++;
         }
+        return ok();
+      }
+      case "item": {
+        const id = String(b.id ?? ""), to = String(b.to ?? ""), it = ITEMS[id], items = itemsOf(c);
+        if (!it || !items[id]) return fail("No such thing.");
+        if (!["worn", "pack", "home"].includes(to)) return fail("Where to?");
+        const atHome = key(...here) === key(...c.home);
+        if ((to === "home" || items[id] === "home") && !atHome) return fail("That stays at home. Go home first.");
+        if (to === "worn" && it.slot === "tool") return fail("Tools go in the pack.");
+        if (to === "pack" && items[id] !== "pack" && loadOf(c) + it.w > CAPACITY * OVERLOAD) return fail("Your pack is full.");
+        if (to === "worn") {
+          for (const [o, at] of Object.entries(items)) if (o !== id && at === "worn" && ITEMS[o]?.slot === it.slot) items[o] = items[id];
+        }
+        items[id] = to;
         return ok();
       }
       default:
@@ -1571,7 +1620,7 @@ function build() {
     for (let i = 0; i < 6; i++) { const a0 = Math.PI / 6 + i * Math.PI / 3, a1 = a0 + Math.PI / 3, R0 = 1.1547;
       seg.push(c.x + Math.cos(a0) * R0, 0.015, c.z + Math.sin(a0) * R0, c.x + Math.cos(a1) * R0, 0.015, c.z + Math.sin(a1) * R0); } }
   const lg = new THREE.BufferGeometry(); lg.setAttribute('position', new THREE.Float32BufferAttribute(seg, 3));
-  scene.add(new THREE.LineSegments(lg, new THREE.LineBasicMaterial({ color: 0x8090c0, transparent: true, opacity: 0.12, depthWrite: false })));
+  scene.add(new THREE.LineSegments(lg, new THREE.LineBasicMaterial({ color: 0xa0b0e0, transparent: true, opacity: 0.2, depthWrite: false })));
   Object.values(SPECIAL).forEach(([q, r]) => reserved.add(key(q, r))); DEMO.forEach(n => reserved.add(key(...n.at))); STAGE2.forEach(s => reserved.add(key(...s.at)));
   ring(1).forEach(([q, r]) => reserved.add(key(q, r)));
   buildCore();
@@ -2034,7 +2083,8 @@ const FAQ = [
     ['Why did my character stop in the middle of nowhere?', 'In wind, and worse in a blizzard, the trail gets lost: a step takes you somewhere you did not choose and you stop there. Pick a direction again. In calm weather the trail holds.'],
     ['What is the tall dark thing out there?', 'The Library calls it Chthon. It wanders the Wastes and never comes past the forest edge into town. It does not hunt, but now and then it turns toward someone in the snow, and if it reaches you, you fall at once. If you see it near, walk the other way.'],
     ['What do the bars mean?', 'Warmth drops wherever the cold is stronger than your clothing, faster in wind and blizzards. Below 25 warmth the frost starts taking health. Energy goes on walking and comes back by a fire. Load is what you carry: past the limit every step costs double.'],
-    ['Is the town always safe?', 'No. When the town holds, its warm circle keeps you safe. When the frost is winning, even the streets between houses bite, and the Library at the edge is a cold walk. Houses, the church and the plaza fire always warm you.'],
+    ['Is the town always safe?', 'Inside any building you are completely safe: you step in and vanish from the map. On the streets, no. When the town holds, its warm circle keeps you safe. When the frost is winning, even the streets between houses bite, and the Library at the edge is a cold walk. Houses, the church and the plaza fire always warm you.'],
+    ['How do I gather?', 'Take your tools from home first: the bow saw for wood and resin, the pickaxe for stone and flint. Open Pack and clothes (key I) at home, or use the Take buttons by your door. Out past the line, stand next to a tree or a rock and press Saw or Break.'],
     ['What can I do out there?', 'Gather wood and stone in The Edge and the Black Pines, resin among the pines and flint in the Stone Teeth. With 6 wood, 4 stone and 1 flint you can build a hearth out in the cold. Anyone can warm up at it and feed it with wood; it burns out unless someone does.'],
     ['I froze. What now?', 'You lie frozen at your own house for 24 hours. Nothing makes it faster: not money, not mining, not anyone. Your rig keeps working the whole time. What you carried stays where you fell for 24 hours.'],
     ['Can I get my pack back?', 'Not yourself. Only someone else can pick up a frozen pack and carry it to town. Post where it lies on the board and make a deal with whoever goes for it. After 24 hours the snow takes it.'],
@@ -2695,7 +2745,7 @@ You can use tools to read the town and to open screens for the player. Open a sc
 let chat = [], chatCtl = null;
 function openMaria(keep) {
   panel('maria', 'Maria', sample ? 'Ask her anything about Aigarth' : 'Qubic Church', 'maria.png', `<div id="chat"></div>
-    <div class="quick" style="margin-top:12px"><button data-q="What happened to Anna?">What happened to Anna?</button><button data-q="How can I help the town?">How can I help the town?</button><button data-q="Build me a rig">Build me a rig</button><button data-q="What should I read?">What should I read?</button><button data-q="Is CfB Satoshi?">Is CfB Satoshi?</button></div>`, true);
+    <div class="quick" style="margin-top:12px"><button data-q="What happened to Anna?">What happened to Anna?</button><button data-q="How can I help the town?">How can I help the town?</button><button data-q="Build me a rig">Build me a rig</button><button data-q="What should I read?">What should I read?</button></div>`, true);
   renderChat();
   document.querySelectorAll('[data-q]').forEach(b => b.onclick = () => ask(b.dataset.q));
   setTimeout(() => $('#chatIn')?.focus(), 50);
@@ -2704,7 +2754,10 @@ function renderChat() {
   const box = $('#chat'); if (!box) return;
   const turns = chat.length ? chat : [{ role: 'assistant', content: me() ? `Good to see you, ${me().nick}. The night is long. What do you need?` : 'You came in from the cold. My sister is frozen in the ice at the centre of town. Ask me anything.' }];
   box.innerHTML = turns.map(t => `<div class="bub ${t.role === 'user' ? 'u' : 'm'}${t.thinking ? ' thinking' : ''}">${esc(t.content)}</div>`).join('');
-  const last = chat.at(-1); if (sample && last?.bank && !last.deep) { const b = document.createElement('button'); b.className = 'ask'; b.textContent = 'Ask her to think it through (uses your own Claude)'; b.onclick = () => askDeep(); box.appendChild(b); }
+  const last = chat.at(-1);
+  if (last?.go) { const GO = { connect: 'Open the Mine', mine: 'Open the Mine', orders: 'Show me the board', chronicle: 'Open the Journal', house: 'Show my house', anna: 'Show me Anna', warmth: 'Show the warmth', fire: 'Add wood to the fire', library: 'Open the Library', herald: 'Open the Herald', observatory: 'Open the Observatory' };
+    const g = document.createElement('button'); g.className = 'btn'; g.style.alignSelf = 'flex-start'; g.textContent = GO[last.go] || 'Take me there'; g.onclick = () => { const s = last.go; last.go = null; goScreen(s); }; box.appendChild(g); }
+  if (sample && last?.bank && !last.deep) { const b = document.createElement('button'); b.className = 'ask'; b.textContent = 'Ask her to think it through (uses your own Claude)'; b.onclick = () => askDeep(); box.appendChild(b); }
   $('#pbody').scrollTop = 1e6;
 }
 $('#chatForm').addEventListener('submit', e => { e.preventDefault(); const v = $('#chatIn').value.trim(); if (!v) return; $('#chatIn').value = ''; ask(v); });
@@ -2724,7 +2777,8 @@ function goScreen(s) {
 }
 function ask(text) {
   chat.push({ role: 'user', content: text });
-  const a = bank(text); chat.push({ role: 'assistant', content: a.text, bank: true }); renderChat(); if (a.go) setTimeout(() => goScreen(a.go), 900);
+  // she answers and stays: the place she mentions waits behind a button, so you can finish reading
+  const a = bank(text); chat.push({ role: 'assistant', content: a.text, bank: true, go: a.go || null }); renderChat();
 }
 async function askDeep() {
   const lastQ = [...chat].reverse().find(t => t.role === 'user'); if (!lastQ) return; const prev = chat.at(-1); if (prev?.bank) prev.deep = true;
@@ -2738,7 +2792,7 @@ async function askDeep() {
   try {
     const { text: out } = await sample(input, { modelTier: 'quick', signal: chatCtl.signal, tools: MARIA_TOOLS, onText: ({ text: t }) => { live.content = t; live.thinking = false; renderChat(); } });
     live.content = out.trim(); live.thinking = false; renderChat();
-    if (pendingScreen) { const s = pendingScreen; pendingScreen = null; setTimeout(() => goScreen(s), 900); }
+    if (pendingScreen) { live.go = pendingScreen; pendingScreen = null; renderChat(); }
   } catch (e) {
     live.thinking = false;
     if (e.code === 'tools_unavailable') { try { const { text: out } = await sample(input, { modelTier: 'quick', cache: false }); live.content = out.trim(); renderChat(); return; } catch (e2) { e = e2; } }
@@ -2850,7 +2904,7 @@ async function demoHistory() {
 /* ================= the character, the cold and the Wastes ================= */
 // The server walks every character and counts the cold (world.ts rules, inlined as W4W). The game asks, predicts
 // with the same rules between answers, and draws. In the prototype (no server) the same rules run locally.
-let XW = null;
+let XW = null, SHEL = {};
 let XV = null, XT = 0, pendingOpen = null, lastDeathSeen = Number(store.get('w4w.deathSeen') || 0), xBusy = false;
 const xnow = () => (XV ? XV.now + (performance.now() - XT) : Date.now());
 const myUid = () => (S.uid && S.real[S.uid] ? S.uid : 'me');
@@ -2881,21 +2935,24 @@ function localWorld() {
   };
 }
 /** Called once the town is built and the capabilities are up. */
-function startX() { if (XW) return; XW = window.W4W_X || localWorld(); hookFeed(); XW.on(v => takeView(v)); controls.addEventListener('start', () => { follow = false; }); }
+function startX() { if (XW) return; borderFx = buildBorder(); XW = window.W4W_X || localWorld(); hookFeed(); XW.on(v => takeView(v)); controls.addEventListener('start', () => { follow = false; }); }
 let follow = true, freezeAsk = 0;
 function takeView(v) {
   if (!v || v.error) return;
-  XV = v; XT = performance.now(); PR = null;
+  XV = v; XT = performance.now(); PR = null; SHEL = W4W.townShelters(allResidents().filter(h => !h.demo && h.at[0] != null).map(h => h.at));
   if (!v.me) ensureChar();
   syncAvatars(); syncHearths(); syncBags(); hud(true);
-  for (const e of v.events || []) if (e.kind === 'gathered') { banner(`+1 ${e.res}`, `${W4W.weightOf(v.me?.inv || W4W.emptyInv()).toFixed(1)} / ${W4W.CAPACITY} carried`); }
+  for (const e of v.events || []) if (e.kind === 'gathered') { sfx.gathered(); banner(`+1 ${e.res}`, `${(v.me ? W4W.loadOf(v.me) : 0).toFixed(1)} / ${W4W.CAPACITY} carried`); }
   checkDeath();
 }
-async function xact(name, body) {
-  if (xBusy) return null; xBusy = true;
-  try { const v = await XW.act(name, body); takeView(v); return v; }
-  catch (e) { say(esc(e.message || 'The cold took your words.'), 'Wastes'); return null; }
-  finally { xBusy = false; }
+// actions go to the server one after another, never dropped: two quick clicks are two orders
+let xq = Promise.resolve();
+function xact(name, body) {
+  const run = async () => { xBusy = true;
+    try { const v = await XW.act(name, body); takeView(v); return v; }
+    catch (e) { say(esc(e.message || 'The cold took your words.'), 'Wastes'); return null; }
+    finally { xBusy = false; } };
+  const p = xq.then(run, run); xq = p.catch(() => {}); return p;
 }
 // when your house appears, your character is born in it
 function ensureChar() { if (XW && me() && me().q != null && XV && !XV.me && !xBusy) xact('char'); }
@@ -2932,7 +2989,7 @@ function makeAvatar(uid, nick, mine) {
   body.traverse(m => { if (m.isMesh) { m.castShadow = false; m.frustumCulled = false; m.material = heroMat(m.material); } }); g.add(body); scene.add(g);
   // a soft round shadow under the feet instead of the blocky shadow-map one
   const blob = new THREE.Mesh(BLOB_GEO, BLOB_MAT); blob.position.y = 0.02; blob.renderOrder = 1; g.add(blob);
-  const mixer = new THREE.AnimationMixer(body); const actions = {}; for (const [n, c] of Object.entries(heroClips)) actions[n] = mixer.clipAction(c); if (actions.Running_A) actions.Running_A.timeScale = 0.8; if (actions.Walking_A) actions.Walking_A.timeScale = 0.42;
+  const mixer = new THREE.AnimationMixer(body); const actions = {}; for (const [n, c] of Object.entries(heroClips)) actions[n] = mixer.clipAction(c); if (actions.Running_A) actions.Running_A.timeScale = 0.8; if (actions.Walking_A) actions.Walking_A.timeScale = 0.5; if (actions.Walking_C) actions.Walking_C.timeScale = 0.45;
   const glow = sprite(GLOW, 0, 0.22, 0, mine ? 0.38 : 0.26, mine ? 0xffc070 : 0x9fc3ff, mine ? 0.7 : 0.45); scene.remove(glow); g.add(glow);
   const L = label(mine ? 'you' : nick, g, 0.62, mine ? 'me' : 'walker');
   const a = { g, body, mixer, actions, cur: null, label: L, mine, ice: null, uid };
@@ -2990,13 +3047,23 @@ function stepAvatars(dt) {
     }
     if (a.ice) { a.g.remove(a.ice); a.ice = null; a.label.el.textContent = a.mine ? 'you' : d.nick; }
     const { p, walking, dir, out } = posOf(d, t, a);
-    // standing at a building: wait at its door, a step toward the middle of town, not inside the walls
-    const cell = walking ? null : W4W.key(d.q, d.r), inside = cell && (Object.values(SPECIAL).some(([q, r]) => W4W.key(q, r) === cell) || allResidents().some(h => h.at[0] != null && W4W.key(...h.at) === cell));
-    const off = inside && p.lengthSq() > 0.01 ? new THREE.Vector3(-p.x, 0, -p.z).normalize().multiplyScalar(0.95) : new THREE.Vector3();
-    if (walking) a.g.position.copy(p); else a.g.position.lerp(p.clone().add(off), Math.min(1, dt * 6));
+    // inside a building you are gone from the map: through the door, the body fades, the walls keep you
+    const indoor = !walking && !!SHEL[W4W.key(d.q, d.r)];
+    if (indoor !== !!a.wasIn) { a.wasIn = indoor; if (a.mine) sfx.door(); a.label.el.textContent = (a.mine ? 'you' : d.nick) + (indoor ? ' · inside' : ''); if (indoor) play(a, 'Interact', true); }
+    a.fade = THREE.MathUtils.clamp((a.fade ?? 1) + (indoor ? -dt * 1.6 : dt * 3), 0, 1);
+    a.body.scale.setScalar(heroScale * Math.max(0.001, a.fade)); a.g.visible = a.fade > 0.02 || indoor;
+    const door = !walking && p.lengthSq() > 0.01 && (indoor || Object.values(SPECIAL).some(([q, r]) => q === d.q && r === d.r)) ? new THREE.Vector3(-p.x, 0, -p.z).normalize().multiplyScalar(0.95) : new THREE.Vector3();
+    if (walking) a.g.position.copy(p); else a.g.position.lerp(p.clone().add(door), Math.min(1, dt * 6));
     if (dir && dir.lengthSq() > 1e-6) { const y = Math.atan2(dir.x, dir.z), r0 = a.g.rotation.y; a.g.rotation.y = r0 + Math.atan2(Math.sin(y - r0), Math.cos(y - r0)) * Math.min(1, dt * 9); }
     const busy = d.act && d.act.until > t;
-    play(a, walking ? (out || !a.actions.Running_A ? 'Walking_A' : 'Running_A') : busy ? 'PickUp' : sittingAt(d) ? 'Sit_Floor_Idle' : 'Idle');
+    // out in the cold the walk turns heavy: bent into the wind, staggering when it blows or you are spent
+    const wx = W4W.weatherAt(t).id, bad = walking && out && (wx !== 'calm' || (d.warmth ?? 100) < 40 || (d.energy ?? 100) < 25);
+    const lean = walking && out ? (bad ? 0.32 : 0.16) : 0, sway = bad ? Math.sin(U.uTime.value * 2.1 + a.uid.length) * (wx === 'blizzard' ? 0.14 : 0.08) : 0;
+    a.body.rotation.x += (lean - a.body.rotation.x) * Math.min(1, dt * 3); a.body.rotation.z += (sway - a.body.rotation.z) * Math.min(1, dt * 3);
+    const chop = d.act?.res === 'stone' || d.act?.res === 'flint' ? '2H_Melee_Attack_Chop' : '1H_Melee_Attack_Chop';
+    if (!(indoor && a.cur === 'Interact')) play(a, walking ? (out ? (bad && a.actions.Walking_C ? 'Walking_C' : 'Walking_A') : 'Running_A') : busy ? (a.actions[chop] ? chop : 'PickUp') : sittingAt(d) ? 'Sit_Floor_Idle' : 'Idle');
+    if (a.mine && walking) { a.stepT = (a.stepT || 0) + dt; const every = out ? (bad ? 0.95 : 0.8) : 0.3; if (a.stepT > every) { a.stepT = 0; sfx.step(out, wx); } }
+    if (a.mine && busy) { a.workT = (a.workT || 0) + dt; if (a.workT > 1.1) { a.workT = 0; sfx.work(d.act?.res); } }
   }
   // the camera walks with you until you take it
   const mine = avatars[myUid()];
@@ -3094,13 +3161,15 @@ function hud(force) {
   if (!XV?.me) { hudEl.hidden = true; actEl.hidden = true; frostEl.style.opacity = 0; return; }
   const pr = predicted(), c = pr.c, t = xnow();
   const here = W4W.cellAt(c, t), zone = W4W.zoneOf(...here), ctx = xctx();
-  const cold = W4W.coldAt(...here, t, ctx), wx = W4W.weatherAt(t), deficit = Math.max(0, cold - ctx.insulation);
-  const kg = W4W.weightOf(c.inv), frozen = c.frozenUntil > t;
+  const ins = W4W.insulationOf(c), cold = W4W.coldAt(...here, t, ctx), wx = W4W.weatherAt(t), deficit = Math.max(0, cold - ins);
+  const kg = W4W.loadOf(c), frozen = c.frozenUntil > t, indoors = !c.path.length && !!SHEL[W4W.key(...here)];
   hudEl.hidden = false;
-  hudEl.innerHTML = `<div class="hz"><b>${esc(W4W.ZONES[zone]?.name || 'The far cold')}</b><span>${frozen ? 'frozen' : cold === 0 ? 'inside the warm circle' : `cold ${Math.round(cold)} · clothing ${ctx.insulation}${deficit ? ` · −${(deficit * W4W.LOSS_K).toFixed(1)}/min` : ''}`}</span></div>
+  hudEl.innerHTML = `<div class="hz"><b>${esc(W4W.ZONES[zone]?.name || 'The far cold')}</b><span>${frozen ? 'frozen' : indoors ? 'indoors · the walls keep you' : cold === 0 ? 'inside the warm circle' : `cold ${Math.round(cold)} · clothing ${ins}${deficit ? ` · −${(deficit * W4W.LOSS_K).toFixed(1)}/min` : ''}`}</span></div>
     ${bar('Warmth', c.warmth, 100, 'w')}${bar('Health', c.health, 100, 'h')}${bar('Energy', c.energy, 100, 'e')}${bar('Load', kg, W4W.CAPACITY, kg > W4W.CAPACITY ? 'l over' : 'l')}
     <div class="hinv">${['wood', 'stone', 'flint', 'resin'].map(k => `<span><i>${k}</i>${c.inv[k] || 0}</span>`).join('')}</div>
-    <div class="hwx"><span class="${wx.id}">${wx.name} ×${wx.mult}</span>${XV.grey ? '<span>grey light −5</span>' : ''}${XV.bell ? '<span class="bad">night of the bell +10</span>' : ''}<span class="${XV.town.holds ? 'good' : 'bad'}">${XV.town.holds ? 'town holds' : 'frost wins'}</span></div>`;
+    <div class="hwx"><span class="${wx.id}">${wx.name} ×${wx.mult}</span>${XV.grey ? '<span>grey light −5</span>' : ''}${XV.bell ? '<span class="bad">night of the bell +10</span>' : ''}<span class="${XV.town.holds ? 'good' : 'bad'}">${XV.town.holds ? 'town holds' : 'frost wins'}</span></div>
+    <button class="hpack" data-pack>Pack and clothes <kbd>I</kbd></button>`;
+  hudEl.querySelector('[data-pack]').onclick = openPack;
   // the cold you feel on the screen
   const fx = frozen ? 0 : Math.max(0, (50 - c.warmth) / 50); frostEl.style.opacity = fx.toFixed(2);
   hudEl.style.setProperty('--chill', Math.min(1, deficit / 12 + fx).toFixed(2));
@@ -3116,6 +3185,7 @@ function hud(force) {
   if (c.path.length && performance.now() - etaT > 2000) { etaT = performance.now(); const nx = c.path[0], first = Math.max(0, c.t0 + c.stepMs - t);
     eta = first + (c.path.length > 1 ? W4W.planTrip({ ...c, q: nx[0], r: nx[1] }, c.path.slice(1), c.t0 + c.stepMs, xctx()).eta : 0); }
   if (c.path.length) drawPrintsOnce(c); else if (!trip && prints.length) drawPrints([0, 0], [], false);
+  stepResTags(frozen ? null : c);
   actions(c, here, t, frozen);
   if (pendingOpen && !c.path.length && !frozen) { const k = pendingOpen; pendingOpen = null; if (W4W.dist(here, k.cell) <= 1) openKind(k.kind, k.id); }
   // the screen thinks you just froze: ask the server, it has the last word
@@ -3130,22 +3200,26 @@ function actions(c, here, t, frozen) {
   else {
     const near = [here, ...W4W.DIRS.map(([dq, dr]) => [here[0] + dq, here[1] + dr])];
     const kinds = new Set();
-    for (const cell of near) { const res = W4W.resourceOf(...cell); if (res && !(XV.nodes[W4W.key(...cell)] > t) && !kinds.has(res)) { kinds.add(res); btns.push(`<button class="btn" data-x="gather" data-at="${cell.join(',')}">Gather ${res}</button>`); } }
+    const items = W4W.itemsOf(c), missing = new Set();
+    for (const cell of near) { const res = W4W.resourceOf(...cell); if (res && !(XV.nodes[W4W.key(...cell)] > t) && !kinds.has(res)) { kinds.add(res); const tool = W4W.toolFor(res);
+      if (items[tool] === 'pack') btns.push(`<button class="btn" data-x="gather" data-at="${cell.join(',')}">${res === 'wood' || res === 'resin' ? 'Saw' : 'Break'} ${res}</button>`); else missing.add(W4W.ITEMS[tool].name.toLowerCase()); } }
+    if (missing.size) btns.push(`<span class="xt">No ${[...missing].join(' and no ')} in your pack. Without tools you can only look. They are at home.</span>`);
     const hk = near.map(cell => W4W.key(...cell)).find(k => XV.hearths[k]);
     if (hk && (c.inv.wood || 0) > 0) btns.push(`<button class="btn" data-x="feed" data-at="${hk}">Feed the hearth (+3h)</button>`);
     const cost = W4W.HEARTH_COST;
     if (W4W.zoneOf(...here) >= 1 && !XV.hearths[W4W.key(...here)]) btns.push(`<button class="btn ${c.inv.wood >= cost.wood && c.inv.stone >= cost.stone && c.inv.flint >= cost.flint ? 'main' : ''}" data-x="hearth">Build a hearth (${cost.wood} wood, ${cost.stone} stone, ${cost.flint} flint)</button>`);
     for (const b of XV.bags || []) if (!b.mine && W4W.dist(here, [b.q, b.r]) <= 1) btns.push(`<button class="btn main" data-x="take" data-id="${esc(b.id)}">Take ${esc(b.nick)}'s frozen pack</button>`);
-    if (W4W.key(...here) === W4W.key(...c.home)) { if (W4W.weightOf(c.inv) > 0) btns.push('<button class="btn" data-x="unload">Unload at home</button>'); const st = c.stash || {}; for (const r of ['wood', 'stone', 'flint']) if ((st[r] || 0) > 0) btns.push(`<button class="btn" data-x="pack" data-res="${r}">Pack ${r} (${st[r]} home)</button>`); }
+    if (W4W.key(...here) === W4W.key(...c.home)) { for (const tl of ['saw', 'pickaxe']) if (W4W.itemsOf(c)[tl] === 'home') btns.push(`<button class="btn main" data-x="item" data-id="${tl}" data-to="pack">Take the ${W4W.ITEMS[tl].name.toLowerCase()}</button>`); if (W4W.weightOf(c.inv) > 0) btns.push('<button class="btn" data-x="unload">Unload at home</button>'); const st = c.stash || {}; for (const r of ['wood', 'stone', 'flint']) if ((st[r] || 0) > 0) btns.push(`<button class="btn" data-x="pack" data-res="${r}">Pack ${r} (${st[r]} home)</button>`); }
     const nt = noteAt(...here); if (nt) btns.push(`<button class="btn main" data-x="note" data-id="${nt.id}">Read the note</button>`);
-    if (!btns.length) btns.push(`<span class="xt">${W4W.zoneOf(...here) === 0 ? 'Click the ground to walk. Out past the forest the cold begins.' : 'Click a tree or a rock next to you to gather. Click the ground to plan the next trip.'}</span>`);
+    if (!btns.length) btns.push(`<span class="xt">${W4W.zoneOf(...here) === 0 ? 'Click the ground to walk. The bright line is the edge of the warmth: past it the cold begins.' : 'Stand next to a tree or a rock to work it: a saw for wood, a pickaxe for stone. Click the ground to plan the next trip.'}</span>`);
   }
   const sig = btns.join(''); if (sig === actSig) return; actSig = sig;
   actEl.hidden = false; actEl.innerHTML = sig;
   actEl.querySelectorAll('[data-x]').forEach(b => b.onclick = () => {
     const x = b.dataset.x, body = {};
     if (b.dataset.at) body.at = b.dataset.at.split(',').map(Number);
-    if (b.dataset.id) body.id = b.dataset.id; if (b.dataset.res) body.res = b.dataset.res;
+    if (b.dataset.id) body.id = b.dataset.id; if (b.dataset.res) body.res = b.dataset.res; if (b.dataset.to) body.to = b.dataset.to;
+    if (x === 'item') sfx.equip();
     if (x === 'go') return goTrip(); if (x === 'cancel') return cancelTrip(); if (x === 'note') return readNote(NOTES.find(n => n.id === b.dataset.id));
     if (x === 'stop') { drawPrints([0, 0], [], false); printSig = ''; }
     xact(x, body);
@@ -3339,13 +3413,13 @@ function hoverCell(e) {
   hoverHex = hexLine(c[0], c[1], W4W.zoneOf(...c) >= 1 ? 0xdff0ff : 0xffe2b8, 0.7, 0.05);
 }
 function stepLocalGrid(c) {
-  const k = c && W4W.zoneOf(c.q, c.r) >= 1 ? c.q + ',' + c.r : ''; if (k === localKey) return; localKey = k;
+  const k = c && !c.frozenUntil ? c.q + ',' + c.r : ''; if (k === localKey) return; localKey = k;
   if (localGrid) { scene.remove(localGrid); localGrid = null; } if (!k) return;
   const seg = [];
   for (let n = 0; n <= 3; n++) for (const [dq, dr] of ring(n)) { const q = c.q + dq, r = c.r + dr; if (W4W.ringOf(q, r) > W4W.MAX_RING) continue; const p = HX(q, r);
     for (let i = 0; i < 6; i++) { const a0 = Math.PI / 6 + i * Math.PI / 3, a1 = a0 + Math.PI / 3; seg.push(p.x + Math.cos(a0) * 1.1547, 0.03, p.z + Math.sin(a0) * 1.1547, p.x + Math.cos(a1) * 1.1547, 0.03, p.z + Math.sin(a1) * 1.1547); } }
   const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(seg, 3));
-  localGrid = new THREE.LineSegments(g, new THREE.LineBasicMaterial({ color: 0xbfd6ff, transparent: true, opacity: 0.16, depthWrite: false })); scene.add(localGrid);
+  localGrid = new THREE.LineSegments(g, new THREE.LineBasicMaterial({ color: 0xdfe9ff, transparent: true, opacity: 0.42, depthWrite: false })); scene.add(localGrid);
 }
 
 const dur = ms => { ms = Math.max(0, ms); const h = Math.floor(ms / 36e5), m = Math.round(ms % 36e5 / 6e4); return h ? `${h} h ${String(m).padStart(2, '0')} min` : ms < 60e3 ? `${Math.max(1, Math.round(ms / 1000))} s` : `${m} min`; };
@@ -3370,6 +3444,132 @@ function tripCard() {
     <button class="btn main" data-x="go">Set out</button><button class="btn" data-x="cancel">Cancel</button>`;
 }
 
+/* ---------- the pack: what you wear, what you carry, what waits at home ---------- */
+const SLOTS = [['head', 'Head'], ['body', 'Body'], ['hands', 'Hands'], ['legs', 'Legs'], ['feet', 'Feet']];
+function openPack() {
+  const pr = predicted(); if (!pr) return; const c = pr.c, items = W4W.itemsOf(c), home = W4W.key(c.q, c.r) === W4W.key(...c.home) && !c.path.length;
+  const ins = W4W.insulationOf(c), load = W4W.loadOf(c), cold = W4W.coldAt(c.q, c.r, xnow(), xctx());
+  const btn = (id, to, label) => `<button class="btn" data-pk="${id}" data-to="${to}">${label}</button>`;
+  const worn = SLOTS.map(([slot, name]) => { const id = Object.keys(items).find(k => items[k] === 'worn' && W4W.ITEMS[k].slot === slot);
+    return `<div class="pslot ${id ? '' : 'empty'}"><i>${name}</i>${id ? `<b>${esc(W4W.ITEMS[id].name)}</b><span>warmth +${W4W.ITEMS[id].ins}</span>${btn(id, 'pack', 'Take off')}` : '<b>nothing</b><span>the cold gets in</span>'}</div>`; }).join('');
+  const row = (id, where) => { const it = W4W.ITEMS[id]; const acts = where === 'pack' ? (it.slot === 'tool' ? '' : btn(id, 'worn', 'Put on')) + (home ? btn(id, 'home', 'Leave at home') : '') : where === 'home' ? (home ? btn(id, 'pack', 'Pack it') + (it.slot === 'tool' ? '' : btn(id, 'worn', 'Put on')) : '<span class="mute">at home</span>') : '';
+    return `<div class="pitem"><div><b>${esc(it.name)}</b><span>${it.slot === 'tool' ? 'tool for ' + it.for.join(' and ') : 'warmth +' + it.ins} · ${it.w} kg</span></div><div class="row">${acts}</div></div>`; };
+  const res = ['wood', 'stone', 'flint', 'resin'].filter(k => c.inv[k]).map(k => `<span><i>${k}</i>${c.inv[k]}</span>`).join('');
+  const st = c.stash || {}, stash = ['wood', 'stone', 'flint', 'resin'].filter(k => st[k]).map(k => `<span><i>${k}</i>${st[k]}</span>`).join('');
+  panel('pack', 'Pack and clothes', `clothing ${ins} against cold ${Math.round(cold)} · load ${load.toFixed(1)} of ${W4W.CAPACITY} kg`, null, `
+    <h3>WORN</h3><div class="pslots">${worn}</div>
+    <h3>IN THE PACK</h3>${Object.keys(items).filter(k => items[k] === 'pack').map(k => row(k, 'pack')).join('') || '<p class="mute">Nothing but air. Tools for work go here.</p>'}
+    ${res ? `<div class="hinv pres">${res}</div>` : ''}
+    <h3>AT HOME${home ? '' : ' · go home to reach it'}</h3>${Object.keys(items).filter(k => items[k] === 'home').map(k => row(k, 'home')).join('') || '<p class="mute">Nothing left at home.</p>'}
+    ${stash ? `<div class="hinv pres">${stash}</div>` : ''}
+    <p class="mute" style="font-size:13px;margin-top:12px">Clothing against the cold is what keeps your warmth. Tools let you work: a bow saw for wood and resin, a pickaxe for stone and flint. If you freeze, your clothes and tools stay with you; what you gathered stays in the snow.</p>`);
+  sfx.pack();
+  $('#pbody').querySelectorAll('[data-pk]').forEach(b => b.onclick = async () => { if (b.dataset.to === 'worn' || b.dataset.to === 'pack') sfx.equip(); await xact('item', { id: b.dataset.pk, to: b.dataset.to }); openPack(); });
+}
+addEventListener('keydown', e => { if (e.code === 'KeyI' && !typing() && !e.ctrlKey && !e.metaKey && hasChar()) { if (panelKind === 'pack') closePanel(); else openPack(); } });
+
+/* ---------- what you can work, marked on the cells around you ---------- */
+const resTags = {};
+function stepResTags(c) {
+  const want = {};
+  if (c && !c.path.length && W4W.zoneOf(c.q, c.r) >= 1) for (const [dq, dr] of [[0, 0], ...W4W.DIRS]) { const q = c.q + dq, r = c.r + dr, res = W4W.resourceOf(q, r);
+    if (res && !(XV.nodes[W4W.key(q, r)] > xnow())) want[W4W.key(q, r)] = res; }
+  for (const k of Object.keys(resTags)) if (want[k] !== resTags[k].res) { scene.remove(resTags[k].a); resTags[k].L.el.remove(); labels.splice(labels.indexOf(resTags[k].L), 1); delete resTags[k]; }
+  for (const [k, res] of Object.entries(want)) if (!resTags[k]) { const [q, r] = k.split(',').map(Number), a = new THREE.Object3D(); a.position.copy(HX(q, r)); scene.add(a);
+    const has = W4W.itemsOf(c)[W4W.toolFor(res)] === 'pack'; resTags[k] = { res, a, L: label(`${res}${has ? '' : ' · no tool'}`, a, 1.1, has ? 'res' : 'res none') }; }
+}
+
+/* ---------- the edge of the warmth: a line in the snow where town ends and the Wastes begin ---------- */
+function buildBorder() {
+  const m = new THREE.MeshBasicMaterial({ color: 0xffd39a, transparent: true, opacity: 0.55, blending: THREE.AdditiveBlending, depthWrite: false }), geos = [];
+  for (const [q, r] of ring(5)) { const c = HX(q, r);
+    for (let i = 0; i < 6; i++) { const a0 = Math.PI / 6 + i * Math.PI / 3, a1 = a0 + Math.PI / 3, mid = (a0 + a1) / 2;
+      // only the sides that face the next ring out
+      const nx = c.x + Math.cos(mid) * 2, nz = c.z + Math.sin(mid) * 2, [nq, nr] = hexAt(nx, nz); if (W4W.ringOf(nq, nr) <= 5) continue;
+      const p0 = new THREE.Vector3(c.x + Math.cos(a0) * 1.1547, 0.035, c.z + Math.sin(a0) * 1.1547), p1 = new THREE.Vector3(c.x + Math.cos(a1) * 1.1547, 0.035, c.z + Math.sin(a1) * 1.1547);
+      const g = new THREE.PlaneGeometry(p0.distanceTo(p1), 0.12); g.rotateX(-Math.PI / 2); g.rotateY(-Math.atan2(p1.z - p0.z, p1.x - p0.x)); g.translate((p0.x + p1.x) / 2, 0.035, (p0.z + p1.z) / 2); geos.push(g); } }
+  const mesh = new THREE.Mesh(mergeGeometries(geos), m); mesh.renderOrder = 2; scene.add(mesh); return mesh;
+}
+let borderFx = null;
+
+/* ---------- the score: mysterious, a little magical, never heavy ----------
+   A music box picks out a slow tune in D lydian over a glassy pad; now and then a shimmer of bells.
+   No saws, no drones you feel in the chest. The wind stays underneath. */
+const LYD = [293.7, 329.6, 370.0, 415.3, 440.0, 493.9, 554.4, 587.3, 659.3, 740.0, 880.0];
+const PADS = [[146.8, 220.0, 329.6, 415.3], [123.5, 185.0, 293.7, 370.0], [164.8, 246.9, 329.6, 493.9], [110.0, 220.0, 277.2, 370.0]];
+let chordI = 0, tuneI = 4;
+function musicLoop() {
+  const ctx = SND.ctx; if (!ctx) return;
+  chordI = (chordI + 1) % PADS.length; padChord(PADS[chordI], 16);
+  // a short phrase on the music box, wandering by steps, with rests
+  let at = 1.2;
+  for (let i = 0, n = 5 + Math.floor(Math.random() * 6); i < n; i++) {
+    tuneI = Math.max(0, Math.min(LYD.length - 1, tuneI + [-2, -1, -1, 1, 1, 2, 0][Math.floor(Math.random() * 7)]));
+    if (Math.random() < 0.82) musicBox(LYD[tuneI], at, 0.05 + Math.random() * 0.02);
+    at += [0.45, 0.6, 0.9, 1.2][Math.floor(Math.random() * 4)];
+  }
+  if (Math.random() < 0.35) setTimeout(() => SND.ctx && shimmer(), 6000 + Math.random() * 5000);
+  setTimeout(musicLoop, 15000 + Math.random() * 4000);
+}
+function padChord(freqs, len) {
+  const ctx = SND.ctx, t = ctx.currentTime, g = ctx.createGain(), lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 1800;
+  g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.035, t + 5); g.gain.setValueAtTime(0.035, t + len - 5); g.gain.linearRampToValueAtTime(0, t + len + 3);
+  g.connect(lp); lp.connect(SND.music);
+  freqs.forEach((f, i) => [-6, 6].forEach(det => { const o = ctx.createOscillator(); o.type = 'sine'; o.frequency.value = f; o.detune.value = det + i * 2;
+    const tr = ctx.createOscillator(), tg = ctx.createGain(); tr.frequency.value = 0.2 + i * 0.07; tg.gain.value = 3; tr.connect(tg); tg.connect(o.detune); tr.start(t); tr.stop(t + len + 3.2);
+    const og = ctx.createGain(); og.gain.value = 0.3; o.connect(og); og.connect(g); o.start(t); o.stop(t + len + 3.2); }));
+}
+/** A music-box tine: bright attack, a glassy overtone, a long ring in the hall. */
+function musicBox(f, delay, vol) {
+  const ctx = SND.ctx, t = ctx.currentTime + delay, g = ctx.createGain(), pan = ctx.createStereoPanner(); pan.pan.value = (Math.random() - 0.5) * 0.8;
+  g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + 0.008); g.gain.exponentialRampToValueAtTime(0.0001, t + 2.6); g.connect(pan); pan.connect(SND.music);
+  [[1, 1], [3.01, 0.25], [5.98, 0.08]].forEach(([m, a]) => { const o = ctx.createOscillator(); o.type = 'sine'; o.frequency.value = f * m; const og = ctx.createGain(); og.gain.value = a; o.connect(og); og.connect(g); o.start(t); o.stop(t + 2.7); });
+}
+function shimmer() { for (let i = 0; i < 7; i++) musicBox(LYD[4 + Math.floor(Math.random() * 7)] * 2, i * 0.11, 0.018); }
+
+/* ---------- small sounds for small things ---------- */
+const sfx = {
+  _n(dur, type, freq, q, vol, at = 0, dest) { const ctx = SND.ctx; if (!ctx) return; const t = ctx.currentTime + at, n = ctx.createBufferSource(); n.buffer = SND.noise; const f = ctx.createBiquadFilter(); f.type = type; f.frequency.value = freq; f.Q.value = q;
+    const g = ctx.createGain(); g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur); n.connect(f); f.connect(g); g.connect(dest || SND.sfx); n.start(t, Math.random() * 3); n.stop(t + dur + 0.02); return f; },
+  _t(f0, f1, dur, vol, type = 'sine', at = 0) { const ctx = SND.ctx; if (!ctx) return; const t = ctx.currentTime + at, o = ctx.createOscillator(); o.type = type; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(Math.max(20, f1), t + dur);
+    const g = ctx.createGain(); g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur); o.connect(g); g.connect(SND.sfx); o.start(t); o.stop(t + dur + 0.02); },
+  click() { this._t(1900, 1200, 0.05, 0.05, 'triangle'); this._n(0.03, 'highpass', 3000, 1, 0.04); },
+  open() { this._n(0.28, 'bandpass', 900, 0.7, 0.07); this._t(320, 520, 0.16, 0.03, 'triangle'); },
+  close() { this._n(0.2, 'bandpass', 600, 0.7, 0.06); this._t(420, 260, 0.14, 0.03, 'triangle'); },
+  pack() { for (let i = 0; i < 4; i++) this._n(0.12, 'bandpass', 700 + i * 260, 1.2, 0.06, i * 0.05); this._t(2400, 2100, 0.08, 0.03, 'square', 0.22); },
+  equip() { for (let i = 0; i < 6; i++) this._n(0.09, 'bandpass', 1200 + Math.random() * 1600, 0.9, 0.05, i * 0.04); },
+  door() { this._t(140, 70, 0.5, 0.05, 'sawtooth'); this._n(0.5, 'bandpass', 380, 6, 0.08); this._t(90, 50, 0.18, 0.14, 'sine', 0.42); this._n(0.12, 'lowpass', 300, 1, 0.12, 0.42); },
+  step(out, wx) { const v = out ? 0.07 : 0.04; this._n(out ? 0.16 : 0.08, 'bandpass', out ? 700 + Math.random() * 300 : 1300 + Math.random() * 400, out ? 1.4 : 1, v); if (out) this._n(0.1, 'highpass', 3500, 1, 0.025, 0.03); },
+  work(res) { if (res === 'wood' || res === 'resin') { this._n(0.22, 'bandpass', 1800, 3, 0.06); this._n(0.22, 'bandpass', 1500, 3, 0.05, 0.35); } else { this._t(1800, 1500, 0.25, 0.05, 'triangle'); this._n(0.06, 'highpass', 2500, 1, 0.08); } },
+  gathered() { musicBox(880, 0, 0.04); musicBox(1318.5, 0.12, 0.03); },
+  death() { const ctx = SND.ctx; if (!ctx) return; this._t(60, 22, 3.5, 0.5); for (let i = 0; i < 18; i++) this._n(0.05, 'highpass', 2000 + Math.random() * 3000, 1, 0.2 * Math.random(), Math.random() * 1.6);
+    [0, 0.9, 2.1].forEach((at, i) => { this._t(55, 40, 0.18, 0.3 / (i + 1), 'sine', 1 + at); this._t(50, 36, 0.16, 0.22 / (i + 1), 'sine', 1.25 + at); }); },
+};
+// every button answers with a click; panels slide open and shut
+document.addEventListener('click', e => { if (e.target.closest?.('button')) sfx.click(); }, true);
+{ const P = $('#panel'); new MutationObserver(() => { const o = P.classList.contains('open'); if (o !== P._o) { P._o = o; o ? sfx.open() : sfx.close(); } }).observe(P, { attributes: true, attributeFilter: ['class'] }); }
+
+/* ---------- places that sound: Anna whispers if you come close, a stove crackles indoors ---------- */
+let whisperT = 0, crackleT = 0;
+function stepPlaces(dt) {
+  if (!SND.ctx) return;
+  const near = controls.target.length() < 7 || (avatars[myUid()]?.g.position.length() ?? 99) < 3.5;
+  if (near && (whisperT -= dt) < 0) { whisperT = 2.5 + Math.random() * 4; whisper(); }
+  const mine = avatars[myUid()], indoor = mine?.wasIn;
+  if (indoor && (crackleT -= dt) < 0) { crackleT = 0.06 + Math.random() * 0.35; sfx._n(0.03 + Math.random() * 0.05, 'bandpass', 1200 + Math.random() * 3500, 2, 0.04 + Math.random() * 0.06); if (Math.random() < 0.08) sfx._n(0.6, 'lowpass', 220, 1, 0.05); }
+}
+/** Breath shaped like speech, in no language you know. */
+function whisper() {
+  const ctx = SND.ctx, t = ctx.currentTime, g = ctx.createGain(), pan = ctx.createStereoPanner(); pan.pan.value = (Math.random() - 0.5) * 1.2; g.connect(pan); pan.connect(SND.sfx);
+  const n = ctx.createBufferSource(); n.buffer = SND.noise; const hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 900;
+  const f1 = ctx.createBiquadFilter(), f2 = ctx.createBiquadFilter(); f1.type = f2.type = 'bandpass'; f1.Q.value = 8; f2.Q.value = 10; n.connect(hp); hp.connect(f1); hp.connect(f2); f1.connect(g); f2.connect(g);
+  const syl = 3 + Math.floor(Math.random() * 5); let at = t;
+  g.gain.setValueAtTime(0, t);
+  for (let i = 0; i < syl; i++) { const d = 0.12 + Math.random() * 0.18; f1.frequency.setValueAtTime(500 + Math.random() * 600, at); f2.frequency.setValueAtTime(1500 + Math.random() * 1400, at);
+    g.gain.linearRampToValueAtTime(0.05 + Math.random() * 0.04, at + d * 0.4); g.gain.linearRampToValueAtTime(0.004, at + d); at += d + Math.random() * 0.08; }
+  g.gain.linearRampToValueAtTime(0, at + 0.1); n.start(t, Math.random() * 3); n.stop(at + 0.2);
+}
+
 /* ---------- you died ---------- */
 function checkDeath() {
   const d = XV?.me?.died; if (!d || d.t <= lastDeathSeen) return;
@@ -3378,6 +3578,7 @@ function checkDeath() {
   const zone = typeof d.zone === 'number' ? (W4W.ZONES[d.zone]?.name || 'the far cold') : d.zone;
   record(`${me()?.nick || 'Someone'} froze in ${zone}: ${d.cause}`);
   if (!fresh) return;
+  sfx.death();
   diedEl.hidden = false; diedEl.className = 'on';
   diedEl.innerHTML = `<div class="dwrap"><h1>YOU DIED</h1><p class="dsub">${/^(Chthon|the Rime)/.test(d.cause) ? `In ${esc(zone)}, Chthon passed through you. There was no cold to feel; there was nothing at all.` : `Frozen in ${esc(zone)}. ${esc(d.cause.charAt(0).toUpperCase() + d.cause.slice(1))}.`}</p>
     <p class="dsub">You lie at home in the ice for 24 hours. Nothing thaws you faster. Your rig keeps working.</p>
@@ -3437,30 +3638,10 @@ function sndBoot() {
   SND.windF = ctx.createBiquadFilter(); SND.windF.type = 'bandpass'; SND.windF.frequency.value = 500; SND.windF.Q.value = 0.8;
   SND.wind = ctx.createGain(); SND.wind.gain.value = 0.07; src.connect(SND.windF); SND.windF.connect(SND.wind); SND.wind.connect(SND.music); src.start();
   // the drone: two low saws, a little apart, under a dark lowpass
-  const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 320; lp.Q.value = 1; const dg = ctx.createGain(); dg.gain.value = 0.06; lp.connect(dg); dg.connect(SND.music);
+  const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 320; lp.Q.value = 1; const dg = ctx.createGain(); dg.gain.value = 0.02; lp.connect(dg); dg.connect(SND.music);
   const lfo = ctx.createOscillator(); lfo.frequency.value = 0.05; const lg = ctx.createGain(); lg.gain.value = 90; lfo.connect(lg); lg.connect(lp.frequency); lfo.start();
-  for (const det of [-7, 6, 1200 - 3]) { const o = ctx.createOscillator(); o.type = 'sawtooth'; o.frequency.value = 73.42; o.detune.value = det; const og = ctx.createGain(); og.gain.value = det > 1000 ? 0.25 : 0.5; o.connect(og); og.connect(lp); o.start(); SND.drone.push(o); }
+  for (const det of [-7, 6, 1200 - 3]) { const o = ctx.createOscillator(); o.type = 'sine'; o.frequency.value = 73.42; o.detune.value = det; const og = ctx.createGain(); og.gain.value = det > 1000 ? 0.25 : 0.5; o.connect(og); og.connect(lp); o.start(); SND.drone.push(o); }
   SND.started = true; musicLoop(); rimeVoice();
-}
-// D major, cold but not hopeless: D, Bm, G, A under a slow pad; bells high up; metal only now and then
-const CHORDS = [[73.42, [146.8, 220.0, 329.6]], [61.74, [123.5, 185.0, 293.7]], [98.0, [196.0, 293.7, 440.0]], [110.0, [220.0, 329.6, 493.9]]];
-const BELLS = [587.3, 659.3, 740.0, 880.0, 987.8, 1174.7];
-let chordI = 0;
-function musicLoop() {
-  const ctx = SND.ctx; if (!ctx) return; const t = ctx.currentTime;
-  chordI = (chordI + 1) % CHORDS.length; const [root, pad] = CHORDS[chordI];
-  SND.drone.forEach(o => o.frequency.setTargetAtTime(root, t, 3));
-  padChord(pad, 14);
-  for (let i = 0, n = 1 + Math.floor(Math.random() * 3); i < n; i++) setTimeout(() => SND.ctx && bowedMetal(BELLS[Math.floor(Math.random() * BELLS.length)] / 2, 0.03 + Math.random() * 0.025), 1500 + i * (2500 + Math.random() * 3000));
-  const r = Math.random(); if (r < 0.14) clank(0.025); else if (r < 0.18) chain();
-  setTimeout(musicLoop, 13000 + Math.random() * 5000);
-}
-/** A soft pad: three triangles that swell in and fade out. */
-function padChord(freqs, len) {
-  const ctx = SND.ctx, t = ctx.currentTime, g = ctx.createGain(), lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 1400;
-  g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.045, t + 4); g.gain.setValueAtTime(0.045, t + len - 5); g.gain.linearRampToValueAtTime(0, t + len + 2);
-  g.connect(lp); lp.connect(SND.music);
-  freqs.forEach((f, i) => [-5, 5].forEach(det => { const o = ctx.createOscillator(); o.type = 'triangle'; o.frequency.value = f; o.detune.value = det + i; const og = ctx.createGain(); og.gain.value = 0.33; o.connect(og); og.connect(g); o.start(t); o.stop(t + len + 2.2); }));
 }
 /** A bowed sheet of metal: inharmonic partials, slow swell, slower fade. */
 function bowedMetal(f, vol) {
@@ -3631,7 +3812,7 @@ function loop(now = performance.now()) {
   spriteCache.forEach(o => { {
     if (o.userData.flicker) { if (o.userData.flare) { o.userData.flare = Math.max(0, o.userData.flare - dt * 0.6); } const f = o.userData.flare || 0; o.material.opacity = 0.8 + Math.sin(t * 13) * 0.08 + Math.sin(t * 7.3) * 0.1; o.scale.setScalar(1.1 + f * 1.2 + (S.town.fire || 0) * 0.08); }
     if (o.userData.blink) o.material.opacity = 0.35 + 0.65 * (Math.sin(t * 4) > 0 ? 1 : 0.2); } });
-  stepCamera(dt); stepAvatars(dt); hud(); stepSound(); if (XV) { stepRime(dt); if ((tick & 15) === 0) { stepNotes(); stepLocalGrid(predicted()?.c); } }
+  stepCamera(dt); stepAvatars(dt); hud(); stepSound(); stepPlaces(dt); if (XV) { stepRime(dt); if ((tick & 15) === 0) { stepNotes(); stepLocalGrid(predicted()?.c); } }
   for (const k in walkers) { const w = walkers[k]; w.g.position.lerp(w.target, Math.min(1, dt * 1.5)); w.g.position.y = 0; w.light.position.set(w.g.position.x + 0.15, 0.45, w.g.position.z); }
   if (fly) { fly.t = Math.min(1, fly.t + dt * 0.9); const k = 1 - Math.pow(1 - fly.t, 3);
     const tgt = fly.from.clone().lerp(fly.to, k); const off = camera.position.clone().sub(controls.target).normalize().multiplyScalar(fly.d0 + (fly.d1 - fly.d0) * k);
