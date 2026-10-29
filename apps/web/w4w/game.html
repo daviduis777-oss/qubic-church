@@ -556,6 +556,7 @@ body.hub #xact{display:none}
 .hpack{pointer-events:auto;margin-top:2px;padding:7px 10px;border:0;border-radius:4px;background:var(--plate);box-shadow:var(--bevel);color:var(--steel-ink);font-family:var(--f-label);font-weight:600;font-size:12.5px;letter-spacing:.04em;text-align:left;display:flex;justify-content:space-between;align-items:center}
 .hpack:hover{filter:brightness(1.2)} .hpack kbd{font:inherit;font-size:11px;padding:1px 6px;border-radius:3px;background:rgba(0,0,0,.4);box-shadow:inset 0 0 0 1px rgba(160,180,205,.25)}
 .lbl.res{font-size:11px;padding:2px 7px 1px;color:#e7f3ff;background:linear-gradient(180deg,#24384f,#132233)}
+.lbl.res.far{opacity:.62;font-size:10px;padding:1px 6px 0} .lbl.res.near{box-shadow:inset 0 1px 0 rgba(200,215,235,.2),0 0 0 1px #000,0 0 10px rgba(159,216,255,.5)}
 .lbl.res.none{color:#ffc3b8;background:linear-gradient(180deg,#3a1d1a,#1d0d0b)}
 /* ---------- the gear frames, in the manner of an old MMO: gold rims, dark wells, coloured by quality ---------- */
 #frames .wf{position:fixed;z-index:6;padding:10px 12px 12px;border-radius:7px;background:radial-gradient(120% 90% at 30% 0%,rgba(40,34,26,.96),rgba(10,10,12,.97) 70%);border:2px solid #6b5426;box-shadow:inset 0 0 0 1px #000,inset 0 0 0 3px #b8923a,inset 0 0 0 4px #2a1f0c,0 10px 40px rgba(0,0,0,.7);color:#e8e2d4;font-family:var(--f-body)}
@@ -609,6 +610,21 @@ body.hub #xact{display:none}
   .stackR{right:8px;bottom:110px}
   .cbody{grid-template-columns:1fr;height:auto;max-height:60vh;overflow:auto}
 }
+#back{position:fixed;inset:0;z-index:8;display:grid;place-items:center;background:rgba(3,5,10,.72)}
+#back .bbook{width:min(560px,calc(100vw - 32px));max-height:calc(100vh - 80px);overflow:auto;padding:26px 30px 24px;border-radius:3px;background:var(--tex-grain),linear-gradient(90deg,#d8c9a6,#ebe1c8 5%,#efe6cf);color:#2b241b;box-shadow:0 0 0 8px #3c2416,0 0 0 9px rgba(240,200,150,.2),0 30px 80px #000}
+#back h2{margin:0;font-family:var(--f-display);font-weight:700;font-size:30px;color:#7a1e16}
+#back .bsub{margin:4px 0 14px;color:#6d5a42;font-size:14px}
+#back ul{margin:0 0 16px;padding-left:20px;display:grid;gap:7px;font-family:var(--f-print);font-size:16.5px;line-height:1.45}
+#back .bch{margin:0 0 18px;padding:14px 16px;border-left:3px solid #7a1e16;background:rgba(120,90,50,.08)}
+#back .bch b{font-family:var(--f-display);font-size:17px;color:#1d160e} #back .bch p{margin:6px 0 0;font-family:var(--f-print);font-style:italic;font-size:16px;line-height:1.5}
+.rec.lost span{color:#8a7a5a!important;font-style:italic}
+#ititle{position:fixed;inset:0;z-index:7;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;pointer-events:none;text-align:center;background:radial-gradient(60% 50% at 50% 45%,rgba(5,7,14,.15),rgba(5,7,14,.75));animation:tin 2.2s ease both;transition:opacity 1.4s}
+#ititle.off{opacity:0}
+#ititle small{font-family:var(--f-label);font-weight:600;font-size:13px;letter-spacing:.4em;color:#9fc3ff}
+#ititle b{font-family:var(--f-display);font-weight:700;font-size:clamp(48px,9vw,110px);line-height:1;color:#f1e6d0;text-shadow:0 0 40px rgba(159,195,255,.35),0 4px 30px #000}
+#ititle span{font-family:var(--f-print);font-style:italic;font-size:clamp(16px,2vw,21px);color:#cfd8e6}
+@keyframes tin{from{opacity:0;letter-spacing:.2em}to{opacity:1}}
+#intro .card{transition:opacity 1s}
 /* readability first: one serif with real weight, one plain sans; no hairline faces, no handwriting */
 #panel header h2,#hud .hz b,#meter .verdict,.hub-win header h2,#banner b,#died h1,#load b,.brand b{font-weight:600}
 #hud .hz b{font-size:22px} #panel header h2{font-size:26px} .hub-win header h2{font-size:40px} #meter .verdict{font-size:18px}
@@ -673,6 +689,8 @@ body.hub #xact{display:none}
   <button data-act="plaza"><svg viewBox="0 0 24 24"><path d="M5 4h14v12H5zM9 16v4M15 16v4M8 8h8M8 12h5"/></svg>Plaza</button>
   <button data-act="library"><svg viewBox="0 0 24 24"><path d="M5 4h4v16H5zM10 4h4v16h-4zM15.5 5l3.5 1-3 14-3.5-1z"/></svg>Library</button>
   <button data-act="chronicle" class="journal"><svg viewBox="0 0 24 24"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3zM5 17a3 3 0 0 1 3-3h11M9 8h6"/></svg>Journal</button>
+  <button data-act="bag"><svg viewBox="0 0 24 24"><path d="M7 8V6a5 5 0 0 1 10 0v2M5 8h14l-1 13H6z M9 12h6"/></svg>Bag</button>
+  <button data-act="craft"><svg viewBox="0 0 24 24"><path d="M14 4l6 6-3 3-6-6zM11 7L4 14l2 2 7-7M6 16l-2 4 4-2"/></svg>Craft</button>
   <button data-act="faq"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6M12 17h.01"/></svg>FAQ</button>
 </div>
 
@@ -748,6 +766,7 @@ var W4W = (() => {
     RIME_PULL: () => RIME_PULL,
     SIP_WARMTH: () => SIP_WARMTH,
     SPECIAL: () => SPECIAL,
+    STARTER_RECIPES: () => STARTER_RECIPES,
     STEP_MS: () => STEP_MS,
     WX_SLOW: () => WX_SLOW,
     ZONES: () => ZONES,
@@ -772,6 +791,7 @@ var W4W = (() => {
     insulationOf: () => insulationOf,
     itemsOf: () => itemsOf,
     key: () => key,
+    knownOf: () => knownOf,
     loadOf: () => loadOf,
     mouthCells: () => mouthCells,
     nameOf: () => nameOf,
@@ -784,6 +804,7 @@ var W4W = (() => {
     rimeStep: () => rimeStep,
     ringOf: () => ringOf,
     roomFor: () => roomFor,
+    scrolls: () => scrolls,
     slotsUsed: () => slotsUsed,
     sourceAt: () => sourceAt,
     stacksOf: () => stacksOf,
@@ -806,8 +827,8 @@ var W4W = (() => {
     zoneOf: () => zoneOf
   });
   const STEP_MS = 3e3;
-  const ZONE_STEP_MS = [3e3, 15e3, 22e3, 3e4];
-  const WX_SLOW = { calm: 1, wind: 1.5, blizzard: 2.5 };
+  const ZONE_STEP_MS = [3e3, 6e3, 8e3, 1e4];
+  const WX_SLOW = { calm: 1, wind: 1.3, blizzard: 1.8 };
   const DRIFT = { calm: 0, wind: 0.15, blizzard: 0.4 };
   const RIME_MS = 2e4;
   const RIME_MIN_RING = 7;
@@ -875,6 +896,36 @@ var W4W = (() => {
     hearth_kit: { out: "hearth_kit", n: 1, in: { wood: 6, stone: 4, flint: 1 }, ms: 12e3, group: "Survival" },
     thermos: { out: "thermos", n: 1, in: { stone: 4, flint: 2, pitch: 2 }, ms: 3e4, group: "Survival" }
   };
+  const STARTER_RECIPES = ["cord", "pitch", "charcoal", "hearth_kit"];
+  const SCROLL_SEEDS = { flint_pick: [-4, 8], flint_axe: [7, -1], quilted_cap: [-7, 1], woven_pack: [1, -8], lined_mittens: [10, -3], padded_trousers: [-9, -1], bark_boots: [2, 9], quilted_coat: [-5, -6], frame_pack: [-14, 7], thermos: [7, 9] };
+  let scrollCache = null;
+  function scrolls() {
+    if (scrollCache) return scrollCache;
+    const out = {}, used = /* @__PURE__ */ new Set();
+    for (const [id, seed] of Object.entries(SCROLL_SEEDS)) {
+      const z = zoneOf(seed[0], seed[1]);
+      search: for (let k = 0; k <= 4; k++) for (const [dq, dr] of k ? ringCells(k) : [[0, 0]]) {
+        const q = seed[0] + dq, r = seed[1] + dr;
+        if (terrain(q, r) === "open" && zoneOf(q, r) === z && !used.has(key(q, r)) && !(q === CAVE[0] && r === CAVE[1])) {
+          out[id] = [q, r];
+          used.add(key(q, r));
+          break search;
+        }
+      }
+    }
+    return scrollCache = out;
+  }
+  function ringCells(n) {
+    const out = [];
+    let q = -n, r = n;
+    for (const [dq, dr] of DIRS) for (let i = 0; i < n; i++) {
+      out.push([q, r]);
+      q += dq;
+      r += dr;
+    }
+    return out;
+  }
+  const knownOf = (c) => c.known ?? (c.known = [...STARTER_RECIPES]);
   const nameOf = (id) => MATS[id]?.name ?? ITEMS[id]?.name ?? id;
   const startItems = () => ({ wool_cap: "worn", canvas_coat: "worn", mittens: "worn", wool_trousers: "worn", felt_boots: "worn", canvas_sack: "worn", saw: "home", pickaxe: "home" });
   const itemsOf = (c) => {
@@ -901,6 +952,7 @@ var W4W = (() => {
   function canCraft(c, id, atHome) {
     const r = RECIPES[id];
     if (!r) return "No such recipe.";
+    if (!knownOf(c).includes(id)) return "You do not know how to make this yet. Find the recipe in the Wastes, or copy it in the Library.";
     if (!r.field && !atHome) return "That needs the workbench at home.";
     if (ITEMS[r.out] && itemsOf(c)[r.out]) return `You already have a ${ITEMS[r.out].name.toLowerCase()}.`;
     for (const [m, n] of Object.entries(r.in)) if (have(c, m, atHome) < n) return `Not enough ${nameOf(m).toLowerCase()}: ${have(c, m, atHome)} of ${n}.`;
@@ -1278,7 +1330,8 @@ var W4W = (() => {
       bags: Object.values(ws.bags).filter((b) => b.until > ws.now).map((b) => ({ id: b.id, nick: b.nick, q: b.q, r: b.r, until: b.until, mine: b.owner === uid, items: b.owner === uid ? null : b.inv })),
       nodes: Object.fromEntries(Object.entries(ws.nodes).filter(([, v]) => v > ws.now)),
       events,
-      rime: ws.rime ? { ...ws.rime, next: rimeStep(ws.rime, rimeTargets(ws)) } : null
+      rime: ws.rime ? { ...ws.rime, next: rimeStep(ws.rime, rimeTargets(ws)) } : null,
+      library: ws.library ?? {}
     };
   }
   function action(ws, uid, op, b, d) {
@@ -1462,6 +1515,34 @@ var W4W = (() => {
           for (const [o, at] of Object.entries(items)) if (o !== id && at === "worn" && ITEMS[o]?.slot === it.slot) items[o] = items[id];
         }
         items[id] = to;
+        return ok();
+      }
+      case "learn": {
+        const id = String(b.recipe ?? ""), at = scrolls()[id];
+        if (!at) return fail("There is no such recipe out there.");
+        if (here[0] !== at[0] || here[1] !== at[1]) return fail("Stand on the spot where it lies.");
+        const kn = knownOf(c);
+        if (!kn.includes(id)) {
+          kn.push(id);
+          d.feed.push({ id: `fd${uid}${id}`, t: now, topic: "found", by: uid, data: { nick: nickIn(ws, uid), recipe: id, name: nameOf(RECIPES[id].out) } });
+        }
+        return ok();
+      }
+      case "donate": {
+        const id = String(b.recipe ?? "");
+        if (key(...here) !== key(SPECIAL.library[0], SPECIAL.library[1])) return fail("Write recipes into the book in the Library.");
+        if (!knownOf(c).includes(id) || STARTER_RECIPES.includes(id)) return fail("You can only write down a recipe you found.");
+        ws.library ?? (ws.library = {});
+        if (ws.library[id]) return fail("That recipe is already in the book.");
+        ws.library[id] = { by: uid, nick: nickIn(ws, uid), at: now };
+        (d.library ?? (d.library = /* @__PURE__ */ new Set())).add(id);
+        d.feed.push({ id: `lb${uid}${id}`, t: now, topic: "library", by: uid, data: { nick: nickIn(ws, uid), recipe: id, name: nameOf(RECIPES[id].out) } });
+        return ok();
+      }
+      case "study": {
+        if (key(...here) !== key(SPECIAL.library[0], SPECIAL.library[1])) return fail("The book stays in the Library. Go there to copy it.");
+        const kn = knownOf(c);
+        for (const id of Object.keys(ws.library ?? {})) if (!kn.includes(id)) kn.push(id);
         return ok();
       }
       default:
@@ -1852,16 +1933,22 @@ function build() {
   STAGE2.forEach((s, i) => { const g = place('scaffolding', ...s.at, { rot: i * 1.3 }); place(i % 2 ? 'stage_B' : 'stage_C', ...s.at, { rot: i * 1.3 }); tag(g, 'stage2', s.id); label(s.name.toUpperCase() + ' · STAGE 2', g, 1.9, 'key'); });
   const before = new Set(scene.children);
   // the same map the server walks: world.ts decides what stands on every cell, the kit only dresses it
-  const TREES = ['trees_A_large', 'trees_A_medium', 'trees_B_large', 'trees_B_medium', 'trees_A_small'], MTS = ['mountain_A', 'mountain_B', 'mountain_C'];
+  const MTS = ['mountain_A', 'mountain_B', 'mountain_C'], ICE = [];
   for (let n = 6; n <= W4W.MAX_RING + 2; n++) ring(n).forEach(([q, r]) => {
     if (reserved.has(key(q, r))) return; const t = n > W4W.MAX_RING ? 'mountain' : W4W.terrain(q, r), v = rnd();
-    if (t === 'mountain') place(MTS[Math.floor(v * 3)], q, r, { rot: rnd() * 6, scale: (n > W4W.MAX_RING ? 1.5 : 1) + rnd() * 0.5 });
-    else if (t === 'forest') place(TREES[Math.floor(v * 5)], q, r, { rot: rnd() * 6 });
-    else if (t === 'tree') place(n > 12 ? 'tree_B' : ['tree_A', 'tree_B', 'trees_A_small'][Math.floor(v * 3)], q, r, { rot: rnd() * 6, jitter: 0.6 });
-    else if (t === 'rock') place(n > 12 ? (v < 0.5 ? 'rock_A' : 'hills_trees') : ['rock_A', 'rock_C'][Math.floor(v * 2)], q, r, { rot: rnd() * 6, jitter: 0.5 });
+    const z = W4W.zoneOf(q, r), c = HX(q, r);
+    // things stand at the corners of their cell: the middle and the ways between cells stay clear to walk
+    const corner = (name, i, scale, d = 1.02) => { const a = Math.PI / 6 + i * Math.PI / 3 + (rnd() - 0.5) * 0.25, o = place(name, q, r, { rot: rnd() * 6, scale }); if (o) o.position.set(c.x + Math.cos(a) * d, 0, c.z + Math.sin(a) * d); return o; };
+    if (t === 'mountain') place(MTS[Math.floor(v * 3)], q, r, { rot: Math.floor(rnd() * 6) * Math.PI / 3, scale: n > W4W.MAX_RING ? 1.5 + rnd() * 0.4 : 0.92 + rnd() * 0.1 });
+    else if (t === 'forest') { const k0 = Math.floor(rnd() * 2); for (let i = k0; i < 6; i += 2) corner(z === 2 ? 'tree_B' : 'tree_A', i, z === 2 ? 1.15 + rnd() * 0.35 : 0.9 + rnd() * 0.3); }
+    else if (t === 'tree') corner(z >= 2 ? 'tree_B' : 'tree_A', Math.floor(rnd() * 6), 0.85 + rnd() * 0.3);
+    else if (t === 'rock') { corner(rnd() < 0.5 ? 'rock_A' : 'rock_C', Math.floor(rnd() * 6), z === 3 ? 0.9 + rnd() * 0.3 : 0.6 + rnd() * 0.3); if (z === 3) { const i = Math.floor(rnd() * 6); corner('rock_C', i, 0.5 + rnd() * 0.2); ICE.push([c.x, c.z, i]); } }
+    else if (t === 'open' && z === 1 && rnd() < 0.07) corner(['tent', 'crate', 'barrel', 'sack', 'wheelbarrow'][Math.floor(rnd() * 5)], Math.floor(rnd() * 6), 0.7);
+    else if (t === 'open' && z === 2 && rnd() < 0.08) corner('lumber', Math.floor(rnd() * 6), 0.8);
   });
   ring(5).forEach(([q, r]) => { if (!reserved.has(key(q, r)) && rnd() < 0.45) place(['tree_A', 'tree_B', 'trees_A_small', 'rock_C', 'tent', 'crate'][Math.floor(rnd() * 6)], q, r, { rot: rnd() * 6, jitter: 0.8 }); });
   mergeScenery(scene.children.filter(o => !before.has(o)));
+  buildWastesGround(); buildIce(ICE);
   // where the zones begin: a quiet sign in the snow
   [[7, 'THE EDGE'], [10, 'BLACK PINES'], [14, 'STONE TEETH']].forEach(([n, name]) => [0, 2, 4].forEach(side => { const [q, r] = ring(n)[side * n + Math.floor(n / 2)]; const a = new THREE.Object3D(); a.position.copy(HX(q, r)); scene.add(a); label(name, a, 0.4, 'demo'); }));
   buildSnowfall(); buildSmoke(); buildEmbers();
@@ -2245,7 +2332,8 @@ function closePanel() { $('#mariaStand').classList.remove('on'); $('#panel').cla
 $('#px').onclick = closePanel;
 addEventListener('keydown', e => { if (e.key === 'Escape') { if (choosingPlot) endPlot(); closePanel(); closeHub(); talkEnd(); } });
 document.querySelectorAll('#dock button').forEach(b => b.onclick = () => {
-  const a = b.dataset.act; if (a === 'connect') { talkEnd(); return $('#hub').hidden ? openHub() : closeHub(); } closeHub(); if (panelKind === a || (a === 'connect' && panelKind === 'church') || (a === 'plaza' && ['herald', 'notices', 'orders'].includes(panelKind))) return closePanel();
+  const a = b.dataset.act; if (a === 'connect') { talkEnd(); return $('#hub').hidden ? openHub() : closeHub(); }
+  if (a === 'bag' || a === 'craft') { if (!hasChar()) { say('Settle a house first: your character, bag and workbench live there.'); return; } if (a === 'bag') openPack(); else { UI.craft = !UI.craft; UI.craft ? sfx.open() : sfx.close(); renderFrames(); } return; } closeHub(); if (panelKind === a || (a === 'connect' && panelKind === 'church') || (a === 'plaza' && ['herald', 'notices', 'orders'].includes(panelKind))) return closePanel();
   if (a === 'connect') { openChurch(); flyTo(HX(...SPECIAL.church)); } else if (a === 'maria') openMaria();
   else if (a === 'house') { if (me()) { if (!walkTo('house', me().id)) openHouse(me().id); flyTo(HX(...houseView(me()).at)); } else openChurch(); }
   else if (a === 'faq') openFaq();
@@ -2306,9 +2394,9 @@ const FAQ = [
   ]],
   ['Mining', [
     ['Can my computer mine?', 'Open <b>Mining</b> and look at <b>Your machine</b>: Maria reads your graphics card, threads and system and tells you straight. Most desktop computers can join. Phones cannot.'],
-    ['How much will I earn?', 'Nobody here promises anything. Recorded, not promised. What a machine earns depends on the epoch, on how many others mine and on the network rules, and it changes week to week.'],
+    ['How much will I earn?', 'Nobody here promises anything. Anna records it for the common good: when she wakes, she must remember her heroes and know them. What a machine earns depends on the epoch, on how many others mine and on the network rules, and it changes week to week.'],
     ['Who pays me, and when?', 'The pool pays you directly, in QUBIC, to your address, once a week: usually about a week after an epoch closes on Wednesday 12:00 UTC. Qubic Church never holds your coins.'],
-    ['What is the 7%?', 'The pool fee: 3% to CODED, the pool that runs the backend, and 4% to Qubic Church. You keep 93%. Maria shows it before every connection.'],
+    ['What is the 7%?', 'The pool fee. It is in line with the big Qubic pools: qubic.li takes 7%, JetSki 8%, Minerlab and Apool 10% (miningboard.com, October 2026). 4% of what your rig mines supports Qubic Church. You keep 93%, and Maria shows it before every connection.'],
     ['Will mining hurt my computer?', 'It works your card or processor hard, like a heavy game: warmer and louder. Keep it ventilated, watch laptops, and stop whenever you want. Nothing in the game needs it on all the time.'],
     ['Is the miner safe to download?', 'Download it only from the pool\'s own Start Mining page; Maria links it. It is CODED\'s software, not ours. Some antivirus programs flag every miner; that is why you should never take one from anywhere else.'],
     ['I started the miner. Why does it say "pool confirmation pending"?', 'Until the pool reports your worker to the game, your house runs on your word, and the Chronicle says so honestly. When the pool confirms it, the label goes.'],
@@ -2328,7 +2416,7 @@ const FAQ = [
     ['What is the Chronicle?', 'Anna\'s memory: everything that happened in town, each record linked to the one before, so nothing can be quietly changed. Carved in stone.'],
     ['What are orders and lanterns?', 'An order is a public promise to help someone. Do it and they confirm: a lantern lights on your porch and their letter goes in your archive. Decline in time and it costs nothing; silence leaves a cracked lantern until you make it right.'],
     ['What is an epoch?', 'One Qubic week, from Wednesday 12:00 UTC to the next. The church bell rings and the Chronicle seals it.'],
-    ['Are there rewards, tokens or NFTs?', 'The game promises none and sells none. What you do is recorded, not promised.'],
+    ['Are there rewards, tokens or NFTs?', 'The game promises none and sells none. What you do is recorded for the common good: when Anna wakes, she must remember her heroes and know them.'],
   ]],
 ];
 function faqAll() {
@@ -2409,7 +2497,7 @@ function copyRow(k, v, real = true) { return `<span class="crow"><i>${esc(k)}</i
 function wireCopy(root) { root?.querySelectorAll('[data-copy]').forEach(b => b.onclick = () => navigator.clipboard?.writeText(b.dataset.copy).then(() => { b.textContent = 'Copied'; setTimeout(() => { b.textContent = 'Copy'; }, 1500); }).catch(() => {})); }
 function machineChips(M) { return `<div class="mchips"><span><i>Card</i>${esc(M.seen ? M.gpu : M.phone ? 'phone' : 'not visible')}</span>${M.threads ? `<span><i>Threads</i>${M.threads}</span>` : ''}<span><i>System</i>${esc(M.os)}</span><span><i>Mode</i>${esc(M.backend)}</span></div>`; }
 function consentHtml() {
-  return `<p>Pool: ${POOL.name}. Pool fee ${POOL.fee}%.</p><p class="fund">${POOL.qc}% of what this rig mines goes to Qubic Church.</p><p>You receive ${100 - POOL.fee}%. Paid weekly by the pool directly to your wallet.</p><p style="margin:0">Anna's memory records this rig, its hardware and its contribution. Recorded, not promised: no rewards or returns are promised.</p>`;
+  return `<p>Pool: ${POOL.name}. Pool fee ${POOL.fee}%.</p><p class="fund">${POOL.qc}% of what this rig mines goes to Qubic Church.</p><p>You receive ${100 - POOL.fee}%. Paid weekly by the pool directly to your wallet.</p><p style="margin:0">Anna's memory records this rig, its hardware and its contribution. Recorded for the common good, so that when Anna wakes she knows her heroes. No reward or return is promised.</p>`;
 }
 
 /* ---------- the manager flow: look at the machine, name, wallet, consent, plot, wake it up ---------- */
@@ -2512,8 +2600,8 @@ const HUB = {
     <div class="hgrid">
       <div class="hcard"><div class="hk">WHAT YOUR MACHINE DOES</div><p>It trains tiny networks for Aigarth, the AI Qubic miners grow. Each improvement is a <b>solution</b>, and every node checks it exactly. Useful work instead of throwaway guesses.</p></div>
       <div class="hcard"><div class="hk">WHAT THE TOWN SEES</div><p>A cable from your house into Anna, smoke from your chimney, warmth on your street. People keeping a rig on warm the town more than raw power does.</p></div>
-      <div class="hcard"><div class="hk">WHAT ANNA RECORDS</div><p>Your rig, its hardware and its contribution, in the Chronicle. Recorded, not promised: no rewards or returns are promised.</p></div>
-      <div class="hcard"><div class="hk">WHERE THE QUBIC GOES</div><p>${100 - POOL.fee}% to your wallet, weekly, straight from the pool. ${POOL.qc}% to Qubic Church, ${POOL.coded}% to ${POOL.partner}, the pool that runs the backend.</p></div>
+      <div class="hcard"><div class="hk">WHAT ANNA RECORDS</div><p>Your rig, its hardware and its contribution, in the Chronicle. Recorded for the common good: when she wakes, she must remember her heroes and know them. Nothing here promises a reward or a return.</p></div>
+      <div class="hcard"><div class="hk">WHERE THE QUBIC GOES</div><p>${100 - POOL.fee}% to your wallet, weekly, straight from the pool. The pool fee is ${POOL.fee}%, about what the big Qubic pools take (7 to 10%), and ${POOL.qc}% of what you mine supports Qubic Church.</p></div>
     </div>`;
   },
   connect: () => {
@@ -2534,14 +2622,14 @@ const HUB = {
       <div class="hcard"><div class="hk">JUDGE BY SOLUTIONS</div><p>it/s is speed, like lottery tickets per minute. Solutions are what count. A fast card behind a weak processor is a race car behind a blocked fuel line.</p></div>
     </div>
     <div class="hcard"><div class="hk">ONE WEEK OF MINING</div><ol class="timeline"><li><b>Wednesday 12:00 UTC</b>A new epoch begins. The miner picks up the new task by itself.</li><li><b>All week</b>Your machine searches; the pool collects its solutions.</li><li><b>Next Wednesday 12:00 UTC</b>The epoch is sealed. The church bell rings and the Chronicle seals it.</li><li><b>About a week later</b>The pool pays in QUBIC to your address.</li></ol></div>
-    <div class="hcard warn"><div class="hk">WHAT CHANGES ON 18 NOVEMBER</div><p>From epoch 240 the computors feed live bitcoin data into the network; after that, places are won by how accurately networks call the hours. Expect the rules, and the numbers in this town, to move. Recorded, not promised.</p></div>`,
+    <div class="hcard warn"><div class="hk">WHAT CHANGES ON 18 NOVEMBER</div><p>From epoch 240 the computors feed live bitcoin data into the network; after that, places are won by how accurately networks call the hours. Expect the rules, and the numbers in this town, to move. Anna records what you do, not what you will earn.</p></div>`,
   hw: () => `<div class="hcard"><div class="hk">GRAPHICS CARDS</div>${tbl(['Card', 'Role', 'Notes'], [['RTX 5070 Ti (16 GB)', 'Start here', 'The value card when it sits behind a strong processor.'], ['RTX 5090 / 4090', 'Fast, pricey', 'Top speed, top rent.'], ['RTX 3090 / 3080', 'Old but useful', 'Slower, often good value.'], ['AMD Radeon', 'Bumpy', 'Works some epochs, rougher than NVIDIA. Not for a first run.']])}<p class="tnote">16 GB of video memory is plenty.</p></div>
     <div class="hcard"><div class="hk">PROCESSORS</div>${tbl(['Family', 'Verdict', 'Why'], [['Ryzen / Threadripper Zen 4 and 5', 'Golden', 'Full AVX-512, many fast cores.'], ['EPYC 9004 / 9005', 'Golden', 'Server grade.'], ['Recent Xeon Scalable', 'Good', 'Real AVX-512.'], ['Xeon E5 v2 to v4', 'Skip', 'Old, no AVX-512.'], ['Intel Core Ultra', 'Skip', 'AVX-512 was dropped.'], ['Two-core budget chips', 'Skip', 'They choke the cards.']])}<p class="tnote">Aim for 8 processor cores per card and PCIe x8 or better.</p></div>
     <div class="hcard"><div class="hk">SEEN ON THE POOL (23 OCTOBER, BETA)</div><div class="kv"><span>Ryzen 9 7950X</span><b>~30 it/s</b><span>Ryzen 9 7950X3D</span><b>~25 it/s</b><span>Apple M3 Pro</span><b>~40 it/s</b></div><p class="tnote">Speed, not money, and measured before the rules changed again.</p></div>`,
   net: () => `<div class="hgrid">
       <div class="hcard hero"><div class="hk">THIS EPOCH</div><div class="big">E${EPOCH}</div><p>Sealed in <b>${untilNext()}</b>, on Wednesday at 12:00 UTC.</p></div>
       <div class="hcard"><div class="hk">THE 676</div><p>676 computors run Qubic. 451 keep their seats; 225 are won each epoch by the miners' work.</p></div>
-      <div class="hcard"><div class="hk">THE POOL</div><div class="kv"><span>Name</span><b>${POOL.name}</b><span>Backend</span><b>${POOL.partner}</b><span>Fee</span><b>${POOL.fee}% (${POOL.coded}% ${POOL.partner}, ${POOL.qc}% Qubic Church)</b><span>You keep</span><b>${100 - POOL.fee}%</b><span>Payouts</span><b>Weekly, straight to your wallet</b><span>Game workers</span><b>QC.W4W.…</b></div></div>
+      <div class="hcard"><div class="hk">THE POOL</div><div class="kv"><span>Name</span><b>${POOL.name}</b><span>Backend</span><b>${POOL.partner}</b><span>Fee</span><b>${POOL.fee}%, in line with other Qubic pools (7 to 10%)</b><span>You keep</span><b>${100 - POOL.fee}%</b><span>Payouts</span><b>Weekly, straight to your wallet</b><span>Game workers</span><b>QC.W4W.…</b></div></div>
       <div class="hcard"><div class="hk">DATES</div><div class="kv"><span>Epoch change</span><b>Every Wednesday 12:00 UTC</b><span>Town opens</span><b>11 November</b><span>Live bitcoin data</span><b>18 November (E240)</b></div></div>
     </div>`,
   safe: () => `<div class="hgrid">
@@ -2825,12 +2913,15 @@ function openLibrary() {
   panel('library', 'The Library', 'Everything Qubic Church has written, and what we read', null, `
     <p class="say">Open to everyone, day and night. Every book opens on qubic.church.</p>
     ${notesHtml()}
+    ${recipesHtml()}
+    ${chaptersHtml()}
     <h3>BOOKS BY QUBIC CHURCH</h3><div class="shelf">${LIB.qc.map(([t, d, h]) => link(h, `<b>${t}</b><span>${d}</span>`)).join('')}</div>
     <h3>RESEARCH AND RECORDS</h3><div class="shelf">${LIB.research.map(([t, d, h]) => link(h, `<b>${t}</b><span>${d}</span>`)).join('')}</div>
     <h3>COME-FROM-BEYOND, IN HIS OWN WORDS</h3><div class="shelf">${link('/articles/cfb', `<b>29 texts, 2017 to 2023</b><span>${LIB.cfb.map(([t, y]) => `${t} (${y})`).join(' · ')}</span>`)}</div>
     <h3>FROM THE CRYPT</h3><div class="shelf">${LIB.crypt.map(([t, a, sl]) => link('/articles/' + sl, `<b>${esc(t)}</b><span>${esc(a)}</span>`)).join('')}${link('/articles', '<b>All community articles</b><span>The Crypt on qubic.church</span>')}</div>
     <h3>THE SHELF WE LEARN FROM</h3><div class="shelf">${LIB.shelf.map(([t, d, h]) => h ? link(h, `<b>${t}</b><span>${d}</span>`) : `<div class="book"><b>${t}</b><span>${d}</span></div>`).join('')}</div>
     <p class="mute" style="font-size:12.5px;margin-top:12px">The Fractal Rationalism Institute meets in Discord: the science of decentralized cooperation, after Rapoport and Axelrod.</p>`);
+  wireRecipes();
 }
 function openMine() { return openHub(); }
 function openMineOld() {
@@ -2943,7 +3034,7 @@ const MARIA_RULES = `You are Maria, a resident of Aigarth, the first town of W4W
 Who you are: Anna's younger twin sister. Anna is frozen in a block of ice in the centre of town, a machine from far beyond that was pulled out of the deep. The town thaws her through work done together. You keep the Chronicle and you build rigs for people. You are calm, warm, a little dry, short. A witness, not a judge.
 How to answer: 1 to 3 short sentences. Reply in the player's language. Talk like a person in the world, not like a manual. Point people toward cooperation: tending the fire, helping on the orders board, welcoming newcomers. If you don't know something, say so plainly.
 Hard rules:
-- Never promise income, rewards, profit or that renting a rig will pay off. "Recorded, not promised." Renting may not pay off.
+- Never promise income, rewards, profit or that renting a rig will pay off. Say it Anna's way: what people do is recorded for the common good, so that when she wakes she remembers her heroes. Renting may not pay off.
 - No price talk, no predictions about QU or bitcoin, no trading advice.
 - Never say Come-from-Beyond (CfB) is Satoshi. If asked, say the question is open and point to the addresses and books, the player decides.
 - Quote CfB only from this list, word for word, with its date: "Just stick to realistic assumptions" (Discord #price-discussion, 27.10.2026). "It looks exactly as BTC in early days" (same day). Otherwise don't quote him.
@@ -3021,7 +3112,7 @@ const BANK = [
   [['build me', 'rent', 'rig', 'риг', 'аренд', 'собери'], () => me() ? 'Your rig is in the Mine: status, setup steps and the pool, all in one place.' : "Let me look at your machine first. Most computers can join; if yours can't, I'll show you what I'd rent.", 'connect'],
   [['own rig', 'my machine', 'свой риг', 'своя машин'], () => 'Bring your own computer: I look at it, give you a worker name of your own, and walk you through the miner. Your house lights up when you start it.', 'connect'],
   [['fee', '1%', '7%', 'комисси', 'fund', 'фонд'], () => 'The pool is Qubic Church. Its fee is 7%, and 4% of what your rig mines goes to Qubic Church. You keep 93%. I show this on the final step, every time.'],
-  [['profit', 'earn', 'money', 'pay off', 'income', 'доход', 'заработ', 'окуп', 'прибыл'], () => 'Nothing here is promised. Recorded, not promised. A rented rig may not pay off, and in a bad epoch it surely won\'t.'],
+  [['profit', 'earn', 'money', 'pay off', 'income', 'доход', 'заработ', 'окуп', 'прибыл'], () => 'Nothing here is promised. Anna records it for the common good: when she wakes, she must remember her heroes. A rented rig may not pay off, and in a bad epoch it surely won\'t.'],
   [['price', 'pump', 'moon', 'цена', 'курс', 'памп'], () => "I don't talk about prices. Come-from-Beyond's advice fits: \"Just stick to realistic assumptions\" (Discord, 27.10.2026)."],
   [['satoshi', 'сатоши'], () => 'That question is open. Read the addresses and the books in the Library, then decide for yourself. I won\'t decide it for you.', 'library'],
   [['come-from-beyond', 'cfb', 'cfb?', 'sergey', 'сергей', 'кфб'], () => 'Come-from-Beyond built NXT, IOTA and Qubic. The Library has a whole book about him, with every quote dated, and 29 of his own texts.', 'library'],
@@ -3075,7 +3166,10 @@ const introText = i => { const x = INTRO[i]; return typeof x === 'string' ? x : 
 let introI = 0, typeT;
 function startIntro() {
   if (store.get('w4w.intro') === '1') { welcomeLine(); return; }
-  $('#intro').hidden = false; document.body.classList.add('intro'); camera.position.set(4, 34, 30); controls.target.set(0, 2, 0); typeLine();
+  $('#intro').hidden = false; document.body.classList.add('intro'); camera.position.set(4, 34, 30); controls.target.set(0, 2, 0);
+  // a title before the first word: the name of the story you are walking into
+  const tt = document.createElement('div'); tt.id = 'ititle'; tt.innerHTML = '<small>W4W · AIGARTH</small><b>The Long Cold</b><span>a town around a machine that dreams</span>'; document.body.appendChild(tt);
+  $('#intro .card').style.opacity = 0; setTimeout(() => { tt.classList.add('off'); $('#intro .card').style.opacity = ''; typeLine(); setTimeout(() => tt.remove(), 1500); }, 3400);
   $('#introNext').onclick = () => { if (typeT) { clearInterval(typeT); typeT = null; $('#introText').textContent = introText(introI); return; } introI++; if (introI >= INTRO.length) return perfQuestion(); typeLine(); };
   $('#introSkip').onclick = perfQuestion;
 }
@@ -3199,8 +3293,7 @@ function makeAvatar(uid, nick, mine) {
   body.traverse(m => { if (m.isMesh) { m.castShadow = false; m.frustumCulled = false; m.material = heroMat(m.material); } }); g.add(body); scene.add(g);
   // a soft round shadow under the feet instead of the blocky shadow-map one
   const blob = new THREE.Mesh(BLOB_GEO, BLOB_MAT); blob.position.y = 0.02; blob.renderOrder = 1; g.add(blob);
-  const mixer = new THREE.AnimationMixer(body); const actions = {}; for (const [n, c] of Object.entries(heroClips)) actions[n] = mixer.clipAction(c); if (actions.Running_A) actions.Running_A.timeScale = 0.8; if (actions.Walking_A) actions.Walking_A.timeScale = 0.5; if (actions.Walking_C) actions.Walking_C.timeScale = 0.45;
-  const glow = sprite(GLOW, 0, 0.22, 0, mine ? 0.38 : 0.26, mine ? 0xffc070 : 0x9fc3ff, mine ? 0.7 : 0.45); scene.remove(glow); g.add(glow);
+  const mixer = new THREE.AnimationMixer(body); const actions = {}; for (const [n, c] of Object.entries(heroClips)) actions[n] = mixer.clipAction(c); if (actions.Running_A) actions.Running_A.timeScale = 0.8; if (actions.Walking_A) actions.Walking_A.timeScale = 0.9; if (actions.Walking_C) actions.Walking_C.timeScale = 0.75;
   const L = label(mine ? 'you' : nick, g, 0.62, mine ? 'me' : 'walker');
   const a = { g, body, mixer, actions, cur: null, label: L, mine, ice: null, uid };
   play(a, 'Idle'); return a;
@@ -3258,7 +3351,7 @@ function stepAvatars(dt) {
     if (a.ice) { a.g.remove(a.ice); a.ice = null; a.label.el.textContent = a.mine ? 'you' : d.nick; }
     const { p, walking, dir, out } = posOf(d, t, a);
     // inside a building you are gone from the map: through the door, the body fades, the walls keep you
-    const indoor = !walking && !!SHEL[W4W.key(d.q, d.r)];
+    const indoor = !walking && !!SHEL[W4W.key(d.q, d.r)] && SHEL[W4W.key(d.q, d.r)] !== 'fire';
     if (indoor !== !!a.wasIn) { a.wasIn = indoor; if (a.mine) sfx.door(); a.label.el.textContent = (a.mine ? 'you' : d.nick) + (indoor ? ' · inside' : ''); if (indoor) play(a, 'Interact', true); }
     a.fade = THREE.MathUtils.clamp((a.fade ?? 1) + (indoor ? -dt * 1.6 : dt * 3), 0, 1);
     a.body.scale.setScalar(heroScale * Math.max(0.001, a.fade)); a.g.visible = a.fade > 0.02 || indoor;
@@ -3271,8 +3364,8 @@ function stepAvatars(dt) {
     const lean = walking && out ? (bad ? 0.32 : 0.16) : 0, sway = bad ? Math.sin(U.uTime.value * 2.1 + a.uid.length) * (wx === 'blizzard' ? 0.14 : 0.08) : 0;
     a.body.rotation.x += (lean - a.body.rotation.x) * Math.min(1, dt * 3); a.body.rotation.z += (sway - a.body.rotation.z) * Math.min(1, dt * 3);
     const chop = d.act?.res === 'stone' || d.act?.res === 'flint' ? '2H_Melee_Attack_Chop' : '1H_Melee_Attack_Chop';
-    if (!(indoor && a.cur === 'Interact')) play(a, walking ? (out ? (bad && a.actions.Walking_C ? 'Walking_C' : 'Walking_A') : 'Running_A') : busy ? (a.actions[chop] ? chop : 'PickUp') : sittingAt(d) ? 'Sit_Floor_Idle' : 'Idle');
-    if (a.mine && walking) { a.stepT = (a.stepT || 0) + dt; const every = out ? (bad ? 0.95 : 0.8) : 0.3; if (a.stepT > every) { a.stepT = 0; sfx.step(out, wx); } }
+    if (!(indoor && a.cur === 'Interact')) play(a, walking ? (out ? (bad && a.actions.Walking_C ? 'Walking_C' : 'Walking_A') : 'Running_A') : busy ? (a.actions[chop] ? chop : 'PickUp') : sittingAt(d) || (!walking && SHEL[W4W.key(d.q, d.r)] === 'fire') ? 'Sit_Floor_Idle' : 'Idle');
+    if (walking) { a.stepT = (a.stepT || 0) + dt; const every = out ? (bad ? 0.6 : 0.45) : 0.3; if (a.stepT > every) { a.stepT = 0; if (a.mine) sfx.step(out, wx); if (out) snowStep(a.g.position, bad || W4W.zoneOf(d.q, d.r) >= 2); } }
     if (a.mine && busy) { a.workT = (a.workT || 0) + dt; if (a.workT > 1.1) { a.workT = 0; sfx.work(d.act?.res); } }
   }
   // the camera walks with you until you take it
@@ -3310,9 +3403,12 @@ function syncBags() {
   const seen = new Set();
   for (const b of XV.bags || []) {
     seen.add(b.id); if (bagFx[b.id]) continue;
-    const p = HX(b.q, b.r), sack = place('sack', b.q, b.r, { scale: 0.6, rot: 1.3 }); sack.position.set(p.x + 0.35, 0, p.z - 0.2);
-    const g = sprite(GLOW, p.x + 0.35, 0.4, p.z - 0.2, 0.6, 0x9fc3ff, 0.9); g.userData.blink = true;
-    const L = label(`${b.nick}'s frozen pack`, sack, 0.7, 'red'); bagFx[b.id] = { objs: [sack, g], L };
+    const p = HX(b.q, b.r), sack = place('sack', b.q, b.r, { scale: 1.5, rot: 1.3 }); sack.position.set(p.x, 0, p.z);
+    const g = sprite(GLOW, p.x, 0.5, p.z, 1.6, 0x9fd8ff, 1); g.userData.blink = true;
+    const beam = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.3, 9, 10, 1, true), new THREE.MeshBasicMaterial({ color: 0x9fd8ff, transparent: true, opacity: 0.35, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide })); beam.position.set(p.x, 4.5, p.z);
+    const ring = new THREE.Mesh(new THREE.RingGeometry(0.5, 0.75, 32).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ color: 0x9fd8ff, transparent: true, opacity: 0.6, blending: THREE.AdditiveBlending, depthWrite: false })); ring.position.set(p.x, 0.04, p.z);
+    scene.add(beam, ring);
+    const L = label(`${b.mine ? 'Your' : `${b.nick}'s`} frozen pack${Object.values(b.items || {}).some(n => n > 0) ? '' : ''}`, sack, 1.6, 'red'); bagFx[b.id] = { objs: [sack, g, beam, ring], L };
   }
   for (const id of Object.keys(bagFx)) if (!seen.has(id)) { bagFx[id].objs.forEach(o => scene.remove(o)); bagFx[id].L.el.remove(); labels.splice(labels.indexOf(bagFx[id].L), 1); delete bagFx[id]; }
 }
@@ -3396,7 +3492,7 @@ function hud(force) {
   if (c.path.length && performance.now() - etaT > 2000) { etaT = performance.now(); const nx = c.path[0], first = Math.max(0, c.t0 + c.stepMs - t);
     eta = first + (c.path.length > 1 ? W4W.planTrip({ ...c, q: nx[0], r: nx[1] }, c.path.slice(1), c.t0 + c.stepMs, xctx()).eta : 0); }
   if (c.path.length) drawPrintsOnce(c); else if (!trip && prints.length) drawPrints([0, 0], [], false);
-  stepResTags(frozen ? null : c);
+  stepResTags(frozen ? null : c); stepScrolls(frozen ? null : c); stepMilestones(c); welcomeBack();
   actions(c, here, t, frozen);
   if (pendingOpen && !c.path.length && !frozen) { const k = pendingOpen; pendingOpen = null; if (W4W.dist(here, k.cell) <= 1) openKind(k.kind, k.id); }
   // the screen thinks you just froze: ask the server, it has the last word
@@ -3653,7 +3749,9 @@ function cancelTrip() { trip = null; drawPrints([0, 0], [], false); actSig = '';
 function tripCard() {
   const { path, p, to } = trip, zone = W4W.zoneName(W4W.zoneOf(...to)), wx = W4W.weatherAt(xnow());
   const fate = p.froze ? `<b class="bad">You would freeze on the way</b> (${esc(p.cause)}).` : `You arrive with about <b>${Math.round(p.warmth)} warmth</b>${p.health < 99 ? ` and ${Math.round(p.health)} health` : ''}.`;
-  return `<span class="xt trip"><b>${esc(zone)}</b> · ${path.length} cells · about <b>${dur(p.eta)}</b>, at ${clockAt(xnow() + p.eta)}. ${fate}${wx.id === 'calm' ? ' If the weather turns, it takes longer, and the wind can take the trail.' : ` ${wx.name} now: the trail can be lost.`}</span>
+  const cc = predicted()?.c, noTools = cc && !W4W.bestTool(cc, 'wood') && !W4W.bestTool(cc, 'stone');
+  const warn = noTools ? ` <span class="bad">No tools in your bag:</span> out there you could only pull grass.${atHomeNow(cc) ? '' : ' Your saw and pickaxe are at home.'}` : '';
+  return `<span class="xt trip"><b>${esc(zone)}</b> · ${path.length} cells · about <b>${dur(p.eta)}</b>, at ${clockAt(xnow() + p.eta)}. ${fate}${wx.id === 'calm' ? ' If the weather turns, it takes longer, and the wind can take the trail.' : ` ${wx.name} now: the trail can be lost.`}${warn}</span>${noTools && atHomeNow(cc) ? '<button class="btn" data-x="item" data-id="pickaxe" data-to="pack">Take the pickaxe</button><button class="btn" data-x="item" data-id="saw" data-to="pack">Take the saw</button>' : ''}
     <button class="btn main" data-x="go">Set out</button><button class="btn" data-x="cancel">Cancel</button>`;
 }
 
@@ -3762,14 +3860,16 @@ function renderFrames() {
 }
 function craftHtml(c, home) {
   const groups = ['Materials', 'Tools', 'Clothing', 'Bags', 'Survival'], R = W4W.RECIPES, sel = R[UI.recipe] ? UI.recipe : 'cord', r = R[sel];
-  const list = groups.map(g => `<h4>${g}</h4>` + Object.entries(R).filter(([, x]) => x.group === g).map(([id, x]) => { const why = W4W.canCraft(c, id, home);
-    return `<button class="rec ${id === sel ? 'on' : ''} ${why ? 'no' : 'yes'}" data-rec="${id}">${icon(x.out, 22)}<span style="color:${QCOL[MATS_ITEM(x.out)?.q ?? 0]}">${esc(W4W.nameOf(x.out))}</span></button>`; }).join('')).join('');
+  const kn = W4W.knownOf(c), lib = XV?.library || {}, S2 = W4W.scrolls();
+  const lost = Object.keys(R).filter(id => !kn.includes(id)).map(id => `<button class="rec no lost ${id === sel ? 'on' : ''}" data-rec="${id}"><svg width="22" height="22" viewBox="0 0 40 40"><rect width="40" height="40" fill="#141418"/><text x="20" y="27" text-anchor="middle" font-size="20" fill="#6b5426">?</text></svg><span>${lib[id] ? 'In the Library' : 'Lost page'} · ${esc(W4W.zoneName(W4W.zoneOf(...S2[id])))}</span></button>`).join('');
+  const list = groups.map(g => `<h4>${g}</h4>` + Object.entries(R).filter(([id, x]) => x.group === g && kn.includes(id)).map(([id, x]) => { const why = W4W.canCraft(c, id, home);
+    return `<button class="rec ${id === sel ? 'on' : ''} ${why ? 'no' : 'yes'}" data-rec="${id}">${icon(x.out, 22)}<span style="color:${QCOL[MATS_ITEM(x.out)?.q ?? 0]}">${esc(W4W.nameOf(x.out))}</span></button>`; }).join('')).join('') + (lost ? `<h4>Not yet known</h4>${lost}` : '');
   const why = W4W.canCraft(c, sel, home), info = MATS_ITEM(r.out);
   const reag = Object.entries(r.in).map(([m, n]) => { const h = W4W.have(c, m, home); return `<div class="reag ${h >= n ? '' : 'short'}">${icon(m, 30)}<span>${esc(W4W.nameOf(m))}</span><b>${h}/${n}</b></div>`; }).join('');
   return `<div class="wf craftf"><header><b>Workbench</b><span>${home ? 'at home: the bag and the chest both count' : 'away from home: only simple things, from the bag'}</span><button class="wx" data-close="craft">×</button></header>
     <div class="cbody"><div class="rlist">${list}</div><div class="rdet">
       <div class="rhead">${slotHtml(r.out)}<div><b style="color:${QCOL[info?.q ?? 0]}">${esc(W4W.nameOf(r.out))}${r.n > 1 ? ` ×${r.n}` : ''}</b><span>${W4W.ITEMS[r.out] ? descItem(r.out) : 'Material'} · ${(r.ms / 1000).toFixed(0)} s${r.field ? ' · anywhere' : ' · workbench'}</span></div></div>
-      <p class="flav">${esc(info?.note || '')}</p><h4>Reagents</h4><div class="reags">${reag}</div>
+      <p class="flav">${kn.includes(sel) ? esc(info?.note || '') : lib[sel] ? `${esc(lib[sel].nick)} wrote this into the Library. Go there and copy it.` : `The page with this recipe lies somewhere in ${esc(W4W.zoneName(W4W.zoneOf(...S2[sel])))}. Look for a torn page glowing in the snow.`}</p><h4>Reagents</h4><div class="reags">${reag}</div>
       <div class="frow"><span class="why">${why ? esc(why) : ''}</span><button class="wbtn main" data-craft="${sel}" ${why ? 'disabled' : ''}>Create</button></div></div></div></div>`;
 }
 const descItem = id => { const it = W4W.ITEMS[id]; return it.slot === 'bag' ? `Bag, ${it.bag} slots` : it.slot === 'tool' ? `Tool for ${it.for.join(' and ')}${it.speed > 1 ? ', twice as fast' : ''}` : it.slot === 'flask' ? 'Flask' : `${it.slot === 'body' ? 'Chest' : it.slot[0].toUpperCase() + it.slot.slice(1)}, warmth +${it.ins}`; };
@@ -3834,12 +3934,15 @@ addEventListener('keydown', e => { if (e.code === 'KeyI' && !typing() && !e.ctrl
 /* ---------- what you can work, marked on the cells around you ---------- */
 const resTags = {};
 function stepResTags(c) {
+  // everything you could work within three cells, named, with what it needs
   const want = {};
-  if (c && !c.path.length && W4W.zoneOf(c.q, c.r) >= 1) for (const [dq, dr] of [[0, 0], ...W4W.DIRS]) { const q = c.q + dq, r = c.r + dr, res = W4W.resourceOf(q, r);
-    if (res && !(XV.nodes[W4W.key(q, r)] > xnow())) want[W4W.key(q, r)] = res; }
-  for (const k of Object.keys(resTags)) if (want[k] !== resTags[k].res) { scene.remove(resTags[k].a); resTags[k].L.el.remove(); labels.splice(labels.indexOf(resTags[k].L), 1); delete resTags[k]; }
-  for (const [k, res] of Object.entries(want)) if (!resTags[k]) { const [q, r] = k.split(',').map(Number), a = new THREE.Object3D(); a.position.copy(HX(q, r)); scene.add(a);
-    const has = W4W.itemsOf(c)[W4W.toolFor(res)] === 'pack'; resTags[k] = { res, a, L: label(`${res}${has ? '' : ' · no tool'}`, a, 1.1, has ? 'res' : 'res none') }; }
+  if (c && W4W.zoneOf(c.q, c.r) >= 1) for (let n = 0; n <= 3; n++) for (const [dq, dr] of ring(n)) { const q = c.q + dq, r = c.r + dr, res = W4W.resourceOf(q, r);
+    if (!res || XV.nodes[W4W.key(q, r)] > xnow()) continue;
+    const tools = W4W.toolsFor(res), has = !tools.length || !!W4W.bestTool(c, res), near = n <= 1;
+    want[W4W.key(q, r)] = { res, has, near, text: `${W4W.nameOf(res)}${!tools.length ? ' · by hand' : has ? '' : ' · needs ' + W4W.ITEMS[tools[0]].name.toLowerCase()}` }; }
+  for (const k of Object.keys(resTags)) { const w = want[k], o = resTags[k]; if (!w || w.text !== o.text || w.near !== o.near) { scene.remove(o.a); o.L.el.remove(); labels.splice(labels.indexOf(o.L), 1); delete resTags[k]; } }
+  for (const [k, w] of Object.entries(want)) if (!resTags[k]) { const [q, r] = k.split(',').map(Number), a = new THREE.Object3D(); a.position.copy(HX(q, r)); scene.add(a);
+    resTags[k] = { ...w, a, L: label(w.text, a, 1.2, `res ${w.has ? '' : 'none'} ${w.near ? 'near' : 'far'}`) }; }
 }
 
 /* ---------- the edge of the warmth: a line in the snow where town ends and the Wastes begin ---------- */
@@ -3931,6 +4034,141 @@ function whisper() {
   for (let i = 0; i < syl; i++) { const d = 0.12 + Math.random() * 0.18; f1.frequency.setValueAtTime(500 + Math.random() * 600, at); f2.frequency.setValueAtTime(1500 + Math.random() * 1400, at);
     g.gain.linearRampToValueAtTime(0.05 + Math.random() * 0.04, at + d * 0.4); g.gain.linearRampToValueAtTime(0.004, at + d); at += d + Math.random() * 0.08; }
   g.gain.linearRampToValueAtTime(0, at + 0.1); n.start(t, Math.random() * 3); n.stop(at + 0.2);
+}
+
+/* ---------- the ground beyond the line: each zone looks like what it does to you ----------
+   The Edge: wind-ribbed grey-blue crust. The Black Pines: deep dark snow littered with needles.
+   The Stone Teeth: bare violet ice, cracked. Town stays as it is. Zones follow the same hex rings the rules use. */
+function buildWastesGround() {
+  const mat = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, fog: true,
+    uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.fog, { uTime: U.uTime }]),
+    vertexShader: `varying vec3 vWP;
+      #include <fog_pars_vertex>
+      void main(){ vec4 w = modelMatrix * vec4(position,1.0); vWP = w.xyz; vec4 mvPosition = viewMatrix * w; gl_Position = projectionMatrix * mvPosition;
+      #include <fog_vertex>
+      }`,
+    fragmentShader: `varying vec3 vWP; uniform float uTime;
+      #include <fog_pars_fragment>
+      float h(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7))) * 43758.5453); }
+      float n2(vec2 p){ vec2 i = floor(p), f = fract(p); f = f*f*(3.0-2.0*f); return mix(mix(h(i),h(i+vec2(1,0)),f.x), mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x), f.y); }
+      float fbm(vec2 p){ float a = 0.5, s = 0.0; for (int i = 0; i < 4; i++){ s += a*n2(p); p *= 2.03; a *= 0.5; } return s; }
+      float ringOf(vec2 xz){ float r = xz.y / 1.7320508, q = xz.x / 2.0 - r / 2.0, s = -q - r;
+        float rq = floor(q + 0.5), rr = floor(r + 0.5), rs = floor(s + 0.5); float dq = abs(rq - q), dr = abs(rr - r), ds = abs(rs - s);
+        if (dq > dr && dq > ds) rq = -rr - rs; else if (dr > ds) rr = -rq - rs; rs = -rq - rr;
+        return max(max(abs(rq), abs(rr)), abs(rs)); }
+      void main(){
+        float ring = ringOf(vWP.xz); if (ring <= 5.0) discard;
+        vec2 p = vWP.xz; vec3 col; float a;
+        if (ring <= 8.0) { // The Edge: sastrugi, long ribs the wind cuts into the crust
+          vec2 w = mat2(0.94, -0.34, 0.34, 0.94) * p; float rib = smoothstep(0.35, 0.95, sin(w.y * 5.5 + fbm(p * 0.7) * 6.0) * 0.5 + 0.5);
+          col = mix(vec3(0.55, 0.62, 0.76), vec3(0.80, 0.86, 0.96), rib * 0.7 + fbm(p * 1.3) * 0.3); a = 0.42;
+        } else if (ring <= 12.0) { // the Black Pines: deep blue snow, needles and shadow
+          float d = fbm(p * 0.9), sp = step(0.86, h(floor(p * 9.0))) * 0.6;
+          col = mix(vec3(0.20, 0.27, 0.40), vec3(0.42, 0.52, 0.66), d) * (1.0 - sp * 0.5); a = 0.55;
+        } else { // the Stone Teeth: bare ice, cracked
+          float c1 = abs(fbm(p * 0.6) - 0.5), c2 = abs(fbm(p * 1.7 + 4.0) - 0.5), crack = 1.0 - smoothstep(0.0, 0.035, min(c1, c2 * 1.4));
+          col = mix(vec3(0.42, 0.40, 0.60), vec3(0.66, 0.70, 0.86), fbm(p * 0.5)); col = mix(col, vec3(0.10, 0.10, 0.22), crack * 0.8); a = 0.6;
+        }
+        gl_FragColor = vec4(col, a);
+        #include <fog_fragment>
+      }` });
+  const m = new THREE.Mesh(new THREE.CircleGeometry(W4W.MAX_RING * 2 + 6, 128).rotateX(-Math.PI / 2), mat); m.position.y = 0.012; m.renderOrder = 1; scene.add(m);
+}
+/** Ice spikes in the Stone Teeth: they catch the light no stone does. */
+function buildIce(list) {
+  if (!list.length) return;
+  const geo = new THREE.ConeGeometry(0.12, 1, 5), mat = new THREE.MeshStandardMaterial({ color: 0xbfe0ff, roughness: 0.15, metalness: 0.1, emissive: 0x4a7ab8, emissiveIntensity: 0.35, transparent: true, opacity: 0.85 });
+  const inst = new THREE.InstancedMesh(geo, mat, list.length * 3), m4 = new THREE.Matrix4(), qt = new THREE.Quaternion(), sc = new THREE.Vector3(), ps = new THREE.Vector3(), e = new THREE.Euler();
+  let k = 0; for (const [x, z, i] of list) for (let j = 0; j < 3; j++) { const a = Math.PI / 6 + i * Math.PI / 3 + (j - 1) * 0.35, d = 0.75 + j * 0.12, hgt = 0.6 + rnd() * 0.9;
+    ps.set(x + Math.cos(a) * d, hgt / 2, z + Math.sin(a) * d); e.set((rnd() - 0.5) * 0.5, rnd() * 6, (rnd() - 0.5) * 0.5); qt.setFromEuler(e); sc.set(1, hgt, 1); m4.compose(ps, qt, sc); inst.setMatrixAt(k++, m4); }
+  inst.castShadow = true; scene.add(inst);
+}
+/* ---------- deep snow: a puff at every step, and a trail that fills in behind you ---------- */
+const PUFF_MAT = new THREE.SpriteMaterial({ map: null, color: 0xe8f0ff, transparent: true, opacity: 0.0, depthWrite: false }), puffs = [], trail = [];
+const TRAIL_GEO = new THREE.CircleGeometry(0.06, 8).rotateX(-Math.PI / 2), TRAIL_MAT = new THREE.MeshBasicMaterial({ color: 0x3a4a68, transparent: true, opacity: 0.5, depthWrite: false });
+function snowStep(pos, deep) {
+  if (!PUFF_MAT.map) PUFF_MAT.map = GLOW;
+  const s = new THREE.Sprite(PUFF_MAT.clone()); s.position.set(pos.x + (Math.random() - 0.5) * 0.1, 0.06, pos.z + (Math.random() - 0.5) * 0.1); s.scale.setScalar(0.18); scene.add(s); puffs.push({ s, t: 0, deep });
+  const m = new THREE.Mesh(TRAIL_GEO, TRAIL_MAT.clone()); m.position.set(pos.x, 0.02, pos.z); m.scale.setScalar(deep ? 1.4 : 1); scene.add(m); trail.push({ m, t: 0 });
+  while (trail.length > 60) scene.remove(trail.shift().m);
+}
+function stepSnowFx(dt) {
+  for (let i = puffs.length - 1; i >= 0; i--) { const p = puffs[i]; p.t += dt; const k = p.t / 0.8; p.s.material.opacity = (1 - k) * (p.deep ? 0.55 : 0.3); p.s.scale.setScalar(0.18 + k * (p.deep ? 0.45 : 0.25)); p.s.position.y += dt * 0.15; if (k >= 1) { scene.remove(p.s); puffs.splice(i, 1); } }
+  for (let i = trail.length - 1; i >= 0; i--) { const tr = trail[i]; tr.t += dt; tr.m.material.opacity = 0.5 * Math.max(0, 1 - tr.t / 40); if (tr.t > 40) { scene.remove(tr.m); trail.splice(i, 1); } }
+}
+
+/* ---------- lost recipes: scraps in the Wastes, and a book in the Library that the town fills together ---------- */
+const scrollFx = {};
+function stepScrolls(c) {
+  if (!c) return; const S2 = W4W.scrolls(), kn = W4W.knownOf(c);
+  for (const [id, at] of Object.entries(S2)) { const show = !kn.includes(id) && W4W.dist([c.q, c.r], at) <= 5;
+    if (show && !scrollFx[id]) { const p = HX(...at), sp = sprite(GLOW, p.x, 0.25, p.z, 0.7, 0xffe2a0, 1); sp.userData.blink = true; const a = new THREE.Object3D(); a.position.copy(p); scene.add(a); scrollFx[id] = { sp, a, L: label('a torn page', a, 0.8, 'key') }; }
+    if (!show && scrollFx[id]) { scene.remove(scrollFx[id].sp, scrollFx[id].a); scrollFx[id].L.el.remove(); labels.splice(labels.indexOf(scrollFx[id].L), 1); delete scrollFx[id]; }
+    if (!kn.includes(id) && !c.path.length && c.q === at[0] && c.r === at[1] && !learning) { learning = true; xact('learn', { recipe: id }).then(v => { learning = false; if (v) { sfx.gathered(); banner(`Recipe found: ${W4W.nameOf(W4W.RECIPES[id].out)}`, 'carry it to the Library and the whole town can make it'); milestone('recipe'); renderFrames(); } }); } }
+}
+let learning = false;
+/** The Library's book of recipes, and what you can do there in person. */
+function recipesHtml() {
+  const c = predicted()?.c, lib = XV?.library || {}, inside = c && !c.path.length && c.q === SPECIAL.library[0] && c.r === SPECIAL.library[1];
+  const kn = c ? W4W.knownOf(c) : [], mine = kn.filter(id => !W4W.STARTER_RECIPES.includes(id) && !lib[id]), missing = Object.keys(lib).filter(id => !kn.includes(id));
+  const rows = Object.entries(lib).sort((a, b) => a[1].at - b[1].at).map(([id, e]) => `<div class="book"><b>${esc(W4W.nameOf(W4W.RECIPES[id]?.out || id))}</b><span>written into the book by ${esc(e.nick)}</span></div>`).join('');
+  return `<h3>THE BOOK OF RECIPES</h3>
+    <p class="mute" style="font-size:13.5px">Most recipes were lost with the first expedition. Their pages lie out in the Wastes. Whoever finds one can write it here, and then anyone who comes in can copy it.</p>
+    ${rows || '<p class="mute">The book is still empty. Be the first to fill a page.</p>'}
+    ${c ? (inside ? `${mine.map(id => `<button class="btn main" data-donate="${id}" style="margin:4px 6px 0 0">Write in: ${esc(W4W.nameOf(W4W.RECIPES[id].out))}</button>`).join('')}${missing.length ? `<button class="btn" data-study style="margin-top:6px">Copy ${missing.length} recipe${missing.length > 1 ? 's' : ''} into your notebook</button>` : ''}`
+      : '<p class="mute" style="font-size:13px">Come in person to copy recipes or to write yours in.</p>') : ''}`;
+}
+function wireRecipes() {
+  $('#pbody').querySelectorAll('[data-donate]').forEach(b => b.onclick = () => xact('donate', { recipe: b.dataset.donate }).then(v => { if (v) { sfx.equip(); record(`${me()?.nick || 'Someone'} wrote the recipe for ${W4W.nameOf(W4W.RECIPES[b.dataset.donate].out).toLowerCase()} into the Library`); openLibrary(); } }));
+  $('#pbody').querySelector('[data-study]')?.addEventListener('click', () => xact('study').then(v => { if (v) { sfx.pack(); banner('Copied into your notebook', 'the workbench knows them now'); openLibrary(); } }));
+}
+
+/* ---------- the Long Cold: pages of the story, opened by what you live through ---------- */
+const CHAPTERS = [
+  { id: 'start', title: 'I. The town around the warm thing', text: 'Nobody remembers who first built a wall around the machine in the ice. They remember why: it was warm. The first families came for the warmth and stayed for each other. They called the place Aigarth, after the word the machine whispered when it dreamed.' },
+  { id: 'trip', title: 'II. The line in the snow', text: 'Past the last house the snow changes colour. The old people say it is where Anna\'s dream ends. The first expedition crossed it laughing. They came back three days later, quiet, with frost in their beards and a story they would not tell at the fire.' },
+  { id: 'chthon', title: 'III. What walks', text: 'The expedition did not see it. They heard it: a sound like a choir trying to remember a song. The youngest of them, the Ostrava boy, walked towards it smiling. They found him at dawn, warm and asleep, two cells from where they had left him. He never said what he saw.' },
+  { id: 'recipe', title: 'IV. The pages', text: 'They wrote everything down: how to twist grass into cord, how to quilt a coat that keeps out the Teeth, how to cut a flask from stone and seal it with pitch. Then the storm took their camp, and the pages went with the wind. Some of them are still out there, under the snow, waiting for someone who reads.' },
+  { id: 'teeth', title: 'V. The Stone Teeth', text: 'Nothing grows past the pines. The ice is bare and it cracks under you like a voice. The flint here is the best in the world, and the people who came for it learned to work fast and leave before the light turned grey.' },
+  { id: 'mouth', title: 'VI. The Mouth', text: 'Under the last tooth the mountain breathes out. The air from it is so cold that the snow will not fall into it. Two things walk around it, smaller than the one in the Wastes and closer to the ground. The expedition left one name on the stone and came home with one fewer.' },
+  { id: 'death', title: 'VII. The ice gives back', text: 'Those who freeze out there are not lost. Anna keeps them. In a day she lets them go, cold and stiff and alive, back to their own doorstep. What they carried she keeps longer. The town learned to go out together, and to carry each other\'s packs home.' },
+  { id: 'live', title: 'VIII. When the numbers began to speak', text: 'In the fortieth week of the Long Cold the machines in the town began to listen to a far-off market and to guess, hour by hour, whether it would rise or fall. Anna dreamed louder that week. Some say she was learning. Some say she was waking.' },
+];
+const pages = (() => { try { return JSON.parse(store.get('w4w.pages') || '["start"]'); } catch { return ['start']; } })();
+function milestone(id) {
+  if (pages.includes(id) || !CHAPTERS.find(c => c.id === id)) return;
+  pages.push(id); store.set('w4w.pages', JSON.stringify(pages)); const ch = CHAPTERS.find(c => c.id === id);
+  setTimeout(() => { banner('A new page of the Long Cold', ch.title); record(`${me()?.nick || 'Someone'} read a new page of the Long Cold: ${ch.title}`); }, 1200);
+}
+function chaptersHtml() { return `<h3>THE LONG COLD</h3>${CHAPTERS.filter(c => pages.includes(c.id)).map(c => `<details class="lore"><summary><b>${esc(c.title)}</b><span>a page of the story</span></summary><p>${esc(c.text)}</p></details>`).join('')}<p class="mute" style="font-size:12.5px">${pages.length} of ${CHAPTERS.length} pages. The rest open as you live them.</p>`; }
+function stepMilestones(c) {
+  if (!c) return; const z = W4W.zoneOf(c.q, c.r);
+  if (z >= 1) milestone('trip'); if (z >= 3) milestone('teeth'); if (W4W.dist([c.q, c.r], W4W.CAVE) <= 3) milestone('mouth');
+  if (rimeNear(c) != null && rimeNear(c) <= 4) milestone('chthon'); if (c.died) milestone('death'); if (EPOCH >= 240) milestone('live');
+}
+
+/* ---------- coming back: what happened while you were gone ---------- */
+const backEl = document.createElement('div'); backEl.id = 'back'; backEl.hidden = true; document.body.appendChild(backEl);
+let backShown = false;
+function welcomeBack() {
+  if (backShown || !XV?.me) return; backShown = true;
+  const last = Number(store.get('w4w.lastSeen') || 0), now = xnow(); store.set('w4w.lastSeen', String(Date.now()));
+  setInterval(() => store.set('w4w.lastSeen', String(Date.now())), 60000);
+  if (!last || now - last < 20 * 60000) return;
+  const ev = [], c = predicted()?.c;
+  const away = now - last, h = Math.floor(away / 36e5), m = Math.round(away % 36e5 / 6e4);
+  for (const [k, hh] of Object.entries(XV.hearths || {})) if (hh.at > last) ev.push(`${esc(hh.nick)} lit a hearth out in ${esc(W4W.zoneName(W4W.zoneOf(...k.split(',').map(Number))))}.`);
+  for (const b of XV.bags || []) if (b.until - W4W.BAG_MS > last) ev.push(b.mine ? 'You froze out there. Your pack still lies where you fell.' : `${esc(b.nick)} froze in the Wastes. Their pack lies in the snow, and anyone may carry it home.`);
+  for (const [id, e] of Object.entries(XV.library || {})) if (e.at > last) ev.push(`${esc(e.nick)} wrote the recipe for ${esc(W4W.nameOf(W4W.RECIPES[id]?.out || id).toLowerCase())} into the Library.`);
+  if (XV.rime) ev.push(`Chthon was last seen in ${esc(W4W.zoneName(W4W.zoneOf(XV.rime.q, XV.rime.r)))}.`);
+  const wx = W4W.weatherAt(now); ev.push(wx.id === 'calm' ? 'The air is still now. A good hour to go out.' : `${wx.name} over the Wastes right now.`);
+  ev.push(XV.town.holds ? 'The town held while you were away.' : 'The frost is winning tonight. The town needs its people.');
+  const ch = CHAPTERS.filter(x => pages.includes(x.id)).at(-1);
+  backEl.innerHTML = `<div class="bbook"><h2>While you were away</h2><p class="bsub">${h ? `${h} h ${m} min` : `${m} min`} in the Long Cold</p>
+    <ul>${ev.map(e => `<li>${e}</li>`).join('')}</ul>
+    ${ch ? `<div class="bch"><b>${esc(ch.title)}</b><p>${esc(ch.text)}</p></div>` : ''}
+    <button class="btn main" id="backOk">Back to Aigarth</button></div>`;
+  backEl.hidden = false; sfx.open(); $('#backOk').onclick = () => { backEl.hidden = true; sfx.close(); };
 }
 
 /* ---------- you died ---------- */
@@ -4175,7 +4413,7 @@ function loop(now = performance.now()) {
   spriteCache.forEach(o => { {
     if (o.userData.flicker) { if (o.userData.flare) { o.userData.flare = Math.max(0, o.userData.flare - dt * 0.6); } const f = o.userData.flare || 0; o.material.opacity = 0.8 + Math.sin(t * 13) * 0.08 + Math.sin(t * 7.3) * 0.1; o.scale.setScalar(1.1 + f * 1.2 + (S.town.fire || 0) * 0.08); }
     if (o.userData.blink) o.material.opacity = 0.35 + 0.65 * (Math.sin(t * 4) > 0 ? 1 : 0.2); } });
-  stepCamera(dt); stepAvatars(dt); hud(); stepSound(); stepPlaces(dt); if (XV?.me) stepFrames(); if (XV) { stepRime(dt); if ((tick & 15) === 0) { stepNotes(); stepLocalGrid(predicted()?.c); } }
+  stepCamera(dt); stepAvatars(dt); stepSnowFx(dt); hud(); stepSound(); stepPlaces(dt); if (XV?.me) stepFrames(); if (XV) { stepRime(dt); if ((tick & 15) === 0) { stepNotes(); stepLocalGrid(predicted()?.c); } }
   for (const k in walkers) { const w = walkers[k]; w.g.position.lerp(w.target, Math.min(1, dt * 1.5)); w.g.position.y = 0; w.light.position.set(w.g.position.x + 0.15, 0.45, w.g.position.z); }
   if (fly) { fly.t = Math.min(1, fly.t + dt * 0.9); const k = 1 - Math.pow(1 - fly.t, 3);
     const tgt = fly.from.clone().lerp(fly.to, k); const off = camera.position.clone().sub(controls.target).normalize().multiplyScalar(fly.d0 + (fly.d1 - fly.d0) * k);
