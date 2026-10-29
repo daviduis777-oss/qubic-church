@@ -54,9 +54,98 @@ button.chip:hover{border-color:var(--line-2)}
 #panel .faq-addr code{padding:3px 8px;border-radius:6px;background:#05070e;border:1px solid var(--line);font:12.5px ui-monospace,monospace;color:var(--gold)}
 #panel .faq-addr .btn{padding:3px 9px;font-size:12px}
 #panel .faq-small{font-size:12.5px;color:var(--mute)}
+/* Maria's dialogue box outside the prologue */
+#talk{position:fixed;inset:0;z-index:6;display:flex;align-items:flex-end;justify-content:center;padding:0 max(16px,env(safe-area-inset-right)) max(28px,calc(env(safe-area-inset-bottom) + 20px)) max(16px,env(safe-area-inset-left));background:linear-gradient(rgba(5,7,14,0),rgba(5,7,14,.7) 75%);pointer-events:none}
+#talk .card{pointer-events:auto;position:relative;width:min(940px,100%);min-height:220px;max-height:calc(100vh - 60px);padding:22px 26px 18px calc(min(58vh,470px) * .714 + 4px);border:1px solid rgba(232,176,92,.42);border-radius:16px;background:linear-gradient(rgba(12,15,26,.94),rgba(8,10,18,.97));box-shadow:0 18px 60px rgba(0,0,0,.55)}
+#talk .card>img{position:absolute;left:-18px;bottom:0;height:min(58vh,470px);width:auto;pointer-events:none;-webkit-mask-image:linear-gradient(#000 82%,transparent);mask-image:linear-gradient(#000 82%,transparent)}
+#talk .card>div{position:relative;max-height:calc(100vh - 100px);overflow:auto}
+#talk .who{display:inline-block;padding:5px 12px;border:1px solid rgba(232,176,92,.5);border-radius:8px;background:#0d1020;font-family:var(--f-label);font-size:11px;letter-spacing:.16em;color:var(--gold)}
+#talk #talkText{margin:12px 0 12px;font-family:var(--f-display);font-weight:600;font-size:clamp(20px,2.3vw,27px);line-height:1.18;color:var(--cream);text-wrap:pretty;cursor:default}
+#talk .row{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-top:12px}
+#talk .row .btn:first-child{margin-right:auto}
+#talk .name{width:100%;margin:2px 0 4px}
+#talk .mono,#hub code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.02em}
+.terr{margin:4px 0 0;font-size:13.5px;color:#ffb4a6}
+.tnote{display:block;margin:8px 0 0;font-size:13px;line-height:1.5;color:var(--mute)}
+.tnote a,.hcard a:not(.btn){color:var(--gold)}
+.mchips{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0}
+.mchips span{display:inline-flex;flex-direction:column;gap:1px;padding:7px 11px;border:1px solid var(--line);border-radius:10px;background:rgba(255,196,107,.04);font-size:14px;color:var(--cream)}
+.mchips i{font-style:normal;font-family:var(--f-label);font-size:9px;letter-spacing:.14em;color:var(--mute);text-transform:uppercase}
+.isteps{margin:6px 0 0;padding-left:22px;display:grid;gap:12px}
+.isteps li{font-size:14.5px;line-height:1.5;color:var(--ink)}
+.isteps li b{color:var(--cream)}
+.isteps .btn{margin-top:8px;display:flex;width:fit-content}
+.crow{display:flex;align-items:center;gap:8px;margin-top:6px;flex-wrap:wrap}
+.crow i{font-style:normal;min-width:96px;font-family:var(--f-label);font-size:9.5px;letter-spacing:.12em;color:var(--mute);text-transform:uppercase}
+.crow code{padding:5px 9px;border-radius:7px;background:#05070e;border:1px solid var(--line);font-size:13px;color:var(--gold);word-break:break-all;max-width:100%}
+.crow .btn{padding:4px 10px;font-size:12px}
+.rules{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 14px;margin:10px 0 0;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:rgba(255,196,107,.03)}
+.rules b{grid-column:1/-1;font-family:var(--f-label);font-size:10px;letter-spacing:.14em;color:var(--gold);font-weight:400}
+.rules span{font-size:13.5px;color:var(--ink);padding-left:14px;position:relative}
+.rules span::before{content:"";position:absolute;left:0;top:.55em;width:6px;height:6px;border-radius:50%;background:var(--amber)}
+/* the Mine */
+#hub{position:fixed;inset:0;z-index:4;display:flex;align-items:center;justify-content:center;padding:64px max(16px,env(safe-area-inset-right)) 96px max(16px,env(safe-area-inset-left));background:rgba(5,7,14,.62)}
+body.hub #dock button.main{background:rgba(255,196,107,.16)}
+.hub-win{width:min(1180px,100%);height:min(860px,100%);display:grid;grid-template-columns:230px 1fr;grid-template-rows:auto 1fr;border:1px solid rgba(232,176,92,.42);border-radius:18px;overflow:hidden;background:radial-gradient(120% 80% at 100% 0%,rgba(232,145,46,.10),transparent 60%),linear-gradient(rgba(12,15,26,.97),rgba(8,10,18,.98));box-shadow:0 24px 80px rgba(0,0,0,.6)}
+.hub-win header{grid-column:1/-1;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:20px 24px 16px;border-bottom:1px solid var(--line)}
+.hub-win header .who{font-family:var(--f-label);font-size:10.5px;letter-spacing:.16em;color:var(--gold)}
+.hub-win header h2{margin:6px 0 2px;font-family:var(--f-display);font-weight:700;font-size:44px;line-height:.95;letter-spacing:.01em;color:var(--cream)}
+.hub-win header p{margin:0;color:var(--mute);font-size:14px}
+.hub-win nav{display:flex;flex-direction:column;gap:2px;padding:12px 10px;border-right:1px solid var(--line);overflow:auto}
+.hub-win nav button{display:flex;align-items:center;gap:10px;padding:10px 12px;border:0;border-radius:10px;background:none;color:var(--ink);font:inherit;font-size:14px;text-align:left;cursor:pointer}
+.hub-win nav button svg{width:18px;height:18px;flex-shrink:0;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;opacity:.8}
+.hub-win nav button:hover{background:rgba(255,196,107,.07)}
+.hub-win nav button.on{background:rgba(255,196,107,.13);color:var(--cream);box-shadow:inset 2px 0 0 var(--amber)}
+.hub-win nav button:focus-visible,.hub-win .x:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
+#hubBody{overflow:auto;padding:20px 24px 26px;display:flex;flex-direction:column;gap:14px}
+.hgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.hgrid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.hcard{padding:16px 18px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.02)}
+.hcard p{margin:6px 0 0;font-size:14.5px;line-height:1.55;color:var(--ink)}
+.hcard .hk{font-family:var(--f-label);font-size:10px;letter-spacing:.15em;color:var(--gold)}
+.hcard .big{margin:8px 0 6px;font-family:var(--f-display);font-weight:700;font-size:clamp(28px,3.4vw,40px);line-height:1;color:var(--cream)}
+.hcard .row{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.hcard .btn.big{padding:13px 20px;font-size:15px}
+.hcard.hero{border-color:rgba(232,176,92,.5);background:radial-gradient(90% 120% at 0% 0%,rgba(232,145,46,.16),transparent 70%),rgba(255,255,255,.02)}
+.hcard.hero.t-no{border-color:var(--line);background:rgba(255,255,255,.02)}
+.hcard.status{border-color:rgba(155,224,138,.35)}
+.hcard.warn{border-color:rgba(159,195,255,.35);background:rgba(159,195,255,.04)}
+.hcard.bad{border-color:rgba(255,106,90,.4);background:rgba(255,106,90,.05)}
+.hcard.good{border-color:rgba(155,224,138,.4);background:rgba(155,224,138,.04)}
+.hcard .maria{margin-top:10px;font-family:var(--f-display);font-weight:600;font-size:20px;line-height:1.25;color:var(--cream)}
+.hcard .mute{color:var(--mute)}
+.hcard.tier .big{font-size:26px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin-top:10px;font-size:14px}
+.kv span{color:var(--mute)} .kv b{color:var(--cream);font-weight:600;word-break:break-word}
+.htbl{width:100%;border-collapse:collapse;margin-top:8px;font-size:14px}
+.htbl th{text-align:left;font-family:var(--f-label);font-weight:400;font-size:9.5px;letter-spacing:.13em;color:var(--mute);padding:8px 10px 8px 0;border-bottom:1px solid var(--line)}
+.htbl td{padding:9px 10px 9px 0;border-bottom:1px solid rgba(255,196,107,.08);color:var(--ink);vertical-align:top}
+.htbl td:first-child{color:var(--cream)}
+.htbl .v-good{color:var(--green);font-weight:600} .htbl .v-bad{color:var(--red);font-weight:600} .htbl .v-mid{color:var(--gold)}
+.timeline{list-style:none;margin:10px 0 0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;counter-reset:t}
+.timeline li{position:relative;padding:12px 12px 12px 14px;border-left:2px solid var(--amber);background:rgba(255,196,107,.03);border-radius:0 10px 10px 0;font-size:13.5px;line-height:1.45;color:var(--ink)}
+.timeline b{display:block;margin-bottom:4px;color:var(--cream);font-size:14px}
+.hlist{margin:8px 0 0;padding-left:18px;display:grid;gap:6px;font-size:14.5px;line-height:1.5}
+@media (max-width: 900px){
+  .hub-win{grid-template-columns:1fr;grid-template-rows:auto auto 1fr}
+  .hub-win nav{flex-direction:row;border-right:0;border-bottom:1px solid var(--line);padding:8px}
+  .hub-win nav button{flex-shrink:0;padding:8px 10px;font-size:13px}
+  .hgrid,.hgrid.three,.timeline{grid-template-columns:1fr}
+}
+@media (max-width: 760px){
+  #hub{padding:0}
+  .hub-win{height:100%;border-radius:0;border:0}
+  .hub-win header{padding:max(14px,env(safe-area-inset-top)) 16px 12px}
+  .hub-win header h2{font-size:34px}
+  #hubBody{padding:14px 14px 110px}
+  #talk .card{padding:18px 16px 14px;min-height:0}
+  #talk .card>img{display:none}
+  #talk #talkText{font-size:clamp(18px,5vw,23px)}
+  .rules{grid-template-columns:1fr}
+}
 #proto{position:fixed;left:max(16px,env(safe-area-inset-left));bottom:max(12px,env(safe-area-inset-bottom));font-size:11px;color:var(--mute);letter-spacing:.06em;pointer-events:none}
 
-#dock{position:fixed;left:50%;transform:translateX(-50%);bottom:max(30px,calc(env(safe-area-inset-bottom) + 18px));display:flex;gap:6px;padding:6px;border:1px solid var(--line);border-radius:16px;background:var(--panel);backdrop-filter:blur(6px)}
+#dock{z-index:5;position:fixed;left:50%;transform:translateX(-50%);bottom:max(30px,calc(env(safe-area-inset-bottom) + 18px));display:flex;gap:6px;padding:6px;border:1px solid var(--line);border-radius:16px;background:var(--panel);backdrop-filter:blur(6px)}
 #dock button{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:76px;padding:8px 10px;border:0;border-radius:11px;background:transparent;font-size:12.5px;color:var(--ink)}
 #dock button svg{width:20px;height:20px;stroke:var(--gold);fill:none;stroke-width:1.6}
 #dock button:hover,#dock button.on{background:rgba(255,196,107,.1)}
@@ -232,7 +321,7 @@ body.intro #dock,body.intro #feed,body.intro #online,body.intro #meter{visibilit
 <div id="top">
   <div class="brand"><span class="pilot" aria-hidden="true"></span><b>W4W · AIGARTH</b></div>
   <div class="chips">
-    <span class="chip hide-sm">Epoch <b>237</b></span>
+    <span class="chip hide-sm">Epoch <b id="epochV">237</b></span>
     <span class="chip hide-sm">Power <b id="pow">0</b><span class="mute">sol/h</span></span>
     <span class="chip">Anna <b id="melt">0%</b><span class="mute">thawed</span></span>
     <button class="chip hide-sm" id="wx" title="Network weather (demo toggle)">Weather <b id="wxv">Clear</b></button>
@@ -251,7 +340,7 @@ body.intro #dock,body.intro #feed,body.intro #online,body.intro #meter{visibilit
 <div id="banner"><b id="bannerB"></b><span id="bannerS"></span></div>
 
 <div id="dock">
-  <button class="main" data-act="connect"><svg viewBox="0 0 24 24"><path d="M12 3v7M8 6v4M16 6v4M6 10h12v3a6 6 0 0 1-12 0zM12 19v2"/></svg>Connect a rig</button>
+  <button class="main" data-act="connect"><svg viewBox="0 0 24 24"><path d="M12 3v7M8 6v4M16 6v4M6 10h12v3a6 6 0 0 1-12 0zM12 19v2"/></svg>Mining</button>
   <button data-act="maria"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4zM8 9h8M8 12h5"/></svg>Maria</button>
   <button data-act="house"><svg viewBox="0 0 24 24"><path d="M4 11 12 4l8 7M6 10v10h12V10M10 20v-5h4v5"/></svg>My house</button>
   <button data-act="plaza"><svg viewBox="0 0 24 24"><path d="M5 4h14v12H5zM9 16v4M15 16v4M8 8h8M8 12h5"/></svg>Plaza</button>
@@ -277,6 +366,8 @@ body.intro #dock,body.intro #feed,body.intro #online,body.intro #meter{visibilit
 </div>
 
 <img id="mariaStand" src="maria-full.webp" alt="">
+<div id="talk" hidden><div class="card"><img src="maria-full.webp" alt="Maria"><div><span class="who" id="talkWho">MARIA · MINING</span><p id="talkText"></p><div id="talkBody"></div><div class="row" id="talkRow"></div></div></div></div>
+<div id="hub" hidden></div>
 <div id="proto">PROTOTYPE · NO RIG IS REALLY RENTED</div>
 <div id="load"><span class="pilot"></span><b>WARMING UP AIGARTH</b></div>
 
@@ -304,7 +395,8 @@ const MOBILE = matchMedia('(max-width: 760px)').matches || matchMedia('(pointer:
 const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const store = { get(k) { try { return localStorage.getItem(k); } catch { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch {} } };
-const EPOCH = 237;
+const E_START = Date.UTC(2026, 9, 28, 12), WEEK = 6048e5; // E237 began Wednesday 28.10.2026 12:00 UTC
+const EPOCH = 237 + Math.max(0, Math.floor((Date.now() - E_START) / WEEK));
 
 /* ================= renderer / scene ================= */
 const canvas = $('#c');
@@ -525,7 +617,7 @@ function allResidents() {
 function houseView(h) { // normalise a stored house to what the scene draws
   return { id: h.id, nick: h.nick || 'someone', at: [h.q ?? h.at?.[0], h.r ?? h.at?.[1]], gpus: h.gpus || 1, hw: h.hw || '', state: h.state || 'building', sol: h.sol || 0,
     since: h.since || EPOCH, phase: h.phase || 0, stage: Math.min(2, h.phase || 0), demo: !!h.demo, founder: !!h.founder,
-    letters: 0, lanterns: 0, seals: h.state === 'mining' ? 1 : 0, sprouts: h.state === 'mining' ? 1 : 0, wood: h.wood || 0, lastWood: h.lastWood || 0, welcomes: h.welcomes || [], createdAt: h.createdAt || 0, real: !h.demo && h.id !== 'me' };
+    letters: 0, lanterns: 0, seals: h.state === 'mining' ? 1 : 0, sprouts: h.state === 'mining' ? 1 : 0, wood: h.wood || 0, lastWood: h.lastWood || 0, welcomes: h.welcomes || [], createdAt: h.createdAt || 0, real: !h.demo && h.id !== 'me', own: !!h.own, worker: h.worker || '', walletShort: h.walletShort || '', confirmed: !!h.confirmed, backend: h.backend || '' };
 }
 function ordersAll() { return [...S.demoOrders, ...Object.values(S.orders)]; }
 function refreshTown(baseline = false) {
@@ -864,6 +956,7 @@ function makeHouse(d, mine) {
     fx.lights.push(sprite(GLOW, front.x, 0.42, front.z, 0.8, 0xffc070, 1)); fx.lights.push(glowDecal(front.x, front.z, 1.7, 0xffb060, 0.55));
     if (d.state === 'mining') fx.smoke = { x: p.x + facing.z * 0.25, y: d.gpus >= 5 ? 1.25 : 1.15, z: p.z - facing.x * 0.25 };
   }
+  if (d.state === 'waiting') { const s = sprite(GLOW, front.x, 0.7, front.z, 0.6, 0xffb35c, 1); s.userData.blink = true; fx.lights.push(s); }
   if (d.state === 'nosignal') { const s = sprite(RED, front.x, 0.7, front.z, 0.75, 0xffffff, 1); s.userData.blink = true; fx.lights.push(s); }
   if (d.state === 'mining' || d.state === 'building') fx.pipe = makePipe(p, d.state === 'mining', mine);
   const L = Math.min(d.lanterns || 0, 8);
@@ -1039,13 +1132,14 @@ function panel(kind, title, sub, img, html, chat = false) {
 }
 function closePanel() { $('#mariaStand').classList.remove('on'); $('#panel').classList.remove('open'); panelKind = null; openHouseId = null; document.querySelectorAll('#dock button').forEach(b => b.classList.remove('on')); }
 $('#px').onclick = closePanel;
-addEventListener('keydown', e => { if (e.key === 'Escape') { if (choosingPlot) endPlot(); closePanel(); } });
+addEventListener('keydown', e => { if (e.key === 'Escape') { if (choosingPlot) endPlot(); closePanel(); closeHub(); talkEnd(); } });
 document.querySelectorAll('#dock button').forEach(b => b.onclick = () => {
-  const a = b.dataset.act; if (panelKind === a || (a === 'connect' && panelKind === 'church') || (a === 'plaza' && ['herald', 'notices', 'orders'].includes(panelKind))) return closePanel();
+  const a = b.dataset.act; if (a === 'connect') { talkEnd(); return $('#hub').hidden ? openHub() : closeHub(); } closeHub(); if (panelKind === a || (a === 'connect' && panelKind === 'church') || (a === 'plaza' && ['herald', 'notices', 'orders'].includes(panelKind))) return closePanel();
   if (a === 'connect') { openChurch(); flyTo(HX(...SPECIAL.church)); } else if (a === 'maria') openMaria();
   else if (a === 'house') { if (me()) { openHouse(me().id); flyTo(HX(...houseView(me()).at)); } else openChurch(); }
   else if (a === 'plaza') { openPlaza(); flyTo(HX(...SPECIAL.plaza)); } else if (a === 'library') { openLibrary(); flyTo(HX(...SPECIAL.library)); } else if (a === 'chronicle') openChronicle(); });
 $('#gfxv').textContent = LITE ? 'Light' : 'Full';
+$('#epochV').textContent = EPOCH;
 /* which browser, and where its graphics switch lives */
 const BROWSER = (() => { const ua = navigator.userAgent;
   return /YaBrowser/.test(ua) ? { name: 'Yandex Browser', addr: 'browser://settings/system', opt: 'Use hardware acceleration if possible', gpu: 'browser://gpu' }
@@ -1103,9 +1197,219 @@ function openMeter() {
 function plaza_noop() {
 }
 
+/* ================= mining: the machine, the Mine, Maria as manager ================= */
+const POOL = { name: 'Qubic Church', partner: 'CODED', fee: 7, coded: 3, qc: 4, start: 'https://beta.codedonqubic.com/pool/onboarding', beta: true };
+const WALLET_RE = /^[A-Z]{60}$/;
+const myWallet = () => store.get('w4w.wallet') || '';
+const shortW = w => (w ? w.slice(0, 4) + '…' + w.slice(-5) : '');
+const newWorker = () => 'QC.W4W.OWN-' + [...crypto.getRandomValues(new Uint8Array(3))].map(b => b.toString(16).padStart(2, '0')).join('').toUpperCase();
+const nextEpochAt = () => E_START + (EPOCH - 236) * WEEK;
+function untilNext() { const ms = Math.max(0, nextEpochAt() - Date.now()); const d = Math.floor(ms / 864e5), h = Math.floor(ms % 864e5 / 36e5), m = Math.floor(ms % 36e5 / 6e4); return `${d}d ${h}h ${m}m`; }
+
+// what the browser can tell about this computer: the card it draws with, threads, system
+function machine() {
+  const ua = navigator.userAgent, raw = SOFT ? '' : GPU_NAME;
+  const m = raw.match(/(NVIDIA GeForce [^(,)]+|NVIDIA RTX [^(,)]+|NVIDIA [^(,)]*(?:Quadro|Tesla|A\d{3,4})[^(,)]*|AMD Radeon[^(,)]*|Radeon[^(,)]*|Apple M\d[^(,)]*|Intel\(R\)[^(,)]+|Intel [^(,)]*Graphics[^(,)]*)/i);
+  const gpu = m ? m[1].replace(/\s*\(0x[0-9a-f]+\)/ig, '').replace(/\s+Direct3D.*$/i, '').replace(/\s+/g, ' ').trim() : '';
+  const os = /Android/i.test(ua) ? 'Android' : /iPhone|iPad|iPod/i.test(ua) ? 'iOS' : /Mac/i.test(ua) ? 'macOS' : /Win/i.test(ua) ? 'Windows' : /Linux|X11/i.test(ua) ? 'Linux' : 'your system';
+  const phone = os === 'Android' || os === 'iOS';
+  const threads = navigator.hardwareConcurrency || 0;
+  const v = /nvidia/i.test(gpu) ? 'nvidia' : /amd|radeon/i.test(gpu) ? 'amd' : /apple m/i.test(gpu) ? 'apple' : /intel/i.test(gpu) ? 'intel' : 'unknown';
+  const rtx = /RTX\s*(20|30|40|50)\d\d/i.test(gpu) || /RTX\s*A?\d{4}/i.test(gpu);
+  let tier, verdict, backend;
+  if (phone) { tier = 'no'; backend = '—'; verdict = "A phone can't carry this work. Come back from a computer: your plot on the ring will wait."; }
+  else if (v === 'nvidia') { backend = 'GPU'; tier = rtx ? 'good' : 'ok'; verdict = rtx ? 'A CUDA card. The miner puts it straight to work.' : 'An older NVIDIA card. It can join; it will be slower.'; }
+  else if (v === 'apple') { backend = 'Auto'; tier = 'good'; verdict = 'Apple Silicon. The miner has a build for it.'; }
+  else if (v === 'amd') { backend = 'Auto'; tier = 'ok'; verdict = 'Radeon works in some epochs and is rougher than NVIDIA. Auto mode lets the miner decide.'; }
+  else { backend = 'Auto'; tier = 'cpu'; verdict = SOFT ? "Your browser hides the graphics card from me, so I'll plan for the processor. If there is an NVIDIA card inside, the miner will find it anyway." : "I don't see a card I'd mine on, so the processor does the work. Auto mode picks AVX2 or AVX-512 by itself."; }
+  const name = gpu.replace(/^NVIDIA GeForce /i, '').replace(/^AMD /i, '');
+  return { gpu, seen: !!gpu, vendor: v, os, phone, threads, tier, verdict, backend, hw: (name || 'CPU') + (threads ? ` · ${threads} threads` : '') };
+}
+
+/* ---------- Maria's dialogue box (the same one as the prologue) ---------- */
+let talkT = null;
+function talk(text, { body = '', choices = [], who = 'MARIA · MINING' } = {}) {
+  closePanel(); closeHub();
+  const el = $('#talk'); el.hidden = false;
+  $('#talkWho').textContent = who; $('#talkBody').innerHTML = body;
+  const row = $('#talkRow'); row.innerHTML = '';
+  choices.forEach(c => { const b = document.createElement('button'); b.className = 'btn' + (c.main ? ' main' : ''); b.textContent = c.label; b.onclick = () => c.fn(); row.appendChild(b); });
+  const p = $('#talkText'); clearInterval(talkT); talkT = null; p.dataset.full = text;
+  if (REDUCED) p.textContent = text;
+  else { let i = 0; p.textContent = ''; talkT = setInterval(() => { p.textContent = text.slice(0, ++i); if (i >= text.length) { clearInterval(talkT); talkT = null; } }, 12); }
+  p.onclick = () => { if (talkT) { clearInterval(talkT); talkT = null; p.textContent = p.dataset.full; } };
+  wireCopy($('#talkBody'));
+}
+function talkEnd() { clearInterval(talkT); talkT = null; $('#talk').hidden = true; }
+function copyRow(k, v, real = true) { return `<span class="crow"><i>${esc(k)}</i><code>${esc(v)}</code>${real ? `<button class="btn" data-copy="${esc(v)}">Copy</button>` : ''}</span>`; }
+function wireCopy(root) { root?.querySelectorAll('[data-copy]').forEach(b => b.onclick = () => navigator.clipboard?.writeText(b.dataset.copy).then(() => { b.textContent = 'Copied'; setTimeout(() => { b.textContent = 'Copy'; }, 1500); }).catch(() => {})); }
+function machineChips(M) { return `<div class="mchips"><span><i>Card</i>${esc(M.seen ? M.gpu : M.phone ? 'phone' : 'not visible')}</span>${M.threads ? `<span><i>Threads</i>${M.threads}</span>` : ''}<span><i>System</i>${esc(M.os)}</span><span><i>Mode</i>${esc(M.backend)}</span></div>`; }
+function consentHtml() {
+  return `<p>Pool: ${POOL.name}. Pool fee ${POOL.fee}%.</p><p class="fund">${POOL.qc}% of what this rig mines goes to Qubic Church.</p><p>You receive ${100 - POOL.fee}%. Paid weekly by the pool directly to your wallet.</p><p style="margin:0">Anna's memory records this rig, its hardware and its contribution. Recorded, not promised: no rewards or returns are promised.</p>`;
+}
+
+/* ---------- the manager flow: look at the machine, name, wallet, consent, plot, wake it up ---------- */
+let mmDraft = {};
+function mmStart() {
+  const cur = me();
+  if (cur?.own && cur.state === 'waiting') return mmInstall();
+  if (cur) return openHub('machine');
+  const M = machine(); mmDraft = { ...mmDraft, M };
+  if (M.phone) return talk(`You're on ${M.os === 'iOS' ? 'an iPhone or iPad' : 'a phone'}. ${M.verdict}`, { body: machineChips(M), choices: [{ label: 'How mining works', fn: () => openHub('how') }, { label: 'Rent a rig instead', fn: mmRent }, { label: 'OK', main: true, fn: talkEnd }] });
+  const saw = M.seen ? `I see ${M.gpu}${M.threads ? ` and ${M.threads} threads` : ''}` : `I see ${M.threads ? M.threads + ' threads' : 'a computer'} but no card I can name`;
+  talk(`Let me look at your machine. ${saw}, on ${M.os}. ${M.verdict} Want to plug it into Anna?`, {
+    body: machineChips(M), choices: [{ label: 'Not now', fn: talkEnd }, { label: 'Rent a rig instead', fn: mmRent }, { label: 'Plug it in', main: true, fn: () => mmName(() => mmWallet(() => mmConsent('own'))) }] });
+}
+function mmName(next) {
+  talk('What should the town call you? One name, one person. It goes on your house and into the Chronicle.', {
+    body: `<input class="name" id="tName" maxlength="24" placeholder="e.g. snowlark" value="${esc(mmDraft.name || (S.isOwner ? 'QubicChurch' : ''))}"><p class="terr" id="tErr"></p>`,
+    choices: [{ label: 'Back', fn: mmStart }, { label: 'Next', main: true, fn: () => {
+      const nm = $('#tName').value.trim().replace(/[^\w.\-]/g, '').slice(0, 24);
+      if (!nm) { $('#tErr').textContent = 'Letters, digits, dot, dash or underscore.'; return; } mmDraft.name = nm; next(); } }] });
+  setTimeout(() => $('#tName')?.focus(), 30);
+}
+function mmWallet(next) {
+  talk('Now your Qubic address: 60 capital letters. Not the seed. The seed is 55 small letters and it stays on paper. I will never ask for it, and nobody here ever will.', {
+    body: `<input class="name mono" id="tWal" maxlength="90" autocomplete="off" spellcheck="false" placeholder="60 letters A–Z" value="${esc(mmDraft.wallet || myWallet())}"><p class="terr" id="tErr"></p>
+      <p class="tnote">No wallet yet? Make one in the official Qubic wallet (start from <a href="https://qubic.org" target="_blank" rel="noopener">qubic.org</a> and type the address yourself), write the seed on paper, then copy the 60-letter address here.</p>`,
+    choices: [{ label: 'Back', fn: () => mmName(() => mmWallet(next)) }, { label: 'Next', main: true, fn: () => {
+      const raw = $('#tWal').value.replace(/\s/g, '');
+      if (/^[a-z]{40,}$/.test(raw)) { $('#tWal').value = ''; $('#tErr').innerHTML = '<b>That looks like a seed.</b> I cleared it and kept nothing. Never paste a seed anywhere. Use the 60-letter address.'; return; }
+      const w = raw.toUpperCase(); if (!WALLET_RE.test(w)) { $('#tErr').textContent = `A Qubic address is exactly 60 letters A–Z. This one has ${w.length}.`; return; }
+      mmDraft.wallet = w; next(); } }] });
+  setTimeout(() => $('#tWal')?.focus(), 30);
+}
+function mmConsent(kind) {
+  const t = kind === 'own' ? null : TIERS.find(x => x.id === mmDraft.tier);
+  talk(kind === 'own' ? 'Before the cable goes in, read this once. I show it to everyone, every time.' : `The rig I'd rent: ${t.pick}, about ${t.cost} (example). Read this once.`, {
+    body: `${S.weather === 'storm' ? '<p class="terr">Storm this epoch (demo): the pool lost seats. Renting now may not pay off.</p>' : ''}<div class="consent">${consentHtml()}</div>${kind === 'own' ? '' : '<p class="tnote">The rental may not pay off. You pay the provider from your own account. Rentals open at launch; today this is an example.</p>'}`,
+    choices: [{ label: 'No, go back', fn: kind === 'own' ? () => mmWallet(() => mmConsent('own')) : mmRent }, { label: 'Yes, connect', main: true, fn: () => {
+      talkEnd(); store.set('w4w.wallet', mmDraft.wallet || ''); draft = { name: mmDraft.name, tier: kind === 'own' ? 'own' : mmDraft.tier }; startPlot(); } }] });
+}
+function installSteps(h, M) {
+  const w = myWallet();
+  return `<ol class="isteps">
+    <li><b>Get the miner.</b> Open the pool's Start Mining page${POOL.beta ? ' (beta)' : ''} and download CODED MINER for ${esc(M.os)}. Builds exist for Windows, Linux, macOS on Apple Silicon and HiveOS. <a class="btn" href="${POOL.start}" target="_blank" rel="noopener">Open Start Mining</a></li>
+    <li><b>Fill in the fields.</b>${copyRow('Qubic ID', w || 'your 60-letter address', !!w)}${copyRow('Worker name', h.worker)}${copyRow('Backend', h.backend || M.backend)}<span class="tnote">Threads: leave the default. This worker name is yours alone: two machines under one name look like one dead rig.</span></li>
+    <li><b>Press start and leave it running.</b> The first solutions take a while, that is normal. At a new epoch the miner waits by itself; you don't restart anything.</li>
+  </ol>`;
+}
+function mmInstall() {
+  const h = me(); if (!h) return mmStart();
+  talk(`Your plot is ready, ${h.nick}. Now wake the machine: three steps on this computer, then tell me.`, {
+    body: installSteps(h, machine()),
+    choices: [{ label: 'Later', fn: () => { talkEnd(); say('Your house waits for the signal. The setup is in the Mine whenever you are ready.'); } }, { label: 'I started the miner', main: true, fn: mmStarted }] });
+}
+async function mmStarted() {
+  const h = me(); if (!h) return; talkEnd(); closeHub();
+  await saveMe({ state: 'mining', confirmed: false, startedAt: Date.now() });
+  banner('ANNA · LINKED', `${h.hw.toUpperCase()} → THE CORE`); pulse(1.3); setTimeout(() => pulse(0.8), 900);
+  record(`${h.nick} started their own machine: ${h.hw}, worker ${h.worker}. Pool confirmation pending`);
+  say("I won't forget. Until the pool confirms your worker, the Chronicle calls it your word, not the pool's. That is fair to everyone.");
+  openHouse(me().id); flyTo(HX(...houseView(me()).at));
+}
+async function mmUnplug() { const h = me(); if (!h) return; await saveMe({ state: 'stopped' }); record(`${h.nick} unplugged ${h.hw}`); say('Unplugged. Stop the miner on your computer too. Your house keeps its place and its record.'); openHub('machine'); }
+async function mmReplug() { await saveMe({ state: 'waiting' }); mmInstall(); }
+const PICK_WHY = { power: 'Top speed and top rent: it only wins while the work pays well.', eff: 'The value card of this season, behind a strong processor. Most people should start here.', cheap: 'Two older flagship cards on a cheap host. Slower, kinder to the wallet.' };
+function rentRules() { return `<div class="rules"><b>What I check before I rent anything</b><span>Host reliability 98% or more</span><span>16 GB of video memory per card</span><span>6 or more processor threads per card, PCIe x8 or better</span><span>Rental of 12 hours or more</span><span>No weak two-core processors</span><span>The price again, right before renting</span></div>`; }
+function mmRent() {
+  talk('Renting means a machine in a data centre mines for you, paid from your own account at the provider. What matters more to you?', {
+    body: '<p class="tnote">Rentals open at launch: I need the server to rent for you. Today I show what I would pick, as an example.</p>',
+    choices: [{ label: 'Back', fn: () => (me() ? openHub('rent') : mmStart()) }, ...TIERS.slice().reverse().map(t => ({ label: t.name, fn: () => mmPick(t.id) }))] });
+}
+function mmPick(id) {
+  const t = TIERS.find(x => x.id === id); mmDraft.tier = id;
+  talk(`My pick: ${t.pick}, about ${t.cost} (example). ${PICK_WHY[id]}`, { body: rentRules(), choices: [{ label: 'Another', fn: mmRent }, ...(me() ? [] : [{ label: 'This one', main: true, fn: () => mmName(() => mmWallet(() => mmConsent('rent'))) }])] });
+}
+
+/* ---------- the Mine: one big screen for everything about mining ---------- */
+const HI = p => `<svg viewBox="0 0 24 24">${p}</svg>`;
+const HUB_TABS = [
+  ['machine', 'Your machine', HI('<rect x="3" y="5" width="18" height="11" rx="1"/><path d="M8 20h8M12 16v4"/>')],
+  ['connect', 'Connect', HI('<path d="M9 7V3M15 7V3M6 7h12v4a6 6 0 0 1-12 0zM12 17v4"/>')],
+  ['rent', 'Rent a rig', HI('<path d="M4 7h16v10H4zM8 11h2M14 11h2M4 17l2 3M20 17l-2 3"/>')],
+  ['how', 'How it works', HI('<circle cx="12" cy="12" r="8"/><path d="M12 8v5l3 2"/>')],
+  ['hw', 'Hardware', HI('<rect x="7" y="7" width="10" height="10"/><path d="M9 3v4M15 3v4M9 17v4M15 17v4M3 9h4M3 15h4M17 9h4M17 15h4"/>')],
+  ['net', 'Network and pool', HI('<circle cx="12" cy="12" r="2"/><circle cx="5" cy="6" r="2"/><circle cx="19" cy="6" r="2"/><circle cx="12" cy="20" r="2"/><path d="M6.5 7.5l4 3M17.5 7.5l-4 3M12 14v4"/>')],
+  ['safe', 'Wallet safety', HI('<path d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z"/><path d="M9 12l2 2 4-4"/>')],
+  ['fix', 'When it looks broken', HI('<path d="M14 6a4 4 0 0 0-5 5L4 16l4 4 5-5a4 4 0 0 0 5-5l-3 3-3-3z"/>')],
+];
+const tbl = (head, rows) => `<table class="htbl"><thead><tr>${head.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r => `<tr>${r.map((c, i) => `<td class="${i === 1 ? 'v-' + (/Golden|Good|Start here/.test(c) ? 'good' : /Skip/.test(c) ? 'bad' : 'mid') : ''}">${c}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+const HUB = {
+  machine: () => {
+    const M = machine(), h = me(), d = h ? houseView(h) : null, own = !!h?.own;
+    const status = h ? `<div class="hcard status"><div class="hk">YOUR RIG</div><div class="big">${esc(h.hw)}</div>
+      <div class="row" style="gap:6px">${stateTag(d)}${h.state === 'mining' && own && !h.confirmed ? '<span class="tag">Your word · pool confirmation pending</span>' : ''}</div>
+      <div class="kv">${own ? `<span>Worker</span><b>${esc(h.worker)}</b><span>Wallet</span><b>${esc(h.walletShort || '—')}</b><span>Mode</span><b>${esc(h.backend || 'Auto')}</b>` : `<span>Rig</span><b>${esc(h.hw)} (example)</b>`}<span>In Aigarth since</span><b>E${h.since}</b></div>
+      <div class="row">${own && h.state === 'waiting' ? '<button class="btn main" data-go="install">Finish setup</button><button class="btn" data-go="started">I started the miner</button>' : ''}${own && h.state === 'mining' ? '<button class="btn" data-go="install">Setup steps</button><button class="btn" data-go="unplug">Unplug</button>' : ''}${own && h.state === 'stopped' ? '<button class="btn main" data-go="replug">Plug it back in</button>' : ''}<button class="btn" data-go="house">My house</button></div></div>` : '';
+    return `${status}<div class="hcard hero t-${M.tier}"><div class="hk">THIS COMPUTER</div><div class="big">${esc(M.seen ? M.gpu : M.phone ? 'A phone' : 'The processor')}</div>
+      ${machineChips(M)}<p class="maria">“${esc(M.verdict)}”</p>
+      ${h ? '' : M.phone ? '<div class="row"><button class="btn" data-go="rent">See what Maria would rent</button></div>' : '<div class="row"><button class="btn main big" data-go="plug">Plug it in with Maria</button><button class="btn" data-go="rent">Rent a rig instead</button></div>'}</div>
+    <div class="hgrid">
+      <div class="hcard"><div class="hk">WHAT YOUR MACHINE DOES</div><p>It trains tiny networks for Aigarth, the AI Qubic miners grow. Each improvement is a <b>solution</b>, and every node checks it exactly. Useful work instead of throwaway guesses.</p></div>
+      <div class="hcard"><div class="hk">WHAT THE TOWN SEES</div><p>A cable from your house into Anna, smoke from your chimney, warmth on your street. People keeping a rig on warm the town more than raw power does.</p></div>
+      <div class="hcard"><div class="hk">WHAT ANNA RECORDS</div><p>Your rig, its hardware and its contribution, in the Chronicle. Recorded, not promised: no rewards or returns are promised.</p></div>
+      <div class="hcard"><div class="hk">WHERE THE QUBIC GOES</div><p>${100 - POOL.fee}% to your wallet, weekly, straight from the pool. ${POOL.qc}% to Qubic Church, ${POOL.coded}% to ${POOL.partner}, the pool that runs the backend.</p></div>
+    </div>`;
+  },
+  connect: () => {
+    const h = me(), M = machine();
+    if (h?.own) return `<div class="hcard"><div class="hk">YOUR SETUP · ${esc(h.worker)}</div>${installSteps(h, M)}<div class="row">${h.state === 'waiting' ? '<button class="btn main" data-go="started">I started the miner</button>' : ''}<button class="btn" data-go="house">My house</button></div></div>`;
+    return `<div class="hcard hero"><div class="hk">PLUG IN YOUR OWN COMPUTER</div><p>Maria looks at your machine, takes your name and your address, shows the pool terms once, and gives you a worker name of your own. Then three steps on your computer.</p><div class="row"><button class="btn main big" data-go="plug" ${M.phone ? 'disabled title="From a computer"' : ''}>Start with Maria</button></div></div>
+      <div class="hgrid"><div class="hcard"><div class="hk">THE MINER</div><p>CODED MINER, from the pool's Start Mining page${POOL.beta ? ' (beta for now)' : ''}. Builds: Windows, Linux x86_64, macOS on Apple Silicon, HiveOS.</p><a class="btn" href="${POOL.start}" target="_blank" rel="noopener">Open Start Mining</a></div>
+      <div class="hcard"><div class="hk">WHAT IT ASKS FOR</div><p><b>Qubic ID</b>: your 60-letter address. <b>Worker name</b>: the one Maria gives you, starting with QC.W4W. <b>Backend</b>: GPU, AVX2, AVX-512 or Auto. <b>Threads</b>: leave the default.</p></div>
+      <div class="hcard"><div class="hk">ON A RENTED BOX</div><p>The same miner runs on a rented Linux machine. Point it at your address, give it its own worker name, and launch it detached so it survives you closing the terminal.</p></div></div>`;
+  },
+  rent: () => `<div class="hcard"><div class="hk">MARIA RENTS FOR YOU · AT LAUNCH</div><p>At launch Maria will rent from the live Clore.ai market on your own account, with the price confirmed twice. Today the picks below are examples, and nothing is rented.</p>${rentRules()}</div>
+    <div class="hgrid three">${TIERS.map(t => `<div class="hcard tier"><div class="hk">${esc(t.name.toUpperCase())}</div><div class="big">${esc(t.pick)}</div><p class="mute">${esc(t.price)} · example</p><p>${esc(PICK_WHY[t.id])}</p><button class="btn" data-pick="${t.id}">Ask Maria about it</button></div>`).join('')}</div>
+    <p class="tnote">A rented rig may not pay off, and in a bad epoch it surely won't.</p>`,
+  how: () => `<div class="hgrid">
+      <div class="hcard"><div class="hk">USEFUL PROOF OF WORK</div><p>Bitcoin miners guess numbers and throw almost all of them away. Qubic miners train small networks for Aigarth. When a trained network beats the one it started from, that improvement is a <b>solution</b>.</p></div>
+      <div class="hcard"><div class="hk">ONE SOLUTION</div><p>A network of three-state neurons (in epoch 236: 32 of them) that calls hours of bitcoin UP or DOWN with fewer mistakes than its parent. Every node recomputes it exactly; a false claim costs a deposit. The shape can change every epoch.</p></div>
+      <div class="hcard"><div class="hk">THE ANT COLONY</div><p>Solutions grow as a tree: each one improves an earlier one. That search structure is called the ant colony. The pool hands your machine a parent and collects what it finds.</p></div>
+      <div class="hcard"><div class="hk">JUDGE BY SOLUTIONS</div><p>it/s is speed, like lottery tickets per minute. Solutions are what count. A fast card behind a weak processor is a race car behind a blocked fuel line.</p></div>
+    </div>
+    <div class="hcard"><div class="hk">ONE WEEK OF MINING</div><ol class="timeline"><li><b>Wednesday 12:00 UTC</b>A new epoch begins. The miner picks up the new task by itself.</li><li><b>All week</b>Your machine searches; the pool collects its solutions.</li><li><b>Next Wednesday 12:00 UTC</b>The epoch is sealed. The church bell rings and the Chronicle seals it.</li><li><b>About a week later</b>The pool pays in QUBIC to your address.</li></ol></div>
+    <div class="hcard warn"><div class="hk">WHAT CHANGES ON 18 NOVEMBER</div><p>From epoch 240 the computors feed live bitcoin data into the network; after that, places are won by how accurately networks call the hours. Expect the rules, and the numbers in this town, to move. Recorded, not promised.</p></div>`,
+  hw: () => `<div class="hcard"><div class="hk">GRAPHICS CARDS</div>${tbl(['Card', 'Role', 'Notes'], [['RTX 5070 Ti (16 GB)', 'Start here', 'The value card when it sits behind a strong processor.'], ['RTX 5090 / 4090', 'Fast, pricey', 'Top speed, top rent.'], ['RTX 3090 / 3080', 'Old but useful', 'Slower, often good value.'], ['AMD Radeon', 'Bumpy', 'Works some epochs, rougher than NVIDIA. Not for a first run.']])}<p class="tnote">16 GB of video memory is plenty.</p></div>
+    <div class="hcard"><div class="hk">PROCESSORS</div>${tbl(['Family', 'Verdict', 'Why'], [['Ryzen / Threadripper Zen 4 and 5', 'Golden', 'Full AVX-512, many fast cores.'], ['EPYC 9004 / 9005', 'Golden', 'Server grade.'], ['Recent Xeon Scalable', 'Good', 'Real AVX-512.'], ['Xeon E5 v2 to v4', 'Skip', 'Old, no AVX-512.'], ['Intel Core Ultra', 'Skip', 'AVX-512 was dropped.'], ['Two-core budget chips', 'Skip', 'They choke the cards.']])}<p class="tnote">Aim for 8 processor cores per card and PCIe x8 or better.</p></div>
+    <div class="hcard"><div class="hk">SEEN ON THE POOL (23 OCTOBER, BETA)</div><div class="kv"><span>Ryzen 9 7950X</span><b>~30 it/s</b><span>Ryzen 9 7950X3D</span><b>~25 it/s</b><span>Apple M3 Pro</span><b>~40 it/s</b></div><p class="tnote">Speed, not money, and measured before the rules changed again.</p></div>`,
+  net: () => `<div class="hgrid">
+      <div class="hcard hero"><div class="hk">THIS EPOCH</div><div class="big">E${EPOCH}</div><p>Sealed in <b>${untilNext()}</b>, on Wednesday at 12:00 UTC.</p></div>
+      <div class="hcard"><div class="hk">THE 676</div><p>676 computors run Qubic. 451 keep their seats; 225 are won each epoch by the miners' work.</p></div>
+      <div class="hcard"><div class="hk">THE POOL</div><div class="kv"><span>Name</span><b>${POOL.name}</b><span>Backend</span><b>${POOL.partner}</b><span>Fee</span><b>${POOL.fee}% (${POOL.coded}% ${POOL.partner}, ${POOL.qc}% Qubic Church)</b><span>You keep</span><b>${100 - POOL.fee}%</b><span>Payouts</span><b>Weekly, straight to your wallet</b><span>Game workers</span><b>QC.W4W.…</b></div></div>
+      <div class="hcard"><div class="hk">DATES</div><div class="kv"><span>Epoch change</span><b>Every Wednesday 12:00 UTC</b><span>Town opens</span><b>11 November</b><span>Live bitcoin data</span><b>18 November (E240)</b></div></div>
+    </div>`,
+  safe: () => `<div class="hgrid">
+      <div class="hcard bad"><div class="hk">THE SEED · NEVER</div><div class="big">55 small letters</div><p>The master key of your wallet. Paper only. Never a screenshot, a chat, a pool, a rental site or a "wallet checker". Anyone who asks for it is stealing.</p></div>
+      <div class="hcard good"><div class="hk">THE ADDRESS · SAFE</div><div class="big">60 capital letters</div><p>Your Qubic ID. Safe to share. It is all a pool or a miner ever needs.</p></div>
+    </div>
+    <div class="hcard"><div class="hk">MARIA'S RULES</div><ul class="hlist"><li>Maria never asks for a seed, and nothing in this town ever will.</li><li>Download the miner only from the pool's own Start Mining page.</li><li>Every machine gets its own worker name.</li><li>Nobody here sells mining, places or returns. If someone offers, walk away.</li><li>Rented rigs: deposit small first, test for an hour, then decide.</li></ul></div>`,
+  fix: () => `<div class="hcard">${tbl(['What you see', 'What it means', 'Do'], [['No solutions in the first hour', 'Normal. They take a while to come.', 'Nothing. Hopping rigs only burns money.'], ['Everything frozen at the epoch change', 'The pool or backend is catching up.', 'Wait. Restart the miner once if you must.'], ['Dashboard shows nothing for a worker', 'Two machines share one worker name.', 'Give each machine its own name.'], ['Many rejected candidates', 'The processor cannot keep up with the cards.', 'A stronger processor or a better host.'], ['Download of the worker package fails', 'Your region cannot reach the pool servers.', 'Try another network or a rented box elsewhere.']])}</div>
+    <div class="hcard"><div class="hk">STILL STUCK?</div><p>Ask on the plaza: pin an order like "check my worker name". Someone who has done it will help, and it lights a lantern for them.</p><div class="row"><button class="btn" data-go="orders">Orders board</button><button class="btn" data-go="faq">FAQ</button></div></div>`,
+};
+const HUB_GO = { plug: mmStart, install: mmInstall, started: mmStarted, unplug: mmUnplug, replug: mmReplug, rent: mmRent,
+  house: () => { closeHub(); if (me()) { openHouse(me().id); flyTo(HX(...houseView(me()).at)); } }, orders: () => { closeHub(); openOrders(); flyTo(HX(...SPECIAL.plaza)); }, faq: () => { closeHub(); openFaq(); } };
+let hubTab = 'machine';
+function openHub(tab = hubTab) {
+  hubTab = HUB[tab] ? tab : 'machine'; closePanel(); talkEnd();
+  const el = $('#hub'); el.hidden = false; document.body.classList.add('hub');
+  el.innerHTML = `<div class="hub-win" role="dialog" aria-label="The Mine">
+    <header><div><span class="who">THE MINE · ${POOL.name.toUpperCase()} POOL</span><h2>Mining</h2><p>Your machine, the pool and the work, in one place.</p></div><button class="x" id="hubX" aria-label="Close">×</button></header>
+    <nav>${HUB_TABS.map(([k, n, ic]) => `<button data-tab="${k}" class="${k === hubTab ? 'on' : ''}">${ic}<span>${n}</span></button>`).join('')}</nav>
+    <section id="hubBody">${HUB[hubTab]()}</section></div>`;
+  $('#hubX').onclick = closeHub; el.onclick = e => { if (e.target === el) closeHub(); };
+  el.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => openHub(b.dataset.tab));
+  el.querySelectorAll('[data-go]').forEach(b => b.onclick = () => HUB_GO[b.dataset.go]());
+  el.querySelectorAll('[data-pick]').forEach(b => b.onclick = () => mmPick(b.dataset.pick));
+  wireCopy(el);
+}
+function closeHub() { const el = $('#hub'); if (!el || el.hidden) return; el.hidden = true; el.innerHTML = ''; document.body.classList.remove('hub'); }
+
 /* ================= church: connect a rig ================= */
 let draft = {};
-function openChurch() {
+function openChurch(classic) {
+  if (!me() && !classic) return mmStart();
   if (me()) {
     panel('church', 'Maria', 'Qubic Church', 'maria.png', `
       <p class="say">${S.isOwner ? 'Welcome home, founder. This church is yours: you keep it, and you write the Herald\'s column. ' : ''}You're one of us now, ${esc(me().nick)}. Your house is on the ring and Anna remembers it. The bell rings on Wednesday at 12:00 UTC: that is when the epoch is sealed.</p>
@@ -1131,15 +1435,12 @@ function finalStep() {
   panel('church', 'Final step', own ? 'Your own rig' : `${t.pick} · ${t.cost} (example)`, 'maria.png', `
     ${S.weather === 'storm' ? '<p class="say" style="border-color:var(--red)">Storm this epoch (demo): the pool lost seats. Renting now may not pay off.</p>' : ''}
     <div class="consent">
-      <p>Pool: Qubic Church. Pool fee 7%.</p>
-      <p class="fund">4% of what this rig mines goes to Qubic Church.</p>
-      <p>You receive 93%. Paid weekly by the pool directly to your wallet.</p>
-      <p style="margin:0">Anna's memory records this rig, its hardware and its contribution. Recorded, not promised: no rewards or returns are promised.</p>
+      ${consentHtml()}
     </div>
     ${own ? '' : '<p class="mute" style="font-size:13px">The rental may not pay off. You pay the provider from your own account.</p>'}
     <h3>CONNECT THIS RIG TO ANNA?</h3>
     <div class="row"><button class="btn" id="no">No, go back</button><button class="btn main" id="yes">Yes, connect</button></div>`);
-  $('#no').onclick = openChurch; $('#yes').onclick = () => { closePanel(); startPlot(); };
+  $('#no').onclick = () => openChurch(true); $('#yes').onclick = () => { closePanel(); startPlot(); };
 }
 function startPlot() {
   choosingPlot = true; const geo = new THREE.CircleGeometry(0.95, 6); geo.rotateX(-Math.PI / 2); geo.rotateY(Math.PI / 6);
@@ -1151,12 +1452,15 @@ function startPlot() {
 function endPlot() { choosingPlot = false; plotMarks.forEach(m => scene.remove(m)); plotMarks = []; canvas.style.cursor = 'default'; }
 async function settle([q, r]) {
   endPlot(); const own = draft.tier === 'own'; const t = TIERS.find(x => x.id === draft.tier);
-  const h = { nick: draft.name, q, r, gpus: own ? 1 : t.gpus, hw: own ? '1× RTX 5070 Ti (own)' : t.pick, state: 'building', phase: 0, sol: own ? 600 : t.sol, since: EPOCH, createdAt: Date.now(), tier: own ? 'own' : t.id, wood: 0, lastWood: 0, welcomes: [] };
+  const M = mmDraft.M || machine(); const wal = mmDraft.wallet || myWallet();
+  const h = own ? { nick: draft.name, q, r, gpus: 1, hw: M.hw, own: true, worker: newWorker(), walletShort: shortW(wal), backend: M.backend, os: M.os, state: 'waiting', confirmed: false, phase: 0, sol: 0, since: EPOCH, createdAt: Date.now(), tier: 'own', wood: 0, lastWood: 0, welcomes: [] }
+    : { nick: draft.name, q, r, gpus: t.gpus, hw: t.pick, state: 'building', phase: 0, sol: t.sol, since: EPOCH, createdAt: Date.now(), tier: t.id, walletShort: shortW(wal), wood: 0, lastWood: 0, welcomes: [] };
   await saveMe(h); flyTo(HX(q, r));
   record(`${h.nick} said YES to the final step: ${h.hw}, 4% to Qubic Church`);
   record(`${h.nick} broke ground at plot ${q},${r}`);
   room?.emit('settled', { nick: h.nick }).catch(() => {});
-  say(own ? `Got it, ${esc(h.nick)}. Start the CODED miner on your machine with your worker name. Your house lights up when the pool sees it.` : `Renting ${esc(h.hw)} for you, ${esc(h.nick)}. In real life the first solutions take 10 to 30 minutes. Here it's sped up.`);
+  if (own) { setTimeout(mmInstall, 900); return; }
+  say(`Renting ${esc(h.hw)} for you, ${esc(h.nick)} (example). In real life the first solutions take 10 to 30 minutes. Here it's sped up.`);
   openHouse(me().id); runBuild();
 }
 const PHASES = ['Renting', 'Deploying', 'Connecting', 'Warming up', 'Mining'];
@@ -1184,7 +1488,7 @@ const ICON = {
   facade: '<svg viewBox="0 0 24 24"><path d="M4 20V9l8-5 8 5v11zM9 20v-6h6v6"/></svg>',
 };
 function part(icon, name, desc, val, pct) { return `<div class="part">${ICON[icon]}<div><b>${name}</b><span>${desc}</span><div class="lv"><i style="width:${Math.round(Math.min(1, pct) * 100)}%"></i></div></div><div class="v">${val}</div></div>`; }
-function stateTag(d) { return { mining: '<span class="tag good">Mining</span>', building: '<span class="tag gold">Building</span>', nosignal: '<span class="tag bad">No signal · rent still running</span>', stopped: '<span class="tag">Stopped</span>', ruin: '<span class="tag">Left the world</span>' }[d.state] || ''; }
+function stateTag(d) { return { waiting: '<span class="tag gold">Waiting for your miner</span>', mining: '<span class="tag good">Mining</span>', building: '<span class="tag gold">Building</span>', nosignal: '<span class="tag bad">No signal · rent still running</span>', stopped: '<span class="tag">Stopped</span>', ruin: '<span class="tag">Left the world</span>' }[d.state] || ''; }
 function openHouse(id) {
   const d = S.town.res?.find(h => h.id === id); if (!d) return; openHouseId = id;
   const mine = id === S.uid || id === 'me';
@@ -1201,9 +1505,10 @@ function openHouse(id) {
   panel('house', d.nick, `${mine ? 'Your house' : d.demo ? 'A demo resident' : 'A neighbour'} · in Aigarth since E${d.since}`, null, `
     <div class="row" style="margin-bottom:6px">${stateTag(d)} ${d.cracked ? '<span class="tag bad">Cracked lantern · a promise not kept yet</span>' : ''}</div>
     ${phases}
+    ${mine && d.own ? `<div class="row" style="margin:8px 0 2px"><span class="mute" style="font-size:12.5px">Worker ${esc(d.worker)}</span></div><div class="row"><button class="btn" id="toHub">Open the Mine</button>${d.state === 'waiting' ? '<button class="btn main" id="toStarted">I started the miner</button>' : ''}</div>` : ''}
     <h3>THE FIVE PARTS OF THE HOUSE</h3>
     <div class="parts">
-      ${part('hall', 'Machine hall', d.state === 'ruin' ? 'Empty. The owner left in E' + d.left : `${esc(d.hw)}${d.state === 'mining' ? ' · ' + d.sol.toLocaleString('en-US') + ' sol/h est.' : ''} · the only part money can grow`, d.gpus || 0, (d.gpus || 0) / 8)}
+      ${part('hall', 'Machine hall', d.state === 'ruin' ? 'Empty. The owner left in E' + d.left : `${esc(d.hw)}${d.state === 'mining' ? (d.own ? (d.confirmed ? ' · measured by the pool' : ' · pool confirmation pending') : ' · ' + d.sol.toLocaleString('en-US') + ' sol/h est.') : ''} · the only part money can grow`, d.gpus || 0, (d.gpus || 0) / 8)}
       ${part('porch', 'Porch lanterns', 'One per order done for someone else', d.lanterns || 0, (d.lanterns || 0) / 8)}
       ${part('archive', 'Archive', 'Collections of real events. Not for sale', items.length, items.length / 8)}
       ${part('garden', 'Epoch garden', 'A sprout for every epoch you were active', d.sprouts || 0, (d.sprouts || 0) / 52)}
@@ -1215,6 +1520,7 @@ function openHouse(id) {
     ${mine && d.state === 'mining' ? '<h3>NEXT</h3><p class="mute" style="margin:0 0 10px">Every order you finish for someone lights a lantern here and leaves their letter in your archive. And it warms the whole town.</p><div class="row"><button class="btn" id="toOrders">Orders board</button><button class="btn" id="toFire">Add wood to the fire</button></div>' : ''}`);
   $('#toOrders')?.addEventListener('click', () => { openOrders(); flyTo(HX(...SPECIAL.plaza)); });
   $('#toFire')?.addEventListener('click', addWood);
+  $('#toHub')?.addEventListener('click', () => openHub('machine')); $('#toStarted')?.addEventListener('click', mmStarted);
   $('#hWelcome')?.addEventListener('click', () => welcome(d.id, d.nick).then(() => openHouse(d.id)));
 }
 
@@ -1361,7 +1667,8 @@ function openLibrary() {
     <h3>THE SHELF WE LEARN FROM</h3><div class="shelf">${LIB.shelf.map(([t, d, h]) => h ? link(h, `<b>${t}</b><span>${d}</span>`) : `<div class="book"><b>${t}</b><span>${d}</span></div>`).join('')}</div>
     <p class="mute" style="font-size:12.5px;margin-top:12px">The Fractal Rationalism Institute meets in Discord: the science of decentralized cooperation, after Rapoport and Axelrod.</p>`);
 }
-function openMine() {
+function openMine() { return openHub(); }
+function openMineOld() {
   panel('mine', 'The Mine', 'Useful proof of work, explained plainly', null, `
     <p class="say">Down here people learn how Qubic mining really works: hardware, pools, payouts, and why the work is useful. Read it before you rent anything.</p>
     <div class="shelf">${link('/mine-qubic', '<b>Mine Qubic: the field guide</b><span>Hardware, pools and payouts on qubic.church</span>')}${link('/bpp9000', '<b>What the miners are growing</b><span>BPP-9000, live</span>')}</div>
@@ -1476,7 +1783,7 @@ const MARIA_TOOLS = [
 ];
 let pendingScreen = null;
 function goScreen(s) {
-  if (s === 'connect') { openChurch(); flyTo(HX(...SPECIAL.church)); } else if (s === 'orders') { openOrders(); flyTo(HX(...SPECIAL.plaza)); } else if (s === 'chronicle') openChronicle();
+  if (s === 'connect') { mmStart(); } else if (s === 'orders') { openOrders(); flyTo(HX(...SPECIAL.plaza)); } else if (s === 'chronicle') openChronicle();
   else if (s === 'house') { if (me()) { openHouse(me().id); flyTo(HX(...houseView(me()).at)); } else openChurch(); } else if (s === 'anna') { openCore(); flyTo(new THREE.Vector3(0, 0, 0)); } else if (s === 'warmth') openMeter(); else if (s === 'fire') addWood();
   else if (s === 'library') { openLibrary(); flyTo(HX(...SPECIAL.library)); } else if (s === 'herald') { openPlaza('herald'); flyTo(HX(...SPECIAL.plaza)); } else if (s === 'observatory') openObservatory(); else if (s === 'mine') openMine();
 }
@@ -1513,8 +1820,8 @@ const BANK = [
   [['who are you', 'maria', 'мария', 'кто ты'], () => "I'm Maria, Anna's younger twin. I keep the Chronicle and build rigs for people. A witness, not a judge."],
   [['help', 'how can i', 'what can i do', 'помочь', 'помощь', 'что делать'], () => 'Keep a rig on, add wood to the plaza fire, take an order on the board, light a lamp for a newcomer. People warm this town more than iron does.'],
   [['warm', 'frost', 'cold', 'storm', 'тепло', 'мороз', 'холод', 'метел'], () => `Warmth ${Math.round(S.town.W)} against frost ${Math.round(S.town.F)}. ${S.town.B >= 0 ? 'The town holds.' : 'The frost is winning.'} Most warmth comes from people: rigs kept on, neighbours here, promises kept, wood on the fire.`, 'warmth'],
-  [['build me', 'rent', 'rig', 'риг', 'аренд', 'собери'], () => "Come to the church. I'll show you three rigs, or you can connect your own.", 'connect'],
-  [['own rig', 'my machine', 'свой риг', 'своя машин'], () => 'Run the CODED miner on your own machine with your worker name. Your house lights up when the pool sees it.'],
+  [['build me', 'rent', 'rig', 'риг', 'аренд', 'собери'], () => me() ? 'Your rig is in the Mine: status, setup steps and the pool, all in one place.' : "Let me look at your machine first. Most computers can join; if yours can't, I'll show you what I'd rent.", 'connect'],
+  [['own rig', 'my machine', 'свой риг', 'своя машин'], () => 'Bring your own computer: I look at it, give you a worker name of your own, and walk you through the miner. Your house lights up when you start it.', 'connect'],
   [['fee', '1%', '7%', 'комисси', 'fund', 'фонд'], () => 'The pool is Qubic Church. Its fee is 7%, and 4% of what your rig mines goes to Qubic Church. You keep 93%. I show this on the final step, every time.'],
   [['profit', 'earn', 'money', 'pay off', 'income', 'доход', 'заработ', 'окуп', 'прибыл'], () => 'Nothing here is promised. Recorded, not promised. A rented rig may not pay off, and in a bad epoch it surely won\'t.'],
   [['price', 'pump', 'moon', 'цена', 'курс', 'памп'], () => "I don't talk about prices. Come-from-Beyond's advice fits: \"Just stick to realistic assumptions\" (Discord, 27.10.2026)."],
@@ -1542,7 +1849,7 @@ const BANK = [
   [['market', 'auction', 'bar', 'stage 2', 'рынок', 'аукцион', 'бар'], () => 'The market, the auction and the bar are still in scaffolding. They open when they are really ready, not on a timer.'],
   [['nft', 'lighthouse', 'маяк'], () => 'Each of the 200 Anna Aigarth NFTs will become a founder\'s lighthouse on the map. A mark of who was here from the start, not power and not income.'],
   [['donate', 'atrium', 'атриум', 'донат', 'support'], () => 'The Atrium is where real projects get built in the open. You can light a lamp for it on qubic.church/donate.'],
-  [['mine', 'mining', 'майнинг', 'шахт'], () => 'The Mine on the edge of town has the field guide: hardware, pools and payouts, explained plainly.', 'mine'],
+  [['mine', 'mining', 'майнинг', 'шахт'], () => 'The Mine has everything: your machine, setup, renting, hardware, the pool and the epoch clock.', 'mine'],
   [['demo', 'prototype', 'real', 'демо', 'прототип'], () => 'This is a prototype. No rig is really rented here, and the houses marked demo are stand-ins until more people arrive.'],
   [['hello', 'hi', 'hey', 'привет', 'здравств'], () => me() ? `Good to see you, ${me().nick}. The night is long. What do you need?` : 'You came in from the cold. Sit by the fire. What do you want to know?'],
   [['thank', 'спасибо'], () => "I won't forget it."],
