@@ -43,6 +43,17 @@ button.chip:hover{border-color:var(--line-2)}
 #meter.losing .verdict{color:var(--frost)}
 
 #diag{position:fixed;z-index:9;left:12px;top:56px;margin:0;padding:10px 12px;border:1px solid var(--line-2);border-radius:10px;background:rgba(5,7,14,.88);color:#cfe6ff;font:12px/1.5 ui-monospace,monospace;white-space:pre;pointer-events:none}
+#dock button.journal{color:var(--gold);box-shadow:inset 0 0 0 1px rgba(255,196,107,.45);background:rgba(255,196,107,.08)}
+#dock button.journal svg{stroke:var(--gold)}
+.jtabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:0 0 12px;padding:4px;border:1px solid var(--line);border-radius:12px}
+.jtabs button{padding:9px;border:0;border-radius:9px;background:none;color:var(--ink);font:inherit;font-family:var(--f-label);font-size:11px;letter-spacing:.14em;text-transform:uppercase;cursor:pointer}
+.jtabs button.on{background:rgba(255,196,107,.16);color:var(--cream)}
+.jgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px}
+.jstat{padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.02)}
+.jstat i{display:block;font-style:normal;font-family:var(--f-label);font-size:9px;letter-spacing:.14em;color:var(--mute);text-transform:uppercase}
+.jstat b{display:block;margin:3px 0 1px;font-family:var(--f-display);font-weight:700;font-size:21px;line-height:1.05;color:var(--cream)}
+.jstat span{font-size:12px;color:var(--mute)}
+.jstat.good{border-color:rgba(155,224,138,.35)} .jstat.bad{border-color:rgba(255,106,90,.4)}
 #panel .faq-g{margin:16px 0 4px}
 #panel .faq-g:first-child{margin-top:0}
 #panel .faq{border-bottom:1px solid var(--line);padding:2px 0}
@@ -348,7 +359,7 @@ body.intro #dock,body.intro #feed,body.intro #online,body.intro #meter{visibilit
   <button data-act="house"><svg viewBox="0 0 24 24"><path d="M4 11 12 4l8 7M6 10v10h12V10M10 20v-5h4v5"/></svg>My house</button>
   <button data-act="plaza"><svg viewBox="0 0 24 24"><path d="M5 4h14v12H5zM9 16v4M15 16v4M8 8h8M8 12h5"/></svg>Plaza</button>
   <button data-act="library"><svg viewBox="0 0 24 24"><path d="M5 4h4v16H5zM10 4h4v16h-4zM15.5 5l3.5 1-3 14-3.5-1z"/></svg>Library</button>
-  <button data-act="chronicle"><svg viewBox="0 0 24 24"><path d="M6 3h10l3 3v15H6zM9 9h7M9 13h7M9 17h4"/></svg>Chronicle</button>
+  <button data-act="chronicle" class="journal"><svg viewBox="0 0 24 24"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3zM5 17a3 3 0 0 1 3-3h11M9 8h6"/></svg>Journal</button>
   <button data-act="faq"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6M12 17h.01"/></svg>FAQ</button>
 </div>
 
@@ -1455,7 +1466,7 @@ function openChurch(classic) {
   if (me()) {
     panel('church', 'Maria', 'Qubic Church', 'maria.png', `
       <p class="say">${S.isOwner ? 'Welcome home, founder. This church is yours: you keep it, and you write the Herald\'s column. ' : ''}You're one of us now, ${esc(me().nick)}. Your house is on the ring and Anna remembers it. The bell rings on Wednesday at 12:00 UTC: that is when the epoch is sealed.</p>
-      <div class="row"><button class="btn main" id="goTalk">Talk to Maria</button><button class="btn" id="goHouse">My house</button><button class="btn" id="goChron">Chronicle</button></div>`);
+      <div class="row"><button class="btn main" id="goTalk">Talk to Maria</button><button class="btn" id="goHouse">My house</button><button class="btn" id="goChron">Journal</button></div>`);
     $('#goTalk').onclick = openMaria; $('#goHouse').onclick = () => { openHouse(me().id); flyTo(HX(...houseView(me()).at)); }; $('#goChron').onclick = openChronicle; return;
   }
   panel('church', 'Maria', 'Qubic Church · she builds rigs and keeps the Chronicle', 'maria.png', `
@@ -1742,7 +1753,9 @@ function briefing() {
   chat = [{ role: 'assistant', content: text }]; openMaria(true); return true;
 }
 /* ================= chronicle ================= */
-async function openChronicle(force = true) {
+let journalTab = 'world';
+async function openChronicle(force = true, tab = journalTab) {
+  journalTab = tab;
   let rows = [...S.localChron.map(r => ({ ...r, author: r.author || 'demo' }))];
   if (S.shared) {
     const ids = Object.keys(S.real);
@@ -1751,10 +1764,37 @@ async function openChronicle(force = true) {
   }
   rows.sort((a, b) => (b.at || 0) - (a.at || 0) || (b.n || 0) - (a.n || 0));
   if (!force && panelKind !== 'chronicle') return;
-  panel('chronicle', 'Chronicle', `Anna's memory · ${rows.length} records · carved in stone`, null, `
-    <p class="say" style="font-size:14px">Every house keeps its own journal, open to everyone. Each record carries the hash of the one before it, so changing a word in the past breaks every hash after it. Once an epoch, the last hash is meant to be anchored in Qubic.</p>
-    <div class="row" style="margin-bottom:8px"><button class="btn" id="verify">Check every chain</button><span class="tag" id="vres"></span></div>
-    <ul class="chron">${rows.slice(0, 200).map(r => `<li><span class="n">#${r.n}</span><span><b style="color:var(--cream)">${esc(r.author)}</b> · E${r.epoch} · ${esc(r.text)}${r.demo ? ' <span class="tag">demo history</span>' : ''}</span><span class="h">${esc(String(r.hash).slice(0, 32))}…  ← ${esc(String(r.prev).slice(0, 8))}</span></li>`).join('')}</ul>`);
+  const t = S.town, cur = me(), myId = S.uid && S.real[S.uid] ? S.uid : 'me';
+  const mineRows = rows.filter(r => !r.demo && (r.house === S.uid || (cur && r.author === cur.nick)));
+  const list = rs => rs.length ? `<ul class="chron">${rs.slice(0, 200).map(r => `<li><span class="n">#${r.n}</span><span><b style="color:var(--cream)">${esc(r.author)}</b> · E${r.epoch} · ${esc(r.text)}${r.demo ? ' <span class="tag">demo history</span>' : ''}</span><span class="h">${esc(String(r.hash).slice(0, 32))}…  ← ${esc(String(r.prev).slice(0, 8))}</span></li>`).join('')}</ul>` : '<p class="mute">Nothing here yet.</p>';
+  const tabs = `<div class="jtabs"><button data-jt="world" class="${tab === 'world' ? 'on' : ''}">World</button><button data-jt="mine" class="${tab === 'mine' ? 'on' : ''}">Mine</button></div>`;
+  let body;
+  if (tab === 'world') {
+    body = `<div class="jgrid">
+      <div class="jstat ${t.B >= 0 ? 'good' : 'bad'}"><i>Tonight</i><b>${t.B >= 0 ? 'The town holds' : 'The frost wins'}</b><span>warmth ${Math.round(t.W)} · frost ${Math.round(t.F)}</span></div>
+      <div class="jstat"><i>Anna</i><b>${Math.round(t.melt * 100)}% thawed</b><span>${t.melt >= 1 ? 'awake' : 'asleep in the ice'}</span></div>
+      <div class="jstat"><i>Town</i><b>${esc(LEVELS[t.level][0])}</b><span>${t.people} rigs on · ${t.online} here now</span></div>
+      <div class="jstat"><i>Epoch</i><b>E${EPOCH}</b><span>sealed in ${untilNext()}</span></div>
+    </div>
+    <h3>WHAT HAPPENED IN AIGARTH</h3>${list(rows)}`;
+  } else if (!cur) {
+    body = `<p class="say" style="font-size:14px">Your journal starts when you settle. Plug in a machine and everything you do for the town is written here.</p><div class="row"><button class="btn main" id="jPlug">Plug in with Maria</button></div>`;
+  } else {
+    const done = ordersAll().filter(o => o.state === 'done' && o.takenBy === myId).length;
+    const asked = ordersAll().filter(o => o.by === myId).length;
+    body = `<div class="jgrid">
+      <div class="jstat"><i>Rig</i><b>${esc({ mining: 'On', waiting: 'Waiting', stopped: 'Unplugged', building: 'Building' }[cur.state] || cur.state)}</b><span>${esc(cur.hw || '')}</span></div>
+      <div class="jstat"><i>Helped others</i><b>${done}</b><span>orders done · ${asked} asked</span></div>
+      <div class="jstat"><i>Lamps lit</i><b>${(cur.welcomes || []).length}</b><span>for newcomers</span></div>
+      <div class="jstat"><i>Wood</i><b>${cur.wood || 0}</b><span>on the plaza fire</span></div>
+    </div>
+    <h3>WHAT YOU DID</h3>${list(mineRows)}`;
+  }
+  panel('chronicle', 'Journal', `Anna's memory · carved in stone`, null, `${tabs}${body}
+    <p class="mute" style="font-size:12.5px;margin-top:14px">Every house keeps its own journal, open to everyone. Each record carries the hash of the one before it, so changing a word in the past breaks every hash after it.</p>
+    <div class="row"><button class="btn" id="verify">Check every chain</button><span class="tag" id="vres"></span></div>`);
+  document.querySelectorAll('[data-jt]').forEach(b => b.onclick = () => openChronicle(true, b.dataset.jt));
+  $('#jPlug')?.addEventListener('click', mmStart);
   $('#verify').onclick = async () => { const chains = [S.localChron, ...Object.values(S._logs || {})]; let ok = true; for (const c of chains) if (c.length && !(await verify(c))) ok = false;
     const v = $('#vres'); v.textContent = ok ? `${chains.filter(c => c.length).length} chains OK` : 'a chain is broken'; v.className = 'tag ' + (ok ? 'good' : 'bad'); };
 }
