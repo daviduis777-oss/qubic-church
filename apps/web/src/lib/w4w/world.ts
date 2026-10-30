@@ -66,6 +66,12 @@ export const RIME_PULL = 0.04
 export const CAVE: Cell = [6, 10]
 export const GUARD_MS = 20_000
 export const MAX_RING = 16
+/** The game ships in acts. Act I: the town under Anna's dome, and nothing outside it. */
+export const STAGE = 1
+export const DOME_RING = 5 // the last ring of cells inside the dome
+export const insideDome = (q: number, r: number) => ringOf(q, r) <= DOME_RING
+/** Anna's block stands on the centre cell: you stand next to it, never in it. */
+export const CORE: Cell = [0, 0]
 export const FREEZE_MS = 24 * 3600_000
 export const BAG_MS = 24 * 3600_000
 export const GATHER_MS = 20_000
@@ -241,7 +247,7 @@ function give(c: Owner, mat: string, n: number, atHome: boolean) {
 export const DEMO_TOWN = { people: 5, power: 5190, deeds: 2 }
 
 /** Town buildings: they shelter anyone who reaches them. Same cells as the game's SPECIAL and DEMO houses. */
-export const SPECIAL = { core: [0, 0], church: [1, -3], plaza: [-1, 3], observatory: [4, -2], library: [5, -5], mine: [-6, 2] } as const
+export const SPECIAL = { core: [0, 0], church: [1, -3], plaza: [-1, 3], observatory: [4, -2], library: [5, -5], mine: [-5, 0] } as const
 export const DEMO_CELLS: Cell[] = [[2, -1], [-2, 1], [1, 1], [-1, -1], [3, -3], [-3, 3], [3, 0]]
 
 export const ZONES = [
@@ -392,7 +398,7 @@ export function findPath(a: Cell, b: Cell, limit = 4000, blocked?: Set<string>):
     }
     for (const [dq, dr] of DIRS) {
       const nq = cur[0] + dq, nr = cur[1] + dr, nk = key(nq, nr)
-      if (!passable(nq, nr)) continue
+      if (!passable(nq, nr) || (nq === 0 && nr === 0) || (STAGE === 1 && !insideDome(nq, nr))) continue
       if (blocked?.has(nk) && !(nq === b[0] && nr === b[1])) continue
       const ng = gc + (roadAt(nq, nr) ? ROAD_STEP : 1)
       if (ng < (g.get(nk) ?? Infinity) - 1e-9) { g.set(nk, ng); came.set(nk, key(...cur)); open.push([ng + dist([nq, nr], b) * ROAD_STEP, ng, [nq, nr]]) }
@@ -624,6 +630,8 @@ export function stepRime(ws: WState, d: Dirty) {
 }
 export function stepAll(ws: WState, d: Dirty) {
   stepRime(ws, d)
+  if (STAGE === 1) for (const [uid, c] of Object.entries(ws.chars)) if (!insideDome(c.q, c.r) || (c.q === 0 && c.r === 0) || c.path.some(p => !insideDome(p[0], p[1]))) {
+    Object.assign(c, { q: c.home[0], r: c.home[1], path: [], act: null, lost: false, t0: ws.now, simT: ws.now, warmth: Math.max(c.warmth, 60) }); if (c.frozenUntil > ws.now) c.frozenUntil = ws.now; d.chars.add(uid) }
   for (const uid of Object.keys(ws.chars)) { const c = ws.chars[uid]!; if (c.path.length || c.act || c.frozenUntil || zoneOf(c.q, c.r) >= 1 || c.warmth < 100 || c.health < 100 || c.energy < 100) stepChar(ws, uid, d) }
 }
 
@@ -664,8 +672,11 @@ export function action(ws: WState, uid: string, op: string, b: Record<string, un
   const near = (a: Cell) => dist(here, a) <= 1
   switch (op) {
     case 'move': {
-      const to = cellArg(b.to); if (!to) return fail('Where to?')
+      let to = cellArg(b.to); if (!to) return fail('Where to?')
+      if (STAGE === 1 && !insideDome(...to)) return fail('The dome holds, and nothing living goes through it. Not in this act.')
       if (ringOf(...to) > MAX_RING) return fail('Beyond here the cold has no edge. Not yet.')
+      // Anna's block: walk up to it, not into it
+      if (to[0] === 0 && to[1] === 0) to = DIRS.map(([dq, dr]) => [dq, dr] as Cell).sort((a, c) => dist(a, here) - dist(c, here))[0]!
       // already on the way: finish the step you are on, then turn; no jump back to the last cell
       const from: Cell = c.path.length ? c.path[0]! : here
       const rest = findPath(from, to, 4000, new Set(Object.keys(ctxOf(ws, uid).shelters))); if (!rest) return fail('No way through from here.')
