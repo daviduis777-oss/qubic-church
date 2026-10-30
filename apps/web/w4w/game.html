@@ -633,7 +633,7 @@ body:has(#panel.open) #goals{visibility:hidden}
 #veil .vp{font-family:var(--f-display);font-weight:600;font-size:20px;color:#ffd79a;text-shadow:0 0 10px rgba(255,160,60,.6)} #veil .vs{flex:1;text-align:right;font-size:12px;color:#c9b393}
 #veil .vtrack{height:7px;margin:4px 0 5px;border-radius:4px;background:rgba(0,0,0,.55);box-shadow:inset 0 0 0 1px rgba(255,166,74,.25);overflow:hidden}
 #veil .vtrack i{display:block;height:100%;background:linear-gradient(90deg,#c4561a,#ff9a3c 60%,#ffd79a);box-shadow:0 0 10px rgba(255,150,60,.9)}
-#veil .vsub{font-size:12px;color:#b9a689} #veil em{font-style:normal;color:#ffc46b;font-weight:600}
+#veil .vsub{font-size:12px;color:#b9a689} #veil.danger .vs{color:#ff7a5a;font-weight:600} #veil.danger{box-shadow:0 0 0 1px #000,inset 0 0 0 1px rgba(255,90,60,.7),0 0 22px rgba(255,60,30,.35)} #veil em{font-style:normal;color:#ffc46b;font-weight:600}
 body:has(#panel.open) #veil{visibility:hidden}
 @media (max-width: 760px){ #veil{top:calc(max(50px,calc(env(safe-area-inset-top) + 44px)) + 62px)} #veil .vs{display:none} }
 #goals .rank{cursor:grab;user-select:none;touch-action:none;position:relative;display:flex;align-items:baseline;gap:8px;padding:9px 12px 10px;background:linear-gradient(180deg,#2c261f,#1a1612);box-shadow:inset 0 -1px 0 #000,inset 0 -2px 0 rgba(201,160,74,.3)}
@@ -848,6 +848,8 @@ var W4W = (() => {
     STARTER_RECIPES: () => STARTER_RECIPES,
     STEP_MS: () => STEP_MS,
     TOWN_RING: () => TOWN_RING,
+    VEIL_COLD: () => VEIL_COLD,
+    VEIL_FULL: () => VEIL_FULL,
     WEEK_MS: () => WEEK_MS,
     WX_SLOW: () => WX_SLOW,
     ZONES: () => ZONES,
@@ -912,6 +914,7 @@ var W4W = (() => {
     townOfState: () => townOfState,
     townShelters: () => townShelters,
     townWarmth: () => townWarmth,
+    veilOf: () => veilOf,
     viewOf: () => viewOf,
     weatherAt: () => weatherAt,
     weekOf: () => weekOf,
@@ -1271,9 +1274,19 @@ var W4W = (() => {
     const d = new Date(t);
     return d.getUTCDay() === 3 && d.getUTCHours() >= 12 && d.getUTCHours() < 14;
   }
+  const VEIL_FULL = 3e4;
+  const veilOf = (power) => Math.max(0, Math.min(1, Math.log10(1 + power / 400) / Math.log10(1 + VEIL_FULL / 400)));
+  const VEIL_COLD = 42;
   function coldAt(q, r, t, ctx) {
     const [x, z] = worldXZ(q, r);
     if (ctx.shelters[key(q, r)]) return 0;
+    if (STAGE === 1 && insideDome(q, r)) {
+      const V = ctx.veil ?? 0.6, d = Math.hypot(x, z) / DOME_RADIUS;
+      let c2 = VEIL_COLD * Math.pow(1 - V, 1.2) * (0.25 + 0.75 * d);
+      if (greyAt(t)) c2 -= 3;
+      if (bellAt(t)) c2 += 8;
+      return Math.max(0, c2) * weatherAt(t, ctx.netStorm).mult;
+    }
     if (Math.hypot(x, z) <= ctx.heatR) return 0;
     const zone = zoneOf(q, r);
     if (zone > 3) return 999;
@@ -1502,7 +1515,7 @@ var W4W = (() => {
     const W = 6 * Math.min(o.people, 12) + 6 * Math.min(o.online, 5) + 4 * Math.min(o.deeds, 5) + 3 * Math.min(o.fire, 5) + Math.round(12 * Math.log10(1 + o.power / 500) * 10) / 10;
     const F = 60 + (o.storm ? 15 : 0);
     const B = W - F;
-    return { W, F, B, holds: B >= 0, heatR: Math.min(10, Math.max(2.6, 5.6 + B * 0.28)) * TOWN_RING / 5 };
+    return { W, F, B, holds: B >= 0, heatR: Math.min(10, Math.max(2.6, 5.6 + B * 0.28)) * TOWN_RING / 5, power: o.power, veil: veilOf(o.power) };
   }
   const newDirty = () => ({ chars: /* @__PURE__ */ new Set(), hearths: /* @__PURE__ */ new Set(), bags: /* @__PURE__ */ new Set(), bagsGone: /* @__PURE__ */ new Set(), nodes: /* @__PURE__ */ new Set(), feed: [] });
   function townOfState(ws) {
@@ -1516,7 +1529,7 @@ var W4W = (() => {
     const t = townOfState(ws);
     const cells = Object.values(ws.houses).filter((x) => x.q != null && x.r != null).map((x) => [x.q, x.r]);
     const home = ws.chars[uid]?.home ?? [ws.houses[uid]?.q ?? 0, ws.houses[uid]?.r ?? 0];
-    return { heatR: t.heatR, holds: t.holds, netStorm: false, shelters: townShelters(cells), home: key(home[0], home[1]), hearths: Object.fromEntries(Object.entries(ws.hearths).map(([k, v]) => [k, v.until])), insulation: INSULATION_T1, rime: ws.rimeTrail };
+    return { veil: t.veil, heatR: t.heatR, holds: t.holds, netStorm: false, shelters: townShelters(cells), home: key(home[0], home[1]), hearths: Object.fromEntries(Object.entries(ws.hearths).map(([k, v]) => [k, v.until])), insulation: INSULATION_T1, rime: ws.rimeTrail };
   }
   const nickIn = (ws, uid) => ws.houses[uid]?.nick ?? "someone";
   const zoneName = (z) => ZONES[z]?.name ?? "the far cold";
@@ -3615,7 +3628,7 @@ function ensureChar() { if (XW && me() && me().q != null && XV && !XV.me && !xBu
 /* ---------- the rules, run locally between server answers ---------- */
 function xctx() {
   const t = XV.town, cells = allResidents().filter(h => !h.demo && h.at[0] != null).map(h => h.at);
-  return { heatR: t.heatR, holds: t.holds, netStorm: false, shelters: W4W.townShelters(cells), home: W4W.key(...XV.me.home), hearths: Object.fromEntries(Object.entries(XV.hearths).map(([k, v]) => [k, v.until])), insulation: W4W.INSULATION_T1,
+  return { veil: W4W.veilOf(S.town.power || t.power || 0), heatR: t.heatR, holds: t.holds, netStorm: false, shelters: W4W.townShelters(cells), home: W4W.key(...XV.me.home), hearths: Object.fromEntries(Object.entries(XV.hearths).map(([k, v]) => [k, v.until])), insulation: W4W.INSULATION_T1,
     rime: XV.rime ? [[XV.rime.t, XV.rime.q, XV.rime.r], ...(XV.rime.next ? [[XV.rime.next.t, XV.rime.next.q, XV.rime.next.r]] : [])] : undefined };
 }
 let PR = null, PRT = 0;
@@ -5254,7 +5267,7 @@ if (ACT1) document.body.classList.add('act1');
 document.addEventListener('click', e => { const b = e.target.closest?.('[data-beast],[data-chthon]'); if (!b) return; sfx.click(); if (b.dataset.beast) openBeast(b.dataset.beast); else openChthon(); });
 const atVeil = (q, r) => W4W.insideDome(q, r) && W4W.DIRS.some(([a, b]) => !W4W.insideDome(q + a, r + b));
 const GATE_CELL = [0, -W4W.TOWN_RING], DOME_R = W4W.DOME_RADIUS, DOME_H = W4W.TOWN_RING + 3;
-const DOME_U = { uTime: U.uTime, uHits: { value: Array.from({ length: 8 }, () => new THREE.Vector4(0, -99, 0, -99)) }, uThin: { value: 0 }, uVeil: { value: 0.6 } };
+const DOME_U = { uTime: U.uTime, uHits: { value: Array.from({ length: 8 }, () => new THREE.Vector4(0, -99, 0, -99)) }, uThin: { value: 0 }, uVeil: { value: 0.6 }, uShow: { value: 0 } };
 let hitI = 0, domeMesh = null;
 function domeHit(p) { DOME_U.uHits.value[hitI++ % 8].set(p.x, p.y, p.z, U.uTime.value); }
 /** A point on the Veil: around by angle a, up by height y. */
@@ -5263,7 +5276,7 @@ function buildDome() {
   const geo = new THREE.SphereGeometry(DOME_R, 128, 48, 0, Math.PI * 2, 0, Math.PI / 2); geo.scale(1, DOME_H / DOME_R, 1);
   const mat = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, uniforms: DOME_U,
     vertexShader: `varying vec3 vW; varying vec3 vN; varying vec3 vL; void main(){ vec4 w = modelMatrix * vec4(position, 1.); vW = w.xyz; vN = normalize(mat3(modelMatrix) * normal); vL = position; gl_Position = projectionMatrix * viewMatrix * w; }`,
-    fragmentShader: `uniform float uTime; uniform vec4 uHits[8]; uniform float uThin; uniform float uVeil; varying vec3 vW; varying vec3 vN; varying vec3 vL;
+    fragmentShader: `uniform float uTime; uniform vec4 uHits[8]; uniform float uThin; uniform float uVeil; uniform float uShow; varying vec3 vW; varying vec3 vN; varying vec3 vL;
       vec2 hexcell(vec2 p){ vec2 r = vec2(1., 1.7320508), h = r * .5; vec2 a = mod(p, r) - h, b = mod(p - h, r) - h; return dot(a, a) < dot(b, b) ? a : b; }
       float hexd(vec2 p){ p = abs(p); return max(dot(p, vec2(0.8660254, 0.5)), p.y); }
       void main(){
@@ -5282,6 +5295,9 @@ function buildDome() {
         a += (1. - smoothstep(0., 0.07, h)) * 0.3;
         a += lip * (0.22 + 0.12 * sin(uTime * 6. + az * 20.));
         a *= (0.45 + 0.75 * uVeil) * (gl_FrontFacing ? 1.0 : 0.4);
+        // close up only the light where it is struck and the seam at its foot remain
+        float strike = 0.; for (int i = 0; i < 8; i++) { float tt = uTime - uHits[i].w; if (tt >= 0. && tt < 2.6) strike = max(strike, exp(-distance(vW, uHits[i].xyz) * 0.9) * (1. - tt / 2.6)); }
+        a *= max(uShow, max(strike, (1. - smoothstep(0., 0.05, h)) * 0.8));
         gl_FragColor = vec4(col, min(1., a * 1.4));
       }` });
   domeMesh = new THREE.Mesh(geo, mat); domeMesh.renderOrder = 6; scene.add(domeMesh);
@@ -5316,8 +5332,8 @@ function buildGate() {
   const a = new THREE.Object3D(); a.position.copy(dir.clone().multiplyScalar(DOME_R - 1.2)); scene.add(a); label('THE NORTH GATE · SEALED', a, 3.0, 'red');
 }
 /* ---------- the Veil's strength: the town's mining power, shown and felt ---------- */
-const VEIL_FULL = 30000; // sol/h for a fully closed, bright Veil
-function veilStrength() { const P = S.town.power || 0; return THREE.MathUtils.clamp(Math.log10(1 + P / 400) / Math.log10(1 + VEIL_FULL / 400), 0, 1); }
+const VEIL_FULL = W4W.VEIL_FULL; // sol/h for a fully closed, bright Veil
+function veilStrength() { return W4W.veilOf(S.town.power || 0); }
 const veilEl = document.createElement('button'); veilEl.id = 'veil'; veilEl.hidden = true; veilEl.setAttribute('aria-label', 'The strength of the Veil'); document.body.appendChild(veilEl);
 veilEl.onclick = () => { sfx.click(); openHub(); };
 let veilSig = '';
@@ -5325,8 +5341,10 @@ function renderVeil() {
   if (!ACT1 || !$('#intro').hidden) { veilEl.hidden = true; return; }
   const V = veilStrength(), pct = Math.round(V * 100), P = S.town.power || 0, mine = me(), my = mine?.state === 'mining' ? mine.sol || 0 : 0;
   const without = THREE.MathUtils.clamp(Math.log10(1 + (P - my) / 400) / Math.log10(1 + VEIL_FULL / 400), 0, 1), add = Math.max(0, Math.round((V - without) * 1000) / 10);
-  const state = V >= 0.97 ? 'Closed overhead. The storm stays out.' : V >= 0.6 ? 'Holding. Some snow gets through.' : V >= 0.35 ? 'Open to the sky. Snow pours in.' : 'Only a fence of light. The cold is inside.';
-  const sig = [pct, P, my, add].join(':'); if (sig === veilSig && !veilEl.hidden) return; veilSig = sig; veilEl.hidden = false;
+  const wx = W4W.weatherAt(xnow()), wallCold = W4W.VEIL_COLD * Math.pow(1 - V, 1.2) * wx.mult, deadly = wallCold > W4W.INSULATION_T1;
+  const state = deadly ? `${wx.id === 'calm' ? 'Too weak' : wx.name}: the streets by the wall freeze. Get indoors.` : V >= 0.97 ? 'Closed overhead. The storm stays out.' : V >= 0.6 ? 'Holding. Some snow gets through.' : V >= 0.35 ? 'Open to the sky. Snow pours in.' : 'Only a fence of light. The cold is inside.';
+  veilEl.classList.toggle('danger', deadly);
+  const sig = [pct, P, my, add, deadly, wx.id].join(':'); if (sig === veilSig && !veilEl.hidden) return; veilSig = sig; veilEl.hidden = false;
   veilEl.innerHTML = `<div class="vrow"><b>THE VEIL</b><span class="vp">${pct}%</span><span class="vs">${esc(state)}</span></div><div class="vtrack"><i style="width:${pct}%"></i></div>
     <div class="vsub">${P.toLocaleString('en-US')} sol/h of mining holds it${my ? ` · <em>your rig: +${add}%</em>` : ' · <em>start your rig to make it stronger</em>'}</div>`;
 }
@@ -5358,6 +5376,8 @@ function buildStorm() {
 function stepStorm(dt) {
   if (!stormPts) return; STORM_U.uC.value.set(controls.target.x, controls.target.z);
   const V = veilStrength(); DOME_U.uVeil.value += (V - DOME_U.uVeil.value) * Math.min(1, dt * 0.6); STORM_U.uVeil.value = DOME_U.uVeil.value;
+  // the dome is for looking at the town from afar; up close it would only get in the way
+  const far = THREE.MathUtils.smoothstep(camera.position.distanceTo(controls.target), 30, 42); DOME_U.uShow.value += (far - DOME_U.uShow.value) * Math.min(1, dt * 4);
 }
 
 /* ---------- the dark: you see what is near you and what you have walked past; the rest is night ---------- */

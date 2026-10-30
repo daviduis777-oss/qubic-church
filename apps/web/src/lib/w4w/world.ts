@@ -41,6 +41,7 @@ export type Ctx = {
   home: string // key of this character's own house
   hearths: Record<string, number> // key -> burning until (ms)
   insulation: number
+  veil?: number // the dome's strength 0..1, from the town's mining power
   rime?: [number, number, number][] // where the Rime stood: [since t, q, r], oldest first
   noDrift?: boolean // planning a trip: no wind luck
 }
@@ -368,9 +369,21 @@ export const greyAt = (t: number) => Math.floor(t / 3_600_000) % 6 >= 4
 export function bellAt(t: number) { const d = new Date(t); return d.getUTCDay() === 3 && d.getUTCHours() >= 12 && d.getUTCHours() < 14 }
 
 /** How much cold bites on a cell at a moment, before clothing. 0 inside the warm circle. */
+/** The Veil's strength from the town's mining power, sol/h: logarithmic, full at VEIL_FULL. */
+export const VEIL_FULL = 30_000
+export const veilOf = (power: number) => Math.max(0, Math.min(1, Math.log10(1 + power / 400) / Math.log10(1 + VEIL_FULL / 400)))
+/** Under the Veil the cold is what the mining lets through: none near Anna, most by the wall, all of it when the dome is weak. */
+export const VEIL_COLD = 42
 export function coldAt(q: number, r: number, t: number, ctx: Ctx) {
   const [x, z] = worldXZ(q, r)
   if (ctx.shelters[key(q, r)]) return 0 // indoors: walls, a stove, nothing gets in
+  if (STAGE === 1 && insideDome(q, r)) {
+    const V = ctx.veil ?? 0.6, d = Math.hypot(x, z) / DOME_RADIUS
+    let c = VEIL_COLD * Math.pow(1 - V, 1.2) * (0.25 + 0.75 * d) // the outer streets, by the wall, freeze first
+    if (greyAt(t)) c -= 3
+    if (bellAt(t)) c += 8
+    return Math.max(0, c) * weatherAt(t, ctx.netStorm).mult
+  }
   if (Math.hypot(x, z) <= ctx.heatR) return 0
   const zone = zoneOf(q, r)
   if (zone > 3) return 999
@@ -576,7 +589,7 @@ export function townWarmth(o: { people: number; online: number; deeds: number; f
   const W = 6 * Math.min(o.people, 12) + 6 * Math.min(o.online, 5) + 4 * Math.min(o.deeds, 5) + 3 * Math.min(o.fire, 5) + Math.round(12 * Math.log10(1 + o.power / 500) * 10) / 10
   const F = 60 + (o.storm ? 15 : 0)
   const B = W - F
-  return { W, F, B, holds: B >= 0, heatR: Math.min(10, Math.max(2.6, 5.6 + B * 0.28)) * TOWN_RING / 5 }
+  return { W, F, B, holds: B >= 0, heatR: Math.min(10, Math.max(2.6, 5.6 + B * 0.28)) * TOWN_RING / 5, power: o.power, veil: veilOf(o.power) }
 }
 
 
@@ -615,7 +628,7 @@ export function ctxOf(ws: WState, uid: string): Ctx {
   const t = townOfState(ws)
   const cells = Object.values(ws.houses).filter(x => x.q != null && x.r != null).map(x => [x.q!, x.r!] as Cell)
   const home = ws.chars[uid]?.home ?? [ws.houses[uid]?.q ?? 0, ws.houses[uid]?.r ?? 0]
-  return { heatR: t.heatR, holds: t.holds, netStorm: false, shelters: townShelters(cells), home: key(home[0], home[1]), hearths: Object.fromEntries(Object.entries(ws.hearths).map(([k, v]) => [k, v.until])), insulation: INSULATION_T1, rime: ws.rimeTrail }
+  return { veil: t.veil, heatR: t.heatR, holds: t.holds, netStorm: false, shelters: townShelters(cells), home: key(home[0], home[1]), hearths: Object.fromEntries(Object.entries(ws.hearths).map(([k, v]) => [k, v.until])), insulation: INSULATION_T1, rime: ws.rimeTrail }
 }
 const nickIn = (ws: WState, uid: string) => ws.houses[uid]?.nick ?? 'someone'
 export const zoneName = (z: number) => (ZONES as readonly { name: string }[])[z]?.name ?? 'the far cold'
