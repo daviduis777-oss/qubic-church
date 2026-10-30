@@ -624,8 +624,9 @@ body.hub #xact{display:none}
 .mapf{width:560px} .mapf canvas{display:block;width:536px;height:536px;border-radius:6px;cursor:crosshair;box-shadow:inset 0 0 0 1px #000,0 0 0 1px #000,0 0 0 2px rgba(201,160,74,.25)}
 .mapf .mkey{display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:9px;font-size:12px;color:var(--kmute)} .mapf .mkey i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:-1px}
 /* the tracker: what to do next, and why */
-#goals{position:fixed;z-index:4;right:16px;top:66px;width:300px;transform-origin:100% 0;transform:scale(var(--ui));border-radius:9px;padding:0;color:var(--kink);font-family:var(--f-body);background:linear-gradient(180deg,rgba(30,25,20,.93),rgba(14,12,14,.93));box-shadow:0 0 0 1px #000,inset 0 0 0 1px rgba(201,160,74,.45),0 10px 30px rgba(0,0,0,.5);overflow:hidden}
-#goals .rank{position:relative;display:flex;align-items:baseline;gap:8px;padding:9px 12px 10px;background:linear-gradient(180deg,#2c261f,#1a1612);box-shadow:inset 0 -1px 0 #000,inset 0 -2px 0 rgba(201,160,74,.3)}
+#goals{position:fixed;z-index:6;width:300px;transform-origin:0 0;transform:scale(var(--ui));border-radius:9px;padding:0;color:var(--kink);font-family:var(--f-body);background:linear-gradient(180deg,rgba(30,25,20,.93),rgba(14,12,14,.93));box-shadow:0 0 0 1px #000,inset 0 0 0 1px rgba(201,160,74,.45),0 10px 30px rgba(0,0,0,.5);overflow:hidden}
+body:has(#panel.open) #goals{visibility:hidden}
+#goals .rank{cursor:grab;user-select:none;touch-action:none;position:relative;display:flex;align-items:baseline;gap:8px;padding:9px 12px 10px;background:linear-gradient(180deg,#2c261f,#1a1612);box-shadow:inset 0 -1px 0 #000,inset 0 -2px 0 rgba(201,160,74,.3)}
 #goals .rank b{font-family:var(--f-display);font-weight:600;font-size:16px;color:#f0c96a} #goals .rank span{flex:1;font-size:12px;color:var(--kmute)}
 #goals .rank i{position:absolute;left:0;bottom:0;height:2px;background:linear-gradient(90deg,#f0c96a,#ffe7a8);box-shadow:0 0 8px rgba(240,201,106,.7)}
 #goals .gfold{border:0;background:none;color:var(--kmute);font-size:16px;cursor:pointer;padding:0 2px} #goals.fold .gbody{display:none}
@@ -802,6 +803,7 @@ var W4W = (() => {
     DEMO_CELLS: () => DEMO_CELLS,
     DEMO_TOWN: () => DEMO_TOWN,
     DIRS: () => DIRS,
+    DOME_RADIUS: () => DOME_RADIUS,
     DOME_RING: () => DOME_RING,
     DRIFT: () => DRIFT,
     FREEZE_MS: () => FREEZE_MS,
@@ -931,8 +933,12 @@ var W4W = (() => {
   const GUARD_MS = 2e4;
   const MAX_RING = 16 + SHIFT;
   const STAGE = 1;
-  const DOME_RING = TOWN_RING;
-  const insideDome = (q, r) => ringOf(q, r) <= DOME_RING;
+  const DOME_RING = TOWN_RING + 2;
+  const DOME_RADIUS = 18.4;
+  const insideDome = (q, r) => {
+    const x = 2 * (q + r / 2), z = 1.7320508 * r;
+    return Math.hypot(x, z) <= DOME_RADIUS - 1.2;
+  };
   const CORE_RING = 1;
   const inCore = (q, r) => ringOf(q, r) <= CORE_RING;
   const CORE = [0, 0];
@@ -1172,7 +1178,7 @@ var W4W = (() => {
   const worldXZ = (q, r) => [2 * (q + r / 2), 1.7320508 * r];
   function zoneOf(q, r) {
     const n = ringOf(q, r);
-    return n <= TOWN_RING ? 0 : n <= 8 + SHIFT ? 1 : n <= 12 + SHIFT ? 2 : n <= MAX_RING ? 3 : 4;
+    return insideDome(q, r) ? 0 : n <= TOWN_RING ? 1 : n <= 8 + SHIFT ? 1 : n <= 12 + SHIFT ? 2 : n <= MAX_RING ? 3 : 4;
   }
   function hash(a, b, s = 0) {
     let h = Math.imul(a | 0, 374761393) + Math.imul(b | 0, 668265263) + Math.imul(s | 0, 2147483647) | 0;
@@ -1220,7 +1226,8 @@ var W4W = (() => {
   const landmarkAt = (q, r) => LANDMARKS.find((l) => dist([q, r], l.at) <= (l.id === "lake" ? 2 : 1))?.id ?? null;
   function terrain(q, r) {
     const n = ringOf(q, r);
-    if (n <= TOWN_RING) return "town";
+    if (insideDome(q, r)) return "town";
+    if (n <= TOWN_RING) return "open";
     if (n > MAX_RING) return "void";
     if (roadAt(q, r) || lakeAt(q, r)) return "open";
     const camp = dist([q, r], LANDMARKS[0].at), choir = dist([q, r], LANDMARKS[2].at);
@@ -2232,7 +2239,7 @@ function build() {
   const before = new Set(scene.children);
   // the same map the server walks: world.ts decides what stands on every cell, the kit only dresses it
   const MTS = ['mountain_A', 'mountain_B', 'mountain_C'], ICE = []; CHOIR.length = 0; NATURE.length = 0;
-  for (let n = W4W.TOWN_RING + 1; n <= W4W.MAX_RING + 2; n++) ring(n).forEach(([q, r]) => {
+  for (let n = W4W.TOWN_RING + 1; n <= (ACT1 ? 0 : W4W.MAX_RING + 2); n++) ring(n).forEach(([q, r]) => {
     if (reserved.has(key(q, r))) return; const t = n > W4W.MAX_RING ? 'mountain' : W4W.terrain(q, r), v = rnd();
     const z = W4W.zoneOf(q, r), c = HX(q, r);
     const lm = W4W.landmarkAt(q, r);
@@ -2257,10 +2264,11 @@ function build() {
   for (let n = W4W.TOWN_RING - 1; n <= (ACT1 ? 0 : W4W.TOWN_RING); n++) ring(n).forEach(([q, r]) => { if (reserved.has(key(q, r)) || (q === GATE_CELL[0] && r === GATE_CELL[1]) || rnd() >= (n === W4W.TOWN_RING ? 0.45 : 0.18)) return; const c = HX(q, r), v = rnd();
     if (v < 0.6) NATURE.push([c.x + (rnd() - 0.5) * 0.8, c.z + (rnd() - 0.5) * 0.8, 'pine', 1.5 + rnd() * 0.6]); else if (v < 0.75) NATURE.push([c.x + (rnd() - 0.5) * 0.8, c.z + (rnd() - 0.5) * 0.8, 'rock', 0.45]); else place(['tent', 'crate'][Math.floor(rnd() * 2)], q, r, { rot: rnd() * 6, jitter: 0.8 }); });
   mergeScenery(scene.children.filter(o => !before.has(o)));
-  buildWastesGround(); buildIce(ICE); buildRoads(); buildLake(); buildChoir(); buildQProps(); buildNature(); if (ACT1) buildDome();
-  W4W.LANDMARKS.forEach(L => { const a = new THREE.Object3D(); a.position.copy(HX(...L.at)); scene.add(a); label(L.name, a, L.id === 'mouth' ? 2.2 : 1.6, 'place'); });
+  if (!ACT1) { buildWastesGround(); buildIce(ICE); buildRoads(); buildLake(); buildChoir(); buildQProps(); }
+  buildNature(); if (ACT1) buildDome();
+  if (!ACT1) W4W.LANDMARKS.forEach(L => { const a = new THREE.Object3D(); a.position.copy(HX(...L.at)); scene.add(a); label(L.name, a, L.id === 'mouth' ? 2.2 : 1.6, 'place'); });
   // where the zones begin: a quiet sign in the snow
-  [[7 + W4W.TOWN_RING - 5, 'THE EDGE'], [10 + W4W.TOWN_RING - 5, 'BLACK PINES'], [14 + W4W.TOWN_RING - 5, 'STONE TEETH']].forEach(([n, name]) => [0, 2, 4].forEach(side => { const [q, r] = ring(n)[side * n + Math.floor(n / 2)]; const a = new THREE.Object3D(); a.position.copy(HX(q, r)); scene.add(a); label(name, a, 0.4, 'demo'); }));
+  if (!ACT1) [[7 + W4W.TOWN_RING - 5, 'THE EDGE'], [10 + W4W.TOWN_RING - 5, 'BLACK PINES'], [14 + W4W.TOWN_RING - 5, 'STONE TEETH']].forEach(([n, name]) => [0, 2, 4].forEach(side => { const [q, r] = ring(n)[side * n + Math.floor(n / 2)]; const a = new THREE.Object3D(); a.position.copy(HX(q, r)); scene.add(a); label(name, a, 0.4, 'demo'); }));
   buildSnowfall(); buildSmoke(); buildEmbers();
 }
 /* forest, rocks and mountains never move: bake them into one mesh, one draw call instead of hundreds */
@@ -2274,7 +2282,7 @@ function mergeScenery(objs) {
     const mesh = new THREE.Mesh(g, mat); mesh.castShadow = true; mesh.receiveShadow = true; mesh.matrixAutoUpdate = false; scene.add(mesh); });
 }
 function freePlots() { const taken = new Set(reserved); allResidents().forEach(h => taken.add(key(...h.at))); const out = [];
-  for (let n = 2; n <= W4W.TOWN_RING; n++) ring(n).forEach(([q, r]) => { if (!taken.has(key(q, r)) && !(q === GATE_CELL[0] && r === GATE_CELL[1])) out.push([q, r]); }); return out; }
+  for (let n = 2; n <= W4W.DOME_RING; n++) ring(n).forEach(([q, r]) => { if (W4W.insideDome(q, r) && !taken.has(key(q, r)) && !(q === GATE_CELL[0] && r === GATE_CELL[1])) out.push([q, r]); }); return out; }
 function lamp(p) {
   const post = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.05, 1.3, 6), new THREE.MeshStandardMaterial({ color: 0x241c18, roughness: 0.8 }));
   post.position.set(p.x, 0.65, p.z); post.castShadow = true; scene.add(post);
@@ -3604,9 +3612,12 @@ function predicted() { if (!XV?.me) return null; const n = performance.now(); if
 /* ---------- avatars ---------- */
 let HERO = null, heroClips = {}, heroScale = 1;
 const avatars = {};
-new GLTFLoader().load('hero.glb', g => {
-  HERO = g; heroClips = Object.fromEntries(g.animations.map(a => [a.name, a]));
-  const box = new THREE.Box3().setFromObject(g.scene); heroScale = 0.42 / Math.max(0.01, box.max.y - box.min.y);
+(() => { const l = new GLTFLoader(); l.setMeshoptDecoder(MeshoptDecoder); return l; })().load('hero.glb', g => {
+  HERO = g; heroClips = Object.fromEntries(g.animations.map(a => [a.name.replace(/^.*\|/, ''), a]));
+  // the hooded wanderer speaks a different animation language: give the old names to the closest moves
+  const alias = { Walking_A: 'Walk', Walking_C: 'Walk', Running_A: 'Run', PickUp: 'Interact', Death_A: 'Death', Lie_Idle: 'Death', Sit_Floor_Idle: 'Idle_Neutral', Hit_B: 'HitRecieve', '1H_Melee_Attack_Chop': 'Sword_Slash', '2H_Melee_Attack_Chop': 'Punch_Right' };
+  for (const [k, v] of Object.entries(alias)) if (!heroClips[k] && heroClips[v]) { const c = heroClips[v].clone(); c.name = k; heroClips[k] = c; }
+  g.scene.updateMatrixWorld(true); const box = new THREE.Box3().setFromObject(g.scene, true); heroScale = 0.5 / Math.max(0.01, box.max.y - box.min.y);
   syncAvatars();
 }, undefined, e => console.warn('hero', e));
 const BLOB_GEO = new THREE.PlaneGeometry(0.62, 0.62).rotateX(-Math.PI / 2);
@@ -3616,7 +3627,7 @@ const BLOB_MAT = (() => { const cv = document.createElement('canvas'); cv.width 
 const heroMats = new Map();
 function heroMat(src) {
   if (heroMats.has(src)) return heroMats.get(src);
-  const m = src.clone(); m.metalness = 0; m.roughness = 0.75; m.emissive = new THREE.Color(0xffffff); m.emissiveMap = src.map || null; m.emissiveIntensity = 0.38;
+  const m = src.clone(); m.metalness = 0; m.roughness = 0.75; m.emissive = src.map ? new THREE.Color(0xffffff) : src.color.clone(); m.emissiveMap = src.map || null; m.emissiveIntensity = src.map ? 0.38 : 0.55;
   heroMats.set(src, m); return m;
 }
 function makeAvatar(uid, nick, mine) {
@@ -3631,6 +3642,7 @@ function makeAvatar(uid, nick, mine) {
 }
 function play(a, name, once = false) {
   if (a.cur === name) return; const next = a.actions[name]; if (!next) return; const prev = a.cur && a.actions[a.cur];
+  if (name === 'Lie_Idle') once = true;
   next.reset(); next.setLoop(once ? THREE.LoopOnce : THREE.LoopRepeat); next.clampWhenFinished = once; next.fadeIn(0.25).play(); if (prev) prev.fadeOut(0.25); a.cur = name;
 }
 function dropAvatar(uid) { const a = avatars[uid]; if (!a) return; scene.remove(a.g); a.label.el.remove(); labels.splice(labels.indexOf(a.label), 1); delete avatars[uid]; }
@@ -4059,7 +4071,7 @@ function buildSeams() {
         vec2 o = vWP.xz - cell(vWP.xz);
         float e = max(max(abs(o.x), abs(dot(o, vec2(0.5, 0.8660254)))), abs(dot(o, vec2(-0.5, 0.8660254))));
         float groove = 1.0 - smoothstep(0.0, 0.09, 1.0 - e), lip = smoothstep(0.82, 0.9, e) * (1.0 - smoothstep(0.9, 0.97, e));
-        float d = length(vWP.xz - uP), near = (1.0 - smoothstep(4.0, 9.0, d)) * uOn, town = 1.0 - smoothstep(${(W4W.TOWN_RING * 2 - 0.5).toFixed(1)}, ${(W4W.TOWN_RING * 2 + 1.5).toFixed(1)}, length(vWP.xz));
+        float d = length(vWP.xz - uP), near = (1.0 - smoothstep(4.0, 9.0, d)) * uOn, town = 1.0 - smoothstep(${(W4W.DOME_RADIUS - 1.0).toFixed(1)}, ${(W4W.DOME_RADIUS).toFixed(1)}, length(vWP.xz));
         float a = max(near, town * 0.45);
         gl_FragColor = vec4(mix(vec3(0.92,0.96,1.0), vec3(0.10,0.14,0.26), groove), (groove * 0.30 + lip * 0.07) * a);
         #include <fog_fragment>
@@ -4228,8 +4240,8 @@ function toolMesh(id) {
 function syncTool(holder, body, id) {
   if (holder.id === id) return; holder.id = id;
   if (holder.m) { holder.m.parent?.remove(holder.m); holder.m = null; }
-  if (!id) return; const hand = body.getObjectByName('handslotr') || body.getObjectByName('handslot.r') || body.getObjectByName('handr'); if (!hand) return;
-  holder.m = toolMesh(id); hand.add(holder.m);
+  if (!id) return; const hand = body.getObjectByName('handslotr') || body.getObjectByName('WristR') || body.getObjectByName('handr'); if (!hand) return;
+  holder.m = toolMesh(id); hand.add(holder.m); body.updateMatrixWorld(true); const ws = new THREE.Vector3(); hand.getWorldScale(ws); holder.m.scale.setScalar(1.2 / Math.max(1e-5, ws.x));
 }
 /** What a walker would hold for the work in hand. */
 function toolInHand(d, mine) {
@@ -4255,6 +4267,7 @@ function defPos(id, w, h) {
   if (id === 'bag') return [innerWidth - w - 16, innerHeight - h - 132];
   if (id === 'chest') { const b = winRect('bag'); return b ? [b.left - w - 12, b.bottom - h] : [innerWidth - w - 16, innerHeight - h - 132]; }
   if (id === 'log') return [16, innerHeight - h - 16];
+  if (id === 'goals') return [innerWidth - w - 16, 66];
   return [120, 120];
 }
 function placeWin(el) {
@@ -4264,19 +4277,19 @@ function placeWin(el) {
   x = Math.max(4, Math.min(innerWidth - Math.min(w, 120) - 4, x)); y = Math.max(4, Math.min(innerHeight - 44 * s, y));
   el.style.left = Math.round(x) + 'px'; el.style.top = Math.round(y) + 'px'; el.classList.toggle('top', id === topWin);
 }
-function placeWins() { document.querySelectorAll('.wf[data-f]').forEach(el => { if (!el.hidden) placeWin(el); }); }
+function placeWins() { document.querySelectorAll('.wf[data-f], #goals').forEach(el => { if (!el.hidden) placeWin(el); }); }
 let dragWin = null;
 document.addEventListener('pointerdown', e => {
-  const wf = e.target.closest?.('.wf[data-f]'); if (!wf) return;
+  const wf = e.target.closest?.('.wf[data-f], #goals'); if (!wf) return;
   if (topWin !== wf.dataset.f) { topWin = wf.dataset.f; document.querySelectorAll('.wf.top').forEach(x => x.classList.remove('top')); wf.classList.add('top'); }
-  const hd = e.target.closest('header'); if (!hd || e.target.closest('button') || innerWidth <= 760) return;
+  const hd = e.target.closest('header, #goals .rank'); if (!hd || e.target.closest('button') || innerWidth <= 760) return;
   e.preventDefault(); const x0 = e.clientX, y0 = e.clientY, l0 = wf.offsetLeft, t0 = wf.offsetTop; wf.classList.add('drag'); dragWin = wf; tipEl.hidden = true;
   const mv = ev => { WIN[wf.dataset.f] = [l0 + ev.clientX - x0, t0 + ev.clientY - y0]; placeWin(wf); };
   const up = () => { wf.classList.remove('drag'); dragWin = null; removeEventListener('pointermove', mv); removeEventListener('pointerup', up); saveWin(); };
   addEventListener('pointermove', mv); addEventListener('pointerup', up);
 }, true);
 // a double click on the title puts a window back where it started
-document.addEventListener('dblclick', e => { const hd = e.target.closest?.('.wf[data-f] header'); if (!hd || e.target.closest('button')) return; const wf = hd.closest('.wf'); delete WIN[wf.dataset.f]; saveWin(); placeWin(wf); });
+document.addEventListener('dblclick', e => { const hd = e.target.closest?.('.wf[data-f] header, #goals .rank'); if (!hd || e.target.closest('button')) return; const wf = hd.closest('.wf, #goals'); delete WIN[wf.dataset.f]; saveWin(); placeWin(wf); });
 function toggleWin(id) { UI[id] = !UI[id]; if (UI[id]) { topWin = id; sfx.open(); } else sfx.close(); renderFrames(); }
 
 const LEFT = [['head', 'Head'], ['body', 'Chest'], ['hands', 'Hands']], RIGHT = [['legs', 'Legs'], ['feet', 'Feet'], ['bag', 'Bag']];
@@ -4621,7 +4634,7 @@ function stepFauna(dt) {
 }
 
 /* ================= why go out at all: one clear next thing, the town's orders, Anna's shards, a rank ================= */
-const goalEl = document.createElement('div'); goalEl.id = 'goals'; goalEl.hidden = true; document.body.appendChild(goalEl);
+const goalEl = document.createElement('div'); goalEl.id = 'goals'; goalEl.dataset.f = 'goals'; goalEl.hidden = true; document.body.appendChild(goalEl);
 let goalSig = '', goalT = 0, goalFold = store.get('w4w.goalFold') ? store.get('w4w.goalFold') === '1' : innerWidth <= 760;
 const DIRWORD = (from, to) => { const [ax, az] = W4W.worldXZ(...from), [bx, bz] = W4W.worldXZ(...to), a = Math.atan2(-(bz - az), bx - ax) * 180 / Math.PI;
   return ['east', 'north-east', 'north', 'north-west', 'west', 'south-west', 'south', 'south-east'][((Math.round(a / 45) % 8) + 8) % 8]; };
@@ -4668,7 +4681,7 @@ function renderGoals(force = false) {
   const ord = orders.map(o => { const ok = done.includes(o.id), need = Object.entries(o.need).map(([m, n]) => `${Math.min(c.inv[m] || 0, n)}/${n} ${W4W.nameOf(m).toLowerCase()}`).join(', ');
     return `<li class="${ok ? 'done' : ''}"><b>${ok ? '✓ ' : ''}${esc(o.text)}</b><span>${ok ? 'filled' : need} · +${o.pts}</span></li>`; }).join('');
   const sig = JSON.stringify([g, ren, done, found, c.inv, goalFold]); if (sig === goalSig && !goalEl.hidden) return; goalSig = sig;
-  goalEl.hidden = false; goalEl.classList.toggle('fold', goalFold);
+  goalEl.hidden = false; goalEl.classList.toggle('fold', goalFold); requestAnimationFrame(() => placeWin(goalEl));
   goalEl.innerHTML = `<div class="rank"><b>${esc(cur[1])}</b><span>${nx ? `${ren} / ${nx[0]} renown` : `${ren} renown`}</span><button class="gfold" title="${goalFold ? 'Show' : 'Fold'}">${goalFold ? '+' : '–'}</button><i style="width:${nx ? Math.round((ren - cur[0]) / (nx[0] - cur[0]) * 100) : 100}%"></i></div>
     <div class="gbody"><div class="goal"><small>Next</small><b>${esc(g.title)}</b><p>${esc(g.why)}</p>${g.to || g.open ? `<button class="gbtn" data-go>${esc(g.cta || 'Show the way')}</button>` : ''}</div>
     <div class="gsec"><small>The town asks today</small><ul>${ord}</ul></div>
@@ -5226,7 +5239,8 @@ function stepEmbers(dt) {
 const ACT1 = W4W.STAGE === 1;
 if (ACT1) document.body.classList.add('act1');
 document.addEventListener('click', e => { const b = e.target.closest?.('[data-beast],[data-chthon]'); if (!b) return; sfx.click(); if (b.dataset.beast) openBeast(b.dataset.beast); else openChthon(); });
-const GATE_CELL = [0, -W4W.TOWN_RING], DOME_R = W4W.TOWN_RING * 2 + 1.35, DOME_H = W4W.TOWN_RING + 3;
+const atVeil = (q, r) => W4W.insideDome(q, r) && W4W.DIRS.some(([a, b]) => !W4W.insideDome(q + a, r + b));
+const GATE_CELL = [0, -W4W.TOWN_RING], DOME_R = W4W.DOME_RADIUS, DOME_H = W4W.TOWN_RING + 3;
 const DOME_U = { uTime: U.uTime, uHits: { value: Array.from({ length: 8 }, () => new THREE.Vector4(0, -99, 0, -99)) }, uThin: { value: 0 } };
 let hitI = 0, domeMesh = null;
 function domeHit(p) { DOME_U.uHits.value[hitI++ % 8].set(p.x, p.y, p.z, U.uTime.value); }
@@ -5264,7 +5278,7 @@ async function buildPylons() {
   const [ob, crys] = await Promise.all([qModel('obelisk'), qModel('crystal')]);
   for (let i = 0; i < 6; i++) { const a = i / 6 * Math.PI * 2 + Math.PI / 6, p = new THREE.Vector3(Math.cos(a) * (DOME_R + 0.7), 0, Math.sin(a) * (DOME_R + 0.7));
     if (ob) qPlace(ob, p.x, p.z, 2.2, -a, { c: 0x1c2030, k: 0.7 });
-    if (crys) { const c = qPlace(crys, p.x, p.z, 0.55, a, { c: 0xffd08a, k: 0.8, e: 0xff8a2a, ei: 1.4 }); c.position.y += 2.15; }
+    if (crys) { const c = qPlace(crys, p.x, p.z, 0.55, a, { c: 0xffd08a, k: 0.8, e: 0xff8a2a, ei: 1.4 }); c.position.y += 2.15; c.traverse(m => { if (m.isMesh) m.material.userData.noFow = true; }); }
     const s = sprite(GLOW, p.x, 2.5, p.z, 1.6, 0xffa64a, 0.9); s.userData.base = 0.9; glowDecal(p.x, p.z, 1.6, 0xffa64a, 0.35); }
 }
 /* the North Gate: sealed since the ninth night */
@@ -5284,53 +5298,73 @@ function buildGate() {
   const sp = sprite(GLOW, p.x - dir.x * 0.4, 1.2, p.z - dir.z * 0.4, 1.2, 0xff6a3c, 0.6); sp.userData.base = 0.6;
   const a = new THREE.Object3D(); a.position.copy(dir.clone().multiplyScalar(DOME_R - 1.2)); scene.add(a); label('THE NORTH GATE · SEALED', a, 3.0, 'red');
 }
-/* the White: a storm wall, a dark floor of blown snow, and snow that never lands */
-let stormPts = null; const STORM_U = { uTime: U.uTime };
+/* the White: no walls, no rings: snow driven sideways by a wind that never stops, thick outside the Veil, thin under it */
+let stormPts = null;
+const STORM_U = { uTime: U.uTime, uR: { value: 0 }, uC: { value: new THREE.Vector2() }, uWind: { value: new THREE.Vector2(7.5, 2.4) } };
 function buildStorm() {
-  const floor = new THREE.Mesh(new THREE.RingGeometry(DOME_R + 0.3, 110, 128, 8).rotateX(-Math.PI / 2), new THREE.ShaderMaterial({ transparent: true, depthWrite: false, fog: true,
-    uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.fog, {}]),
-    vertexShader: `varying vec3 vW;
-      #include <fog_pars_vertex>
-      void main(){ vec4 w = modelMatrix * vec4(position, 1.); vW = w.xyz; vec4 mvPosition = viewMatrix * w; gl_Position = projectionMatrix * mvPosition;
-      #include <fog_vertex>
-      }`,
-    fragmentShader: `varying vec3 vW; uniform float uTime;
-      #include <fog_pars_fragment>
-      float h(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
-      float n2(vec2 p){ vec2 i = floor(p), f = fract(p); f = f * f * (3. - 2. * f); return mix(mix(h(i), h(i + vec2(1, 0)), f.x), mix(h(i + vec2(0, 1)), h(i + vec2(1, 1)), f.x), f.y); }
+  const N = LITE ? 4000 : 9000, pos = new Float32Array(N * 3), seed = new Float32Array(N);
+  for (let i = 0; i < N; i++) { pos.set([Math.random() * 70 - 35, Math.random() * 12, Math.random() * 70 - 35], i * 3); seed[i] = Math.random(); }
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('seed', new THREE.BufferAttribute(seed, 1));
+  STORM_U.uR.value = DOME_R;
+  const mat = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, uniforms: STORM_U,
+    vertexShader: `attribute float seed; uniform float uTime; uniform float uR; uniform vec2 uC; uniform vec2 uWind; varying float vA;
       void main(){
-        float d = length(vW.xz), a = atan(vW.z, vW.x);
-        vec2 q = vec2(a * 18.0 + uTime * 1.6, d * 0.9 - uTime * 0.25);
-        float streak = n2(q * vec2(1.0, 3.0)) * 0.6 + n2(q * vec2(2.3, 7.0) + 3.1) * 0.4;
-        float dark = smoothstep(${(DOME_R + 0.3).toFixed(1)}, ${(DOME_R + 6).toFixed(1)}, d);
-        vec3 col = mix(vec3(0.10, 0.12, 0.19), vec3(0.62, 0.68, 0.80), smoothstep(0.55, 0.9, streak) * 0.55);
-        gl_FragColor = vec4(mix(col, vec3(.85,.9,1.), dark * 0.25), 0.62 + dark * 0.33);
-        #include <fog_fragment>
-      }` }));
-  floor.material.uniforms.uTime = U.uTime; floor.position.y = 0.05; floor.renderOrder = 2; scene.add(floor);
-  // two curtains of driven snow, turning round the town
-  for (const [R, H, sp, op] of [[DOME_R + 1.6, 12, 1.4, 0.32], [DOME_R + 6, 18, 1.0, 0.55], [DOME_R + 15, 24, 0.6, 0.8]]) {
-    const m = new THREE.Mesh(new THREE.CylinderGeometry(R, R, H, 128, 1, true), new THREE.ShaderMaterial({ transparent: true, depthWrite: false, side: THREE.DoubleSide, uniforms: { uTime: U.uTime },
-      vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.); }`,
-      fragmentShader: `varying vec2 vUv; uniform float uTime;
-        float h(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
-        float n2(vec2 p){ vec2 i = floor(p), f = fract(p); f = f * f * (3. - 2. * f); return mix(mix(h(i), h(i + vec2(1, 0)), f.x), mix(h(i + vec2(0, 1)), h(i + vec2(1, 1)), f.x), f.y); }
-        void main(){ vec2 p = vec2(vUv.x * 60. + uTime * ${(sp * 2.4).toFixed(2)}, vUv.y * 9. + uTime * 0.35);
-          float s = n2(p * vec2(1., 2.5)) * 0.55 + n2(p * vec2(3., 9.) + 7.) * 0.45; float band = smoothstep(0., .25, vUv.y) * (1. - smoothstep(.55, 1., vUv.y));
-          gl_FragColor = vec4(mix(vec3(.55, .6, .72), vec3(.92, .95, 1.), s), (0.35 + s * 0.65) * band * ${op.toFixed(2)}); }` }));
-    m.position.y = H / 2 - 1; m.renderOrder = 4; scene.add(m);
-  }
-  // snow that never lands, blown round the Veil
-  const N = LITE ? 1200 : 3000, pos = new Float32Array(N * 3), meta = [];
-  for (let i = 0; i < N; i++) { const a = Math.random() * Math.PI * 2, r = DOME_R + 0.8 + Math.random() * 22, y = Math.random() * 9; pos.set([Math.cos(a) * r, y, Math.sin(a) * r], i * 3); meta.push({ a, r, y, w: 0.25 + Math.random() * 0.35 }); }
-  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-  stormPts = new THREE.Points(g, new THREE.PointsMaterial({ color: 0xe8f0ff, size: 0.13, transparent: true, opacity: 0.85, depthWrite: false })); stormPts.userData.meta = meta; stormPts.frustumCulled = false; scene.add(stormPts);
+        // every flake rides the wind; the box of snow follows the camera, so it never runs out
+        vec3 p = position; float sp = 0.6 + seed * 0.8;
+        p.xz += uWind * uTime * sp + vec2(sin(uTime * 1.3 + seed * 40.) * 0.6, cos(uTime * 0.9 + seed * 30.) * 0.4);
+        p.y = mod(position.y - uTime * (1.4 + seed * 1.2), 12.0);
+        p.xz = mod(p.xz - uC + 35., 70.) - 35. + uC;
+        float out_ = smoothstep(uR - 0.5, uR + 1.5, length(p.xz) + (p.y > 0. ? p.y * 0.0 : 0.));
+        // under the Veil only a few flakes get through, and slowly
+        vA = mix(0.18 * step(0.75, seed), 0.85, out_);
+        vec4 mv = modelViewMatrix * vec4(p, 1.); gl_PointSize = (1.6 + seed * 2.4) * mix(0.8, 1.6, out_) * (14. / -mv.z); gl_Position = projectionMatrix * mv; }`,
+    fragmentShader: `varying float vA; void main(){ vec2 c = gl_PointCoord - .5; float d = length(c * vec2(1., 2.2)); float a = (1. - smoothstep(.1, .5, d)) * vA; gl_FragColor = vec4(vec3(.9, .94, 1.), a); }` });
+  stormPts = new THREE.Points(g, mat); stormPts.frustumCulled = false; stormPts.renderOrder = 7; scene.add(stormPts);
 }
 function stepStorm(dt) {
-  if (!stormPts) return; const p = stormPts.geometry.attributes.position, M = stormPts.userData.meta;
-  for (let i = 0; i < M.length; i++) { const m = M[i]; m.a += dt * m.w * (12 / m.r) * 3; m.y -= dt * (0.6 + m.w); if (m.y < 0) m.y = 9; p.setXYZ(i, Math.cos(m.a) * m.r, m.y, Math.sin(m.a) * m.r); }
-  p.needsUpdate = true;
+  if (!stormPts) return; STORM_U.uC.value.set(controls.target.x, controls.target.z);
   DOME_U.uThin.value += (((XV?.town?.holds ?? S.town.B >= 0) ? 0 : 1) - DOME_U.uThin.value) * Math.min(1, dt * 0.5);
+}
+
+/* ---------- the dark: you see what is near you and what you have walked past; the rest is night ---------- */
+const FOW_N = 128, FOW_W = 80;
+const fowData = (() => { const d = new Uint8Array(FOW_N * FOW_N); try { const b = store.get('w4w.fow'); if (b) { const s = atob(b); for (let i = 0; i < Math.min(s.length, d.length); i++) d[i] = s.charCodeAt(i); } } catch {} return d; })();
+const FOW_TEX = new THREE.DataTexture(fowData, FOW_N, FOW_N, THREE.RedFormat); FOW_TEX.magFilter = FOW_TEX.minFilter = THREE.LinearFilter; FOW_TEX.needsUpdate = true;
+const FOW_U = { uFowTex: { value: FOW_TEX }, uFowP: { value: new THREE.Vector2(0, 0) }, uFowR: { value: 8.5 }, uFowDome: { value: W4W.DOME_RADIUS }, uFowOn: { value: 0 } };
+let fowSaveT = 0, fowPaintT = 0, fowScanT = 0;
+function fowPaint(x, z, rad) {
+  const px = (x / FOW_W + 0.5) * FOW_N, pz = (z / FOW_W + 0.5) * FOW_N, R = rad / FOW_W * FOW_N; let ch = false;
+  for (let j = Math.max(0, Math.floor(pz - R)); j <= Math.min(FOW_N - 1, Math.ceil(pz + R)); j++) for (let i = Math.max(0, Math.floor(px - R)); i <= Math.min(FOW_N - 1, Math.ceil(px + R)); i++) {
+    const d = Math.hypot(i - px, j - pz) / R; if (d > 1) continue; const v = Math.round(255 * Math.min(1, (1 - d) * 2.2)), k = j * FOW_N + i; if (v > fowData[k]) { fowData[k] = v; ch = true; } }
+  if (ch) FOW_TEX.needsUpdate = true;
+}
+function fowPatch(m) {
+  if (!m || m.userData.fow || m.userData.noFow || m.isSpriteMaterial || m.isPointsMaterial || m.isShaderMaterial || m.isLineBasicMaterial || m.isLineDashedMaterial) return; m.userData.fow = true;
+  const prev = m.onBeforeCompile, prevKey = m.customProgramCacheKey ? m.customProgramCacheKey.bind(m) : null;
+  m.onBeforeCompile = (sh, r) => { prev?.call(m, sh, r); Object.assign(sh.uniforms, FOW_U);
+    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vFowW;').replace('#include <project_vertex>', `#include <project_vertex>
+      { vec4 fw = vec4(transformed, 1.0);
+      #ifdef USE_INSTANCING
+        fw = instanceMatrix * fw;
+      #endif
+        vFowW = (modelMatrix * fw).xyz; }`);
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vFowW; uniform sampler2D uFowTex; uniform vec2 uFowP; uniform float uFowR; uniform float uFowDome; uniform float uFowOn;').replace('#include <dithering_fragment>', `#include <dithering_fragment>
+      { float d = distance(vFowW.xz, uFowP), near = 1.0 - smoothstep(uFowR * 0.4, uFowR, d), rr = length(vFowW.xz);
+        float inside = 1.0 - smoothstep(uFowDome - 0.6, uFowDome + 0.6, rr);
+        float seen = texture2D(uFowTex, vFowW.xz / ${FOW_W.toFixed(1)} + 0.5).r, core = 1.0 - smoothstep(4.5, 8.0, rr);
+        // past the Veil even your own light barely reaches; inside, what you have seen stays half-lit
+        float vis = max(near * mix(0.16, 1.0, inside), max(seen * 0.55, core * 0.75) * inside);
+        gl_FragColor.rgb = mix(gl_FragColor.rgb, mix(vec3(0.01, 0.013, 0.026), gl_FragColor.rgb, clamp(vis, 0.0, 1.0)), uFowOn); }`);
+  };
+  m.customProgramCacheKey = () => (prevKey ? prevKey() : '') + '|fow';
+  m.needsUpdate = true;
+}
+function stepFow() {
+  const now = performance.now(), on = hasChar() && $('#intro').hidden; FOW_U.uFowOn.value += ((on ? 1 : 0) - FOW_U.uFowOn.value) * 0.08;
+  if (now - fowScanT > 1500) { fowScanT = now; scene.traverse(o => { if (o.isMesh || o.isInstancedMesh || o.isSkinnedMesh) (Array.isArray(o.material) ? o.material : [o.material]).forEach(fowPatch); }); }
+  const a = avatars[myUid()]; if (!a) return; FOW_U.uFowP.value.set(a.g.position.x, a.g.position.z);
+  if (now - fowPaintT > 250) { fowPaintT = now; if (Math.hypot(a.g.position.x, a.g.position.z) < W4W.DOME_RADIUS) fowPaint(a.g.position.x, a.g.position.z, FOW_U.uFowR.value * 0.75); }
+  if (now - fowSaveT > 10000) { fowSaveT = now; try { let s = ''; for (let i = 0; i < fowData.length; i++) s += String.fromCharCode(fowData[i]); store.set('w4w.fow', btoa(s)); } catch {} }
 }
 
 /* ---------- the Hollow: what walks round the Veil and scratches at it ---------- */
@@ -5355,7 +5389,7 @@ async function buildHorrors() {
     const g = await qModel(H.model); if (!g) continue;
     const body = cloneSkinned(g.scene); body.updateMatrixWorld(true); const bb = new THREE.Box3().setFromObject(body, true), s = H.h / Math.max(1e-4, bb.max.y - bb.min.y);
     body.scale.multiplyScalar(s); body.position.y = -bb.min.y * s;
-    body.traverse(m => { if (m.isMesh) { m.castShadow = true; m.frustumCulled = false; if (m.material?.emissive && m.material.emissiveIntensity > 0.5) m.material.emissiveIntensity = 3; } });
+    body.traverse(m => { if (m.isMesh) { m.castShadow = true; m.frustumCulled = false; if (m.material?.emissive && m.material.emissiveIntensity > 0.5) { m.material.emissiveIntensity = 3; m.material.userData.noFow = true; } } });
     const root = new THREE.Group(); root.add(body); scene.add(root);
     const mx = new THREE.AnimationMixer(body), acts = Object.fromEntries(g.animations.map(a => [a.name.replace(/^.*\|/, ''), mx.clipAction(a)]));
     const B = { ...H, walk: 'Walk', idle: 'Idle', hit: 'Scratch', root, body, mx, acts, cur: '', a: i / HOLLOW.length * Math.PI * 2 + 0.3, dir: i % 2 ? -1 : 1, rad: H.r, mode: 'walk', t: 6 + Math.random() * 8, strikeT: 0 };
@@ -5443,7 +5477,7 @@ const ACT1_TASKS = [
   { id: 'mine', page: 'lamp', title: 'Light your lamp in the Veil', why: 'Start mining. Every rig in town is a lamp that Anna burns to hold the dome.', cta: 'Open the Mine', go: () => openHub() },
   { id: 'fire', page: 'fire', title: 'Feed the plaza fire', why: 'It holds the people, not the dome. For an hour the whole town feels it.', cta: 'Walk to the fire', go: () => walkTo('fire', 'fire') },
   { id: 'watch', page: 'white', title: 'Look into the White', why: 'Climb the Observatory. See what the storm lets you see.', cta: 'Walk to the Observatory', go: () => walkTo('observatory', 'observatory') },
-  { id: 'edge', page: 'scratch', title: 'Walk to the edge of the Veil', why: 'Stand where the light meets the snow, and watch what comes to scratch at it.', cta: 'Walk to the edge', go: () => { const c = myC(); if (!c) return; let best = null, bd = 99; for (const cell of ring(W4W.TOWN_RING)) { if (reserved.has(key(...cell))) continue; const d = W4W.dist(cell, [c.q, c.r]); if (d < bd) { bd = d; best = cell; } } if (best) planTo(best); } },
+  { id: 'edge', page: 'scratch', title: 'Walk to the edge of the Veil', why: 'Stand where the light meets the snow, and watch what comes to scratch at it.', cta: 'Walk to the edge', go: () => { const c = myC(); if (!c) return; let best = null, bd = 99; for (let n = 6; n <= W4W.DOME_RING; n++) for (const cell of ring(n)) { if (reserved.has(key(...cell)) || !atVeil(...cell)) continue; const d = W4W.dist(cell, [c.q, c.r]); if (d < bd) { bd = d; best = cell; } } if (best) planTo(best); } },
   { id: 'gate', page: 'knock', title: 'Go to the North Gate', why: 'It has been sealed since the ninth night. Read what is written on it.', cta: 'Walk to the Gate', go: () => walkTo('gate', 'gate') },
   { id: 'library', page: 'wardens', title: 'Find the drawing in the Library', why: 'The one thing in town older than the cold. It is the reason anyone still hopes.', cta: 'Walk to the Library', go: () => walkTo('library', 'library') },
 ];
@@ -5459,13 +5493,13 @@ function act1Mark(id) {
 function act1Watch(c) {
   if (!ACT1 || !c) return;
   if (me()?.state === 'mining') act1Mark('mine');
-  if (!c.path.length && W4W.ringOf(c.q, c.r) === W4W.TOWN_RING) act1Mark('edge');
+  if (!c.path.length && atVeil(c.q, c.r)) act1Mark('edge');
   if (!c.path.length && W4W.dist([c.q, c.r], GATE_CELL) <= 0) act1Mark('gate');
 }
 function act1Goals(c) {
   const todo = ACT1_TASKS.filter(t => !act1Done.has(t.id)), next = todo[0], m = Math.round((S.town.melt || 0) * 100), done = ACT1_TASKS.length - todo.length;
   const sig = JSON.stringify([next?.id, done, m, goalFold]); if (sig === goalSig && !goalEl.hidden) return; goalSig = sig;
-  goalEl.hidden = false; goalEl.classList.toggle('fold', goalFold);
+  goalEl.hidden = false; goalEl.classList.toggle('fold', goalFold); requestAnimationFrame(() => placeWin(goalEl));
   goalEl.innerHTML = `<div class="rank"><b>Act I · Under the Veil</b><span>${done} of ${ACT1_TASKS.length}</span><button class="gfold" title="${goalFold ? 'Show' : 'Fold'}">${goalFold ? '+' : '–'}</button><i style="width:${Math.round(done / ACT1_TASKS.length * 100)}%"></i></div>
     <div class="gbody">${next ? `<div class="goal"><small>Next</small><b>${esc(next.title)}</b><p>${esc(next.why)}</p><button class="gbtn" data-go>${esc(next.cta)}</button></div>`
       : `<div class="goal"><small>Now</small><b>Keep the light</b><p>You have done everything the first act asks. Keep your rig on, feed the fire, welcome the next one through the church door. The Gate waits for Anna.</p></div>`}
@@ -5501,7 +5535,7 @@ function loop(now = performance.now()) {
   if ((spriteClock += dt) > 1) { spriteClock = 0; spriteCache = []; scene.traverse(o => { if (o.isSprite && (o.userData.flicker || o.userData.blink)) spriteCache.push(o); }); } U.uTime.value += dt; const t = U.uTime.value;
   U.uHeat.value += (heatTarget - U.uHeat.value) * Math.min(1, dt * 0.8);
   U.uBoost.value = Math.max(0, U.uBoost.value - dt * 0.45);
-  stepWaves(dt); stepEmbers(dt); stepMotes(dt); if (!ACT1) stepFauna(dt); else { stepStorm(dt); stepHollow(dt); }
+  stepWaves(dt); stepEmbers(dt); stepMotes(dt); if (!ACT1) stepFauna(dt); else { stepStorm(dt); stepHollow(dt); stepFow(); }
   if (S.town.B > 0 && (waveClock += dt) > Math.max(2.2, 6 - S.town.B * 0.15)) { waveClock = 0; pulse(0.25); }
   snowNow += (snowTarget - snowNow) * Math.min(1, dt * 0.6);
   if (SOFT && snow && snow.visible) { snow.visible = false; startSnow2D(); }

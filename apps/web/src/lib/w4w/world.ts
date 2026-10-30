@@ -79,8 +79,10 @@ export const GUARD_MS = 20_000
 export const MAX_RING = 16 + SHIFT
 /** The game ships in acts. Act I: the town under Anna's dome, and nothing outside it. */
 export const STAGE = 1
-export const DOME_RING = TOWN_RING // the last ring of cells inside the dome
-export const insideDome = (q: number, r: number) => ringOf(q, r) <= DOME_RING
+export const DOME_RING = TOWN_RING + 2 // no cell beyond this ring is inside the dome
+/** The Veil is round: a cell is inside when its centre is clear of the dome wall by more than a cell's radius. World units. */
+export const DOME_RADIUS = 18.4
+export const insideDome = (q: number, r: number) => { const x = 2 * (q + r / 2), z = 1.7320508 * r; return Math.hypot(x, z) <= DOME_RADIUS - 1.2 }
 /** Anna's block and its boilers fill the centre cell and the ring around it: you stand at ring 2, never inside. */
 export const CORE_RING = 1
 export const inCore = (q: number, r: number) => ringOf(q, r) <= CORE_RING
@@ -277,7 +279,7 @@ export const dist = (a: Cell, b: Cell) => ringOf(a[0] - b[0], a[1] - b[1])
 export const worldXZ = (q: number, r: number) => [2 * (q + r / 2), 1.7320508 * r] as const
 export function zoneOf(q: number, r: number) {
   const n = ringOf(q, r)
-  return n <= TOWN_RING ? 0 : n <= 8 + SHIFT ? 1 : n <= 12 + SHIFT ? 2 : n <= MAX_RING ? 3 : 4
+  return insideDome(q, r) ? 0 : n <= TOWN_RING ? 1 : n <= 8 + SHIFT ? 1 : n <= 12 + SHIFT ? 2 : n <= MAX_RING ? 3 : 4
 }
 
 function hash(a: number, b: number, s = 0) {
@@ -330,7 +332,8 @@ export const landmarkAt = (q: number, r: number) => LANDMARKS.find(l => dist([q,
 /** What stands on a cell. The game draws exactly this; the server walks exactly this. */
 export function terrain(q: number, r: number): Terrain {
   const n = ringOf(q, r)
-  if (n <= TOWN_RING) return 'town'
+  if (insideDome(q, r)) return 'town'
+  if (n <= TOWN_RING) return 'open'
   if (n > MAX_RING) return 'void'
   if (roadAt(q, r) || lakeAt(q, r)) return 'open'
   const camp = dist([q, r], LANDMARKS[0].at), choir = dist([q, r], LANDMARKS[2].at)
