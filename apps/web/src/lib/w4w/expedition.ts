@@ -7,7 +7,7 @@ import * as W from './world'
  * loads the world, lets the rules run, and writes back what changed. The server walks every character and
  * counts the cold even while their tab is closed.
  */
-export const KX = { chars: 'w4w:c:chars', hearths: 'w4w:c:hearths', bags: 'w4w:c:bags', nodes: 'w4w:c:nodes', rime: 'w4w:c:rime', library: 'w4w:c:library', shards: 'w4w:c:shards', anna: 'w4w:c:anna', delivered: 'w4w:c:delivered', pylons: 'w4w:c:pylons', story: 'w4w:c:story', letters: 'w4w:c:letters', lread: 'w4w:c:lread' }
+export const KX = { chars: 'w4w:c:chars', hearths: 'w4w:c:hearths', bags: 'w4w:c:bags', nodes: 'w4w:c:nodes', rime: 'w4w:c:rime', library: 'w4w:c:library', shards: 'w4w:c:shards', anna: 'w4w:c:anna', delivered: 'w4w:c:delivered', pylons: 'w4w:c:pylons', story: 'w4w:c:story', letters: 'w4w:c:letters', lread: 'w4w:c:lread', say: 'w4w:c:say', sayT: 'w4w:c:sayT', replies: 'w4w:c:replies', replyT: 'w4w:c:replyT' }
 
 const safe = (v: string | null | undefined) => { if (!v) return null; try { return JSON.parse(v) } catch { return null } }
 const parseAll = <T>(m: unknown) => Object.fromEntries(Object.entries(pairs(m)).map(([k, v]) => [k, safe(v) as T]).filter(([, v]) => v)) as Record<string, T>
@@ -68,6 +68,8 @@ export async function revive(uid: string) {
 export async function act(uid: string, op: string, b: Record<string, unknown>) {
   const ws = await load(); const d = W.newDirty()
   if (op === 'readletter') return readLetter(ws, d, uid, String(b.id ?? ''))
+  if (op === 'say') return sayAloud(ws, d, uid, b.text)
+  if (op === 'reply') return replyUnderGate(ws, d, uid, b.text)
   const r = W.action(ws, uid, op, b, d)
   await save(ws, d)
   return r.ok ? { ok: true as const, data: await withLetters(W.viewOf(ws, uid, r.events), uid) } : { ok: false as const, error: r.error, status: r.status }
@@ -77,7 +79,7 @@ export async function act(uid: string, op: string, b: Record<string, unknown>) {
  * The admin slips a letter under the North Gate. It lies there for a set time (an hour by default). Whoever walks to
  * the Gate in that time can read it and keep it. When the time is up the snow takes it, and those who missed it see
  * only that a letter came. Texts live in Redis, never in the public repo or the game file, so nobody reads ahead. */
-export type Letter = { id: string; at: number; until: number; from: string; title: string; text: string }
+export type Letter = { id: string; at: number; until: number; from: string; title: string; text: string; to?: string }
 async function lettersAll(): Promise<Letter[]> {
   const [m] = await pipe([['HGETALL', KX.letters]])
   return Object.values(parseAll<Letter>(m)).sort((a, b) => a.at - b.at)
@@ -86,11 +88,43 @@ async function readMap(uid: string): Promise<Record<string, number>> {
   const [r] = await pipe([['HGET', KX.lread, uid]]); return (safe(r as string | null) as Record<string, number> | null) ?? {}
 }
 async function withLetters<T extends object>(v: T, uid: string, now = Date.now()) {
-  const [all, read, cnt] = await Promise.all([lettersAll(), readMap(uid), pipe([['HGETALL', KX.letters + ':n']]).then(([m]) => pairs(m))])
-  const letters = all.filter(l => l.at <= now).slice(-40).map(l => { const reads = Number(cnt[l.id] ?? 0)
-    return read[l.id] ? { id: l.id, at: l.at, until: l.until, from: l.from, title: l.title, text: l.text, read: read[l.id], reads }
-      : now < l.until ? { id: l.id, at: l.at, until: l.until, from: l.from, title: l.title, open: true, reads } : { id: l.id, at: l.at, until: l.until, from: l.from, title: l.title, missed: true, reads } })
-  return { ...v, letters }
+  const [all, read, cnt, said] = await Promise.all([lettersAll(), readMap(uid), pipe([['HGETALL', KX.letters + ':n']]).then(([m]) => pairs(m)), pipe([['LRANGE', KX.say, 0, 199]]).then(([l]) => (l as string[]) ?? [])])
+  const letters = all.filter(l => l.at <= now && (!l.to || l.to === uid)).slice(-40).map(l => { const reads = Number(cnt[l.id] ?? 0), mine = l.to === uid || undefined
+    return read[l.id] ? { id: l.id, at: l.at, until: l.until, from: l.from, title: l.title, text: l.text, read: read[l.id], reads, mine }
+      : now < l.until ? { id: l.id, at: l.at, until: l.until, from: l.from, title: l.title, open: true, reads, mine } : { id: l.id, at: l.at, until: l.until, from: l.from, title: l.title, missed: true, reads, mine } })
+  // what you heard: only words said within earshot of where you stand, in the last quarter of an hour
+  const me = (v as { me?: { q: number; r: number } | null }).me
+  const heard = !me ? [] : said.map(x => safe(x) as Said | null).filter((x): x is Said => !!x && now - x.t < SAY_KEEP && (x.uid === uid || W.dist([x.q, x.r], [me.q, me.r]) <= EARSHOT)).slice(0, 30).reverse()
+  return { ...v, letters, heard }
+}
+
+/* ================= talking: only people standing near you hear what you say ================= */
+type Said = { id: string; t: number; uid: string; nick: string; q: number; r: number; text: string }
+export const EARSHOT = 3, SAY_KEEP = 15 * 60_000
+const clean = (t: unknown, n: number) => String(t ?? '').replace(/[\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, n)
+async function sayAloud(ws: W.WState, d: W.Dirty, uid: string, raw: unknown): Promise<{ ok: true; data: object } | { ok: false; error: string; status?: number }> {
+  W.stepAll(ws, d); await save(ws, d)
+  const c = ws.chars[uid]; if (!c) return { ok: false, error: 'No character yet.' }
+  const text = clean(raw, 240); if (!text) return { ok: false, error: 'Say something.' }
+  const [last] = await pipe([['HGET', KX.sayT, uid]]); if (ws.now - Number(last ?? 0) < 2500) return { ok: false, error: 'Slow down. Let them answer.' }
+  const at: W.Cell = [c.q, c.r]
+  const x: Said = { id: `s${ws.now.toString(36)}${uid.slice(-4)}`, t: ws.now, uid, nick: W.nickIn(ws, uid), q: at[0], r: at[1], text }
+  await pipe([['LPUSH', KX.say, JSON.stringify(x)], ['LTRIM', KX.say, 0, 199], ['HSET', KX.sayT, uid, ws.now]])
+  return { ok: true, data: await withLetters(W.viewOf(ws, uid), uid) }
+}
+
+/* ================= answers slipped under the Gate: only the admin reads them ================= */
+type Reply = { id: string; t: number; uid: string; nick: string; text: string; to?: string }
+async function replyUnderGate(ws: W.WState, d: W.Dirty, uid: string, raw: unknown): Promise<{ ok: true; data: object } | { ok: false; error: string; status?: number }> {
+  W.stepAll(ws, d); await save(ws, d)
+  const c = ws.chars[uid]; if (!c) return { ok: false, error: 'No character yet.' }
+  if (c.path.length || W.dist([c.q, c.r], W.GATE_CELL) > 1) return { ok: false, error: 'Walk to the North Gate. The gap under it is the only way out.' }
+  const text = clean(raw, 1500); if (text.length < 2) return { ok: false, error: 'Write something first.' }
+  const [last] = await pipe([['HGET', KX.replyT, uid]]); const wait = 30 * 60_000 - (ws.now - Number(last ?? 0))
+  if (wait > 0) return { ok: false, error: `Your last note has hardly reached the snow. Again in ${Math.ceil(wait / 60000)} min.` }
+  const r: Reply = { id: `r${ws.now.toString(36)}${uid.slice(-4)}`, t: ws.now, uid, nick: W.nickIn(ws, uid), text }
+  await pipe([['LPUSH', KX.replies, JSON.stringify(r)], ['LTRIM', KX.replies, 0, 499], ['HSET', KX.replyT, uid, ws.now]])
+  return { ok: true, data: await withLetters(W.viewOf(ws, uid), uid) }
 }
 async function readLetter(ws: W.WState, d: W.Dirty, uid: string, id: string): Promise<{ ok: true; data: object } | { ok: false; error: string; status?: number }> {
   W.stepAll(ws, d); await save(ws, d)
@@ -116,7 +150,8 @@ export async function storyDesk(b: Record<string, unknown>) {
     if (!title || !text) return { ok: false as const, error: 'A letter needs a title and a text.' }
     const at = b.at ? Number(new Date(String(b.at))) : now, hours = Math.max(0.1, Math.min(48, Number(b.hours ?? 1) || 1))
     if (!Number.isFinite(at)) return { ok: false as const, error: 'That time does not parse.' }
-    const l: Letter = { id: 'l' + at.toString(36), at, until: at + hours * 3600_000, from: String(b.from ?? 'the twelve').slice(0, 60), title, text }
+    const to = b.to ? String(b.to).trim().slice(0, 80) : ''
+    const l: Letter = { id: 'l' + at.toString(36), at, until: at + hours * 3600_000, from: String(b.from ?? 'the twelve').slice(0, 60), title, text, ...(to ? { to } : {}) }
     await pipe([['HSET', KX.letters, l.id, JSON.stringify(l)]])
   } else if (cmd === 'del') await pipe([['HDEL', KX.letters, String(b.id ?? '')]])
   else if (cmd === 'phase') { story.phase = Math.max(0, Math.min(3, Number(b.phase) || 0)); await pipe([['SET', KX.story, JSON.stringify(story)]]) }
@@ -124,5 +159,7 @@ export async function storyDesk(b: Record<string, unknown>) {
   else if (cmd === 'unveil') { story.unveil = { at: now, until: now + (Number(b.hours) || 3) * 3600_000 }; await pipe([['SET', KX.story, JSON.stringify(story)], ['LPUSH', K.events, JSON.stringify({ id: `uv${now}`, t: now, topic: 'unveil', by: '', tab: 'server', data: { until: story.unveil.until } })]]) }
   else if (cmd === 'calm') { story.unveil = null; await pipe([['SET', KX.story, JSON.stringify(story)]]) }
   const [cnt] = await pipe([['HGETALL', KX.letters + ':n']]); const n = pairs(cnt)
-  return { ok: true as const, data: { story: { ...story, hush: Math.round(W.hushNow(story, now)) }, letters: (await lettersAll()).map(l => ({ ...l, reads: Number(n[l.id] ?? 0) })) } }
+  const [rl] = await pipe([['LRANGE', KX.replies, 0, 99]])
+  const replies = ((rl as string[]) ?? []).map(x => safe(x)).filter(Boolean)
+  return { ok: true as const, data: { story: { ...story, hush: Math.round(W.hushNow(story, now)) }, letters: (await lettersAll()).map(l => ({ ...l, reads: Number(n[l.id] ?? 0) })), replies } }
 }
