@@ -1,7 +1,7 @@
 <title>W4W Aigarth</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Alegreya+Sans+SC:wght@500;700&family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&family=Cinzel:wght@400;500;600;700&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@400;500;700&family=Alegreya+Sans+SC:wght@500;700&family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&family=Cinzel:wght@400;500;600;700&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
 <style>
 /* A night town seen from above: amber light against blue frost. One display face, one body face, one wide label face. */
 :root{
@@ -252,7 +252,7 @@ input.name,textarea.name{width:100%;padding:11px 12px;border-radius:10px;border:
 .paper p{margin:0 0 10px}
 .paper .col{border-top:1px solid var(--line);padding-top:10px;margin-top:12px}
 .paper .kick{font-family:var(--f-label);font-size:9.5px;letter-spacing:.14em;color:var(--gold);display:block;margin-bottom:4px}
-.paper blockquote{margin:0;padding:8px 12px;border-left:2px solid var(--gold);font-style:italic}
+.paper blockquote{margin:0;padding:8px 12px;border-left:2px solid var(--gold);font-style:normal}
 .note{padding:10px 12px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;background:rgba(241,226,192,.04)}
 .note small{display:block;color:var(--mute);font-size:12px;margin-top:4px}
 .shelf{display:grid;gap:8px}
@@ -298,7 +298,7 @@ body.intro #dock,body.intro #feed,body.intro #online,body.intro #meter{visibilit
 #intro .card{position:relative;width:min(900px,100%);min-height:200px;padding:22px 26px 18px calc(min(60vh,480px) * .714 + 4px);border:1px solid rgba(232,176,92,.42);border-radius:16px;background:linear-gradient(rgba(12,15,26,.9),rgba(8,10,18,.94));box-shadow:0 0 0 1px rgba(0,0,0,.4),0 18px 60px rgba(0,0,0,.55)}
 #intro img{position:absolute;left:-18px;bottom:0;height:min(60vh,480px);width:auto;max-width:none;pointer-events:none;-webkit-mask-image:linear-gradient(#000 82%,transparent);mask-image:linear-gradient(#000 82%,transparent)}
 #intro .card>div{position:relative}
-#intro .card.anna{border-color:rgba(159,195,255,.5)} #intro .card.anna .who{color:#cfe6ff;border-color:rgba(159,195,255,.5)} #intro .card.anna p{color:#dcecff;font-style:italic}
+#intro .card.anna{border-color:rgba(159,195,255,.5)} #intro .card.anna .who{color:#cfe6ff;border-color:rgba(159,195,255,.5)} #intro .card.anna p{color:#dcecff;font-style:normal}
 #intro .who{display:inline-block;margin-top:-36px;padding:5px 12px;border:1px solid rgba(232,176,92,.5);border-radius:8px;background:#0d1020;font-family:var(--f-label);font-size:11px;letter-spacing:.16em;color:var(--gold)}
 #intro p{margin:12px 0 14px;font-family:var(--f-display);font-weight:600;font-size:clamp(22px,2.7vw,31px);line-height:1.16;color:var(--cream);min-height:3.5em;text-wrap:pretty}
 #intro .row{justify-content:flex-end;gap:10px}
@@ -383,7 +383,7 @@ body.delir #frostfx{animation:delir 2.6s infinite steps(1)}
   --steel-0:#0a0e14; --steel-1:#151b24; --steel-2:#232c38; --steel-3:#33404f; --steel-hi:#8396ad; --steel-ink:#c9d5e3;
   --paper:#e6dcc3; --paper-2:#d2c29f; --ink-d:#2b241b; --pencil:#4d4437;
   --leather:#2a1810; --leather-2:#46291a; --vellum:#ede2c8; --ember:#f2a347; --ember-2:#c9701d; --blood:#9e2a22;
-  --f-display:Cinzel,'Trajan Pro',Georgia,serif; --f-print:'IM Fell English',Georgia,serif; --f-label:'Alegreya Sans SC','Alegreya Sans',system-ui,sans-serif; --f-body:'Alegreya Sans',system-ui,sans-serif; --f-hand:'IM Fell English',Georgia,serif;
+  --f-display:Cinzel,'Trajan Pro',Georgia,serif; --f-print:Alegreya,Georgia,serif; --f-label:'Alegreya Sans SC','Alegreya Sans',system-ui,sans-serif; --f-body:'Alegreya Sans',system-ui,sans-serif; --f-hand:Alegreya,Georgia,serif;
   --plate:var(--tex-brushed),linear-gradient(180deg,#232b36 0%,#161c25 55%,#10151c 100%);
   --bevel:inset 0 1px 0 rgba(200,215,235,.22),inset 0 -1px 0 rgba(0,0,0,.6),inset 0 0 0 1px rgba(0,0,0,.35),0 6px 18px rgba(0,0,0,.45);
   --rivets:radial-gradient(circle at 9px 9px,#c3cfdc 0 1.2px,#56636f 1.8px,#1a2028 2.6px,transparent 3.2px),radial-gradient(circle at calc(100% - 9px) 9px,#c3cfdc 0 1.2px,#56636f 1.8px,#1a2028 2.6px,transparent 3.2px),radial-gradient(circle at 9px calc(100% - 9px),#c3cfdc 0 1.2px,#56636f 1.8px,#1a2028 2.6px,transparent 3.2px),radial-gradient(circle at calc(100% - 9px) calc(100% - 9px),#c3cfdc 0 1.2px,#56636f 1.8px,#1a2028 2.6px,transparent 3.2px);
@@ -427,10 +427,10 @@ body{font-family:var(--f-body);font-size:16px}
 .lbl.red{color:#ffd3cc;background:linear-gradient(180deg,#3a1512,#1c0907);box-shadow:inset 0 1px 0 rgba(255,160,150,.25),0 0 0 1px #000}
 .lbl.walker{color:#dbe8ff}
 .lbl.demo{opacity:.78}
-.lbl.place{font-family:var(--f-display);font-style:italic;font-weight:600;font-size:14px;letter-spacing:.02em;color:#f1e6d0;background:linear-gradient(180deg,rgba(40,32,24,.85),rgba(18,14,10,.85));box-shadow:inset 0 1px 0 rgba(255,220,170,.2),0 0 0 1px rgba(0,0,0,.7)}
+.lbl.place{font-family:var(--f-display);font-style:normal;font-weight:600;font-size:14px;letter-spacing:.02em;color:#f1e6d0;background:linear-gradient(180deg,rgba(40,32,24,.85),rgba(18,14,10,.85));box-shadow:inset 0 1px 0 rgba(255,220,170,.2),0 0 0 1px rgba(0,0,0,.7)}
 .lbl.pyl{font-size:10.5px;padding:2px 7px 1px;color:#ffd79a;background:linear-gradient(180deg,rgba(60,32,10,.85),rgba(24,12,4,.85))} .lbl.pyl.crack{color:#ffd0c4;background:linear-gradient(180deg,#5a1208,#2a0602);box-shadow:0 0 0 1px #000,0 0 12px rgba(255,60,30,.6)}
 .pbars{display:grid;gap:5px} .pbar{display:grid;grid-template-columns:150px 1fr 44px;align-items:center;gap:8px;font-size:13px} .pbar i{height:7px;border-radius:4px;background:rgba(0,0,0,.5);overflow:hidden;box-shadow:inset 0 0 0 1px rgba(255,166,74,.2)} .pbar i b{display:block;height:100%;background:linear-gradient(90deg,#c4561a,#ffb35a)} .pbar.crack i b{background:linear-gradient(90deg,#8a1208,#ff3a1a)} .pbar.on span{color:#ffd79a;font-weight:600} .pbar em{font-style:normal;text-align:right;color:#cdbb9c} .pbar.crack em{color:#ff7a5a}
-.lbl.road{font-family:var(--f-display);font-style:italic;font-size:12px;color:#e8d8b8;background:rgba(30,22,14,.6);box-shadow:none;opacity:.85} .lbl.road::after{display:none}
+.lbl.road{font-family:var(--f-display);font-style:normal;font-size:12px;color:#e8d8b8;background:rgba(30,22,14,.6);box-shadow:none;opacity:.85} .lbl.road::after{display:none}
 
 /* ---------- the instrument plate: warmth, health, energy, load ---------- */
 #hud{border:0;border-radius:6px;width:270px;padding:14px 16px 13px;gap:7px;background:var(--rivets),var(--plate);box-shadow:var(--bevel);overflow:hidden}
@@ -485,39 +485,25 @@ body{font-family:var(--f-body);font-size:16px}
 .book b,.opt b,.order .t,details.lore summary b{font-family:var(--f-print);font-weight:400;font-size:17.5px;color:#f1e6d0}
 .tag{border-radius:3px;font-family:var(--f-label);font-weight:600;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase}
 
-/* the journal: a thick book, leather outside, vellum inside */
-#panel[data-kind=chronicle]{width:min(520px,calc(100vw - 32px));background:var(--tex-leather),linear-gradient(135deg,#4a2c1c,#2a1810 60%,#1d100a);box-shadow:inset 0 0 0 2px #120a06,inset 0 0 0 7px #3c2416,inset 0 0 0 8px rgba(240,200,150,.18),inset 0 0 40px rgba(0,0,0,.6),0 24px 70px rgba(0,0,0,.65)}
-#panel[data-kind=chronicle] header{background:none;box-shadow:none;padding:20px 26px 10px}
-#panel[data-kind=chronicle] header h2{font-size:34px;color:#e9c99a;text-shadow:0 1px 0 #000,0 0 1px #000}
-#panel[data-kind=chronicle] header p{color:rgba(233,201,154,.7)}
-#panel[data-kind=chronicle] #pbody{margin:0 14px 16px;padding:22px 24px 24px 34px;border-radius:2px;background:var(--tex-grain),linear-gradient(90deg,#c9b78f 0,#e7dcc0 4%,#efe5cc 50%,#e9dec3 100%);color:var(--ink-d);box-shadow:inset 10px 0 18px -10px rgba(60,35,15,.6),0 2px 0 #b8a47c,0 4px 0 #a8946c,0 6px 0 #97835d,0 8px 14px rgba(0,0,0,.5)}
-#panel[data-kind=chronicle] .jtabs{border:0;padding:0;border-bottom:1px solid rgba(60,40,20,.35);border-radius:0;gap:0}
-#panel[data-kind=chronicle] .jtabs button{border-radius:0;color:rgba(43,36,27,.6);font-family:var(--f-display);font-size:18px;letter-spacing:.06em;text-transform:none;padding:6px 0 8px}
-#panel[data-kind=chronicle] .jtabs button.on{background:none;color:var(--ink-d);box-shadow:inset 0 -2px 0 #7a1e16}
-#panel[data-kind=chronicle] .jstat{background:rgba(120,90,50,.08)!important;box-shadow:inset 0 0 0 1px rgba(60,40,20,.22)}
-#panel[data-kind=chronicle] .jstat i{color:#6d5a42;font-family:var(--f-label);font-size:12px}
-#panel[data-kind=chronicle] .jstat b{font-family:var(--f-print);font-weight:400;color:#1d160e}
-#panel[data-kind=chronicle] .jstat span{color:#6d5a42}
-#panel[data-kind=chronicle] #pbody h3{color:#7a1e16;font-family:var(--f-display);font-size:16px;letter-spacing:.1em}
-#panel[data-kind=chronicle] #pbody h3::after{background:linear-gradient(90deg,rgba(122,30,22,.45),transparent)}
-#panel[data-kind=chronicle] .chron li{border-bottom:1px solid rgba(60,40,20,.18);font-family:var(--f-print);font-size:15.5px;line-height:1.4;color:#2b241b}
-#panel[data-kind=chronicle] .chron li b{color:#1a140c!important}
-#panel[data-kind=chronicle] .chron .n{font-family:var(--f-display);color:#7a1e16;font-size:16px}
-#panel[data-kind=chronicle] .chron .h,#panel[data-kind=chronicle] .mute{color:#7a6a52}
-#panel[data-kind=chronicle] .tag{color:#6d5a42;border-color:rgba(60,40,20,.3)}
-#panel[data-kind=chronicle] .x,#panel[data-kind=note] .x{background:none;box-shadow:none;color:#e9c99a}
+/* the journal: the same iron case as every other window; tabs are engraved labels */
+#panel[data-kind=chronicle]{width:min(540px,calc(100vw - 32px))}
+#panel[data-kind=chronicle] .jtabs{display:flex;flex-wrap:wrap;gap:2px 18px;padding:0 0 2px;margin:0 0 16px;border:0;border-bottom:1px solid rgba(242,163,71,.22);border-radius:0}
+#panel[data-kind=chronicle] .jtabs button{padding:7px 1px 9px;border-radius:0;background:none;color:#9a8e7a;font:600 13.5px var(--f-label);letter-spacing:.08em;text-transform:none}
+#panel[data-kind=chronicle] .jtabs button:hover{color:#e9dcc4} #panel[data-kind=chronicle] .jtabs button.on{background:none;color:#ffd79a;box-shadow:inset 0 -2px 0 #f2a347}
+#panel[data-kind=chronicle] .chron li{font-size:14.5px;line-height:1.5}
+#panel[data-kind=note] .x{background:none;box-shadow:none;color:#e9c99a}
 /* the field manual (FAQ) and the library: same book, lighter */
-#panel[data-kind=faq] #pbody,#panel[data-kind=library] #pbody{margin:0 12px 14px;border-radius:2px;background:var(--tex-grain),linear-gradient(90deg,#d8c9a6,#ebe1c8 5%,#efe6cf);color:var(--ink-d);box-shadow:inset 10px 0 16px -10px rgba(60,35,15,.5),0 8px 14px rgba(0,0,0,.4)}
-#panel[data-kind=faq] .faq summary{font-family:var(--f-print);font-weight:400;font-size:18.5px;color:#1d160e}
-#panel[data-kind=faq] .faq[open] summary{color:#7a1e16}
-#panel[data-kind=faq] .faq{border-bottom:1px solid rgba(60,40,20,.2)}
-#panel[data-kind=faq] .faq p,#panel[data-kind=faq] .faq li{color:#2b241b;font-size:15px}
-#panel[data-kind=faq] #pbody h3,#panel[data-kind=library] #pbody h3{color:#7a1e16}
+#panel[data-kind=library] #pbody{margin:0 12px 14px;border-radius:2px;background:var(--tex-grain),linear-gradient(90deg,#d8c9a6,#ebe1c8 5%,#efe6cf);color:var(--ink-d);box-shadow:inset 10px 0 16px -10px rgba(60,35,15,.5),0 8px 14px rgba(0,0,0,.4)}
+#panel[data-kind=faq] .faq summary{font-family:var(--f-print);font-weight:500;font-size:17.5px;color:#f1e6d0}
+#panel[data-kind=faq] .faq[open] summary{color:#ffd79a}
+#panel[data-kind=faq] .faq{border-bottom:1px solid rgba(242,163,71,.14)}
+#panel[data-kind=faq] .faq p,#panel[data-kind=faq] .faq li{color:#ddd3c0;font-size:15.5px;line-height:1.6}
+#panel[data-kind=library] #pbody h3{color:#7a1e16}
 #panel[data-kind=library] .book,#panel[data-kind=library] details.lore{background:rgba(120,90,50,.07)!important;box-shadow:inset 0 0 0 1px rgba(60,40,20,.2)}
 #panel[data-kind=library] .book b,#panel[data-kind=library] details.lore summary b{color:#1d160e}
 #panel[data-kind=library] .book span,#panel[data-kind=library] details.lore summary span,#panel[data-kind=library] .mute{color:#6d5a42}
 #panel[data-kind=library] details.lore p{color:#2b241b;font-family:var(--f-print);font-size:16px}
-#panel[data-kind=library] .say{background:none;box-shadow:none;padding:0 0 4px;font-style:italic}
+#panel[data-kind=library] .say{background:none;box-shadow:none;padding:0 0 4px;font-style:normal}
 /* a found note: a single sheet, handwritten */
 #panel[data-kind=note]{background:var(--tex-grain),radial-gradient(130% 100% at 20% 0%,#f0e6cf,#dccdab 70%,#c9b68c);box-shadow:0 24px 60px rgba(0,0,0,.6);transform:rotate(.7deg)}
 #panel[data-kind=note] header{background:none;box-shadow:none}
@@ -551,7 +537,7 @@ body{font-family:var(--f-body);font-size:16px}
 .hub-win nav button.on{background:linear-gradient(90deg,rgba(242,163,71,.16),transparent);box-shadow:inset 3px 0 0 var(--ember)}
 .hcard .big,.jstat b,.part .v,.split b{font-family:var(--f-label);font-weight:700}
 .jtabs button,.mchips i,.crow i,.rules b,.jstat i{font-family:var(--f-label);font-weight:600;font-size:12.5px}
-.hcard .maria{font-family:var(--f-print);font-style:italic;font-weight:400;font-size:21px}
+.hcard .maria{font-family:var(--f-print);font-style:normal;font-weight:400;font-size:21px}
 body.hub #xact{display:none}
 .bub{border-radius:3px!important;font-size:15px}
 .bub.m{background:var(--tex-grain),linear-gradient(180deg,#e9dfc6,#d8c9a6)!important;border:0!important;color:var(--ink-d);font-family:var(--f-print);font-size:16.5px;line-height:1.4;box-shadow:0 5px 12px rgba(0,0,0,.4)}
@@ -629,7 +615,7 @@ body.hub #xact{display:none}
 .rec svg{flex-shrink:0;border-radius:3px;box-shadow:0 0 0 1px #000} .rec:hover{background:rgba(240,201,106,.07)} .rec.on{background:linear-gradient(90deg,rgba(240,201,106,.2),rgba(240,201,106,.03));box-shadow:inset 2px 0 0 #f0c96a} .rec.no span{opacity:.55}
 .rdet{padding:2px 2px 0}
 .rhead{display:flex;gap:12px;align-items:center} .rhead b{display:block;font-size:18px;font-family:var(--f-display);font-weight:600} .rhead span{font-size:12.5px;color:var(--kmute)}
-.flav{margin:12px 0 0;padding:8px 10px;border-radius:4px;background:rgba(240,201,106,.05);box-shadow:inset 2px 0 0 rgba(240,201,106,.4);color:#e8cf8e;font-style:italic;font-size:13.5px;line-height:1.45}
+.flav{margin:12px 0 0;padding:8px 10px;border-radius:4px;background:rgba(240,201,106,.05);box-shadow:inset 2px 0 0 rgba(240,201,106,.4);color:#e8cf8e;font-style:normal;font-size:13.5px;line-height:1.45}
 .reags{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .reag{display:flex;align-items:center;gap:8px;padding:4px 8px 4px 4px;border-radius:5px;background:rgba(0,0,0,.4);box-shadow:inset 0 0 0 1px #000,inset 0 0 0 2px rgba(201,160,74,.12);font-size:13px}
 .reag svg{width:30px;height:30px;flex-shrink:0;border-radius:3px;box-shadow:0 0 0 1px #000} .reag span{flex:1} .reag b{color:#fff} .reag.short b{color:#ff6a4c}
@@ -645,12 +631,12 @@ body:has(#panel.open) #goals{visibility:hidden}
 #veil .vrow{display:flex;align-items:baseline;gap:10px} #veil b{font-family:var(--f-label);font-weight:600;font-size:12px;letter-spacing:.14em;color:#ffb35a}
 #veil .vp{font-family:var(--f-display);font-weight:600;font-size:20px;color:#ffd79a;text-shadow:0 0 10px rgba(255,160,60,.6)} #veil .vs{flex:1;text-align:right;font-size:12px;color:#c9b393}
 /* letters from beyond the Gate: torn paper, a cold hand, ink that ran in the snow */
-.lpaper{position:relative;margin:4px 2px 6px;padding:26px 26px 22px;color:#2b1d12;background:radial-gradient(120% 90% at 30% 20%,#f4e6c6,#e6d2a8 60%,#d6bd8c);font:17px/1.62 'IM Fell English',Georgia,serif;box-shadow:0 1px 0 rgba(255,255,255,.4) inset,0 18px 40px rgba(0,0,0,.5);transform:rotate(-.6deg);
+.lpaper{position:relative;margin:4px 2px 6px;padding:26px 26px 22px;color:#2b1d12;background:radial-gradient(120% 90% at 30% 20%,#f4e6c6,#e6d2a8 60%,#d6bd8c);font:17px/1.62 Alegreya,Georgia,serif;box-shadow:0 1px 0 rgba(255,255,255,.4) inset,0 18px 40px rgba(0,0,0,.5);transform:rotate(-.6deg);
   clip-path:polygon(0 1%,6% 0,14% .8%,23% 0,35% .6%,48% 0,60% .9%,72% .2%,85% .8%,100% 0,99.4% 20%,100% 46%,99.2% 74%,100% 100%,88% 99.2%,70% 100%,52% 99.3%,33% 100%,16% 99.4%,0 100%,.6% 70%,0 40%,.8% 18%)}
 .lpaper::after{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(40% 30% at 82% 88%,rgba(120,80,40,.18),transparent 70%),radial-gradient(30% 20% at 12% 70%,rgba(90,110,140,.14),transparent 70%)}
-.lpaper header{display:flex;justify-content:space-between;margin:0 0 14px;font:italic 13px 'IM Fell English',Georgia,serif;color:#6b5136}
+.lpaper header{display:flex;justify-content:space-between;margin:0 0 14px;font:13px 'IM Fell English',Georgia,serif;color:#6b5136}
 .lpaper p{margin:0 0 12px;text-wrap:pretty} .lpaper p:first-of-type::first-letter{font-size:1.35em}
-.lpaper footer{margin-top:14px;text-align:right;font:italic 18px 'IM Fell English',Georgia,serif;color:#4a2a16}
+.lpaper footer{margin-top:14px;text-align:right;font:18px 'IM Fell English',Georgia,serif;color:#4a2a16}
 .lin{margin:0 0 14px;padding:14px 16px;border-radius:8px;background:linear-gradient(180deg,rgba(255,226,160,.12),rgba(255,226,160,.04));box-shadow:inset 0 0 0 1px rgba(255,214,140,.45),0 0 30px rgba(255,190,90,.15)}
 .lin small{display:block;font:600 11px var(--f-label);letter-spacing:.12em;color:#ffcf86} .lin b{display:block;font:500 20px var(--f-print);color:#fff0d6;margin:4px 0 2px} .lin p{margin:0 0 10px;color:#d9c7a8}
 .lmiss{display:flex;flex-direction:column;gap:2px;margin:6px 0;padding:10px 12px;border-radius:8px;border:1px dashed rgba(200,190,170,.25);opacity:.75}
@@ -659,15 +645,11 @@ body:has(#panel.open) #goals{visibility:hidden}
 #goals .glet{background:linear-gradient(180deg,rgba(255,220,150,.14),transparent);box-shadow:inset 3px 0 0 #ffcf86;animation:glet 2.4s ease-in-out infinite}
 @keyframes glet{50%{box-shadow:inset 3px 0 0 #fff0c8,0 0 18px rgba(255,200,110,.18)}}
 @media (prefers-reduced-motion:reduce){#goals .glet{animation:none}}
-#panel[data-kind=chronicle] .lmiss{border-color:rgba(60,40,20,.3)} #panel[data-kind=chronicle] .lmiss b{color:#4a3a28;text-decoration-color:rgba(60,40,20,.45)} #panel[data-kind=chronicle] .lmiss span{color:#6b5a44}
-#panel[data-kind=chronicle] .lmiss.now{border-color:#a8501a;background:rgba(200,120,40,.1)} #panel[data-kind=chronicle] .lmiss.now b{color:#7a2e10}
-#panel[data-kind=chronicle] details.lore{background:rgba(120,90,50,.07);border-color:rgba(60,40,20,.25)} #panel[data-kind=chronicle] details.lore summary b{color:var(--ink-d)} #panel[data-kind=chronicle] details.lore summary span{color:#6b5a44}
-#panel[data-kind=chronicle] details.lore p,#panel[data-kind=chronicle] .bnote p{color:#2b241b;font-family:var(--f-print);font-size:16px;line-height:1.6} #panel[data-kind=chronicle] .bnote small,#panel[data-kind=chronicle] .mute{color:#6d5a42}
-#panel[data-kind=chronicle] .lpaper{box-shadow:0 8px 20px rgba(60,40,20,.35)}
 #pbody .ups{display:grid;gap:8px;margin:0 0 14px} #pbody .up{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;background:rgba(255,255,255,.03);box-shadow:inset 0 0 0 1px var(--line)}
 #pbody .up>div{flex:1;min-width:0} #pbody .up b{display:block;font:500 16px var(--f-print);color:#f1e6d0} #pbody .up span{display:block;font-size:13px;color:var(--mute);margin:2px 0 6px}
 #pbody .up .need{display:flex;flex-wrap:wrap;gap:5px} #pbody .up .need i{font-style:normal;font-size:12px;padding:2px 7px;border-radius:999px;background:rgba(0,0,0,.35);color:#c9b393;box-shadow:inset 0 0 0 1px rgba(255,190,110,.25)} #pbody .up .need i.ok{color:#bfe8a8;box-shadow:inset 0 0 0 1px rgba(150,220,120,.4)}
 #pbody .up.locked{opacity:.85} #pbody .up .btn[disabled]{opacity:.55;cursor:default}
+#pbody .pback{display:inline-flex;align-items:center;gap:6px;margin:0 0 12px;padding:6px 12px 6px 9px;border:0;border-radius:6px;background:rgba(242,163,71,.1);box-shadow:inset 0 0 0 1px rgba(242,163,71,.35);color:#ffd79a;font:600 13.5px var(--f-label);letter-spacing:.04em;cursor:pointer} #pbody .pback:hover{background:rgba(242,163,71,.18)}
 #veil .vhush{display:flex;align-items:center;gap:8px;margin-top:5px;font:600 10.5px var(--f-label);letter-spacing:.14em;color:#9fb6d8}
 #veil .vhush i{flex:1;height:5px;border-radius:3px;background:rgba(0,0,0,.55);overflow:hidden} #veil .vhush b{display:block;height:100%;background:linear-gradient(90deg,#2c3a55,#8fa8d8)} #veil .vhush em{font-style:normal;color:#cfe0ff}
 #veil.unveiled{box-shadow:0 0 0 1px #000,inset 0 0 0 1px rgba(255,90,70,.8),0 0 30px rgba(255,40,20,.4);animation:hr 1.6s infinite} #veil.unveiled .vp,#veil.unveiled b{color:#ff8a70}
@@ -689,10 +671,9 @@ body:has(#panel.open) #veil{visibility:hidden}
 #goals .gbar{height:6px;margin-top:6px;border-radius:3px;background:rgba(0,0,0,.5);box-shadow:inset 0 0 0 1px rgba(201,160,74,.25);overflow:hidden} #goals .gbar i{display:block;height:100%;background:linear-gradient(90deg,#5ab8ff,#bfe8ff);box-shadow:0 0 8px rgba(143,208,255,.8)}
 body.act1 #dock button[data-act=bag],body.act1 #dock button[data-act=craft],body.act1 #dock button[data-act=map]{display:none}
 #goals .wall{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;height:34px;margin:2px 0 6px} #goals .wall i{position:relative;border-radius:3px;background:rgba(0,0,0,.5);box-shadow:inset 0 0 0 1px rgba(255,166,74,.25);overflow:hidden} #goals .wall i b{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(0deg,#c4561a,#ffc46b)} #goals .wall i.crack b{background:linear-gradient(0deg,#7a1006,#ff3a1a)} #goals .wall i.pr{box-shadow:inset 0 0 0 1px #ff6a3a,0 0 8px rgba(255,90,40,.6)}
-#panel[data-kind=chronicle] .book{border-color:rgba(90,60,30,.35)} #panel[data-kind=chronicle] .book b{color:#2b241b!important} #panel[data-kind=chronicle] .book span{color:#6d5a42!important} #panel[data-kind=chronicle] .book:hover{background:rgba(120,90,50,.08)!important}
-.bestiary{display:grid;gap:10px;margin-bottom:12px} .bnote{padding:12px 14px;border-radius:3px;background:var(--tex-grain),linear-gradient(90deg,#d8c9a6,#ebe1c8 6%,#efe6cf);color:#2b241b;box-shadow:0 2px 10px rgba(0,0,0,.5)}
-.bnote small{display:block;font-family:var(--f-label);font-weight:600;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#7a1e16;margin-bottom:5px} .bnote p{margin:0;font-family:var(--f-print);font-style:italic;font-size:15.5px;line-height:1.5}
-.bnote.locked{background:rgba(0,0,0,.35);color:#8a8070;box-shadow:inset 0 0 0 1px rgba(201,160,74,.2)} .bnote.locked small{color:#6d6658} .bnote.locked p{font-style:normal;font-family:var(--f-body);font-size:13px}
+.bestiary{display:grid;gap:10px;margin-bottom:12px} .bnote{padding:13px 16px 14px;border-radius:6px;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.015));box-shadow:inset 0 0 0 1px rgba(201,160,74,.2),inset 3px 0 0 rgba(242,163,71,.6);color:#ece3d0}
+.bnote small{display:block;font-family:var(--f-label);font-weight:600;font-size:12px;letter-spacing:.08em;color:#e8a75a;margin-bottom:6px} .bnote p{margin:0;font-family:var(--f-print);font-size:16.5px;line-height:1.62;color:#ece3d0}
+.bnote.locked{background:rgba(0,0,0,.3);color:#8a8070;box-shadow:inset 0 0 0 1px rgba(201,160,74,.14)} .bnote.locked p{color:#8a8070} .bnote.locked small{color:#6d6658} .bnote.locked p{font-style:normal;font-family:var(--f-body);font-size:13px}
 #goals .fpick{display:block;width:100%;margin-top:7px;padding:8px 10px;border:0;border-radius:5px;text-align:left;cursor:pointer;color:var(--kink);background:rgba(0,0,0,.35);box-shadow:inset 0 0 0 1px rgba(201,160,74,.3)} #goals .fpick:hover{box-shadow:inset 0 0 0 1px #f0c96a;background:rgba(240,201,106,.08)}
 #goals .fpick b{display:block;font-family:var(--f-display);font-size:14.5px;color:#f0c96a} #goals .fpick span{display:block;font-size:12px;line-height:1.4;color:#cfc6b4;margin-top:2px} #goals .fpick em{display:block;font-style:normal;font-size:11px;color:#8a8070;margin-top:3px}
 #goals .roles{list-style:none;margin:4px 0 6px;padding:0;display:grid;gap:4px} #goals .roles li{font-size:13px;color:#e8dfcc;padding-left:2px} #goals .roles li.done{color:#7fe06a}
@@ -707,7 +688,7 @@ body.act1 #dock button[data-act=bag],body.act1 #dock button[data-act=craft],body
 #libroom header{display:grid;grid-template-columns:auto 1fr auto;align-items:end;gap:28px;padding:26px 34px 18px;border-bottom:1px solid rgba(60,40,20,.25)}
 #libroom header small{display:block;font-family:var(--f-label);font-size:13px;letter-spacing:.24em;color:#8a5a2a}
 #libroom header h2{margin:2px 0 0;font-family:var(--f-display);font-weight:600;font-size:40px;line-height:1;letter-spacing:.04em;color:#3a1408}
-#libroom header p{margin:0 0 4px;font-family:var(--f-print);font-style:italic;font-size:17px;color:#5d4a33}
+#libroom header p{margin:0 0 4px;font-family:var(--f-print);font-style:normal;font-size:17px;color:#5d4a33}
 #libroom .lr-x{width:38px;height:38px;border-radius:50%;border:0;cursor:pointer;font-size:22px;line-height:38px;color:#f3e3c0;background:radial-gradient(circle at 40% 35%,#6a2a18,#2a0c04);box-shadow:0 0 0 1px #1c0a04,0 0 0 3px #b8892f,0 0 0 4px #1c0a04}
 #libroom .lr-x:hover{filter:brightness(1.25)}
 #libroom .lr-body{flex:1;min-height:0;display:grid;grid-template-columns:330px 1fr}
@@ -716,7 +697,7 @@ body.act1 #dock button[data-act=bag],body.act1 #dock button[data-act=craft],body
 #libroom figure svg{display:block;width:100%;height:auto}
 #libroom h3{margin:16px 0 6px;font-family:var(--f-display);font-weight:600;font-size:17px;letter-spacing:.06em;color:#5a1a10}
 #libroom .lr-draw p{margin:0 0 8px;font-family:var(--f-print);font-size:16.5px;line-height:1.5;color:#2a2219}
-#libroom .lr-hope{font-style:italic;color:#5a1a10!important}
+#libroom .lr-hope{font-style:normal;color:#5a1a10!important}
 #libroom .lr-meter{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;margin-top:10px;font-size:13px;color:#5d4a33}
 #libroom .lr-meter i{height:8px;border-radius:4px;background:rgba(60,40,20,.15);overflow:hidden;box-shadow:inset 0 0 0 1px rgba(60,40,20,.2)} #libroom .lr-meter b{display:block;height:100%;background:linear-gradient(90deg,#c4561a,#ffb35a)}
 #libroom .lr-note{margin:6px 0;padding:8px 10px;background:rgba(255,248,230,.5);box-shadow:inset 0 0 0 1px rgba(60,40,20,.18)} #libroom .lr-note summary{cursor:pointer;font-family:var(--f-print);font-size:16px} #libroom .lr-note p{margin:6px 0 0;font-size:15px}
@@ -735,14 +716,14 @@ body.act1 #dock button[data-act=bag],body.act1 #dock button[data-act=craft],body
 #libroom .lbk em{margin-top:auto;font-style:normal;font-family:var(--f-label);font-size:12px;letter-spacing:.08em;color:var(--sc);opacity:0;transition:opacity .15s}
 #libroom a.lbk:hover{transform:translateY(-2px);box-shadow:0 1px 0 rgba(255,255,255,.6) inset,0 0 0 1px rgba(60,40,20,.28),0 10px 22px rgba(60,40,20,.2)} #libroom a.lbk:hover em,#libroom a.lbk:focus-visible em{opacity:1}
 #libroom a.lbk:focus-visible{outline:2px solid #7a1e16;outline-offset:2px}
-#libroom .lr-foot{margin:10px 0 0;font-size:13.5px;color:#7a6a52;font-style:italic}
-#libroom .lr-legend{margin:-4px 0 16px;max-width:62ch;font:italic 16px/1.6 "IM Fell English",Georgia,serif;color:#4a3824}
+#libroom .lr-foot{margin:10px 0 0;font-size:13.5px;color:#7a6a52;font-style:normal}
+#libroom .lr-legend{margin:-4px 0 16px;max-width:62ch;font:16px/1.6 "IM Fell English",Georgia,serif;color:#4a3824}
 @media (max-width: 760px){ #libroom .lr{height:calc(100vh - 24px)} #libroom header{grid-template-columns:1fr auto;padding:18px 18px 12px} #libroom header p{display:none} #libroom header h2{font-size:30px}
   #libroom .lr-body{grid-template-columns:1fr;overflow:auto} #libroom .lr-draw{border-right:0;border-bottom:1px solid rgba(60,40,20,.22);padding:16px 18px} #libroom figure{max-width:260px;margin:0 auto 6px} #libroom .lr-shelves{padding:14px 18px} #libroom .lr-grid{overflow:visible} }
 @media (prefers-reduced-motion: reduce){ #libroom,#libroom .lr,#libroom .lbk{transition:none} }
 
 #goals .gsec a{color:#f0c96a}
-#goals .gsec p{margin:0;font-size:12.5px;color:#cfc6b4} #goals .gsec p b{color:#9fd8ff} #goals .gnext{margin:0;font-size:11.5px;color:#8a8070;font-style:italic}
+#goals .gsec p{margin:0;font-size:12.5px;color:#cfc6b4} #goals .gsec p b{color:#9fd8ff} #goals .gnext{margin:0;font-size:11.5px;color:#8a8070;font-style:normal}
 .lbl.shard{color:#06223a;background:linear-gradient(180deg,#d8f1ff,#8fc9f2);box-shadow:0 0 0 1px rgba(0,30,60,.7),0 0 14px rgba(143,208,255,.7)}
 @media (max-width: 760px){ #goals{top:auto;bottom:150px;right:8px;width:min(300px,calc(100vw - 16px))} }
 /* the log: what happens to you and around you */
@@ -752,7 +733,7 @@ body.act1 #dock button[data-act=bag],body.act1 #dock button[data-act=craft],body
 #logf .tabs button.on{color:#f0c96a;background:rgba(240,201,106,.12);box-shadow:inset 0 0 0 1px rgba(240,201,106,.45)}
 #logf ol{list-style:none;margin:0;padding:6px 8px;height:168px;overflow:auto;border-radius:5px;background:rgba(0,0,0,.42);box-shadow:inset 0 0 0 1px #000,inset 0 0 0 2px rgba(201,160,74,.1);scrollbar-width:thin;scrollbar-color:#7a5a22 transparent;font-size:13px;line-height:1.42}
 #logf li{padding:1px 0;color:#d9d2c2} #logf li time{color:#6d6658;font-size:11.5px;margin-right:7px;font-variant-numeric:tabular-nums}
-#logf li.me{color:#ece4d2} #logf li.good{color:#9fe08a} #logf li.warm{color:#f0c96a} #logf li.bad{color:#ff8a6a} #logf li.cold{color:#9fc8ff} #logf li.world{color:#b8b0d8} #logf li.odd{color:#c9a0ff;font-style:italic}
+#logf li.me{color:#ece4d2} #logf li.good{color:#9fe08a} #logf li.warm{color:#f0c96a} #logf li.bad{color:#ff8a6a} #logf li.cold{color:#9fc8ff} #logf li.world{color:#b8b0d8} #logf li.odd{color:#c9a0ff;font-style:normal}
 #logf.min ol{display:none} #logf.min{padding-bottom:0} #logf.min header{margin-bottom:0;border-radius:7px}
 #tip{position:fixed;z-index:9;max-width:270px;padding:9px 12px;border-radius:6px;background:linear-gradient(180deg,rgba(26,22,18,.97),rgba(10,9,11,.97));border:1px solid #000;box-shadow:inset 0 0 0 1px rgba(201,160,74,.45),0 6px 18px rgba(0,0,0,.6);font-family:var(--f-body);font-size:13px;line-height:1.4;color:#fff;pointer-events:none;display:flex;flex-direction:column}
 #tip b{font-size:15px;margin-bottom:2px} #tip .g{color:#7fe06a} #tip i{color:#e8cf8e;margin-top:4px} #tip .hint{color:#8a8478;margin-top:4px;font-size:12px}
@@ -773,13 +754,13 @@ body.act1 #dock button[data-act=bag],body.act1 #dock button[data-act=craft],body
 #back .bsub{margin:4px 0 14px;color:#6d5a42;font-size:14px}
 #back ul{margin:0 0 16px;padding-left:20px;display:grid;gap:7px;font-family:var(--f-print);font-size:16.5px;line-height:1.45}
 #back .bch{margin:0 0 18px;padding:14px 16px;border-left:3px solid #7a1e16;background:rgba(120,90,50,.08)}
-#back .bch b{font-family:var(--f-display);font-size:17px;color:#1d160e} #back .bch p{margin:6px 0 0;font-family:var(--f-print);font-style:italic;font-size:16px;line-height:1.5}
-.rec.lost span{color:#8a7a5a!important;font-style:italic}
+#back .bch b{font-family:var(--f-display);font-size:17px;color:#1d160e} #back .bch p{margin:6px 0 0;font-family:var(--f-print);font-style:normal;font-size:16px;line-height:1.5}
+.rec.lost span{color:#8a7a5a!important;font-style:normal}
 #ititle{position:fixed;inset:0;z-index:7;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;pointer-events:none;text-align:center;background:radial-gradient(60% 50% at 50% 45%,rgba(5,7,14,.15),rgba(5,7,14,.75));animation:tin 2.2s ease both;transition:opacity 1.4s}
 #ititle.off{opacity:0}
 #ititle small{font-family:var(--f-label);font-weight:600;font-size:13px;letter-spacing:.4em;color:#9fc3ff}
 #ititle b{font-family:var(--f-display);font-weight:700;font-size:clamp(48px,9vw,110px);line-height:1;color:#f1e6d0;text-shadow:0 0 40px rgba(159,195,255,.35),0 4px 30px #000}
-#ititle span{font-family:var(--f-print);font-style:italic;font-size:clamp(16px,2vw,21px);color:#cfd8e6}
+#ititle span{font-family:var(--f-print);font-style:normal;font-size:clamp(16px,2vw,21px);color:#cfd8e6}
 @keyframes tin{from{opacity:0;letter-spacing:.2em}to{opacity:1}}
 #intro .card{transition:opacity 1s}
 /* readability first: one serif with real weight, one plain sans; no hairline faces, no handwriting */
@@ -795,14 +776,11 @@ body.act1 #dock button[data-act=bag],body.act1 #dock button[data-act=craft],body
 .hwx span{font-weight:600;font-size:11px;letter-spacing:.04em}
 #hud .hz span,#panel header p{font-size:13px;letter-spacing:0}
 #pbody h3{font-weight:700;font-size:11.5px;letter-spacing:.12em}
-#xact .xt,#xact .xt.trip{font-family:var(--f-print);font-style:italic;font-size:16.5px;line-height:1.45;color:#241d14}
-.hrime{font-family:var(--f-print);font-style:italic;font-size:15px}
+#xact .xt,#xact .xt.trip{font-family:var(--f-print);font-style:normal;font-size:16.5px;line-height:1.45;color:#241d14}
+.hrime{font-family:var(--f-print);font-style:normal;font-size:15px}
 .say{font-size:15.5px;line-height:1.5}
-#panel[data-kind=chronicle] .chron li{font-size:14.5px;line-height:1.45}
-#panel[data-kind=chronicle] .jtabs button{font-weight:600;font-size:16px;letter-spacing:.02em}
-#panel[data-kind=chronicle] header h2{font-size:30px}
-#panel[data-kind=note] header h2{font-family:var(--f-print);font-style:italic;font-size:26px}
-#panel[data-kind=note] .say{font-family:var(--f-print)!important;font-style:italic;font-size:20px!important;line-height:1.5!important}
+#panel[data-kind=note] header h2{font-family:var(--f-print);font-style:normal;font-size:26px}
+#panel[data-kind=note] .say{font-family:var(--f-print)!important;font-style:normal;font-size:20px!important;line-height:1.5!important}
 #panel[data-kind=chthon] header h2{font-size:32px;letter-spacing:.24em}
 #talk #talkText,#intro p{font-weight:500;font-size:clamp(20px,2.2vw,27px);line-height:1.3}
 .book b,.opt b,.order .t,details.lore summary b,#panel[data-kind=faq] .faq summary{font-weight:600;font-size:16px}
@@ -6107,10 +6085,12 @@ function bestiaryHtml() {
       return `<button class="book" style="width:100%;text-align:left;background:none;cursor:pointer" data-${B.id === 'chthon' ? 'chthon' : 'beast'}="${B.id}"><b>${n ? esc(B.name) : '? ? ?'}</b><span>${n ? `${n} of 4 pages · ${esc(B.seen)}` : 'Not yet seen. Watch the edge of the Veil.'}</span></button>`; }).join('')}</div>`;
 }
 function openBeast(id, fromBook) {
-  const B = BESTIARY.find(x => x.id === id); if (!B) return; act1Mark('watch2'); if (!fromBook) observe(id);
+  const B = BESTIARY.find(x => x.id === id); if (!B) return; const from = fromBook ? panelKind : null; act1Mark('watch2'); if (!fromBook) observe(id);
   const n = BEAST_AT.filter(k => (OBS[id] || 0) >= k).length;
   const pages = B.notes.map(([who, txt], k) => k < n ? `<div class="bnote"><small>${esc(who)}</small><p>${esc(txt)}</p></div>` : `<div class="bnote locked"><small>A page still unread</small><p>Watch it ${BEAST_AT[k] - (OBS[id] || 0)} more ${BEAST_AT[k] - (OBS[id] || 0) === 1 ? 'time' : 'times'} at the edge of the Veil.</p></div>`).join('');
-  panel('beast', n ? B.name : '? ? ?', B.seen, null, `<div class="bestiary">${pages}</div><p class="mute" style="font-size:12.5px">The Bestiary is kept in the Observatory. Everything in it was seen from inside the Veil.</p>`);
+  const back = from === 'chronicle' ? ['Back to the Journal', () => openChronicle(true, 'beasts')] : from === 'observatory' ? ['Back to the Observatory', () => openObservatory()] : null;
+  panel('beast', n ? B.name : '? ? ?', B.seen, null, `${back ? `<button class="pback" data-pback>‹ ${back[0]}</button>` : ''}<div class="bestiary">${pages}</div><p class="mute" style="font-size:12.5px">The Bestiary is kept in the Observatory. Everything in it was seen from inside the Veil.</p>`);
+  if (back) $('#pbody [data-pback]').onclick = () => { sfx.click(); back[1](); };
 }
 function openGate() {
   act1Mark('gate'); const m = Math.round((S.town.melt || 0) * 100), L = openLetter(), c = myC(), near = c && !c.path.length && W4W.dist([c.q, c.r], GATE_CELL) <= 1;
