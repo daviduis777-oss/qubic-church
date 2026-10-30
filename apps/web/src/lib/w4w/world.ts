@@ -60,17 +60,30 @@ export const WX_SLOW = { calm: 1, wind: 1.3, blizzard: 1.8 } as const
 export const DRIFT = { calm: 0, wind: 0.15, blizzard: 0.4 } as const
 /** The Rime: what walks the Wastes. Anna's light keeps it past the forest edge. */
 export const RIME_MS = 20_000
-export const RIME_MIN_RING = 7
+/** The town reaches ring TOWN_RING; everything outside was laid out for a town of 5 rings and is pushed out by the difference. */
+export const TOWN_RING = 8
+const SHIFT = TOWN_RING - 5
+/** Push a cell of the old layout outward by SHIFT rings, along its own direction. */
+function outward(c: [number, number]): [number, number] {
+  const n = (Math.abs(c[0]) + Math.abs(c[1]) + Math.abs(c[0] + c[1])) / 2; if (!n) return c
+  const k = (n + SHIFT) / n, x = c[0] * k, z = c[1] * k, y = -x - z
+  let rx = Math.round(x), rz = Math.round(z); const ry = Math.round(y), dx = Math.abs(rx - x), dz = Math.abs(rz - z), dy = Math.abs(ry - y)
+  if (dx > dz && dx > dy) rx = -rz - ry; else if (dz > dy) rz = -rx - ry
+  return [rx, rz]
+}
+export const RIME_MIN_RING = 7 + SHIFT
 export const RIME_PULL = 0.04
 /** The Mouth: the cave of Pure Cold under the last tooth, and the two that keep it. */
-export const CAVE: Cell = [6, 10]
+export const CAVE: Cell = outward([6, 10])
 export const GUARD_MS = 20_000
-export const MAX_RING = 16
+export const MAX_RING = 16 + SHIFT
 /** The game ships in acts. Act I: the town under Anna's dome, and nothing outside it. */
 export const STAGE = 1
-export const DOME_RING = 5 // the last ring of cells inside the dome
+export const DOME_RING = TOWN_RING // the last ring of cells inside the dome
 export const insideDome = (q: number, r: number) => ringOf(q, r) <= DOME_RING
-/** Anna's block stands on the centre cell: you stand next to it, never in it. */
+/** Anna's block and its boilers fill the centre cell and the ring around it: you stand at ring 2, never inside. */
+export const CORE_RING = 1
+export const inCore = (q: number, r: number) => ringOf(q, r) <= CORE_RING
 export const CORE: Cell = [0, 0]
 export const FREEZE_MS = 24 * 3600_000
 export const BAG_MS = 24 * 3600_000
@@ -142,7 +155,7 @@ export const RECIPES: Record<string, Recipe> = {
 /** Everyone knows these; the rest are found out in the Wastes or copied from the Library. */
 export const STARTER_RECIPES = ['cord', 'pitch', 'charcoal', 'hearth_kit']
 /** Where the lost recipes lie: one scrap per recipe, on open snow near its seed. */
-const SCROLL_SEEDS: Record<string, Cell> = { flint_pick: [-4, 8], flint_axe: [7, -1], quilted_cap: [-7, 1], woven_pack: [1, -8], lined_mittens: [10, -3], padded_trousers: [-9, -1], bark_boots: [2, 9], quilted_coat: [-5, -6], frame_pack: [-14, 7], thermos: [7, 9] }
+const SCROLL_SEEDS: Record<string, Cell> = { flint_pick: outward([-4, 8]), flint_axe: outward([7, -1]), quilted_cap: outward([-7, 1]), woven_pack: outward([1, -8]), lined_mittens: outward([10, -3]), padded_trousers: outward([-9, -1]), bark_boots: outward([2, 9]), quilted_coat: outward([-5, -6]), frame_pack: outward([-14, 7]), thermos: outward([7, 9]) }
 let scrollCache: Record<string, Cell> | null = null
 export function scrolls(): Record<string, Cell> {
   if (scrollCache) return scrollCache
@@ -208,7 +221,7 @@ export function shardsFor(week: number) {
   const want: [number, number][] = [[1, 3], [2, 3], [3, 2]]
   let n = list.length
   for (const [z, count] of want) { const cells: Cell[] = []
-    for (let ring = z === 1 ? 6 : z === 2 ? 9 : 13; ring <= (z === 1 ? 8 : z === 2 ? 12 : MAX_RING); ring++) for (const c of ringCells(ring)) if (terrain(c[0], c[1]) === 'open' && !roadAt(c[0], c[1]) && !used.has(key(...c)) && dist(c, CAVE) > 1) cells.push(c)
+    for (let ring = (z === 1 ? 6 : z === 2 ? 9 : 13) + SHIFT; ring <= (z === 1 ? 8 + SHIFT : z === 2 ? 12 + SHIFT : MAX_RING); ring++) for (const c of ringCells(ring)) if (terrain(c[0], c[1]) === 'open' && !roadAt(c[0], c[1]) && !used.has(key(...c)) && dist(c, CAVE) > 1) cells.push(c)
     for (let i = 0; i < count && cells.length; i++) { const c = cells.splice(Math.floor(hash(week, n, 43) * cells.length), 1)[0]!; used.add(key(...c)); list.push({ id: `${week}:${n}`, at: c, zone: z }); n++ } }
   shardCache = { week, list }; return list
 }
@@ -264,7 +277,7 @@ export const dist = (a: Cell, b: Cell) => ringOf(a[0] - b[0], a[1] - b[1])
 export const worldXZ = (q: number, r: number) => [2 * (q + r / 2), 1.7320508 * r] as const
 export function zoneOf(q: number, r: number) {
   const n = ringOf(q, r)
-  return n <= 5 ? 0 : n <= 8 ? 1 : n <= 12 ? 2 : n <= MAX_RING ? 3 : 4
+  return n <= TOWN_RING ? 0 : n <= 8 + SHIFT ? 1 : n <= 12 + SHIFT ? 2 : n <= MAX_RING ? 3 : 4
 }
 
 function hash(a: number, b: number, s = 0) {
@@ -285,14 +298,14 @@ export const ROADS = [
 ] as const
 /** Named places. The map shows them once you have seen them; the roads everyone knows. */
 export const LANDMARKS = [
-  { id: 'camp', name: 'The First Camp', at: [-1, -6] as Cell, note: 'Where the first expedition slept before the storm. Their tents are still standing.' },
-  { id: 'lake', name: 'The Still Lake', at: [-10, 4] as Cell, note: 'Black ice so clear you can see the pines that grew here before the cold.' },
-  { id: 'choir', name: 'The Choir Stones', at: [-6, 14] as Cell, note: 'A ring of standing stones. On windless nights something sings between them.' },
+  { id: 'camp', name: 'The First Camp', at: outward([-1, -6]) as Cell, note: 'Where the first expedition slept before the storm. Their tents are still standing.' },
+  { id: 'lake', name: 'The Still Lake', at: outward([-10, 4]) as Cell, note: 'Black ice so clear you can see the pines that grew here before the cold.' },
+  { id: 'choir', name: 'The Choir Stones', at: outward([-6, 14]) as Cell, note: 'A ring of standing stones. On windless nights something sings between them.' },
   { id: 'mouth', name: 'The Mouth', at: CAVE, note: 'The cave of Pure Cold under the last tooth. Not open yet.' },
 ] as const
 /** The Teeth close like a jaw: a wall of peaks on ring 13, broken where the roads go through and at two old passes. */
-export const RIDGE_RING = 13
-export const PASSES: Cell[] = [[-13, 0], [-13, 13]]
+export const RIDGE_RING = 13 + SHIFT
+export const PASSES: Cell[] = [outward([-13, 0]), outward([-13, 13])]
 const ROAD_STEP = 0.7
 let _roads: Map<string, string> | null = null
 /** Every road cell, keyed, with the road it belongs to. */
@@ -301,7 +314,7 @@ export function roadCells() {
   const m = new Map<string, string>()
   for (const R of ROADS) {
     const A = DIRS[R.a]!, B = DIRS[R.b]!, N = R.na + R.nb
-    let q = A[0] * 5, r = A[1] * 5
+    let q = A[0] * TOWN_RING, r = A[1] * TOWN_RING
     for (let i = 0; i < N; i++) {
       const useB = Math.floor((i + 1) * R.nb / N) > Math.floor(i * R.nb / N)
       const d = useB ? B : A; q += d[0]; r += d[1]; m.set(key(q, r), R.id)
@@ -317,15 +330,15 @@ export const landmarkAt = (q: number, r: number) => LANDMARKS.find(l => dist([q,
 /** What stands on a cell. The game draws exactly this; the server walks exactly this. */
 export function terrain(q: number, r: number): Terrain {
   const n = ringOf(q, r)
-  if (n <= 5) return 'town'
+  if (n <= TOWN_RING) return 'town'
   if (n > MAX_RING) return 'void'
   if (roadAt(q, r) || lakeAt(q, r)) return 'open'
   const camp = dist([q, r], LANDMARKS[0].at), choir = dist([q, r], LANDMARKS[2].at)
   if (camp <= 1 || choir === 0) return 'open'
   if (choir === 1) return 'rock'
   const h = hash(q, r, 7)
-  if (n <= 8) return h < 0.22 ? 'tree' : h < 0.3 ? 'rock' : 'open'
-  if (n <= 12) return n >= 10 && h < 0.12 && !nearRoad(q, r) ? 'mountain' : h < 0.62 ? 'forest' : h < 0.7 ? 'rock' : 'open'
+  if (n <= 8 + SHIFT) return h < 0.22 ? 'tree' : h < 0.3 ? 'rock' : 'open'
+  if (n <= 12 + SHIFT) return n >= 10 + SHIFT && h < 0.12 && !nearRoad(q, r) ? 'mountain' : h < 0.62 ? 'forest' : h < 0.7 ? 'rock' : 'open'
   if (n === RIDGE_RING && !nearRoad(q, r) && !PASSES.some(p => dist(p, [q, r]) <= 1) && hash(q, r, 23) < 0.93) return 'mountain'
   return h < 0.22 && !nearRoad(q, r) ? 'mountain' : h < 0.52 ? 'rock' : h < 0.6 ? 'tree' : 'open'
 }
@@ -398,7 +411,7 @@ export function findPath(a: Cell, b: Cell, limit = 4000, blocked?: Set<string>):
     }
     for (const [dq, dr] of DIRS) {
       const nq = cur[0] + dq, nr = cur[1] + dr, nk = key(nq, nr)
-      if (!passable(nq, nr) || (nq === 0 && nr === 0) || (STAGE === 1 && !insideDome(nq, nr))) continue
+      if (!passable(nq, nr) || inCore(nq, nr) || (STAGE === 1 && !insideDome(nq, nr))) continue
       if (blocked?.has(nk) && !(nq === b[0] && nr === b[1])) continue
       const ng = gc + (roadAt(nq, nr) ? ROAD_STEP : 1)
       if (ng < (g.get(nk) ?? Infinity) - 1e-9) { g.set(nk, ng); came.set(nk, key(...cur)); open.push([ng + dist([nq, nr], b) * ROAD_STEP, ng, [nq, nr]]) }
@@ -560,7 +573,7 @@ export function townWarmth(o: { people: number; online: number; deeds: number; f
   const W = 6 * Math.min(o.people, 12) + 6 * Math.min(o.online, 5) + 4 * Math.min(o.deeds, 5) + 3 * Math.min(o.fire, 5) + Math.round(12 * Math.log10(1 + o.power / 500) * 10) / 10
   const F = 60 + (o.storm ? 15 : 0)
   const B = W - F
-  return { W, F, B, holds: B >= 0, heatR: Math.min(10, Math.max(2.6, 5.6 + B * 0.28)) }
+  return { W, F, B, holds: B >= 0, heatR: Math.min(10, Math.max(2.6, 5.6 + B * 0.28)) * TOWN_RING / 5 }
 }
 
 
@@ -621,7 +634,7 @@ const rimeTargets = (ws: WState) => Object.values(ws.chars).filter(c => !(c.froz
 /** Walk the Rime up to now, one move every RIME_MS, and remember where it stood for the cold to check. */
 export function stepRime(ws: WState, d: Dirty) {
   if (ws.rimeTrail) return
-  let th: Rime = ws.rime ?? { q: 11, r: -6, t: Math.floor(ws.now / RIME_MS) * RIME_MS, d: 2 }
+  let th: Rime = ws.rime && ringOf(ws.rime.q, ws.rime.r) >= RIME_MIN_RING ? ws.rime : { ...(ws.rime ?? { t: Math.floor(ws.now / RIME_MS) * RIME_MS, d: 2 }), q: outward([11, -6])[0], r: outward([11, -6])[1] }
   if (ws.now - th.t > 24 * 3600_000) th = { ...th, t: Math.floor((ws.now - 24 * 3600_000) / RIME_MS) * RIME_MS }
   const trail: [number, number, number][] = [[th.t, th.q, th.r]], targets = rimeTargets(ws)
   while (th.t + RIME_MS <= ws.now) { th = rimeStep(th, targets); trail.push([th.t, th.q, th.r]) }
@@ -630,7 +643,7 @@ export function stepRime(ws: WState, d: Dirty) {
 }
 export function stepAll(ws: WState, d: Dirty) {
   stepRime(ws, d)
-  if (STAGE === 1) for (const [uid, c] of Object.entries(ws.chars)) if (!insideDome(c.q, c.r) || (c.q === 0 && c.r === 0) || c.path.some(p => !insideDome(p[0], p[1]))) {
+  if (STAGE === 1) for (const [uid, c] of Object.entries(ws.chars)) if (!insideDome(c.q, c.r) || inCore(c.q, c.r) || c.path.some(p => !insideDome(p[0], p[1]))) {
     Object.assign(c, { q: c.home[0], r: c.home[1], path: [], act: null, lost: false, t0: ws.now, simT: ws.now, warmth: Math.max(c.warmth, 60) }); if (c.frozenUntil > ws.now) c.frozenUntil = ws.now; d.chars.add(uid) }
   for (const uid of Object.keys(ws.chars)) { const c = ws.chars[uid]!; if (c.path.length || c.act || c.frozenUntil || zoneOf(c.q, c.r) >= 1 || c.warmth < 100 || c.health < 100 || c.energy < 100) stepChar(ws, uid, d) }
 }
@@ -676,7 +689,7 @@ export function action(ws: WState, uid: string, op: string, b: Record<string, un
       if (STAGE === 1 && !insideDome(...to)) return fail('The dome holds, and nothing living goes through it. Not in this act.')
       if (ringOf(...to) > MAX_RING) return fail('Beyond here the cold has no edge. Not yet.')
       // Anna's block: walk up to it, not into it
-      if (to[0] === 0 && to[1] === 0) to = DIRS.map(([dq, dr]) => [dq, dr] as Cell).sort((a, c) => dist(a, here) - dist(c, here))[0]!
+      if (inCore(...to)) { const sh = ctxOf(ws, uid).shelters; to = ringCells(CORE_RING + 1).filter(x => !sh[key(...x)] && passable(...x)).sort((a, c) => dist(a, here) - dist(c, here))[0] ?? to }
       // already on the way: finish the step you are on, then turn; no jump back to the last cell
       const from: Cell = c.path.length ? c.path[0]! : here
       const rest = findPath(from, to, 4000, new Set(Object.keys(ctxOf(ws, uid).shelters))); if (!rest) return fail('No way through from here.')
@@ -825,7 +838,7 @@ export function action(ws: WState, uid: string, op: string, b: Record<string, un
       return ok()
     }
     case 'give': {
-      if (dist(here, [0, 0]) > 1 || c.path.length) return fail('Bring the shards to Anna, in the middle of town.')
+      if (dist(here, [0, 0]) > CORE_RING + 1 || c.path.length) return fail('Bring the shards to Anna, in the middle of town.')
       const n = c.inv.shard || 0; if (!n) return fail('You carry no shard.')
       delete c.inv.shard
       ws.anna ??= { n: 0, heroes: {} }; ws.anna.n += n; const h = (ws.anna.heroes[uid] ??= { nick: nickIn(ws, uid), n: 0 }); h.n += n; h.nick = nickIn(ws, uid); d.anna = true
