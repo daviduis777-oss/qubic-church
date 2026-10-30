@@ -662,6 +662,7 @@ body:has(#panel.open) #goals{visibility:hidden}
 #panel[data-kind=chronicle] .lmiss{border-color:rgba(60,40,20,.3)} #panel[data-kind=chronicle] .lmiss b{color:#4a3a28;text-decoration-color:rgba(60,40,20,.45)} #panel[data-kind=chronicle] .lmiss span{color:#6b5a44}
 #panel[data-kind=chronicle] .lmiss.now{border-color:#a8501a;background:rgba(200,120,40,.1)} #panel[data-kind=chronicle] .lmiss.now b{color:#7a2e10}
 #panel[data-kind=chronicle] details.lore{background:rgba(120,90,50,.07);border-color:rgba(60,40,20,.25)} #panel[data-kind=chronicle] details.lore summary b{color:var(--ink-d)} #panel[data-kind=chronicle] details.lore summary span{color:#6b5a44}
+#panel[data-kind=chronicle] details.lore p,#panel[data-kind=chronicle] .bnote p{color:#2b241b;font-family:var(--f-print);font-size:16px;line-height:1.6} #panel[data-kind=chronicle] .bnote small,#panel[data-kind=chronicle] .mute{color:#6d5a42}
 #panel[data-kind=chronicle] .lpaper{box-shadow:0 8px 20px rgba(60,40,20,.35)}
 #veil .vhush{display:flex;align-items:center;gap:8px;margin-top:5px;font:600 10.5px var(--f-label);letter-spacing:.14em;color:#9fb6d8}
 #veil .vhush i{flex:1;height:5px;border-radius:3px;background:rgba(0,0,0,.55);overflow:hidden} #veil .vhush b{display:block;height:100%;background:linear-gradient(90deg,#2c3a55,#8fa8d8)} #veil .vhush em{font-style:normal;color:#cfe0ff}
@@ -2644,7 +2645,7 @@ function buildCore() {
       void main(){ float f=pow(1.-abs(dot(vN,vV)),3.); gl_FragColor=vec4(uCol*(f*.95+.06)*(1.+uBoost*1.6)*uFade, 1.); }` });
   const rim = new THREE.Mesh(ice.geometry, rimMat); rim.scale.setScalar(1.006); ice.add(rim);
   // iron bands and heating coils bolted onto the block, fed by four boilers on the dug earth
-  const iron = new THREE.MeshStandardMaterial({ color: 0x2b2522, metalness: 0.7, roughness: 0.45 });
+  const iron = new THREE.MeshStandardMaterial({ color: 0x8a7868, metalness: 0.55, roughness: 0.42, emissive: 0x4a2010, emissiveIntensity: 0.55 }); iron.userData.noFow = true;
   const copper = new THREE.MeshStandardMaterial({ color: 0xb06a3a, metalness: 0.75, roughness: 0.32, emissive: 0xff5a14, emissiveIntensity: 0.8 });
   const hot = new THREE.MeshStandardMaterial({ color: 0x1a1210, emissive: 0xff7a22, emissiveIntensity: 1.6, roughness: 0.6 });
   [0.36].forEach(y => { for (let i = 0; i < 4; i++) { const an = i * Math.PI / 2; const bnd = new THREE.Mesh(new THREE.BoxGeometry(W - 0.3, 0.14, 0.08), iron); bnd.position.set(Math.sin(an) * (hw + 0.04), y, Math.cos(an) * (hw + 0.04)); bnd.rotation.y = an; bnd.castShadow = true; block.add(bnd); } });
@@ -2752,7 +2753,7 @@ function disposeHouse(id) { const h = houses[id]; if (!h) return; if (hoverOn ==
   for (let i = interactive.length - 1; i >= 0; i--) if (interactive[i].userData.id === id) interactive.splice(i, 1);
   delete houses[id]; }
 const PIPE_COPPER = new THREE.MeshStandardMaterial({ color: 0xb06a38, metalness: 0.7, roughness: 0.36, emissive: 0x3a1406, emissiveIntensity: 0.7 });
-const PIPE_IRON = new THREE.MeshStandardMaterial({ color: 0x3a3430, metalness: 0.6, roughness: 0.55 });
+const PIPE_IRON = new THREE.MeshStandardMaterial({ color: 0x6e625a, metalness: 0.55, roughness: 0.5, emissive: 0x2a140a, emissiveIntensity: 0.5 });
 const PIPE_FLOW_V = `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.); }`;
 const PIPE_FLOW_F = `uniform float uTime; uniform float uOn; uniform float uMine; uniform float uBoost; varying vec2 vUv;
   void main(){ float p = fract(vUv.x * 6. - uTime * (0.45 + uBoost)); float band = smoothstep(0.82, 1., p) + (1. - smoothstep(0., 0.12, p)) * 0.6;
@@ -2760,15 +2761,30 @@ const PIPE_FLOW_F = `uniform float uTime; uniform float uOn; uniform float uMine
     float a = (band * 0.95 + 0.07) * uOn * (0.35 + 0.65 * seam); vec3 c = mix(vec3(1., .5, .15), vec3(1., .86, .5), band) * (1. + uMine * .5);
     gl_FragColor = vec4(c * a, a); }`;
 /** A copper pipe from a working house down to the frozen ground and along it to the boilers round Anna, with the light running inside. */
+const CORE_RING_R = 2.22, CORE_RING_Y = 0.8;
+let coreRing = null;
+function ensureCoreRing() {
+  if (coreRing) return; coreRing = new THREE.Group();
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(CORE_RING_R, 0.075, 8, 96), PIPE_COPPER); ring.rotation.x = Math.PI / 2; ring.position.y = CORE_RING_Y; coreRing.add(ring);
+  for (let i = 0; i < 12; i++) { const a = i / 12 * Math.PI * 2, x = Math.cos(a) * CORE_RING_R, z = Math.sin(a) * CORE_RING_R;
+    const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.05, CORE_RING_Y, 6), PIPE_IRON); leg.position.set(x, CORE_RING_Y / 2, z); coreRing.add(leg);
+    const band = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.02, 5, 12), PIPE_IRON); band.position.set(x, CORE_RING_Y, z); band.rotation.y = -a; coreRing.add(band); }
+  scene.add(coreRing);
+}
 function makePipe(p, on, mine) {
+  ensureCoreRing();
   const g = new THREE.Group(), dir = p.clone().setY(0).normalize(), side = new THREE.Vector3(-dir.z, 0, dir.x), r = mine ? 0.055 : 0.042;
-  const start = p.clone().sub(dir.clone().multiplyScalar(0.55)).setY(0.55), end = dir.clone().multiplyScalar(3.35).setY(0.7), L = start.distanceTo(end), n = Math.max(2, Math.round(L / 1.6)), wob = (rnd() - 0.5) * 0.8;
-  const pts = [start, start.clone().setY(0.2).sub(dir.clone().multiplyScalar(0.25))];
-  for (let i = 1; i < n; i++) { const k = i / n; pts.push(start.clone().lerp(end, k).setY(0.2).add(side.clone().multiplyScalar(Math.sin(k * Math.PI) * wob))); }
-  pts.push(end.clone().setY(0.25).add(dir.clone().multiplyScalar(0.35)), end);
+  // out of the house wall, down to the snow, along the ground, up over the dug earth and into the collector ring round Anna
+  const start = p.clone().sub(dir.clone().multiplyScalar(0.42)).setY(0.42), foot = dir.clone().multiplyScalar(3.3).setY(0.16), end = dir.clone().multiplyScalar(CORE_RING_R + 0.02).setY(CORE_RING_Y);
+  const L = start.distanceTo(foot), n = Math.max(2, Math.round(L / 1.6)), wob = (rnd() - 0.5) * 0.8;
+  const pts = [start, start.clone().setY(0.18).sub(dir.clone().multiplyScalar(0.22))];
+  for (let i = 1; i < n; i++) { const k = i / n; pts.push(start.clone().lerp(foot, k).setY(0.18).add(side.clone().multiplyScalar(Math.sin(k * Math.PI) * wob))); }
+  pts.push(foot, dir.clone().multiplyScalar(2.78).setY(0.36), dir.clone().multiplyScalar(2.45).setY(0.66), end);
   const curve = new THREE.CatmullRomCurve3(pts, false, 'centripetal'), segs = Math.max(20, Math.round(L * 10));
   const metal = new THREE.Mesh(new THREE.TubeGeometry(curve, segs, r, 8, false), PIPE_COPPER); metal.castShadow = true; g.add(metal);
   g.add(new THREE.Mesh(new THREE.TubeGeometry(curve, segs, r * 1.18, 8, false), new THREE.ShaderMaterial({ vertexShader: PIPE_FLOW_V, fragmentShader: PIPE_FLOW_F, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, uniforms: { uTime: U.uTime, uBoost: U.uBoost, uOn: { value: on ? 1 : 0.12 }, uMine: { value: mine ? 1 : 0 } } })));
+  // flanges where the pipe meets the house and the ring, so it is plainly bolted on
+  for (const [u, big] of [[0, 1.9], [1, 1.7]]) { const q = curve.getPoint(u), f = new THREE.Mesh(new THREE.CylinderGeometry(r * big, r * big, 0.05, 12), PIPE_IRON); f.position.copy(q); f.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), curve.getTangent(u)); g.add(f); }
   for (let i = 1; i < n; i++) { const q = curve.getPoint(i / n);
     const post = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.04, q.y + 0.02, 6), PIPE_IRON); post.position.set(q.x, (q.y + 0.02) / 2, q.z); g.add(post);
     const clamp = new THREE.Mesh(new THREE.TorusGeometry(r * 1.35, 0.012, 5, 12), PIPE_IRON); clamp.position.copy(q); clamp.lookAt(q.clone().add(curve.getTangent(i / n))); g.add(clamp); }
