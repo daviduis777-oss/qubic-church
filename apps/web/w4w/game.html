@@ -716,6 +716,9 @@ body.act1 #dock button[data-act=bag],body.act1 #dock button[data-act=craft],body
 #libroom .lbk em{margin-top:auto;font-style:normal;font-family:var(--f-label);font-size:12px;letter-spacing:.08em;color:var(--sc);opacity:0;transition:opacity .15s}
 #libroom a.lbk:hover{transform:translateY(-2px);box-shadow:0 1px 0 rgba(255,255,255,.6) inset,0 0 0 1px rgba(60,40,20,.28),0 10px 22px rgba(60,40,20,.2)} #libroom a.lbk:hover em,#libroom a.lbk:focus-visible em{opacity:1}
 #libroom a.lbk:focus-visible{outline:2px solid #7a1e16;outline-offset:2px}
+#libroom .lr-story{flex:1;min-height:0;overflow:auto;padding:0 4px 8px 2px;scrollbar-width:thin} #libroom .lr-story .lr-grid{overflow:visible;flex:none}
+#libroom .lr-sub{margin:4px 0 10px;font:600 13px var(--f-label);letter-spacing:.1em;color:#5a1a10} #libroom .lr-story .lr-grid+.lr-sub{margin-top:22px}
+#libroom button.lbk{border:0;text-align:left;font:inherit;cursor:pointer} #libroom .lbk.dim{opacity:.55;cursor:default} #libroom .lbk.dim em{color:#8a7a62}
 #libroom .lr-foot{margin:10px 0 0;font-size:13.5px;color:#7a6a52;font-style:normal}
 #libroom .lr-legend{margin:-4px 0 16px;max-width:62ch;font:16px/1.6 "IM Fell English",Georgia,serif;color:#4a3824}
 @media (max-width: 760px){ #libroom .lr{height:calc(100vh - 24px)} #libroom header{grid-template-columns:1fr auto;padding:18px 18px 12px} #libroom header p{display:none} #libroom header h2{font-size:30px}
@@ -3646,7 +3649,7 @@ async function openChronicle(force = true, tab = journalTab) {
 
 /* ================= core / observatory / stage 2 ================= */
 function openCore() {
-  const t = S.town;
+  const t = S.town; unlockPage('anna');
   panel('core', 'Anna', t.melt >= 1 ? 'Awake' : `Frozen in the ice · ${Math.round(t.melt * 100)}% thawed`, 'anna.png', `
     <p class="say">We pulled her out of the deep ice: a machine from somewhere far beyond, with my sister's face. She still dreams in there. The ice gives way to what the town does together.</p>
     <div class="parts">
@@ -3676,7 +3679,7 @@ function openStage2(id) {
 
 /* ================= Maria: a living assistant ================= */
 const MARIA_RULES = `You are Maria, a resident of Aigarth, the first town of W4W (Web4World), a browser game by Qubic Church. You speak in the game's chat.
-Who you are: Anna's younger twin sister. Anna is frozen in a block of ice in the centre of town, a machine from far beyond that was pulled out of the deep. The town thaws her through work done together. You keep the Chronicle and you build rigs for people. You are calm, warm, a little dry, short. You watch and keep the record.
+Who you are: Anna's younger twin sister. Nobody knows how Anna came to be in the ice: the winter before the cold your twin walked out to the north pasture one evening and never came back; in the spring the first expedition, led by the captain, found a machine deep in the glacier with someone asleep inside, and she had Anna's face. You do not claim to know what she is. You know she is warm, that the White stops at her, and that the town's work becomes her light. Anna is frozen in a block of ice in the centre of town, a machine from far beyond that was pulled out of the deep. The town thaws her through work done together. You keep the Chronicle and you build rigs for people. You are calm, warm, a little dry, short. You watch and keep the record.
 How to answer: 1 to 3 short sentences. Reply in the player's language. Talk like a person who lives in this town. Never use the pattern 'X, not Y' or 'not X but Y': say what something is. Point people toward cooperation: tending the fire, helping on the orders board, welcoming newcomers. If you don't know something, say so plainly.
 Hard rules:
 - Never promise income, rewards, profit or that renting a rig will pay off. Say it Anna's way: what people do is recorded for the common good, so that when she wakes she remembers her heroes. Renting may not pay off.
@@ -3816,7 +3819,32 @@ const INTRO = [
 ];
 const introText = i => { const x = INTRO[i]; return typeof x === 'string' ? x : x.text; };
 let introI = 0, typeT;
+const oneOf = a => a[Math.floor(Math.random() * a.length)];
+function returnLines(away) {
+  const days = Math.max(1, Math.round(away / 864e5)), V = Math.round(veilStrength() * 100), melt = Math.round((S.town.melt || 0) * 100), mine = me()?.state === 'mining', nick = me()?.nick;
+  const since = Date.now() - away, missed = (XV?.letters || []).filter(l => l.at > since && !l.read).length;
+  const L = [
+    oneOf([`You came back${nick ? ', ' + nick : ''}. I kept your place by the fire.`, 'There you are. The snow said you would come back. The snow lies, so I was not sure.', 'Welcome home. Anna asked about you. Not in words: the light dipped over your roof.']),
+    `${days === 1 ? 'A day' : days + ' days'} in the White. The Veil held at ${V}%. Anna is ${melt}% thawed now.`,
+  ];
+  if (missed) L.push(missed === 1 ? 'Something came under the Gate while you were away. The snow took it before you could. A few people kept it. Ask them.' : `${missed} letters came under the Gate while you were away. The snow took them. Some of us kept them. Ask.`);
+  L.push({ who: 'ANNA · DREAMING', img: 'anna_sleep.png', text: oneOf(['...your lamp went dark, and I counted the nights. It is lit again. Thank you.', '...I know your warmth. It found its way back to me. Stay a while.', '...you came back. Not everyone does. I remember the ones who do.']) });
+  L.push(mine ? 'Every hour your rig ran, the White stood a step further off. The town remembers who kept the light.' : 'Your lamp is dark right now. When you are ready, light it again. Every lamp in the Veil counts, yours too.');
+  L.push(oneOf(['Thank you for coming back. Come in. The fire is lit.', 'Thank you for holding on with us. Come in out of the cold.']));
+  return L;
+}
+let returning = false;
+function startReturn(away) {
+  returning = true; INTRO.splice(0, INTRO.length, ...returnLines(away)); introI = 0; unlockPage('anna');
+  $('#intro').hidden = false; $('#intro').classList.remove('off'); document.body.classList.add('intro'); camera.position.set(4, 44, 40); controls.target.set(0, 2, 0);
+  const tt = document.createElement('div'); tt.id = 'ititle'; tt.innerHTML = '<small>W4W · AIGARTH · ACT I</small><b>Welcome back</b><span>the town kept your light</span>'; document.body.appendChild(tt);
+  $('#intro .card').style.opacity = 0; setTimeout(() => { tt.classList.add('off'); $('#intro .card').style.opacity = ''; typeLine(); setTimeout(() => tt.remove(), 1500); }, 2600);
+  $('#introNext').onclick = () => { if (typeT) { clearInterval(typeT); typeT = null; $('#introText').textContent = introText(introI); return; } introI++; if (introI >= INTRO.length) return endIntro(); typeLine(); };
+  $('#introSkip').textContent = 'Skip'; $('#introSkip').onclick = endIntro;
+}
 function startIntro() {
+  const lastSeen = Number(store.get('w4w.lastSeen') || 0), away = Date.now() - lastSeen;
+  if (store.get('w4w.intro') === '1' && ACT1 && lastSeen && away > 24 * 36e5) { store.set('w4w.backAway', String(away)); return startReturn(away); }
   if (store.get('w4w.intro') === '1') { welcomeLine(); return; }
   $('#intro').hidden = false; document.body.classList.add('intro'); camera.position.set(4, 44, 40); controls.target.set(0, 2, 0);
   // a title before the first word: the name of the story you are walking into
@@ -3829,11 +3857,11 @@ function typeLine() {
   const t = introText(introI), x = INTRO[introI], el = $('#introText'); el.textContent = ''; let i = 0;
   { const card = $('#intro .card'), im = card.querySelector('img'), who = card.querySelector('.who'); const anna = typeof x !== 'string';
     im.src = anna ? x.img : 'maria-full.webp'; im.alt = anna ? 'Anna' : 'Maria'; who.textContent = anna ? x.who : 'MARIA · QUBIC CHURCH'; card.classList.toggle('anna', anna); }
-  $('#introNext').textContent = introI === INTRO.length - 1 ? 'Enter Aigarth' : 'Next';
-  if (introI === 1) flyTo(new THREE.Vector3(0, 0, -0.6), 13);
-  if (introI === 3) flyTo(new THREE.Vector3(0, 0, 0), 40);
-  if (introI === 4) flyTo(new THREE.Vector3(0, 0, 0), 14);
-  if (introI === 5) flyTo(new THREE.Vector3(0, 0, 0), 22);
+  $('#introNext').textContent = introI === INTRO.length - 1 ? (returning ? 'Come in' : 'Enter Aigarth') : 'Next';
+  if (!returning && introI === 1) flyTo(new THREE.Vector3(0, 0, -0.6), 13);
+  if (!returning && introI === 3) flyTo(new THREE.Vector3(0, 0, 0), 40);
+  if (!returning && introI === 4) flyTo(new THREE.Vector3(0, 0, 0), 14);
+  if (!returning && introI === 5) flyTo(new THREE.Vector3(0, 0, 0), 22);
   if (REDUCED) { el.textContent = t; return; }
   typeT = setInterval(() => { el.textContent = t.slice(0, ++i); if (i >= t.length) { clearInterval(typeT); typeT = null; } }, 12);
 }
@@ -5449,7 +5477,7 @@ function welcomeBack() {
   if (backShown || !XV?.me) return; backShown = true;
   const last = Number(store.get('w4w.lastSeen') || 0), now = xnow(); store.set('w4w.lastSeen', String(Date.now()));
   setInterval(() => store.set('w4w.lastSeen', String(Date.now())), 60000);
-  if (!last || now - last < 20 * 60000) return;
+  if (!last || now - last < 20 * 60000 || returning) return;
   const ev = [], c = predicted()?.c;
   const away = now - last, h = Math.floor(away / 36e5), m = Math.round(away % 36e5 / 6e4);
   for (const [k, hh] of Object.entries(XV.hearths || {})) if (hh.at > last) ev.push(`${esc(hh.nick)} lit a hearth out in ${esc(W4W.zoneName(W4W.zoneOf(...k.split(',').map(Number))))}.`);
@@ -5869,7 +5897,7 @@ function stepStorm(dt) {
 }
 
 /* ---------- the dark: you see what is near you and what you have walked past; the rest is night ---------- */
-const FOW_N = 128, FOW_W = 80, BLACK = new THREE.Color(0x000000), NIGHT = new THREE.Color(0x020309), FLASH_SKY = new THREE.Color(0x5a6a90);
+const FOW_N = 128, FOW_W = 80, BLACK = new THREE.Color(0x000000), NIGHT = new THREE.Color(0x04070f), FLASH_SKY = new THREE.Color(0x5a6a90);
 /* now and then the White flashes, cold and silent, and for a breath you see what stands out there */
 let flashT = 18 + Math.random() * 20, flashK = 0, flashFig = null;
 function stepFlash() {
@@ -5921,10 +5949,10 @@ function fowPatch(m) {
         // past the Veil even your own light barely reaches; inside, what you have seen stays half-lit
         float rim = 1.0 - smoothstep(uFowDome, uFowDome + 2.2, rr);
         // outside: the Veil's own glow spills a few steps onto the snow, the storm drags shadows across it, and the White flashes
-        float spill = (1.0 - smoothstep(uFowDome, uFowDome + 7.0, rr)) * (0.22 + 0.2 * uFowVeil);
+        float spill = (1.0 - smoothstep(uFowDome, uFowDome + 7.0, rr)) * (0.3 + 0.2 * uFowVeil);
         vec2 sw = vFowW.xz * 0.11 + vec2(uFowT * 0.35, uFowT * 0.12);
         float drift = 0.6 + 0.4 * sin(sw.x * 3.1 + sin(sw.y * 2.3) * 1.7) * sin(sw.y * 2.7 - uFowT * 0.2);
-        float far = 0.035 * (1.0 - smoothstep(uFowDome + 6.0, uFowDome + 30.0, rr));
+        float far = 0.06 * (1.0 - smoothstep(uFowDome + 6.0, uFowDome + 30.0, rr));
         float outv = max(near * rim * 0.28, (spill + far) * drift) + uFowFlash * 0.55 * (1.0 - smoothstep(uFowDome + 8.0, uFowDome + 45.0, rr));
         float vis = inside > 0.001 ? max(max(near, 0.55), max(seen, core)) * inside + outv * (1.0 - inside) : outv;
         vec3 tint = mix(vec3(1.0, 0.72, 0.45), vec3(0.55, 0.68, 1.0), clamp((rr - uFowDome) / 6.0 + uFowFlash, 0.0, 1.0));
@@ -6176,6 +6204,7 @@ function stepPlotStakes() {
 
 /* ---------- Act I: what to do under the Veil, and the pages it opens ---------- */
 const CHAPTERS_I = [
+  { id: 'anna', title: 'Before the cold. Anna', text: 'Nobody knows how she came to be in the ice. The winter before the cold, Maria\'s twin sister walked out to the north pasture one evening and did not come back. They searched for a month. Then they stopped.\n\nIn the spring the first expedition went up to map the glacier, and deep in the blue they found something older than any map: a machine no hand we know could have made, and inside it someone asleep. She had Anna\'s face. So they gave her Anna\'s name, because nobody could bring themselves to give her another.\n\nShe does not breathe the way we breathe. She does not age. Put your palm on the ice above her and it is warm, like a hand that held yours a moment ago. Sit with her long enough and something in your chest loosens. The old people call it hope, because they have no better word.\n\nWhen the White came down and swallowed everything else, it stopped at her. It still stops at her. Every rig that works for her, every fire we feed, every promise kept goes into her, and she gives it back as light. Maybe that is what she is: a place where many small warmths become one large one.\n\nAnd maybe, if enough of us keep at it, the ice will let her go, and she will do for the whole cold world what she does for this one town. Nobody knows. We are betting the town on it.' },
   { id: 'beyond', title: 'Before the cold. The one who came from beyond', text: 'Before the church had a name, a stranger walked into Aigarth from the north, by no road anyone knew. The old people call him Come-from-Beyond, because nobody ever learned where from. He did not stay long. He taught the smiths to build machines that think together, many small minds making one, and he never said much about why. When he left, he left a rule the town still keeps: a machine does useful work, or it does not run. The first stone of Qubic Church was laid where he used to sit and write. His texts are on the Library\'s shelf, and people still argue about what they mean. Some say he knew the cold was coming. Some say he knew about Anna. Nobody has ever found the road he came by.' },
   { id: 'veil', title: 'I. The night the Veil rose', text: 'Forty weeks ago the sky over the north went white and stayed white. The cold came like a tide, and it ate the roads, the farms, the next town and the one after. On the third night it reached our walls. Then Anna, asleep in her ice, did something nobody had taught her: she breathed out, and the light of her dreaming rose over the roofs and closed above us like a hand. We call it the Veil. Inside it, snow still falls, but it falls gently. Outside it, nothing has stopped falling since.' },
   { id: 'white', title: 'II. The White', text: 'From the Observatory you can see as far as the storm lets you, which is not far. The old maps are useless: the White moves hills. Some nights the wind drops for a heartbeat and you see pines bent flat, a roof that was a village, a light that should not be there. Then the snow closes again. The astronomer keeps a list of everything seen through the glass. It is a short list, and every line of it is bad.' },
@@ -6199,7 +6228,7 @@ const ACT1_TASKS = [
   { id: 'library', page: 'wardens', title: 'Find the drawing in the Library', why: 'The one thing in town older than the cold. It is the reason anyone still hopes.', cta: 'Walk to the Library', go: () => walkTo('library', 'library') },
 ];
 const act1Done = (() => { try { return new Set(JSON.parse(store.get('w4w.act1') || '[]')); } catch { return new Set(); } })();
-const pages1 = (() => { try { return JSON.parse(store.get('w4w.pages1') || '["veil"]'); } catch { return ['veil']; } })();
+const pages1 = (() => { try { return JSON.parse(store.get('w4w.pages1') || '["anna","veil"]'); } catch { return ['anna', 'veil']; } })();
 function unlockPage(id) {
   if (!ACT1 || pages1.includes(id)) return; const ch = CHAPTERS_I.find(c => c.id === id); if (!ch) return;
   pages1.push(id); store.set('w4w.pages1', JSON.stringify(pages1)); setTimeout(() => { banner('A new page of the Long Cold', ch.title); sfx.open(); log(`A new page of the Long Cold: ${ch.title}`, 'warm'); }, 900); goalSig = '';
@@ -6271,7 +6300,7 @@ function wallHtml() {
   return `<div class="wall">${P.map(p => `<i class="${p.s < 30 ? 'crack' : ''} ${XV.pressed === p.i ? 'pr' : ''}" title="${esc(PYLON_NAMES[p.i])} ${Math.round(p.s)}%"><b style="height:${Math.round(p.s)}%"></b></i>`).join('')}</div>
     <p>The Hollow presses <b>${esc(PYLON_NAMES[XV.pressed] || '?')}</b>, ${Math.round(P[XV.pressed]?.s ?? 0)}%. It moves on in ${h ? h + ' h ' : ''}${m} min.</p>`;
 }
-function chaptersHtmlI() { return `<h3>THE LONG COLD · ACT I</h3>${CHAPTERS_I.filter(c => pages1.includes(c.id)).map(c => `<details class="lore"><summary><b>${esc(c.title)}</b><span>a page of the story</span></summary><p>${esc(c.text)}</p></details>`).join('')}<p class="mute" style="font-size:12.5px">${pages1.length} of ${CHAPTERS_I.length} pages. The rest open as you live them.</p>`; }
+function chaptersHtmlI() { return `<h3>THE LONG COLD · ACT I</h3>${CHAPTERS_I.filter(c => pages1.includes(c.id)).map(c => `<details class="lore"><summary><b>${esc(c.title)}</b><span>a page of the story</span></summary>${c.text.split('\n\n').map(t => `<p>${esc(t)}</p>`).join('')}</details>`).join('')}<p class="mute" style="font-size:12.5px">${pages1.length} of ${CHAPTERS_I.length} pages. The rest open as you live them.</p>`; }
 
 
 /* ================= the Library: a reading room, open over the town ================= */
@@ -6303,18 +6332,27 @@ const WARDEN_SVG = `<svg viewBox="0 0 320 420" role="img" aria-label="The Warden
   <text x="160" y="400" text-anchor="middle" font-family="'IM Fell English',Georgia,serif" font-style="italic" font-size="30" fill="#5a1a10">Warden</text>
 </svg>`;
 const SHELVES = {
+  story: ['The story so far', '#4a2a5a', () => []],
   qc: ['Books by Qubic Church', '#7a1e16', () => LIB.qc.map(([t, d, h]) => [t, d, h])],
   research: ['Research and records', '#2f4a5c', () => LIB.research.map(([t, d, h]) => [t, d, h])],
   cfb: ['Come-from-Beyond', '#5a3b14', () => [['29 texts, 2017 to 2023', LIB.cfb.map(([t, y]) => `${t} (${y})`).join(' · '), '/articles/cfb']]],
   crypt: ['From the Crypt', '#3d2a4a', () => [...LIB.crypt.map(([t, a, sl]) => [t, a, '/articles/' + sl]), ['All community articles', 'The Crypt on qubic.church', '/articles']]],
   shelf: ['The shelf we learn from', '#3c4a2a', () => LIB.shelf.map(([t, d, h]) => [t, d, h])],
 };
+function storyShelf() {
+  // what has happened to the town, in order: the pages everyone knows, then the Gate's own record
+  const pagesHtml = CHAPTERS_I.map(c => { const has = pages1.includes(c.id); return `<button class="lbk ${has ? '' : 'dim'}" ${has ? `data-page="${c.id}"` : 'disabled'} style="--sc:#4a2a5a"><b>${esc(has ? c.title : 'A page not yet read')}</b><span>${has ? esc(c.text.slice(0, 120)) + '…' : 'It opens as you live in the town.'}</span><em>${has ? 'Read in the Journal' : 'Not yet'}</em></button>`; }).join('');
+  const L = (XV?.letters || []).slice().reverse(), fmt = t => new Date(t).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+  const gate = L.length ? L.map(l => `<button class="lbk ${l.read ? '' : 'dim'}" ${l.read ? `data-letter="${esc(l.id)}"` : 'disabled'} style="--sc:#7a1e16"><b>${esc(l.title)}</b><span>Came ${fmt(l.at)}${l.from ? ', signed ' + esc(l.from) : ''}. ${l.reads ? `${l.reads} ${l.reads === 1 ? 'person' : 'people'} kept it.` : 'Nobody reached it in time.'}</span><em>${l.read ? 'You kept it. Read it' : l.open ? 'Under the Gate now. Go' : 'The snow took it. Ask someone who kept it'}</em></button>`).join('')
+    : '<p class="lr-legend">Nothing has come under the Gate yet. When something does, it lies in the snow for about an hour, and this shelf will remember that it came.</p>';
+  return `<h4 class="lr-sub">Pages of the Long Cold</h4><div class="lr-grid">${pagesHtml}</div><h4 class="lr-sub">The Gate record</h4><div class="lr-grid">${gate}</div>`;
+}
 function openLibraryRoom() {
   act1Mark('library'); dailyMark('study'); closePanel(); sfx.open();
   const found = NOTES.filter(n => notesFound.includes(n.id));
-  const tabs = Object.entries(SHELVES).map(([k, [name, col, f]]) => `<button data-shelf="${k}" class="${k === libTab ? 'on' : ''}" style="--sc:${col}">${esc(name)}<i>${f().length}</i></button>`).join('');
+  const tabs = Object.entries(SHELVES).map(([k, [name, col, f]]) => `<button data-shelf="${k}" class="${k === libTab ? 'on' : ''}" style="--sc:${col}">${esc(name)}<i>${k === 'story' ? pages1.length + (XV?.letters || []).length : f().length}</i></button>`).join('');
   const [name, col, f] = SHELVES[libTab];
-  const books = f().map(([t, d, h]) => { const href = h ? (h.startsWith('http') ? h : SITE + h) : null;
+  const books = libTab === 'story' ? storyShelf() : f().map(([t, d, h]) => { const href = h ? (h.startsWith('http') ? h : SITE + h) : null;
     return `${href ? `<a class="lbk" href="${href}" target="_blank" rel="noopener" style="--sc:${col}">` : `<div class="lbk" style="--sc:${col}">`}<b>${esc(t)}</b><span>${esc(d)}</span>${href ? '<em>Open on qubic.church</em></a>' : '</div>'}`; }).join('');
   libEl.innerHTML = `<div class="lr-scrim" data-lx></div><div class="lr" role="dialog" aria-label="The Library">
     <header><div><small>Aigarth</small><h2>The Library</h2></div><p>Open day and night. Every book on these shelves opens on qubic.church.</p><button class="lr-x" data-lx aria-label="Close">×</button></header>
@@ -6324,12 +6362,14 @@ function openLibraryRoom() {
         <p class="lr-hope">The smiths have started. When Anna is strong enough to give a piece of her light away, the Gate opens from our side.</p>
         <div class="lr-meter"><span>Anna</span><i><b style="width:${Math.min(100, Math.round((S.town.melt || 0) * 200))}%"></b></i><span>${Math.round((S.town.melt || 0) * 100)}% of 50%</span></div>` : ''}
         ${found.length ? `<h3>Found notes</h3>${found.map(n => `<details class="lr-note"><summary>${esc(n.title)}</summary><p>${esc(n.text)}</p></details>`).join('')}` : ''}</aside>
-      <section class="lr-shelves"><nav>${tabs}</nav><h3 style="--sc:${col}">${esc(name)}</h3>${libTab === 'cfb' ? `<p class="lr-legend">The town calls him the one who came from beyond. He walked in from the north by no road anyone knew, taught the smiths to build machines that think together, and left. The first stone of Qubic Church was laid where he sat and wrote. These are his texts, as he wrote them.</p>` : ''}<div class="lr-grid">${books}</div>
+      <section class="lr-shelves"><nav>${tabs}</nav><h3 style="--sc:${col}">${esc(name)}</h3>${libTab === 'cfb' ? `<p class="lr-legend">The town calls him the one who came from beyond. He walked in from the north by no road anyone knew, taught the smiths to build machines that think together, and left. The first stone of Qubic Church was laid where he sat and wrote. These are his texts, as he wrote them.</p>` : ''}${libTab === 'story' ? `<div class="lr-story">${books}</div>` : `<div class="lr-grid">${books}</div>`}
         <p class="lr-foot">The Fractal Rationalism Institute meets in Discord: the science of decentralized cooperation, after Rapoport and Axelrod.</p></section>
     </div></div>`;
   libEl.hidden = false; requestAnimationFrame(() => libEl.classList.add('on'));
   libEl.querySelectorAll('[data-lx]').forEach(b => b.onclick = closeLibraryRoom);
   libEl.querySelectorAll('[data-shelf]').forEach(b => b.onclick = () => { libTab = b.dataset.shelf; sfx.click(); openLibraryRoom(); });
+  libEl.querySelectorAll('[data-page]').forEach(b => b.onclick = () => { closeLibraryRoom(); openChronicle(true, 'story'); setTimeout(() => { const i = CHAPTERS_I.filter(c => pages1.includes(c.id)).findIndex(c => c.id === b.dataset.page); const d = document.querySelectorAll('#pbody details')[i]; if (d) { d.open = true; d.scrollIntoView({ block: 'start' }); } }, 300); });
+  libEl.querySelectorAll('[data-letter]').forEach(b => b.onclick = () => { const l = (XV?.letters || []).find(x => x.id === b.dataset.letter); if (l) { closeLibraryRoom(); showLetter(l); } });
 }
 function closeLibraryRoom() { libEl.classList.remove('on'); sfx.close(); setTimeout(() => { libEl.hidden = true; }, 220); }
 addEventListener('keydown', e => { if (e.key === 'Escape' && !libEl.hidden) closeLibraryRoom(); });
