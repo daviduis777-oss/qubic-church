@@ -2254,7 +2254,7 @@ function build() {
     else if (t === 'open' && z === 1 && rnd() < 0.07) corner(['tent', 'crate', 'barrel', 'sack', 'wheelbarrow'][Math.floor(rnd() * 5)], Math.floor(rnd() * 6), 0.7);
     else if (t === 'open' && z === 2 && rnd() < 0.08) corner('lumber', Math.floor(rnd() * 6), 0.8);
   });
-  for (let n = W4W.TOWN_RING - 1; n <= W4W.TOWN_RING; n++) ring(n).forEach(([q, r]) => { if (reserved.has(key(q, r)) || (q === GATE_CELL[0] && r === GATE_CELL[1]) || rnd() >= (n === W4W.TOWN_RING ? 0.45 : 0.18)) return; const c = HX(q, r), v = rnd();
+  for (let n = W4W.TOWN_RING - 1; n <= (ACT1 ? 0 : W4W.TOWN_RING); n++) ring(n).forEach(([q, r]) => { if (reserved.has(key(q, r)) || (q === GATE_CELL[0] && r === GATE_CELL[1]) || rnd() >= (n === W4W.TOWN_RING ? 0.45 : 0.18)) return; const c = HX(q, r), v = rnd();
     if (v < 0.6) NATURE.push([c.x + (rnd() - 0.5) * 0.8, c.z + (rnd() - 0.5) * 0.8, 'pine', 1.5 + rnd() * 0.6]); else if (v < 0.75) NATURE.push([c.x + (rnd() - 0.5) * 0.8, c.z + (rnd() - 0.5) * 0.8, 'rock', 0.45]); else place(['tent', 'crate'][Math.floor(rnd() * 2)], q, r, { rot: rnd() * 6, jitter: 0.8 }); });
   mergeScenery(scene.children.filter(o => !before.has(o)));
   buildWastesGround(); buildIce(ICE); buildRoads(); buildLake(); buildChoir(); buildQProps(); buildNature(); if (ACT1) buildDome();
@@ -2274,7 +2274,7 @@ function mergeScenery(objs) {
     const mesh = new THREE.Mesh(g, mat); mesh.castShadow = true; mesh.receiveShadow = true; mesh.matrixAutoUpdate = false; scene.add(mesh); });
 }
 function freePlots() { const taken = new Set(reserved); allResidents().forEach(h => taken.add(key(...h.at))); const out = [];
-  for (let n = 2; n <= W4W.TOWN_RING - 1; n++) ring(n).forEach(([q, r]) => { if (!taken.has(key(q, r)) && !(q === GATE_CELL[0] && r === GATE_CELL[1])) out.push([q, r]); }); return out; }
+  for (let n = 2; n <= W4W.TOWN_RING; n++) ring(n).forEach(([q, r]) => { if (!taken.has(key(q, r)) && !(q === GATE_CELL[0] && r === GATE_CELL[1])) out.push([q, r]); }); return out; }
 function lamp(p) {
   const post = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.05, 1.3, 6), new THREE.MeshStandardMaterial({ color: 0x241c18, roughness: 0.8 }));
   post.position.set(p.x, 0.65, p.z); post.castShadow = true; scene.add(post);
@@ -3344,7 +3344,7 @@ function openObservatory() {
   act1Mark('watch');
   panel('observatory', 'Observatory', 'Network weather and BPP-9000', null, `
     ${ACT1 ? `<h3>THROUGH THE GLASS</h3><p style="margin:0 0 8px">As far as the White lets you see, which is not far. The astronomer's list of what walks outside the Veil:</p>
-    <div class="shelf">${HOLLOW.map(H => `<button class="book" style="width:100%;text-align:left;background:none;cursor:pointer" data-beast="${H.id}"><b>${esc(H.name)}</b><span>${esc(H.text.split('. ')[0])}.</span></button>`).join('')}<button class="book" style="width:100%;text-align:left;background:none;cursor:pointer" data-chthon><b>???</b><span>Something taller than the pines, far out. The others walk away from it.</span></button></div>` : ''}
+    <div class="shelf">${HOLLOW.filter(H => !H.hidden).map(H => `<button class="book" style="width:100%;text-align:left;background:none;cursor:pointer" data-beast="${H.id}"><b>${esc(H.name)}</b><span>${esc(H.text.split('. ')[0])}.</span></button>`).join('')}<button class="book" style="width:100%;text-align:left;background:none;cursor:pointer" data-chthon><b>???</b><span>Something taller than the pines, far out. The others walk away from it.</span></button></div>` : ''}
     <p class="say">From here the town watches the Qubic network: the epoch, the threshold, whether our pool holds seats in the 676. Bad news turns into a storm over Aigarth and pushes the frost harder.</p>
     <div class="parts">${part('facade', 'Epoch', 'Changes every Wednesday at 12:00 UTC', 'E' + EPOCH, 1)}${part('hall', 'Weather', S.weather === 'clear' ? 'Pool in the 676 (demo)' : 'Pool lost seats (demo)', S.weather === 'clear' ? 'Clear' : 'Storm', S.weather === 'clear' ? 1 : 0.2)}</div>
     <h3>BPP-9000</h3>
@@ -3570,7 +3570,7 @@ function localWorld() {
   };
 }
 /** Called once the town is built and the capabilities are up. */
-function startX() { if (XW) return; borderFx = buildBorder(); XW = window.W4W_X || localWorld(); hookFeed(); XW.on(v => takeView(v)); controls.addEventListener('start', () => { follow = false; }); }
+function startX() { if (XW) return; if (!ACT1) borderFx = buildBorder(); XW = window.W4W_X || localWorld(); hookFeed(); XW.on(v => takeView(v)); controls.addEventListener('start', () => { follow = false; }); }
 let follow = true, freezeAsk = 0;
 function takeView(v) {
   if (!v || v.error) return;
@@ -4847,6 +4847,7 @@ function whisper() {
    The Stone Teeth: bare violet ice, cracked. Town stays as it is. Zones follow the same hex rings the rules use. */
 /* ---------- the old roads, the lake, the stones ---------- */
 const CHOIR = [], CHOIR_BOX = [], NATURE = [];
+const THEME_TEX = {}; const themeTex = n => (THEME_TEX[n] ||= (() => { const t = new THREE.TextureLoader().load('q/tex/' + n + '.jpg'); t.colorSpace = THREE.SRGBColorSpace; t.wrapS = t.wrapT = THREE.RepeatWrapping; return t; })());
 /* Quaternius Stylized Nature (CC0): pines, dead trees and rocks, snowed on, one instanced mesh per part */
 async function buildNature() {
   const sets = { pine: ['Pine_1', 'Pine_2', 'Pine_3', 'Pine_4', 'Pine_5'], dead: ['DeadTree_1', 'DeadTree_2', 'DeadTree_3'], rock: ['Rock_Medium_1', 'Rock_Medium_2', 'Rock_Medium_3'] };
@@ -4859,7 +4860,8 @@ async function buildNature() {
       g.scene.updateMatrixWorld(true); const bb = new THREE.Box3().setFromObject(g.scene), H = Math.max(1e-3, bb.max.y - bb.min.y), parts = []; g.scene.traverse(m => { if (m.isMesh) parts.push(m); });
       const m4 = new THREE.Matrix4(), qt = new THREE.Quaternion(), sc = new THREE.Vector3(), ps = new THREE.Vector3(), e = new THREE.Euler();
       for (const part of parts) {
-        const mat = part.material.clone(); mat.color = new THREE.Color(tint[kind]); if (mat.alphaTest === 0 && mat.map && kind === 'pine') mat.alphaTest = 0.4;
+        const mat = part.material.clone(); mat.color = new THREE.Color(tint[kind]);
+        if (kind === 'rock') { mat.map = themeTex('tex_rock'); mat.color = new THREE.Color(0xe2e6ee); } if (mat.alphaTest === 0 && mat.map && kind === 'pine') mat.alphaTest = 0.4;
         const inst = new THREE.InstancedMesh(part.geometry, snowify(mat), mine.length);
         mine.forEach(([x, z, , h], i) => { const k = h / H; e.set(0, (x * 7.13 + z * 3.7) % 6.28, 0); qt.setFromEuler(e); sc.setScalar(k); ps.set(x, -bb.min.y * k, z); m4.compose(ps, qt, sc).multiply(part.matrixWorld); inst.setMatrixAt(i, m4); });
         inst.castShadow = true; inst.receiveShadow = true; scene.add(inst);
@@ -4942,7 +4944,7 @@ function buildWastesGround() {
 /** Ice spikes in the Stone Teeth: they catch the light no stone does. */
 function buildIce(list) {
   if (!list.length) return;
-  const geo = new THREE.ConeGeometry(0.12, 1, 5), mat = new THREE.MeshStandardMaterial({ color: 0xbfe0ff, roughness: 0.15, metalness: 0.1, emissive: 0x4a7ab8, emissiveIntensity: 0.35, transparent: true, opacity: 0.85 });
+  const geo = new THREE.ConeGeometry(0.12, 1, 5), mat = new THREE.MeshStandardMaterial({ map: themeTex('tex_ice'), color: 0xdfefff, roughness: 0.15, metalness: 0.1, emissive: 0x4a7ab8, emissiveIntensity: 0.35, transparent: true, opacity: 0.85 });
   const inst = new THREE.InstancedMesh(geo, mat, list.length * 3), m4 = new THREE.Matrix4(), qt = new THREE.Quaternion(), sc = new THREE.Vector3(), ps = new THREE.Vector3(), e = new THREE.Euler();
   let k = 0; for (const [x, z, i] of list) for (let j = 0; j < 3; j++) { const a = Math.PI / 6 + i * Math.PI / 3 + (j - 1) * 0.35, d = 0.75 + j * 0.12, hgt = 0.6 + rnd() * 0.9;
     ps.set(x + Math.cos(a) * d, hgt / 2, z + Math.sin(a) * d); e.set((rnd() - 0.5) * 0.5, rnd() * 6, (rnd() - 0.5) * 0.5); qt.setFromEuler(e); sc.set(1, hgt, 1); m4.compose(ps, qt, sc); inst.setMatrixAt(k++, m4); }
@@ -5224,7 +5226,7 @@ function stepEmbers(dt) {
 const ACT1 = W4W.STAGE === 1;
 if (ACT1) document.body.classList.add('act1');
 document.addEventListener('click', e => { const b = e.target.closest?.('[data-beast],[data-chthon]'); if (!b) return; sfx.click(); if (b.dataset.beast) openBeast(b.dataset.beast); else openChthon(); });
-const GATE_CELL = [0, -W4W.TOWN_RING], DOME_R = W4W.TOWN_RING * 2 + 1.8, DOME_H = W4W.TOWN_RING + 3;
+const GATE_CELL = [0, -W4W.TOWN_RING], DOME_R = W4W.TOWN_RING * 2 + 1.35, DOME_H = W4W.TOWN_RING + 3;
 const DOME_U = { uTime: U.uTime, uHits: { value: Array.from({ length: 8 }, () => new THREE.Vector4(0, -99, 0, -99)) }, uThin: { value: 0 } };
 let hitI = 0, domeMesh = null;
 function domeHit(p) { DOME_U.uHits.value[hitI++ % 8].set(p.x, p.y, p.z, U.uTime.value); }
@@ -5242,28 +5244,28 @@ function buildDome() {
         float h = clamp(vL.y / ${DOME_H.toFixed(1)}, 0., 1.), az = atan(vL.z, vL.x), el = asin(h);
         vec2 hc = hexcell(vec2(az * 10.0, el * 12.0)); float edge = smoothstep(0.40, 0.5, hexd(hc));
         float flow = 0.5 + 0.5 * sin(el * 16. - uTime * 1.1 + az * 4.);
-        vec3 col = mix(vec3(0.42, 0.80, 1.0), vec3(0.70, 0.56, 1.0), h * 0.9 + 0.1 * sin(az * 2. + uTime * .2));
-        float a = fres * 0.42 + edge * (0.035 + 0.07 * flow) + 0.012;
+        vec3 col = mix(vec3(1.0, 0.55, 0.16), vec3(1.0, 0.80, 0.42), h * 0.9 + 0.1 * sin(az * 2. + uTime * .2));
+        float a = fres * 0.26 + edge * (0.02 + 0.045 * flow) + 0.004;
         for (int i = 0; i < 8; i++) { vec4 H = uHits[i]; float t = uTime - H.w; if (t < 0. || t > 2.6) continue; float d = distance(vW, H.xyz);
           float ring = exp(-pow((d - t * 3.0) * 2.2, 2.)) * (1. - t / 2.6), hot = exp(-d * 1.4) * max(0., 1. - t * 1.2);
-          a += ring * 0.55 + hot * 0.9 + edge * ring * 1.1; col = mix(col, vec3(0.9, 0.97, 1.0), clamp(ring + hot, 0., 1.)); }
-        a += (1. - smoothstep(0., 0.1, h)) * 0.45;
+          a += ring * 0.55 + hot * 0.9 + edge * ring * 1.1; col = mix(col, vec3(1.0, 0.92, 0.7), clamp(ring + hot, 0., 1.)); }
+        a += (1. - smoothstep(0., 0.07, h)) * 0.3;
         a *= (1.0 - uThin * 0.55) * (gl_FrontFacing ? 1.0 : 0.4);
         gl_FragColor = vec4(col, min(1., a * 1.4));
       }` });
   domeMesh = new THREE.Mesh(geo, mat); domeMesh.renderOrder = 6; scene.add(domeMesh);
   // where the Veil meets the snow: a bright seam on the ground
-  const seam = new THREE.Mesh(new THREE.RingGeometry(DOME_R - 0.25, DOME_R + 0.4, 160).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ color: 0x8fd8ff, transparent: true, opacity: 0.55, blending: THREE.AdditiveBlending, depthWrite: false }));
+  const seam = new THREE.Mesh(new THREE.RingGeometry(DOME_R - 0.15, DOME_R + 0.3, 160).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ color: 0xffa64a, transparent: true, opacity: 0.45, blending: THREE.AdditiveBlending, depthWrite: false }));
   seam.position.y = 0.04; seam.renderOrder = 3; scene.add(seam);
-  buildPylons(); buildGate(); buildStorm(); buildHollow();
+  buildPylons(); buildGate(); buildStorm(); buildHorrors();
 }
 /* six pylons hold the Veil's edge: dark stone, a crystal of Anna's light on top */
 async function buildPylons() {
   const [ob, crys] = await Promise.all([qModel('obelisk'), qModel('crystal')]);
-  for (let i = 0; i < 6; i++) { const a = i / 6 * Math.PI * 2 + Math.PI / 6, p = new THREE.Vector3(Math.cos(a) * (DOME_R - 0.6), 0, Math.sin(a) * (DOME_R - 0.6));
+  for (let i = 0; i < 6; i++) { const a = i / 6 * Math.PI * 2 + Math.PI / 6, p = new THREE.Vector3(Math.cos(a) * (DOME_R + 0.7), 0, Math.sin(a) * (DOME_R + 0.7));
     if (ob) qPlace(ob, p.x, p.z, 2.2, -a, { c: 0x1c2030, k: 0.7 });
-    if (crys) { const c = qPlace(crys, p.x, p.z, 0.55, a, { c: 0xbfe8ff, k: 0.8, e: 0x5ab8ff, ei: 1.4 }); c.position.y += 2.15; }
-    const s = sprite(GLOW, p.x, 2.5, p.z, 1.6, 0x8fd0ff, 0.9); s.userData.base = 0.9; glowDecal(p.x, p.z, 1.6, 0x8fd0ff, 0.35); }
+    if (crys) { const c = qPlace(crys, p.x, p.z, 0.55, a, { c: 0xffd08a, k: 0.8, e: 0xff8a2a, ei: 1.4 }); c.position.y += 2.15; }
+    const s = sprite(GLOW, p.x, 2.5, p.z, 1.6, 0xffa64a, 0.9); s.userData.base = 0.9; glowDecal(p.x, p.z, 1.6, 0xffa64a, 0.35); }
 }
 /* the North Gate: sealed since the ninth night */
 function buildGate() {
@@ -5333,14 +5335,13 @@ function stepStorm(dt) {
 
 /* ---------- the Hollow: what walks round the Veil and scratches at it ---------- */
 const HOLLOW = [
-  { id: 'scratcher', name: 'The Scratcher', model: 'yeti', h: 1.6, walk: 'Walk', idle: 'Idle', hit: 'Punch', speed: 0.55, r: DOME_R + 1.3,
-    text: 'Bigger than a door, hunched like an old man, white where the snow sticks to it. Every night it picks a place on the Veil and drags its claws down it until the light ripples. The children say it is looking for the thin places. The children are right.' },
-  { id: 'hollow', name: 'The Hollow Man', model: 'demon_blue', h: 1.35, walk: 'Walk', idle: 'Idle', hit: 'Punch', speed: 0.45, r: DOME_R + 1.6,
-    text: 'It walks the edge slowly, the way you walk past a house you used to live in. Sometimes it stops at the North Gate and stands there for an hour. It wears what is left of a coat. Nobody has said out loud whose.' },
-  { id: 'wailer', name: 'The Wailer', model: 'ghost', h: 1.25, walk: 'Fast_Flying', idle: 'Flying_Idle', hit: 'Punch', speed: 0.75, r: DOME_R + 1.0, float: 0.7,
-    text: 'You hear it before you see it: singing, in voices you know. Your mother. A friend who went with the expedition. If it calls you by name, go indoors and do not answer.' },
-  { id: 'circler', name: 'The Circler', model: 'wyvern', h: 1.6, walk: 'Dragon_Flying', idle: 'Dragon_Flying', hit: 'Dragon_Attack', speed: 1.3, r: DOME_R + 2.5, fly: DOME_H + 1.5,
-    text: 'High above the Veil, round and round, never landing. On nights when the town is cold it comes lower. When it strikes the top of the Veil, the whole dome rings like a bell.' },
+  { id: 'scratcher', name: 'The Scratcher', model: 'h/tallman', h: 2.6, speed: 0.42, r: DOME_R + 1.4,
+    text: 'Twice the height of a door and thin as a winter tree, with arms that reach the snow. Every night it picks a place on the Veil and drags its claws down it until the light ripples. The children say it is looking for the thin places. The children are right.' },
+  { id: 'hollow', name: 'The Hollow Man', model: 'h/crawler', h: 1.25, speed: 0.6, r: DOME_R + 1.8,
+    text: 'Six long legs, and slung underneath them, what is left of a man in what is left of a coat. It walks the edge the way you walk past a house you used to live in. Sometimes it stops at the North Gate and stands there for an hour. Nobody has said out loud whose coat it is.' },
+  { id: 'wailer', name: 'The Wailer', model: 'h/shroud', h: 2.0, speed: 0.5, r: DOME_R + 1.2, float: 0.35,
+    text: 'A hanging drape with a light inside it, and things like hands beneath. You hear it before you see it: singing, in voices you know. Your mother. A friend who went with the expedition. If it calls you by name, go indoors and do not answer.' },
+  { id: 'scratcher2', name: 'The Scratcher', model: 'h/tallman', h: 2.9, speed: 0.36, r: DOME_R + 2.2, hidden: true, text: '' },
 ];
 const hollow = [];
 function darken(root, eyes) {
@@ -5349,17 +5350,16 @@ function darken(root, eyes) {
     if (/Wood|Straps|Teeth|Tongue|Belly|Secondary/.test(n) && !/Ghost_Secondary/.test(n)) m.material = dark;
     else if (eyes.test(n)) m.material = glow; else m.material = dark; if (/Wood/.test(n)) m.visible = false; });
 }
-async function buildHollow() {
+async function buildHorrors() {
   for (const [i, H] of HOLLOW.entries()) {
     const g = await qModel(H.model); if (!g) continue;
     const body = cloneSkinned(g.scene); body.updateMatrixWorld(true); const bb = new THREE.Box3().setFromObject(body, true), s = H.h / Math.max(1e-4, bb.max.y - bb.min.y);
     body.scale.multiplyScalar(s); body.position.y = -bb.min.y * s;
-    darken(body, H.model === 'wyvern' ? /^Eyes/ : H.model === 'demon_blue' ? /Eye_Black/ : /Eye_White/);
+    body.traverse(m => { if (m.isMesh) { m.castShadow = true; m.frustumCulled = false; if (m.material?.emissive && m.material.emissiveIntensity > 0.5) m.material.emissiveIntensity = 3; } });
     const root = new THREE.Group(); root.add(body); scene.add(root);
-    const eye = sprite(GLOW, 0, 0, 0, 0.5, 0x9fe8ff, 0.5); root.add(eye); eye.position.set(0, H.h * 0.82, 0.18); eye.userData.base = 0.5;
     const mx = new THREE.AnimationMixer(body), acts = Object.fromEntries(g.animations.map(a => [a.name.replace(/^.*\|/, ''), mx.clipAction(a)]));
-    const B = { ...H, root, body, mx, acts, cur: '', a: i / HOLLOW.length * Math.PI * 2 + 0.3, dir: i % 2 ? -1 : 1, rad: H.r, mode: 'walk', t: 6 + Math.random() * 8, strikeT: 0 };
-    tag(root, 'beast', H.id); hollowPlay(B, H.walk); hollow.push(B);
+    const B = { ...H, walk: 'Walk', idle: 'Idle', hit: 'Scratch', root, body, mx, acts, cur: '', a: i / HOLLOW.length * Math.PI * 2 + 0.3, dir: i % 2 ? -1 : 1, rad: H.r, mode: 'walk', t: 6 + Math.random() * 8, strikeT: 0 };
+    tag(root, 'beast', H.id.replace(/2$/, '')); hollowPlay(B, B.walk); hollow.push(B);
   }
 }
 function hollowPlay(B, n, once = false) { if (B.cur === n || !B.acts[n]) return; const a = B.acts[n], o = B.acts[B.cur]; a.reset(); a.setLoop(once ? THREE.LoopOnce : THREE.LoopRepeat); a.fadeIn(0.3).play(); o?.fadeOut(0.3); B.cur = n; }
@@ -5431,12 +5431,13 @@ const CHAPTERS_I = [
   { id: 'veil', title: 'I. The night the Veil rose', text: 'Forty weeks ago the sky over the north went white and stayed white. The cold did not come like weather. It came like a tide, and it ate the roads, the farms, the next town and the one after. On the third night it reached our walls. Then Anna, asleep in her ice, did something nobody had taught her: she breathed out, and the light of her dreaming rose over the roofs and closed above us like a hand. We call it the Veil. Inside it, snow still falls, but it falls gently. Outside it, nothing has stopped falling since.' },
   { id: 'white', title: 'II. The White', text: 'From the Observatory you can see as far as the storm lets you, which is not far. The old maps are useless: the White moves hills. Some nights the wind drops for a heartbeat and you see pines bent flat, a roof that was a village, a light that should not be there. Then the snow closes again. The astronomer keeps a list of everything seen through the glass. It is a short list, and every line of it is bad.' },
   { id: 'knock', title: 'III. The knocking', text: 'Twelve of us went out through the North Gate the week before the cold came, to bring the farms in. When the White reached the town, the Gate was sealed behind them. On the ninth night someone knocked on it from outside: three slow knocks, then three more. The voice was the captain\'s. It asked us, very politely, to open. We did not. At dawn the knocking stopped. Nobody in Aigarth agrees on whether we did the right thing. Everybody agrees we would do it again.' },
-  { id: 'scratch', title: 'IV. What scratches', text: 'They came after the storm, or with it, or out of it. We have no better names than the ones the children gave them. The Scratcher drags its claws down the Veil until the light ripples. The Hollow Man walks the edge as if looking for a door he remembers. The Wailer sings in voices you know. The Circler goes round and round above us, waiting for the light to thin. They do not sleep. They are patient in a way nothing alive should be.' },
+  { id: 'scratch', title: 'IV. What scratches', text: 'They came after the storm, or with it, or out of it. We have no better names than the ones the children gave them. The Scratcher drags its claws down the Veil until the light ripples. The Hollow Man walks the edge as if looking for a door he remembers. The Wailer sings in voices you know. And far out, sometimes, something taller than the pines stands still and watches the light. They do not sleep. They are patient in a way nothing alive should be.' },
   { id: 'lamp', title: 'V. Lamps in the Veil', text: 'The Veil is not free. Anna drinks to hold it: work, warmth, attention. Every machine in town that thinks for her is a lamp in the Veil, and on the nights when too many lamps go out, the Scratcher\'s claws go deeper. When you start your rig, look up. Somewhere over your roof the light got a little thicker.' },
   { id: 'fire', title: 'VI. The fire on the plaza', text: 'The plaza fire was lit on the first night and it has not gone out once. It does not hold the Veil; Anna does that. It holds us. People come to it to stand next to other people. Feed it, and for an hour the whole town feels a little less alone.' },
   { id: 'wardens', title: 'VII. The Wardens', text: 'In the Library there is a drawing older than the cold: a figure in heavy plates, lined with something that glows. Under it, in the hand of the expedition\'s smith, one word: Warden. A suit that carries a piece of Anna\'s light on the body, so the White cannot get in. The smiths have started. They need iron, and patience, and above all they need Anna strong enough to give a piece of her light away. When she is, the Gate opens, and this time it opens from our side.' },
   { id: 'remember', title: 'VIII. She remembers', text: 'Anna does not sleep the way we sleep. She listens. She knows whose lamp is lit and whose fire was fed, who welcomed a stranger and who kept a promise. Maria says Anna keeps a list too, the opposite of the astronomer\'s. She records it for the common good: when she wakes, she must remember her heroes and know them by name.' },
 ];
+const _unused_ = null;
 const ACT1_TASKS = [
   { id: 'maria', page: 'remember', title: 'Talk to Maria', why: 'She keeps the Chronicle and knows what the town needs tonight.', cta: 'Talk to Maria', go: () => openMaria() },
   { id: 'mine', page: 'lamp', title: 'Light your lamp in the Veil', why: 'Start mining. Every rig in town is a lamp that Anna burns to hold the dome.', cta: 'Open the Mine', go: () => openHub() },
@@ -5544,5 +5545,5 @@ function loop(now = performance.now()) {
 }
 requestAnimationFrame(loop);
 addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); DPR = Math.min(DPR, dprFor()); renderer.setPixelRatio(DPR); composer.setPixelRatio?.(DPR); renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight); fxaaSize(); });
-window.__w4w = { S, settle, X: () => ({ XV, avatars, predicted, xact, hexAt, warp: ms => XW.warp?.(ms), planTo, goTrip, NOTES, rimeFx, openLibrary, trip, prints: prints.length, rimeAt: (q, r) => XW._rime?.(q, r), stash: o => XW._stash?.(o), UI, renderFrames, unfollow: () => { follow = false; fly = null; } }), freePlots, openMaria, ask, addWood, refreshTown, draft: v => (draft = v), camera, controls, updateIce, renderer, scene, __composer: LITE ? null : composer };
+window.__w4w = { S, settle, X: () => ({ XV, avatars, predicted, xact, hexAt, warp: ms => XW.warp?.(ms), planTo, goTrip, NOTES, rimeFx, openLibrary, trip, prints: prints.length, rimeAt: (q, r) => XW._rime?.(q, r), stash: o => XW._stash?.(o), UI, renderFrames, unfollow: () => { follow = false; fly = null; }, hollow }), freePlots, openMaria, ask, addWood, refreshTown, draft: v => (draft = v), camera, controls, updateIce, renderer, scene, __composer: LITE ? null : composer };
 </script>
