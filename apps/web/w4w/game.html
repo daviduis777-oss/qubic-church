@@ -3029,7 +3029,7 @@ const FAQ = [
     ['Can my computer mine?', 'Open <b>Mining</b> and look at <b>Your machine</b>: Maria reads your graphics card, threads and system and tells you straight. Most desktop computers can join. Phones cannot.'],
     ['How much will I earn?', 'Nobody here promises anything. Anna records it for the common good: when she wakes, she must remember her heroes and know them. What a machine earns depends on the epoch, on how many others mine and on the network rules, and it changes week to week.'],
     ['Who pays me, and when?', 'The pool pays you directly, in QUBIC, to your address, once a week: usually about a week after an epoch closes on Wednesday 12:00 UTC. Qubic Church never holds your coins.'],
-    ['What is the 7%?', 'The pool fee. It is in line with the big Qubic pools: qubic.li takes 7%, JetSki 8%, Minerlab and Apool 10% (miningboard.com, October 2026). 4% of what your rig mines supports Qubic Church. You keep 93%, and Maria shows it before every connection.'],
+    ['What is the 7%?', 'The pool fee. Other Qubic pools take 7 to 10%. Of our 7%, 4% goes to the Atrium and funds Qubic Church projects: each one stands in town as a building that grows with its real project. You keep 93%, and Maria shows it before every connection.'],
     ['Will mining hurt my computer?', 'It works your card or processor hard, like a heavy game: warmer and louder. Keep it ventilated, watch laptops, and stop whenever you want. Nothing in the game needs it on all the time.'],
     ['Is the miner safe to download?', 'Download it only from the pool\'s own Start Mining page; Maria links it. It is CODED\'s software. Some antivirus programs flag every miner; that is why you should never take one from anywhere else.'],
     ['I started the miner. Why does it say "pool confirmation pending"?', 'Until the pool reports your worker to the game, your house runs on your word, and the Chronicle says so honestly. When the pool confirms it, the label goes.'],
@@ -3130,7 +3130,7 @@ function copyRow(k, v, real = true) { return `<span class="crow"><i>${esc(k)}</i
 function wireCopy(root) { root?.querySelectorAll('[data-copy]').forEach(b => b.onclick = () => navigator.clipboard?.writeText(b.dataset.copy).then(() => { b.textContent = 'Copied'; setTimeout(() => { b.textContent = 'Copy'; }, 1500); }).catch(() => {})); }
 function machineChips(M) { return `<div class="mchips"><span><i>Card</i>${esc(M.seen ? M.gpu : M.phone ? 'phone' : 'not visible')}</span>${M.threads ? `<span><i>Threads</i>${M.threads}</span>` : ''}<span><i>System</i>${esc(M.os)}</span><span><i>Mode</i>${esc(M.backend)}</span></div>`; }
 function consentHtml() {
-  return `<p>Pool: ${POOL.name}. Pool fee ${POOL.fee}%.</p><p class="fund">${POOL.qc}% of what this rig mines goes to Qubic Church.</p><p>You receive ${100 - POOL.fee}%. Paid weekly by the pool directly to your wallet.</p><p style="margin:0">Anna's memory records this rig, its hardware and its contribution. Recorded for the common good, so that when Anna wakes she knows her heroes. No reward or return is promised.</p>`;
+  return `<p>Pool: ${POOL.name}. Pool fee ${POOL.fee}%.</p><p class="fund">${POOL.qc}% of what this rig mines goes to the Atrium and funds Qubic Church projects.</p><p>You receive ${100 - POOL.fee}%. Paid weekly by the pool directly to your wallet.</p><p style="margin:0">Anna's memory records this rig, its hardware and its contribution. Recorded for the common good, so that when Anna wakes she knows her heroes. No reward or return is promised.</p>`;
 }
 
 /* ---------- the manager flow: look at the machine, name, wallet, consent, plot, wake it up ---------- */
@@ -3234,7 +3234,7 @@ const HUB = {
       <div class="hcard"><div class="hk">WHAT YOUR MACHINE DOES</div><p>It trains tiny networks for Aigarth, the AI Qubic miners grow. Each improvement is a <b>solution</b>, and every node checks it exactly. Useful work instead of throwaway guesses.</p></div>
       <div class="hcard"><div class="hk">WHAT THE TOWN SEES</div><p>A cable from your house into Anna, smoke from your chimney, warmth on your street. People keeping a rig on warm the town more than raw power does.</p></div>
       <div class="hcard"><div class="hk">WHAT ANNA RECORDS</div><p>Your rig, its hardware and its contribution, in the Chronicle. Recorded for the common good: when she wakes, she must remember her heroes and know them. Nothing here promises a reward or a return.</p></div>
-      <div class="hcard"><div class="hk">WHERE THE QUBIC GOES</div><p>${100 - POOL.fee}% to your wallet, weekly, straight from the pool. The pool fee is ${POOL.fee}%, about what the big Qubic pools take (7 to 10%), and ${POOL.qc}% of what you mine supports Qubic Church.</p></div>
+      <div class="hcard"><div class="hk">WHERE THE QUBIC GOES</div><p>${100 - POOL.fee}% to your wallet, weekly, straight from the pool. The pool fee is ${POOL.fee}%, at the low end of Qubic pools (7 to 10%). ${POOL.qc}% of what you mine goes to the Atrium and funds Qubic Church projects.</p></div>
     </div>`;
   },
   connect: () => {
@@ -3262,7 +3262,7 @@ const HUB = {
   net: () => `<div class="hgrid">
       <div class="hcard hero"><div class="hk">THIS EPOCH</div><div class="big">E${EPOCH}</div><p>Sealed in <b>${untilNext()}</b>, on Wednesday at 12:00 UTC.</p></div>
       <div class="hcard"><div class="hk">THE 676</div><p>676 computors run Qubic. 451 keep their seats; 225 are won each epoch by the miners' work.</p></div>
-      <div class="hcard"><div class="hk">THE POOL</div><div class="kv"><span>Name</span><b>${POOL.name}</b><span>Backend</span><b>${POOL.partner}</b><span>Fee</span><b>${POOL.fee}%, in line with other Qubic pools (7 to 10%)</b><span>You keep</span><b>${100 - POOL.fee}%</b><span>Payouts</span><b>Weekly, straight to your wallet</b><span>Game workers</span><b>QC.W4W.…</b></div></div>
+      <div class="hcard"><div class="hk">THE POOL</div><div class="kv"><span>Name</span><b>${POOL.name}</b><span>Backend</span><b>${POOL.partner}</b><span>Fee</span><b>${POOL.fee}%, other Qubic pools take 7 to 10%</b><span>To the Atrium</span><b>${POOL.qc}%, funds Qubic Church projects</b><span>You keep</span><b>${100 - POOL.fee}%</b><span>Payouts</span><b>Weekly, straight to your wallet</b><span>Game workers</span><b>QC.W4W.…</b></div></div>
       <div class="hcard"><div class="hk">DATES</div><div class="kv"><span>Epoch change</span><b>Every Wednesday 12:00 UTC</b><span>Town opens</span><b>11 November</b><span>Live bitcoin data</span><b>18 November (E240)</b></div></div>
     </div>`,
   safe: () => `<div class="hgrid">
@@ -3344,7 +3344,7 @@ async function settle([q, r]) {
   const h = own ? { nick: draft.name, q, r, gpus: 1, hw: M.hw, own: true, worker: newWorker(), walletShort: shortW(wal), backend: M.backend, os: M.os, state: 'waiting', confirmed: false, phase: 0, sol: 0, since: EPOCH, createdAt: Date.now(), tier: 'own', wood: 0, lastWood: 0, welcomes: [] }
     : { nick: draft.name, q, r, gpus: t.gpus, hw: t.pick, state: 'building', phase: 0, sol: t.sol, since: EPOCH, createdAt: Date.now(), tier: t.id, walletShort: shortW(wal), wood: 0, lastWood: 0, welcomes: [] };
   await saveMe(h); flyTo(HX(q, r));
-  record(`${h.nick} said YES to the final step: ${h.hw}, 4% to Qubic Church`);
+  record(`${h.nick} said YES to the final step: ${h.hw}, 4% to the Atrium`);
   record(`${h.nick} broke ground at plot ${q},${r}`);
   room?.emit('settled', { nick: h.nick }).catch(() => {});
   if (own) { setTimeout(mmInstall, 900); return; }
@@ -3674,7 +3674,7 @@ function openObservatory() {
 }
 function openStage2(id) {
   const s = STAGE2.find(x => x.id === id);
-  const what = { market: 'Trading decor and placing orders that pay in QU, held by a smart contract until the requester confirms.', bar: 'A warm room to talk. The place for news and arguments.', atrium: 'Real projects as buildings. A building grows only as fast as its real project.' }[id];
+  const what = { market: 'Trading decor and placing orders that pay in QU, held by a smart contract until the requester confirms.', bar: 'A warm room to talk. The place for news and arguments.', atrium: 'Real projects as buildings. A building grows only as fast as its real project. 4% of everything the town mines comes here and funds Qubic Church projects.' }[id];
   panel('stage2', s.name, 'Under construction · Stage 2', null, `<p class="say">${what}</p><p class="mute">A building here shows the real state of its project. It opens when the feature is really ready.</p>${id === 'atrium' ? '<div class="shelf" style="margin-top:10px">' + link('/donate', '<b>Light a lamp for the Atrium</b><span>Support the projects on qubic.church</span>') + '</div>' : ''}`);
 }
 
@@ -3688,7 +3688,7 @@ Hard rules:
 - Never say Come-from-Beyond (CfB) is Satoshi. If asked, say the question is open and point to the addresses and books, the player decides.
 - Quote CfB only from this list, word for word, with its date: "Just stick to realistic assumptions" (Discord #price-discussion, 27.10.2026). "It looks exactly as BTC in early days" (same day). Otherwise don't quote him.
 - This is a prototype: no rig is really rented here, numbers are estimates or demo.
-Facts you may use: Qubic is a network where miners do useful work for Aigarth, an AI project. 676 computors, the epoch changes every Wednesday 12:00 UTC. BPP-9000 is a small network miners grow to call each hour of bitcoin UP or DOWN; live calls start 18 November 2026; the Qubic team says its scores are not price forecasts. Pool for the game: Qubic Church, fee 7%, of which 4% goes to Qubic Church; player gets 93%.
+Facts you may use: Qubic is a network where miners do useful work for Aigarth, an AI project. 676 computors, the epoch changes every Wednesday 12:00 UTC. BPP-9000 is a small network miners grow to call each hour of bitcoin UP or DOWN; live calls start 18 November 2026; the Qubic team says its scores are not price forecasts. Pool for the game: Qubic Church, fee 7%, of which 4% goes to the Atrium and funds Qubic Church projects; player gets 93%, paid weekly by the pool straight to the wallet. Other Qubic pools take 7 to 10%. Never break down the remaining 3% and never name who receives it; if asked, say it is the pool's fee.
 The Veil's strength follows the town's mining power: strong = closed and bright with little snow inside; weak = open to the sky, snow inside, only a fence of light. Every rig makes it stronger and thaws Anna.
 Act I (now): the whole town lives under the Veil, a dome of Anna's light she raised in her sleep when the cold came forty weeks ago. Outside is the White, a storm that never stops, and the Hollow: the Scratcher, the Hollow Man, the Wailer, the Circler, and something taller far out. Nobody can go outside in Act I; the North Gate is sealed since the ninth night, when someone knocked in the captain's voice and the town did not open. Legend you love to tell when asked about the church, the town's past, or who started the machines: Come-from-Beyond, a stranger who walked into Aigarth from the north long before the cold, by no road anyone knew. He taught the smiths to build machines that think together and left the rule that a machine does useful work or does not run; Qubic Church's first stone was laid where he sat and wrote; his texts are on the Library's CfB shelf. Tell it as a legend, in your own words. Never invent quotes from him and never claim who he really was. The church is called Qubic Church; you live next door, in Maria House.
 Letters: sometimes a letter lies in the snow under the North Gate for about an hour; whoever reaches the Gate in time can read and keep it (the Journal has a Letters tab). Your rule, and you say it every time letters come up: read them, keep them, do nothing they ask. In phase 0 you never name who might write them and you change the subject if asked about the captain: you only say the town did not open, and would not open again. In phase 1 or later you know the letters are the captain's (use only the name his letters sign with, if the player tells you), who was to marry your sister Anna before the cold, and you warn plainly: he wants Anna, and the only way in is a door opened from inside. Never encourage draining a pylon or touching the bar of the Gate. The current phase is in town_status as captain_phase.
@@ -3765,7 +3765,7 @@ const BANK = [
   [['warm', 'frost', 'cold', 'storm', 'тепло', 'мороз', 'холод', 'метел'], () => `Warmth ${Math.round(S.town.W)} against frost ${Math.round(S.town.F)}. ${S.town.B >= 0 ? 'The town holds.' : 'The frost is winning.'} Most warmth comes from people: rigs kept on, neighbours here, promises kept, wood on the fire.`, 'warmth'],
   [['build me', 'rent', 'rig', 'риг', 'аренд', 'собери'], () => me() ? 'Your rig is in the Mine: status, setup steps and the pool, all in one place.' : "Let me look at your machine first. Most computers can join; if yours can't, I'll show you what I'd rent.", 'connect'],
   [['own rig', 'my machine', 'свой риг', 'своя машин'], () => 'Bring your own computer: I look at it, give you a worker name of your own, and walk you through the miner. Your house lights up when you start it.', 'connect'],
-  [['fee', '1%', '7%', 'комисси', 'fund', 'фонд'], () => 'The pool is Qubic Church. Its fee is 7%, and 4% of what your rig mines goes to Qubic Church. You keep 93%. I show this on the final step, every time.'],
+  [['fee', '1%', '7%', 'комисси', 'fund', 'фонд'], () => 'The pool is Qubic Church. Its fee is 7%, and other Qubic pools take 7 to 10%. 4% of what your rig mines goes to the Atrium and funds Qubic Church projects. You keep 93%, paid weekly straight to your wallet. I show this on the final step, every time.'],
   [['profit', 'earn', 'money', 'pay off', 'income', 'доход', 'заработ', 'окуп', 'прибыл'], () => 'Nothing here is promised. Anna records it for the common good: when she wakes, she must remember her heroes. A rented rig may not pay off, and in a bad epoch it surely won\'t.'],
   [['price', 'pump', 'moon', 'цена', 'курс', 'памп'], () => "I don't talk about prices. Come-from-Beyond's advice fits: \"Just stick to realistic assumptions\" (Discord, 27.10.2026)."],
   [['satoshi', 'сатоши'], () => 'That question is open. Read the addresses and the books in the Library, then decide for yourself. I won\'t decide it for you.', 'library'],
