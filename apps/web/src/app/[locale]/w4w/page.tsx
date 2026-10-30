@@ -88,7 +88,8 @@ const css = `
 .w4w-end .tag span{color:var(--warm)}
 .w4w-acct{display:inline-block;margin-top:28px;font-size:14.5px;color:var(--mute);text-decoration:underline;text-underline-offset:4px}
 .w4w-acct:hover,.w4w-acct:focus-visible{color:var(--ink)}
-.w4w-gatebox{margin-top:36px}
+.w4w-gatebox{margin-top:32px;padding:18px 20px 20px;width:min(560px,100%);border:1px solid rgba(150,200,255,.35);border-radius:12px;background:rgba(8,12,20,.72);box-shadow:0 0 0 1px #000,0 0 40px rgba(110,170,255,.12);scroll-margin-top:24px}
+.w4w-gatehead{margin:0 0 10px;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:#9fc3ff}
 .w4w-beta{display:inline-block;margin-top:18px;padding:6px 10px;font-size:13px;line-height:1;color:#2c3440;text-decoration:none;border-radius:6px}
 .w4w-beta:hover,.w4w-beta:focus-visible{color:#8f9aa8;outline:none;background:#ffffff08}
 .w4w-link{background:none;border:0;color:#b9c3d0;font:inherit;font-size:14px;text-decoration:underline;text-underline-offset:4px;cursor:pointer;padding:8px 0}
@@ -128,6 +129,8 @@ export default async function W4WPage(props: { params: Promise<{ locale: string 
 
   // Testers reach the gate through a link they are given (/w4w?invite=1; an empty ?invite is dropped on the way); everyone else sees the announcement.
   const gate = sp.invite !== undefined
+  // a link with the code in it (/w4w?invite=AB12CD34) fills the code in for the tester
+  const invite = typeof sp.invite === 'string' && /^[A-Za-z0-9]{6,16}$/.test(sp.invite) && sp.invite !== '1' ? sp.invite.toUpperCase() : ''
 
   return (
     <main className={`w4w ${bppFonts}`}>
@@ -152,8 +155,9 @@ export default async function W4WPage(props: { params: Promise<{ locale: string 
             <W4WCountdown at={LAUNCH} />
           </div>
           {gate && (
-            <div className="w4w-gatebox">
-              <W4WGate name={user?.name ?? null} />
+            <div className="w4w-gatebox" id="enter">
+              <p className="w4w-gatehead">Beta entrance</p>
+              <W4WGate code={invite} name={user?.name ?? null} />
             </div>
           )}
         </div>
@@ -221,7 +225,7 @@ export default async function W4WPage(props: { params: Promise<{ locale: string 
         </Link>
         <div>
           {/* Quiet door for the beta testers: opens the invite gate at the top of the page. */}
-          <a aria-label="Beta testers: enter with an invite" className="w4w-beta" href="/w4w?invite=1" title="Beta">
+          <a aria-label="Beta testers: enter with an invite" className="w4w-beta" href="/w4w?invite=1#enter" title="Beta">
             β
           </a>
         </div>
