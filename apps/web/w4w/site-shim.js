@@ -185,6 +185,42 @@ ${fresh ? `<div class="code"><span>${esc(fresh)}</span><button class="q" data-co
     }
     btn.onclick = () => { fresh = null; wrap.classList.add('on'); render() }
     wrap.addEventListener('click', e => { if (e.target === wrap) wrap.classList.remove('on') })
+
+    /* ---------- the story desk: letters under the North Gate, the Captain's phase, the Hush ---------- */
+    const sbtn = document.createElement('button'); sbtn.id = 'storyBtn'; sbtn.textContent = 'Story desk'
+    sbtn.style.cssText = 'position:fixed;left:16px;bottom:82px;z-index:40;font:600 12px var(--f-body,system-ui);color:#cfe0ff;background:rgba(14,16,26,.88);border:1px solid rgba(140,170,255,.4);border-radius:999px;padding:8px 14px;cursor:pointer'
+    const swrap = document.createElement('div'); swrap.id = 'storydesk'; css.textContent += css.textContent.replaceAll('#gate', '#storydesk')
+    swrap.innerHTML = '<div class="box" role="dialog" aria-label="Story desk"></div>'
+    document.body.append(sbtn, swrap)
+    const sbox = swrap.querySelector('.box')
+    const PH = ['0 · Unseen. Only letters from the twelve.', '1 · Whispers. His letters ask; a pylon can be drained for warmth.', '2 · Knocking. The Hush shows; the Gate bar can be lifted.', '3 · Unveiling. When the Hush is full, the Veil falls for 3 hours.']
+    const when = t => new Date(t).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+    async function story(body) {
+      sbox.innerHTML = '<p>Loading…</p>'
+      let v; try { v = await post({ op: 'story', ...body }) } catch (e) { sbox.innerHTML = `<button class="q x" data-close>Close</button><p>${esc(e.message)}</p>`; sbox.querySelector('[data-close]').onclick = () => swrap.classList.remove('on'); return }
+      const st = v.story, now = Date.now(), un = st.unveil && now < st.unveil.until
+      sbox.innerHTML = `<button class="q x" data-close>Close</button><h3>Story desk</h3>
+<p>Everything here goes live at once for every player. Letters are stored on the server only, so nobody can read them ahead.</p>
+<h3 style="font-size:15px">Slip a letter under the North Gate</h3>
+<div class="row"><input id="sFrom" maxlength="60" value="the twelve" placeholder="Signed by"><input id="sHours" type="number" min="0.1" max="48" step="0.5" value="1" style="flex:0 0 80px" title="Hours it lies there"></div>
+<div class="row"><input id="sTitle" maxlength="120" placeholder="Title, as players will see it"></div>
+<div class="row"><textarea id="sText" maxlength="4000" rows="7" placeholder="The letter" style="flex:1;background:#0b0a0e;border:1px solid #3a2f28;border-radius:8px;color:#efe3cf;padding:9px 10px;font:inherit;resize:vertical"></textarea></div>
+<div class="row"><input id="sAt" type="datetime-local" title="Leave empty to post now"><button id="sPost">Post the letter</button></div>
+<table><tr><th>Letter</th><th>Lies there</th><th>Read by</th><th></th></tr>${v.letters.slice().reverse().map(l => `<tr><td>${esc(l.title)}<br><span style="color:#8e806e">${esc(l.from)}</span></td><td>${when(l.at)} to ${when(l.until)}${now >= l.at && now < l.until ? ' · <b style="color:#ffc46b">now</b>' : now < l.at ? ' · waiting' : ''}</td><td>${l.reads}</td><td><button class="q" data-del="${esc(l.id)}">Delete</button></td></tr>`).join('') || '<tr><td colspan="4" style="color:#8e806e">No letters yet.</td></tr>'}</table>
+<h3 style="font-size:15px">The Captain</h3>
+<p>Phase now: <b>${esc(PH[st.phase] || st.phase)}</b><br>Hush: <b>${st.hush}</b> of 100${un ? `<br><b style="color:#ff6a50">The Veil is down until ${when(st.unveil.until)}.</b>` : ''}</p>
+<div class="row" style="flex-wrap:wrap">${PH.map((t, i) => `<button class="q" data-phase="${i}" ${i === st.phase ? 'disabled' : ''}>Phase ${i}</button>`).join('')}</div>
+<div class="row" style="flex-wrap:wrap"><input id="sHush" type="number" min="0" max="100" value="${st.hush}" style="flex:0 0 90px"><button class="q" id="sHushSet">Set the Hush</button>${un ? '<button class="q" data-calm>Raise the Veil again</button>' : '<button class="q" data-unveil>Drop the Veil now (3 h)</button>'}</div>`
+      sbox.querySelector('[data-close]').onclick = () => swrap.classList.remove('on')
+      sbox.querySelector('#sPost').onclick = () => { const at = sbox.querySelector('#sAt').value; story({ do: 'post', from: sbox.querySelector('#sFrom').value, hours: +sbox.querySelector('#sHours').value, title: sbox.querySelector('#sTitle').value, text: sbox.querySelector('#sText').value, at: at ? new Date(at).toISOString() : undefined }) }
+      sbox.querySelectorAll('[data-del]').forEach(b => { b.onclick = () => { if (confirm('Delete this letter for everyone?')) story({ do: 'del', id: b.dataset.del }) } })
+      sbox.querySelectorAll('[data-phase]').forEach(b => { b.onclick = () => { if (confirm(`Move the Captain to phase ${b.dataset.phase}?`)) story({ do: 'phase', phase: +b.dataset.phase }) } })
+      sbox.querySelector('#sHushSet').onclick = () => story({ do: 'hush', hush: +sbox.querySelector('#sHush').value })
+      sbox.querySelector('[data-unveil]')?.addEventListener('click', () => { if (confirm('Drop the Veil for every player for 3 hours? This is the apocalypse.')) story({ do: 'unveil', hours: 3 }) })
+      sbox.querySelector('[data-calm]')?.addEventListener('click', () => story({ do: 'calm' }))
+    }
+    sbtn.onclick = () => { swrap.classList.add('on'); story({ do: 'list' }) }
+    swrap.addEventListener('click', e => { if (e.target === swrap) swrap.classList.remove('on') })
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot)
   else boot()

@@ -33,6 +33,8 @@ export type Char = {
   deeds?: Record<string, number> // firsts that earned renown, once each
   orders?: { day: number; done: string[] } // today's town orders you have filled
   tended?: Record<string, number> // when you last gave warmth to each pylon
+  drained?: number // when you last took warmth back from a pylon (phase 1+)
+  barred?: number // when you last lifted the bar of the North Gate (phase 2+)
 }
 export type Ctx = {
   heatR: number // radius of the town's warm circle, world units
@@ -642,11 +644,12 @@ export type WState = {
   anna?: { n: number; heroes: Record<string, { nick: string; n: number }> } // shards brought to Anna, and by whom
   delivered?: { day: number; n: number } // town orders filled today, by everyone
   pylons?: Record<string, Pylon> // the six pylons, by index
+  story?: Story // the antagonist's progress: set by the admin and by what players do
   rime?: Rime
   rimeTrail?: [number, number, number][] // computed on load, not stored
 }
-export type Feed = { id: string; t: number; topic: 'froze' | 'hearth' | 'took' | 'library' | 'found' | 'shard' | 'anna' | 'order' | 'pylon'; by: string; data: Record<string, unknown> }
-export type Dirty = { chars: Set<string>; hearths: Set<string>; bags: Set<string>; bagsGone: Set<string>; nodes: Set<string>; feed: Feed[]; rime?: boolean; library?: Set<string>; shards?: Set<string>; anna?: boolean; delivered?: boolean; pylons?: Set<string> }
+export type Feed = { id: string; t: number; topic: 'froze' | 'hearth' | 'took' | 'library' | 'found' | 'shard' | 'anna' | 'order' | 'pylon' | 'letter' | 'drain' | 'bar' | 'unveil'; by: string; data: Record<string, unknown> }
+export type Dirty = { chars: Set<string>; hearths: Set<string>; bags: Set<string>; bagsGone: Set<string>; nodes: Set<string>; feed: Feed[]; rime?: boolean; library?: Set<string>; shards?: Set<string>; anna?: boolean; delivered?: boolean; pylons?: Set<string>; story?: boolean }
 export const newDirty = (): Dirty => ({ chars: new Set(), hearths: new Set(), bags: new Set(), bagsGone: new Set(), nodes: new Set(), feed: [] })
 
 export function townOfState(ws: WState) {
@@ -654,7 +657,29 @@ export function townOfState(ws: WState) {
   const mining = real.filter(x => x.state === 'mining')
   const fire = real.filter(x => ws.now - (x.lastWood ?? 0) < 3600_000).length
   const today = ws.delivered?.day === dayOf(ws.now) ? ws.delivered.n : 0
-  return townWarmth({ people: DEMO_TOWN.people + mining.length, online: ws.online, deeds: DEMO_TOWN.deeds + ws.doneOrders + Math.floor(today / 2), fire, power: DEMO_TOWN.power + mining.reduce((a, x) => a + (x.sol ?? 0), 0), storm: false })
+  const t = townWarmth({ people: DEMO_TOWN.people + mining.length, online: ws.online, deeds: DEMO_TOWN.deeds + ws.doneOrders + Math.floor(today / 2), fire, power: DEMO_TOWN.power + mining.reduce((a, x) => a + (x.sol ?? 0), 0), storm: false })
+  return unveiled(ws.story, ws.now) ? { ...t, veil: 0 } : t
+}
+
+/* ================= the Captain: what he asks, what it costs the town =================
+ * Phase 0: he is unseen. Phase 1: his letters ask, and people can drain a pylon for warmth.
+ * Phase 2: the bar of the North Gate can be lifted, a notch at a time. Phase 3: when the Hush is full, the Veil falls.
+ * Phases are set by the admin. The Hush is set by players. */
+export type Story = { phase: number; hush: number; ht: number; unveil?: { at: number; until: number } | null }
+export const GATE_CELL: Cell = [0, -TOWN_RING]
+export const HUSH_MAX = 100
+export const HUSH_FADE = 2 // per hour, by itself
+export const UNVEIL_MS = 3 * 3600_000
+export const DRAIN_TAKE = 12, DRAIN_GAIN = 15, DRAIN_WAIT = 30 * 60_000, BAR_WAIT = 60 * 60_000, BAR_COST = 10
+export const hushNow = (s: Story | undefined, now: number) => !s ? 0 : Math.max(0, Math.min(HUSH_MAX, s.hush - HUSH_FADE * Math.max(0, now - (s.ht || now)) / 3600_000))
+export const unveiled = (s: Story | undefined, now: number) => !!s?.unveil && now >= s.unveil.at && now < s.unveil.until
+function addHush(ws: WState, n: number, d: Dirty) {
+  const s = (ws.story ??= { phase: 0, hush: 0, ht: ws.now })
+  s.hush = Math.max(0, Math.min(HUSH_MAX, hushNow(s, ws.now) + n)); s.ht = ws.now; d.story = true
+  if (s.phase >= 3 && s.hush >= HUSH_MAX && !unveiled(s, ws.now)) {
+    s.unveil = { at: ws.now, until: ws.now + UNVEIL_MS }; s.hush = 0
+    d.feed.push({ id: `uv${ws.now}`, t: ws.now, topic: 'unveil', by: '', data: { until: s.unveil.until } })
+  }
 }
 export function ctxOf(ws: WState, uid: string): Ctx {
   const t = townOfState(ws)
@@ -663,7 +688,7 @@ export function ctxOf(ws: WState, uid: string): Ctx {
   const pyl = Array.from({ length: PYLON_N }, (_, i) => pylonNow(ws.pylons?.[i], i, ws.now, t.veil))
   return { pylons: pyl, veil: t.veil, heatR: t.heatR, holds: t.holds, netStorm: false, shelters: townShelters(cells), home: key(home[0], home[1]), hearths: Object.fromEntries(Object.entries(ws.hearths).map(([k, v]) => [k, v.until])), insulation: INSULATION_T1, rime: ws.rimeTrail }
 }
-const nickIn = (ws: WState, uid: string) => ws.houses[uid]?.nick ?? 'someone'
+export const nickIn = (ws: WState, uid: string) => ws.houses[uid]?.nick ?? 'someone'
 export const zoneName = (z: number) => (ZONES as readonly { name: string }[])[z]?.name ?? 'the far cold'
 
 export function stepChar(ws: WState, uid: string, d: Dirty) {
@@ -710,6 +735,7 @@ export function viewOf(ws: WState, uid: string, events: Event[] = []) {
     anna: ws.anna ?? { n: 0, heroes: {} },
     orders: ordersFor(dayOf(ws.now)), delivered: ws.delivered?.day === dayOf(ws.now) ? ws.delivered.n : 0,
     pylons: Array.from({ length: PYLON_N }, (_, i) => { const p = ws.pylons?.[i]; return { i, at: pylonCell(i), s: pylonNow(p, i, ws.now, veilOf(townOfState(ws).power)), nick: p?.nick ?? null, at_t: p?.at ?? 0 } }),
+    story: { phase: ws.story?.phase ?? 0, hush: (ws.story?.phase ?? 0) >= 2 ? Math.round(hushNow(ws.story, ws.now)) : null, unveil: unveiled(ws.story, ws.now) ? ws.story!.unveil! : null },
     pressed: pressedAt(ws.now), pressNext: (Math.floor(ws.now / PYLON_PRESS_MS) + 1) * PYLON_PRESS_MS,
     ranks: Object.fromEntries(Object.entries(ws.chars).map(([k, x]) => [k, rankOf(x.renown ?? 0)])),
   }
@@ -886,7 +912,32 @@ export function action(ws: WState, uid: string, op: string, b: Record<string, un
       ws.pylons ??= {}; const V = veilOf(townOfState(ws).power), cur = pylonNow(ws.pylons[i], i, now, V)
       ws.pylons[i] = { s: Math.min(100, cur + PYLON_GIVE), t: now, by: uid, nick: nickIn(ws, uid), at: now }; (d.pylons ??= new Set()).add(String(i))
       c.warmth -= PYLON_COST; (c.tended ??= {})[i] = now; addRenown(c, cur < 30 ? 4 : 2)
+      if (hushNow(ws.story, now) > 0) addHush(ws, -1, d)
       d.feed.push({ id: `py${uid}${i}${now}`, t: now, topic: 'pylon', by: uid, data: { nick: nickIn(ws, uid), i, s: Math.round(ws.pylons[i]!.s), was: Math.round(cur) } })
+      return ok()
+    }
+    case 'drain': {
+      // the first thing the letters ask: take a little warmth back from the wall. It feels like nothing. It is not nothing.
+      if ((ws.story?.phase ?? 0) < 1) return fail('unknown action')
+      const i = Number(b.i); if (!(i >= 0 && i < PYLON_N)) return fail('Which pylon?')
+      if (c.path.length) return fail('Stop walking first.')
+      if (dist(here, pylonCell(i)) > 1) return fail('Stand next to the pylon.')
+      if (now - (c.drained ?? 0) < DRAIN_WAIT) return fail(`Your hands are still burning from the last time. Again in ${Math.ceil((DRAIN_WAIT - (now - (c.drained ?? 0))) / 60_000)} min.`)
+      ws.pylons ??= {}; const V = veilOf(townOfState(ws).power), cur = pylonNow(ws.pylons[i], i, now, V)
+      if (cur < DRAIN_TAKE) return fail('There is nothing left in it to take.')
+      const was = ws.pylons[i]; ws.pylons[i] = { s: cur - DRAIN_TAKE, t: now, by: was?.by ?? '', nick: was?.nick ?? '', at: was?.at ?? 0 }; (d.pylons ??= new Set()).add(String(i))
+      c.warmth = Math.min(100, c.warmth + DRAIN_GAIN); c.drained = now; addHush(ws, 2, d)
+      d.feed.push({ id: `dr${now}${i}`, t: now, topic: 'drain', by: '', data: { i, s: Math.round(cur - DRAIN_TAKE) } })
+      return ok()
+    }
+    case 'bar': {
+      // phase 2: the bar of the North Gate, lifted a notch by a cold hand
+      if ((ws.story?.phase ?? 0) < 2) return fail('The bar has not moved since the ninth night. It will not move for you.')
+      if (c.path.length || dist(here, GATE_CELL) > 1) return fail('Stand at the North Gate.')
+      if (now - (c.barred ?? 0) < BAR_WAIT) return fail(`The iron still holds the shape of your hand. Again in ${Math.ceil((BAR_WAIT - (now - (c.barred ?? 0))) / 60_000)} min.`)
+      if (c.warmth < BAR_COST + 8) return fail('Your hands are too cold to grip the iron.')
+      c.warmth -= BAR_COST; c.barred = now; addHush(ws, 4, d)
+      d.feed.push({ id: `br${now}`, t: now, topic: 'bar', by: '', data: {} })
       return ok()
     }
     case 'pick': {

@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { getSession } from '@/lib/forum/auth'
 import { accessOf, adminView, dropInvite, makeInvite, redeem, revoke } from '@/lib/w4w/access'
 import { K, pairs, pipe, run } from '@/lib/w4w/store'
-import { act, revive, worldFor } from '@/lib/w4w/expedition'
+import { act, revive, storyDesk, worldFor } from '@/lib/w4w/expedition'
 
 export const dynamic = 'force-dynamic'
 
@@ -152,6 +152,12 @@ export async function POST(req: Request) {
         if (b.act === 'revive') { if (!acc.admin) return no('Only the admin can do that.', 403); const r = await revive(me); return r.ok ? NextResponse.json(r.data) : no(r.error, 400) }
         const r = await act(me, String(b.act ?? ''), b)
         return r.ok ? NextResponse.json(r.data) : no(r.error, r.status ?? 400)
+      }
+      case 'story': {
+        // the story desk: letters under the Gate, the Captain's phase, the Hush. Admin only.
+        if (!acc.admin) return no('Admins only.', 403)
+        const r = await storyDesk(b)
+        return r.ok ? NextResponse.json(r.data) : no(r.error, 400)
       }
       case 'admin': {
         if (!acc.admin) return no('Admins only.', 403)

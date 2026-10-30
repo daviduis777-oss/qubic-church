@@ -1,7 +1,7 @@
 <title>W4W Aigarth</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Alegreya+Sans+SC:wght@500;700&family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&family=Cinzel:wght@400;500;600;700&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
 <style>
 /* A night town seen from above: amber light against blue frost. One display face, one body face, one wide label face. */
 :root{
@@ -355,6 +355,7 @@ details.lore summary b{color:var(--cream)} details.lore summary span{font-size:1
 details.lore p{margin:8px 0 0;font-size:14.5px;line-height:1.55;color:var(--ink)}
 #xact .btn{padding:7px 12px;font-size:13px}
 body:has(#hud:not([hidden])) #feed{bottom:170px}
+#cold2{position:fixed;inset:0;z-index:2;pointer-events:none;opacity:calc(var(--chill2,0) * .85);transition:opacity 2s;background:radial-gradient(ellipse at center,transparent 38%,rgba(120,170,255,.16) 66%,rgba(205,228,255,.55) 100%),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='500' preserveAspectRatio='none'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.02 .06' numOctaves='5' seed='3'/%3E%3CfeColorMatrix values='0 0 0 0 .85 0 0 0 0 .93 0 0 0 0 1 0 0 0 2.2 -1.2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E");background-size:100% 100%;-webkit-mask-image:radial-gradient(ellipse at center,transparent 42%,#000 92%);mask-image:radial-gradient(ellipse at center,transparent 42%,#000 92%)}
 #frostfx{position:fixed;inset:0;z-index:2;pointer-events:none;opacity:0;transition:opacity 1.5s;background:radial-gradient(ellipse at center,transparent 45%,rgba(150,190,255,.28) 75%,rgba(220,235,255,.6) 100%);box-shadow:inset 0 0 120px rgba(200,225,255,.45)}
 body.delir #frostfx{animation:delir 2.6s infinite steps(1)}
 @keyframes delir{0%,100%{filter:none}37%{filter:blur(2px) brightness(1.4)}41%{filter:none}73%{filter:hue-rotate(40deg)}76%{filter:none}}
@@ -382,13 +383,13 @@ body.delir #frostfx{animation:delir 2.6s infinite steps(1)}
   --steel-0:#0a0e14; --steel-1:#151b24; --steel-2:#232c38; --steel-3:#33404f; --steel-hi:#8396ad; --steel-ink:#c9d5e3;
   --paper:#e6dcc3; --paper-2:#d2c29f; --ink-d:#2b241b; --pencil:#4d4437;
   --leather:#2a1810; --leather-2:#46291a; --vellum:#ede2c8; --ember:#f2a347; --ember-2:#c9701d; --blood:#9e2a22;
-  --f-display:Lora,Georgia,serif; --f-print:Lora,Georgia,serif; --f-label:'IBM Plex Sans',system-ui,sans-serif; --f-body:'IBM Plex Sans',system-ui,sans-serif; --f-hand:Lora,Georgia,serif;
+  --f-display:Cinzel,'Trajan Pro',Georgia,serif; --f-print:'IM Fell English',Georgia,serif; --f-label:'Alegreya Sans SC','Alegreya Sans',system-ui,sans-serif; --f-body:'Alegreya Sans',system-ui,sans-serif; --f-hand:'IM Fell English',Georgia,serif;
   --plate:var(--tex-brushed),linear-gradient(180deg,#232b36 0%,#161c25 55%,#10151c 100%);
   --bevel:inset 0 1px 0 rgba(200,215,235,.22),inset 0 -1px 0 rgba(0,0,0,.6),inset 0 0 0 1px rgba(0,0,0,.35),0 6px 18px rgba(0,0,0,.45);
   --rivets:radial-gradient(circle at 9px 9px,#c3cfdc 0 1.2px,#56636f 1.8px,#1a2028 2.6px,transparent 3.2px),radial-gradient(circle at calc(100% - 9px) 9px,#c3cfdc 0 1.2px,#56636f 1.8px,#1a2028 2.6px,transparent 3.2px),radial-gradient(circle at 9px calc(100% - 9px),#c3cfdc 0 1.2px,#56636f 1.8px,#1a2028 2.6px,transparent 3.2px),radial-gradient(circle at calc(100% - 9px) calc(100% - 9px),#c3cfdc 0 1.2px,#56636f 1.8px,#1a2028 2.6px,transparent 3.2px);
 }
-html,body{font-synthesis:none}
-body{font-family:var(--f-body)}
+html,body{font-synthesis:weight}
+body{font-family:var(--f-body);font-size:16px}
 
 /* ---------- steel: buttons and plates ---------- */
 .btn{border:0;border-radius:4px;background:var(--plate);box-shadow:var(--bevel);color:var(--steel-ink);font-family:var(--f-label);font-weight:600;font-size:15px;letter-spacing:.07em;text-transform:uppercase;padding:9px 15px;transition:transform .08s,filter .15s}
@@ -633,6 +634,28 @@ body:has(#panel.open) #goals{visibility:hidden}
 #veil:hover{box-shadow:0 0 0 1px #000,inset 0 0 0 1px rgba(255,190,110,.8),0 0 24px rgba(255,140,40,.35)}
 #veil .vrow{display:flex;align-items:baseline;gap:10px} #veil b{font-family:var(--f-label);font-weight:600;font-size:12px;letter-spacing:.14em;color:#ffb35a}
 #veil .vp{font-family:var(--f-display);font-weight:600;font-size:20px;color:#ffd79a;text-shadow:0 0 10px rgba(255,160,60,.6)} #veil .vs{flex:1;text-align:right;font-size:12px;color:#c9b393}
+/* letters from beyond the Gate: torn paper, a cold hand, ink that ran in the snow */
+.lpaper{position:relative;margin:4px 2px 6px;padding:26px 26px 22px;color:#2b1d12;background:radial-gradient(120% 90% at 30% 20%,#f4e6c6,#e6d2a8 60%,#d6bd8c);font:17px/1.62 'IM Fell English',Georgia,serif;box-shadow:0 1px 0 rgba(255,255,255,.4) inset,0 18px 40px rgba(0,0,0,.5);transform:rotate(-.6deg);
+  clip-path:polygon(0 1%,6% 0,14% .8%,23% 0,35% .6%,48% 0,60% .9%,72% .2%,85% .8%,100% 0,99.4% 20%,100% 46%,99.2% 74%,100% 100%,88% 99.2%,70% 100%,52% 99.3%,33% 100%,16% 99.4%,0 100%,.6% 70%,0 40%,.8% 18%)}
+.lpaper::after{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(40% 30% at 82% 88%,rgba(120,80,40,.18),transparent 70%),radial-gradient(30% 20% at 12% 70%,rgba(90,110,140,.14),transparent 70%)}
+.lpaper header{display:flex;justify-content:space-between;margin:0 0 14px;font:italic 13px 'IM Fell English',Georgia,serif;color:#6b5136}
+.lpaper p{margin:0 0 12px;text-wrap:pretty} .lpaper p:first-of-type::first-letter{font-size:1.35em}
+.lpaper footer{margin-top:14px;text-align:right;font:italic 18px 'IM Fell English',Georgia,serif;color:#4a2a16}
+.lin{margin:0 0 14px;padding:14px 16px;border-radius:8px;background:linear-gradient(180deg,rgba(255,226,160,.12),rgba(255,226,160,.04));box-shadow:inset 0 0 0 1px rgba(255,214,140,.45),0 0 30px rgba(255,190,90,.15)}
+.lin small{display:block;font:600 11px var(--f-label);letter-spacing:.12em;color:#ffcf86} .lin b{display:block;font:500 20px var(--f-print);color:#fff0d6;margin:4px 0 2px} .lin p{margin:0 0 10px;color:#d9c7a8}
+.lmiss{display:flex;flex-direction:column;gap:2px;margin:6px 0;padding:10px 12px;border-radius:8px;border:1px dashed rgba(200,190,170,.25);opacity:.75}
+.lmiss b{font:500 15px var(--f-print);color:#d8ccb6;text-decoration:line-through;text-decoration-color:rgba(220,220,230,.35)} .lmiss span{font-size:13px;color:#9d927f}
+.lmiss.now{opacity:1;border-style:solid;border-color:rgba(255,214,140,.5)} .lmiss.now b{text-decoration:none;color:#ffe2a8}
+#goals .glet{background:linear-gradient(180deg,rgba(255,220,150,.14),transparent);box-shadow:inset 3px 0 0 #ffcf86;animation:glet 2.4s ease-in-out infinite}
+@keyframes glet{50%{box-shadow:inset 3px 0 0 #fff0c8,0 0 18px rgba(255,200,110,.18)}}
+@media (prefers-reduced-motion:reduce){#goals .glet{animation:none}}
+#panel[data-kind=chronicle] .lmiss{border-color:rgba(60,40,20,.3)} #panel[data-kind=chronicle] .lmiss b{color:#4a3a28;text-decoration-color:rgba(60,40,20,.45)} #panel[data-kind=chronicle] .lmiss span{color:#6b5a44}
+#panel[data-kind=chronicle] .lmiss.now{border-color:#a8501a;background:rgba(200,120,40,.1)} #panel[data-kind=chronicle] .lmiss.now b{color:#7a2e10}
+#panel[data-kind=chronicle] details.lore{background:rgba(120,90,50,.07);border-color:rgba(60,40,20,.25)} #panel[data-kind=chronicle] details.lore summary b{color:var(--ink-d)} #panel[data-kind=chronicle] details.lore summary span{color:#6b5a44}
+#panel[data-kind=chronicle] .lpaper{box-shadow:0 8px 20px rgba(60,40,20,.35)}
+#veil .vhush{display:flex;align-items:center;gap:8px;margin-top:5px;font:600 10.5px var(--f-label);letter-spacing:.14em;color:#9fb6d8}
+#veil .vhush i{flex:1;height:5px;border-radius:3px;background:rgba(0,0,0,.55);overflow:hidden} #veil .vhush b{display:block;height:100%;background:linear-gradient(90deg,#2c3a55,#8fa8d8)} #veil .vhush em{font-style:normal;color:#cfe0ff}
+#veil.unveiled{box-shadow:0 0 0 1px #000,inset 0 0 0 1px rgba(255,90,70,.8),0 0 30px rgba(255,40,20,.4);animation:hr 1.6s infinite} #veil.unveiled .vp,#veil.unveiled b{color:#ff8a70}
 #veil .vtrack{height:7px;margin:4px 0 5px;border-radius:4px;background:rgba(0,0,0,.55);box-shadow:inset 0 0 0 1px rgba(255,166,74,.25);overflow:hidden}
 #veil .vtrack i{display:block;height:100%;background:linear-gradient(90deg,#c4561a,#ff9a3c 60%,#ffd79a);box-shadow:0 0 10px rgba(255,150,60,.9)}
 #veil .vsub{font-size:12px;color:#b9a689} #veil.danger .vs{color:#ff7a5a;font-weight:600} #veil.danger{box-shadow:0 0 0 1px #000,inset 0 0 0 1px rgba(255,90,60,.7),0 0 22px rgba(255,60,30,.35)} #veil em{font-style:normal;color:#ffc46b;font-weight:600}
@@ -658,6 +681,50 @@ body.act1 #dock button[data-act=bag],body.act1 #dock button[data-act=craft],body
 #goals .fpick{display:block;width:100%;margin-top:7px;padding:8px 10px;border:0;border-radius:5px;text-align:left;cursor:pointer;color:var(--kink);background:rgba(0,0,0,.35);box-shadow:inset 0 0 0 1px rgba(201,160,74,.3)} #goals .fpick:hover{box-shadow:inset 0 0 0 1px #f0c96a;background:rgba(240,201,106,.08)}
 #goals .fpick b{display:block;font-family:var(--f-display);font-size:14.5px;color:#f0c96a} #goals .fpick span{display:block;font-size:12px;line-height:1.4;color:#cfc6b4;margin-top:2px} #goals .fpick em{display:block;font-style:normal;font-size:11px;color:#8a8070;margin-top:3px}
 #goals .roles{list-style:none;margin:4px 0 6px;padding:0;display:grid;gap:4px} #goals .roles li{font-size:13px;color:#e8dfcc;padding-left:2px} #goals .roles li.done{color:#7fe06a}
+/* ---------- the Library reading room ---------- */
+#libroom{position:fixed;inset:0;z-index:12;display:grid;place-items:center;opacity:0;transition:opacity .22s ease}
+#libroom.on{opacity:1}
+#libroom .lr-scrim{position:absolute;inset:0;background:radial-gradient(80% 70% at 50% 40%,rgba(20,12,6,.55),rgba(4,3,2,.86))}
+#libroom .lr{position:relative;width:min(1040px,calc(100vw - 32px));height:min(720px,calc(100vh - 48px));display:flex;flex-direction:column;border-radius:4px;overflow:hidden;color:#2a2219;font-family:var(--f-body);
+  background:var(--tex-grain),radial-gradient(120% 90% at 30% 10%,#f3ead3,#e6d8b6 60%,#d6c39a);
+  box-shadow:0 0 0 1px #1c120a,0 0 0 9px #3c2416,0 0 0 10px rgba(240,200,150,.18),0 40px 100px rgba(0,0,0,.75);transform:translateY(8px) scale(.985);transition:transform .25s cubic-bezier(.2,.8,.2,1)}
+#libroom.on .lr{transform:none}
+#libroom header{display:grid;grid-template-columns:auto 1fr auto;align-items:end;gap:28px;padding:26px 34px 18px;border-bottom:1px solid rgba(60,40,20,.25)}
+#libroom header small{display:block;font-family:var(--f-label);font-size:13px;letter-spacing:.24em;color:#8a5a2a}
+#libroom header h2{margin:2px 0 0;font-family:var(--f-display);font-weight:600;font-size:40px;line-height:1;letter-spacing:.04em;color:#3a1408}
+#libroom header p{margin:0 0 4px;font-family:var(--f-print);font-style:italic;font-size:17px;color:#5d4a33}
+#libroom .lr-x{width:38px;height:38px;border-radius:50%;border:0;cursor:pointer;font-size:22px;line-height:38px;color:#f3e3c0;background:radial-gradient(circle at 40% 35%,#6a2a18,#2a0c04);box-shadow:0 0 0 1px #1c0a04,0 0 0 3px #b8892f,0 0 0 4px #1c0a04}
+#libroom .lr-x:hover{filter:brightness(1.25)}
+#libroom .lr-body{flex:1;min-height:0;display:grid;grid-template-columns:330px 1fr}
+#libroom .lr-draw{padding:20px 26px 24px 34px;border-right:1px solid rgba(60,40,20,.22);overflow:auto;scrollbar-width:thin;scrollbar-color:#b8892f transparent}
+#libroom figure{margin:0 0 6px;padding:10px;background:rgba(255,248,230,.55);box-shadow:inset 0 0 0 1px rgba(60,40,20,.22),0 6px 18px rgba(60,40,20,.15);transform:rotate(-1.2deg)}
+#libroom figure svg{display:block;width:100%;height:auto}
+#libroom h3{margin:16px 0 6px;font-family:var(--f-display);font-weight:600;font-size:17px;letter-spacing:.06em;color:#5a1a10}
+#libroom .lr-draw p{margin:0 0 8px;font-family:var(--f-print);font-size:16.5px;line-height:1.5;color:#2a2219}
+#libroom .lr-hope{font-style:italic;color:#5a1a10!important}
+#libroom .lr-meter{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;margin-top:10px;font-size:13px;color:#5d4a33}
+#libroom .lr-meter i{height:8px;border-radius:4px;background:rgba(60,40,20,.15);overflow:hidden;box-shadow:inset 0 0 0 1px rgba(60,40,20,.2)} #libroom .lr-meter b{display:block;height:100%;background:linear-gradient(90deg,#c4561a,#ffb35a)}
+#libroom .lr-note{margin:6px 0;padding:8px 10px;background:rgba(255,248,230,.5);box-shadow:inset 0 0 0 1px rgba(60,40,20,.18)} #libroom .lr-note summary{cursor:pointer;font-family:var(--f-print);font-size:16px} #libroom .lr-note p{margin:6px 0 0;font-size:15px}
+#libroom .lr-shelves{display:flex;flex-direction:column;min-height:0;padding:16px 30px 20px}
+#libroom nav{display:flex;flex-wrap:wrap;gap:6px;padding-bottom:12px;border-bottom:1px solid rgba(60,40,20,.18)}
+#libroom nav button{display:flex;align-items:center;gap:8px;padding:7px 12px;border:0;border-radius:3px;cursor:pointer;font-family:var(--f-body);font-weight:500;font-size:15px;color:#4a3a28;background:transparent;box-shadow:inset 0 0 0 1px rgba(60,40,20,.2)}
+#libroom nav button i{font-style:normal;font-size:12px;color:#8a7458}
+#libroom nav button:hover{background:rgba(120,90,50,.08)}
+#libroom nav button.on{color:#fff6e4;background:var(--sc);box-shadow:inset 0 -2px 0 rgba(0,0,0,.25)} #libroom nav button.on i{color:rgba(255,246,228,.75)}
+#libroom .lr-shelves h3{color:var(--sc);margin:14px 0 10px}
+#libroom .lr-grid{flex:1;min-height:0;overflow:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;align-content:start;padding:2px 4px 8px 2px;scrollbar-width:thin;scrollbar-color:#b8892f transparent}
+#libroom .lbk{position:relative;display:flex;flex-direction:column;gap:5px;min-height:118px;padding:14px 14px 12px 20px;border-radius:2px;text-decoration:none;color:#2a2219;background:linear-gradient(180deg,rgba(255,250,236,.85),rgba(246,236,212,.85));box-shadow:0 1px 0 rgba(255,255,255,.6) inset,0 0 0 1px rgba(60,40,20,.18),0 3px 8px rgba(60,40,20,.12);transition:transform .15s ease,box-shadow .15s ease}
+#libroom .lbk::before{content:"";position:absolute;left:0;top:0;bottom:0;width:7px;background:var(--sc);box-shadow:inset -1px 0 0 rgba(0,0,0,.25)}
+#libroom .lbk b{font-family:var(--f-print);font-weight:400;font-size:19px;line-height:1.2;color:#1d140c}
+#libroom .lbk span{font-size:14px;line-height:1.4;color:#5d4a33}
+#libroom .lbk em{margin-top:auto;font-style:normal;font-family:var(--f-label);font-size:12px;letter-spacing:.08em;color:var(--sc);opacity:0;transition:opacity .15s}
+#libroom a.lbk:hover{transform:translateY(-2px);box-shadow:0 1px 0 rgba(255,255,255,.6) inset,0 0 0 1px rgba(60,40,20,.28),0 10px 22px rgba(60,40,20,.2)} #libroom a.lbk:hover em,#libroom a.lbk:focus-visible em{opacity:1}
+#libroom a.lbk:focus-visible{outline:2px solid #7a1e16;outline-offset:2px}
+#libroom .lr-foot{margin:10px 0 0;font-size:13.5px;color:#7a6a52;font-style:italic}
+@media (max-width: 760px){ #libroom .lr{height:calc(100vh - 24px)} #libroom header{grid-template-columns:1fr auto;padding:18px 18px 12px} #libroom header p{display:none} #libroom header h2{font-size:30px}
+  #libroom .lr-body{grid-template-columns:1fr;overflow:auto} #libroom .lr-draw{border-right:0;border-bottom:1px solid rgba(60,40,20,.22);padding:16px 18px} #libroom figure{max-width:260px;margin:0 auto 6px} #libroom .lr-shelves{padding:14px 18px} #libroom .lr-grid{overflow:visible} }
+@media (prefers-reduced-motion: reduce){ #libroom,#libroom .lr,#libroom .lbk{transition:none} }
+
 #goals .gsec a{color:#f0c96a}
 #goals .gsec p{margin:0;font-size:12.5px;color:#cfc6b4} #goals .gsec p b{color:#9fd8ff} #goals .gnext{margin:0;font-size:11.5px;color:#8a8070;font-style:italic}
 .lbl.shard{color:#06223a;background:linear-gradient(180deg,#d8f1ff,#8fc9f2);box-shadow:0 0 0 1px rgba(0,30,60,.7),0 0 14px rgba(143,208,255,.7)}
@@ -816,6 +883,8 @@ var W4W = (() => {
   var world_exports = {};
   __export(world_exports, {
     BAG_MS: () => BAG_MS,
+    BAR_COST: () => BAR_COST,
+    BAR_WAIT: () => BAR_WAIT,
     CAVE: () => CAVE,
     CORE: () => CORE,
     CORE_RING: () => CORE_RING,
@@ -826,15 +895,21 @@ var W4W = (() => {
     DIRS: () => DIRS,
     DOME_RADIUS: () => DOME_RADIUS,
     DOME_RING: () => DOME_RING,
+    DRAIN_GAIN: () => DRAIN_GAIN,
+    DRAIN_TAKE: () => DRAIN_TAKE,
+    DRAIN_WAIT: () => DRAIN_WAIT,
     DRIFT: () => DRIFT,
     FREEZE_MS: () => FREEZE_MS,
     FROSTBITE: () => FROSTBITE,
+    GATE_CELL: () => GATE_CELL,
     GATHER_MS: () => GATHER_MS,
     GUARD_MS: () => GUARD_MS,
     HEARTH_COST: () => HEARTH_COST,
     HEARTH_MAX_MS: () => HEARTH_MAX_MS,
     HEARTH_START_MS: () => HEARTH_START_MS,
     HEARTH_WOOD_MS: () => HEARTH_WOOD_MS,
+    HUSH_FADE: () => HUSH_FADE,
+    HUSH_MAX: () => HUSH_MAX,
     INSULATION_T1: () => INSULATION_T1,
     ITEMS: () => ITEMS,
     LANDMARKS: () => LANDMARKS,
@@ -864,6 +939,7 @@ var W4W = (() => {
     STARTER_RECIPES: () => STARTER_RECIPES,
     STEP_MS: () => STEP_MS,
     TOWN_RING: () => TOWN_RING,
+    UNVEIL_MS: () => UNVEIL_MS,
     VEIL_COLD: () => VEIL_COLD,
     VEIL_FULL: () => VEIL_FULL,
     WEEK_MS: () => WEEK_MS,
@@ -887,6 +963,7 @@ var W4W = (() => {
     greyAt: () => greyAt,
     guardsAt: () => guardsAt,
     have: () => have,
+    hushNow: () => hushNow,
     inCore: () => inCore,
     inMouth: () => inMouth,
     insideDome: () => insideDome,
@@ -901,6 +978,7 @@ var W4W = (() => {
     nameOf: () => nameOf,
     newChar: () => newChar,
     newDirty: () => newDirty,
+    nickIn: () => nickIn,
     ordersDone: () => ordersDone,
     ordersFor: () => ordersFor,
     passable: () => passable,
@@ -934,6 +1012,7 @@ var W4W = (() => {
     townOfState: () => townOfState,
     townShelters: () => townShelters,
     townWarmth: () => townWarmth,
+    unveiled: () => unveiled,
     veilOf: () => veilOf,
     viewOf: () => viewOf,
     weatherAt: () => weatherAt,
@@ -1574,7 +1653,30 @@ var W4W = (() => {
     const mining = real.filter((x) => x.state === "mining");
     const fire = real.filter((x) => ws.now - (x.lastWood ?? 0) < 36e5).length;
     const today = ws.delivered?.day === dayOf(ws.now) ? ws.delivered.n : 0;
-    return townWarmth({ people: DEMO_TOWN.people + mining.length, online: ws.online, deeds: DEMO_TOWN.deeds + ws.doneOrders + Math.floor(today / 2), fire, power: DEMO_TOWN.power + mining.reduce((a, x) => a + (x.sol ?? 0), 0), storm: false });
+    const t = townWarmth({ people: DEMO_TOWN.people + mining.length, online: ws.online, deeds: DEMO_TOWN.deeds + ws.doneOrders + Math.floor(today / 2), fire, power: DEMO_TOWN.power + mining.reduce((a, x) => a + (x.sol ?? 0), 0), storm: false });
+    return unveiled(ws.story, ws.now) ? { ...t, veil: 0 } : t;
+  }
+  const GATE_CELL = [0, -TOWN_RING];
+  const HUSH_MAX = 100;
+  const HUSH_FADE = 2;
+  const UNVEIL_MS = 3 * 36e5;
+  const DRAIN_TAKE = 12;
+  const DRAIN_GAIN = 15;
+  const DRAIN_WAIT = 30 * 6e4;
+  const BAR_WAIT = 60 * 6e4;
+  const BAR_COST = 10;
+  const hushNow = (s, now) => !s ? 0 : Math.max(0, Math.min(HUSH_MAX, s.hush - HUSH_FADE * Math.max(0, now - (s.ht || now)) / 36e5));
+  const unveiled = (s, now) => !!s?.unveil && now >= s.unveil.at && now < s.unveil.until;
+  function addHush(ws, n, d) {
+    const s = ws.story ?? (ws.story = { phase: 0, hush: 0, ht: ws.now });
+    s.hush = Math.max(0, Math.min(HUSH_MAX, hushNow(s, ws.now) + n));
+    s.ht = ws.now;
+    d.story = true;
+    if (s.phase >= 3 && s.hush >= HUSH_MAX && !unveiled(s, ws.now)) {
+      s.unveil = { at: ws.now, until: ws.now + UNVEIL_MS };
+      s.hush = 0;
+      d.feed.push({ id: `uv${ws.now}`, t: ws.now, topic: "unveil", by: "", data: { until: s.unveil.until } });
+    }
   }
   function ctxOf(ws, uid) {
     const t = townOfState(ws);
@@ -1660,6 +1762,7 @@ var W4W = (() => {
         const p = ws.pylons?.[i];
         return { i, at: pylonCell(i), s: pylonNow(p, i, ws.now, veilOf(townOfState(ws).power)), nick: p?.nick ?? null, at_t: p?.at ?? 0 };
       }),
+      story: { phase: ws.story?.phase ?? 0, hush: (ws.story?.phase ?? 0) >= 2 ? Math.round(hushNow(ws.story, ws.now)) : null, unveil: unveiled(ws.story, ws.now) ? ws.story.unveil : null },
       pressed: pressedAt(ws.now),
       pressNext: (Math.floor(ws.now / PYLON_PRESS_MS) + 1) * PYLON_PRESS_MS,
       ranks: Object.fromEntries(Object.entries(ws.chars).map(([k, x]) => [k, rankOf(x.renown ?? 0)]))
@@ -1900,7 +2003,38 @@ var W4W = (() => {
         c.warmth -= PYLON_COST;
         (c.tended ?? (c.tended = {}))[i] = now;
         addRenown(c, cur < 30 ? 4 : 2);
+        if (hushNow(ws.story, now) > 0) addHush(ws, -1, d);
         d.feed.push({ id: `py${uid}${i}${now}`, t: now, topic: "pylon", by: uid, data: { nick: nickIn(ws, uid), i, s: Math.round(ws.pylons[i].s), was: Math.round(cur) } });
+        return ok();
+      }
+      case "drain": {
+        if ((ws.story?.phase ?? 0) < 1) return fail("unknown action");
+        const i = Number(b.i);
+        if (!(i >= 0 && i < PYLON_N)) return fail("Which pylon?");
+        if (c.path.length) return fail("Stop walking first.");
+        if (dist(here, pylonCell(i)) > 1) return fail("Stand next to the pylon.");
+        if (now - (c.drained ?? 0) < DRAIN_WAIT) return fail(`Your hands are still burning from the last time. Again in ${Math.ceil((DRAIN_WAIT - (now - (c.drained ?? 0))) / 6e4)} min.`);
+        ws.pylons ?? (ws.pylons = {});
+        const V = veilOf(townOfState(ws).power), cur = pylonNow(ws.pylons[i], i, now, V);
+        if (cur < DRAIN_TAKE) return fail("There is nothing left in it to take.");
+        const was = ws.pylons[i];
+        ws.pylons[i] = { s: cur - DRAIN_TAKE, t: now, by: was?.by ?? "", nick: was?.nick ?? "", at: was?.at ?? 0 };
+        (d.pylons ?? (d.pylons = /* @__PURE__ */ new Set())).add(String(i));
+        c.warmth = Math.min(100, c.warmth + DRAIN_GAIN);
+        c.drained = now;
+        addHush(ws, 2, d);
+        d.feed.push({ id: `dr${now}${i}`, t: now, topic: "drain", by: "", data: { i, s: Math.round(cur - DRAIN_TAKE) } });
+        return ok();
+      }
+      case "bar": {
+        if ((ws.story?.phase ?? 0) < 2) return fail("The bar has not moved since the ninth night. It will not move for you.");
+        if (c.path.length || dist(here, GATE_CELL) > 1) return fail("Stand at the North Gate.");
+        if (now - (c.barred ?? 0) < BAR_WAIT) return fail(`The iron still holds the shape of your hand. Again in ${Math.ceil((BAR_WAIT - (now - (c.barred ?? 0))) / 6e4)} min.`);
+        if (c.warmth < BAR_COST + 8) return fail("Your hands are too cold to grip the iron.");
+        c.warmth -= BAR_COST;
+        c.barred = now;
+        addHush(ws, 4, d);
+        d.feed.push({ id: `br${now}`, t: now, topic: "bar", by: "", data: {} });
         return ok();
       }
       case "pick": {
@@ -2525,7 +2659,7 @@ function buildCore() {
     fragmentShader: `uniform float uA; uniform float uTime; varying vec2 vUv; void main(){ float f=pow(1.-vUv.y,1.6); float s=.7+.3*sin(vUv.x*44.+uTime*5.); gl_FragColor=vec4(vec3(.55,.9,1.)*f*s*uA,1.); }` });
   const beam = new THREE.Mesh(new THREE.CylinderGeometry(0.7, 1.15, 28, 32, 1, true), beamMat); beam.position.set(0, TOP + 14, 0); beam.frustumCulled = false; scene.add(beam);
   const shardMat = new THREE.MeshPhysicalMaterial({ ...(LITE ? { transparent: true, opacity: 0.8 } : { transmission: 0.6, thickness: 0.3, ior: 1.31 }), color: 0xdff2ff, roughness: 0.15, emissive: 0x4f86c9, emissiveIntensity: 0.25, envMap: iceMat.envMap });
-  const shards = Array.from({ length: 7 }, (_, i) => { const sh = new THREE.Mesh(new THREE.OctahedronGeometry(0.1 + (i % 3) * 0.05, 0), shardMat); sh.scale.y = 1.6; sh.userData.a = i / 7 * Math.PI * 2; sh.userData.r = 3.0 + (i % 2) * 0.3; sh.userData.y = 2.9 + (i % 3) * 0.6; scene.add(sh); return sh; });
+  const shards = Array.from({ length: 7 }, (_, i) => { const sh = new THREE.Mesh(new THREE.OctahedronGeometry(0.1 + (i % 3) * 0.05, 0), shardMat); sh.scale.y = 1.6; sh.userData.a = i / 7 * Math.PI * 2; sh.userData.r = 3.0 + (i % 2) * 0.3; sh.userData.y = 2.9 + (i % 3) * 0.6; return sh; });
   const decal = glowDecal(0, 0, 4.5, 0xffb060, 0.5);
   const zs = [0, 1, 2].map(zSprite);
   coreParts = { ice, iceMat, topMat, liteMat, liteTop, iceRich, iceLite, rim, rimMat, anna, annaMat, sleepTex, awakeTex, inner, block, copper, hot, beamMat, shards, shardMat, decal, zs, Y: AY, TOP, awake: false, em: 0.04 };
@@ -2602,12 +2736,32 @@ function disposeHouse(id) { const h = houses[id]; if (!h) return; if (hoverOn ==
   h.label.el.remove(); labels.splice(labels.indexOf(h.label), 1);
   for (let i = interactive.length - 1; i >= 0; i--) if (interactive[i].userData.id === id) interactive.splice(i, 1);
   delete houses[id]; }
+const PIPE_COPPER = new THREE.MeshStandardMaterial({ color: 0xb06a38, metalness: 0.7, roughness: 0.36, emissive: 0x3a1406, emissiveIntensity: 0.7 });
+const PIPE_IRON = new THREE.MeshStandardMaterial({ color: 0x3a3430, metalness: 0.6, roughness: 0.55 });
+const PIPE_FLOW_V = `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.); }`;
+const PIPE_FLOW_F = `uniform float uTime; uniform float uOn; uniform float uMine; uniform float uBoost; varying vec2 vUv;
+  void main(){ float p = fract(vUv.x * 6. - uTime * (0.45 + uBoost)); float band = smoothstep(0.82, 1., p) + (1. - smoothstep(0., 0.12, p)) * 0.6;
+    float seam = smoothstep(0.42, 0.5, abs(fract(vUv.y * 2.) - 0.5));
+    float a = (band * 0.95 + 0.07) * uOn * (0.35 + 0.65 * seam); vec3 c = mix(vec3(1., .5, .15), vec3(1., .86, .5), band) * (1. + uMine * .5);
+    gl_FragColor = vec4(c * a, a); }`;
+/** A copper pipe from a working house down to the frozen ground and along it to the boilers round Anna, with the light running inside. */
 function makePipe(p, on, mine) {
-  const g = new THREE.Group(); g.userData = { from: p.clone().setY(1.0), on, mine, motes: [], t: rnd() * 3 }; scene.add(g); pipes.push(g); return g;
+  const g = new THREE.Group(), dir = p.clone().setY(0).normalize(), side = new THREE.Vector3(-dir.z, 0, dir.x), r = mine ? 0.055 : 0.042;
+  const start = p.clone().sub(dir.clone().multiplyScalar(0.55)).setY(0.55), end = dir.clone().multiplyScalar(3.35).setY(0.7), L = start.distanceTo(end), n = Math.max(2, Math.round(L / 1.6)), wob = (rnd() - 0.5) * 0.8;
+  const pts = [start, start.clone().setY(0.2).sub(dir.clone().multiplyScalar(0.25))];
+  for (let i = 1; i < n; i++) { const k = i / n; pts.push(start.clone().lerp(end, k).setY(0.2).add(side.clone().multiplyScalar(Math.sin(k * Math.PI) * wob))); }
+  pts.push(end.clone().setY(0.25).add(dir.clone().multiplyScalar(0.35)), end);
+  const curve = new THREE.CatmullRomCurve3(pts, false, 'centripetal'), segs = Math.max(20, Math.round(L * 10));
+  const metal = new THREE.Mesh(new THREE.TubeGeometry(curve, segs, r, 8, false), PIPE_COPPER); metal.castShadow = true; g.add(metal);
+  g.add(new THREE.Mesh(new THREE.TubeGeometry(curve, segs, r * 1.18, 8, false), new THREE.ShaderMaterial({ vertexShader: PIPE_FLOW_V, fragmentShader: PIPE_FLOW_F, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, uniforms: { uTime: U.uTime, uBoost: U.uBoost, uOn: { value: on ? 1 : 0.12 }, uMine: { value: mine ? 1 : 0 } } })));
+  for (let i = 1; i < n; i++) { const q = curve.getPoint(i / n);
+    const post = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.04, q.y + 0.02, 6), PIPE_IRON); post.position.set(q.x, (q.y + 0.02) / 2, q.z); g.add(post);
+    const clamp = new THREE.Mesh(new THREE.TorusGeometry(r * 1.35, 0.012, 5, 12), PIPE_IRON); clamp.position.copy(q); clamp.lookAt(q.clone().add(curve.getTangent(i / n))); g.add(clamp); }
+  scene.add(g); pipes.push(g); return g;
 }
 const MOTE_MAT = {};
 function stepMotes(dt) {
-  if (REDUCED) return;
+  return;
   for (const g of pipes) { const u = g.userData; if (!u.on) continue; u.t -= dt * (1 + U.uBoost.value * 2.5);
     if (u.t <= 0) { u.t = (u.mine ? 2.4 : 4) + rnd() * 3;
       const s = new THREE.Sprite((MOTE_MAT[u.mine] ||= new THREE.SpriteMaterial({ map: GLOW, color: u.mine ? 0xffd9a0 : 0xffb870, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending })).clone());
@@ -3361,6 +3515,7 @@ const LIB = {
 };
 const link = (href, inner) => `<a class="book" href="${href.startsWith('http') ? href : SITE + href}" target="_blank" rel="noopener">${inner}</a>`;
 function openLibrary() {
+  if (ACT1) return openLibraryRoom();
   act1Mark('library'); dailyMark('study');
   panel('library', 'The Library', 'Everything Qubic Church has written, and what we read', null, `
     ${ACT1 ? `<div class="hcard" style="margin-bottom:12px"><div class="hk">THE DRAWING OLDER THAN THE COLD</div><p>A figure in heavy plates, lined with something that glows. Under it, in the expedition smith's hand, one word: <b>Warden</b>. A suit that carries a piece of Anna's light on the body, so the White cannot get in. The smiths have started. When Anna is strong enough to give a piece of her light away, the Gate opens from our side.</p></div>` : ''}
@@ -3423,10 +3578,11 @@ async function openChronicle(force = true, tab = journalTab) {
   const t = S.town, cur = me(), myId = S.uid && S.real[S.uid] ? S.uid : 'me';
   const mineRows = rows.filter(r => !r.demo && (r.house === S.uid || (cur && r.author === cur.nick)));
   const list = rs => rs.length ? `<ul class="chron">${rs.slice(0, 200).map(r => `<li><span class="n">#${r.n}</span><span><b style="color:var(--cream)">${esc(r.author)}</b> · E${r.epoch} · ${esc(r.text)}${r.demo ? ' <span class="tag">demo history</span>' : ''}</span><span class="h">${esc(String(r.hash).slice(0, 32))}…  ← ${esc(String(r.prev).slice(0, 8))}</span></li>`).join('')}</ul>` : '<p class="mute">Nothing here yet.</p>';
-  const tabs = `<div class="jtabs"><button data-jt="world" class="${tab === 'world' ? 'on' : ''}">World</button><button data-jt="mine" class="${tab === 'mine' ? 'on' : ''}">Mine</button>${ACT1 ? `<button data-jt="story" class="${tab === 'story' ? 'on' : ''}">The Long Cold</button><button data-jt="beasts" class="${tab === 'beasts' ? 'on' : ''}">Bestiary</button>` : ''}</div>`;
+  const tabs = `<div class="jtabs"><button data-jt="world" class="${tab === 'world' ? 'on' : ''}">World</button><button data-jt="mine" class="${tab === 'mine' ? 'on' : ''}">Mine</button>${ACT1 ? `<button data-jt="story" class="${tab === 'story' ? 'on' : ''}">The Long Cold</button><button data-jt="beasts" class="${tab === 'beasts' ? 'on' : ''}">Bestiary</button><button data-jt="letters" class="${tab === 'letters' ? 'on' : ''}">Letters${openLetter() ? ' ●' : ''}</button>` : ''}</div>`;
   let body;
   if (tab === 'story') body = chaptersHtmlI();
   else if (tab === 'beasts') body = bestiaryHtml();
+  else if (tab === 'letters') body = lettersHtml();
   else if (tab === 'world') {
     body = `<div class="jgrid">
       <div class="jstat ${t.B >= 0 ? 'good' : 'bad'}"><i>Tonight</i><b>${t.B >= 0 ? 'The town holds' : 'The frost wins'}</b><span>warmth ${Math.round(t.W)} · frost ${Math.round(t.F)}</span></div>
@@ -3499,7 +3655,8 @@ Hard rules:
 - This is a prototype: no rig is really rented here, numbers are estimates or demo.
 Facts you may use: Qubic is a network where miners do useful work for Aigarth, an AI project. 676 computors, the epoch changes every Wednesday 12:00 UTC. BPP-9000 is a small network miners grow to call each hour of bitcoin UP or DOWN; live calls start 18 November 2026; the Qubic team says its scores are not price forecasts. Pool for the game: Qubic Church, fee 7%, of which 4% goes to Qubic Church; player gets 93%.
 The Veil's strength follows the town's mining power: strong = closed and bright with little snow inside; weak = open to the sky, snow inside, only a fence of light. Every rig makes it stronger and thaws Anna.
-Act I (now): the whole town lives under the Veil, a dome of Anna's light she raised in her sleep when the cold came forty weeks ago. Outside is the White, a storm that never stops, and the Hollow: the Scratcher, the Hollow Man, the Wailer, the Circler, and something taller far out. Nobody can go outside in Act I; the North Gate is sealed since the ninth night, when someone knocked in the captain's voice and the town did not open. Hope: the Wardens, heavy suits carrying Anna's light, being built; the Gate opens from our side when Anna is strong enough (50%). Never send anyone outside. Everything happens inside: mining (rigs are lamps in the Veil), the plaza fire, the orders board, welcoming newcomers.
+Act I (now): the whole town lives under the Veil, a dome of Anna's light she raised in her sleep when the cold came forty weeks ago. Outside is the White, a storm that never stops, and the Hollow: the Scratcher, the Hollow Man, the Wailer, the Circler, and something taller far out. Nobody can go outside in Act I; the North Gate is sealed since the ninth night, when someone knocked in the captain's voice and the town did not open. Letters: sometimes a letter lies in the snow under the North Gate for about an hour; whoever reaches the Gate in time can read and keep it (the Journal has a Letters tab). Your rule, and you say it every time letters come up: read them, keep them, do nothing they ask. In phase 0 you never name who might write them and you change the subject if asked about the captain: you only say the town did not open, and would not open again. In phase 1 or later you know the letters are the captain's (use only the name his letters sign with, if the player tells you), who was to marry your sister Anna before the cold, and you warn plainly: he wants Anna, and the only way in is a door opened from inside. Never encourage draining a pylon or touching the bar of the Gate. The current phase is in town_status as captain_phase.
+Hope: the Wardens, heavy suits carrying Anna's light, being built; the Gate opens from our side when Anna is strong enough (50%). Never send anyone outside. Everything happens inside: mining (rigs are lamps in the Veil), the plaza fire, the orders board, welcoming newcomers.
 Game rules: warmth against frost. Warmth comes mostly from people (rigs kept on, neighbours online, orders done, wood on the fire); raw power counts less. When frost wins, the storm grows. Houses have five parts: machine hall (the only thing money grows), porch lanterns (orders done for others), archive (collections, not for sale), epoch garden (time in the world), facade.
 You can use tools to read the town and to open screens for the player. Open a screen when the player wants to do something there.`;
 let chat = [], chatCtl = null;
@@ -3522,7 +3679,7 @@ function renderChat() {
   $('#pbody').scrollTop = 1e6;
 }
 $('#chatForm').addEventListener('submit', e => { e.preventDefault(); const v = $('#chatIn').value.trim(); if (!v) return; $('#chatIn').value = ''; ask(v); });
-function townBrief() { const t = S.town; return { warmth: Math.round(t.W), frost: Math.round(t.F), holds: t.B >= 0, rigs_on: t.people, neighbours_online: t.online, anna_thawed_percent: Math.round(t.melt * 100), level: LEVELS[t.level][0], weather: S.weather, open_orders: ordersAll().filter(o => o.state === 'open').map(o => o.title).slice(0, 6) }; }
+function townBrief() { const t = S.town; return { warmth: Math.round(t.W), frost: Math.round(t.F), holds: t.B >= 0, rigs_on: t.people, neighbours_online: t.online, anna_thawed_percent: Math.round(t.melt * 100), level: LEVELS[t.level][0], weather: S.weather, open_orders: ordersAll().filter(o => o.state === 'open').map(o => o.title).slice(0, 6), veil_percent: Math.round(veilStrength() * 100), captain_phase: XV?.story?.phase || 0, letter_under_gate_now: openLetter()?.title || null, letters_player_kept: letters().filter(l => l.read).length }; }
 const MARIA_TOOLS = [
   { name: 'town_status', description: 'Returns the town right now: warmth, frost, whether the town holds, rigs on, neighbours online, how thawed Anna is, open orders.', execute: () => townBrief() },
   { name: 'my_house', description: "Returns the player's house: name, hardware, state, lanterns, or that they have not settled yet.", execute: () => { const h = me(); if (!h) return { settled: false }; const v = S.town.res.find(x => x.id === (S.real[S.uid] ? S.uid : 'me')); return { settled: true, name: h.nick, hardware: h.hw, state: h.state, lanterns: v?.lanterns || 0 }; } },
@@ -3622,6 +3779,7 @@ const INTRO = [
   'One rig can\'t warm this night. A town can.',
   'Every rig in this town is a lamp in the Veil. Every fire fed, every promise kept, makes the light thicker.',
   'One day the Gate will open again, from our side. Not yet. First we hold.',
+  'And if a letter ever comes under the Gate in a hand you know: read it. Keep it. Do nothing it asks.',
   'Help me keep the light.',
 ];
 const introText = i => { const x = INTRO[i]; return typeof x === 'string' ? x : x.text; };
@@ -3677,13 +3835,15 @@ const hasChar = () => !!XV?.me;
 function localWorld() {
   // the prototype keeps the whole expedition world in this browser, with the very same rules
   let st = null; try { st = JSON.parse(store.get('w4w.xworld') || 'null'); } catch {}
-  st ||= { chars: {}, hearths: {}, bags: {}, nodes: {} }; st.library ||= {}; st.shards ||= {}; st.anna ||= { n: 0, heroes: {} }; st.pylons ||= {};
+  st ||= { chars: {}, hearths: {}, bags: {}, nodes: {} }; st.library ||= {}; st.shards ||= {}; st.anna ||= { n: 0, heroes: {} }; st.pylons ||= {}; st.letters ||= []; st.lread ||= {};
   const subs = [];
   const wsNow = () => { const h = me(); const houses = {}; if (h) houses.me = { q: h.q, r: h.r, nick: h.nick, state: h.state, sol: h.sol, lastWood: h.lastWood };
-    return { now: Date.now(), houses, chars: st.chars, hearths: st.hearths, bags: st.bags, nodes: st.nodes, online: 1, doneOrders: 0, rime: st.rime, library: st.library, shards: st.shards, anna: st.anna, delivered: st.delivered, pylons: st.pylons }; };
+    return { now: Date.now(), houses, chars: st.chars, hearths: st.hearths, bags: st.bags, nodes: st.nodes, online: 1, doneOrders: 0, rime: st.rime, library: st.library, shards: st.shards, anna: st.anna, delivered: st.delivered, pylons: st.pylons, story: st.story }; };
   const keep = () => store.set('w4w.xworld', JSON.stringify(st));
   const emit = v => subs.forEach(f => { try { f(v); } catch (e) { console.warn(e); } });
-  const view = (events = []) => { const ws = wsNow(); const d = W4W.newDirty(); W4W.stepAll(ws, d); st.rime = ws.rime; keep(); return W4W.viewOf(ws, 'me', events); };
+  // letters in the prototype: the same shapes the server sends
+  const lview = v => { const now = Date.now(); v.letters = st.letters.filter(l => l.at <= now).map(l => st.lread[l.id] ? { ...l, read: st.lread[l.id] } : now < l.until ? { id: l.id, at: l.at, until: l.until, from: l.from, title: l.title, open: true } : { id: l.id, at: l.at, until: l.until, title: l.title, missed: true }); return v; };
+  const view = (events = []) => { const ws = wsNow(); const d = W4W.newDirty(); W4W.stepAll(ws, d); st.rime = ws.rime; keep(); return lview(W4W.viewOf(ws, 'me', events)); };
   setInterval(() => { if (me()) emit(view()); }, 4000);
   return {
     get: () => (me() ? view() : null),
@@ -3693,11 +3853,15 @@ function localWorld() {
       Object.values(st.chars).forEach(c => { sh(c); sh(c.act); if (c.died) c.died.t -= ms; }); Object.values(st.hearths).forEach(sh); Object.values(st.bags).forEach(sh);
       for (const k in st.nodes) st.nodes[k] -= ms; if (st.rime) st.rime.t -= ms; Object.values(st.pylons).forEach(sh); keep(); emit(view()); },
     admin: () => true,
+    _letter(o) { st.letters.push({ id: 'l' + Date.now().toString(36), at: Date.now(), until: Date.now() + 3600_000, from: 'the twelve', ...o }); keep(); emit(view()); },
+    _story(o) { st.story = { phase: 0, hush: 0, ht: Date.now(), ...st.story, ...o }; keep(); emit(view()); },
     _stash(o) { if (st.chars.me) { st.chars.me.stash = o; keep(); emit(view()); } },
     _rime(q, r) { st.rime = { q, r, t: Math.floor(Date.now() / W4W.RIME_MS) * W4W.RIME_MS, d: 0 }; keep(); emit(view()); },
     async act(name, body = {}) {
       if (name === 'revive') { const c = st.chars.me; if (c) Object.assign(c, { frozenUntil: 0, warmth: 100, health: 100, energy: 100, q: c.home[0], r: c.home[1], path: [], act: null, lost: false, t0: Date.now(), simT: Date.now() }); keep(); const v = view(); emit(v); return v; }
-      const ws = wsNow(); const d = W4W.newDirty(); const r = W4W.action(ws, 'me', name, body, d); st.rime = ws.rime; st.delivered = ws.delivered; keep(); if (!r.ok) { const e = new Error(r.error); e.status = r.status; throw e; } const v = W4W.viewOf(ws, 'me', r.events); emit(v); return v; },
+      if (name === 'readletter') { const l = st.letters.find(x => x.id === body.id), c = st.chars.me, now = Date.now(); if (!l || now >= l.until) throw new Error('The snow has taken it. The ink ran before anyone came.'); const here = c && W4W.cellAt(c, now);
+        if (!c || c.path.length || W4W.dist(here, W4W.GATE_CELL) > 1) throw new Error('Walk to the North Gate. The letter is lying in the snow under it.'); st.lread[l.id] = now; keep(); const v = view(); emit(v); return v; }
+      const ws = wsNow(); const d = W4W.newDirty(); const r = W4W.action(ws, 'me', name, body, d); st.rime = ws.rime; st.delivered = ws.delivered; st.story = ws.story; keep(); if (!r.ok) { const e = new Error(r.error); e.status = r.status; throw e; } const v = lview(W4W.viewOf(ws, 'me', r.events)); emit(v); return v; },
   };
 }
 /** Called once the town is built and the capabilities are up. */
@@ -3726,7 +3890,7 @@ function ensureChar() { if (XW && me() && me().q != null && XV && !XV.me && !xBu
 /* ---------- the rules, run locally between server answers ---------- */
 function xctx() {
   const t = XV.town, cells = allResidents().filter(h => !h.demo && h.at[0] != null).map(h => h.at);
-  return { pylons: (XV.pylons || []).map(p => p.s), veil: W4W.veilOf(S.town.power || t.power || 0), heatR: t.heatR, holds: t.holds, netStorm: false, shelters: W4W.townShelters(cells), home: W4W.key(...XV.me.home), hearths: Object.fromEntries(Object.entries(XV.hearths).map(([k, v]) => [k, v.until])), insulation: W4W.INSULATION_T1,
+  return { pylons: (XV.pylons || []).map(p => p.s), veil: isUnveiled() ? 0 : W4W.veilOf(S.town.power || t.power || 0), heatR: t.heatR, holds: t.holds, netStorm: false, shelters: W4W.townShelters(cells), home: W4W.key(...XV.me.home), hearths: Object.fromEntries(Object.entries(XV.hearths).map(([k, v]) => [k, v.until])), insulation: W4W.INSULATION_T1,
     rime: XV.rime ? [[XV.rime.t, XV.rime.q, XV.rime.r], ...(XV.rime.next ? [[XV.rime.next.t, XV.rime.next.q, XV.rime.next.r]] : [])] : undefined };
 }
 let PR = null, PRT = 0;
@@ -3934,6 +4098,8 @@ function clickGround(e) {
 const hudEl = document.createElement('div'); hudEl.id = 'hud'; hudEl.hidden = true; document.body.appendChild(hudEl);
 const actEl = document.createElement('div'); actEl.id = 'xact'; actEl.hidden = true; document.body.appendChild(actEl);
 const frostEl = document.createElement('div'); frostEl.id = 'frostfx'; document.body.appendChild(frostEl);
+{ const c2 = document.createElement('div'); c2.id = 'cold2'; document.body.appendChild(c2); }
+canvas.style.transition = 'filter 2s';
 const diedEl = document.createElement('div'); diedEl.id = 'died'; diedEl.hidden = true; document.body.appendChild(diedEl);
 let hudT = 0, actSig = '', etaT = 0, eta = 0, printSig = ''; const seenEv = new Set();
 function drawPrintsOnce(c) { const sig = c.q + ',' + c.r + ':' + c.path.length; if (sig === printSig) return; printSig = sig; drawPrints([c.q, c.r], c.path, W4W.zoneOf(...c.path.at(-1)) >= 1); }
@@ -3968,7 +4134,7 @@ function hud(force) {
   if (c.path.length && performance.now() - etaT > 2000) { etaT = performance.now(); const nx = c.path[0], first = Math.max(0, c.t0 + c.stepMs - t);
     eta = first + (c.path.length > 1 ? W4W.planTrip({ ...c, q: nx[0], r: nx[1] }, c.path.slice(1), c.t0 + c.stepMs, xctx()).eta : 0); }
   if (c.path.length) drawPrintsOnce(c); else if (!trip && prints.length) drawPrints([0, 0], [], false);
-  stepPlotStakes();
+  stepPlotStakes(); stepLetters();
   if (!ACT1) { stepResTags(frozen ? null : c); stepScrolls(frozen ? null : c); stepMilestones(c); } else act1Watch(c); welcomeBack(); renderGoals();
   actions(c, here, t, frozen);
   if (pendingOpen && !c.path.length && !frozen) { const k = pendingOpen; pendingOpen = null; if (W4W.dist(here, k.cell) <= (k.kind === 'core' ? 2 : 1)) openKind(k.kind, k.id); }
@@ -5202,6 +5368,10 @@ function hookFeed() {
   room.on('hearth', m => { const x = m.data || {}; if (m.by !== S.uid) say(`${esc(x.nick || 'Someone')} lit a hearth in ${esc(x.zone || 'the Wastes')}. Anyone may warm up there.`, 'Wastes'); });
   room.on('took', m => { const x = m.data || {}; say(`${esc(x.nick || 'Someone')} picked up ${esc(x.owner || 'someone')}'s frozen pack.`, 'Wastes'); });
   room.on('pylon', m => { const x = m.data || {}; if (m.by !== S.uid) log(`${x.nick || 'Someone'} gave ${PYLON_NAMES[x.i] || 'a pylon'} their warmth. It holds at ${x.s}%.`, 'warm', 'world'); });
+  room.on('letter', m => { const x = m.data || {}; if (m.by !== S.uid) log(`${x.nick || 'Someone'} picked up the letter under the Gate${x.n > 1 ? ` (${x.n} have read it)` : ''}.`, 'world', 'world'); });
+  room.on('drain', m => { const x = m.data || {}; log(`Someone took warmth back from ${PYLON_NAMES[x.i] || 'a pylon'}. It fell to ${x.s}%. Nobody saw who.`, 'world', 'world'); });
+  room.on('bar', () => { log('Someone lifted the bar of the North Gate a notch. The iron screamed all the way to the plaza.', 'world', 'world'); });
+  room.on('unveil', m => { banner('THE VEIL IS DOWN', 'hold Anna. Every hand to the pylons'); log('The Veil went out. The White is in the streets. Hold the pylons, hold Anna.', 'world', 'world'); });
   room.on('froze', m => { const x = m.data || {}; if (m.by !== S.uid) log(`${x.nick || 'Someone'} froze in ${x.zone || 'the Wastes'}.`, 'world', 'world'); });
   room.on('took', m => { const x = m.data || {}; log(`${x.nick || 'Someone'} carried ${x.owner || 'someone'}'s frozen pack home.`, 'world', 'world'); });
 }
@@ -5418,25 +5588,43 @@ function buildDome() {
 /* six pylons hold the Veil's edge: dark stone, a crystal of Anna's light on top */
 const PYLON_NAMES = ['The Kiln', 'The Widow', 'The Choir', 'The Old Bell', 'The North Tooth', 'The Lantern'];
 const PYL = [];
+const PYL_STONE = new THREE.MeshStandardMaterial({ color: 0xa79d8e, roughness: 0.9, emissive: 0x3a2a1c, emissiveIntensity: 0.6 }), PYL_IRON = new THREE.MeshStandardMaterial({ color: 0x9a8f86, metalness: 0.55, roughness: 0.4, emissive: 0x4a2c18, emissiveIntensity: 0.55 });
+PYL_STONE.userData.noFow = PYL_IRON.userData.noFow = true;
+const BRZ_STONE = PYL_STONE, BRZ_IRON = new THREE.MeshStandardMaterial({ color: 0x8a7a6a, metalness: 0.6, roughness: 0.45, emissive: 0x5a2a10, emissiveIntensity: 0.7, side: THREE.DoubleSide }),
+  BRZ_COAL = new THREE.MeshBasicMaterial({ color: 0xff6a20 }), BRZ_FLAME = new THREE.MeshBasicMaterial({ color: 0xffb050, transparent: true, opacity: 0.85, blending: THREE.AdditiveBlending, depthWrite: false }), GATE_FLAMES = [];
+BRZ_IRON.userData.noFow = BRZ_COAL.userData.noFow = BRZ_FLAME.userData.noFow = true;
+[PYL_STONE, PYL_IRON].forEach(m => { m.userData.noFow = true; });
+function energyColumn() {
+  const g = new THREE.Group(), add = (geo, mat, y, sc) => { const m = new THREE.Mesh(geo, mat); m.position.y = y; if (sc) m.scale.set(...sc); m.castShadow = true; g.add(m); return m; };
+  add(new THREE.CylinderGeometry(0.55, 0.62, 0.32, 6), PYL_STONE, 0.16); add(new THREE.CylinderGeometry(0.42, 0.5, 0.22, 6), PYL_STONE, 0.43);
+  for (let k = 0; k < 3; k++) { const a = k / 3 * Math.PI * 2, u = new THREE.Mesh(new THREE.BoxGeometry(0.07, 2.1, 0.07), PYL_IRON); u.position.set(Math.cos(a) * 0.26, 1.55, Math.sin(a) * 0.26); u.castShadow = true; g.add(u); }
+  const copper = new THREE.MeshStandardMaterial({ color: 0xb06a38, metalness: 0.75, roughness: 0.32, emissive: 0xff6a1a, emissiveIntensity: 0.9 }); copper.userData.noFow = true;
+  const coil = []; for (let i = 0; i <= 120; i++) { const t = i / 120, a = t * Math.PI * 2 * 9; coil.push(new THREE.Vector3(Math.cos(a) * 0.2, 0.6 + t * 1.6, Math.sin(a) * 0.2)); }
+  g.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(coil), 240, 0.022, 5, false), copper));
+  const coreMat = new THREE.MeshStandardMaterial({ color: 0xffd08a, emissive: 0xff8a2a, emissiveIntensity: 2.2, roughness: 0.2, transparent: true, opacity: 0.95 }); coreMat.userData.noFow = true;
+  const core = add(new THREE.OctahedronGeometry(0.2, 0), coreMat, 2.85, [1, 1.7, 1]);
+  add(new THREE.CylinderGeometry(0.34, 0.26, 0.12, 6), PYL_IRON, 2.6); add(new THREE.ConeGeometry(0.3, 0.32, 6), PYL_IRON, 3.32);
+  return { g, mats: [copper, coreMat], core };
+}
 async function buildPylons() {
-  const [ob, crys] = await Promise.all([qModel('obelisk'), qModel('crystal')]);
-  for (let i = 0; i < W4W.PYLON_N; i++) { const p = HX(...W4W.pylonCell(i)), a = W4W.pylonAngle(i), P = { i, p };
-    if (ob) { P.ob = qPlace(ob, p.x, p.z, 2.2, -a, { c: 0x1c2030, k: 0.7 }); tag(P.ob, 'pylon', String(i)); }
-    if (crys) { P.crys = qPlace(crys, p.x, p.z, 0.55, a, { c: 0xffd08a, k: 0.8, e: 0xff8a2a, ei: 1.4 }); P.crys.position.y += 2.15; P.mats = []; P.crys.traverse(m => { if (m.isMesh) { m.material.userData.noFow = true; P.mats.push(m.material); } }); tag(P.crys, 'pylon', String(i)); }
-    P.glow = sprite(GLOW, p.x, 2.5, p.z, 1.6, 0xffa64a, 0.9); P.glow.userData.base = 0.9; P.decal = glowDecal(p.x, p.z, 1.6, 0xffa64a, 0.35);
-    const an = new THREE.Object3D(); an.position.copy(p); scene.add(an); P.L = label(PYLON_NAMES[i], an, 2.9, 'pyl');
+  for (let i = 0; i < W4W.PYLON_N; i++) { const p = HX(...W4W.pylonCell(i)), P = { i, p }, col = energyColumn();
+    col.g.position.copy(p); col.g.rotation.y = W4W.pylonAngle(i); scene.add(col.g); tag(col.g, 'pylon', String(i)); P.col = col; P.mats = col.mats; P.core = col.core;
+    P.glow = sprite(GLOW, p.x, 2.85, p.z, 1.6, 0xffa64a, 0.9); P.glow.userData.base = 0.9; P.decal = glowDecal(p.x, p.z, 2.2, 0xffa64a, 0.4);
+    const an = new THREE.Object3D(); an.position.copy(p); scene.add(an); P.L = label(PYLON_NAMES[i], an, 3.6, 'pyl');
     PYL.push(P); }
 }
 const AMBER = new THREE.Color(0xff8a2a), WOUND = new THREE.Color(0xff2a1a);
 let pylWarn = {};
 function stepPylons(dt) {
+  const tf = U.uTime.value; GATE_FLAMES.forEach((f, k) => { f.scale.set(1 + Math.sin(tf * 11 + k) * 0.12, 1 + Math.sin(tf * 7.3 + k * 2) * 0.22, 1); f.rotation.y = tf * 1.3; });
   if (!XV?.pylons || !PYL.length) return; const tt = U.uTime.value;
   for (const P of PYL) { const s = (XV.pylons[P.i]?.s ?? 80) / 100, crack = s < 0.3, pressed = XV.pressed === P.i;
     const flick = crack ? (Math.sin(tt * 23 + P.i) > 0.2 ? 1 : 0.25) : 1;
     P.glow.material.opacity = (0.25 + 0.75 * s) * flick; P.glow.scale.setScalar(0.8 + 1.2 * s);
     P.glow.material.color.copy(AMBER).lerp(WOUND, Math.max(0, 0.5 - s) * 2);
     P.decal.material.opacity = 0.1 + 0.3 * s;
-    P.mats?.forEach(m => { m.emissiveIntensity = (0.2 + 1.6 * s) * flick; m.emissive.copy(AMBER).lerp(WOUND, Math.max(0, 0.5 - s) * 2); });
+    P.mats?.forEach((m, k) => { m.emissiveIntensity = (k ? 0.6 + 2.2 * s : 0.15 + 0.9 * s) * flick; m.emissive.copy(AMBER).lerp(WOUND, Math.max(0, 0.5 - s) * 2); });
+    if (P.core) { P.core.rotation.y += dt * (0.4 + 1.6 * s); P.core.position.y = 2.85 + Math.sin(tt * 1.4 + P.i) * 0.06; }
     DOME_U.uPyl.value[P.i] = s;
     P.L.el.textContent = `${PYLON_NAMES[P.i]} · ${Math.round(s * 100)}%${pressed ? ' · pressed' : ''}`; P.L.el.classList.toggle('crack', crack);
     if (crack && !pylWarn[P.i]) { pylWarn[P.i] = 1; log(`${PYLON_NAMES[P.i]} is cracking. The houses on that side will freeze first.`, 'bad', 'world'); }
@@ -5452,7 +5640,9 @@ function openPylon(i) {
     <p class="say">${esc(PYLON_LORE[i])}</p>
     <h3>THE SIX</h3><div class="pbars">${rows}</div>
     <p class="mute" style="font-size:12.5px;margin:8px 0 12px">The Hollow picks a sector and presses on it for six hours: that pylon fades three times as fast. Below 30% it cracks, and the cold comes through on that side. Give it your warmth to hold it. ${P.nick ? `Last to give: ${esc(P.nick)}.` : ''}</p>
-    ${near ? (wait > 0 ? `<p class="mute">You gave this one your warmth. Again in ${Math.ceil(wait / 60000)} min.</p>` : `<button class="btn main" data-tend="${i}">Give it your warmth (−${W4W.PYLON_COST} warmth, +${W4W.PYLON_GIVE}%)</button>`) : `<button class="btn" data-walkp="${i}">Walk to ${esc(PYLON_NAMES[i])}</button>`}`);
+    ${near ? (wait > 0 ? `<p class="mute">You gave this one your warmth. Again in ${Math.ceil(wait / 60000)} min.</p>` : `<button class="btn main" data-tend="${i}">Give it your warmth (−${W4W.PYLON_COST} warmth, +${W4W.PYLON_GIVE}%)</button>`) : `<button class="btn" data-walkp="${i}">Walk to ${esc(PYLON_NAMES[i])}</button>`}
+    ${near && (XV.story?.phase || 0) >= 1 ? `<p class="mute" style="font-size:12.5px;margin:12px 0 6px">The iron is warm. The letters say a pylon has more than it needs, and that a little taken back does no harm.</p><button class="btn ghost" data-drain="${i}">Take warmth back (+${W4W.DRAIN_GAIN} warmth, −${W4W.DRAIN_TAKE}%)</button>` : ''}`);
+  $('#pbody').querySelector('[data-drain]')?.addEventListener('click', () => { sfx.equip(); xact('drain', { i }).then(v => { if (v) { log(`You took warmth back from ${PYLON_NAMES[i]}. Your hands burn. Nobody saw.`, 'world'); openPylon(i); } }); });
   $('#pbody').querySelector('[data-tend]')?.addEventListener('click', () => tendPylon(i));
   $('#pbody').querySelector('[data-walkp]')?.addEventListener('click', () => walkTo('pylon', String(i)));
 }
@@ -5469,24 +5659,41 @@ const PYLON_LORE = [
 ];
 /* the North Gate: sealed since the ninth night */
 function buildGate() {
-  const g = new THREE.Group(), stone = new THREE.MeshStandardMaterial({ color: 0x2a2a34, roughness: 0.95 }), iron = new THREE.MeshStandardMaterial({ color: 0x1a1c22, roughness: 0.5, metalness: 0.7 }),
-    rime = new THREE.MeshStandardMaterial({ color: 0xdff0ff, roughness: 0.4, emissive: 0x3a6a9a, emissiveIntensity: 0.25 });
-  const box = (w, h, d, m, x, y, z) => { const o = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m); o.position.set(x, y, z); o.castShadow = true; g.add(o); return o; };
-  box(0.8, 3.2, 0.8, stone, -1.35, 1.6, 0); box(0.8, 3.2, 0.8, stone, 1.35, 1.6, 0); box(3.5, 0.7, 0.9, stone, 0, 3.35, 0);
-  box(0.95, 0.25, 0.95, rime, -1.35, 3.3, 0); box(0.95, 0.25, 0.95, rime, 1.35, 3.3, 0);
-  const l = box(0.94, 2.7, 0.14, iron, -0.48, 1.35, 0), r = box(0.94, 2.7, 0.14, iron, 0.48, 1.35, 0);
-  for (const d of [l, r]) for (let k = 0; k < 4; k++) { const band = new THREE.Mesh(new THREE.BoxGeometry(0.96, 0.08, 0.18), iron); band.position.y = -1.0 + k * 0.65; d.add(band); }
-  box(2.2, 0.12, 0.22, iron, 0, 1.4, 0.12); // the bar across
-  box(0.4, 0.4, 0.06, new THREE.MeshBasicMaterial({ color: 0xff5a3c }), 0, 1.4, 0.24); // the seal
-  for (let k = 0; k < 9; k++) box(0.14 + Math.random() * 0.2, 0.6 + Math.random() * 1.2, 0.14, rime, -1.6 + Math.random() * 3.2, 0.3, 0.3 + Math.random() * 0.4); // drifts of ice against it
-  const dir = HX(...GATE_CELL).setY(0).normalize(), p = dir.clone().multiplyScalar(DOME_R - 0.2);
-  g.position.copy(p); g.rotation.y = Math.atan2(dir.x, dir.z); g.scale.setScalar(0.8); scene.add(g); tag(g, 'gate', 'gate');
-  const sp = sprite(GLOW, p.x - dir.x * 0.4, 1.2, p.z - dir.z * 0.4, 1.2, 0xff6a3c, 0.6); sp.userData.base = 0.6;
-  const a = new THREE.Object3D(); a.position.copy(dir.clone().multiplyScalar(DOME_R - 1.2)); scene.add(a); label('THE NORTH GATE · SEALED', a, 3.0, 'red');
+  const g = new THREE.Group(), M = (c, o = {}) => { const m = new THREE.MeshStandardMaterial({ color: c, roughness: 0.85, ...o }); m.userData.noFow = true; return m; };
+  const stone = M(0x9a938a, { emissive: 0x2a2018, emissiveIntensity: 0.35 }), stoneD = M(0x6e6760, { emissive: 0x1a140e, emissiveIntensity: 0.3 }), wood = M(0x7a5030, { emissive: 0x2a1408, emissiveIntensity: 0.35 }), iron = M(0x3c3836, { metalness: 0.6, roughness: 0.5 }), frost = M(0xe4f0ff, { roughness: 0.45, emissive: 0x24405a, emissiveIntensity: 0.4 });
+  const seal = M(0xffb35a, { emissive: 0xff7a1a, emissiveIntensity: 2.4, roughness: 0.3 });
+  const box = (w, h, d, m, x, y, z, ry = 0) => { const o = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m); o.position.set(x, y, z); o.rotation.y = ry; o.castShadow = true; o.receiveShadow = true; g.add(o); return o; };
+  // two squat towers with stepped tops
+  for (const sx of [-1, 1]) { box(1.0, 3.4, 1.0, stone, sx * 1.65, 1.7, 0); box(1.15, 0.22, 1.15, stoneD, sx * 1.65, 3.45, 0); box(1.25, 0.25, 1.25, stoneD, sx * 1.65, 0.12, 0);
+    for (let k = -1; k <= 1; k += 2) box(0.26, 0.3, 0.26, stoneD, sx * 1.65 + k * 0.38, 3.7, 0.38), box(0.26, 0.3, 0.26, stoneD, sx * 1.65 + k * 0.38, 3.7, -0.38);
+    box(0.4, 0.15, 1.05, frost, sx * 1.65, 3.62, 0); }
+  // the arch over the doors
+  for (let i = 0; i <= 8; i++) { const a = Math.PI * i / 8, x = Math.cos(a) * 1.15, y = 2.75 + Math.sin(a) * 0.55; box(0.42, 0.32, 0.9, stone, x, y, 0, 0).rotation.z = a - Math.PI / 2; }
+  // two heavy doors, banded in iron, barred and sealed
+  for (const sx of [-1, 1]) { box(1.12, 2.7, 0.18, wood, sx * 0.57, 1.35, 0); for (let k = 0; k < 4; k++) box(1.14, 0.1, 0.22, iron, sx * 0.57, 0.4 + k * 0.65, 0);
+    for (let k = 0; k < 3; k++) box(0.08, 0.08, 0.24, iron, sx * (0.2 + k * 0.3), 2.3, 0); }
+  box(2.5, 0.2, 0.2, iron, 0, 1.4, 0.2); box(0.18, 0.5, 0.26, iron, -1.0, 1.4, 0.2); box(0.18, 0.5, 0.26, iron, 1.0, 1.4, 0.2);
+  const sl = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 0.06, 16), seal); sl.rotation.x = Math.PI / 2; sl.position.set(0, 1.4, 0.33); g.add(sl);
+  for (let k = 0; k < 5; k++) { const m = new THREE.Mesh(new THREE.SphereGeometry(0.35 + Math.random() * 0.25, 10, 6, 0, Math.PI * 2, 0, Math.PI / 2), frost); m.scale.y = 0.55; m.position.set(-1.4 + k * 0.7, 0, 0.35 + Math.random() * 0.25); g.add(m); }
+  const dir = HX(...GATE_CELL).setY(0).normalize(), p = dir.clone().multiplyScalar(DOME_R - 0.7);
+  g.position.copy(p); g.rotation.y = Math.atan2(dir.x, dir.z) + Math.PI; g.scale.setScalar(0.62); scene.add(g); tag(g, 'gate', 'gate');
+  // braziers either side: the Gate is always watched
+  for (const sx of [-1, 1]) { const b = p.clone().add(new THREE.Vector3(-dir.z, 0, dir.x).multiplyScalar(sx * 1.6)).sub(dir.clone().multiplyScalar(0.8));
+    const bz = new THREE.Group(); bz.position.set(b.x, 0, b.z); scene.add(bz);
+    const ped = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.22, 0.46, 6), BRZ_STONE); ped.position.y = 0.23; bz.add(ped);
+    const bowl = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.14, 0.16, 10, 1, true), BRZ_IRON); bowl.position.y = 0.54; bz.add(bowl);
+    const coals = new THREE.Mesh(new THREE.CircleGeometry(0.24, 10), BRZ_COAL); coals.rotation.x = -Math.PI / 2; coals.position.y = 0.6; bz.add(coals);
+    const flame = new THREE.Mesh(new THREE.ConeGeometry(0.13, 0.42, 7), BRZ_FLAME); flame.position.y = 0.82; bz.add(flame); flame.userData.lick = true; GATE_FLAMES.push(flame);
+    const f = sprite(GLOW, b.x, 0.85, b.z, 1.0, 0xff9a3c, 1); f.userData.flicker = true; glowDecal(b.x, b.z, 1.6, 0xffb060, 0.5); }
+  const sg = sprite(GLOW, p.x - dir.x * 0.3, 0.9, p.z - dir.z * 0.3, 0.32, 0xff7a2a, 0.8); sg.userData.base = 0.8;
+  // the watch fires light the doors from the town's side
+  const lamp = new THREE.PointLight(0xffb070, 9, 7, 1.6); lamp.position.copy(p).sub(dir.clone().multiplyScalar(2.2)).setY(1.6); scene.add(lamp);
+  const a = new THREE.Object3D(); a.position.copy(dir.clone().multiplyScalar(DOME_R - 1.6)); scene.add(a); label('THE NORTH GATE · SEALED', a, 2.8, 'red');
 }
 /* ---------- the Veil's strength: the town's mining power, shown and felt ---------- */
 const VEIL_FULL = W4W.VEIL_FULL; // sol/h for a fully closed, bright Veil
-function veilStrength() { return W4W.veilOf(S.town.power || 0); }
+const isUnveiled = () => !!XV?.story?.unveil && xnow() < XV.story.unveil.until;
+function veilStrength() { return isUnveiled() ? 0 : W4W.veilOf(S.town.power || 0); }
 const veilEl = document.createElement('button'); veilEl.id = 'veil'; veilEl.hidden = true; veilEl.setAttribute('aria-label', 'The strength of the Veil'); document.body.appendChild(veilEl);
 veilEl.onclick = () => { sfx.click(); openHub(); };
 let veilSig = '';
@@ -5497,16 +5704,22 @@ function renderVeil() {
   const wx = W4W.weatherAt(xnow()), wallCold = W4W.VEIL_COLD * Math.pow(1 - V, 1.2) * wx.mult, deadly = wallCold > W4W.INSULATION_T1;
   const state = deadly ? `${wx.id === 'calm' ? 'Too weak' : wx.name}: the streets by the wall freeze. Get indoors.` : V >= 0.97 ? 'Closed overhead. The storm stays out.' : V >= 0.6 ? 'Holding. Some snow gets through.' : V >= 0.35 ? 'Open to the sky. Snow pours in.' : 'Only a fence of light. The cold is inside.';
   veilEl.classList.toggle('danger', deadly);
-  const sig = [pct, P, my, add, deadly, wx.id].join(':'); if (sig === veilSig && !veilEl.hidden) return; veilSig = sig; veilEl.hidden = false;
+  { const c = predicted()?.c, ins = c ? W4W.insulationOf(c) : 22, cold = c ? W4W.coldAt(c.q, c.r, xnow(), xctx()) : 0, k = THREE.MathUtils.clamp(Math.max((0.6 - V) / 0.45, (cold - ins * 0.6) / (ins * 0.8)), 0, 1);
+    canvas.style.filter = k > 0.02 ? `saturate(${(1 - 0.45 * k).toFixed(2)}) hue-rotate(${(-14 * k).toFixed(1)}deg) brightness(${(1 - 0.06 * k).toFixed(2)}) contrast(${(1 + 0.05 * k).toFixed(2)})` : '';
+    document.body.style.setProperty('--chill2', k.toFixed(2)); }
+  const hush = XV?.story?.hush, un = isUnveiled();
+  const sig = [pct, P, my, add, deadly, wx.id, hush, un].join(':'); if (sig === veilSig && !veilEl.hidden) return; veilSig = sig; veilEl.hidden = false;
+  veilEl.classList.toggle('unveiled', un);
+  if (un) { veilEl.innerHTML = `<div class="vrow"><b>THE VEIL</b><span class="vp">0%</span><span class="vs">Down. The White is in the streets. Hold the pylons. Hold Anna.</span></div><div class="vtrack"><i style="width:0%"></i></div><div class="vsub">It comes back in ${Math.ceil((XV.story.unveil.until - xnow()) / 60000)} min, if there is anything left to hold.</div>`; return; }
   veilEl.innerHTML = `<div class="vrow"><b>THE VEIL</b><span class="vp">${pct}%</span><span class="vs">${esc(state)}</span></div><div class="vtrack"><i style="width:${pct}%"></i></div>
-    <div class="vsub">${P.toLocaleString('en-US')} sol/h of mining holds it${my ? ` · <em>your rig: +${add}%</em>` : ' · <em>start your rig to make it stronger</em>'}</div>`;
+    <div class="vsub">${P.toLocaleString('en-US')} sol/h of mining holds it${my ? ` · <em>your rig: +${add}%</em>` : ' · <em>start your rig to make it stronger</em>'}</div>${hush != null ? `<div class="vhush" title="The Hush: how much of what the letters ask has been done. At 100 the Veil can fall."><span>THE HUSH</span><i><b style="width:${hush}%"></b></i><em>${hush}</em></div>` : ''}`;
 }
 
 /* the White: no walls, no rings: snow driven sideways by a wind that never stops, thick outside the Veil, thin under it */
 let stormPts = null;
 const STORM_U = { uTime: U.uTime, uVeil: { value: 0.6 }, uR: { value: 0 }, uC: { value: new THREE.Vector2() }, uWind: { value: new THREE.Vector2(7.5, 2.4) } };
 function buildStorm() {
-  const N = LITE ? 3000 : 6000, pos = new Float32Array(N * 3), seed = new Float32Array(N);
+  const N = LITE ? 5000 : 10000, pos = new Float32Array(N * 3), seed = new Float32Array(N);
   for (let i = 0; i < N; i++) { pos.set([Math.random() * 70 - 35, Math.random() * 12, Math.random() * 70 - 35], i * 3); seed[i] = Math.random(); }
   const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('seed', new THREE.BufferAttribute(seed, 1));
   STORM_U.uR.value = DOME_R;
@@ -5521,7 +5734,7 @@ function buildStorm() {
         float out_ = smoothstep(uR - 0.5, uR + 1.5, length(p.xz) + (p.y > 0. ? p.y * 0.0 : 0.));
         // under the Veil only a few flakes get through, and slowly
         // a strong Veil keeps most of the snow out; a weak one lets the storm in
-        vA = mix(0.75 * step(0.15 + uVeil * 0.8, seed), 0.0, out_);
+        vA = mix(0.7 * step(uVeil * 0.55, seed), 0.0, out_);
         vec4 mv = modelViewMatrix * vec4(p, 1.); gl_PointSize = (1.4 + seed * 2.0) * (14. / -mv.z); gl_Position = projectionMatrix * mv; }`,
     fragmentShader: `varying float vA; void main(){ vec2 c = gl_PointCoord - .5; float d = length(c * vec2(1., 2.2)); float a = (1. - smoothstep(.1, .5, d)) * vA; gl_FragColor = vec4(vec3(.9, .94, 1.), a); }` });
   stormPts = new THREE.Points(g, mat); stormPts.frustumCulled = false; stormPts.renderOrder = 7; scene.add(stormPts);
@@ -5561,7 +5774,7 @@ function fowPatch(m) {
         float seen = texture2D(uFowTex, vFowW.xz / ${FOW_W.toFixed(1)} + 0.5).r, core = 1.0 - smoothstep(4.5, 8.0, rr);
         // past the Veil even your own light barely reaches; inside, what you have seen stays half-lit
         float rim = 1.0 - smoothstep(uFowDome, uFowDome + 2.2, rr);
-        float vis = inside > 0.001 ? max(max(near, 0.22), max(seen * 0.92, core * 0.95)) * inside + near * rim * 0.28 * (1.0 - inside) : near * rim * 0.28;
+        float vis = inside > 0.001 ? max(max(near, 0.55), max(seen, core)) * inside + near * rim * 0.28 * (1.0 - inside) : near * rim * 0.28;
         gl_FragColor.rgb = mix(gl_FragColor.rgb, gl_FragColor.rgb * clamp(vis, 0.0, 1.0), uFowOn); }`);
   };
   m.customProgramCacheKey = () => (prevKey ? prevKey() : '') + '|fow';
@@ -5695,12 +5908,71 @@ function openBeast(id, fromBook) {
   panel('beast', n ? B.name : '? ? ?', B.seen, null, `<div class="bestiary">${pages}</div><p class="mute" style="font-size:12.5px">The Bestiary is kept in the Observatory. Everything in it was seen from inside the Veil.</p>`);
 }
 function openGate() {
-  act1Mark('gate'); const m = Math.round((S.town.melt || 0) * 100);
-  panel('gate', 'The North Gate', 'Sealed since the ninth night', null, `
+  act1Mark('gate'); const m = Math.round((S.town.melt || 0) * 100), L = openLetter(), c = myC(), near = c && !c.path.length && W4W.dist([c.q, c.r], GATE_CELL) <= 1;
+  const kept = letters().filter(l => l.read).length, ph = XV?.story?.phase || 0, barWait = (c?.barred || 0) + W4W.BAR_WAIT - xnow();
+  const letterHtml = L ? `<div class="lin"><small>Lying in the snow under the Gate</small><b>${esc(L.title)}</b><p>The snow takes it in <span data-lleft>${mmss(L.until - xnow())}</span>. After that nobody can read it.</p>
+      ${near ? `<button class="btn main" data-readl="${esc(L.id)}">Pick it up</button>` : `<button class="btn main" data-walkg>Walk to the Gate</button>`}</div>` : '';
+  panel('gate', 'The North Gate', 'Sealed since the ninth night', null, `${letterHtml}
     <p class="say">Twelve went out through this gate the week before the cold. On the ninth night someone knocked on it from outside, three slow knocks and then three more, in the captain's voice. We did not open. The bar has not moved since.</p>
+    ${kept ? `<p class="mute" style="font-size:12.5px">You have kept ${kept} ${kept === 1 ? 'letter' : 'letters'} from under this gate. <a href="#" data-lkept>Read them in the Journal</a>.</p>` : ''}
+    ${ph >= 2 ? `<h3>THE BAR</h3><p style="margin:0 0 10px">The iron is warm on the outside. Someone has been lifting it, a notch at a time. Nobody admits to it.</p>${near ? (barWait > 0 ? `<p class="mute">The iron still holds the shape of your hand. Again in ${Math.ceil(barWait / 60000)} min.</p>` : `<button class="btn ghost" data-bar>Lift the bar a notch</button>`) : ''}` : ''}
     <div class="parts">${part('hall', 'The Wardens\' Hall', 'The first suit that can walk in the White needs Anna strong enough to give a piece of her light away', m + '% of 50%', Math.min(1, m / 50))}</div>
     <h3>WHEN IT OPENS</h3><p style="margin:0 0 10px">It opens from our side, when we choose, for people in Warden plates who carry Anna's light on their backs. Until then the whole town has one job: keep the lamps lit. Every rig, every fed fire, every kept promise brings that day closer.</p>
     <p class="mute" style="font-size:12.5px">Act II of the story begins at this gate.</p>`);
+  const pb = $('#pbody');
+  pb.querySelector('[data-readl]')?.addEventListener('click', e => readLetter(e.currentTarget.dataset.readl));
+  pb.querySelector('[data-walkg]')?.addEventListener('click', () => { sfx.click(); closePanel(); walkTo('gate'); });
+  pb.querySelector('[data-lkept]')?.addEventListener('click', e => { e.preventDefault(); openChronicle(true, 'letters'); });
+  pb.querySelector('[data-bar]')?.addEventListener('click', () => { if (!confirmBar()) return; sfx.equip(); xact('bar', {}).then(v => { if (v) { pulse(0.8); banner('The iron screams', 'the bar rose a notch'); log('You lifted the bar of the North Gate a notch. Something outside went very still.', 'world'); openGate(); } }); });
+}
+const mmss = ms => { ms = Math.max(0, ms); const m = Math.floor(ms / 60000), s = Math.floor(ms % 60000 / 1000); return `${m}:${String(s).padStart(2, '0')}`; };
+let barAsk = 0;
+function confirmBar() { if (Date.now() - barAsk < 8000) return true; barAsk = Date.now(); say('Are you sure? Maria said: do nothing they ask. Press it again if you mean it.', 'Gate'); return false; }
+
+/* ---------- letters from beyond the Gate: they lie in the snow for an hour, then the snow takes them ---------- */
+const letters = () => XV?.letters || [];
+const openLetter = () => letters().find(l => l.open);
+const LSEEN = (() => { try { return new Set(JSON.parse(store.get('w4w.lseen') || '[]')); } catch { return new Set(); } })();
+let letterObj = null, letterSig = '';
+function stepLetters() {
+  if (!ACT1 || !XV) return; const L = openLetter(), sig = L ? L.id : '';
+  if (L && !LSEEN.has(L.id)) { LSEEN.add(L.id); store.set('w4w.lseen', JSON.stringify([...LSEEN].slice(-60)));
+    banner('Under the North Gate', 'a letter, in the snow. It will not last the hour'); sfx.open?.();
+    log(`Something was slipped under the North Gate: ${L.title}. The snow will take it in ${Math.ceil((L.until - xnow()) / 60000)} min.`, 'warm'); goalSig = ''; }
+  const left = $('#pbody [data-lleft]'); if (left && L) left.textContent = mmss(L.until - xnow());
+  if (sig === letterSig) return; letterSig = sig; goalSig = '';
+  if (letterObj) { letterObj.forEach(o => { if (o.el) { o.el.remove(); labels.splice(labels.indexOf(o), 1); } else { scene.remove(o); const k = interactive.indexOf(o); if (k >= 0) interactive.splice(k, 1); } }); letterObj = null; }
+  if (!L) return;
+  const dir = HX(...GATE_CELL).setY(0).normalize(), p = dir.clone().multiplyScalar(DOME_R - 1.55);
+  const paper = new THREE.MeshBasicMaterial({ color: 0xf3e2bf }); paper.userData.noFow = true;
+  const env = new THREE.Mesh(new THREE.PlaneGeometry(0.42, 0.3), paper); env.rotation.set(-Math.PI / 2, 0, Math.atan2(dir.x, dir.z) + 0.3); env.position.set(p.x, 0.06, p.z);
+  const seal = new THREE.Mesh(new THREE.CircleGeometry(0.05, 12), new THREE.MeshBasicMaterial({ color: 0x8a1a12 })); seal.material.userData.noFow = true; seal.rotation.x = -Math.PI / 2; seal.position.set(p.x, 0.065, p.z);
+  const g = sprite(GLOW, p.x, 0.25, p.z, 1.3, 0xffe2a0, 0.9); g.userData.blink = true;
+  tag(env, 'gate', 'gate'); scene.add(env, seal);
+  const a = new THREE.Object3D(); a.position.set(p.x, 0, p.z); scene.add(a); const lb = label('A LETTER UNDER THE GATE', a, 1.0, 'pyl');
+  letterObj = [env, seal, g, a]; if (lb) letterObj.push(lb);
+}
+function readLetter(id) {
+  sfx.click(); xact('readletter', { id }).then(v => { if (!v) return; const l = (v.letters || []).find(x => x.id === id); if (!l) return;
+    act1Mark('letter'); log(`You picked up the letter under the Gate: ${l.title}. It is yours now. The Journal keeps it.`, 'warm'); showLetter(l); });
+}
+function letterPaper(l) {
+  const d = new Date(l.at), when = d.toLocaleDateString([], { month: 'long', day: 'numeric' });
+  return `<article class="lpaper"><header><span>${esc(when)}</span><span>under the North Gate</span></header>${String(l.text).split(/\n{2,}/).map(t => `<p>${esc(t).replace(/\n/g, '<br>')}</p>`).join('')}<footer>${esc(l.from || '')}</footer></article>`;
+}
+function showLetter(l) {
+  panel('letter', l.title, 'A letter from beyond the Gate', null, `${letterPaper(l)}<p class="mute" style="font-size:12.5px;margin-top:12px">Maria says: read them, keep them, do nothing they ask.</p>`);
+}
+function lettersHtml() {
+  const all = letters().slice().reverse();
+  if (!all.length) return `<h3>LETTERS FROM BEYOND THE GATE</h3><p class="mute">Nothing has come under the Gate yet. When something does, it lies in the snow for about an hour. Whoever reaches the Gate in time can read it and keep it. Then the snow takes it.</p>`;
+  return `<h3>LETTERS FROM BEYOND THE GATE</h3>${all.map(l => l.read ? `<details class="lore"><summary><b>${esc(l.title)}</b><span>${esc(l.from || '')} · kept</span></summary>${letterPaper(l)}</details>`
+    : l.open ? `<div class="lmiss now"><b>${esc(l.title)}</b><span>Under the Gate right now. ${mmss(l.until - xnow())} left.</span></div>`
+    : `<div class="lmiss"><b>${esc(l.title)}</b><span>Came ${esc(new Date(l.at).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }))}. You were not at the Gate. The snow took it. Ask someone who was.</span></div>`).join('')}`;
+}
+function letterGoalHtml() {
+  const L = openLetter(); if (!L) return '';
+  return `<div class="gsec glet"><small>Under the North Gate</small><p>A letter. The snow takes it in <b>${Math.max(1, Math.ceil((L.until - xnow()) / 60000))} min</b>.</p><button class="gbtn" data-letter>${myC() && W4W.dist([myC().q, myC().r], GATE_CELL) <= 1 ? 'Pick it up' : 'Go to the Gate'}</button></div>`;
 }
 
 /* ---------- free plots: stakes in the snow where a newcomer can build ---------- */
@@ -5788,16 +6060,17 @@ function act1Watch(c) {
 }
 function act1Goals(c) {
   const todo = ACT1_TASKS.filter(t => !act1Done.has(t.id)), next = todo[0], m = Math.round((S.town.melt || 0) * 100), done = ACT1_TASKS.length - todo.length;
-  const sig = JSON.stringify([next?.id, done, m, goalFold, (XV?.pylons || []).map(p => Math.round(p.s)), XV?.pressed, myFaction(), JSON.stringify(DAILY), factionCount('keepers'), factionCount('walkers')]); if (sig === goalSig && !goalEl.hidden) return; goalSig = sig;
+  const sig = JSON.stringify([next?.id, done, m, goalFold, (XV?.pylons || []).map(p => Math.round(p.s)), XV?.pressed, myFaction(), openLetter()?.id, Math.ceil((openLetter()?.until - xnow()) / 60000) || 0, XV?.story?.phase, XV?.story?.hush, JSON.stringify(DAILY), factionCount('keepers'), factionCount('walkers')]); if (sig === goalSig && !goalEl.hidden) return; goalSig = sig;
   goalEl.hidden = false; goalEl.classList.toggle('fold', goalFold); requestAnimationFrame(() => placeWin(goalEl));
   goalEl.innerHTML = `<div class="rank"><b>Act I · Under the Veil</b><span>${done} of ${ACT1_TASKS.length}</span><button class="gfold" title="${goalFold ? 'Show' : 'Fold'}">${goalFold ? '+' : '–'}</button><i style="width:${Math.round(done / ACT1_TASKS.length * 100)}%"></i></div>
     <div class="gbody">${next ? `<div class="goal"><small>Next</small><b>${esc(next.title)}</b><p>${esc(next.why)}</p><button class="gbtn" data-go>${esc(next.cta)}</button></div>`
       : rolesHtml()}
-    <div class="gsec"><small>The wall</small>${wallHtml()}</div>
+    ${letterGoalHtml()}<div class="gsec"><small>The wall</small>${wallHtml()}</div>
     <div class="gsec"><small>The Wardens' Hall</small><p>The first suit for the White needs Anna at 50%. She is at <b>${m}%</b>.</p><div class="gbar"><i style="width:${Math.min(100, m * 2)}%"></i></div></div>
     <div class="gsec"><small>Pages of the Long Cold</small><p>${pages1.length} of ${CHAPTERS_I.length} read · <a href="#" data-story>open</a> · Bestiary: ${BESTIARY.reduce((a, B) => a + BEAST_AT.filter(k => (OBS[B.id] || 0) >= k).length, 0)} of 16 pages · <a href="#" data-beasts>open</a></p></div></div>`;
   goalEl.querySelector('.gfold').onclick = () => { goalFold = !goalFold; store.set('w4w.goalFold', goalFold ? '1' : '0'); sfx.click(); goalSig = ''; renderGoals(true); };
   goalEl.querySelector('[data-go]')?.addEventListener('click', () => { sfx.click(); next.go(); });
+  goalEl.querySelector('[data-letter]')?.addEventListener('click', () => { sfx.click(); const L = openLetter(), c = myC(); if (L && c && !c.path.length && W4W.dist([c.q, c.r], GATE_CELL) <= 1) readLetter(L.id); else walkTo('gate'); });
   goalEl.querySelectorAll('[data-faction]').forEach(b => b.onclick = () => chooseFaction(b.dataset.faction));
   goalEl.querySelector('[data-story]')?.addEventListener('click', e => { e.preventDefault(); openChronicle(true, 'story'); });
   goalEl.querySelector('[data-beasts]')?.addEventListener('click', e => { e.preventDefault(); openChronicle(true, 'beasts'); });
@@ -5809,6 +6082,67 @@ function wallHtml() {
     <p>The Hollow presses <b>${esc(PYLON_NAMES[XV.pressed] || '?')}</b>, ${Math.round(P[XV.pressed]?.s ?? 0)}%. It moves on in ${h ? h + ' h ' : ''}${m} min.</p>`;
 }
 function chaptersHtmlI() { return `<h3>THE LONG COLD · ACT I</h3>${CHAPTERS_I.filter(c => pages1.includes(c.id)).map(c => `<details class="lore"><summary><b>${esc(c.title)}</b><span>a page of the story</span></summary><p>${esc(c.text)}</p></details>`).join('')}<p class="mute" style="font-size:12.5px">${pages1.length} of ${CHAPTERS_I.length} pages. The rest open as you live them.</p>`; }
+
+
+/* ================= the Library: a reading room, open over the town ================= */
+const libEl = document.createElement('div'); libEl.id = 'libroom'; libEl.hidden = true; document.body.appendChild(libEl);
+let libTab = 'qc';
+const WARDEN_SVG = `<svg viewBox="0 0 320 420" role="img" aria-label="The Warden, a sketch">
+  <defs><radialGradient id="wcore" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#ffe7b0"/><stop offset=".45" stop-color="#ff9a3c"/><stop offset="1" stop-color="#ff9a3c" stop-opacity="0"/></radialGradient>
+  <filter id="ink"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="1.6"/></filter></defs>
+  <g fill="none" stroke="#3a2a18" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" filter="url(#ink)">
+    <path d="M136 52 Q160 30 184 52 L188 92 Q160 104 132 92 Z"/><path d="M140 70 H180" stroke-width="3"/><path d="M146 66 h28" stroke-width=".8"/>
+    <path d="M132 92 Q104 98 90 118 L84 150 Q100 162 116 150 L122 128"/><path d="M188 92 Q216 98 230 118 L236 150 Q220 162 204 150 L198 128"/>
+    <path d="M90 118 Q96 108 112 110"/><path d="M230 118 Q224 108 208 110"/>
+    <path d="M122 128 L118 230 Q160 248 202 230 L198 128 Q160 112 122 128 Z"/>
+    <path d="M124 160 Q160 150 196 160"/><path d="M122 196 Q160 186 198 196"/>
+    <path d="M86 152 L80 230 Q90 240 100 232 L104 160"/><path d="M234 152 L240 230 Q230 240 220 232 L216 160"/>
+    <path d="M80 230 L74 262 L84 270 L96 262 L100 232"/><path d="M240 230 L246 262 L236 270 L224 262 L220 232"/>
+    <path d="M78 262 l-4 10 M84 268 l-1 11 M92 266 l2 10"/><path d="M242 262 l4 10 M236 268 l1 11 M228 266 l-2 10"/>
+    <path d="M124 232 L120 330 L142 334 L148 238"/><path d="M196 232 L200 330 L178 334 L172 238"/>
+    <path d="M120 290 Q131 284 144 290"/><path d="M200 290 Q189 284 176 290"/>
+    <path d="M118 330 L112 352 L148 354 L146 334"/><path d="M202 330 L208 352 L172 354 L174 334"/>
+    <path d="M160 236 L160 250" stroke-dasharray="2 3"/>
+    <path d="M56 52 V352" stroke-width=".7"/><path d="M50 52 h12 M50 352 h12" stroke-width=".7"/>
+    <path d="M190 176 Q226 160 236 138" stroke-width=".8"/><path d="M196 104 Q222 86 228 70" stroke-width=".8"/><path d="M110 300 Q72 312 60 330" stroke-width=".8"/>
+  </g>
+  <circle cx="160" cy="178" r="26" fill="url(#wcore)"><animate attributeName="r" values="23;29;23" dur="4.5s" repeatCount="indefinite"/></circle>
+  <circle cx="160" cy="178" r="9" fill="none" stroke="#3a2a18" stroke-width="1.2"/>
+  <g font-family="'IM Fell English',Georgia,serif" font-style="italic" fill="#3a2a18" font-size="13">
+    <text x="196" y="132" font-size="12">the light rides here</text><text x="190" y="64" font-size="12">felt, four fingers</text><text x="18" y="346" transform="rotate(-90 18 346)">eleven hands high</text>  </g>
+  <text x="160" y="400" text-anchor="middle" font-family="'IM Fell English',Georgia,serif" font-style="italic" font-size="30" fill="#5a1a10">Warden</text>
+</svg>`;
+const SHELVES = {
+  qc: ['Books by Qubic Church', '#7a1e16', () => LIB.qc.map(([t, d, h]) => [t, d, h])],
+  research: ['Research and records', '#2f4a5c', () => LIB.research.map(([t, d, h]) => [t, d, h])],
+  cfb: ['Come-from-Beyond', '#5a3b14', () => [['29 texts, 2017 to 2023', LIB.cfb.map(([t, y]) => `${t} (${y})`).join(' · '), '/articles/cfb']]],
+  crypt: ['From the Crypt', '#3d2a4a', () => [...LIB.crypt.map(([t, a, sl]) => [t, a, '/articles/' + sl]), ['All community articles', 'The Crypt on qubic.church', '/articles']]],
+  shelf: ['The shelf we learn from', '#3c4a2a', () => LIB.shelf.map(([t, d, h]) => [t, d, h])],
+};
+function openLibraryRoom() {
+  act1Mark('library'); dailyMark('study'); closePanel(); sfx.open();
+  const found = NOTES.filter(n => notesFound.includes(n.id));
+  const tabs = Object.entries(SHELVES).map(([k, [name, col, f]]) => `<button data-shelf="${k}" class="${k === libTab ? 'on' : ''}" style="--sc:${col}">${esc(name)}<i>${f().length}</i></button>`).join('');
+  const [name, col, f] = SHELVES[libTab];
+  const books = f().map(([t, d, h]) => { const href = h ? (h.startsWith('http') ? h : SITE + h) : null;
+    return `${href ? `<a class="lbk" href="${href}" target="_blank" rel="noopener" style="--sc:${col}">` : `<div class="lbk" style="--sc:${col}">`}<b>${esc(t)}</b><span>${esc(d)}</span>${href ? '<em>Open on qubic.church</em></a>' : '</div>'}`; }).join('');
+  libEl.innerHTML = `<div class="lr-scrim" data-lx></div><div class="lr" role="dialog" aria-label="The Library">
+    <header><div><small>Aigarth</small><h2>The Library</h2></div><p>Open day and night. Every book on these shelves opens on qubic.church.</p><button class="lr-x" data-lx aria-label="Close">×</button></header>
+    <div class="lr-body">
+      <aside class="lr-draw">${ACT1 ? `<figure>${WARDEN_SVG}</figure><h3>The drawing older than the cold</h3>
+        <p>A figure in heavy plates, lined with something that glows. Under it, in the expedition smith's hand, one word. A suit that carries a piece of Anna's light on the body, so the White cannot get in.</p>
+        <p class="lr-hope">The smiths have started. When Anna is strong enough to give a piece of her light away, the Gate opens from our side.</p>
+        <div class="lr-meter"><span>Anna</span><i><b style="width:${Math.min(100, Math.round((S.town.melt || 0) * 200))}%"></b></i><span>${Math.round((S.town.melt || 0) * 100)}% of 50%</span></div>` : ''}
+        ${found.length ? `<h3>Found notes</h3>${found.map(n => `<details class="lr-note"><summary>${esc(n.title)}</summary><p>${esc(n.text)}</p></details>`).join('')}` : ''}</aside>
+      <section class="lr-shelves"><nav>${tabs}</nav><h3 style="--sc:${col}">${esc(name)}</h3><div class="lr-grid">${books}</div>
+        <p class="lr-foot">The Fractal Rationalism Institute meets in Discord: the science of decentralized cooperation, after Rapoport and Axelrod.</p></section>
+    </div></div>`;
+  libEl.hidden = false; requestAnimationFrame(() => libEl.classList.add('on'));
+  libEl.querySelectorAll('[data-lx]').forEach(b => b.onclick = closeLibraryRoom);
+  libEl.querySelectorAll('[data-shelf]').forEach(b => b.onclick = () => { libTab = b.dataset.shelf; sfx.click(); openLibraryRoom(); });
+}
+function closeLibraryRoom() { libEl.classList.remove('on'); sfx.close(); setTimeout(() => { libEl.hidden = true; }, 220); }
+addEventListener('keydown', e => { if (e.key === 'Escape' && !libEl.hidden) closeLibraryRoom(); });
 
 /* ================= loop ================= */
 const clock = new THREE.Clock(); const _v3 = new THREE.Vector3();
@@ -5879,5 +6213,5 @@ function loop(now = performance.now()) {
 }
 requestAnimationFrame(loop);
 addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); DPR = Math.min(DPR, dprFor()); renderer.setPixelRatio(DPR); composer.setPixelRatio?.(DPR); renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight); fxaaSize(); });
-window.__w4w = { S, settle, X: () => ({ XV, avatars, predicted, xact, hexAt, warp: ms => XW.warp?.(ms), planTo, goTrip, NOTES, rimeFx, openLibrary, trip, prints: prints.length, rimeAt: (q, r) => XW._rime?.(q, r), stash: o => XW._stash?.(o), UI, renderFrames, unfollow: () => { follow = false; fly = null; }, hollow, act1Mark: id => act1Mark(id), openBeast: id => openBeast(id) }), freePlots, openMaria, ask, addWood, refreshTown, draft: v => (draft = v), camera, controls, updateIce, renderer, scene, __composer: LITE ? null : composer };
+window.__w4w = { S, settle, X: () => ({ XV, avatars, predicted, xact, hexAt, warp: ms => XW.warp?.(ms), planTo, goTrip, NOTES, rimeFx, openLibrary, trip, prints: prints.length, rimeAt: (q, r) => XW._rime?.(q, r), stash: o => XW._stash?.(o), letter: o => XW._letter?.(o), story: o => XW._story?.(o), openGate, openChronicle, openPylon, walkTo, UI, renderFrames, unfollow: () => { follow = false; fly = null; }, hollow, act1Mark: id => act1Mark(id), openBeast: id => openBeast(id), openLibraryRoom: () => openLibraryRoom() }), freePlots, openMaria, ask, addWood, refreshTown, draft: v => (draft = v), camera, controls, updateIce, renderer, scene, __composer: LITE ? null : composer };
 </script>
