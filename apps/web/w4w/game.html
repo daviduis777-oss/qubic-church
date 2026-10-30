@@ -3748,6 +3748,7 @@ function stepNotes() {
     if (noteFx[n.id]) noteFx[n.id].visible = show; }
 }
 function syncBags() {
+  if (ACT1) { for (const id of Object.keys(bagFx)) { bagFx[id].objs.forEach(o => scene.remove(o)); bagFx[id].L.el.remove(); labels.splice(labels.indexOf(bagFx[id].L), 1); delete bagFx[id]; } return; }
   const seen = new Set();
   for (const b of XV.bags || []) {
     seen.add(b.id); if (bagFx[b.id]) continue;
@@ -4072,7 +4073,7 @@ function buildSeams() {
         float e = max(max(abs(o.x), abs(dot(o, vec2(0.5, 0.8660254)))), abs(dot(o, vec2(-0.5, 0.8660254))));
         float groove = 1.0 - smoothstep(0.0, 0.09, 1.0 - e), lip = smoothstep(0.82, 0.9, e) * (1.0 - smoothstep(0.9, 0.97, e));
         float d = length(vWP.xz - uP), near = (1.0 - smoothstep(4.0, 9.0, d)) * uOn, town = 1.0 - smoothstep(${(W4W.DOME_RADIUS - 1.0).toFixed(1)}, ${(W4W.DOME_RADIUS).toFixed(1)}, length(vWP.xz));
-        float a = max(near, town * 0.45);
+        float a = max(near, town * 0.45) * (1.0 - smoothstep(${(W4W.DOME_RADIUS - 0.4).toFixed(1)}, ${(W4W.DOME_RADIUS + 0.2).toFixed(1)}, length(vWP.xz)));
         gl_FragColor = vec4(mix(vec3(0.92,0.96,1.0), vec3(0.10,0.14,0.26), groove), (groove * 0.30 + lip * 0.07) * a);
         #include <fog_fragment>
       }` });
@@ -4391,7 +4392,7 @@ function wireFrames(c, home) {
 function placeTip(e) { const w = tipEl.offsetWidth, h = tipEl.offsetHeight; tipEl.style.left = Math.min(innerWidth - w - 8, e.clientX + 16) + 'px'; tipEl.style.top = Math.max(8, Math.min(innerHeight - h - 8, e.clientY - h - 10)) + 'px'; }
 function openPack() { UI.char = UI.bag = !(UI.char && UI.bag); if (UI.bag) sfx.pack(); else sfx.close(); renderFrames(); }
 addEventListener('keydown', e => { if (typing() || e.ctrlKey || e.metaKey || !hasChar()) return;
-  if (ACT1 && ['KeyB', 'KeyK', 'KeyM'].includes(e.code)) return;
+  if (ACT1 && ['KeyB', 'KeyK', 'KeyM', 'KeyC'].includes(e.code)) return;
   if (e.code === 'KeyC') toggleWin('char'); else if (e.code === 'KeyB') { UI.bag = !UI.bag; if (UI.bag) { topWin = 'bag'; sfx.pack(); } else sfx.close(); renderFrames(); }
   else if (e.code === 'KeyK') toggleWin('craft'); else if (e.code === 'KeyM') toggleWin('map'); else if (e.code === 'KeyL') toggleLog();
   else if (e.code === 'Escape') { UI.char = UI.bag = UI.craft = UI.map = false; tipEl.hidden = true; renderFrames(); } });
@@ -5316,8 +5317,8 @@ function buildStorm() {
         p.xz = mod(p.xz - uC + 35., 70.) - 35. + uC;
         float out_ = smoothstep(uR - 0.5, uR + 1.5, length(p.xz) + (p.y > 0. ? p.y * 0.0 : 0.));
         // under the Veil only a few flakes get through, and slowly
-        vA = mix(0.18 * step(0.75, seed), 0.85, out_);
-        vec4 mv = modelViewMatrix * vec4(p, 1.); gl_PointSize = (1.6 + seed * 2.4) * mix(0.8, 1.6, out_) * (14. / -mv.z); gl_Position = projectionMatrix * mv; }`,
+        vA = mix(0.55 * step(0.45, seed), 0.0, out_);
+        vec4 mv = modelViewMatrix * vec4(p, 1.); gl_PointSize = (1.4 + seed * 2.0) * (14. / -mv.z); gl_Position = projectionMatrix * mv; }`,
     fragmentShader: `varying float vA; void main(){ vec2 c = gl_PointCoord - .5; float d = length(c * vec2(1., 2.2)); float a = (1. - smoothstep(.1, .5, d)) * vA; gl_FragColor = vec4(vec3(.9, .94, 1.), a); }` });
   stormPts = new THREE.Points(g, mat); stormPts.frustumCulled = false; stormPts.renderOrder = 7; scene.add(stormPts);
 }
@@ -5327,10 +5328,10 @@ function stepStorm(dt) {
 }
 
 /* ---------- the dark: you see what is near you and what you have walked past; the rest is night ---------- */
-const FOW_N = 128, FOW_W = 80;
+const FOW_N = 128, FOW_W = 80, BLACK = new THREE.Color(0x000000);
 const fowData = (() => { const d = new Uint8Array(FOW_N * FOW_N); try { const b = store.get('w4w.fow'); if (b) { const s = atob(b); for (let i = 0; i < Math.min(s.length, d.length); i++) d[i] = s.charCodeAt(i); } } catch {} return d; })();
 const FOW_TEX = new THREE.DataTexture(fowData, FOW_N, FOW_N, THREE.RedFormat); FOW_TEX.magFilter = FOW_TEX.minFilter = THREE.LinearFilter; FOW_TEX.needsUpdate = true;
-const FOW_U = { uFowTex: { value: FOW_TEX }, uFowP: { value: new THREE.Vector2(0, 0) }, uFowR: { value: 8.5 }, uFowDome: { value: W4W.DOME_RADIUS }, uFowOn: { value: 0 } };
+const FOW_U = { uFowTex: { value: FOW_TEX }, uFowP: { value: new THREE.Vector2(0, 0) }, uFowR: { value: 11 }, uFowDome: { value: W4W.DOME_RADIUS }, uFowOn: { value: 0 } };
 let fowSaveT = 0, fowPaintT = 0, fowScanT = 0;
 function fowPaint(x, z, rad) {
   const px = (x / FOW_W + 0.5) * FOW_N, pz = (z / FOW_W + 0.5) * FOW_N, R = rad / FOW_W * FOW_N; let ch = false;
@@ -5353,14 +5354,17 @@ function fowPatch(m) {
         float inside = 1.0 - smoothstep(uFowDome - 0.6, uFowDome + 0.6, rr);
         float seen = texture2D(uFowTex, vFowW.xz / ${FOW_W.toFixed(1)} + 0.5).r, core = 1.0 - smoothstep(4.5, 8.0, rr);
         // past the Veil even your own light barely reaches; inside, what you have seen stays half-lit
-        float vis = max(near * mix(0.16, 1.0, inside), max(seen * 0.55, core * 0.75) * inside);
-        gl_FragColor.rgb = mix(gl_FragColor.rgb, mix(vec3(0.01, 0.013, 0.026), gl_FragColor.rgb, clamp(vis, 0.0, 1.0)), uFowOn); }`);
+        float rim = 1.0 - smoothstep(uFowDome, uFowDome + 2.2, rr);
+        float vis = inside > 0.001 ? max(max(near, 0.22), max(seen * 0.92, core * 0.95)) * inside + near * rim * 0.28 * (1.0 - inside) : near * rim * 0.28;
+        gl_FragColor.rgb = mix(gl_FragColor.rgb, gl_FragColor.rgb * clamp(vis, 0.0, 1.0), uFowOn); }`);
   };
   m.customProgramCacheKey = () => (prevKey ? prevKey() : '') + '|fow';
   m.needsUpdate = true;
 }
 function stepFow() {
   const now = performance.now(), on = hasChar() && $('#intro').hidden; FOW_U.uFowOn.value += ((on ? 1 : 0) - FOW_U.uFowOn.value) * 0.08;
+  // the sky beyond the shroud is black too, and the town's own snowfall stays under the Veil
+  { const k = FOW_U.uFowOn.value; scene.background.copy(FOG).lerp(BLACK, k); if (snow) snow.visible = k < 0.5; }
   if (now - fowScanT > 1500) { fowScanT = now; scene.traverse(o => { if (o.isMesh || o.isInstancedMesh || o.isSkinnedMesh) (Array.isArray(o.material) ? o.material : [o.material]).forEach(fowPatch); }); }
   const a = avatars[myUid()]; if (!a) return; FOW_U.uFowP.value.set(a.g.position.x, a.g.position.z);
   if (now - fowPaintT > 250) { fowPaintT = now; if (Math.hypot(a.g.position.x, a.g.position.z) < W4W.DOME_RADIUS) fowPaint(a.g.position.x, a.g.position.z, FOW_U.uFowR.value * 0.75); }
