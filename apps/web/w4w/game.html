@@ -626,6 +626,16 @@ body.hub #xact{display:none}
 /* the tracker: what to do next, and why */
 #goals{position:fixed;z-index:6;width:300px;transform-origin:0 0;transform:scale(var(--ui));border-radius:9px;padding:0;color:var(--kink);font-family:var(--f-body);background:linear-gradient(180deg,rgba(30,25,20,.93),rgba(14,12,14,.93));box-shadow:0 0 0 1px #000,inset 0 0 0 1px rgba(201,160,74,.45),0 10px 30px rgba(0,0,0,.5);overflow:hidden}
 body:has(#panel.open) #goals{visibility:hidden}
+#veil{position:fixed;z-index:4;left:50%;transform:translateX(-50%);top:calc(max(58px,calc(env(safe-area-inset-top) + 50px)) + 66px);width:min(440px,calc(100vw - 32px));padding:7px 12px 8px;border:0;border-radius:6px;cursor:pointer;text-align:left;color:#f3e3c0;font-family:var(--f-body);
+  background:linear-gradient(180deg,rgba(40,26,12,.88),rgba(18,12,8,.88));box-shadow:0 0 0 1px #000,inset 0 0 0 1px rgba(255,166,74,.45),0 0 18px rgba(255,140,40,.18)}
+#veil:hover{box-shadow:0 0 0 1px #000,inset 0 0 0 1px rgba(255,190,110,.8),0 0 24px rgba(255,140,40,.35)}
+#veil .vrow{display:flex;align-items:baseline;gap:10px} #veil b{font-family:var(--f-label);font-weight:600;font-size:12px;letter-spacing:.14em;color:#ffb35a}
+#veil .vp{font-family:var(--f-display);font-weight:600;font-size:20px;color:#ffd79a;text-shadow:0 0 10px rgba(255,160,60,.6)} #veil .vs{flex:1;text-align:right;font-size:12px;color:#c9b393}
+#veil .vtrack{height:7px;margin:4px 0 5px;border-radius:4px;background:rgba(0,0,0,.55);box-shadow:inset 0 0 0 1px rgba(255,166,74,.25);overflow:hidden}
+#veil .vtrack i{display:block;height:100%;background:linear-gradient(90deg,#c4561a,#ff9a3c 60%,#ffd79a);box-shadow:0 0 10px rgba(255,150,60,.9)}
+#veil .vsub{font-size:12px;color:#b9a689} #veil em{font-style:normal;color:#ffc46b;font-weight:600}
+body:has(#panel.open) #veil{visibility:hidden}
+@media (max-width: 760px){ #veil{top:calc(max(50px,calc(env(safe-area-inset-top) + 44px)) + 62px)} #veil .vs{display:none} }
 #goals .rank{cursor:grab;user-select:none;touch-action:none;position:relative;display:flex;align-items:baseline;gap:8px;padding:9px 12px 10px;background:linear-gradient(180deg,#2c261f,#1a1612);box-shadow:inset 0 -1px 0 #000,inset 0 -2px 0 rgba(201,160,74,.3)}
 #goals .rank b{font-family:var(--f-display);font-weight:600;font-size:16px;color:#f0c96a} #goals .rank span{flex:1;font-size:12px;color:var(--kmute)}
 #goals .rank i{position:absolute;left:0;bottom:0;height:2px;background:linear-gradient(90deg,#f0c96a,#ffe7a8);box-shadow:0 0 8px rgba(240,201,106,.7)}
@@ -2703,6 +2713,7 @@ function faqLag() {
 const FAQ = [
   ['The cold beyond the town', [
     ['How do I walk?', 'Once your house stands, you have a character who lives in it. Inside the town you run, a few seconds a cell. Buildings open only when you are standing at their door: click one and you walk there first.'],
+    ['What is the Veil strength?', 'The dome is held by the town\'s mining. The more sol/h the rigs of Aigarth put out, the stronger the Veil: at full strength it closes overhead, glows bright and keeps the storm out. When the town mines little, it opens to the sky, snow pours in and only a low fence of light keeps the things outside at bay. The panel under the warmth meter shows the strength and what your own rig adds. Mining also thaws Anna.'],
     ['Can I go outside the dome?', 'Not in Act I. The dome is the Veil: Anna\'s light, raised in her sleep the night the cold came. Outside it is the White, a storm that has not stopped once, and the things that scratch at the light. The North Gate stays sealed until the Wardens are ready: suits that carry a piece of Anna\'s light. They need Anna at 50%. Everything you do inside, above all keeping your rig on, brings that day closer. Act II begins at the Gate.'],
     ['How do trips work?', 'Click a place beyond the forest. The route appears cell by cell with the arrival time for the weather ahead and the warmth you would arrive with. Click Set out, or the same place again. Trips are real time: about 30 seconds a cell in The Edge, 45 in the Black Pines, a minute in the Stone Teeth, slower in wind and much slower in a blizzard. You can close the game; the trip goes on. Move the view with WASD, the arrows, or by pushing the mouse against the edge of the screen.'],
     ['Why did my character stop in the middle of nowhere?', 'In wind, and worse in a blizzard, the trail gets lost: a step takes you somewhere you did not choose and you stop there. Pick a direction again. In calm weather the trail holds.'],
@@ -3376,6 +3387,7 @@ Hard rules:
 - Quote CfB only from this list, word for word, with its date: "Just stick to realistic assumptions" (Discord #price-discussion, 27.10.2026). "It looks exactly as BTC in early days" (same day). Otherwise don't quote him.
 - This is a prototype: no rig is really rented here, numbers are estimates or demo.
 Facts you may use: Qubic is a network where miners do useful work for Aigarth, an AI project. 676 computors, the epoch changes every Wednesday 12:00 UTC. BPP-9000 is a small network miners grow to call each hour of bitcoin UP or DOWN; live calls start 18 November 2026; the Qubic team says its scores are not price forecasts. Pool for the game: Qubic Church, fee 7%, of which 4% goes to Qubic Church; player gets 93%.
+The Veil's strength follows the town's mining power: strong = closed and bright with little snow inside; weak = open to the sky, snow inside, only a fence of light. Every rig makes it stronger and thaws Anna.
 Act I (now): the whole town lives under the Veil, a dome of Anna's light she raised in her sleep when the cold came forty weeks ago. Outside is the White, a storm that never stops, and the Hollow: the Scratcher, the Hollow Man, the Wailer, the Circler, and something taller far out. Nobody can go outside in Act I; the North Gate is sealed since the ninth night, when someone knocked in the captain's voice and the town did not open. Hope: the Wardens, heavy suits carrying Anna's light, being built; the Gate opens from our side when Anna is strong enough (50%). Never send anyone outside. Everything happens inside: mining (rigs are lamps in the Veil), the plaza fire, the orders board, welcoming newcomers.
 Game rules: warmth against frost. Warmth comes mostly from people (rigs kept on, neighbours online, orders done, wood on the fire); raw power counts less. When frost wins, the storm grows. Houses have five parts: machine hall (the only thing money grows), porch lanterns (orders done for others), archive (collections, not for sale), epoch garden (time in the world), facade.
 You can use tools to read the town and to open screens for the player. Open a screen when the player wants to do something there.`;
@@ -5242,7 +5254,7 @@ if (ACT1) document.body.classList.add('act1');
 document.addEventListener('click', e => { const b = e.target.closest?.('[data-beast],[data-chthon]'); if (!b) return; sfx.click(); if (b.dataset.beast) openBeast(b.dataset.beast); else openChthon(); });
 const atVeil = (q, r) => W4W.insideDome(q, r) && W4W.DIRS.some(([a, b]) => !W4W.insideDome(q + a, r + b));
 const GATE_CELL = [0, -W4W.TOWN_RING], DOME_R = W4W.DOME_RADIUS, DOME_H = W4W.TOWN_RING + 3;
-const DOME_U = { uTime: U.uTime, uHits: { value: Array.from({ length: 8 }, () => new THREE.Vector4(0, -99, 0, -99)) }, uThin: { value: 0 } };
+const DOME_U = { uTime: U.uTime, uHits: { value: Array.from({ length: 8 }, () => new THREE.Vector4(0, -99, 0, -99)) }, uThin: { value: 0 }, uVeil: { value: 0.6 } };
 let hitI = 0, domeMesh = null;
 function domeHit(p) { DOME_U.uHits.value[hitI++ % 8].set(p.x, p.y, p.z, U.uTime.value); }
 /** A point on the Veil: around by angle a, up by height y. */
@@ -5251,12 +5263,15 @@ function buildDome() {
   const geo = new THREE.SphereGeometry(DOME_R, 128, 48, 0, Math.PI * 2, 0, Math.PI / 2); geo.scale(1, DOME_H / DOME_R, 1);
   const mat = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, uniforms: DOME_U,
     vertexShader: `varying vec3 vW; varying vec3 vN; varying vec3 vL; void main(){ vec4 w = modelMatrix * vec4(position, 1.); vW = w.xyz; vN = normalize(mat3(modelMatrix) * normal); vL = position; gl_Position = projectionMatrix * viewMatrix * w; }`,
-    fragmentShader: `uniform float uTime; uniform vec4 uHits[8]; uniform float uThin; varying vec3 vW; varying vec3 vN; varying vec3 vL;
+    fragmentShader: `uniform float uTime; uniform vec4 uHits[8]; uniform float uThin; uniform float uVeil; varying vec3 vW; varying vec3 vN; varying vec3 vL;
       vec2 hexcell(vec2 p){ vec2 r = vec2(1., 1.7320508), h = r * .5; vec2 a = mod(p, r) - h, b = mod(p - h, r) - h; return dot(a, a) < dot(b, b) ? a : b; }
       float hexd(vec2 p){ p = abs(p); return max(dot(p, vec2(0.8660254, 0.5)), p.y); }
       void main(){
         vec3 V = normalize(cameraPosition - vW); float f = 1. - abs(dot(normalize(vN), V)); float fres = pow(f, 2.4);
         float h = clamp(vL.y / ${DOME_H.toFixed(1)}, 0., 1.), az = atan(vL.z, vL.x), el = asin(h);
+        float top = 0.22 + 0.78 * smoothstep(0.0, 0.92, uVeil) + 0.04 * sin(az * 9. + uTime * 1.7) * (1. - uVeil);
+        if (h > top && uVeil < 0.97) discard;
+        float lip = uVeil < 0.97 ? smoothstep(top - 0.025, top, h) : 0.;
         vec2 hc = hexcell(vec2(az * 10.0, el * 12.0)); float edge = smoothstep(0.40, 0.5, hexd(hc));
         float flow = 0.5 + 0.5 * sin(el * 16. - uTime * 1.1 + az * 4.);
         vec3 col = mix(vec3(1.0, 0.55, 0.16), vec3(1.0, 0.80, 0.42), h * 0.9 + 0.1 * sin(az * 2. + uTime * .2));
@@ -5265,7 +5280,8 @@ function buildDome() {
           float ring = exp(-pow((d - t * 3.0) * 2.2, 2.)) * (1. - t / 2.6), hot = exp(-d * 1.4) * max(0., 1. - t * 1.2);
           a += ring * 0.55 + hot * 0.9 + edge * ring * 1.1; col = mix(col, vec3(1.0, 0.92, 0.7), clamp(ring + hot, 0., 1.)); }
         a += (1. - smoothstep(0., 0.07, h)) * 0.3;
-        a *= (1.0 - uThin * 0.55) * (gl_FrontFacing ? 1.0 : 0.4);
+        a += lip * (0.22 + 0.12 * sin(uTime * 6. + az * 20.));
+        a *= (0.45 + 0.75 * uVeil) * (gl_FrontFacing ? 1.0 : 0.4);
         gl_FragColor = vec4(col, min(1., a * 1.4));
       }` });
   domeMesh = new THREE.Mesh(geo, mat); domeMesh.renderOrder = 6; scene.add(domeMesh);
@@ -5299,16 +5315,32 @@ function buildGate() {
   const sp = sprite(GLOW, p.x - dir.x * 0.4, 1.2, p.z - dir.z * 0.4, 1.2, 0xff6a3c, 0.6); sp.userData.base = 0.6;
   const a = new THREE.Object3D(); a.position.copy(dir.clone().multiplyScalar(DOME_R - 1.2)); scene.add(a); label('THE NORTH GATE · SEALED', a, 3.0, 'red');
 }
+/* ---------- the Veil's strength: the town's mining power, shown and felt ---------- */
+const VEIL_FULL = 30000; // sol/h for a fully closed, bright Veil
+function veilStrength() { const P = S.town.power || 0; return THREE.MathUtils.clamp(Math.log10(1 + P / 400) / Math.log10(1 + VEIL_FULL / 400), 0, 1); }
+const veilEl = document.createElement('button'); veilEl.id = 'veil'; veilEl.hidden = true; veilEl.setAttribute('aria-label', 'The strength of the Veil'); document.body.appendChild(veilEl);
+veilEl.onclick = () => { sfx.click(); openHub(); };
+let veilSig = '';
+function renderVeil() {
+  if (!ACT1 || !$('#intro').hidden) { veilEl.hidden = true; return; }
+  const V = veilStrength(), pct = Math.round(V * 100), P = S.town.power || 0, mine = me(), my = mine?.state === 'mining' ? mine.sol || 0 : 0;
+  const without = THREE.MathUtils.clamp(Math.log10(1 + (P - my) / 400) / Math.log10(1 + VEIL_FULL / 400), 0, 1), add = Math.max(0, Math.round((V - without) * 1000) / 10);
+  const state = V >= 0.97 ? 'Closed overhead. The storm stays out.' : V >= 0.6 ? 'Holding. Some snow gets through.' : V >= 0.35 ? 'Open to the sky. Snow pours in.' : 'Only a fence of light. The cold is inside.';
+  const sig = [pct, P, my, add].join(':'); if (sig === veilSig && !veilEl.hidden) return; veilSig = sig; veilEl.hidden = false;
+  veilEl.innerHTML = `<div class="vrow"><b>THE VEIL</b><span class="vp">${pct}%</span><span class="vs">${esc(state)}</span></div><div class="vtrack"><i style="width:${pct}%"></i></div>
+    <div class="vsub">${P.toLocaleString('en-US')} sol/h of mining holds it${my ? ` · <em>your rig: +${add}%</em>` : ' · <em>start your rig to make it stronger</em>'}</div>`;
+}
+
 /* the White: no walls, no rings: snow driven sideways by a wind that never stops, thick outside the Veil, thin under it */
 let stormPts = null;
-const STORM_U = { uTime: U.uTime, uR: { value: 0 }, uC: { value: new THREE.Vector2() }, uWind: { value: new THREE.Vector2(7.5, 2.4) } };
+const STORM_U = { uTime: U.uTime, uVeil: { value: 0.6 }, uR: { value: 0 }, uC: { value: new THREE.Vector2() }, uWind: { value: new THREE.Vector2(7.5, 2.4) } };
 function buildStorm() {
-  const N = LITE ? 4000 : 9000, pos = new Float32Array(N * 3), seed = new Float32Array(N);
+  const N = LITE ? 3000 : 6000, pos = new Float32Array(N * 3), seed = new Float32Array(N);
   for (let i = 0; i < N; i++) { pos.set([Math.random() * 70 - 35, Math.random() * 12, Math.random() * 70 - 35], i * 3); seed[i] = Math.random(); }
   const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('seed', new THREE.BufferAttribute(seed, 1));
   STORM_U.uR.value = DOME_R;
   const mat = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, uniforms: STORM_U,
-    vertexShader: `attribute float seed; uniform float uTime; uniform float uR; uniform vec2 uC; uniform vec2 uWind; varying float vA;
+    vertexShader: `attribute float seed; uniform float uTime; uniform float uVeil; uniform float uR; uniform vec2 uC; uniform vec2 uWind; varying float vA;
       void main(){
         // every flake rides the wind; the box of snow follows the camera, so it never runs out
         vec3 p = position; float sp = 0.6 + seed * 0.8;
@@ -5317,14 +5349,15 @@ function buildStorm() {
         p.xz = mod(p.xz - uC + 35., 70.) - 35. + uC;
         float out_ = smoothstep(uR - 0.5, uR + 1.5, length(p.xz) + (p.y > 0. ? p.y * 0.0 : 0.));
         // under the Veil only a few flakes get through, and slowly
-        vA = mix(0.55 * step(0.45, seed), 0.0, out_);
+        // a strong Veil keeps most of the snow out; a weak one lets the storm in
+        vA = mix(0.75 * step(0.15 + uVeil * 0.8, seed), 0.0, out_);
         vec4 mv = modelViewMatrix * vec4(p, 1.); gl_PointSize = (1.4 + seed * 2.0) * (14. / -mv.z); gl_Position = projectionMatrix * mv; }`,
     fragmentShader: `varying float vA; void main(){ vec2 c = gl_PointCoord - .5; float d = length(c * vec2(1., 2.2)); float a = (1. - smoothstep(.1, .5, d)) * vA; gl_FragColor = vec4(vec3(.9, .94, 1.), a); }` });
   stormPts = new THREE.Points(g, mat); stormPts.frustumCulled = false; stormPts.renderOrder = 7; scene.add(stormPts);
 }
 function stepStorm(dt) {
   if (!stormPts) return; STORM_U.uC.value.set(controls.target.x, controls.target.z);
-  DOME_U.uThin.value += (((XV?.town?.holds ?? S.town.B >= 0) ? 0 : 1) - DOME_U.uThin.value) * Math.min(1, dt * 0.5);
+  const V = veilStrength(); DOME_U.uVeil.value += (V - DOME_U.uVeil.value) * Math.min(1, dt * 0.6); STORM_U.uVeil.value = DOME_U.uVeil.value;
 }
 
 /* ---------- the dark: you see what is near you and what you have walked past; the rest is night ---------- */
@@ -5539,7 +5572,7 @@ function loop(now = performance.now()) {
   if ((spriteClock += dt) > 1) { spriteClock = 0; spriteCache = []; scene.traverse(o => { if (o.isSprite && (o.userData.flicker || o.userData.blink)) spriteCache.push(o); }); } U.uTime.value += dt; const t = U.uTime.value;
   U.uHeat.value += (heatTarget - U.uHeat.value) * Math.min(1, dt * 0.8);
   U.uBoost.value = Math.max(0, U.uBoost.value - dt * 0.45);
-  stepWaves(dt); stepEmbers(dt); stepMotes(dt); if (!ACT1) stepFauna(dt); else { stepStorm(dt); stepHollow(dt); stepFow(); }
+  stepWaves(dt); stepEmbers(dt); stepMotes(dt); if (!ACT1) stepFauna(dt); else { stepStorm(dt); stepHollow(dt); stepFow(); if ((tick & 31) === 0) renderVeil(); }
   if (S.town.B > 0 && (waveClock += dt) > Math.max(2.2, 6 - S.town.B * 0.15)) { waveClock = 0; pulse(0.25); }
   snowNow += (snowTarget - snowNow) * Math.min(1, dt * 0.6);
   if (SOFT && snow && snow.visible) { snow.visible = false; startSnow2D(); }
