@@ -1,3 +1,6 @@
-Models in this folder: Quaternius (https://quaternius.com), CC0 1.0 (public domain).
-Taken from the per-model GLBs Quaternius published on Poly Pizza, as packaged in @netforge/asset-library-files.
-The four animals were trimmed to the animations the game uses (Walk, Idle, Idle_2, Eating, Gallop).
+Models and textures in this folder are public domain (CC0 1.0).
+- Quaternius (https://quaternius.com): animals, monsters, obelisk, campfire, chest, ruins, crystals and other props,
+  from the per-model GLBs Quaternius published on Poly Pizza (as packaged in @netforge/asset-library-files);
+  n/: pines, dead trees and rocks from the Stylized Nature MegaKit, textures resized to 512 px.
+  Animations trimmed to the ones the game uses; monsters are recoloured as silhouettes in the game.
+- ambientCG (https://ambientcg.com): tex/snow_* from Snow006, resized to 512 px.

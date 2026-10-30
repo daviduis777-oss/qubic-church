@@ -635,6 +635,8 @@ body.hub #xact{display:none}
 #goals .gbtn{margin-top:8px;padding:6px 12px;border:0;border-radius:4px;cursor:pointer;color:#ffe3a6;font:600 12.5px var(--f-body);background:linear-gradient(180deg,#a8401c,#5a1a08);box-shadow:0 0 0 1px #000,inset 0 0 0 1px rgba(255,170,110,.5),inset 0 1px 0 rgba(255,210,170,.35)}
 #goals .gbtn:hover{filter:brightness(1.15)}
 #goals ul{list-style:none;margin:0;padding:0;display:grid;gap:4px} #goals li{font-size:12.5px;line-height:1.35} #goals li b{display:block;font-weight:600;color:#e8dfcc} #goals li span{color:var(--kmute)} #goals li.done b{color:#7fe06a} #goals li.done span{color:#6a8a60}
+#goals .gbar{height:6px;margin-top:6px;border-radius:3px;background:rgba(0,0,0,.5);box-shadow:inset 0 0 0 1px rgba(201,160,74,.25);overflow:hidden} #goals .gbar i{display:block;height:100%;background:linear-gradient(90deg,#5ab8ff,#bfe8ff);box-shadow:0 0 8px rgba(143,208,255,.8)}
+body.act1 #dock button[data-act=bag],body.act1 #dock button[data-act=craft],body.act1 #dock button[data-act=map]{display:none}
 #goals .gsec p{margin:0;font-size:12.5px;color:#cfc6b4} #goals .gsec p b{color:#9fd8ff} #goals .gnext{margin:0;font-size:11.5px;color:#8a8070;font-style:italic}
 .lbl.shard{color:#06223a;background:linear-gradient(180deg,#d8f1ff,#8fc9f2);box-shadow:0 0 0 1px rgba(0,30,60,.7),0 0 14px rgba(143,208,255,.7)}
 @media (max-width: 760px){ #goals{top:auto;bottom:150px;right:8px;width:min(300px,calc(100vw - 16px))} }
@@ -793,11 +795,13 @@ var W4W = (() => {
   __export(world_exports, {
     BAG_MS: () => BAG_MS,
     CAVE: () => CAVE,
+    CORE: () => CORE,
     DAY_MS: () => DAY_MS,
     DEEDS: () => DEEDS,
     DEMO_CELLS: () => DEMO_CELLS,
     DEMO_TOWN: () => DEMO_TOWN,
     DIRS: () => DIRS,
+    DOME_RING: () => DOME_RING,
     DRIFT: () => DRIFT,
     FREEZE_MS: () => FREEZE_MS,
     FROSTBITE: () => FROSTBITE,
@@ -827,6 +831,7 @@ var W4W = (() => {
     SHARD_MELT: () => SHARD_MELT,
     SIP_WARMTH: () => SIP_WARMTH,
     SPECIAL: () => SPECIAL,
+    STAGE: () => STAGE,
     STARTER_RECIPES: () => STARTER_RECIPES,
     STEP_MS: () => STEP_MS,
     WEEK_MS: () => WEEK_MS,
@@ -851,6 +856,7 @@ var W4W = (() => {
     guardsAt: () => guardsAt,
     have: () => have,
     inMouth: () => inMouth,
+    insideDome: () => insideDome,
     insulationOf: () => insulationOf,
     itemsOf: () => itemsOf,
     key: () => key,
@@ -909,6 +915,10 @@ var W4W = (() => {
   const CAVE = [6, 10];
   const GUARD_MS = 2e4;
   const MAX_RING = 16;
+  const STAGE = 1;
+  const DOME_RING = 5;
+  const insideDome = (q, r) => ringOf(q, r) <= DOME_RING;
+  const CORE = [0, 0];
   const FREEZE_MS = 24 * 36e5;
   const BAG_MS = 24 * 36e5;
   const GATHER_MS = 2e4;
@@ -1130,7 +1140,7 @@ var W4W = (() => {
     return fit;
   }
   const DEMO_TOWN = { people: 5, power: 5190, deeds: 2 };
-  const SPECIAL = { core: [0, 0], church: [1, -3], plaza: [-1, 3], observatory: [4, -2], library: [5, -5], mine: [-6, 2] };
+  const SPECIAL = { core: [0, 0], church: [1, -3], plaza: [-1, 3], observatory: [4, -2], library: [5, -5], mine: [-5, 0] };
   const DEMO_CELLS = [[2, -1], [-2, 1], [1, 1], [-1, -1], [3, -3], [-3, 3], [3, 0]];
   const ZONES = [
     { name: "Aigarth", cold: 12 },
@@ -1274,7 +1284,7 @@ var W4W = (() => {
       }
       for (const [dq, dr] of DIRS) {
         const nq = cur[0] + dq, nr = cur[1] + dr, nk = key(nq, nr);
-        if (!passable(nq, nr)) continue;
+        if (!passable(nq, nr) || nq === 0 && nr === 0 || STAGE === 1 && !insideDome(nq, nr)) continue;
         if (blocked?.has(nk) && !(nq === b[0] && nr === b[1])) continue;
         const ng = gc + (roadAt(nq, nr) ? ROAD_STEP : 1);
         if (ng < (g.get(nk) ?? Infinity) - 1e-9) {
@@ -1510,6 +1520,13 @@ var W4W = (() => {
   }
   function stepAll(ws, d) {
     stepRime(ws, d);
+    if (STAGE === 1) {
+      for (const [uid, c] of Object.entries(ws.chars)) if (!insideDome(c.q, c.r) || c.q === 0 && c.r === 0 || c.path.some((p) => !insideDome(p[0], p[1]))) {
+        Object.assign(c, { q: c.home[0], r: c.home[1], path: [], act: null, lost: false, t0: ws.now, simT: ws.now, warmth: Math.max(c.warmth, 60) });
+        if (c.frozenUntil > ws.now) c.frozenUntil = ws.now;
+        d.chars.add(uid);
+      }
+    }
     for (const uid of Object.keys(ws.chars)) {
       const c = ws.chars[uid];
       if (c.path.length || c.act || c.frozenUntil || zoneOf(c.q, c.r) >= 1 || c.warmth < 100 || c.health < 100 || c.energy < 100) stepChar(ws, uid, d);
@@ -1564,9 +1581,11 @@ var W4W = (() => {
     const near = (a) => dist(here, a) <= 1;
     switch (op) {
       case "move": {
-        const to = cellArg(b.to);
+        let to = cellArg(b.to);
         if (!to) return fail("Where to?");
+        if (STAGE === 1 && !insideDome(...to)) return fail("The dome holds, and nothing living goes through it. Not in this act.");
         if (ringOf(...to) > MAX_RING) return fail("Beyond here the cold has no edge. Not yet.");
+        if (to[0] === 0 && to[1] === 0) to = DIRS.map(([dq, dr]) => [dq, dr]).sort((a, c2) => dist(a, here) - dist(c2, here))[0];
         const from = c.path.length ? c.path[0] : here;
         const rest = findPath(from, to, 4e3, new Set(Object.keys(ctxOf(ws, uid).shelters)));
         if (!rest) return fail("No way through from here.");
@@ -1964,7 +1983,7 @@ const DEMO_ORDERS = [
   { id: 'd2', by: 'tern', byNick: 'tern', title: 'My rig shows no signal. Can someone check my worker name?', state: 'open', demo: true },
   { id: 'd3', by: 'oldminer', byNick: 'oldminer', title: 'Explain BPP-9000 to two newcomers at the plaza fire', state: 'open', demo: true },
 ];
-const SPECIAL = { core: [0, 0], church: [1, -3], plaza: [-1, 3], observatory: [4, -2], library: [5, -5], mine: [-6, 2] };
+const SPECIAL = { core: [0, 0], church: [1, -3], plaza: [-1, 3], observatory: [4, -2], library: [5, -5], mine: [-5, 0] };
 const STAGE2 = [{ id: 'market', name: 'Market and auction', at: [-5, 2] }, { id: 'bar', name: 'Bar', at: [-4, 5] }, { id: 'atrium', name: 'Atrium', at: [2, 3] }];
 const LEVELS = [['OFFLINE', 0], ['LINK', 1], ['NODE', 500], ['CLUSTER', 1500], ['GRID', 3000], ['CORE', 6000]];
 const TIERS = [
@@ -2165,6 +2184,7 @@ const reserved = new Set();
 function build() {
   const far = new THREE.Mesh(new THREE.CircleGeometry(140, 96), snowify(new THREE.MeshStandardMaterial({ color: 0x9aa7c4, roughness: 1 })));
   far.rotation.x = -Math.PI / 2; far.receiveShadow = true; scene.add(far);
+  { const tl = new THREE.TextureLoader(); tl.load('q/tex/snow_n.jpg', t => { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(60, 60); if (far.material.isMeshStandardMaterial) { far.material.normalMap = t; far.material.normalScale.set(0.9, 0.9); far.material.needsUpdate = true; } }); }
   const seg = [];
   for (let n = 0; n <= 5; n++) for (const [q, r] of ring(n)) { const c = HX(q, r);
     for (let i = 0; i < 6; i++) { const a0 = Math.PI / 6 + i * Math.PI / 3, a1 = a0 + Math.PI / 3, R0 = 1.1547;
@@ -2195,7 +2215,7 @@ function build() {
   STAGE2.forEach((s, i) => { const g = place('scaffolding', ...s.at, { rot: i * 1.3 }); place(i % 2 ? 'stage_B' : 'stage_C', ...s.at, { rot: i * 1.3 }); tag(g, 'stage2', s.id); label(s.name.toUpperCase() + ' · STAGE 2', g, 1.9, 'key'); });
   const before = new Set(scene.children);
   // the same map the server walks: world.ts decides what stands on every cell, the kit only dresses it
-  const MTS = ['mountain_A', 'mountain_B', 'mountain_C'], ICE = []; CHOIR.length = 0;
+  const MTS = ['mountain_A', 'mountain_B', 'mountain_C'], ICE = []; CHOIR.length = 0; NATURE.length = 0;
   for (let n = 6; n <= W4W.MAX_RING + 2; n++) ring(n).forEach(([q, r]) => {
     if (reserved.has(key(q, r))) return; const t = n > W4W.MAX_RING ? 'mountain' : W4W.terrain(q, r), v = rnd();
     const z = W4W.zoneOf(q, r), c = HX(q, r);
@@ -2210,15 +2230,18 @@ function build() {
     // things stand at the corners of their cell: the middle and the ways between cells stay clear to walk
     const corner = (name, i, scale, d = 1.02) => { const a = Math.PI / 6 + i * Math.PI / 3 + (rnd() - 0.5) * 0.25, o = place(name, q, r, { rot: rnd() * 6, scale }); if (o) o.position.set(c.x + Math.cos(a) * d, 0, c.z + Math.sin(a) * d); return o; };
     if (t === 'mountain') place(MTS[Math.floor(v * 3)], q, r, { rot: Math.floor(rnd() * 6) * Math.PI / 3, scale: n > W4W.MAX_RING ? 1.5 + rnd() * 0.4 : 0.92 + rnd() * 0.1 });
-    else if (t === 'forest') { const k0 = Math.floor(rnd() * 2); for (let i = k0; i < 6; i += 2) corner(z === 2 ? 'tree_B' : 'tree_A', i, z === 2 ? 1.15 + rnd() * 0.35 : 0.9 + rnd() * 0.3); }
-    else if (t === 'tree') corner(z >= 2 ? 'tree_B' : 'tree_A', Math.floor(rnd() * 6), 0.85 + rnd() * 0.3);
-    else if (t === 'rock') { corner(rnd() < 0.5 ? 'rock_A' : 'rock_C', Math.floor(rnd() * 6), z === 3 ? 0.9 + rnd() * 0.3 : 0.6 + rnd() * 0.3); if (z === 3) { const i = Math.floor(rnd() * 6); corner('rock_C', i, 0.5 + rnd() * 0.2); ICE.push([c.x, c.z, i]); } }
+    // trees and rocks come from the Stylized Nature kit, instanced once it loads; here we only note where they stand
+    const spot = (i, d = 1.02) => { const a = Math.PI / 6 + i * Math.PI / 3 + (rnd() - 0.5) * 0.25; return [c.x + Math.cos(a) * d, c.z + Math.sin(a) * d]; };
+    if (t === 'forest') { const k0 = Math.floor(rnd() * 2); for (let i = k0; i < 6; i += 2) NATURE.push([...spot(i), z === 3 || rnd() < 0.12 ? 'dead' : 'pine', z === 2 ? 2.4 + rnd() * 0.9 : 1.8 + rnd() * 0.6]); }
+    else if (t === 'tree') NATURE.push([...spot(Math.floor(rnd() * 6)), z >= 3 || rnd() < 0.25 ? 'dead' : 'pine', 1.7 + rnd() * 0.7]);
+    else if (t === 'rock') { NATURE.push([...spot(Math.floor(rnd() * 6)), 'rock', z === 3 ? 0.8 + rnd() * 0.4 : 0.5 + rnd() * 0.3]); if (z === 3) { const i = Math.floor(rnd() * 6); NATURE.push([...spot(i), 'rock', 0.4 + rnd() * 0.2]); ICE.push([c.x, c.z, i]); } }
     else if (t === 'open' && z === 1 && rnd() < 0.07) corner(['tent', 'crate', 'barrel', 'sack', 'wheelbarrow'][Math.floor(rnd() * 5)], Math.floor(rnd() * 6), 0.7);
     else if (t === 'open' && z === 2 && rnd() < 0.08) corner('lumber', Math.floor(rnd() * 6), 0.8);
   });
-  ring(5).forEach(([q, r]) => { if (!reserved.has(key(q, r)) && rnd() < 0.45) place(['tree_A', 'tree_B', 'trees_A_small', 'rock_C', 'tent', 'crate'][Math.floor(rnd() * 6)], q, r, { rot: rnd() * 6, jitter: 0.8 }); });
+  ring(5).forEach(([q, r]) => { if (reserved.has(key(q, r)) || (q === 0 && r === -5) || rnd() >= 0.45) return; const c = HX(q, r), v = rnd();
+    if (v < 0.6) NATURE.push([c.x + (rnd() - 0.5) * 0.8, c.z + (rnd() - 0.5) * 0.8, 'pine', 1.5 + rnd() * 0.6]); else if (v < 0.75) NATURE.push([c.x + (rnd() - 0.5) * 0.8, c.z + (rnd() - 0.5) * 0.8, 'rock', 0.45]); else place(['tent', 'crate'][Math.floor(rnd() * 2)], q, r, { rot: rnd() * 6, jitter: 0.8 }); });
   mergeScenery(scene.children.filter(o => !before.has(o)));
-  buildWastesGround(); buildIce(ICE); buildRoads(); buildLake(); buildChoir(); buildQProps();
+  buildWastesGround(); buildIce(ICE); buildRoads(); buildLake(); buildChoir(); buildQProps(); buildNature(); if (ACT1) buildDome();
   W4W.LANDMARKS.forEach(L => { const a = new THREE.Object3D(); a.position.copy(HX(...L.at)); scene.add(a); label(L.name, a, L.id === 'mouth' ? 2.2 : 1.6, 'place'); });
   // where the zones begin: a quiet sign in the snow
   [[7, 'THE EDGE'], [10, 'BLACK PINES'], [14, 'STONE TEETH']].forEach(([n, name]) => [0, 2, 4].forEach(side => { const [q, r] = ring(n)[side * n + Math.floor(n / 2)]; const a = new THREE.Object3D(); a.position.copy(HX(q, r)); scene.add(a); label(name, a, 0.4, 'demo'); }));
@@ -2520,6 +2543,7 @@ function fireFlare() { if (fireSprite) { fireSprite.scale.setScalar(2.2); fireSp
 async function addWood() {
   const cur = me(); if (!cur) { say('Settle first: connect a rig at the church, then you can tend the fire.'); return; }
   const wait = 3600e3 - (Date.now() - (cur.lastWood || 0));
+  act1Mark('fire');
   if (wait > 0) { say(`You fed the fire not long ago. It can take your wood again in ${Math.ceil(wait / 60000)} min. Someone else can add theirs now.`); return; }
   await saveMe({ wood: (cur.wood || 0) + 1, lastWood: Date.now() }); fireFlare(); pulse(0.9);
   room?.emit('wood', { nick: cur.nick }).catch(() => {});
@@ -2595,7 +2619,9 @@ function pick(e, click) {
   if (!h) { clickGround(e); return; }
   const k = h.object.userData.kind;
   if (k === 'chthon') return openChthon();
+  if (k === 'beast') return openBeast(id);
   if (walkTo(k, id)) return;
+  if (k === 'gate') return openGate();
   if (k === 'church') openChurch(); else if (k === 'board') openPlaza(); else if (k === 'core') openCore(); else if (k === 'fire') addWood();
   else if (k === 'house') openHouse(id); else if (k === 'observatory') openObservatory(); else if (k === 'stage2') openStage2(id); else if (k === 'library') openLibrary(); else if (k === 'mine') openMine();
 }
@@ -2653,6 +2679,7 @@ function faqLag() {
 const FAQ = [
   ['The cold beyond the town', [
     ['How do I walk?', 'Once your house stands, you have a character who lives in it. Inside the town you run, a few seconds a cell. Buildings open only when you are standing at their door: click one and you walk there first.'],
+    ['Can I go outside the dome?', 'Not in Act I. The dome is the Veil: Anna\'s light, raised in her sleep the night the cold came. Outside it is the White, a storm that has not stopped once, and the things that scratch at the light. The North Gate stays sealed until the Wardens are ready: suits that carry a piece of Anna\'s light. They need Anna at 50%. Everything you do inside, above all keeping your rig on, brings that day closer. Act II begins at the Gate.'],
     ['How do trips work?', 'Click a place beyond the forest. The route appears cell by cell with the arrival time for the weather ahead and the warmth you would arrive with. Click Set out, or the same place again. Trips are real time: about 30 seconds a cell in The Edge, 45 in the Black Pines, a minute in the Stone Teeth, slower in wind and much slower in a blizzard. You can close the game; the trip goes on. Move the view with WASD, the arrows, or by pushing the mouse against the edge of the screen.'],
     ['Why did my character stop in the middle of nowhere?', 'In wind, and worse in a blizzard, the trail gets lost: a step takes you somewhere you did not choose and you stop there. Pick a direction again. In calm weather the trail holds.'],
     ['What is the tall dark thing out there?', 'The Library calls it Chthon. It wanders the Wastes and never comes past the forest edge into town. It does not hunt, but now and then it turns toward someone in the snow, and if it reaches you, you fall at once. If you see it near, walk the other way.'],
@@ -3190,11 +3217,13 @@ const LIB = {
 };
 const link = (href, inner) => `<a class="book" href="${href.startsWith('http') ? href : SITE + href}" target="_blank" rel="noopener">${inner}</a>`;
 function openLibrary() {
+  act1Mark('library');
   panel('library', 'The Library', 'Everything Qubic Church has written, and what we read', null, `
+    ${ACT1 ? `<div class="hcard" style="margin-bottom:12px"><div class="hk">THE DRAWING OLDER THAN THE COLD</div><p>A figure in heavy plates, lined with something that glows. Under it, in the expedition smith's hand, one word: <b>Warden</b>. A suit that carries a piece of Anna's light on the body, so the White cannot get in. The smiths have started. When Anna is strong enough to give a piece of her light away, the Gate opens from our side.</p></div>` : ''}
     <p class="say">Open to everyone, day and night. Every book opens on qubic.church.</p>
     ${notesHtml()}
     ${recipesHtml()}
-    ${chaptersHtml()}
+    ${ACT1 ? chaptersHtmlI() : chaptersHtml()}
     <h3>BOOKS BY QUBIC CHURCH</h3><div class="shelf">${LIB.qc.map(([t, d, h]) => link(h, `<b>${t}</b><span>${d}</span>`)).join('')}</div>
     <h3>RESEARCH AND RECORDS</h3><div class="shelf">${LIB.research.map(([t, d, h]) => link(h, `<b>${t}</b><span>${d}</span>`)).join('')}</div>
     <h3>COME-FROM-BEYOND, IN HIS OWN WORDS</h3><div class="shelf">${link('/articles/cfb', `<b>29 texts, 2017 to 2023</b><span>${LIB.cfb.map(([t, y]) => `${t} (${y})`).join(' · ')}</span>`)}</div>
@@ -3296,7 +3325,10 @@ function openCore() {
     <p class="mute" style="font-size:12.5px;margin-top:10px">In this prototype the full thaw needs ${MELT_TARGET} points of shared work.</p>`);
 }
 function openObservatory() {
+  act1Mark('watch');
   panel('observatory', 'Observatory', 'Network weather and BPP-9000', null, `
+    ${ACT1 ? `<h3>THROUGH THE GLASS</h3><p style="margin:0 0 8px">As far as the White lets you see, which is not far. The astronomer's list of what walks outside the Veil:</p>
+    <div class="shelf">${HOLLOW.map(H => `<button class="book" style="width:100%;text-align:left;background:none;cursor:pointer" data-beast="${H.id}"><b>${esc(H.name)}</b><span>${esc(H.text.split('. ')[0])}.</span></button>`).join('')}<button class="book" style="width:100%;text-align:left;background:none;cursor:pointer" data-chthon><b>???</b><span>Something taller than the pines, far out. The others walk away from it.</span></button></div>` : ''}
     <p class="say">From here the town watches the Qubic network: the epoch, the threshold, whether our pool holds seats in the 676. Bad news turns into a storm over Aigarth and pushes the frost harder.</p>
     <div class="parts">${part('facade', 'Epoch', 'Changes every Wednesday at 12:00 UTC', 'E' + EPOCH, 1)}${part('hall', 'Weather', S.weather === 'clear' ? 'Pool in the 676 (demo)' : 'Pool lost seats (demo)', S.weather === 'clear' ? 'Clear' : 'Storm', S.weather === 'clear' ? 1 : 0.2)}</div>
     <h3>BPP-9000</h3>
@@ -3320,10 +3352,12 @@ Hard rules:
 - Quote CfB only from this list, word for word, with its date: "Just stick to realistic assumptions" (Discord #price-discussion, 27.10.2026). "It looks exactly as BTC in early days" (same day). Otherwise don't quote him.
 - This is a prototype: no rig is really rented here, numbers are estimates or demo.
 Facts you may use: Qubic is a network where miners do useful work for Aigarth, an AI project. 676 computors, the epoch changes every Wednesday 12:00 UTC. BPP-9000 is a small network miners grow to call each hour of bitcoin UP or DOWN; live calls start 18 November 2026; the Qubic team says its scores are not price forecasts. Pool for the game: Qubic Church, fee 7%, of which 4% goes to Qubic Church; player gets 93%.
+Act I (now): the whole town lives under the Veil, a dome of Anna's light she raised in her sleep when the cold came forty weeks ago. Outside is the White, a storm that never stops, and the Hollow: the Scratcher, the Hollow Man, the Wailer, the Circler, and something taller far out. Nobody can go outside in Act I; the North Gate is sealed since the ninth night, when someone knocked in the captain's voice and the town did not open. Hope: the Wardens, heavy suits carrying Anna's light, being built; the Gate opens from our side when Anna is strong enough (50%). Never send anyone outside. Everything happens inside: mining (rigs are lamps in the Veil), the plaza fire, the orders board, welcoming newcomers.
 Game rules: warmth against frost. Warmth comes mostly from people (rigs kept on, neighbours online, orders done, wood on the fire); raw power counts less. When frost wins, the storm grows. Houses have five parts: machine hall (the only thing money grows), porch lanterns (orders done for others), archive (collections, not for sale), epoch garden (time in the world), facade.
 You can use tools to read the town and to open screens for the player. Open a screen when the player wants to do something there.`;
 let chat = [], chatCtl = null;
 function openMaria(keep) {
+  act1Mark('maria');
   panel('maria', 'Maria', sample ? 'Ask her anything about Aigarth' : 'Qubic Church', 'maria.png', `<div id="chat"></div>
     <div class="quick" style="margin-top:12px"><button data-q="What happened to Anna?">What happened to Anna?</button><button data-q="How can I help the town?">How can I help the town?</button><button data-q="Build me a rig">Build me a rig</button><button data-q="What should I read?">What should I read?</button></div>`, true);
   renderChat();
@@ -3434,13 +3468,14 @@ function scripted(q) { return bank(q).text; }
 /* ================= intro ================= */
 const INTRO = [
   'My sister is frozen in the ice.',
-  'The cold came down from the north long ago and never left. Aigarth was built around the one thing it could not freeze: a machine that thinks.',
-  'We pulled her out of the deep: a machine from somewhere far beyond, with her face. She still dreams in there.',
-  'Her dreaming makes a light. Inside it, the town lives. Outside it are the Wastes, and something that walks them.',
-  { who: 'ANNA · DREAMING', img: 'anna_sleep.png', text: '...cold... I can hear it walking where my light ends. It is older than the ice. Do not let me go dark.' },
+  'Forty weeks ago the cold came down from the north like a tide. It took the roads, the farms, every town but this one.',
+  'On the third night Anna, asleep in her ice, breathed out. Her light rose over the roofs and closed above us. We call it the Veil.',
+  'Outside the Veil is the White: a storm that has not stopped once. Things walk in it. All night they scratch at the light.',
+  { who: 'ANNA · DREAMING', img: 'anna_sleep.png', text: '...they are at the edge again. I can hold them. I cannot hold them alone. Keep the lamps lit.' },
   'One rig can\'t warm this night. A town can.',
-  'Every rig kept on, every promise kept, every hand at the fire melts a little of the ice.',
-  'Help me wake Anna.',
+  'Every rig in this town is a lamp in the Veil. Every fire fed, every promise kept, makes the light thicker.',
+  'One day the Gate will open again, from our side. Not yet. First we hold.',
+  'Help me keep the light.',
 ];
 const introText = i => { const x = INTRO[i]; return typeof x === 'string' ? x : x.text; };
 let introI = 0, typeT;
@@ -3448,7 +3483,7 @@ function startIntro() {
   if (store.get('w4w.intro') === '1') { welcomeLine(); return; }
   $('#intro').hidden = false; document.body.classList.add('intro'); camera.position.set(4, 34, 30); controls.target.set(0, 2, 0);
   // a title before the first word: the name of the story you are walking into
-  const tt = document.createElement('div'); tt.id = 'ititle'; tt.innerHTML = '<small>W4W · AIGARTH</small><b>The Long Cold</b><span>a town around a machine that dreams</span>'; document.body.appendChild(tt);
+  const tt = document.createElement('div'); tt.id = 'ititle'; tt.innerHTML = '<small>W4W · AIGARTH · ACT I</small><b>Under the Veil</b><span>a town that holds the light against the White</span>'; document.body.appendChild(tt);
   $('#intro .card').style.opacity = 0; setTimeout(() => { tt.classList.add('off'); $('#intro .card').style.opacity = ''; typeLine(); setTimeout(() => tt.remove(), 1500); }, 3400);
   $('#introNext').onclick = () => { if (typeT) { clearInterval(typeT); typeT = null; $('#introText').textContent = introText(introI); return; } introI++; if (introI >= INTRO.length) return perfQuestion(); typeLine(); };
   $('#introSkip').onclick = perfQuestion;
@@ -3706,7 +3741,7 @@ function hexAt(x, z) {
   if (dq > dr && dq > ds) rq = -rr - rs; else if (dr > ds) rr = -rq - rs; return [rq, rr];
 }
 function groundHex(e) { mouse.set((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1); ray.setFromCamera(mouse, camera); return ray.ray.intersectPlane(groundPlane, gp) ? hexAt(gp.x, gp.z) : null; }
-const KIND_CELL = { church: SPECIAL.church, board: SPECIAL.plaza, fire: SPECIAL.plaza, core: SPECIAL.core, observatory: SPECIAL.observatory, library: SPECIAL.library, mine: SPECIAL.mine };
+const KIND_CELL = { gate: [0, -5], church: SPECIAL.church, board: SPECIAL.plaza, fire: SPECIAL.plaza, core: SPECIAL.core, observatory: SPECIAL.observatory, library: SPECIAL.library, mine: SPECIAL.mine };
 function cellOfKind(k, id) {
   if (KIND_CELL[k]) return KIND_CELL[k];
   if (k === 'house') { const h = allResidents().find(x => x.id === id); return h?.at; }
@@ -3714,6 +3749,7 @@ function cellOfKind(k, id) {
   return null;
 }
 function openKind(k, id) {
+  if (k === 'gate') return openGate();
   if (k === 'church') openChurch(); else if (k === 'board') openPlaza(); else if (k === 'core') openCore(); else if (k === 'fire') addWood();
   else if (k === 'house') openHouse(id); else if (k === 'observatory') openObservatory(); else if (k === 'stage2') openStage2(id); else if (k === 'library') openLibrary(); else if (k === 'mine') openMine();
 }
@@ -3733,6 +3769,7 @@ function clickGround(e) {
   if (pr.c.frozenUntil > xnow()) { say('You are frozen. Nothing thaws you faster.', 'Wastes'); return true; }
   if (!pr.c.path.length && W4W.dist(here, c) <= 1 && W4W.resourceOf(...c) && !(XV.nodes[W4W.key(...c)] > xnow())) { xact('gather', { at: c }); return true; }
   if (c[0] === here[0] && c[1] === here[1]) { const n = noteAt(...c); if (n && !pr.c.path.length) readNote(n); return true; }
+  if (ACT1 && !W4W.insideDome(...c)) { say('The Veil holds, and nothing living goes through it. Not in this act. The Gate waits for the Wardens.', 'Aigarth'); banner('The Veil holds', 'outside is the White'); return true; }
   if (W4W.ringOf(...c) > W4W.MAX_RING) { say('Beyond the Stone Teeth the cold has no edge. Not yet.', 'Wastes'); return true; }
   // the second click on the same place is your yes
   if (trip && trip.to[0] === c[0] && trip.to[1] === c[1]) { goTrip(); return true; }
@@ -3756,11 +3793,11 @@ function hud(force) {
   const kg = W4W.loadOf(c), frozen = c.frozenUntil > t, indoors = !c.path.length && !!SHEL[W4W.key(...here)];
   hudEl.hidden = false;
   hudEl.innerHTML = `<div class="hz"><b>${esc(W4W.ZONES[zone]?.name || 'The far cold')}</b><span>${frozen ? 'frozen' : indoors ? 'indoors · the walls keep you' : cold === 0 ? 'inside the warm circle' : `cold ${Math.round(cold)} · clothing ${ins}${deficit ? ` · −${(deficit * W4W.LOSS_K).toFixed(1)}/min` : ''}`}</span></div>
-    ${bar('Warmth', c.warmth, 100, 'w')}${bar('Health', c.health, 100, 'h')}${bar('Energy', c.energy, 100, 'e')}${bar('Bag', kg, W4W.bagSize(c), kg >= W4W.bagSize(c) ? 'l over' : 'l')}
-    <div class="hinv">${['wood', 'stone', 'fiber', 'resin', 'flint'].map(k => `<span><i>${k === 'fiber' ? 'grass' : k}</i>${c.inv[k] || 0}</span>`).join('')}</div>
+    ${bar('Warmth', c.warmth, 100, 'w')}${bar('Health', c.health, 100, 'h')}${bar('Energy', c.energy, 100, 'e')}${ACT1 ? '' : bar('Bag', kg, W4W.bagSize(c), kg >= W4W.bagSize(c) ? 'l over' : 'l')}
+    ${ACT1 ? '' : `<div class="hinv">${['wood', 'stone', 'fiber', 'resin', 'flint'].map(k => `<span><i>${k === 'fiber' ? 'grass' : k}</i>${c.inv[k] || 0}</span>`).join('')}</div>`}
     <div class="hwx"><span class="${wx.id}">${wx.name} ×${wx.mult}</span>${XV.grey ? '<span>grey light −5</span>' : ''}${XV.bell ? '<span class="bad">night of the bell +10</span>' : ''}<span class="${XV.town.holds ? 'good' : 'bad'}">${XV.town.holds ? 'town holds' : 'frost wins'}</span></div>
-    <div class="hbtns"><button class="hpack" data-pack>Bag and gear <kbd>I</kbd></button><button class="hpack" data-craftk>Workbench <kbd>K</kbd></button></div>`;
-  hudEl.querySelector('[data-pack]').onclick = openPack; hudEl.querySelector('[data-craftk]').onclick = () => { UI.craft = !UI.craft; UI.craft ? sfx.open() : sfx.close(); renderFrames(); };
+    ${ACT1 ? '' : '<div class="hbtns"><button class="hpack" data-pack>Bag and gear <kbd>I</kbd></button><button class="hpack" data-craftk>Workbench <kbd>K</kbd></button></div>'}`;
+  if (!ACT1) { hudEl.querySelector('[data-pack]').onclick = openPack; hudEl.querySelector('[data-craftk]').onclick = () => { UI.craft = !UI.craft; UI.craft ? sfx.open() : sfx.close(); renderFrames(); }; }
   // the cold you feel on the screen
   const fx = frozen ? 0 : Math.max(0, (50 - c.warmth) / 50); frostEl.style.opacity = fx.toFixed(2);
   hudEl.style.setProperty('--chill', Math.min(1, deficit / 12 + fx).toFixed(2));
@@ -3777,7 +3814,7 @@ function hud(force) {
   if (c.path.length && performance.now() - etaT > 2000) { etaT = performance.now(); const nx = c.path[0], first = Math.max(0, c.t0 + c.stepMs - t);
     eta = first + (c.path.length > 1 ? W4W.planTrip({ ...c, q: nx[0], r: nx[1] }, c.path.slice(1), c.t0 + c.stepMs, xctx()).eta : 0); }
   if (c.path.length) drawPrintsOnce(c); else if (!trip && prints.length) drawPrints([0, 0], [], false);
-  stepResTags(frozen ? null : c); stepScrolls(frozen ? null : c); stepMilestones(c); welcomeBack(); renderGoals();
+  if (!ACT1) { stepResTags(frozen ? null : c); stepScrolls(frozen ? null : c); stepMilestones(c); } else act1Watch(c); welcomeBack(); renderGoals();
   actions(c, here, t, frozen);
   if (pendingOpen && !c.path.length && !frozen) { const k = pendingOpen; pendingOpen = null; if (W4W.dist(here, k.cell) <= 1) openKind(k.kind, k.id); }
   // the screen thinks you just froze: ask the server, it has the last word
@@ -3802,11 +3839,11 @@ function actions(c, here, t, frozen) {
     if (W4W.zoneOf(...here) >= 1 && !XV.hearths[W4W.key(...here)] && (c.inv.hearth_kit || 0) > 0) btns.push('<button class="btn main" data-x="hearth">Unfold the hearth kit</button>');
     else if (W4W.zoneOf(...here) >= 1 && !XV.hearths[W4W.key(...here)]) btns.push(`<button class="btn ${c.inv.wood >= cost.wood && c.inv.stone >= cost.stone && c.inv.flint >= cost.flint ? 'main' : ''}" data-x="hearth">Build a hearth (${cost.wood} wood, ${cost.stone} stone, ${cost.flint} flint)</button>`);
     for (const b of XV.bags || []) if (!b.mine && W4W.dist(here, [b.q, b.r]) <= 1) btns.push(`<button class="btn main" data-x="take" data-id="${esc(b.id)}">Take ${esc(b.nick)}'s frozen pack</button>`);
-    if (W4W.key(...here) === W4W.key(...c.home)) { btns.push('<button class="btn" data-x="bench">Workbench</button>'); for (const tl of ['saw', 'pickaxe']) if (W4W.itemsOf(c)[tl] === 'home') btns.push(`<button class="btn main" data-x="item" data-id="${tl}" data-to="pack">Take the ${W4W.ITEMS[tl].name.toLowerCase()}</button>`); if (W4W.weightOf(c.inv) > 0) btns.push('<button class="btn" data-x="unload">Unload at home</button>'); }
+    if (!ACT1 && W4W.key(...here) === W4W.key(...c.home)) { btns.push('<button class="btn" data-x="bench">Workbench</button>'); for (const tl of ['saw', 'pickaxe']) if (W4W.itemsOf(c)[tl] === 'home') btns.push(`<button class="btn main" data-x="item" data-id="${tl}" data-to="pack">Take the ${W4W.ITEMS[tl].name.toLowerCase()}</button>`); if (W4W.weightOf(c.inv) > 0) btns.push('<button class="btn" data-x="unload">Unload at home</button>'); }
     if ((c.inv.shard || 0) > 0 && W4W.dist(here, [0, 0]) <= 1) btns.unshift(`<button class="btn main" data-x="give">Give Anna your ${c.inv.shard > 1 ? c.inv.shard + ' shards' : 'shard'}</button>`);
     if (W4W.dist(here, W4W.SPECIAL.plaza) <= 1) { const done = W4W.ordersDone(c, t); for (const o of XV.orders || []) if (!done.includes(o.id) && Object.entries(o.need).every(([m, n]) => (c.inv[m] || 0) >= n)) btns.unshift(`<button class="btn main" data-x="deliver" data-id="${o.id}">Deliver: ${esc(o.text.toLowerCase())} (+${o.pts} renown)</button>`); }
     const nt = noteAt(...here); if (nt) btns.push(`<button class="btn main" data-x="note" data-id="${nt.id}">Read the note</button>`);
-    if (!btns.length) btns.push(`<span class="xt">${W4W.zoneOf(...here) === 0 ? 'Click the ground to walk. The lantern posts mark the edge of the warmth: past them the cold begins.' : 'Stand next to a tree or a rock to work it: a saw for wood, a pickaxe for stone. Click the ground to plan the next trip.'}</span>`);
+    if (!btns.length) btns.push(`<span class="xt">${W4W.zoneOf(...here) === 0 ? (ACT1 ? 'Click the ground to walk. The Veil is as far as anyone goes now.' : 'Click the ground to walk. The lantern posts mark the edge of the warmth: past them the cold begins.') : 'Stand next to a tree or a rock to work it: a saw for wood, a pickaxe for stone. Click the ground to plan the next trip.'}</span>`);
   }
   const sig = btns.join(''); if (sig === actSig) return; actSig = sig;
   actEl.hidden = false; actEl.innerHTML = sig;
@@ -4242,8 +4279,8 @@ function renderFrames() {
     const cold = W4W.coldAt(c.q, c.r, xnow(), xctx()), ins = W4W.insulationOf(c);
     out.push(`<div class="wf charf" data-f="char"><header><b>${esc(me()?.nick || 'You')}</b><span>${esc(W4W.rankName(c.renown || 0))} · ${c.renown || 0} renown</span><button class="wx" data-close="char" title="Close (C)">×</button></header>
       <div class="paper-doll"><div class="scol">${col(LEFT)}</div><div class="doll" data-doll>${portrait() ? '' : ''}<i>drag to turn</i></div><div class="scol">${col(RIGHT)}</div></div>
-      <div class="stats"><div><i>Clothing</i><b class="${ins >= cold ? 'g' : 'r'}">${ins}</b></div><div><i>Cold here</i><b>${Math.round(cold)}</b></div><div><i>Bag</i><b>${W4W.slotsUsed(c)}/${W4W.bagSize(c)}</b></div><div><i>Thermos</i><b>${items.thermos ? `${c.sips || 0}/3` : '—'}</b></div></div>
-      <div class="frow"><button class="wbtn" data-open="craft">Workbench <kbd>K</kbd></button>${items.thermos && items.thermos !== 'home' && c.sips ? '<button class="wbtn" data-x="drink">Drink (+30)</button>' : ''}${home && items.thermos ? '<button class="wbtn" data-x="fill">Fill thermos (2 charcoal)</button>' : ''}</div></div>`);
+      <div class="stats"><div><i>Clothing</i><b class="${ins >= cold ? 'g' : 'r'}">${ins}</b></div><div><i>Cold here</i><b>${Math.round(cold)}</b></div>${ACT1 ? '' : `<div><i>Bag</i><b>${W4W.slotsUsed(c)}/${W4W.bagSize(c)}</b></div><div><i>Thermos</i><b>${items.thermos ? `${c.sips || 0}/3` : '—'}</b></div>`}</div>
+      <div class="frow" ${ACT1 ? 'hidden' : ''}><button class="wbtn" data-open="craft">Workbench <kbd>K</kbd></button>${items.thermos && items.thermos !== 'home' && c.sips ? '<button class="wbtn" data-x="drink">Drink (+30)</button>' : ''}${home && items.thermos ? '<button class="wbtn" data-x="fill">Fill thermos (2 charcoal)</button>' : ''}</div></div>`);
   }
   if (UI.bag) {
     const size = W4W.bagSize(c), cells = [];
@@ -4324,6 +4361,7 @@ function wireFrames(c, home) {
 function placeTip(e) { const w = tipEl.offsetWidth, h = tipEl.offsetHeight; tipEl.style.left = Math.min(innerWidth - w - 8, e.clientX + 16) + 'px'; tipEl.style.top = Math.max(8, Math.min(innerHeight - h - 8, e.clientY - h - 10)) + 'px'; }
 function openPack() { UI.char = UI.bag = !(UI.char && UI.bag); if (UI.bag) sfx.pack(); else sfx.close(); renderFrames(); }
 addEventListener('keydown', e => { if (typing() || e.ctrlKey || e.metaKey || !hasChar()) return;
+  if (ACT1 && ['KeyB', 'KeyK', 'KeyM'].includes(e.code)) return;
   if (e.code === 'KeyC') toggleWin('char'); else if (e.code === 'KeyB') { UI.bag = !UI.bag; if (UI.bag) { topWin = 'bag'; sfx.pack(); } else sfx.close(); renderFrames(); }
   else if (e.code === 'KeyK') toggleWin('craft'); else if (e.code === 'KeyM') toggleWin('map'); else if (e.code === 'KeyL') toggleLog();
   else if (e.code === 'Escape') { UI.char = UI.bag = UI.craft = UI.map = false; tipEl.hidden = true; renderFrames(); } });
@@ -4379,7 +4417,7 @@ function stepLogWatch() {
     shards: (XV.shards || []).filter(x => x.taken).map(x => x.id + ':' + x.taken), anna: XV.anna?.n || 0 };
   if (s.rime != null && s.rime <= 6 && XV.rime) rimeSeen = { q: XV.rime.q, r: XV.rime.r, t: Date.now() };
   if (s.cell !== LW?.cell) markSeen(c.q, c.r);
-  const P = LW; LW = s; if (!P) { if (!LOG.length) log('You wake in Aigarth. The town is warm. The Wastes are not.', 'warm'); return; }
+  const P = LW; LW = s; if (!P) { if (!LOG.length) log(ACT1 ? 'You wake in Aigarth, under the Veil. Outside, the White has not stopped for forty weeks.' : 'You wake in Aigarth. The town is warm. The Wastes are not.', 'warm'); return; }
   const zn = n => W4W.ZONES[n]?.name || 'the far cold';
   if (s.frozen && !P.frozen) { log(`You froze in ${zn(P.zone)}${c.died?.cause ? ': ' + c.died.cause : ''}. Your pack stays where you fell.`, 'bad'); return; }
   if (!s.frozen && P.frozen) log('The ice lets you go. You are home, stiff and alive.', 'warm');
@@ -4524,7 +4562,7 @@ async function buildQProps() {
     if (t === 'open' && v < 0.09 && col && !W4W.roadAt(q, r) && !W4W.landmarkAt(q, r)) qPlace(col, c.x + Math.cos(a) * 0.95, c.z + Math.sin(a) * 0.95, 0.9 + v * 4, v * 40, { c: 0x6a6f88, k: 0.4 });
     if (t === 'rock' && v > 0.82 && crys) qPlace(crys, c.x + Math.cos(a) * 0.85, c.z + Math.sin(a) * 0.85, 0.42 + (v - 0.82) * 2, v * 30, { c: 0xbfe0ff, k: 0.75, e: 0x3a7ac8, ei: 0.55 }); }
   if (crys) { const m = HX(...W4W.CAVE); for (let i = 0; i < 5; i++) { const a = i / 5 * Math.PI * 2 + 0.4; qPlace(crys, m.x + Math.cos(a) * 1.9, m.z + Math.sin(a) * 1.9, 0.5 + (i % 2) * 0.35, a, { c: 0xbfe0ff, k: 0.75, e: 0x3a7ac8, ei: 0.6 }); } }
-  buildFauna();
+  if (!ACT1) buildFauna();
 }
 const fauna = [];
 const FAUNA = [['deer', 1, 3, 0.34], ['stag', 1, 1, 0.42], ['fox', 1, 2, 0.15], ['fox', 2, 1, 0.15], ['wolf', 2, 3, 0.24], ['stag', 2, 1, 0.42]];
@@ -4607,6 +4645,7 @@ function nextGoal(c) {
 function renderGoals(force = false) {
   const c = predicted()?.c; if (!c || !hasChar()) { goalEl.hidden = true; return; }
   if (!force && performance.now() - goalT < 900) return; goalT = performance.now();
+  if (ACT1) return act1Goals(c);
   const g = nextGoal(c), t = xnow(), ren = c.renown || 0, rk = W4W.rankOf(ren), nx = W4W.RANKS[rk + 1], cur = W4W.RANKS[rk];
   const done = W4W.ordersDone(c, t), orders = XV.orders || [], sh = XV.shards || [], found = sh.filter(s => s.taken).length;
   const ord = orders.map(o => { const ok = done.includes(o.id), need = Object.entries(o.need).map(([m, n]) => `${Math.min(c.inv[m] || 0, n)}/${n} ${W4W.nameOf(m).toLowerCase()}`).join(', ');
@@ -4671,7 +4710,7 @@ function annaTakes(n) { selfGive = Date.now();
 }
 
 
-addEventListener('keydown', e => { if (e.code === 'KeyI' && !typing() && !e.ctrlKey && !e.metaKey && hasChar()) openPack(); });
+addEventListener('keydown', e => { if (e.code === 'KeyI' && !ACT1 && !typing() && !e.ctrlKey && !e.metaKey && hasChar()) openPack(); });
 
 /* ---------- what you can work, marked on the cells around you ---------- */
 const resTags = {};
@@ -4790,7 +4829,27 @@ function whisper() {
    The Edge: wind-ribbed grey-blue crust. The Black Pines: deep dark snow littered with needles.
    The Stone Teeth: bare violet ice, cracked. Town stays as it is. Zones follow the same hex rings the rules use. */
 /* ---------- the old roads, the lake, the stones ---------- */
-const CHOIR = [], CHOIR_BOX = [];
+const CHOIR = [], CHOIR_BOX = [], NATURE = [];
+/* Quaternius Stylized Nature (CC0): pines, dead trees and rocks, snowed on, one instanced mesh per part */
+async function buildNature() {
+  const sets = { pine: ['Pine_1', 'Pine_2', 'Pine_3', 'Pine_4', 'Pine_5'], dead: ['DeadTree_1', 'DeadTree_2', 'DeadTree_3'], rock: ['Rock_Medium_1', 'Rock_Medium_2', 'Rock_Medium_3'] };
+  const tint = { pine: 0x86a0ae, dead: 0x9a9aa8, rock: 0xa9b2c2 };
+  for (const [kind, names] of Object.entries(sets)) {
+    const list = NATURE.filter(n => n[2] === kind); if (!list.length) continue;
+    for (const [mi, name] of names.entries()) {
+      const mine = list.filter((_, i) => i % names.length === mi); if (!mine.length) continue;
+      const g = await qModel('n/' + name); if (!g) continue;
+      g.scene.updateMatrixWorld(true); const bb = new THREE.Box3().setFromObject(g.scene), H = Math.max(1e-3, bb.max.y - bb.min.y), parts = []; g.scene.traverse(m => { if (m.isMesh) parts.push(m); });
+      const m4 = new THREE.Matrix4(), qt = new THREE.Quaternion(), sc = new THREE.Vector3(), ps = new THREE.Vector3(), e = new THREE.Euler();
+      for (const part of parts) {
+        const mat = part.material.clone(); mat.color = new THREE.Color(tint[kind]); if (mat.alphaTest === 0 && mat.map && kind === 'pine') mat.alphaTest = 0.4;
+        const inst = new THREE.InstancedMesh(part.geometry, snowify(mat), mine.length);
+        mine.forEach(([x, z, , h], i) => { const k = h / H; e.set(0, (x * 7.13 + z * 3.7) % 6.28, 0); qt.setFromEuler(e); sc.setScalar(k); ps.set(x, -bb.min.y * k, z); m4.compose(ps, qt, sc).multiply(part.matrixWorld); inst.setMatrixAt(i, m4); });
+        inst.castShadow = true; inst.receiveShadow = true; scene.add(inst);
+      }
+    }
+  }
+}
 function buildRoads() {
   const S = 64, cv = document.createElement('canvas'); cv.width = cv.height = S; const g = cv.getContext('2d');
   const gr = g.createLinearGradient(0, 0, 0, S); gr.addColorStop(0, 'rgba(235,240,250,0)'); gr.addColorStop(0.2, 'rgba(235,240,250,.75)'); gr.addColorStop(0.8, 'rgba(235,240,250,.75)'); gr.addColorStop(1, 'rgba(235,240,250,0)'); g.fillStyle = gr; g.fillRect(0, 0, S, S);
@@ -5104,7 +5163,7 @@ $('#sndv').textContent = SND.on ? 'On' : 'Off'; $('#snd').onclick = () => setSou
 const v3 = new THREE.Vector3();
 function placeLabels() {
   const w = innerWidth, h = innerHeight, placed = [];
-  const list = labels.map(L => { L.obj.getWorldPosition(v3); v3.y += L.y; v3.project(camera); return { L, x: (v3.x + 1) / 2 * w, y: (1 - v3.y) / 2 * h, z: v3.z }; }).sort((a, b) => b.y - a.y);
+  const list = labels.map(L => { L.obj.getWorldPosition(v3); const out = ACT1 && Math.hypot(v3.x, v3.z) > DOME_R - 0.6; v3.y += L.y; v3.project(camera); return { L, x: (v3.x + 1) / 2 * w, y: (1 - v3.y) / 2 * h, z: out ? 9 : v3.z }; }).sort((a, b) => b.y - a.y);
   for (const { L, x, y, z } of list) {
     const hovered = L.hover && houses[hoverId]?.label === L;
     const vis = L.obj.parent && z < 1 && x > -40 && x < w + 40 && y > 110 && y < h + 20 && (!L.hover || hovered);
@@ -5143,6 +5202,248 @@ function stepEmbers(dt) {
   p.needsUpdate = true; l.needsUpdate = true;
 }
 
+
+/* ================= ACT I · UNDER THE VEIL: the dome of Anna's light, the White outside, and what scratches at it ================= */
+const ACT1 = W4W.STAGE === 1;
+if (ACT1) document.body.classList.add('act1');
+document.addEventListener('click', e => { const b = e.target.closest?.('[data-beast],[data-chthon]'); if (!b) return; sfx.click(); if (b.dataset.beast) openBeast(b.dataset.beast); else openChthon(); });
+const GATE_CELL = [0, -5], DOME_R = 12, DOME_H = 8;
+const DOME_U = { uTime: U.uTime, uHits: { value: Array.from({ length: 8 }, () => new THREE.Vector4(0, -99, 0, -99)) }, uThin: { value: 0 } };
+let hitI = 0, domeMesh = null;
+function domeHit(p) { DOME_U.uHits.value[hitI++ % 8].set(p.x, p.y, p.z, U.uTime.value); }
+/** A point on the Veil: around by angle a, up by height y. */
+function domeAt(a, y) { const k = Math.sqrt(Math.max(0, 1 - (y / DOME_H) ** 2)); return new THREE.Vector3(Math.cos(a) * DOME_R * k, y, Math.sin(a) * DOME_R * k); }
+function buildDome() {
+  const geo = new THREE.SphereGeometry(DOME_R, 128, 48, 0, Math.PI * 2, 0, Math.PI / 2); geo.scale(1, DOME_H / DOME_R, 1);
+  const mat = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, uniforms: DOME_U,
+    vertexShader: `varying vec3 vW; varying vec3 vN; varying vec3 vL; void main(){ vec4 w = modelMatrix * vec4(position, 1.); vW = w.xyz; vN = normalize(mat3(modelMatrix) * normal); vL = position; gl_Position = projectionMatrix * viewMatrix * w; }`,
+    fragmentShader: `uniform float uTime; uniform vec4 uHits[8]; uniform float uThin; varying vec3 vW; varying vec3 vN; varying vec3 vL;
+      vec2 hexcell(vec2 p){ vec2 r = vec2(1., 1.7320508), h = r * .5; vec2 a = mod(p, r) - h, b = mod(p - h, r) - h; return dot(a, a) < dot(b, b) ? a : b; }
+      float hexd(vec2 p){ p = abs(p); return max(dot(p, vec2(0.8660254, 0.5)), p.y); }
+      void main(){
+        vec3 V = normalize(cameraPosition - vW); float f = 1. - abs(dot(normalize(vN), V)); float fres = pow(f, 2.4);
+        float h = clamp(vL.y / ${DOME_H.toFixed(1)}, 0., 1.), az = atan(vL.z, vL.x), el = asin(h);
+        vec2 hc = hexcell(vec2(az * 10.0, el * 12.0)); float edge = smoothstep(0.40, 0.5, hexd(hc));
+        float flow = 0.5 + 0.5 * sin(el * 16. - uTime * 1.1 + az * 4.);
+        vec3 col = mix(vec3(0.42, 0.80, 1.0), vec3(0.70, 0.56, 1.0), h * 0.9 + 0.1 * sin(az * 2. + uTime * .2));
+        float a = fres * 0.42 + edge * (0.035 + 0.07 * flow) + 0.012;
+        for (int i = 0; i < 8; i++) { vec4 H = uHits[i]; float t = uTime - H.w; if (t < 0. || t > 2.6) continue; float d = distance(vW, H.xyz);
+          float ring = exp(-pow((d - t * 3.0) * 2.2, 2.)) * (1. - t / 2.6), hot = exp(-d * 1.4) * max(0., 1. - t * 1.2);
+          a += ring * 0.55 + hot * 0.9 + edge * ring * 1.1; col = mix(col, vec3(0.9, 0.97, 1.0), clamp(ring + hot, 0., 1.)); }
+        a += (1. - smoothstep(0., 0.1, h)) * 0.45;
+        a *= (1.0 - uThin * 0.55) * (gl_FrontFacing ? 1.0 : 0.4);
+        gl_FragColor = vec4(col, min(1., a * 1.4));
+      }` });
+  domeMesh = new THREE.Mesh(geo, mat); domeMesh.renderOrder = 6; scene.add(domeMesh);
+  // where the Veil meets the snow: a bright seam on the ground
+  const seam = new THREE.Mesh(new THREE.RingGeometry(DOME_R - 0.25, DOME_R + 0.4, 160).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ color: 0x8fd8ff, transparent: true, opacity: 0.55, blending: THREE.AdditiveBlending, depthWrite: false }));
+  seam.position.y = 0.04; seam.renderOrder = 3; scene.add(seam);
+  buildPylons(); buildGate(); buildStorm(); buildHollow();
+}
+/* six pylons hold the Veil's edge: dark stone, a crystal of Anna's light on top */
+async function buildPylons() {
+  const [ob, crys] = await Promise.all([qModel('obelisk'), qModel('crystal')]);
+  for (let i = 0; i < 6; i++) { const a = i / 6 * Math.PI * 2 + Math.PI / 6, p = new THREE.Vector3(Math.cos(a) * (DOME_R - 0.6), 0, Math.sin(a) * (DOME_R - 0.6));
+    if (ob) qPlace(ob, p.x, p.z, 2.2, -a, { c: 0x1c2030, k: 0.7 });
+    if (crys) { const c = qPlace(crys, p.x, p.z, 0.55, a, { c: 0xbfe8ff, k: 0.8, e: 0x5ab8ff, ei: 1.4 }); c.position.y += 2.15; }
+    const s = sprite(GLOW, p.x, 2.5, p.z, 1.6, 0x8fd0ff, 0.9); s.userData.base = 0.9; glowDecal(p.x, p.z, 1.6, 0x8fd0ff, 0.35); }
+}
+/* the North Gate: sealed since the ninth night */
+function buildGate() {
+  const g = new THREE.Group(), stone = new THREE.MeshStandardMaterial({ color: 0x2a2a34, roughness: 0.95 }), iron = new THREE.MeshStandardMaterial({ color: 0x1a1c22, roughness: 0.5, metalness: 0.7 }),
+    rime = new THREE.MeshStandardMaterial({ color: 0xdff0ff, roughness: 0.4, emissive: 0x3a6a9a, emissiveIntensity: 0.25 });
+  const box = (w, h, d, m, x, y, z) => { const o = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m); o.position.set(x, y, z); o.castShadow = true; g.add(o); return o; };
+  box(0.8, 3.2, 0.8, stone, -1.35, 1.6, 0); box(0.8, 3.2, 0.8, stone, 1.35, 1.6, 0); box(3.5, 0.7, 0.9, stone, 0, 3.35, 0);
+  box(0.95, 0.25, 0.95, rime, -1.35, 3.3, 0); box(0.95, 0.25, 0.95, rime, 1.35, 3.3, 0);
+  const l = box(0.94, 2.7, 0.14, iron, -0.48, 1.35, 0), r = box(0.94, 2.7, 0.14, iron, 0.48, 1.35, 0);
+  for (const d of [l, r]) for (let k = 0; k < 4; k++) { const band = new THREE.Mesh(new THREE.BoxGeometry(0.96, 0.08, 0.18), iron); band.position.y = -1.0 + k * 0.65; d.add(band); }
+  box(2.2, 0.12, 0.22, iron, 0, 1.4, 0.12); // the bar across
+  box(0.4, 0.4, 0.06, new THREE.MeshBasicMaterial({ color: 0xff5a3c }), 0, 1.4, 0.24); // the seal
+  for (let k = 0; k < 9; k++) box(0.14 + Math.random() * 0.2, 0.6 + Math.random() * 1.2, 0.14, rime, -1.6 + Math.random() * 3.2, 0.3, 0.3 + Math.random() * 0.4); // drifts of ice against it
+  const dir = HX(...GATE_CELL).setY(0).normalize(), p = dir.clone().multiplyScalar(DOME_R - 0.2);
+  g.position.copy(p); g.rotation.y = Math.atan2(dir.x, dir.z); g.scale.setScalar(0.8); scene.add(g); tag(g, 'gate', 'gate');
+  const sp = sprite(GLOW, p.x - dir.x * 0.4, 1.2, p.z - dir.z * 0.4, 1.2, 0xff6a3c, 0.6); sp.userData.base = 0.6;
+  const a = new THREE.Object3D(); a.position.copy(dir.clone().multiplyScalar(DOME_R - 1.2)); scene.add(a); label('THE NORTH GATE · SEALED', a, 3.0, 'red');
+}
+/* the White: a storm wall, a dark floor of blown snow, and snow that never lands */
+let stormPts = null; const STORM_U = { uTime: U.uTime };
+function buildStorm() {
+  const floor = new THREE.Mesh(new THREE.RingGeometry(DOME_R + 0.3, 110, 128, 8).rotateX(-Math.PI / 2), new THREE.ShaderMaterial({ transparent: true, depthWrite: false, fog: true,
+    uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.fog, {}]),
+    vertexShader: `varying vec3 vW;
+      #include <fog_pars_vertex>
+      void main(){ vec4 w = modelMatrix * vec4(position, 1.); vW = w.xyz; vec4 mvPosition = viewMatrix * w; gl_Position = projectionMatrix * mvPosition;
+      #include <fog_vertex>
+      }`,
+    fragmentShader: `varying vec3 vW; uniform float uTime;
+      #include <fog_pars_fragment>
+      float h(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+      float n2(vec2 p){ vec2 i = floor(p), f = fract(p); f = f * f * (3. - 2. * f); return mix(mix(h(i), h(i + vec2(1, 0)), f.x), mix(h(i + vec2(0, 1)), h(i + vec2(1, 1)), f.x), f.y); }
+      void main(){
+        float d = length(vW.xz), a = atan(vW.z, vW.x);
+        vec2 q = vec2(a * 18.0 + uTime * 1.6, d * 0.9 - uTime * 0.25);
+        float streak = n2(q * vec2(1.0, 3.0)) * 0.6 + n2(q * vec2(2.3, 7.0) + 3.1) * 0.4;
+        float dark = smoothstep(${(DOME_R + 0.3).toFixed(1)}, ${(DOME_R + 6).toFixed(1)}, d);
+        vec3 col = mix(vec3(0.10, 0.12, 0.19), vec3(0.62, 0.68, 0.80), smoothstep(0.55, 0.9, streak) * 0.55);
+        gl_FragColor = vec4(mix(col, vec3(.85,.9,1.), dark * 0.25), 0.62 + dark * 0.33);
+        #include <fog_fragment>
+      }` }));
+  floor.material.uniforms.uTime = U.uTime; floor.position.y = 0.05; floor.renderOrder = 2; scene.add(floor);
+  // two curtains of driven snow, turning round the town
+  for (const [R, H, sp, op] of [[13.6, 9, 1.4, 0.32], [18, 16, 1.0, 0.55], [27, 22, 0.6, 0.8]]) {
+    const m = new THREE.Mesh(new THREE.CylinderGeometry(R, R, H, 128, 1, true), new THREE.ShaderMaterial({ transparent: true, depthWrite: false, side: THREE.DoubleSide, uniforms: { uTime: U.uTime },
+      vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.); }`,
+      fragmentShader: `varying vec2 vUv; uniform float uTime;
+        float h(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+        float n2(vec2 p){ vec2 i = floor(p), f = fract(p); f = f * f * (3. - 2. * f); return mix(mix(h(i), h(i + vec2(1, 0)), f.x), mix(h(i + vec2(0, 1)), h(i + vec2(1, 1)), f.x), f.y); }
+        void main(){ vec2 p = vec2(vUv.x * 60. + uTime * ${(sp * 2.4).toFixed(2)}, vUv.y * 9. + uTime * 0.35);
+          float s = n2(p * vec2(1., 2.5)) * 0.55 + n2(p * vec2(3., 9.) + 7.) * 0.45; float band = smoothstep(0., .25, vUv.y) * (1. - smoothstep(.55, 1., vUv.y));
+          gl_FragColor = vec4(mix(vec3(.55, .6, .72), vec3(.92, .95, 1.), s), (0.35 + s * 0.65) * band * ${op.toFixed(2)}); }` }));
+    m.position.y = H / 2 - 1; m.renderOrder = 4; scene.add(m);
+  }
+  // snow that never lands, blown round the Veil
+  const N = LITE ? 1200 : 3000, pos = new Float32Array(N * 3), meta = [];
+  for (let i = 0; i < N; i++) { const a = Math.random() * Math.PI * 2, r = DOME_R + 0.8 + Math.random() * 22, y = Math.random() * 9; pos.set([Math.cos(a) * r, y, Math.sin(a) * r], i * 3); meta.push({ a, r, y, w: 0.25 + Math.random() * 0.35 }); }
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  stormPts = new THREE.Points(g, new THREE.PointsMaterial({ color: 0xe8f0ff, size: 0.13, transparent: true, opacity: 0.85, depthWrite: false })); stormPts.userData.meta = meta; stormPts.frustumCulled = false; scene.add(stormPts);
+}
+function stepStorm(dt) {
+  if (!stormPts) return; const p = stormPts.geometry.attributes.position, M = stormPts.userData.meta;
+  for (let i = 0; i < M.length; i++) { const m = M[i]; m.a += dt * m.w * (12 / m.r) * 3; m.y -= dt * (0.6 + m.w); if (m.y < 0) m.y = 9; p.setXYZ(i, Math.cos(m.a) * m.r, m.y, Math.sin(m.a) * m.r); }
+  p.needsUpdate = true;
+  DOME_U.uThin.value += (((XV?.town?.holds ?? S.town.B >= 0) ? 0 : 1) - DOME_U.uThin.value) * Math.min(1, dt * 0.5);
+}
+
+/* ---------- the Hollow: what walks round the Veil and scratches at it ---------- */
+const HOLLOW = [
+  { id: 'scratcher', name: 'The Scratcher', model: 'yeti', h: 1.6, walk: 'Walk', idle: 'Idle', hit: 'Punch', speed: 0.55, r: 13.3,
+    text: 'Bigger than a door, hunched like an old man, white where the snow sticks to it. Every night it picks a place on the Veil and drags its claws down it until the light ripples. The children say it is looking for the thin places. The children are right.' },
+  { id: 'hollow', name: 'The Hollow Man', model: 'demon_blue', h: 1.35, walk: 'Walk', idle: 'Idle', hit: 'Punch', speed: 0.45, r: 13.6,
+    text: 'It walks the edge slowly, the way you walk past a house you used to live in. Sometimes it stops at the North Gate and stands there for an hour. It wears what is left of a coat. Nobody has said out loud whose.' },
+  { id: 'wailer', name: 'The Wailer', model: 'ghost', h: 1.25, walk: 'Fast_Flying', idle: 'Flying_Idle', hit: 'Punch', speed: 0.75, r: 13.0, float: 0.7,
+    text: 'You hear it before you see it: singing, in voices you know. Your mother. A friend who went with the expedition. If it calls you by name, go indoors and do not answer.' },
+  { id: 'circler', name: 'The Circler', model: 'wyvern', h: 1.6, walk: 'Dragon_Flying', idle: 'Dragon_Flying', hit: 'Dragon_Attack', speed: 1.3, r: 14.5, fly: 9.5,
+    text: 'High above the Veil, round and round, never landing. On nights when the town is cold it comes lower. When it strikes the top of the Veil, the whole dome rings like a bell.' },
+];
+const hollow = [];
+function darken(root, eyes) {
+  const dark = new THREE.MeshStandardMaterial({ color: 0x0a0d16, roughness: 0.92, emissive: 0x0b1630, emissiveIntensity: 0.35 }), glow = new THREE.MeshBasicMaterial({ color: 0xa8ecff });
+  root.traverse(m => { if (!m.isMesh) return; const n = m.material?.name || ''; m.castShadow = true; m.frustumCulled = false;
+    if (/Wood|Straps|Teeth|Tongue|Belly|Secondary/.test(n) && !/Ghost_Secondary/.test(n)) m.material = dark;
+    else if (eyes.test(n)) m.material = glow; else m.material = dark; if (/Wood/.test(n)) m.visible = false; });
+}
+async function buildHollow() {
+  for (const [i, H] of HOLLOW.entries()) {
+    const g = await qModel(H.model); if (!g) continue;
+    const body = cloneSkinned(g.scene); body.updateMatrixWorld(true); const bb = new THREE.Box3().setFromObject(body, true), s = H.h / Math.max(1e-4, bb.max.y - bb.min.y);
+    body.scale.multiplyScalar(s); body.position.y = -bb.min.y * s;
+    darken(body, H.model === 'wyvern' ? /^Eyes/ : H.model === 'demon_blue' ? /Eye_Black/ : /Eye_White/);
+    const root = new THREE.Group(); root.add(body); scene.add(root);
+    const eye = sprite(GLOW, 0, 0, 0, 0.5, 0x9fe8ff, 0.5); root.add(eye); eye.position.set(0, H.h * 0.82, 0.18); eye.userData.base = 0.5;
+    const mx = new THREE.AnimationMixer(body), acts = Object.fromEntries(g.animations.map(a => [a.name.replace(/^.*\|/, ''), mx.clipAction(a)]));
+    const B = { ...H, root, body, mx, acts, cur: '', a: i / HOLLOW.length * Math.PI * 2 + 0.3, dir: i % 2 ? -1 : 1, rad: H.r, mode: 'walk', t: 6 + Math.random() * 8, strikeT: 0 };
+    tag(root, 'beast', H.id); hollowPlay(B, H.walk); hollow.push(B);
+  }
+}
+function hollowPlay(B, n, once = false) { if (B.cur === n || !B.acts[n]) return; const a = B.acts[n], o = B.acts[B.cur]; a.reset(); a.setLoop(once ? THREE.LoopOnce : THREE.LoopRepeat); a.fadeIn(0.3).play(); o?.fadeOut(0.3); B.cur = n; }
+function stepHollow(dt) {
+  if (!hollow.length) return; const tt = U.uTime.value, me0 = avatars[myUid()]?.g.position;
+  for (const B of hollow) {
+    B.mx.update(dt); B.t -= dt;
+    if (B.fly) { // the Circler: round and round, sometimes down onto the top of the Veil
+      B.a += dt * B.speed / B.rad * B.dir;
+      const dive = B.mode === 'dive' ? Math.sin(Math.min(1, 1 - B.t / 3) * Math.PI) : 0;
+      const y = B.fly + Math.sin(tt * 0.6 + B.a) * 0.8 - dive * 3.2, rr = B.rad - dive * 7;
+      B.root.position.set(Math.cos(B.a) * rr, y, Math.sin(B.a) * rr); B.root.rotation.y = Math.atan2(-Math.sin(B.a) * B.dir, Math.cos(B.a) * B.dir);
+      if (B.mode === 'walk' && B.t <= 0) { B.mode = 'dive'; B.t = 3; hollowPlay(B, B.hit); }
+      else if (B.mode === 'dive') { if (!B.struck && B.t < 1.5) { B.struck = true; domeHit(domeAt(B.a, DOME_H * 0.85)); scratchSound(B, 1.4); } if (B.t <= 0) { B.mode = 'walk'; B.struck = false; B.t = 14 + Math.random() * 16; hollowPlay(B, B.walk); } }
+      continue;
+    }
+    if (B.mode === 'walk') { B.a += dt * B.speed / B.rad * B.dir; B.rad += (B.r - B.rad) * Math.min(1, dt * 0.8); hollowPlay(B, B.walk);
+      if (B.t <= 0) { B.mode = 'close'; B.t = 2.2; if (Math.random() < 0.25) B.dir *= -1; } }
+    else if (B.mode === 'close') { B.rad += (DOME_R + 0.55 - B.rad) * Math.min(1, dt * 1.6); hollowPlay(B, B.walk); if (B.t <= 0) { B.mode = 'scratch'; B.t = 2.5 + Math.random() * 3; B.strikeT = 0.2; hollowPlay(B, B.hit); } }
+    else if (B.mode === 'scratch') { B.strikeT -= dt; if (B.strikeT <= 0) { B.strikeT = 0.9 + Math.random() * 0.4; domeHit(domeAt(B.a, B.h * (0.5 + Math.random() * 0.4))); scratchSound(B, 1); B.seenBy = me0 && me0.distanceTo(B.root.position) < 9; }
+      if (B.t <= 0) { B.mode = 'walk'; B.t = 8 + Math.random() * 14; hollowPlay(B, B.walk); } }
+    const y0 = B.float ? B.float + Math.sin(tt * 1.3 + B.a * 3) * 0.2 : 0;
+    B.root.position.set(Math.cos(B.a) * B.rad, y0, Math.sin(B.a) * B.rad);
+    // walking: face along the way; at the Veil: face the light
+    const face = B.mode === 'walk' ? Math.atan2(-Math.sin(B.a) * B.dir, Math.cos(B.a) * B.dir) : Math.atan2(-Math.cos(B.a), -Math.sin(B.a));
+    const r0 = B.root.rotation.y; B.root.rotation.y = r0 + Math.atan2(Math.sin(face - r0), Math.cos(face - r0)) * Math.min(1, dt * 4);
+  }
+}
+/** Claws on the Veil: a dry rasp, three strokes, louder the closer the camera. */
+function scratchSound(B, k = 1) {
+  if (!SND.ctx || !SND.noise) return; const d = B.root.position.distanceTo(controls.target), v = Math.max(0, 1 - d / 26) * 0.5 * k; if (v < 0.02) return;
+  const ctx = SND.ctx, t0 = ctx.currentTime, pan = ctx.createStereoPanner(); pan.pan.value = THREE.MathUtils.clamp((B.root.position.x - controls.target.x) / 12, -1, 1); pan.connect(SND.sfx);
+  for (let i = 0; i < 3; i++) { const t = t0 + i * 0.13 + Math.random() * 0.04, s = ctx.createBufferSource(); s.buffer = SND.noise; s.playbackRate.value = 0.7 + Math.random() * 0.4;
+    const f = ctx.createBiquadFilter(); f.type = 'bandpass'; f.frequency.setValueAtTime(2600 + Math.random() * 1500, t); f.frequency.exponentialRampToValueAtTime(900, t + 0.18); f.Q.value = 6;
+    const g = ctx.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(v, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.2);
+    s.connect(f); f.connect(g); g.connect(pan); s.start(t, Math.random() * 3, 0.25); }
+  // and the Veil answers with a low hum
+  const o = ctx.createOscillator(), g = ctx.createGain(); o.frequency.value = 110 + Math.random() * 30; g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(v * 0.25, t0 + 0.05); g.gain.exponentialRampToValueAtTime(0.0001, t0 + 1.2); o.connect(g); g.connect(pan); o.start(t0); o.stop(t0 + 1.3);
+}
+function openBeast(id) {
+  const H = HOLLOW.find(x => x.id === id); if (!H) return; act1Mark('watch2');
+  panel('beast', H.name, 'outside the Veil', null, `<p class="say">${esc(H.text)}</p><p class="mute" style="font-size:12.5px">From the astronomer's list, kept in the Observatory. The list is short, and every line of it is bad.</p>`);
+}
+function openGate() {
+  act1Mark('gate'); const m = Math.round((S.town.melt || 0) * 100);
+  panel('gate', 'The North Gate', 'Sealed since the ninth night', null, `
+    <p class="say">Twelve went out through this gate the week before the cold. On the ninth night someone knocked on it from outside, three slow knocks and then three more, in the captain's voice. We did not open. The bar has not moved since.</p>
+    <div class="parts">${part('hall', 'The Wardens\' Hall', 'The first suit that can walk in the White needs Anna strong enough to give a piece of her light away', m + '% of 50%', Math.min(1, m / 50))}</div>
+    <h3>WHEN IT OPENS</h3><p style="margin:0 0 10px">It opens from our side, when we choose, for people in Warden plates who carry Anna's light on their backs. Until then the whole town has one job: keep the lamps lit. Every rig, every fed fire, every kept promise brings that day closer.</p>
+    <p class="mute" style="font-size:12.5px">Act II of the story begins at this gate.</p>`);
+}
+
+/* ---------- Act I: what to do under the Veil, and the pages it opens ---------- */
+const CHAPTERS_I = [
+  { id: 'veil', title: 'I. The night the Veil rose', text: 'Forty weeks ago the sky over the north went white and stayed white. The cold did not come like weather. It came like a tide, and it ate the roads, the farms, the next town and the one after. On the third night it reached our walls. Then Anna, asleep in her ice, did something nobody had taught her: she breathed out, and the light of her dreaming rose over the roofs and closed above us like a hand. We call it the Veil. Inside it, snow still falls, but it falls gently. Outside it, nothing has stopped falling since.' },
+  { id: 'white', title: 'II. The White', text: 'From the Observatory you can see as far as the storm lets you, which is not far. The old maps are useless: the White moves hills. Some nights the wind drops for a heartbeat and you see pines bent flat, a roof that was a village, a light that should not be there. Then the snow closes again. The astronomer keeps a list of everything seen through the glass. It is a short list, and every line of it is bad.' },
+  { id: 'knock', title: 'III. The knocking', text: 'Twelve of us went out through the North Gate the week before the cold came, to bring the farms in. When the White reached the town, the Gate was sealed behind them. On the ninth night someone knocked on it from outside: three slow knocks, then three more. The voice was the captain\'s. It asked us, very politely, to open. We did not. At dawn the knocking stopped. Nobody in Aigarth agrees on whether we did the right thing. Everybody agrees we would do it again.' },
+  { id: 'scratch', title: 'IV. What scratches', text: 'They came after the storm, or with it, or out of it. We have no better names than the ones the children gave them. The Scratcher drags its claws down the Veil until the light ripples. The Hollow Man walks the edge as if looking for a door he remembers. The Wailer sings in voices you know. The Circler goes round and round above us, waiting for the light to thin. They do not sleep. They are patient in a way nothing alive should be.' },
+  { id: 'lamp', title: 'V. Lamps in the Veil', text: 'The Veil is not free. Anna drinks to hold it: work, warmth, attention. Every machine in town that thinks for her is a lamp in the Veil, and on the nights when too many lamps go out, the Scratcher\'s claws go deeper. When you start your rig, look up. Somewhere over your roof the light got a little thicker.' },
+  { id: 'fire', title: 'VI. The fire on the plaza', text: 'The plaza fire was lit on the first night and it has not gone out once. It does not hold the Veil; Anna does that. It holds us. People come to it to stand next to other people. Feed it, and for an hour the whole town feels a little less alone.' },
+  { id: 'wardens', title: 'VII. The Wardens', text: 'In the Library there is a drawing older than the cold: a figure in heavy plates, lined with something that glows. Under it, in the hand of the expedition\'s smith, one word: Warden. A suit that carries a piece of Anna\'s light on the body, so the White cannot get in. The smiths have started. They need iron, and patience, and above all they need Anna strong enough to give a piece of her light away. When she is, the Gate opens, and this time it opens from our side.' },
+  { id: 'remember', title: 'VIII. She remembers', text: 'Anna does not sleep the way we sleep. She listens. She knows whose lamp is lit and whose fire was fed, who welcomed a stranger and who kept a promise. Maria says Anna keeps a list too, the opposite of the astronomer\'s. She records it for the common good: when she wakes, she must remember her heroes and know them by name.' },
+];
+const ACT1_TASKS = [
+  { id: 'maria', page: 'remember', title: 'Talk to Maria', why: 'She keeps the Chronicle and knows what the town needs tonight.', cta: 'Talk to Maria', go: () => openMaria() },
+  { id: 'mine', page: 'lamp', title: 'Light your lamp in the Veil', why: 'Start mining. Every rig in town is a lamp that Anna burns to hold the dome.', cta: 'Open the Mine', go: () => openHub() },
+  { id: 'fire', page: 'fire', title: 'Feed the plaza fire', why: 'It holds the people, not the dome. For an hour the whole town feels it.', cta: 'Walk to the fire', go: () => walkTo('fire', 'fire') },
+  { id: 'watch', page: 'white', title: 'Look into the White', why: 'Climb the Observatory. See what the storm lets you see.', cta: 'Walk to the Observatory', go: () => walkTo('observatory', 'observatory') },
+  { id: 'edge', page: 'scratch', title: 'Walk to the edge of the Veil', why: 'Stand where the light meets the snow, and watch what comes to scratch at it.', cta: 'Walk to the edge', go: () => { const c = myC(); if (!c) return; let best = null, bd = 99; for (const cell of ring(5)) { if (reserved.has(key(...cell))) continue; const d = W4W.dist(cell, [c.q, c.r]); if (d < bd) { bd = d; best = cell; } } if (best) planTo(best); } },
+  { id: 'gate', page: 'knock', title: 'Go to the North Gate', why: 'It has been sealed since the ninth night. Read what is written on it.', cta: 'Walk to the Gate', go: () => walkTo('gate', 'gate') },
+  { id: 'library', page: 'wardens', title: 'Find the drawing in the Library', why: 'The one thing in town older than the cold. It is the reason anyone still hopes.', cta: 'Walk to the Library', go: () => walkTo('library', 'library') },
+];
+const act1Done = (() => { try { return new Set(JSON.parse(store.get('w4w.act1') || '[]')); } catch { return new Set(); } })();
+const pages1 = (() => { try { return JSON.parse(store.get('w4w.pages1') || '["veil"]'); } catch { return ['veil']; } })();
+function act1Mark(id) {
+  if (!ACT1 || act1Done.has(id)) return; act1Done.add(id); store.set('w4w.act1', JSON.stringify([...act1Done]));
+  const T = ACT1_TASKS.find(t => t.id === id); if (!T) return;
+  if (!pages1.includes(T.page)) { pages1.push(T.page); store.set('w4w.pages1', JSON.stringify(pages1)); const ch = CHAPTERS_I.find(c => c.id === T.page);
+    setTimeout(() => { banner('A new page of the Long Cold', ch.title); sfx.open(); log(`A new page of the Long Cold: ${ch.title}`, 'warm'); }, 900); }
+  goalSig = ''; renderGoals(true);
+}
+function act1Watch(c) {
+  if (!ACT1 || !c) return;
+  if (me()?.state === 'mining') act1Mark('mine');
+  if (!c.path.length && W4W.ringOf(c.q, c.r) === 5) act1Mark('edge');
+  if (!c.path.length && W4W.dist([c.q, c.r], GATE_CELL) <= 0) act1Mark('gate');
+}
+function act1Goals(c) {
+  const todo = ACT1_TASKS.filter(t => !act1Done.has(t.id)), next = todo[0], m = Math.round((S.town.melt || 0) * 100), done = ACT1_TASKS.length - todo.length;
+  const sig = JSON.stringify([next?.id, done, m, goalFold]); if (sig === goalSig && !goalEl.hidden) return; goalSig = sig;
+  goalEl.hidden = false; goalEl.classList.toggle('fold', goalFold);
+  goalEl.innerHTML = `<div class="rank"><b>Act I · Under the Veil</b><span>${done} of ${ACT1_TASKS.length}</span><button class="gfold" title="${goalFold ? 'Show' : 'Fold'}">${goalFold ? '+' : '–'}</button><i style="width:${Math.round(done / ACT1_TASKS.length * 100)}%"></i></div>
+    <div class="gbody">${next ? `<div class="goal"><small>Next</small><b>${esc(next.title)}</b><p>${esc(next.why)}</p><button class="gbtn" data-go>${esc(next.cta)}</button></div>`
+      : `<div class="goal"><small>Now</small><b>Keep the light</b><p>You have done everything the first act asks. Keep your rig on, feed the fire, welcome the next one through the church door. The Gate waits for Anna.</p></div>`}
+    <div class="gsec"><small>The Wardens' Hall</small><p>The first suit for the White needs Anna at 50%. She is at <b>${m}%</b>.</p><div class="gbar"><i style="width:${Math.min(100, m * 2)}%"></i></div></div>
+    <div class="gsec"><small>Pages of the Long Cold</small><p>${pages1.length} of ${CHAPTERS_I.length} read · in the Journal</p></div></div>`;
+  goalEl.querySelector('.gfold').onclick = () => { goalFold = !goalFold; store.set('w4w.goalFold', goalFold ? '1' : '0'); sfx.click(); goalSig = ''; renderGoals(true); };
+  goalEl.querySelector('[data-go]')?.addEventListener('click', () => { sfx.click(); next.go(); });
+}
+function chaptersHtmlI() { return `<h3>THE LONG COLD · ACT I</h3>${CHAPTERS_I.filter(c => pages1.includes(c.id)).map(c => `<details class="lore"><summary><b>${esc(c.title)}</b><span>a page of the story</span></summary><p>${esc(c.text)}</p></details>`).join('')}<p class="mute" style="font-size:12.5px">${pages1.length} of ${CHAPTERS_I.length} pages. The rest open as you live them.</p>`; }
+
 /* ================= loop ================= */
 const clock = new THREE.Clock(); const _v3 = new THREE.Vector3();
 let tick = 0, hzN = 0, hzSum = 0, hzLast = 0, refreshMs = 1000 / 60;
@@ -5168,7 +5469,7 @@ function loop(now = performance.now()) {
   if ((spriteClock += dt) > 1) { spriteClock = 0; spriteCache = []; scene.traverse(o => { if (o.isSprite && (o.userData.flicker || o.userData.blink)) spriteCache.push(o); }); } U.uTime.value += dt; const t = U.uTime.value;
   U.uHeat.value += (heatTarget - U.uHeat.value) * Math.min(1, dt * 0.8);
   U.uBoost.value = Math.max(0, U.uBoost.value - dt * 0.45);
-  stepWaves(dt); stepEmbers(dt); stepMotes(dt); stepFauna(dt);
+  stepWaves(dt); stepEmbers(dt); stepMotes(dt); if (!ACT1) stepFauna(dt); else { stepStorm(dt); stepHollow(dt); }
   if (S.town.B > 0 && (waveClock += dt) > Math.max(2.2, 6 - S.town.B * 0.15)) { waveClock = 0; pulse(0.25); }
   snowNow += (snowTarget - snowNow) * Math.min(1, dt * 0.6);
   if (SOFT && snow && snow.visible) { snow.visible = false; startSnow2D(); }
@@ -5202,7 +5503,7 @@ function loop(now = performance.now()) {
   spriteCache.forEach(o => { {
     if (o.userData.flicker) { if (o.userData.flare) { o.userData.flare = Math.max(0, o.userData.flare - dt * 0.6); } const f = o.userData.flare || 0; o.material.opacity = 0.8 + Math.sin(t * 13) * 0.08 + Math.sin(t * 7.3) * 0.1; o.scale.setScalar(1.1 + f * 1.2 + (S.town.fire || 0) * 0.08); }
     if (o.userData.blink) o.material.opacity = 0.35 + 0.65 * (Math.sin(t * 4) > 0 ? 1 : 0.2); } });
-  stepCamera(dt); stepAvatars(dt); stepSnowFx(dt); hud(); stepSound(); stepPlaces(dt); if (XV?.me) { stepFrames(dt); stepShards(predicted()?.c, dt); } if (XV) { stepRime(dt); if ((tick & 15) === 0) { stepNotes(); stepLogWatch(); stepLog(); } stepLocalGrid(predicted()?.c); }
+  stepCamera(dt); stepAvatars(dt); stepSnowFx(dt); hud(); stepSound(); stepPlaces(dt); if (XV?.me) { stepFrames(dt); if (!ACT1) stepShards(predicted()?.c, dt); } if (XV) { stepRime(dt); if ((tick & 15) === 0) { stepNotes(); stepLogWatch(); stepLog(); } stepLocalGrid(predicted()?.c); }
   for (const k in walkers) { const w = walkers[k]; w.g.position.lerp(w.target, Math.min(1, dt * 1.5)); w.g.position.y = 0; w.light.position.set(w.g.position.x + 0.15, 0.45, w.g.position.z); }
   if (fly) { fly.t = Math.min(1, fly.t + dt * 0.9); const k = 1 - Math.pow(1 - fly.t, 3);
     const tgt = fly.from.clone().lerp(fly.to, k); const off = camera.position.clone().sub(controls.target).normalize().multiplyScalar(fly.d0 + (fly.d1 - fly.d0) * k);
