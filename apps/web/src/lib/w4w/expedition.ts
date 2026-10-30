@@ -86,9 +86,10 @@ async function readMap(uid: string): Promise<Record<string, number>> {
   const [r] = await pipe([['HGET', KX.lread, uid]]); return (safe(r as string | null) as Record<string, number> | null) ?? {}
 }
 async function withLetters<T extends object>(v: T, uid: string, now = Date.now()) {
-  const [all, read] = await Promise.all([lettersAll(), readMap(uid)])
-  const letters = all.filter(l => l.at <= now).slice(-40).map(l => read[l.id] ? { id: l.id, at: l.at, until: l.until, from: l.from, title: l.title, text: l.text, read: read[l.id] }
-    : now < l.until ? { id: l.id, at: l.at, until: l.until, from: l.from, title: l.title, open: true } : { id: l.id, at: l.at, until: l.until, title: l.title, missed: true })
+  const [all, read, cnt] = await Promise.all([lettersAll(), readMap(uid), pipe([['HGETALL', KX.letters + ':n']]).then(([m]) => pairs(m))])
+  const letters = all.filter(l => l.at <= now).slice(-40).map(l => { const reads = Number(cnt[l.id] ?? 0)
+    return read[l.id] ? { id: l.id, at: l.at, until: l.until, from: l.from, title: l.title, text: l.text, read: read[l.id], reads }
+      : now < l.until ? { id: l.id, at: l.at, until: l.until, from: l.from, title: l.title, open: true, reads } : { id: l.id, at: l.at, until: l.until, from: l.from, title: l.title, missed: true, reads } })
   return { ...v, letters }
 }
 async function readLetter(ws: W.WState, d: W.Dirty, uid: string, id: string): Promise<{ ok: true; data: object } | { ok: false; error: string; status?: number }> {
