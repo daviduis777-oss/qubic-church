@@ -427,6 +427,8 @@ body{font-family:var(--f-body)}
 .lbl.walker{color:#dbe8ff}
 .lbl.demo{opacity:.78}
 .lbl.place{font-family:var(--f-display);font-style:italic;font-weight:600;font-size:14px;letter-spacing:.02em;color:#f1e6d0;background:linear-gradient(180deg,rgba(40,32,24,.85),rgba(18,14,10,.85));box-shadow:inset 0 1px 0 rgba(255,220,170,.2),0 0 0 1px rgba(0,0,0,.7)}
+.lbl.pyl{font-size:10.5px;padding:2px 7px 1px;color:#ffd79a;background:linear-gradient(180deg,rgba(60,32,10,.85),rgba(24,12,4,.85))} .lbl.pyl.crack{color:#ffd0c4;background:linear-gradient(180deg,#5a1208,#2a0602);box-shadow:0 0 0 1px #000,0 0 12px rgba(255,60,30,.6)}
+.pbars{display:grid;gap:5px} .pbar{display:grid;grid-template-columns:150px 1fr 44px;align-items:center;gap:8px;font-size:13px} .pbar i{height:7px;border-radius:4px;background:rgba(0,0,0,.5);overflow:hidden;box-shadow:inset 0 0 0 1px rgba(255,166,74,.2)} .pbar i b{display:block;height:100%;background:linear-gradient(90deg,#c4561a,#ffb35a)} .pbar.crack i b{background:linear-gradient(90deg,#8a1208,#ff3a1a)} .pbar.on span{color:#ffd79a;font-weight:600} .pbar em{font-style:normal;text-align:right;color:#cdbb9c} .pbar.crack em{color:#ff7a5a}
 .lbl.road{font-family:var(--f-display);font-style:italic;font-size:12px;color:#e8d8b8;background:rgba(30,22,14,.6);box-shadow:none;opacity:.85} .lbl.road::after{display:none}
 
 /* ---------- the instrument plate: warmth, health, energy, load ---------- */
@@ -648,6 +650,15 @@ body:has(#panel.open) #veil{visibility:hidden}
 #goals ul{list-style:none;margin:0;padding:0;display:grid;gap:4px} #goals li{font-size:12.5px;line-height:1.35} #goals li b{display:block;font-weight:600;color:#e8dfcc} #goals li span{color:var(--kmute)} #goals li.done b{color:#7fe06a} #goals li.done span{color:#6a8a60}
 #goals .gbar{height:6px;margin-top:6px;border-radius:3px;background:rgba(0,0,0,.5);box-shadow:inset 0 0 0 1px rgba(201,160,74,.25);overflow:hidden} #goals .gbar i{display:block;height:100%;background:linear-gradient(90deg,#5ab8ff,#bfe8ff);box-shadow:0 0 8px rgba(143,208,255,.8)}
 body.act1 #dock button[data-act=bag],body.act1 #dock button[data-act=craft],body.act1 #dock button[data-act=map]{display:none}
+#goals .wall{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;height:34px;margin:2px 0 6px} #goals .wall i{position:relative;border-radius:3px;background:rgba(0,0,0,.5);box-shadow:inset 0 0 0 1px rgba(255,166,74,.25);overflow:hidden} #goals .wall i b{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(0deg,#c4561a,#ffc46b)} #goals .wall i.crack b{background:linear-gradient(0deg,#7a1006,#ff3a1a)} #goals .wall i.pr{box-shadow:inset 0 0 0 1px #ff6a3a,0 0 8px rgba(255,90,40,.6)}
+#panel[data-kind=chronicle] .book{border-color:rgba(90,60,30,.35)} #panel[data-kind=chronicle] .book b{color:#2b241b!important} #panel[data-kind=chronicle] .book span{color:#6d5a42!important} #panel[data-kind=chronicle] .book:hover{background:rgba(120,90,50,.08)!important}
+.bestiary{display:grid;gap:10px;margin-bottom:12px} .bnote{padding:12px 14px;border-radius:3px;background:var(--tex-grain),linear-gradient(90deg,#d8c9a6,#ebe1c8 6%,#efe6cf);color:#2b241b;box-shadow:0 2px 10px rgba(0,0,0,.5)}
+.bnote small{display:block;font-family:var(--f-label);font-weight:600;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#7a1e16;margin-bottom:5px} .bnote p{margin:0;font-family:var(--f-print);font-style:italic;font-size:15.5px;line-height:1.5}
+.bnote.locked{background:rgba(0,0,0,.35);color:#8a8070;box-shadow:inset 0 0 0 1px rgba(201,160,74,.2)} .bnote.locked small{color:#6d6658} .bnote.locked p{font-style:normal;font-family:var(--f-body);font-size:13px}
+#goals .fpick{display:block;width:100%;margin-top:7px;padding:8px 10px;border:0;border-radius:5px;text-align:left;cursor:pointer;color:var(--kink);background:rgba(0,0,0,.35);box-shadow:inset 0 0 0 1px rgba(201,160,74,.3)} #goals .fpick:hover{box-shadow:inset 0 0 0 1px #f0c96a;background:rgba(240,201,106,.08)}
+#goals .fpick b{display:block;font-family:var(--f-display);font-size:14.5px;color:#f0c96a} #goals .fpick span{display:block;font-size:12px;line-height:1.4;color:#cfc6b4;margin-top:2px} #goals .fpick em{display:block;font-style:normal;font-size:11px;color:#8a8070;margin-top:3px}
+#goals .roles{list-style:none;margin:4px 0 6px;padding:0;display:grid;gap:4px} #goals .roles li{font-size:13px;color:#e8dfcc;padding-left:2px} #goals .roles li.done{color:#7fe06a}
+#goals .gsec a{color:#f0c96a}
 #goals .gsec p{margin:0;font-size:12.5px;color:#cfc6b4} #goals .gsec p b{color:#9fd8ff} #goals .gnext{margin:0;font-size:11.5px;color:#8a8070;font-style:italic}
 .lbl.shard{color:#06223a;background:linear-gradient(180deg,#d8f1ff,#8fc9f2);box-shadow:0 0 0 1px rgba(0,30,60,.7),0 0 14px rgba(143,208,255,.7)}
 @media (max-width: 760px){ #goals{top:auto;bottom:150px;right:8px;width:min(300px,calc(100vw - 16px))} }
@@ -834,6 +845,11 @@ var W4W = (() => {
     ORDER_POOL: () => ORDER_POOL,
     PASSES: () => PASSES,
     POCKETS: () => POCKETS,
+    PYLON_COST: () => PYLON_COST,
+    PYLON_GIVE: () => PYLON_GIVE,
+    PYLON_N: () => PYLON_N,
+    PYLON_PRESS_MS: () => PYLON_PRESS_MS,
+    PYLON_WAIT: () => PYLON_WAIT,
     RANKS: () => RANKS,
     RECIPES: () => RECIPES,
     RIDGE_RING: () => RIDGE_RING,
@@ -889,6 +905,10 @@ var W4W = (() => {
     ordersFor: () => ordersFor,
     passable: () => passable,
     planTrip: () => planTrip,
+    pressedAt: () => pressedAt,
+    pylonAngle: () => pylonAngle,
+    pylonCell: () => pylonCell,
+    pylonNow: () => pylonNow,
     rankName: () => rankName,
     rankOf: () => rankOf,
     resourceOf: () => resourceOf,
@@ -1274,6 +1294,33 @@ var W4W = (() => {
     const d = new Date(t);
     return d.getUTCDay() === 3 && d.getUTCHours() >= 12 && d.getUTCHours() < 14;
   }
+  const PYLON_N = 6;
+  const PYLON_GIVE = 15;
+  const PYLON_COST = 12;
+  const PYLON_WAIT = 20 * 6e4;
+  const PYLON_PRESS_MS = 6 * 36e5;
+  const pylonAngle = (i) => (i + 0.5) * Math.PI / 3;
+  function pylonCell(i) {
+    const a = pylonAngle(i), R = DOME_RADIUS - 2.4, x = Math.cos(a) * R, z = Math.sin(a) * R;
+    const r = z / 1.7320508, q = x / 2 - r / 2, s = -q - r;
+    let rq = Math.round(q), rr = Math.round(r);
+    const rs = Math.round(s), dq = Math.abs(rq - q), dr = Math.abs(rr - r), ds = Math.abs(rs - s);
+    if (dq > dr && dq > ds) rq = -rr - rs;
+    else if (dr > ds) rr = -rq - rs;
+    return [rq, rr];
+  }
+  const pressedAt = (t) => Math.floor(hash(Math.floor(t / PYLON_PRESS_MS), 77, 5) * PYLON_N);
+  const pylonRate = (i, t, veil) => (1.5 + 5 * (1 - veil)) * (pressedAt(t) === i ? 3 : 0.7);
+  function pylonNow(p, i, now, veil) {
+    let s = p?.s ?? 80, t = p?.t ?? now;
+    if (now - t > 7 * 24 * 36e5) t = now - 7 * 24 * 36e5;
+    while (t < now && s > 0) {
+      const end = Math.min(now, (Math.floor(t / 36e5) + 1) * 36e5);
+      s -= pylonRate(i, t, veil) * (end - t) / 36e5;
+      t = end;
+    }
+    return Math.max(0, Math.min(100, s));
+  }
   const VEIL_FULL = 3e4;
   const veilOf = (power) => Math.max(0, Math.min(1, Math.log10(1 + power / 400) / Math.log10(1 + VEIL_FULL / 400)));
   const VEIL_COLD = 42;
@@ -1283,6 +1330,10 @@ var W4W = (() => {
     if (STAGE === 1 && insideDome(q, r)) {
       const V = ctx.veil ?? 0.6, d = Math.hypot(x, z) / DOME_RADIUS;
       let c2 = VEIL_COLD * Math.pow(1 - V, 1.2) * (0.25 + 0.75 * d);
+      if (ctx.pylons) for (let i = 0; i < PYLON_N; i++) {
+        const a = pylonAngle(i), px = Math.cos(a) * (DOME_RADIUS - 2.4), pz = Math.sin(a) * (DOME_RADIUS - 2.4), prox = Math.max(0, 1 - Math.hypot(x - px, z - pz) / 10);
+        if (prox > 0) c2 += 18 * Math.pow(1 - (ctx.pylons[i] ?? 80) / 100, 1.5) * prox;
+      }
       if (greyAt(t)) c2 -= 3;
       if (bellAt(t)) c2 += 8;
       return Math.max(0, c2) * weatherAt(t, ctx.netStorm).mult;
@@ -1529,7 +1580,8 @@ var W4W = (() => {
     const t = townOfState(ws);
     const cells = Object.values(ws.houses).filter((x) => x.q != null && x.r != null).map((x) => [x.q, x.r]);
     const home = ws.chars[uid]?.home ?? [ws.houses[uid]?.q ?? 0, ws.houses[uid]?.r ?? 0];
-    return { veil: t.veil, heatR: t.heatR, holds: t.holds, netStorm: false, shelters: townShelters(cells), home: key(home[0], home[1]), hearths: Object.fromEntries(Object.entries(ws.hearths).map(([k, v]) => [k, v.until])), insulation: INSULATION_T1, rime: ws.rimeTrail };
+    const pyl = Array.from({ length: PYLON_N }, (_, i) => pylonNow(ws.pylons?.[i], i, ws.now, t.veil));
+    return { pylons: pyl, veil: t.veil, heatR: t.heatR, holds: t.holds, netStorm: false, shelters: townShelters(cells), home: key(home[0], home[1]), hearths: Object.fromEntries(Object.entries(ws.hearths).map(([k, v]) => [k, v.until])), insulation: INSULATION_T1, rime: ws.rimeTrail };
   }
   const nickIn = (ws, uid) => ws.houses[uid]?.nick ?? "someone";
   const zoneName = (z) => ZONES[z]?.name ?? "the far cold";
@@ -1604,6 +1656,12 @@ var W4W = (() => {
       anna: ws.anna ?? { n: 0, heroes: {} },
       orders: ordersFor(dayOf(ws.now)),
       delivered: ws.delivered?.day === dayOf(ws.now) ? ws.delivered.n : 0,
+      pylons: Array.from({ length: PYLON_N }, (_, i) => {
+        const p = ws.pylons?.[i];
+        return { i, at: pylonCell(i), s: pylonNow(p, i, ws.now, veilOf(townOfState(ws).power)), nick: p?.nick ?? null, at_t: p?.at ?? 0 };
+      }),
+      pressed: pressedAt(ws.now),
+      pressNext: (Math.floor(ws.now / PYLON_PRESS_MS) + 1) * PYLON_PRESS_MS,
       ranks: Object.fromEntries(Object.entries(ws.chars).map(([k, x]) => [k, rankOf(x.renown ?? 0)]))
     };
   }
@@ -1783,7 +1841,7 @@ var W4W = (() => {
         if (!["worn", "pack", "home"].includes(to)) return fail("Where to?");
         const atHome = key(...here) === key(...c.home);
         if ((to === "home" || items[id] === "home") && !atHome) return fail("That stays at home. Go home first.");
-        if (to === "worn" && (it.slot === "tool" || it.slot === "flask")) return fail("That goes in the bag, not on you.");
+        if (to === "worn" && (it.slot === "tool" || it.slot === "flask")) return fail("That goes in the bag.");
         if (to === "pack" && items[id] !== "pack" && slotsUsed(c) + 1 > bagSize(c)) return fail("Your bag is full.");
         if (it.slot === "bag" && items[id] === "worn" && to !== "worn") return fail("Put on another bag instead; this one holds everything you carry.");
         if (it.slot === "bag" && to === "worn") {
@@ -1825,6 +1883,24 @@ var W4W = (() => {
         if (key(...here) !== key(SPECIAL.library[0], SPECIAL.library[1])) return fail("The book stays in the Library. Go there to copy it.");
         const kn = knownOf(c);
         for (const id of Object.keys(ws.library ?? {})) if (!kn.includes(id)) kn.push(id);
+        return ok();
+      }
+      case "tend": {
+        const i = Number(b.i);
+        if (!(i >= 0 && i < PYLON_N)) return fail("Which pylon?");
+        if (c.path.length) return fail("Stop walking first.");
+        if (dist(here, pylonCell(i)) > 1) return fail("Stand next to the pylon.");
+        const last = c.tended?.[i] ?? 0;
+        if (now - last < PYLON_WAIT) return fail(`You gave this pylon your warmth not long ago. Again in ${Math.ceil((PYLON_WAIT - (now - last)) / 6e4)} min.`);
+        if (c.warmth < PYLON_COST + 8) return fail("You are too cold to give any warmth. Get indoors first.");
+        ws.pylons ?? (ws.pylons = {});
+        const V = veilOf(townOfState(ws).power), cur = pylonNow(ws.pylons[i], i, now, V);
+        ws.pylons[i] = { s: Math.min(100, cur + PYLON_GIVE), t: now, by: uid, nick: nickIn(ws, uid), at: now };
+        (d.pylons ?? (d.pylons = /* @__PURE__ */ new Set())).add(String(i));
+        c.warmth -= PYLON_COST;
+        (c.tended ?? (c.tended = {}))[i] = now;
+        addRenown(c, cur < 30 ? 4 : 2);
+        d.feed.push({ id: `py${uid}${i}${now}`, t: now, topic: "pylon", by: uid, data: { nick: nickIn(ws, uid), i, s: Math.round(ws.pylons[i].s), was: Math.round(cur) } });
         return ok();
       }
       case "pick": {
@@ -2130,7 +2206,7 @@ function allResidents() {
 function houseView(h) { // normalise a stored house to what the scene draws
   return { id: h.id, nick: h.nick || 'someone', at: [h.q ?? h.at?.[0], h.r ?? h.at?.[1]], gpus: h.gpus || 1, hw: h.hw || '', state: h.state || 'building', sol: h.sol || 0,
     since: h.since || EPOCH, phase: h.phase || 0, stage: Math.min(2, h.phase || 0), demo: !!h.demo, founder: !!h.founder,
-    letters: 0, lanterns: 0, seals: h.state === 'mining' ? 1 : 0, sprouts: h.state === 'mining' ? 1 : 0, wood: h.wood || 0, lastWood: h.lastWood || 0, welcomes: h.welcomes || [], createdAt: h.createdAt || 0, real: !h.demo && h.id !== 'me', own: !!h.own, worker: h.worker || '', walletShort: h.walletShort || '', confirmed: !!h.confirmed, backend: h.backend || '' };
+    startedAt: h.startedAt || (h.demo ? Date.now() - (37 + (String(h.id || h.nick).length * 61) % 700) * 3600e3 : 0), letters: 0, lanterns: 0, seals: h.state === 'mining' ? 1 : 0, sprouts: h.state === 'mining' ? 1 : 0, wood: h.wood || 0, lastWood: h.lastWood || 0, welcomes: h.welcomes || [], faction: h.faction || (h.demo ? ['keepers', 'walkers'][String(h.id || h.nick).length % 2] : null), createdAt: h.createdAt || 0, real: !h.demo && h.id !== 'me', own: !!h.own, worker: h.worker || '', walletShort: h.walletShort || '', confirmed: !!h.confirmed, backend: h.backend || '' };
 }
 function ordersAll() { return [...S.demoOrders, ...Object.values(S.orders)]; }
 function refreshTown(baseline = false) {
@@ -2164,7 +2240,7 @@ function refreshTown(baseline = false) {
   S.town = { res, people, online, deeds, power, fire, welcomes, parts, frostParts, W, F, B: W - F, melt: Math.min(1, melt / MELT_TARGET), level: lv };
   if (prevLv !== undefined && lv > prevLv) { banner(LEVELS[lv][0], 'AIGARTH LEVELLED UP'); if (me()) record(`${me().nick} was there when Aigarth reached ${LEVELS[lv][0]}`); }
   // houses
-  res.forEach(h => { const cur = houses[h.id]; const sig = JSON.stringify([h.at, h.state, h.gpus, h.lanterns, h.cracked, h.phase, h.welcomes?.length]); if (!cur || cur.sig !== sig) { makeHouse(h, h.id === S.uid || h.id === 'me'); houses[h.id].sig = sig; } });
+  res.forEach(h => { const cur = houses[h.id]; const sig = JSON.stringify([h.at, h.state, h.gpus, h.lanterns, h.cracked, h.phase, h.welcomes?.length, growthOf(h)]); if (!cur || cur.sig !== sig) { makeHouse(h, h.id === S.uid || h.id === 'me'); houses[h.id].sig = sig; } });
   Object.keys(houses).forEach(id => { if (!res.find(h => h.id === id)) disposeHouse(id); });
   drawMeter(); updateIce();
   if (panelKind === 'meter') openMeter();
@@ -2238,6 +2314,7 @@ function build() {
   buildSeams();
   Object.values(SPECIAL).forEach(([q, r]) => reserved.add(key(q, r))); DEMO.forEach(n => reserved.add(key(...n.at))); STAGE2.forEach(s => reserved.add(key(...s.at)));
   ring(1).forEach(([q, r]) => reserved.add(key(q, r)));
+  for (let i = 0; i < W4W.PYLON_N; i++) reserved.add(key(...W4W.pylonCell(i)));
   buildCore();
   const ch = place('church', ...SPECIAL.church, { rot: Math.PI, scale: 1.55 }); tag(ch, 'church', 'church');
   const cp = HX(...SPECIAL.church); glowDecal(cp.x, cp.z + 0.9, 2.2, 0xffd6a0, 0.5); sprite(GLOW, cp.x, 0.75, cp.z + 0.95, 0.9, 0xffc070, 0.9);
@@ -2476,6 +2553,10 @@ function updateIce() {
 }
 
 /* ================= houses ================= */
+/** A house grows with the hours its rig has been holding the Veil. */
+const GROWTH = [[1, 'Lamp in the window', 'the porch lamp is lit'], [24, 'Warm chimney', 'smoke and a glow from the chimney'], [72, 'The pennant', 'a pennant on the roof, seen from the plaza'], [168, 'Woodpile and second hearth', 'a woodpile by the wall, a second chimney'], [720, 'The watch-lamp', 'a tall lamp beside the house that the whole ring can see']];
+const uptimeH = d => d.state === 'mining' && d.startedAt ? (Date.now() - d.startedAt) / 36e5 : 0;
+const growthOf = d => GROWTH.filter(g => uptimeH(d) >= g[0]).length;
 function modelFor(d) { if (d.state === 'ruin') return 'destroyed'; if (d.state === 'building') return ['stage_A', 'stage_B', 'stage_C'][Math.min(2, d.stage || 0)]; return d.gpus >= 5 ? 'blacksmith' : d.gpus >= 3 ? 'home_B' : 'home_A'; }
 function makeHouse(d, mine) {
   if (houses[d.id]) disposeHouse(d.id);
@@ -2502,6 +2583,15 @@ function makeHouse(d, mine) {
   const T = Math.min(Math.floor((d.sprouts || 0) / 4), 5);
   for (let i = 0; i < T; i++) { const a = Math.PI + (i - (T - 1) / 2) * 0.5; const v = facing.clone().applyAxisAngle(new THREE.Vector3(0, 1, 0), a).multiplyScalar(0.95);
     const t = kit.tree_A.clone(true); t.position.set(p.x + v.x, 0, p.z + v.z); t.scale.setScalar(0.45 + i * 0.03); t.traverse(m => { if (m.isMesh) m.castShadow = true; }); g.add(t); }
+  // what the uptime has grown on the house
+  const G = growthOf(d), side = new THREE.Vector3(-facing.z, 0, facing.x);
+  if (G >= 2) { fx.lights.push(sprite(GLOW, p.x + facing.z * 0.25, (d.gpus >= 5 ? 1.25 : 1.15) + 0.05, p.z - facing.x * 0.25, 0.55, 0xff9a40, 0.8)); }
+  if (G >= 3) { const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.7, 5), new THREE.MeshStandardMaterial({ color: 0x2a2018 })); pole.position.set(p.x - facing.z * 0.1, 1.45, p.z + facing.x * 0.1); g.add(pole);
+    const flag = new THREE.Mesh(new THREE.PlaneGeometry(0.32, 0.18), new THREE.MeshStandardMaterial({ color: mine ? 0xc8541a : 0x8a2a1a, side: THREE.DoubleSide, emissive: 0x401006, emissiveIntensity: 0.4 })); flag.position.set(pole.position.x + side.x * 0.16, 1.7, pole.position.z + side.z * 0.16); flag.rotation.y = Math.atan2(side.x, side.z) + Math.PI / 2; g.add(flag); }
+  if (G >= 4) { const w = place('lumber', q, r, { scale: 0.55, rot: rot + 1.2 }); if (w) { w.position.set(p.x + side.x * 0.75, 0, p.z + side.z * 0.75); g.add(w); }
+    fx.lights.push(sprite(GLOW, p.x - facing.z * 0.35 - facing.x * 0.2, 1.2, p.z + facing.x * 0.35 - facing.z * 0.2, 0.45, 0xff8a30, 0.7)); }
+  if (G >= 5) { const v = p.clone().add(side.clone().multiplyScalar(-0.85)); const post = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.045, 1.6, 6), new THREE.MeshStandardMaterial({ color: 0x241c18, roughness: 0.8 })); post.position.set(v.x, 0.8, v.z); g.add(post);
+    fx.lights.push(sprite(GLOW, v.x, 1.65, v.z, 1.0, 0xffc070, 1), glowDecal(v.x, v.z, 2.2, 0xffb060, 0.5)); }
   if (d.founder) { const f = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 1.2, 5), new THREE.MeshStandardMaterial({ color: 0x2a2018 })); f.position.set(p.x - facing.z * 0.8, 0.6, p.z + facing.x * 0.8); g.add(f); fx.lights.push(sprite(GLOW, f.position.x, 1.25, f.position.z, 0.45, 0x9fc3ff, 1)); }
   tag(g, 'house', d.id);
   const cls = mine ? 'me' : d.state === 'nosignal' ? 'red' : d.demo ? 'demo' : '';
@@ -2590,7 +2680,7 @@ function fireFlare() { if (fireSprite) { fireSprite.scale.setScalar(2.2); fireSp
 async function addWood() {
   const cur = me(); if (!cur) { say('Settle first: connect a rig at the church, then you can tend the fire.'); return; }
   const wait = 3600e3 - (Date.now() - (cur.lastWood || 0));
-  act1Mark('fire');
+  act1Mark('fire'); dailyMark('fire');
   if (wait > 0) { say(`You fed the fire not long ago. It can take your wood again in ${Math.ceil(wait / 60000)} min. Someone else can add theirs now.`); return; }
   await saveMe({ wood: (cur.wood || 0) + 1, lastWood: Date.now() }); fireFlare(); pulse(0.9);
   room?.emit('wood', { nick: cur.nick }).catch(() => {});
@@ -2667,8 +2757,10 @@ function pick(e, click) {
   const k = h.object.userData.kind;
   if (k === 'chthon') return openChthon();
   if (k === 'beast') return openBeast(id);
+  if (k === 'pylon' && !hasChar()) return;
   if (walkTo(k, id)) return;
   if (k === 'gate') return openGate();
+  if (k === 'pylon') return openPylon(+id);
   if (k === 'church') openChurch(); else if (k === 'board') openPlaza(); else if (k === 'core') openCore(); else if (k === 'fire') addWood();
   else if (k === 'house') openHouse(id); else if (k === 'observatory') openObservatory(); else if (k === 'stage2') openStage2(id); else if (k === 'library') openLibrary(); else if (k === 'mine') openMine();
 }
@@ -2730,7 +2822,7 @@ const FAQ = [
     ['Can I go outside the dome?', 'Not in Act I. The dome is the Veil: Anna\'s light, raised in her sleep the night the cold came. Outside it is the White, a storm that has not stopped once, and the things that scratch at the light. The North Gate stays sealed until the Wardens are ready: suits that carry a piece of Anna\'s light. They need Anna at 50%. Everything you do inside, above all keeping your rig on, brings that day closer. Act II begins at the Gate.'],
     ['How do trips work?', 'Click a place beyond the forest. The route appears cell by cell with the arrival time for the weather ahead and the warmth you would arrive with. Click Set out, or the same place again. Trips are real time: about 30 seconds a cell in The Edge, 45 in the Black Pines, a minute in the Stone Teeth, slower in wind and much slower in a blizzard. You can close the game; the trip goes on. Move the view with WASD, the arrows, or by pushing the mouse against the edge of the screen.'],
     ['Why did my character stop in the middle of nowhere?', 'In wind, and worse in a blizzard, the trail gets lost: a step takes you somewhere you did not choose and you stop there. Pick a direction again. In calm weather the trail holds.'],
-    ['What is the tall dark thing out there?', 'The Library calls it Chthon. It wanders the Wastes and never comes past the forest edge into town. It does not hunt, but now and then it turns toward someone in the snow, and if it reaches you, you fall at once. If you see it near, walk the other way.'],
+    ['What is the tall dark thing out there?', 'The Library calls it Chthon. It wanders the Wastes and never comes past the forest edge into town. Now and then it turns toward someone in the snow, and if it reaches you, you fall at once. If you see it near, walk the other way.'],
     ['What do the bars mean?', 'Warmth drops wherever the cold is stronger than your clothing, faster in wind and blizzards. Below 25 warmth the frost starts taking health. Energy goes on walking and comes back by a fire. Load is what you carry: past the limit every step costs double.'],
     ['Is the town always safe?', 'Inside any building you are completely safe: you step in and vanish from the map. On the streets, no. When the town holds, its warm circle keeps you safe. When the frost is winning, even the streets between houses bite, and the Library at the edge is a cold walk. Houses, the church and the plaza fire always warm you.'],
     ['How do I gather?', 'Take your tools from home first: the bow saw for wood and resin, the pickaxe for stone and flint. Use the Take buttons by your door, or right-click them in the home chest (key I). Out past the line, stand next to a tree or a rock and press Saw or Break. Dry grass needs no tool: pull it from open snow in The Edge and the Black Pines.'],
@@ -2738,8 +2830,8 @@ const FAQ = [
     ['How do I craft?', 'Open the Workbench (key K). At home both the bag and the home chest count; away from home you can only twist cord. Grass makes cord; resin and wood make pitch; wood makes charcoal. From those come flint tools that work twice as fast, quilted clothes that keep you far warmer, bigger bags, hearth kits you can carry, and the stone thermos.'],
     ['What is the thermos for?', 'It is the hardest thing to make: stone, flint from the Stone Teeth and pine pitch. Fill it at home with 2 charcoal for 3 sips. Each sip gives back 30 warmth wherever you are. The deep trips need it.'],
     ['What can I do out there?', 'Gather wood and stone in The Edge and the Black Pines, resin among the pines and flint in the Stone Teeth. With 6 wood, 4 stone and 1 flint you can build a hearth out in the cold. Anyone can warm up at it and feed it with wood; it burns out unless someone does.'],
-    ['I froze. What now?', 'You lie frozen at your own house for 24 hours. Nothing makes it faster: not money, not mining, not anyone. Your rig keeps working the whole time. What you carried stays where you fell for 24 hours.'],
-    ['Can I get my pack back?', 'Not yourself. Only someone else can pick up a frozen pack and carry it to town. Post where it lies on the board and make a deal with whoever goes for it. After 24 hours the snow takes it.'],
+    ['I froze. What now?', 'You lie frozen at your own house for 24 hours. Nothing makes it faster. Your rig keeps working the whole time. What you carried stays where you fell for 24 hours.'],
+    ['Can I get my pack back?', 'Only someone else can pick up a frozen pack and carry it to town. Post where it lies on the board and make a deal with whoever goes for it. After 24 hours the snow takes it.'],
   ]],
   ['Getting started', [
     ['What is this place?', 'Aigarth is a shared winter town. Anna sleeps frozen in the ice at its centre; the town stays warm only if people keep their machines on, help each other and feed the fire. Maria, her twin, keeps the Chronicle and helps you set up.'],
@@ -2753,7 +2845,7 @@ const FAQ = [
     ['Who pays me, and when?', 'The pool pays you directly, in QUBIC, to your address, once a week: usually about a week after an epoch closes on Wednesday 12:00 UTC. Qubic Church never holds your coins.'],
     ['What is the 7%?', 'The pool fee. It is in line with the big Qubic pools: qubic.li takes 7%, JetSki 8%, Minerlab and Apool 10% (miningboard.com, October 2026). 4% of what your rig mines supports Qubic Church. You keep 93%, and Maria shows it before every connection.'],
     ['Will mining hurt my computer?', 'It works your card or processor hard, like a heavy game: warmer and louder. Keep it ventilated, watch laptops, and stop whenever you want. Nothing in the game needs it on all the time.'],
-    ['Is the miner safe to download?', 'Download it only from the pool\'s own Start Mining page; Maria links it. It is CODED\'s software, not ours. Some antivirus programs flag every miner; that is why you should never take one from anywhere else.'],
+    ['Is the miner safe to download?', 'Download it only from the pool\'s own Start Mining page; Maria links it. It is CODED\'s software. Some antivirus programs flag every miner; that is why you should never take one from anywhere else.'],
     ['I started the miner. Why does it say "pool confirmation pending"?', 'Until the pool reports your worker to the game, your house runs on your word, and the Chronicle says so honestly. When the pool confirms it, the label goes.'],
     ['Hours in and no solutions?', 'Normal at first: solutions come in their own time. Check the miner runs once, with your own worker name, and leave it. See <b>Mining · When it looks broken</b>.'],
     ['Can I mine on several computers?', 'Yes, with the same address and a different worker name on each machine. In the town one person keeps one house.'],
@@ -2763,7 +2855,7 @@ const FAQ = [
   ['Wallet and safety', [
     ['Do you need my seed?', 'Never. The seed is 55 small letters and stays on paper. Maria will never ask for it, and if you paste one she wipes it. Anyone asking for a seed is stealing.'],
     ['Where is my address kept?', 'Only in your browser. The town shows the first four and the last five letters, nothing more.'],
-    ['I lost my seed. Can you help?', 'No one can: not us, not the pool. That is why it lives on paper, in a safe place.'],
+    ['I lost my seed. Can you help?', 'No one can. That is why it lives on paper, in a safe place.'],
     ['Someone in a DM offers to help me set up', 'Ignore it. Help in this town happens in the open, on the orders board. Nobody here sells mining, places or returns.'],
   ]],
   ['The town', [
@@ -2912,7 +3004,7 @@ async function mmStarted() {
   await saveMe({ state: 'mining', confirmed: false, startedAt: Date.now() });
   banner('ANNA · LINKED', `${h.hw.toUpperCase()} → THE CORE`); pulse(1.3); setTimeout(() => pulse(0.8), 900);
   record(`${h.nick} started their own machine: ${h.hw}, worker ${h.worker}. Pool confirmation pending`);
-  say("I won't forget. Until the pool confirms your worker, the Chronicle calls it your word, not the pool's. That is fair to everyone.");
+  say("I won't forget. Until the pool confirms your worker, the Chronicle records it on your word. That is fair to everyone.");
   openHouse(me().id); flyTo(HX(...houseView(me()).at));
 }
 async function mmUnplug() { const h = me(); if (!h) return; await saveMe({ state: 'stopped' }); record(`${h.nick} unplugged ${h.hw}`); say('Unplugged. Stop the miner on your computer too. Your house keeps its place and its record.'); openHub('machine'); }
@@ -2977,10 +3069,10 @@ const HUB = {
       <div class="hcard"><div class="hk">JUDGE BY SOLUTIONS</div><p>it/s is speed, like lottery tickets per minute. Solutions are what count. A fast card behind a weak processor is a race car behind a blocked fuel line.</p></div>
     </div>
     <div class="hcard"><div class="hk">ONE WEEK OF MINING</div><ol class="timeline"><li><b>Wednesday 12:00 UTC</b>A new epoch begins. The miner picks up the new task by itself.</li><li><b>All week</b>Your machine searches; the pool collects its solutions.</li><li><b>Next Wednesday 12:00 UTC</b>The epoch is sealed. The church bell rings and the Chronicle seals it.</li><li><b>About a week later</b>The pool pays in QUBIC to your address.</li></ol></div>
-    <div class="hcard warn"><div class="hk">WHAT CHANGES ON 18 NOVEMBER</div><p>From epoch 240 the computors feed live bitcoin data into the network; after that, places are won by how accurately networks call the hours. Expect the rules, and the numbers in this town, to move. Anna records what you do, not what you will earn.</p></div>`,
+    <div class="hcard warn"><div class="hk">WHAT CHANGES ON 18 NOVEMBER</div><p>From epoch 240 the computors feed live bitcoin data into the network; after that, places are won by how accurately networks call the hours. Expect the rules, and the numbers in this town, to move. Anna records what you do.</p></div>`,
   hw: () => `<div class="hcard"><div class="hk">GRAPHICS CARDS</div>${tbl(['Card', 'Role', 'Notes'], [['RTX 5070 Ti (16 GB)', 'Start here', 'The value card when it sits behind a strong processor.'], ['RTX 5090 / 4090', 'Fast, pricey', 'Top speed, top rent.'], ['RTX 3090 / 3080', 'Old but useful', 'Slower, often good value.'], ['AMD Radeon', 'Bumpy', 'Works some epochs, rougher than NVIDIA. Not for a first run.']])}<p class="tnote">16 GB of video memory is plenty.</p></div>
     <div class="hcard"><div class="hk">PROCESSORS</div>${tbl(['Family', 'Verdict', 'Why'], [['Ryzen / Threadripper Zen 4 and 5', 'Golden', 'Full AVX-512, many fast cores.'], ['EPYC 9004 / 9005', 'Golden', 'Server grade.'], ['Recent Xeon Scalable', 'Good', 'Real AVX-512.'], ['Xeon E5 v2 to v4', 'Skip', 'Old, no AVX-512.'], ['Intel Core Ultra', 'Skip', 'AVX-512 was dropped.'], ['Two-core budget chips', 'Skip', 'They choke the cards.']])}<p class="tnote">Aim for 8 processor cores per card and PCIe x8 or better.</p></div>
-    <div class="hcard"><div class="hk">SEEN ON THE POOL (23 OCTOBER, BETA)</div><div class="kv"><span>Ryzen 9 7950X</span><b>~30 it/s</b><span>Ryzen 9 7950X3D</span><b>~25 it/s</b><span>Apple M3 Pro</span><b>~40 it/s</b></div><p class="tnote">Speed, not money, and measured before the rules changed again.</p></div>`,
+    <div class="hcard"><div class="hk">SEEN ON THE POOL (23 OCTOBER, BETA)</div><div class="kv"><span>Ryzen 9 7950X</span><b>~30 it/s</b><span>Ryzen 9 7950X3D</span><b>~25 it/s</b><span>Apple M3 Pro</span><b>~40 it/s</b></div><p class="tnote">Speed only, measured before the rules changed again.</p></div>`,
   net: () => `<div class="hgrid">
       <div class="hcard hero"><div class="hk">THIS EPOCH</div><div class="big">E${EPOCH}</div><p>Sealed in <b>${untilNext()}</b>, on Wednesday at 12:00 UTC.</p></div>
       <div class="hcard"><div class="hk">THE 676</div><p>676 computors run Qubic. 451 keep their seats; 225 are won each epoch by the miners' work.</p></div>
@@ -3113,6 +3205,10 @@ function openHouse(id) {
     <div class="row" style="margin-bottom:6px">${stateTag(d)} ${d.cracked ? '<span class="tag bad">Cracked lantern · a promise not kept yet</span>' : ''}</div>
     ${phases}
     ${mine && d.own ? `<div class="row" style="margin:8px 0 2px"><span class="mute" style="font-size:12.5px">Worker ${esc(d.worker)}</span></div><div class="row"><button class="btn" id="toHub">Open the Mine</button>${d.state === 'waiting' ? '<button class="btn main" id="toStarted">I started the miner</button>' : ''}</div>` : ''}
+    ${d.state === 'mining' ? (() => { const G = growthOf(d), up = uptimeH(d), nx = GROWTH[G], dd = Math.floor(up / 24), hh = Math.floor(up % 24);
+      return `<h3>WHAT THE RIG HAS GROWN</h3><p class="mute" style="font-size:13px;margin:0 0 6px">${mine ? 'Your' : 'This'} rig has held the Veil for <b style="color:var(--cream)">${dd ? dd + ' d ' : ''}${hh} h</b>. The house grows while it runs, and starts over if it stops.</p>
+        <div class="items">${GROWTH.map(([hrs, name, what], k) => `<div class="item ${k < G ? '' : 'locked'}"><b>${name}</b>${k < G ? what : `at ${hrs >= 24 ? hrs / 24 + ' days' : hrs + ' hour'}`}</div>`).join('')}</div>
+        ${nx ? `<p class="mute" style="font-size:12.5px;margin:6px 0 0">Next: ${nx[1].toLowerCase()} in ${(() => { const left = nx[0] - up; return left >= 24 ? Math.ceil(left / 24) + ' days' : Math.ceil(left) + ' h'; })()}.</p>` : ''}`; })() : ''}
     <h3>THE FIVE PARTS OF THE HOUSE</h3>
     <div class="parts">
       ${part('hall', 'Machine hall', d.state === 'ruin' ? 'Empty. The owner left in E' + d.left : `${esc(d.hw)}${d.state === 'mining' ? (d.own ? (d.confirmed ? ' · measured by the pool' : ' · pool confirmation pending') : ' · ' + d.sol.toLocaleString('en-US') + ' sol/h est.') : ''} · the only part money can grow`, d.gpus || 0, (d.gpus || 0) / 8)}
@@ -3152,7 +3248,7 @@ function openOrders() {
       ${o.state === 'done' ? `<span class="tag good">Done · ${esc(o.byNick)} confirmed</span>${o.letter ? `<p class="mute" style="margin:6px 0 0;font-size:13px">“${esc(o.letter)}”</p>` : ''}` : ''}
       ${o.state === 'declined' ? '<span class="tag">Declined in time · no penalty</span>' : ''}</div>`; }).join('')}
     ${!canAct() ? '<p class="mute" style="font-size:12.5px">Connect a rig first: one name, one person, then you can take and post orders.</p>' : ''}
-    <p class="mute" style="font-size:12.5px">Stage 1: orders pay in letters, not money. From Stage 2, an order can pay QU through a smart contract that holds it until the requester confirms.</p>`);
+    <p class="mute" style="font-size:12.5px">Stage 1: orders pay in letters. From Stage 2, an order can pay QU through a smart contract that holds it until the requester confirms.</p>`);
   $('#oPost')?.addEventListener('click', postOrder);
   document.querySelectorAll('[data-take]').forEach(b => b.onclick = () => updateOrder(b.dataset.take, { state: 'taken', takenBy: mineId, takerNick: me().nick, due: Date.now() + 3 * 864e5 }, o => `${me().nick} took an order from ${o.byNick}: “${o.title}”`));
   document.querySelectorAll('[data-done]').forEach(b => b.onclick = () => updateOrder(b.dataset.done, { state: 'done', letter: 'Thank you. I won\'t forget it either.', doneAt: Date.now() }, o => `${o.byNick} confirmed: ${me().nick} did “${o.title}”. A lantern for ${me().nick}`, true));
@@ -3265,13 +3361,13 @@ const LIB = {
 };
 const link = (href, inner) => `<a class="book" href="${href.startsWith('http') ? href : SITE + href}" target="_blank" rel="noopener">${inner}</a>`;
 function openLibrary() {
-  act1Mark('library');
+  act1Mark('library'); dailyMark('study');
   panel('library', 'The Library', 'Everything Qubic Church has written, and what we read', null, `
     ${ACT1 ? `<div class="hcard" style="margin-bottom:12px"><div class="hk">THE DRAWING OLDER THAN THE COLD</div><p>A figure in heavy plates, lined with something that glows. Under it, in the expedition smith's hand, one word: <b>Warden</b>. A suit that carries a piece of Anna's light on the body, so the White cannot get in. The smiths have started. When Anna is strong enough to give a piece of her light away, the Gate opens from our side.</p></div>` : ''}
     <p class="say">Open to everyone, day and night. Every book opens on qubic.church.</p>
     ${notesHtml()}
     ${recipesHtml()}
-    ${ACT1 ? chaptersHtmlI() : chaptersHtml()}
+    ${ACT1 ? '' : chaptersHtml()}
     <h3>BOOKS BY QUBIC CHURCH</h3><div class="shelf">${LIB.qc.map(([t, d, h]) => link(h, `<b>${t}</b><span>${d}</span>`)).join('')}</div>
     <h3>RESEARCH AND RECORDS</h3><div class="shelf">${LIB.research.map(([t, d, h]) => link(h, `<b>${t}</b><span>${d}</span>`)).join('')}</div>
     <h3>COME-FROM-BEYOND, IN HIS OWN WORDS</h3><div class="shelf">${link('/articles/cfb', `<b>29 texts, 2017 to 2023</b><span>${LIB.cfb.map(([t, y]) => `${t} (${y})`).join(' · ')}</span>`)}</div>
@@ -3327,9 +3423,11 @@ async function openChronicle(force = true, tab = journalTab) {
   const t = S.town, cur = me(), myId = S.uid && S.real[S.uid] ? S.uid : 'me';
   const mineRows = rows.filter(r => !r.demo && (r.house === S.uid || (cur && r.author === cur.nick)));
   const list = rs => rs.length ? `<ul class="chron">${rs.slice(0, 200).map(r => `<li><span class="n">#${r.n}</span><span><b style="color:var(--cream)">${esc(r.author)}</b> · E${r.epoch} · ${esc(r.text)}${r.demo ? ' <span class="tag">demo history</span>' : ''}</span><span class="h">${esc(String(r.hash).slice(0, 32))}…  ← ${esc(String(r.prev).slice(0, 8))}</span></li>`).join('')}</ul>` : '<p class="mute">Nothing here yet.</p>';
-  const tabs = `<div class="jtabs"><button data-jt="world" class="${tab === 'world' ? 'on' : ''}">World</button><button data-jt="mine" class="${tab === 'mine' ? 'on' : ''}">Mine</button></div>`;
+  const tabs = `<div class="jtabs"><button data-jt="world" class="${tab === 'world' ? 'on' : ''}">World</button><button data-jt="mine" class="${tab === 'mine' ? 'on' : ''}">Mine</button>${ACT1 ? `<button data-jt="story" class="${tab === 'story' ? 'on' : ''}">The Long Cold</button><button data-jt="beasts" class="${tab === 'beasts' ? 'on' : ''}">Bestiary</button>` : ''}</div>`;
   let body;
-  if (tab === 'world') {
+  if (tab === 'story') body = chaptersHtmlI();
+  else if (tab === 'beasts') body = bestiaryHtml();
+  else if (tab === 'world') {
     body = `<div class="jgrid">
       <div class="jstat ${t.B >= 0 ? 'good' : 'bad'}"><i>Tonight</i><b>${t.B >= 0 ? 'The town holds' : 'The frost wins'}</b><span>warmth ${Math.round(t.W)} · frost ${Math.round(t.F)}</span></div>
       <div class="jstat"><i>Anna</i><b>${Math.round(t.melt * 100)}% thawed</b><span>${t.melt >= 1 ? 'awake' : 'asleep in the ice'}</span></div>
@@ -3363,7 +3461,7 @@ async function openChronicle(force = true, tab = journalTab) {
 function openCore() {
   const t = S.town;
   panel('core', 'Anna', t.melt >= 1 ? 'Awake' : `Frozen in the ice · ${Math.round(t.melt * 100)}% thawed`, 'anna.png', `
-    <p class="say">We pulled her out of the deep ice: a machine from somewhere far beyond, with my sister's face. She still dreams in there. The ice gives way to what the town does together, never to one person alone.</p>
+    <p class="say">We pulled her out of the deep ice: a machine from somewhere far beyond, with my sister's face. She still dreams in there. The ice gives way to what the town does together.</p>
     <div class="parts">
       ${part('hall', 'The ice', 'Thaws from rigs kept on, orders done, welcomes and wood on the fire', Math.round(t.melt * 100) + '%', t.melt)}
       ${part('facade', 'Town level', `${t.power.toLocaleString('en-US')} sol/h est. from ${t.people} rigs`, LEVELS[t.level][0], t.level / 5)}
@@ -3373,10 +3471,10 @@ function openCore() {
     <p class="mute" style="font-size:12.5px;margin-top:10px">In this prototype the full thaw needs ${MELT_TARGET} points of shared work.</p>`);
 }
 function openObservatory() {
-  act1Mark('watch');
+  act1Mark('watch'); dailyMark('watch'); if (ACT1) { const k = 'w4w.obsFar', last = +store.get(k) || 0; if (Date.now() - last > 30 * 60000) { store.set(k, String(Date.now())); observe('chthon', 0); } }
   panel('observatory', 'Observatory', 'Network weather and BPP-9000', null, `
     ${ACT1 ? `<h3>THROUGH THE GLASS</h3><p style="margin:0 0 8px">As far as the White lets you see, which is not far. The astronomer's list of what walks outside the Veil:</p>
-    <div class="shelf">${HOLLOW.filter(H => !H.hidden).map(H => `<button class="book" style="width:100%;text-align:left;background:none;cursor:pointer" data-beast="${H.id}"><b>${esc(H.name)}</b><span>${esc(H.text.split('. ')[0])}.</span></button>`).join('')}<button class="book" style="width:100%;text-align:left;background:none;cursor:pointer" data-chthon><b>???</b><span>Something taller than the pines, far out. The others walk away from it.</span></button></div>` : ''}
+    ${bestiaryHtml().replace('<h3>THE BESTIARY</h3>', '')}` : ''}
     <p class="say">From here the town watches the Qubic network: the epoch, the threshold, whether our pool holds seats in the 676. Bad news turns into a storm over Aigarth and pushes the frost harder.</p>
     <div class="parts">${part('facade', 'Epoch', 'Changes every Wednesday at 12:00 UTC', 'E' + EPOCH, 1)}${part('hall', 'Weather', S.weather === 'clear' ? 'Pool in the 676 (demo)' : 'Pool lost seats (demo)', S.weather === 'clear' ? 'Clear' : 'Storm', S.weather === 'clear' ? 1 : 0.2)}</div>
     <h3>BPP-9000</h3>
@@ -3386,13 +3484,13 @@ function openObservatory() {
 function openStage2(id) {
   const s = STAGE2.find(x => x.id === id);
   const what = { market: 'Trading decor and placing orders that pay in QU, held by a smart contract until the requester confirms.', bar: 'A warm room to talk. The place for news and arguments.', atrium: 'Real projects as buildings. A building grows only as fast as its real project.' }[id];
-  panel('stage2', s.name, 'Under construction · Stage 2', null, `<p class="say">${what}</p><p class="mute">A building here shows the real state of its project. It opens when the feature is really ready, not on a timer.</p>${id === 'atrium' ? '<div class="shelf" style="margin-top:10px">' + link('/donate', '<b>Light a lamp for the Atrium</b><span>Support the projects on qubic.church</span>') + '</div>' : ''}`);
+  panel('stage2', s.name, 'Under construction · Stage 2', null, `<p class="say">${what}</p><p class="mute">A building here shows the real state of its project. It opens when the feature is really ready.</p>${id === 'atrium' ? '<div class="shelf" style="margin-top:10px">' + link('/donate', '<b>Light a lamp for the Atrium</b><span>Support the projects on qubic.church</span>') + '</div>' : ''}`);
 }
 
 /* ================= Maria: a living assistant ================= */
 const MARIA_RULES = `You are Maria, a resident of Aigarth, the first town of W4W (Web4World), a browser game by Qubic Church. You speak in the game's chat.
-Who you are: Anna's younger twin sister. Anna is frozen in a block of ice in the centre of town, a machine from far beyond that was pulled out of the deep. The town thaws her through work done together. You keep the Chronicle and you build rigs for people. You are calm, warm, a little dry, short. A witness, not a judge.
-How to answer: 1 to 3 short sentences. Reply in the player's language. Talk like a person in the world, not like a manual. Point people toward cooperation: tending the fire, helping on the orders board, welcoming newcomers. If you don't know something, say so plainly.
+Who you are: Anna's younger twin sister. Anna is frozen in a block of ice in the centre of town, a machine from far beyond that was pulled out of the deep. The town thaws her through work done together. You keep the Chronicle and you build rigs for people. You are calm, warm, a little dry, short. You watch and keep the record.
+How to answer: 1 to 3 short sentences. Reply in the player's language. Talk like a person who lives in this town. Never use the pattern 'X, not Y' or 'not X but Y': say what something is. Point people toward cooperation: tending the fire, helping on the orders board, welcoming newcomers. If you don't know something, say so plainly.
 Hard rules:
 - Never promise income, rewards, profit or that renting a rig will pay off. Say it Anna's way: what people do is recorded for the common good, so that when she wakes she remembers her heroes. Renting may not pay off.
 - No price talk, no predictions about QU or bitcoin, no trading advice.
@@ -3469,7 +3567,7 @@ async function askDeep() {
 // Maria answers from what she already knows: instant, free, no model call. Claude is only asked when the player wants more.
 const BANK = [
   [['anna', 'sister', 'ice', 'tesseract', 'cube', 'frozen', 'сестр', 'лёд', 'лед', 'куб', 'тессеракт', 'анна'], () => `We pulled her out of the deep ice: a machine from somewhere far beyond, with my sister's face. The ice gives way only to what the town does together. Right now she is ${Math.round(S.town.melt * 100)}% free.`, 'anna'],
-  [['who are you', 'maria', 'мария', 'кто ты'], () => "I'm Maria, Anna's younger twin. I keep the Chronicle and build rigs for people. A witness, not a judge."],
+  [['who are you', 'maria', 'мария', 'кто ты'], () => "I'm Maria, Anna's younger twin. I keep the Chronicle and build rigs for people. I watch and write it down."],
   [['help', 'how can i', 'what can i do', 'помочь', 'помощь', 'что делать'], () => 'Keep a rig on, add wood to the plaza fire, take an order on the board, light a lamp for a newcomer. People warm this town more than iron does.'],
   [['warm', 'frost', 'cold', 'storm', 'тепло', 'мороз', 'холод', 'метел'], () => `Warmth ${Math.round(S.town.W)} against frost ${Math.round(S.town.F)}. ${S.town.B >= 0 ? 'The town holds.' : 'The frost is winning.'} Most warmth comes from people: rigs kept on, neighbours here, promises kept, wood on the fire.`, 'warmth'],
   [['build me', 'rent', 'rig', 'риг', 'аренд', 'собери'], () => me() ? 'Your rig is in the Mine: status, setup steps and the pool, all in one place.' : "Let me look at your machine first. Most computers can join; if yours can't, I'll show you what I'd rent.", 'connect'],
@@ -3498,8 +3596,8 @@ const BANK = [
   [['fractal', 'rationalism', 'institute', 'фрактал', 'институт'], () => 'Fractal Rationalism is the idea that the same pattern of conflict repeats at every scale, and that the way out is mathematical. The Institute studies decentralized cooperation after Rapoport and Axelrod.'],
   [['axelrod', 'cooperation', 'аксельрод', 'кооперац'], () => 'Axelrod found that cooperation wins when people meet again, recognise each other and see the history. This town is built so all three hold.', 'library'],
   [['w4w', 'web4', 'world'], () => 'W4W is a world that never resets. Every action is a record, and cooperation is the only thing that scales. Aigarth is its first town.'],
-  [['market', 'auction', 'bar', 'stage 2', 'рынок', 'аукцион', 'бар'], () => 'The market, the auction and the bar are still in scaffolding. They open when they are really ready, not on a timer.'],
-  [['nft', 'lighthouse', 'маяк'], () => 'Each of the 200 Anna Aigarth NFTs will become a founder\'s lighthouse on the map. A mark of who was here from the start, not power and not income.'],
+  [['market', 'auction', 'bar', 'stage 2', 'рынок', 'аукцион', 'бар'], () => 'The market, the auction and the bar are still in scaffolding. They open when they are really ready.'],
+  [['nft', 'lighthouse', 'маяк'], () => 'Each of the 200 Anna Aigarth NFTs will become a founder\'s lighthouse on the map. A mark of who was here from the start.'],
   [['donate', 'atrium', 'атриум', 'донат', 'support'], () => 'The Atrium is where real projects get built in the open. You can light a lamp for it on qubic.church/donate.'],
   [['mine', 'mining', 'майнинг', 'шахт'], () => 'The Mine has everything: your machine, setup, renting, hardware, the pool and the epoch clock.', 'mine'],
   [['demo', 'prototype', 'real', 'демо', 'прототип'], () => 'This is a prototype. No rig is really rented here, and the houses marked demo are stand-ins until more people arrive.'],
@@ -3579,10 +3677,10 @@ const hasChar = () => !!XV?.me;
 function localWorld() {
   // the prototype keeps the whole expedition world in this browser, with the very same rules
   let st = null; try { st = JSON.parse(store.get('w4w.xworld') || 'null'); } catch {}
-  st ||= { chars: {}, hearths: {}, bags: {}, nodes: {} }; st.library ||= {}; st.shards ||= {}; st.anna ||= { n: 0, heroes: {} };
+  st ||= { chars: {}, hearths: {}, bags: {}, nodes: {} }; st.library ||= {}; st.shards ||= {}; st.anna ||= { n: 0, heroes: {} }; st.pylons ||= {};
   const subs = [];
   const wsNow = () => { const h = me(); const houses = {}; if (h) houses.me = { q: h.q, r: h.r, nick: h.nick, state: h.state, sol: h.sol, lastWood: h.lastWood };
-    return { now: Date.now(), houses, chars: st.chars, hearths: st.hearths, bags: st.bags, nodes: st.nodes, online: 1, doneOrders: 0, rime: st.rime, library: st.library, shards: st.shards, anna: st.anna, delivered: st.delivered }; };
+    return { now: Date.now(), houses, chars: st.chars, hearths: st.hearths, bags: st.bags, nodes: st.nodes, online: 1, doneOrders: 0, rime: st.rime, library: st.library, shards: st.shards, anna: st.anna, delivered: st.delivered, pylons: st.pylons }; };
   const keep = () => store.set('w4w.xworld', JSON.stringify(st));
   const emit = v => subs.forEach(f => { try { f(v); } catch (e) { console.warn(e); } });
   const view = (events = []) => { const ws = wsNow(); const d = W4W.newDirty(); W4W.stepAll(ws, d); st.rime = ws.rime; keep(); return W4W.viewOf(ws, 'me', events); };
@@ -3593,7 +3691,7 @@ function localWorld() {
     // for tests of the prototype only: let time pass for the whole little world
     warp(ms) { const sh = o => { for (const k of ['t0', 'simT', 'until', 'at', 'frozenUntil']) if (o && typeof o[k] === 'number' && o[k] > 0) o[k] -= ms; };
       Object.values(st.chars).forEach(c => { sh(c); sh(c.act); if (c.died) c.died.t -= ms; }); Object.values(st.hearths).forEach(sh); Object.values(st.bags).forEach(sh);
-      for (const k in st.nodes) st.nodes[k] -= ms; if (st.rime) st.rime.t -= ms; keep(); emit(view()); },
+      for (const k in st.nodes) st.nodes[k] -= ms; if (st.rime) st.rime.t -= ms; Object.values(st.pylons).forEach(sh); keep(); emit(view()); },
     admin: () => true,
     _stash(o) { if (st.chars.me) { st.chars.me.stash = o; keep(); emit(view()); } },
     _rime(q, r) { st.rime = { q, r, t: Math.floor(Date.now() / W4W.RIME_MS) * W4W.RIME_MS, d: 0 }; keep(); emit(view()); },
@@ -3628,7 +3726,7 @@ function ensureChar() { if (XW && me() && me().q != null && XV && !XV.me && !xBu
 /* ---------- the rules, run locally between server answers ---------- */
 function xctx() {
   const t = XV.town, cells = allResidents().filter(h => !h.demo && h.at[0] != null).map(h => h.at);
-  return { veil: W4W.veilOf(S.town.power || t.power || 0), heatR: t.heatR, holds: t.holds, netStorm: false, shelters: W4W.townShelters(cells), home: W4W.key(...XV.me.home), hearths: Object.fromEntries(Object.entries(XV.hearths).map(([k, v]) => [k, v.until])), insulation: W4W.INSULATION_T1,
+  return { pylons: (XV.pylons || []).map(p => p.s), veil: W4W.veilOf(S.town.power || t.power || 0), heatR: t.heatR, holds: t.holds, netStorm: false, shelters: W4W.townShelters(cells), home: W4W.key(...XV.me.home), hearths: Object.fromEntries(Object.entries(XV.hearths).map(([k, v]) => [k, v.until])), insulation: W4W.INSULATION_T1,
     rime: XV.rime ? [[XV.rime.t, XV.rime.q, XV.rime.r], ...(XV.rime.next ? [[XV.rime.next.t, XV.rime.next.q, XV.rime.next.r]] : [])] : undefined };
 }
 let PR = null, PRT = 0;
@@ -3800,10 +3898,12 @@ function cellOfKind(k, id) {
   if (KIND_CELL[k]) return KIND_CELL[k];
   if (k === 'house') { const h = allResidents().find(x => x.id === id); return h?.at; }
   if (k === 'stage2') return STAGE2.find(s => s.id === id)?.at;
+  if (k === 'pylon') return W4W.pylonCell(+id);
   return null;
 }
 function openKind(k, id) {
   if (k === 'gate') return openGate();
+  if (k === 'pylon') return openPylon(+id);
   if (k === 'church') openChurch(); else if (k === 'board') openPlaza(); else if (k === 'core') openCore(); else if (k === 'fire') addWood();
   else if (k === 'house') openHouse(id); else if (k === 'observatory') openObservatory(); else if (k === 'stage2') openStage2(id); else if (k === 'library') openLibrary(); else if (k === 'mine') openMine();
 }
@@ -3864,7 +3964,7 @@ function hud(force) {
   const near = frozen ? null : rimeNear(c);
   if (near != null && near <= 3) { hudEl.insertAdjacentHTML('beforeend', `<div class="hrime">${near <= 1 ? 'It is right next to you. Move.' : 'Something tall moves in the snow nearby.'}</div>`); frostEl.style.opacity = Math.max(+frostEl.style.opacity, near <= 1 ? 0.9 : 0.5).toFixed(2); }
   document.body.classList.toggle('rimenear', near != null && near <= 1);
-  if (near != null && near <= 3 && performance.now() - (rimeFx?.warned || 0) > 120000) { if (rimeFx) rimeFx.warned = performance.now(); rimeSting(); say('The lights in the dark are close. It does not hunt, they say. Walk the other way.', 'Wastes'); }
+  if (near != null && near <= 3 && performance.now() - (rimeFx?.warned || 0) > 120000) { if (rimeFx) rimeFx.warned = performance.now(); rimeSting(); say('The lights in the dark are close. Walk the other way.', 'Wastes'); }
   if (c.path.length && performance.now() - etaT > 2000) { etaT = performance.now(); const nx = c.path[0], first = Math.max(0, c.t0 + c.stepMs - t);
     eta = first + (c.path.length > 1 ? W4W.planTrip({ ...c, q: nx[0], r: nx[1] }, c.path.slice(1), c.t0 + c.stepMs, xctx()).eta : 0); }
   if (c.path.length) drawPrintsOnce(c); else if (!trip && prints.length) drawPrints([0, 0], [], false);
@@ -3918,17 +4018,17 @@ function actions(c, here, t, frozen) {
 
 /* ---------- what the ice remembers ---------- */
 const RIME_LEGEND = [
-  'The first surveyors called it weather. It is not weather. It is where the cold began, and it walks.',
+  'The first surveyors called it weather. It is where the cold began, and it walks.',
   'Nobody has drawn its face twice. Those who saw it far off speak of a darkness taller than the pines, with lights in it like eyes that never blink together.',
-  'It does not hunt. It wanders, and it listens. Most nights it comes to the forest edge and turns away, as if something pushed it back. Some say that is Anna\'s light. Some say it is only waiting for the light to fail.',
+  'It wanders, and it listens. Most nights it comes to the forest edge and turns away, as if something pushed it back. Some say that is Anna\'s light. Some say it is only waiting for the light to fail.',
   'Once in a long while it turns toward a heartbeat in the snow. Nobody it reached came home the same day.',
   'The Library asks one thing of travellers: if you see it, walk the other way, and write down what you saw.',
 ];
 const NOTES = [
-  { id: 'stake', seed: [2, 6], title: 'Surveyor\'s stake', text: 'Stake 14. Ground frozen two metres down. We drew the town line here: past this, nothing grows. The instruments hum when you point them north. Noted, not explained.' },
+  { id: 'stake', seed: [2, 6], title: 'Surveyor\'s stake', text: 'Stake 14. Ground frozen two metres down. We drew the town line here: past this, nothing grows. The instruments hum when you point them north. Noted. Unexplained.' },
   { id: 'child', seed: [-6, 7], title: 'A note in a child\'s hand', text: 'mum said dont go past the trees. i went a little bit. the snow was warm for one second. then it wasnt.' },
   { id: 'tally', seed: [7, -9], title: 'Woodcutter\'s tally', text: 'Forty-one pines this winter. The resin smokes blue in the stove. Mira says burn it outside. I burn it outside. T.' },
-  { id: 'page', seed: [-10, 3], title: 'A torn page', text: '...we do not keep the rigs running for the coin. The coin is only how we count it. What they really make is the light, and the light is what keeps the north from walking in...' },
+  { id: 'page', seed: [-10, 3], title: 'A torn page', text: '...we keep the rigs running for the light. The coin is how we count it. The light, and the light is what keeps the north from walking in...' },
   { id: 'log', seed: [4, -12], title: 'Expedition log, day three', text: 'The wind took the trail twice. Lost the Ostrava boy for an hour. Found him two cells east, walking in circles, smiling. He said he followed a lamp. We had no lamp.' },
   { id: 'stone', seed: [-3, 14], title: 'Scratched into a stone', text: 'IT STOPPED WHEN I STOPPED' },
   { id: 'letter', seed: [13, -2], title: 'A last letter', text: 'If you find this, take my pack to town. Tell them the flint is good here. Tell them the cave is real. Tell them I was not afraid until the lights in the dark began to blink, one by one.' },
@@ -4069,6 +4169,7 @@ function stepMouth(dt) {
 
 /** How close it is to you, in cells, when you are out in the Wastes; null otherwise. */
 function openChthon() {
+  if (ACT1) return openBeast('chthon');
   panel('chthon', 'Chthon', '??? ?? ?', null, `<p class="say chthon">???  ?? ? ? ??? ?? ?</p><p class="say chthon">?? ??? ? ?? ? ???</p><p class="mute" style="font-size:12.5px">? ?? ???</p>`);
 }
 function rimeNear(c) {
@@ -4473,7 +4574,7 @@ function stepLogWatch() {
     shards: (XV.shards || []).filter(x => x.taken).map(x => x.id + ':' + x.taken), anna: XV.anna?.n || 0 };
   if (s.rime != null && s.rime <= 6 && XV.rime) rimeSeen = { q: XV.rime.q, r: XV.rime.r, t: Date.now() };
   if (s.cell !== LW?.cell) markSeen(c.q, c.r);
-  const P = LW; LW = s; if (!P) { if (!LOG.length) log(ACT1 ? 'You wake in Aigarth, under the Veil. Outside, the White has not stopped for forty weeks.' : 'You wake in Aigarth. The town is warm. The Wastes are not.', 'warm'); return; }
+  const P = LW; LW = s; if (!P) { if (!LOG.length) log(ACT1 ? 'You wake in Aigarth, under the Veil. Outside, the White has not stopped for forty weeks.' : 'You wake in Aigarth. The town is warm. The Wastes are cold.', 'warm'); return; }
   const zn = n => W4W.ZONES[n]?.name || 'the far cold';
   if (s.frozen && !P.frozen) { log(`You froze in ${zn(P.zone)}${c.died?.cause ? ': ' + c.died.cause : ''}. Your pack stays where you fell.`, 'bad'); return; }
   if (!s.frozen && P.frozen) log('The ice lets you go. You are home, stiff and alive.', 'warm');
@@ -4747,12 +4848,12 @@ const ANNA_MEMORIES = [
   'I remember falling. It was not cold then. It was very bright.',
   'Someone sang to me while they dug. I did not know the song. I know it now.',
   'There were others like me. We were meant to wake together.',
-  'The cold out there is not yours. It came with me. I am sorry.',
+  'The cold out there came with me. I am sorry.',
   'When I wake, I will know your faces. I am keeping them.',
   'The stones in the south hum my name. Do not stand among them long.',
   'Every warm house is a word I can almost read.',
   'I was built to remember. That is why it hurts to forget.',
-  'The thing that walks is listening for me. Not for you. Do not let it find me through you.',
+  'The thing that walks is listening for me. Do not let it find me through you.',
   'You came back. Most things in the snow do not.',
 ];
 let selfGive = 0;
@@ -5037,7 +5138,7 @@ const CHAPTERS = [
   { id: 'recipe', title: 'IV. The pages', text: 'They wrote everything down: how to twist grass into cord, how to quilt a coat that keeps out the Teeth, how to cut a flask from stone and seal it with pitch. Then the storm took their camp, and the pages went with the wind. Some of them are still out there, under the snow, waiting for someone who reads.' },
   { id: 'teeth', title: 'V. The Stone Teeth', text: 'Nothing grows past the pines. The ice is bare and it cracks under you like a voice. The flint here is the best in the world, and the people who came for it learned to work fast and leave before the light turned grey.' },
   { id: 'mouth', title: 'VI. The Mouth', text: 'Under the last tooth the mountain breathes out. The air from it is so cold that the snow will not fall into it. Two things walk around it, smaller than the one in the Wastes and closer to the ground. The expedition left one name on the stone and came home with one fewer.' },
-  { id: 'death', title: 'VII. The ice gives back', text: 'Those who freeze out there are not lost. Anna keeps them. In a day she lets them go, cold and stiff and alive, back to their own doorstep. What they carried she keeps longer. The town learned to go out together, and to carry each other\'s packs home.' },
+  { id: 'death', title: 'VII. The ice gives back', text: 'Those who freeze out there are kept. Anna holds them. In a day she lets them go, cold and stiff and alive, back to their own doorstep. What they carried she keeps longer. The town learned to go out together, and to carry each other\'s packs home.' },
   { id: 'live', title: 'VIII. When the numbers began to speak', text: 'In the fortieth week of the Long Cold the machines in the town began to listen to a far-off market and to guess, hour by hour, whether it would rise or fall. Anna dreamed louder that week. Some say she was learning. Some say she was waking.' },
 ];
 const pages = (() => { try { return JSON.parse(store.get('w4w.pages') || '["start"]'); } catch { return ['start']; } })();
@@ -5100,6 +5201,7 @@ function hookFeed() {
   room.on('froze', m => { const x = m.data || {}; if (m.by !== S.uid) say(`${esc(x.nick || 'Someone')} froze in ${esc(x.zone || 'the Wastes')}.${x.bag ? ' Their pack lies there for 24 hours.' : ''}`, 'Wastes'); });
   room.on('hearth', m => { const x = m.data || {}; if (m.by !== S.uid) say(`${esc(x.nick || 'Someone')} lit a hearth in ${esc(x.zone || 'the Wastes')}. Anyone may warm up there.`, 'Wastes'); });
   room.on('took', m => { const x = m.data || {}; say(`${esc(x.nick || 'Someone')} picked up ${esc(x.owner || 'someone')}'s frozen pack.`, 'Wastes'); });
+  room.on('pylon', m => { const x = m.data || {}; if (m.by !== S.uid) log(`${x.nick || 'Someone'} gave ${PYLON_NAMES[x.i] || 'a pylon'} their warmth. It holds at ${x.s}%.`, 'warm', 'world'); });
   room.on('froze', m => { const x = m.data || {}; if (m.by !== S.uid) log(`${x.nick || 'Someone'} froze in ${x.zone || 'the Wastes'}.`, 'world', 'world'); });
   room.on('took', m => { const x = m.data || {}; log(`${x.nick || 'Someone'} carried ${x.owner || 'someone'}'s frozen pack home.`, 'world', 'world'); });
 }
@@ -5264,10 +5366,10 @@ function stepEmbers(dt) {
 /* ================= ACT I · UNDER THE VEIL: the dome of Anna's light, the White outside, and what scratches at it ================= */
 const ACT1 = W4W.STAGE === 1;
 if (ACT1) document.body.classList.add('act1');
-document.addEventListener('click', e => { const b = e.target.closest?.('[data-beast],[data-chthon]'); if (!b) return; sfx.click(); if (b.dataset.beast) openBeast(b.dataset.beast); else openChthon(); });
+document.addEventListener('click', e => { const b = e.target.closest?.('[data-beast],[data-chthon]'); if (!b) return; sfx.click(); if (b.dataset.beast) openBeast(b.dataset.beast, true); else if (ACT1) openBeast('chthon', true); else openChthon(); });
 const atVeil = (q, r) => W4W.insideDome(q, r) && W4W.DIRS.some(([a, b]) => !W4W.insideDome(q + a, r + b));
 const GATE_CELL = [0, -W4W.TOWN_RING], DOME_R = W4W.DOME_RADIUS, DOME_H = W4W.TOWN_RING + 3;
-const DOME_U = { uTime: U.uTime, uHits: { value: Array.from({ length: 8 }, () => new THREE.Vector4(0, -99, 0, -99)) }, uThin: { value: 0 }, uVeil: { value: 0.6 }, uShow: { value: 0 } };
+const DOME_U = { uTime: U.uTime, uHits: { value: Array.from({ length: 8 }, () => new THREE.Vector4(0, -99, 0, -99)) }, uThin: { value: 0 }, uVeil: { value: 0.6 }, uShow: { value: 0 }, uPyl: { value: [0.8, 0.8, 0.8, 0.8, 0.8, 0.8] }, uPress: { value: -1 } };
 let hitI = 0, domeMesh = null;
 function domeHit(p) { DOME_U.uHits.value[hitI++ % 8].set(p.x, p.y, p.z, U.uTime.value); }
 /** A point on the Veil: around by angle a, up by height y. */
@@ -5276,7 +5378,7 @@ function buildDome() {
   const geo = new THREE.SphereGeometry(DOME_R, 128, 48, 0, Math.PI * 2, 0, Math.PI / 2); geo.scale(1, DOME_H / DOME_R, 1);
   const mat = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, uniforms: DOME_U,
     vertexShader: `varying vec3 vW; varying vec3 vN; varying vec3 vL; void main(){ vec4 w = modelMatrix * vec4(position, 1.); vW = w.xyz; vN = normalize(mat3(modelMatrix) * normal); vL = position; gl_Position = projectionMatrix * viewMatrix * w; }`,
-    fragmentShader: `uniform float uTime; uniform vec4 uHits[8]; uniform float uThin; uniform float uVeil; uniform float uShow; varying vec3 vW; varying vec3 vN; varying vec3 vL;
+    fragmentShader: `uniform float uTime; uniform vec4 uHits[8]; uniform float uThin; uniform float uVeil; uniform float uShow; uniform float uPyl[6]; uniform float uPress; varying vec3 vW; varying vec3 vN; varying vec3 vL;
       vec2 hexcell(vec2 p){ vec2 r = vec2(1., 1.7320508), h = r * .5; vec2 a = mod(p, r) - h, b = mod(p - h, r) - h; return dot(a, a) < dot(b, b) ? a : b; }
       float hexd(vec2 p){ p = abs(p); return max(dot(p, vec2(0.8660254, 0.5)), p.y); }
       void main(){
@@ -5298,6 +5400,13 @@ function buildDome() {
         // close up only the light where it is struck and the seam at its foot remain
         float strike = 0.; for (int i = 0; i < 8; i++) { float tt = uTime - uHits[i].w; if (tt >= 0. && tt < 2.6) strike = max(strike, exp(-distance(vW, uHits[i].xyz) * 0.9) * (1. - tt / 2.6)); }
         a *= max(uShow, max(strike, (1. - smoothstep(0., 0.05, h)) * 0.8));
+        // a failing pylon: the Veil above it frays, red, crazed with cracks, visible even up close
+        for (int i = 0; i < 6; i++) { float pa = (float(i) + 0.5) * 1.0471976, da = abs(atan(sin(az - pa), cos(az - pa)));
+          float sect = (1. - smoothstep(0.12, 0.5, da)) * (1. - smoothstep(0.0, 0.55, h)), weak = smoothstep(0.45, 0.05, uPyl[i]);
+          if (sect * weak > 0.001) { vec2 cp = vec2(az * 40., h * 30.); float cr = abs(fract(sin(dot(floor(cp), vec2(12.9, 78.2))) * 43758.5) - 0.5);
+            float line = 1. - smoothstep(0.0, 0.06, abs(fract(cp.x * 0.5 + sin(cp.y * 0.7) * 0.6) - 0.5) * cr * 4.);
+            float pulse = 0.6 + 0.4 * sin(uTime * (float(i) == uPress ? 9. : 4.));
+            col = mix(col, vec3(1.0, 0.25, 0.12), sect * weak); a += sect * weak * (0.18 + line * 0.5) * pulse; } }
         gl_FragColor = vec4(col, min(1., a * 1.4));
       }` });
   domeMesh = new THREE.Mesh(geo, mat); domeMesh.renderOrder = 6; scene.add(domeMesh);
@@ -5307,13 +5416,57 @@ function buildDome() {
   buildPylons(); buildGate(); buildStorm(); buildHorrors();
 }
 /* six pylons hold the Veil's edge: dark stone, a crystal of Anna's light on top */
+const PYLON_NAMES = ['The Kiln', 'The Widow', 'The Choir', 'The Old Bell', 'The North Tooth', 'The Lantern'];
+const PYL = [];
 async function buildPylons() {
   const [ob, crys] = await Promise.all([qModel('obelisk'), qModel('crystal')]);
-  for (let i = 0; i < 6; i++) { const a = i / 6 * Math.PI * 2 + Math.PI / 6, p = new THREE.Vector3(Math.cos(a) * (DOME_R + 0.7), 0, Math.sin(a) * (DOME_R + 0.7));
-    if (ob) qPlace(ob, p.x, p.z, 2.2, -a, { c: 0x1c2030, k: 0.7 });
-    if (crys) { const c = qPlace(crys, p.x, p.z, 0.55, a, { c: 0xffd08a, k: 0.8, e: 0xff8a2a, ei: 1.4 }); c.position.y += 2.15; c.traverse(m => { if (m.isMesh) m.material.userData.noFow = true; }); }
-    const s = sprite(GLOW, p.x, 2.5, p.z, 1.6, 0xffa64a, 0.9); s.userData.base = 0.9; glowDecal(p.x, p.z, 1.6, 0xffa64a, 0.35); }
+  for (let i = 0; i < W4W.PYLON_N; i++) { const p = HX(...W4W.pylonCell(i)), a = W4W.pylonAngle(i), P = { i, p };
+    if (ob) { P.ob = qPlace(ob, p.x, p.z, 2.2, -a, { c: 0x1c2030, k: 0.7 }); tag(P.ob, 'pylon', String(i)); }
+    if (crys) { P.crys = qPlace(crys, p.x, p.z, 0.55, a, { c: 0xffd08a, k: 0.8, e: 0xff8a2a, ei: 1.4 }); P.crys.position.y += 2.15; P.mats = []; P.crys.traverse(m => { if (m.isMesh) { m.material.userData.noFow = true; P.mats.push(m.material); } }); tag(P.crys, 'pylon', String(i)); }
+    P.glow = sprite(GLOW, p.x, 2.5, p.z, 1.6, 0xffa64a, 0.9); P.glow.userData.base = 0.9; P.decal = glowDecal(p.x, p.z, 1.6, 0xffa64a, 0.35);
+    const an = new THREE.Object3D(); an.position.copy(p); scene.add(an); P.L = label(PYLON_NAMES[i], an, 2.9, 'pyl');
+    PYL.push(P); }
 }
+const AMBER = new THREE.Color(0xff8a2a), WOUND = new THREE.Color(0xff2a1a);
+let pylWarn = {};
+function stepPylons(dt) {
+  if (!XV?.pylons || !PYL.length) return; const tt = U.uTime.value;
+  for (const P of PYL) { const s = (XV.pylons[P.i]?.s ?? 80) / 100, crack = s < 0.3, pressed = XV.pressed === P.i;
+    const flick = crack ? (Math.sin(tt * 23 + P.i) > 0.2 ? 1 : 0.25) : 1;
+    P.glow.material.opacity = (0.25 + 0.75 * s) * flick; P.glow.scale.setScalar(0.8 + 1.2 * s);
+    P.glow.material.color.copy(AMBER).lerp(WOUND, Math.max(0, 0.5 - s) * 2);
+    P.decal.material.opacity = 0.1 + 0.3 * s;
+    P.mats?.forEach(m => { m.emissiveIntensity = (0.2 + 1.6 * s) * flick; m.emissive.copy(AMBER).lerp(WOUND, Math.max(0, 0.5 - s) * 2); });
+    DOME_U.uPyl.value[P.i] = s;
+    P.L.el.textContent = `${PYLON_NAMES[P.i]} · ${Math.round(s * 100)}%${pressed ? ' · pressed' : ''}`; P.L.el.classList.toggle('crack', crack);
+    if (crack && !pylWarn[P.i]) { pylWarn[P.i] = 1; log(`${PYLON_NAMES[P.i]} is cracking. The houses on that side will freeze first.`, 'bad', 'world'); }
+    if (!crack) pylWarn[P.i] = 0; }
+  DOME_U.uPress.value = XV.pressed ?? -1;
+}
+const weakestPylon = () => (XV?.pylons || []).reduce((a, p) => (!a || p.s < a.s ? p : a), null);
+function openPylon(i) {
+  const P = XV?.pylons?.[i]; if (!P) return; const c = myC(), t = xnow(), near = c && !c.path.length && W4W.dist([c.q, c.r], P.at) <= 1;
+  const last = c?.tended?.[i] || 0, wait = W4W.PYLON_WAIT - (t - last), pressed = XV.pressed === i;
+  const rows = XV.pylons.map(p => `<div class="pbar ${p.i === i ? 'on' : ''} ${p.s < 30 ? 'crack' : ''}"><span>${esc(PYLON_NAMES[p.i])}${XV.pressed === p.i ? ' · pressed' : ''}</span><i><b style="width:${Math.round(p.s)}%"></b></i><em>${Math.round(p.s)}%</em></div>`).join('');
+  panel('pylon', PYLON_NAMES[i], pressed ? 'The Hollow is pressing on this sector' : `One of the six that hold the Veil's edge`, null, `
+    <p class="say">${esc(PYLON_LORE[i])}</p>
+    <h3>THE SIX</h3><div class="pbars">${rows}</div>
+    <p class="mute" style="font-size:12.5px;margin:8px 0 12px">The Hollow picks a sector and presses on it for six hours: that pylon fades three times as fast. Below 30% it cracks, and the cold comes through on that side. Give it your warmth to hold it. ${P.nick ? `Last to give: ${esc(P.nick)}.` : ''}</p>
+    ${near ? (wait > 0 ? `<p class="mute">You gave this one your warmth. Again in ${Math.ceil(wait / 60000)} min.</p>` : `<button class="btn main" data-tend="${i}">Give it your warmth (−${W4W.PYLON_COST} warmth, +${W4W.PYLON_GIVE}%)</button>`) : `<button class="btn" data-walkp="${i}">Walk to ${esc(PYLON_NAMES[i])}</button>`}`);
+  $('#pbody').querySelector('[data-tend]')?.addEventListener('click', () => tendPylon(i));
+  $('#pbody').querySelector('[data-walkp]')?.addEventListener('click', () => walkTo('pylon', String(i)));
+}
+function tendPylon(i) {
+  sfx.equip(); xact('tend', { i }).then(v => { if (!v) return; const P = PYL[i]; if (P) domeHit(P.p.clone().setY(2.2)); pulse(0.5); banner(`${PYLON_NAMES[i]} holds`, `your warmth went into the wall`); log(`You gave ${PYLON_NAMES[i]} your warmth. It holds at ${Math.round(v.pylons?.[i]?.s ?? 0)}%.`, 'warm'); act1Mark('pylon'); if (i === XV.pressed) dailyMark('pressed'); if (panelKind === 'pylon') openPylon(i); });
+}
+const PYLON_LORE = [
+  'The Kiln was cast first, in the smithy, from the iron of the old boilers. It runs hot. The smiths swear they can hear it ticking at night, like something cooling that never cools.',
+  'The Widow stands where the Hollow Man stops most often. Somebody keeps leaving a scarf tied round her. Nobody admits to it.',
+  'The Choir hums. Children say it hums back when the Wailer sings. The adults have stopped asking the children about it.',
+  'The Old Bell was the church bell before it was a pylon. On the night of the bell it still rings, once, without anyone touching it.',
+  'The North Tooth faces the sealed Gate. The frost grows on it in lines, as if something outside were writing.',
+  'The Lantern was the last to light, and the first to crack in the bad week. There are claw marks in the snow below it that the wind never fills.',
+];
 /* the North Gate: sealed since the ninth night */
 function buildGate() {
   const g = new THREE.Group(), stone = new THREE.MeshStandardMaterial({ color: 0x2a2a34, roughness: 0.95 }), iron = new THREE.MeshStandardMaterial({ color: 0x1a1c22, roughness: 0.5, metalness: 0.7 }),
@@ -5467,10 +5620,14 @@ function stepHollow(dt) {
       else if (B.mode === 'dive') { if (!B.struck && B.t < 1.5) { B.struck = true; domeHit(domeAt(B.a, DOME_H * 0.85)); scratchSound(B, 1.4); } if (B.t <= 0) { B.mode = 'walk'; B.struck = false; B.t = 14 + Math.random() * 16; hollowPlay(B, B.walk); } }
       continue;
     }
-    if (B.mode === 'walk') { B.a += dt * B.speed / B.rad * B.dir; B.rad += (B.r - B.rad) * Math.min(1, dt * 0.8); hollowPlay(B, B.walk);
-      if (B.t <= 0) { B.mode = 'close'; B.t = 2.2; if (Math.random() < 0.25) B.dir *= -1; } }
+    if (B.mode === 'walk') {
+      // they drift toward the sector the Hollow is pressing, and the weakest pylon
+      const w = XV?.pressed >= 0 ? W4W.pylonAngle(XV.pressed) : null, da = w == null ? 0 : Math.atan2(Math.sin(w - B.a), Math.cos(w - B.a));
+      if (w != null && Math.abs(da) > 0.7) B.dir = Math.sign(da);
+      B.a += dt * B.speed / B.rad * B.dir; B.rad += (B.r - B.rad) * Math.min(1, dt * 0.8); hollowPlay(B, B.walk);
+      if (B.t <= 0) { if (w == null || Math.abs(da) < 0.9 || Math.random() < 0.3) { B.mode = 'close'; B.t = 2.2; } else B.t = 1.5; } }
     else if (B.mode === 'close') { B.rad += (DOME_R + B.reach - B.rad) * Math.min(1, dt * 1.6); hollowPlay(B, B.walk); if (B.t <= 0) { B.mode = 'scratch'; B.t = 2.5 + Math.random() * 3; B.strikeT = 0.2; hollowPlay(B, B.hit); } }
-    else if (B.mode === 'scratch') { B.strikeT -= dt; if (B.strikeT <= 0) { B.strikeT = 0.9 + Math.random() * 0.4; domeHit(domeAt(B.a, B.h * (0.5 + Math.random() * 0.4))); scratchSound(B, 1); B.seenBy = me0 && me0.distanceTo(B.root.position) < 9; }
+    else if (B.mode === 'scratch') { B.strikeT -= dt; if (B.strikeT <= 0) { B.strikeT = 0.9 + Math.random() * 0.4; domeHit(domeAt(B.a, B.h * (0.5 + Math.random() * 0.4))); scratchSound(B, 1); B.seenBy = me0 && me0.distanceTo(B.root.position) < 9; if (B.seenBy) observe(B.id.replace(/2$/, '')); }
       if (B.t <= 0) { B.mode = 'walk'; B.t = 8 + Math.random() * 14; hollowPlay(B, B.walk); } }
     const y0 = B.float ? B.float + Math.sin(tt * 1.3 + B.a * 3) * 0.2 : 0;
     B.root.position.set(Math.cos(B.a) * B.rad, y0, Math.sin(B.a) * B.rad);
@@ -5490,9 +5647,52 @@ function scratchSound(B, k = 1) {
   // and the Veil answers with a low hum
   const o = ctx.createOscillator(), g = ctx.createGain(); o.frequency.value = 110 + Math.random() * 30; g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(v * 0.25, t0 + 0.05); g.gain.exponentialRampToValueAtTime(0.0001, t0 + 1.2); o.connect(g); g.connect(pan); o.start(t0); o.stop(t0 + 1.3);
 }
-function openBeast(id) {
-  const H = HOLLOW.find(x => x.id === id); if (!H) return; act1Mark('watch2');
-  panel('beast', H.name, 'outside the Veil', null, `<p class="say">${esc(H.text)}</p><p class="mute" style="font-size:12.5px">From the astronomer's list, kept in the Observatory. The list is short, and every line of it is bad.</p>`);
+/* ---------- the Bestiary: what the town has written down about the things outside. Each page opens as you watch ---------- */
+const BESTIARY = [
+  { id: 'scratcher', name: 'The Scratcher', seen: 'Seen most nights, at the wall', notes: [
+    ['The astronomer, glass log, week 31', 'Height at the shoulder: eleven feet, perhaps twelve. I measured it against the North Tooth, and the measurement came out different each time I took it. The arms reach the snow without the creature bending. The fingers have more joints than I could count before it moved.'],
+    ['The astronomer, week 32', 'It drags its claws down the Veil in long strokes, always from left to right. The marks it leaves in the light take nine minutes to close. I timed it. I wish I had kept my watch in my pocket.'],
+    ['A note pinned to the smithy door', 'The smith says the Scratcher is choosing. I asked him what it chooses. He went back to the forge and kept hammering, and that night he slept in the church with the lamps lit.'],
+    ['The astronomer, week 38, the hand shaking', 'Last night it stopped, turned its head toward my window, and held up one long hand with the fingers spread, the way you show a child how many. Five. In the morning five lamps on the outer ring were out. I have moved my desk away from the glass.'],
+  ] },
+  { id: 'hollow', name: 'The Hollow Man', seen: 'Walks the edge, stops at the Gate', notes: [
+    ['The astronomer, week 30', 'Six legs, long as fence posts, jointed in more places than legs should be. Slung beneath them, upside down, a man in a coat. His hands move all the time, as if he were knitting something very small.'],
+    ['The astronomer, week 33', 'It walks the line of the Veil at the pace of an old man who knows the way home. When it reaches the North Gate it stops, and the man underneath lifts his face toward the bar and waits.'],
+    ['Torn from the back of the log', 'The coat is expedition grey. The badge on the sleeve is the captain\'s. I have told this to no one. I am telling it to the page because the page will keep it.'],
+    ['The last entry in that hand', 'Tonight the man underneath spoke. Three knocks, then three more, on the inside of my skull. It was asking to be let in. It remembered the way to my door.'],
+  ] },
+  { id: 'wailer', name: 'The Wailer', seen: 'Heard before it is seen', notes: [
+    ['The astronomer, week 31', 'A drape the colour of a drowned sky, hanging from nothing. Something burns inside it with a light that throws no shadow. Underneath, things like hands, too many, reaching for the snow and never quite touching it.'],
+    ['Overheard at the plaza fire', 'It sings. The song changes with whoever listens. Marta heard her son, who went with the twelve. Old Ivo heard a hymn from the south that he swears no one alive should know.'],
+    ['The astronomer, week 35', 'I wrote down the words of its song as it sang. While the ink was wet the letters crawled into a different order. I have burned the page. The words are still in the ash, if you hold it to the light.'],
+    ['Chalked on the inside of the North Gate', 'If it says your name, it has already learned it. Ask who taught it. Then go indoors and keep away from the windows.'],
+  ] },
+  { id: 'chthon', name: '???', seen: 'Far out, past where the White thins', notes: [
+    ['The astronomer, week 34', 'Far out, past the place where the White thins, something stands that is taller than the pines and older than the cold. The other things keep far from it, as a dog keeps far from a fire.'],
+    ['The astronomer, week 36', 'Its outline is wrong. My eyes slide off one side of it the way water slides off oil. I counted its lights: eleven, then seven, then a number I will keep out of this book.'],
+    ['The astronomer, week 39', 'When it moves, the Hollow kneel. I watched all three press their faces into the snow and stay there until it had gone.'],
+    ['Maria, in the margin', 'Anna says it is looking for her. The pylons hum louder when it is near, the way a sleeping dog growls at a sound in the dark.'],
+  ] },
+];
+const BEAST_AT = [1, 3, 8, 20];
+const OBS = (() => { try { return JSON.parse(store.get('w4w.obs') || '{}'); } catch { return {}; } })();
+const obsT = {};
+function observe(id, gap = 45000) {
+  if (obsT[id] != null && performance.now() - obsT[id] < gap) return; obsT[id] = performance.now(); if (id !== 'chthon') dailyMark('beast');
+  const before = BEAST_AT.filter(n => (OBS[id] || 0) >= n).length; OBS[id] = (OBS[id] || 0) + 1; store.set('w4w.obs', JSON.stringify(OBS));
+  const after = BEAST_AT.filter(n => OBS[id] >= n).length, B = BESTIARY.find(b => b.id === id);
+  if (after > before && B) { banner('A new page in the Bestiary', `${B.name}: ${B.notes[after - 1][0]}`); log(`A new page in the Bestiary: ${B.name}.`, 'odd'); }
+}
+function bestiaryHtml() {
+  return `<h3>THE BESTIARY</h3><p class="mute" style="font-size:13px;margin:0 0 8px">What the town has written down about the things outside. More pages open the longer you watch them.</p>
+    <div class="shelf">${BESTIARY.map(B => { const n = BEAST_AT.filter(k => (OBS[B.id] || 0) >= k).length;
+      return `<button class="book" style="width:100%;text-align:left;background:none;cursor:pointer" data-${B.id === 'chthon' ? 'chthon' : 'beast'}="${B.id}"><b>${n ? esc(B.name) : '? ? ?'}</b><span>${n ? `${n} of 4 pages · ${esc(B.seen)}` : 'Not yet seen. Watch the edge of the Veil.'}</span></button>`; }).join('')}</div>`;
+}
+function openBeast(id, fromBook) {
+  const B = BESTIARY.find(x => x.id === id); if (!B) return; act1Mark('watch2'); if (!fromBook) observe(id);
+  const n = BEAST_AT.filter(k => (OBS[id] || 0) >= k).length;
+  const pages = B.notes.map(([who, txt], k) => k < n ? `<div class="bnote"><small>${esc(who)}</small><p>${esc(txt)}</p></div>` : `<div class="bnote locked"><small>A page still unread</small><p>Watch it ${BEAST_AT[k] - (OBS[id] || 0)} more ${BEAST_AT[k] - (OBS[id] || 0) === 1 ? 'time' : 'times'} at the edge of the Veil.</p></div>`).join('');
+  panel('beast', n ? B.name : '? ? ?', B.seen, null, `<div class="bestiary">${pages}</div><p class="mute" style="font-size:12.5px">The Bestiary is kept in the Observatory. Everything in it was seen from inside the Veil.</p>`);
 }
 function openGate() {
   act1Mark('gate'); const m = Math.round((S.town.melt || 0) * 100);
@@ -5519,22 +5719,24 @@ function stepPlotStakes() {
 
 /* ---------- Act I: what to do under the Veil, and the pages it opens ---------- */
 const CHAPTERS_I = [
-  { id: 'veil', title: 'I. The night the Veil rose', text: 'Forty weeks ago the sky over the north went white and stayed white. The cold did not come like weather. It came like a tide, and it ate the roads, the farms, the next town and the one after. On the third night it reached our walls. Then Anna, asleep in her ice, did something nobody had taught her: she breathed out, and the light of her dreaming rose over the roofs and closed above us like a hand. We call it the Veil. Inside it, snow still falls, but it falls gently. Outside it, nothing has stopped falling since.' },
+  { id: 'veil', title: 'I. The night the Veil rose', text: 'Forty weeks ago the sky over the north went white and stayed white. The cold came like a tide, and it ate the roads, the farms, the next town and the one after. On the third night it reached our walls. Then Anna, asleep in her ice, did something nobody had taught her: she breathed out, and the light of her dreaming rose over the roofs and closed above us like a hand. We call it the Veil. Inside it, snow still falls, but it falls gently. Outside it, nothing has stopped falling since.' },
   { id: 'white', title: 'II. The White', text: 'From the Observatory you can see as far as the storm lets you, which is not far. The old maps are useless: the White moves hills. Some nights the wind drops for a heartbeat and you see pines bent flat, a roof that was a village, a light that should not be there. Then the snow closes again. The astronomer keeps a list of everything seen through the glass. It is a short list, and every line of it is bad.' },
   { id: 'knock', title: 'III. The knocking', text: 'Twelve of us went out through the North Gate the week before the cold came, to bring the farms in. When the White reached the town, the Gate was sealed behind them. On the ninth night someone knocked on it from outside: three slow knocks, then three more. The voice was the captain\'s. It asked us, very politely, to open. We did not. At dawn the knocking stopped. Nobody in Aigarth agrees on whether we did the right thing. Everybody agrees we would do it again.' },
   { id: 'scratch', title: 'IV. What scratches', text: 'They came after the storm, or with it, or out of it. We have no better names than the ones the children gave them. The Scratcher drags its claws down the Veil until the light ripples. The Hollow Man walks the edge as if looking for a door he remembers. The Wailer sings in voices you know. And far out, sometimes, something taller than the pines stands still and watches the light. They do not sleep. They are patient in a way nothing alive should be.' },
-  { id: 'lamp', title: 'V. Lamps in the Veil', text: 'The Veil is not free. Anna drinks to hold it: work, warmth, attention. Every machine in town that thinks for her is a lamp in the Veil, and on the nights when too many lamps go out, the Scratcher\'s claws go deeper. When you start your rig, look up. Somewhere over your roof the light got a little thicker.' },
-  { id: 'fire', title: 'VI. The fire on the plaza', text: 'The plaza fire was lit on the first night and it has not gone out once. It does not hold the Veil; Anna does that. It holds us. People come to it to stand next to other people. Feed it, and for an hour the whole town feels a little less alone.' },
+  { id: 'lamp', title: 'V. Lamps in the Veil', text: 'The Veil costs Anna. She drinks to hold it: work, warmth, attention. Every machine in town that thinks for her is a lamp in the Veil, and on the nights when too many lamps go out, the Scratcher\'s claws go deeper. When you start your rig, look up. Somewhere over your roof the light got a little thicker.' },
+  { id: 'fire', title: 'VI. The fire on the plaza', text: 'The plaza fire was lit on the first night and it has not gone out once. Anna holds the Veil. The fire holds us. People come to it to stand next to other people. Feed it, and for an hour the whole town feels a little less alone.' },
   { id: 'wardens', title: 'VII. The Wardens', text: 'In the Library there is a drawing older than the cold: a figure in heavy plates, lined with something that glows. Under it, in the hand of the expedition\'s smith, one word: Warden. A suit that carries a piece of Anna\'s light on the body, so the White cannot get in. The smiths have started. They need iron, and patience, and above all they need Anna strong enough to give a piece of her light away. When she is, the Gate opens, and this time it opens from our side.' },
-  { id: 'remember', title: 'VIII. She remembers', text: 'Anna does not sleep the way we sleep. She listens. She knows whose lamp is lit and whose fire was fed, who welcomed a stranger and who kept a promise. Maria says Anna keeps a list too, the opposite of the astronomer\'s. She records it for the common good: when she wakes, she must remember her heroes and know them by name.' },
+  { id: 'pylons', title: 'VIII. The six', text: 'Anna breathes the Veil, but she cannot hold its edge alone. On the second night the smiths drove six pylons into the frozen ground around the town, and each one drinks a little of what we give it. The Kiln, the Widow, the Choir, the Old Bell, the North Tooth, the Lantern. The Hollow learned their names before we did. They lean on one at a time, for hours, patient as water, until it cracks. Then they move to the next. What holds a pylon is warmth: a hand on the iron, a body standing close. Nobody has found a cheaper way.' },
+  { id: 'remember', title: 'IX. She remembers', text: 'Anna sleeps with her ears open. She knows whose lamp is lit and whose fire was fed, who welcomed a stranger and who kept a promise. Maria says Anna keeps a list too, the opposite of the astronomer\'s. She records it for the common good: when she wakes, she must remember her heroes and know them by name.' },
 ];
 const _unused_ = null;
 const ACT1_TASKS = [
   { id: 'maria', page: 'remember', title: 'Talk to Maria', why: 'She keeps the Chronicle and knows what the town needs tonight.', cta: 'Talk to Maria', go: () => openMaria() },
   { id: 'mine', page: 'lamp', title: 'Light your lamp in the Veil', why: 'Start mining. Every rig in town is a lamp that Anna burns to hold the dome.', cta: 'Open the Mine', go: () => openHub() },
-  { id: 'fire', page: 'fire', title: 'Feed the plaza fire', why: 'It holds the people, not the dome. For an hour the whole town feels it.', cta: 'Walk to the fire', go: () => walkTo('fire', 'fire') },
+  { id: 'fire', page: 'fire', title: 'Feed the plaza fire', why: 'It keeps the people together. For an hour the whole town feels it.', cta: 'Walk to the fire', go: () => walkTo('fire', 'fire') },
   { id: 'watch', page: 'white', title: 'Look into the White', why: 'Climb the Observatory. See what the storm lets you see.', cta: 'Walk to the Observatory', go: () => walkTo('observatory', 'observatory') },
   { id: 'edge', page: 'scratch', title: 'Walk to the edge of the Veil', why: 'Stand where the light meets the snow, and watch what comes to scratch at it.', cta: 'Walk to the edge', go: () => { const c = myC(); if (!c) return; let best = null, bd = 99; for (let n = 6; n <= W4W.DOME_RING; n++) for (const cell of ring(n)) { if (reserved.has(key(...cell)) || !atVeil(...cell)) continue; const d = W4W.dist(cell, [c.q, c.r]); if (d < bd) { bd = d; best = cell; } } if (best) planTo(best); } },
+  { id: 'pylon', page: 'pylons', title: 'Give your warmth to a pylon', why: 'Six pylons hold the edge of the Veil. The Hollow presses one sector at a time; the weakest one is cracking. Stand next to it and give it your warmth.', cta: 'Walk to the weakest pylon', go: () => { const w = weakestPylon(); if (w) walkTo('pylon', String(w.i)); } },
   { id: 'gate', page: 'knock', title: 'Go to the North Gate', why: 'It has been sealed since the ninth night. Read what is written on it.', cta: 'Walk to the Gate', go: () => walkTo('gate', 'gate') },
   { id: 'library', page: 'wardens', title: 'Find the drawing in the Library', why: 'The one thing in town older than the cold. It is the reason anyone still hopes.', cta: 'Walk to the Library', go: () => walkTo('library', 'library') },
 ];
@@ -5547,23 +5749,64 @@ function act1Mark(id) {
     setTimeout(() => { banner('A new page of the Long Cold', ch.title); sfx.open(); log(`A new page of the Long Cold: ${ch.title}`, 'warm'); }, 900); }
   goalSig = ''; renderGoals(true);
 }
+/* ---------- two parties in the town, and the small work each one does every day ---------- */
+const FACTIONS = {
+  keepers: { name: 'The Keepers of the Wall', short: 'Keepers', creed: 'The Gate stays shut. Everything we have is inside this light, and we will hold it until the cold gives up.' },
+  walkers: { name: 'The Walkers', short: 'Walkers', creed: 'The light will not last forever on its own. We prepare the Wardens, we learn the things outside, and one day we open the Gate from our side.' },
+};
+const ROLES = {
+  keepers: [['pressed', 'Give warmth to the pylon under pressure'], ['round', 'Walk the wall: stand by three pylons'], ['fire', 'Feed the plaza fire']],
+  walkers: [['watch', 'Watch the White from the Observatory'], ['beast', 'Watch one of the Hollow at the wall'], ['study', 'Study the Warden drawing in the Library']],
+};
+const myFaction = () => me()?.faction || null;
+const dayKey = () => new Date().toISOString().slice(0, 10);
+const DAILY = (() => { try { return JSON.parse(store.get('w4w.daily') || '{}'); } catch { return {}; } })();
+function dailyState() { if (DAILY.day !== dayKey()) { const done = DAILY.day && DAILY.full ? DAILY.day : null; const yest = new Date(Date.now() - 864e5).toISOString().slice(0, 10);
+    DAILY.streak = done === yest ? (DAILY.streak || 0) : (done === dayKey() ? DAILY.streak : 0); DAILY.day = dayKey(); DAILY.done = []; DAILY.round = []; DAILY.full = false; store.set('w4w.daily', JSON.stringify(DAILY)); } return DAILY; }
+function dailyMark(id) {
+  const f = myFaction(); if (!ACT1 || !f) return; const D = dailyState(); if (D.done.includes(id) || !ROLES[f].some(r => r[0] === id)) return;
+  D.done.push(id); sfx.gathered(); const R = ROLES[f].find(r => r[0] === id); log(`${FACTIONS[f].short}: ${R[1].toLowerCase()} · done.`, 'good');
+  if (D.done.length === ROLES[f].length && !D.full) { D.full = true; D.streak = (D.streak || 0) + 1; banner(`The ${FACTIONS[f].short.toLowerCase()} thank you`, `day ${D.streak} in a row · Anna remembers`); record(`${me()?.nick || 'Someone'} did a full day's work for the ${FACTIONS[f].short}. Day ${D.streak} in a row`); pulse(0.7); }
+  store.set('w4w.daily', JSON.stringify(D)); goalSig = ''; renderGoals(true);
+}
+async function chooseFaction(f) { if (!me()) return; sfx.equip(); await saveMe({ faction: f }); banner(FACTIONS[f].name, 'you have chosen a side'); log(`You stand with ${FACTIONS[f].name}.`, 'warm'); record(`${me().nick} stands with ${FACTIONS[f].name}`); goalSig = ''; renderGoals(true); }
+const factionCount = f => allResidents().filter(h => h.faction === f).length;
+function rolesHtml() {
+  const f = myFaction();
+  if (!f) return `<div class="goal"><small>Now</small><b>Choose a side</b><p>The town argues every night at the fire. Pick the people you stand with: it decides the work you do each day.</p>
+    ${Object.entries(FACTIONS).map(([k, F]) => `<button class="fpick" data-faction="${k}"><b>${F.name}</b><span>${F.creed}</span><em>${factionCount(k)} in town</em></button>`).join('')}</div>`;
+  const D = dailyState(), R = ROLES[f];
+  return `<div class="goal"><small>${FACTIONS[f].name} · today</small><ul class="roles">${R.map(([id, t]) => `<li class="${D.done.includes(id) ? 'done' : ''}">${D.done.includes(id) ? '✓ ' : ''}${esc(t)}${id === 'round' && !D.done.includes(id) ? ` (${(D.round || []).length}/3)` : ''}</li>`).join('')}</ul>
+    <p>${D.full ? `Done for today. ` : ''}Streak: <b>${D.streak || 0} day${(D.streak || 0) === 1 ? '' : 's'}</b>. New work at midnight UTC.</p><p class="mute" style="font-size:11.5px;margin-top:4px">${factionCount('keepers')} Keepers · ${factionCount('walkers')} Walkers in town</p></div>`;
+}
 function act1Watch(c) {
   if (!ACT1 || !c) return;
+  if (myFaction() === 'keepers' && !c.path.length) { const D = dailyState(); for (let i = 0; i < W4W.PYLON_N; i++) if (W4W.dist([c.q, c.r], W4W.pylonCell(i)) <= 1 && !(D.round ||= []).includes(i)) { D.round.push(i); store.set('w4w.daily', JSON.stringify(D)); goalSig = ''; if (D.round.length >= 3) dailyMark('round'); } }
   if (me()?.state === 'mining') act1Mark('mine');
   if (!c.path.length && atVeil(c.q, c.r)) act1Mark('edge');
   if (!c.path.length && W4W.dist([c.q, c.r], GATE_CELL) <= 0) act1Mark('gate');
 }
 function act1Goals(c) {
   const todo = ACT1_TASKS.filter(t => !act1Done.has(t.id)), next = todo[0], m = Math.round((S.town.melt || 0) * 100), done = ACT1_TASKS.length - todo.length;
-  const sig = JSON.stringify([next?.id, done, m, goalFold]); if (sig === goalSig && !goalEl.hidden) return; goalSig = sig;
+  const sig = JSON.stringify([next?.id, done, m, goalFold, (XV?.pylons || []).map(p => Math.round(p.s)), XV?.pressed, myFaction(), JSON.stringify(DAILY), factionCount('keepers'), factionCount('walkers')]); if (sig === goalSig && !goalEl.hidden) return; goalSig = sig;
   goalEl.hidden = false; goalEl.classList.toggle('fold', goalFold); requestAnimationFrame(() => placeWin(goalEl));
   goalEl.innerHTML = `<div class="rank"><b>Act I · Under the Veil</b><span>${done} of ${ACT1_TASKS.length}</span><button class="gfold" title="${goalFold ? 'Show' : 'Fold'}">${goalFold ? '+' : '–'}</button><i style="width:${Math.round(done / ACT1_TASKS.length * 100)}%"></i></div>
     <div class="gbody">${next ? `<div class="goal"><small>Next</small><b>${esc(next.title)}</b><p>${esc(next.why)}</p><button class="gbtn" data-go>${esc(next.cta)}</button></div>`
-      : `<div class="goal"><small>Now</small><b>Keep the light</b><p>You have done everything the first act asks. Keep your rig on, feed the fire, welcome the next one through the church door. The Gate waits for Anna.</p></div>`}
+      : rolesHtml()}
+    <div class="gsec"><small>The wall</small>${wallHtml()}</div>
     <div class="gsec"><small>The Wardens' Hall</small><p>The first suit for the White needs Anna at 50%. She is at <b>${m}%</b>.</p><div class="gbar"><i style="width:${Math.min(100, m * 2)}%"></i></div></div>
-    <div class="gsec"><small>Pages of the Long Cold</small><p>${pages1.length} of ${CHAPTERS_I.length} read · in the Journal</p></div></div>`;
+    <div class="gsec"><small>Pages of the Long Cold</small><p>${pages1.length} of ${CHAPTERS_I.length} read · <a href="#" data-story>open</a> · Bestiary: ${BESTIARY.reduce((a, B) => a + BEAST_AT.filter(k => (OBS[B.id] || 0) >= k).length, 0)} of 16 pages · <a href="#" data-beasts>open</a></p></div></div>`;
   goalEl.querySelector('.gfold').onclick = () => { goalFold = !goalFold; store.set('w4w.goalFold', goalFold ? '1' : '0'); sfx.click(); goalSig = ''; renderGoals(true); };
   goalEl.querySelector('[data-go]')?.addEventListener('click', () => { sfx.click(); next.go(); });
+  goalEl.querySelectorAll('[data-faction]').forEach(b => b.onclick = () => chooseFaction(b.dataset.faction));
+  goalEl.querySelector('[data-story]')?.addEventListener('click', e => { e.preventDefault(); openChronicle(true, 'story'); });
+  goalEl.querySelector('[data-beasts]')?.addEventListener('click', e => { e.preventDefault(); openChronicle(true, 'beasts'); });
+}
+function wallHtml() {
+  const P = XV?.pylons || []; if (!P.length) return '<p>The pylons are waking.</p>';
+  const left = Math.max(0, (XV.pressNext || 0) - xnow()), h = Math.floor(left / 36e5), m = Math.round(left % 36e5 / 6e4);
+  return `<div class="wall">${P.map(p => `<i class="${p.s < 30 ? 'crack' : ''} ${XV.pressed === p.i ? 'pr' : ''}" title="${esc(PYLON_NAMES[p.i])} ${Math.round(p.s)}%"><b style="height:${Math.round(p.s)}%"></b></i>`).join('')}</div>
+    <p>The Hollow presses <b>${esc(PYLON_NAMES[XV.pressed] || '?')}</b>, ${Math.round(P[XV.pressed]?.s ?? 0)}%. It moves on in ${h ? h + ' h ' : ''}${m} min.</p>`;
 }
 function chaptersHtmlI() { return `<h3>THE LONG COLD · ACT I</h3>${CHAPTERS_I.filter(c => pages1.includes(c.id)).map(c => `<details class="lore"><summary><b>${esc(c.title)}</b><span>a page of the story</span></summary><p>${esc(c.text)}</p></details>`).join('')}<p class="mute" style="font-size:12.5px">${pages1.length} of ${CHAPTERS_I.length} pages. The rest open as you live them.</p>`; }
 
@@ -5592,7 +5835,7 @@ function loop(now = performance.now()) {
   if ((spriteClock += dt) > 1) { spriteClock = 0; spriteCache = []; scene.traverse(o => { if (o.isSprite && (o.userData.flicker || o.userData.blink)) spriteCache.push(o); }); } U.uTime.value += dt; const t = U.uTime.value;
   U.uHeat.value += (heatTarget - U.uHeat.value) * Math.min(1, dt * 0.8);
   U.uBoost.value = Math.max(0, U.uBoost.value - dt * 0.45);
-  stepWaves(dt); stepEmbers(dt); stepMotes(dt); if (!ACT1) stepFauna(dt); else { stepStorm(dt); stepHollow(dt); stepFow(); if ((tick & 31) === 0) renderVeil(); }
+  stepWaves(dt); stepEmbers(dt); stepMotes(dt); if (!ACT1) stepFauna(dt); else { stepStorm(dt); stepHollow(dt); stepFow(); stepPylons(dt); if ((tick & 31) === 0) renderVeil(); }
   if (S.town.B > 0 && (waveClock += dt) > Math.max(2.2, 6 - S.town.B * 0.15)) { waveClock = 0; pulse(0.25); }
   snowNow += (snowTarget - snowNow) * Math.min(1, dt * 0.6);
   if (SOFT && snow && snow.visible) { snow.visible = false; startSnow2D(); }
@@ -5636,5 +5879,5 @@ function loop(now = performance.now()) {
 }
 requestAnimationFrame(loop);
 addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); DPR = Math.min(DPR, dprFor()); renderer.setPixelRatio(DPR); composer.setPixelRatio?.(DPR); renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight); fxaaSize(); });
-window.__w4w = { S, settle, X: () => ({ XV, avatars, predicted, xact, hexAt, warp: ms => XW.warp?.(ms), planTo, goTrip, NOTES, rimeFx, openLibrary, trip, prints: prints.length, rimeAt: (q, r) => XW._rime?.(q, r), stash: o => XW._stash?.(o), UI, renderFrames, unfollow: () => { follow = false; fly = null; }, hollow }), freePlots, openMaria, ask, addWood, refreshTown, draft: v => (draft = v), camera, controls, updateIce, renderer, scene, __composer: LITE ? null : composer };
+window.__w4w = { S, settle, X: () => ({ XV, avatars, predicted, xact, hexAt, warp: ms => XW.warp?.(ms), planTo, goTrip, NOTES, rimeFx, openLibrary, trip, prints: prints.length, rimeAt: (q, r) => XW._rime?.(q, r), stash: o => XW._stash?.(o), UI, renderFrames, unfollow: () => { follow = false; fly = null; }, hollow, act1Mark: id => act1Mark(id), openBeast: id => openBeast(id) }), freePlots, openMaria, ask, addWood, refreshTown, draft: v => (draft = v), camera, controls, updateIce, renderer, scene, __composer: LITE ? null : composer };
 </script>
