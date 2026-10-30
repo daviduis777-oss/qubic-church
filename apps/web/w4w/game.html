@@ -3987,10 +3987,23 @@ function routeFor(a, d) {
     if (base >= 0 && same(R.cells[base], cur) && d.path.every((c, i) => same(R.cells[base + 1 + i], c))) return R;
     // a new order mid-step: keep everything up to the step we are on, swap the rest
     const at = R.cells.findIndex((c, i) => same(c, cur) && same(R.cells[i + 1], d.path[0]));
-    if (at >= 0) { const cells = [...R.cells.slice(0, at + 2), ...d.path.slice(1)]; return (a.route = { cells, cv: new THREE.CatmullRomCurve3(cells.map(c => HX(...c)), false, 'centripetal', 0.5) }); }
+    if (at >= 0) { const cells = [...R.cells.slice(0, at + 2), ...d.path.slice(1)]; return (a.route = { cells, cv: new THREE.CatmullRomCurve3(routePts(cells), false, 'centripetal', 0.5) }); }
   }
   const cells = [cur, ...d.path];
-  return (a.route = { cells, cv: new THREE.CatmullRomCurve3(cells.map(c => HX(...c)), false, 'centripetal', 0.5) });
+  return (a.route = { cells, cv: new THREE.CatmullRomCurve3(routePts(cells), false, 'centripetal', 0.5) });
+}
+function routePts(cells) {
+  const pts = cells.map(c => HX(...c)), last = cells[cells.length - 1], sh = SHEL[W4W.key(...last)], e = pts[pts.length - 1];
+  if (sh && sh !== 'fire' && e.lengthSq() > 0.01) pts[pts.length - 1] = e.clone().add(new THREE.Vector3(-e.x, 0, -e.z).normalize().multiplyScalar(0.95));
+  return pts;
+}
+const doorFx = [];
+function doorGlow(at) {
+  const s = sprite(GLOW, at.x, 0.35, at.z, 0.2, 0xffc070, 0); doorFx.push({ s, t: 0 });
+}
+function stepDoorFx(dt) {
+  for (let i = doorFx.length - 1; i >= 0; i--) { const f = doorFx[i]; f.t += dt; const k = f.t < 0.25 ? f.t / 0.25 : Math.max(0, 1 - (f.t - 0.25) / 1.1);
+    f.s.material.opacity = 0.95 * k; f.s.scale.setScalar(0.5 + 0.7 * Math.min(1, f.t * 2)); if (f.t > 1.4) { scene.remove(f.s); f.s.material.dispose(); doorFx.splice(i, 1); } }
 }
 function posOf(d, t, a) {
   if (!d.path?.length) { if (a) a.route = null; return { p: HX(d.q, d.r), walking: false, dir: null }; }
@@ -4016,17 +4029,23 @@ function stepAvatars(dt) {
     }
     if (a.ice) { a.g.remove(a.ice); a.ice = null; a.label.el.textContent = a.mine ? 'you' : d.nick; }
     const { p, walking, dir, out } = posOf(d, t, a);
+    // standing still: measure the door from the middle of the cell you stopped at, wherever the route curve ended
+    const stand = !walking && d.path?.length ? d.path[d.path.length - 1] : [d.q, d.r]; if (!walking) p.copy(HX(...stand));
     // inside a building you are gone from the map: through the door, the body fades, the walls keep you
-    const indoor = !walking && !!SHEL[W4W.key(d.q, d.r)] && SHEL[W4W.key(d.q, d.r)] !== 'fire';
-    if (indoor !== !!a.wasIn) { a.wasIn = indoor; if (a.mine) sfx.door(); a.label.el.textContent = (a.mine ? 'you' : d.nick) + (indoor ? ' · inside' : ''); if (indoor) play(a, 'Interact', true); }
-    a.fade = THREE.MathUtils.clamp((a.fade ?? 1) + (indoor ? -dt * 1.6 : dt * 3), 0, 1);
+    const indoor = !walking && !!SHEL[W4W.key(...stand)] && SHEL[W4W.key(...stand)] !== 'fire';
+    if (indoor !== !!a.wasIn) { a.wasIn = indoor; a.enterT = 0; a.label.el.textContent = (a.mine ? 'you' : d.nick) + (indoor ? ' · inside' : ''); if (indoor) play(a, 'Interact', true); else if (a.mine) sfx.door(); }
+    if (indoor) { const was = a.enterT || 0; a.enterT = was + dt; if (was < 0.4 && a.enterT >= 0.4) { if (a.mine) sfx.door(); doorGlow(p.clone().add(new THREE.Vector3(-p.x, 0, -p.z).normalize().multiplyScalar(0.8))); } }
+    a.fade = THREE.MathUtils.clamp((a.fade ?? 1) + (indoor ? (a.enterT > 0.5 ? -dt * 1.5 : 0) : dt * 3), 0, 1);
     a.body.scale.setScalar(heroScale * Math.max(0.001, a.fade)); a.g.visible = a.fade > 0.02 || indoor;
-    const door = !walking && p.lengthSq() > 0.01 && (indoor || Object.values(SPECIAL).some(([q, r]) => q === d.q && r === d.r)) ? new THREE.Vector3(-p.x, 0, -p.z).normalize().multiplyScalar(0.95) : new THREE.Vector3();
-    if (walking) a.g.position.copy(p); else a.g.position.lerp(p.clone().add(door), Math.min(1, dt * 6));
+    const door = !walking && p.lengthSq() > 0.01 && (indoor || Object.values(SPECIAL).some(([q, r]) => q === stand[0] && r === stand[1])) ? new THREE.Vector3(-p.x, 0, -p.z).normalize().multiplyScalar(0.95) : new THREE.Vector3();
+    if (walking) a.g.position.copy(p);
+    else if (indoor && door.lengthSq() > 0) { const into = THREE.MathUtils.smoothstep(a.enterT || 0, 0.5, 1.4); a.g.position.lerp(p.clone().add(door.clone().multiplyScalar(1 - into * 0.45)), Math.min(1, dt * 6)); }
+    else a.g.position.lerp(p.clone().add(door), Math.min(1, dt * 6));
     // at work you face what you are working
     const busyNow = d.act && d.act.until > t && d.act.q != null && !walking;
     if (busyNow) { const w = HX(d.act.q, d.act.r); const y = Math.atan2(w.x - a.g.position.x, w.z - a.g.position.z), r0 = a.g.rotation.y; a.g.rotation.y = r0 + Math.atan2(Math.sin(y - r0), Math.cos(y - r0)) * Math.min(1, dt * 6); }
     else if (dir && dir.lengthSq() > 1e-6) { const y = Math.atan2(dir.x, dir.z), r0 = a.g.rotation.y; a.g.rotation.y = r0 + Math.atan2(Math.sin(y - r0), Math.cos(y - r0)) * Math.min(1, dt * 9); }
+    if (indoor && door.lengthSq() > 0) { const y = Math.atan2(-door.x, -door.z), r0 = a.g.rotation.y; a.g.rotation.y = r0 + Math.atan2(Math.sin(y - r0), Math.cos(y - r0)) * Math.min(1, dt * 8); }
     const busy = d.act && d.act.until > t;
     // out in the cold the walk turns heavy: bent into the wind, staggering when it blows or you are spent
     const wx = W4W.weatherAt(t).id, bad = walking && out && (wx !== 'calm' || (d.warmth ?? 100) < 40 || (d.energy ?? 100) < 25);
@@ -4036,7 +4055,9 @@ function stepAvatars(dt) {
     // the tool comes out of the bag for the work, and goes back after
     a.toolId = busy && !walking ? toolInHand(d, a.mine) : null; syncTool(a.tool ||= { id: null, m: null }, a.body, a.toolId);
     if (!(indoor && a.cur === 'Interact')) play(a, walking ? (out ? (bad && a.actions.Walking_C ? 'Walking_C' : 'Walking_A') : 'Running_A') : busy ? (a.actions[chop] ? chop : 'PickUp') : sittingAt(d) || (!walking && SHEL[W4W.key(d.q, d.r)] === 'fire') ? 'Sit_Floor_Idle' : 'Idle');
-    if (walking) { a.stepT = (a.stepT || 0) + dt; const every = out ? (bad ? 0.6 : 0.45) : 0.3; if (a.stepT > every) { a.stepT = 0; if (a.mine) sfx.step(out, wx); if (out) snowStep(a.g.position, bad || W4W.zoneOf(d.q, d.r) >= 2); footPrint(a); } }
+    if (walking) { const lp = a.lastP || (a.lastP = a.g.position.clone()); a.walkD = (a.walkD || 0) + Math.min(0.5, lp.distanceTo(a.g.position)); lp.copy(a.g.position);
+      const stride = out ? 0.2 : 0.16; if (a.walkD > stride) { a.walkD = 0; footPrint(a); if (a.mine) sfx.step(out, wx); if (out && (a.stepN = (a.stepN || 0) + 1) % 3 === 0) snowStep(a.g.position, bad || W4W.zoneOf(d.q, d.r) >= 2); } }
+    else if (a.lastP) a.lastP.copy(a.g.position);
     if (a.mine && busy) { a.workT = (a.workT || 0) + dt; if (a.workT > 1.1) { a.workT = 0; sfx.work(d.act?.res); } }
   }
   // the camera walks with you until you take it
@@ -4050,16 +4071,16 @@ function footPrint(a) {
   if (!printMesh) {
     const cv = document.createElement('canvas'); cv.width = 32; cv.height = 64; const x = cv.getContext('2d');
     x.fillStyle = '#fff'; x.beginPath(); x.ellipse(16, 22, 9, 15, 0, 0, Math.PI * 2); x.fill(); x.beginPath(); x.ellipse(16, 50, 7, 9, 0, 0, Math.PI * 2); x.fill();
-    const tex = new THREE.CanvasTexture(cv), geo = new THREE.PlaneGeometry(0.11, 0.22).rotateX(-Math.PI / 2), born = new Float32Array(PRINT_N).fill(-99);
+    const tex = new THREE.CanvasTexture(cv), geo = new THREE.PlaneGeometry(0.042, 0.085).rotateX(-Math.PI / 2), born = new Float32Array(PRINT_N).fill(-99);
     geo.setAttribute('aBorn', new THREE.InstancedBufferAttribute(born, 1));
     const mat = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, uniforms: { uMap: { value: tex }, uNow: { value: 0 }, uLife: { value: PRINT_LIFE } },
       vertexShader: `attribute float aBorn; varying vec2 vUv; varying float vA; uniform float uNow, uLife;
         void main() { vUv = uv; float age = uNow - aBorn; vA = age < 0. ? 0. : clamp(1. - age / uLife, 0., 1.); gl_Position = projectionMatrix * modelViewMatrix * instanceMatrix * vec4(position, 1.); }`,
-      fragmentShader: `uniform sampler2D uMap; varying vec2 vUv; varying float vA; void main() { float m = texture2D(uMap, vUv).r; gl_FragColor = vec4(0.22, 0.27, 0.4, m * vA * vA * 0.42); }` });
+      fragmentShader: `uniform sampler2D uMap; varying vec2 vUv; varying float vA; void main() { float m = texture2D(uMap, vUv).r; gl_FragColor = vec4(0.2, 0.25, 0.38, m * vA * vA * 0.55); }` });
     printMesh = new THREE.InstancedMesh(geo, mat, PRINT_N); printMesh.frustumCulled = false; printMesh.renderOrder = 2;
     const m4 = new THREE.Matrix4().makeScale(0, 0, 0); for (let i = 0; i < PRINT_N; i++) printMesh.setMatrixAt(i, m4); scene.add(printMesh);
   }
-  const g = a.g, side = (a.foot = !a.foot) ? 1 : -1, yaw = g.rotation.y, px = g.position.x + Math.cos(yaw) * 0.07 * side, pz = g.position.z - Math.sin(yaw) * 0.07 * side;
+  const g = a.g, side = (a.foot = !a.foot) ? 1 : -1, yaw = g.rotation.y, px = g.position.x + Math.cos(yaw) * 0.028 * side, pz = g.position.z - Math.sin(yaw) * 0.028 * side;
   const m4 = new THREE.Matrix4().makeRotationY(yaw); m4.setPosition(px, 0.035, pz); const i = printK++ % PRINT_N;
   printMesh.setMatrixAt(i, m4); printMesh.instanceMatrix.needsUpdate = true;
   const ab = printMesh.geometry.getAttribute('aBorn'); ab.array[i] = U.uTime.value; ab.needsUpdate = true;
@@ -5199,7 +5220,7 @@ const sfx = {
   pack() { for (let i = 0; i < 4; i++) this._n(0.12, 'bandpass', 700 + i * 260, 1.2, 0.06, i * 0.05); this._t(2400, 2100, 0.08, 0.03, 'square', 0.22); },
   equip() { for (let i = 0; i < 6; i++) this._n(0.09, 'bandpass', 1200 + Math.random() * 1600, 0.9, 0.05, i * 0.04); },
   door() { this._t(140, 70, 0.5, 0.05, 'sawtooth'); this._n(0.5, 'bandpass', 380, 6, 0.08); this._t(90, 50, 0.18, 0.14, 'sine', 0.42); this._n(0.12, 'lowpass', 300, 1, 0.12, 0.42); },
-  step(out, wx) { const v = out ? 0.07 : 0.04; this._n(out ? 0.16 : 0.08, 'bandpass', out ? 700 + Math.random() * 300 : 1300 + Math.random() * 400, out ? 1.4 : 1, v); if (out) this._n(0.1, 'highpass', 3500, 1, 0.025, 0.03); },
+  step(out, wx) { const v = out ? 0.07 : 0.05; this._n(0.11, 'bandpass', 520 + Math.random() * 260, 1.2, v); for (let i = 0; i < 3; i++) this._n(0.025, 'bandpass', 1800 + Math.random() * 1600, 2.5, v * 0.35, 0.015 + i * 0.025 + Math.random() * 0.01); if (out) this._n(0.1, 'highpass', 3500, 1, 0.02, 0.03); },
   work(res) { if (res === 'wood' || res === 'resin') { this._n(0.22, 'bandpass', 1800, 3, 0.06); this._n(0.22, 'bandpass', 1500, 3, 0.05, 0.35); } else { this._t(1800, 1500, 0.25, 0.05, 'triangle'); this._n(0.06, 'highpass', 2500, 1, 0.08); } },
   gathered() { musicBox(880, 0, 0.04); musicBox(1318.5, 0.12, 0.03); },
   death() { const ctx = SND.ctx; if (!ctx) return; this._t(60, 22, 3.5, 0.5); for (let i = 0; i < 18; i++) this._n(0.05, 'highpass', 2000 + Math.random() * 3000, 1, 0.2 * Math.random(), Math.random() * 1.6);
@@ -5829,10 +5850,34 @@ function stepStorm(dt) {
 }
 
 /* ---------- the dark: you see what is near you and what you have walked past; the rest is night ---------- */
-const FOW_N = 128, FOW_W = 80, BLACK = new THREE.Color(0x000000);
+const FOW_N = 128, FOW_W = 80, BLACK = new THREE.Color(0x000000), NIGHT = new THREE.Color(0x020309), FLASH_SKY = new THREE.Color(0x5a6a90);
+/* now and then the White flashes, cold and silent, and for a breath you see what stands out there */
+let flashT = 18 + Math.random() * 20, flashK = 0, flashFig = null;
+function stepFlash() {
+  const dt = 1 / 60; flashT -= dt;
+  if (flashT <= 0) { flashT = 28 + Math.random() * 45; flashK = 1; showFigure(); if (SND.ctx && SND.on) rumble(); }
+  if (flashK > 0) { flashK = Math.max(0, flashK - dt * 1.6); const t = 1 - flashK; FOW_U.uFowFlash.value = flashK * (t < 0.12 ? 1 : t < 0.2 ? 0.25 : t < 0.32 ? 0.8 : 0.5); }
+  else FOW_U.uFowFlash.value = 0;
+  if (flashFig) flashFig.visible = FOW_U.uFowFlash.value > 0.05;
+}
+function showFigure() {
+  // something far taller than the pines, standing still past where the light reaches
+  if (!flashFig) { flashFig = new THREE.Group(); const m = new THREE.MeshBasicMaterial({ color: 0x000000 }); m.userData.noFow = true;
+    const body = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.9, 9, 6), m); body.position.y = 4.5; flashFig.add(body);
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.7, 8, 6), m); head.scale.set(0.8, 1.3, 0.8); head.position.y = 9.6; flashFig.add(head);
+    for (const sx of [-1, 1]) { const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.08, 8.5, 5), m); arm.position.set(sx * 0.9, 5, 0); arm.rotation.z = sx * 0.12; flashFig.add(arm); }
+    scene.add(flashFig); }
+  const a = Math.random() * Math.PI * 2, r = DOME_R + 24 + Math.random() * 10; flashFig.position.set(Math.cos(a) * r, 0, Math.sin(a) * r); flashFig.lookAt(0, 0, 0);
+  if (Math.random() < 0.55) flashFig.position.y = -20; // most nights there is nothing there. Most.
+}
+function rumble() {
+  const ctx = SND.ctx, t0 = ctx.currentTime + 0.4 + Math.random() * 0.8, n = ctx.createBufferSource(); if (!SND.noise) return; n.buffer = SND.noise;
+  const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 160; const g = ctx.createGain(); g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(0.03, t0 + 0.5); g.gain.exponentialRampToValueAtTime(0.0001, t0 + 3.2);
+  n.connect(lp); lp.connect(g); g.connect(SND.verb || SND.sfx); n.start(t0, Math.random() * 2, 3.4);
+}
 const fowData = (() => { const d = new Uint8Array(FOW_N * FOW_N); try { const b = store.get('w4w.fow'); if (b) { const s = atob(b); for (let i = 0; i < Math.min(s.length, d.length); i++) d[i] = s.charCodeAt(i); } } catch {} return d; })();
 const FOW_TEX = new THREE.DataTexture(fowData, FOW_N, FOW_N, THREE.RedFormat); FOW_TEX.magFilter = FOW_TEX.minFilter = THREE.LinearFilter; FOW_TEX.needsUpdate = true;
-const FOW_U = { uFowTex: { value: FOW_TEX }, uFowP: { value: new THREE.Vector2(0, 0) }, uFowR: { value: 11 }, uFowDome: { value: W4W.DOME_RADIUS }, uFowOn: { value: 0 } };
+const FOW_U = { uFowTex: { value: FOW_TEX }, uFowP: { value: new THREE.Vector2(0, 0) }, uFowR: { value: 11 }, uFowDome: { value: W4W.DOME_RADIUS }, uFowOn: { value: 0 }, uFowT: U.uTime, uFowFlash: { value: 0 }, uFowVeil: { value: 0.6 } };
 let fowSaveT = 0, fowPaintT = 0, fowScanT = 0;
 function fowPaint(x, z, rad) {
   const px = (x / FOW_W + 0.5) * FOW_N, pz = (z / FOW_W + 0.5) * FOW_N, R = rad / FOW_W * FOW_N; let ch = false;
@@ -5850,14 +5895,22 @@ function fowPatch(m) {
         fw = instanceMatrix * fw;
       #endif
         vFowW = (modelMatrix * fw).xyz; }`);
-    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vFowW; uniform sampler2D uFowTex; uniform vec2 uFowP; uniform float uFowR; uniform float uFowDome; uniform float uFowOn;').replace('#include <dithering_fragment>', `#include <dithering_fragment>
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vFowW; uniform sampler2D uFowTex; uniform vec2 uFowP; uniform float uFowR; uniform float uFowDome; uniform float uFowOn; uniform float uFowT; uniform float uFowFlash; uniform float uFowVeil;').replace('#include <dithering_fragment>', `#include <dithering_fragment>
       { float d = distance(vFowW.xz, uFowP), near = 1.0 - smoothstep(uFowR * 0.4, uFowR, d), rr = length(vFowW.xz);
         float inside = 1.0 - smoothstep(uFowDome - 0.6, uFowDome + 0.6, rr);
         float seen = texture2D(uFowTex, vFowW.xz / ${FOW_W.toFixed(1)} + 0.5).r, core = 1.0 - smoothstep(4.5, 8.0, rr);
         // past the Veil even your own light barely reaches; inside, what you have seen stays half-lit
         float rim = 1.0 - smoothstep(uFowDome, uFowDome + 2.2, rr);
-        float vis = inside > 0.001 ? max(max(near, 0.55), max(seen, core)) * inside + near * rim * 0.28 * (1.0 - inside) : near * rim * 0.28;
-        gl_FragColor.rgb = mix(gl_FragColor.rgb, gl_FragColor.rgb * clamp(vis, 0.0, 1.0), uFowOn); }`);
+        // outside: the Veil's own glow spills a few steps onto the snow, the storm drags shadows across it, and the White flashes
+        float spill = (1.0 - smoothstep(uFowDome, uFowDome + 7.0, rr)) * (0.22 + 0.2 * uFowVeil);
+        vec2 sw = vFowW.xz * 0.11 + vec2(uFowT * 0.35, uFowT * 0.12);
+        float drift = 0.6 + 0.4 * sin(sw.x * 3.1 + sin(sw.y * 2.3) * 1.7) * sin(sw.y * 2.7 - uFowT * 0.2);
+        float far = 0.035 * (1.0 - smoothstep(uFowDome + 6.0, uFowDome + 30.0, rr));
+        float outv = max(near * rim * 0.28, (spill + far) * drift) + uFowFlash * 0.55 * (1.0 - smoothstep(uFowDome + 8.0, uFowDome + 45.0, rr));
+        float vis = inside > 0.001 ? max(max(near, 0.55), max(seen, core)) * inside + outv * (1.0 - inside) : outv;
+        vec3 tint = mix(vec3(1.0, 0.72, 0.45), vec3(0.55, 0.68, 1.0), clamp((rr - uFowDome) / 6.0 + uFowFlash, 0.0, 1.0));
+        vec3 lit = gl_FragColor.rgb * clamp(vis, 0.0, 1.0) * mix(vec3(1.0), tint, 1.0 - inside);
+        gl_FragColor.rgb = mix(gl_FragColor.rgb, lit, uFowOn); }`);
   };
   m.customProgramCacheKey = () => (prevKey ? prevKey() : '') + '|fow';
   m.needsUpdate = true;
@@ -5865,7 +5918,8 @@ function fowPatch(m) {
 function stepFow() {
   const now = performance.now(), on = hasChar() && $('#intro').hidden; FOW_U.uFowOn.value += ((on ? 1 : 0) - FOW_U.uFowOn.value) * 0.08;
   // the sky beyond the shroud is black too, and the town's own snowfall stays under the Veil
-  { const k = FOW_U.uFowOn.value; scene.background.copy(FOG).lerp(BLACK, k); if (snow) snow.visible = k < 0.5; }
+  { const k = FOW_U.uFowOn.value; scene.background.copy(FOG).lerp(NIGHT, k).lerp(FLASH_SKY, FOW_U.uFowFlash.value * 0.35 * k); if (snow) snow.visible = k < 0.5; }
+  FOW_U.uFowVeil.value = veilStrength(); stepFlash();
   if (now - fowScanT > 1500) { fowScanT = now; scene.traverse(o => { if (o.isMesh || o.isInstancedMesh || o.isSkinnedMesh) (Array.isArray(o.material) ? o.material : [o.material]).forEach(fowPatch); }); }
   const a = avatars[myUid()]; if (!a) return; FOW_U.uFowP.value.set(a.g.position.x, a.g.position.z);
   if (now - fowPaintT > 250) { fowPaintT = now; if (Math.hypot(a.g.position.x, a.g.position.z) < W4W.DOME_RADIUS) fowPaint(a.g.position.x, a.g.position.z, FOW_U.uFowR.value * 0.75); }
@@ -5936,19 +5990,33 @@ function stepHollow(dt) {
 function fieldHit(ctx, t0, out, v, k = 1) {
   // the thud: a sine dropping fast, felt more than heard
   const o = ctx.createOscillator(), g = ctx.createGain(); o.type = 'sine'; o.frequency.setValueAtTime(95 * (0.9 + Math.random() * 0.2), t0); o.frequency.exponentialRampToValueAtTime(38, t0 + 0.28);
-  g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(v * 1.3 * k, t0 + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.42); o.connect(g); g.connect(out); o.start(t0); o.stop(t0 + 0.5);
+  g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(v * 1.1 * k, t0 + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.5); o.connect(g); g.connect(out); o.start(t0); o.stop(t0 + 0.5);
   // the field: two detuned saws through a falling lowpass, wobbling like a struck sheet of light
   const f = ctx.createBiquadFilter(); f.type = 'lowpass'; f.Q.value = 9; f.frequency.setValueAtTime(2400, t0); f.frequency.exponentialRampToValueAtTime(260, t0 + 1.1);
-  const fg = ctx.createGain(); fg.gain.setValueAtTime(0.0001, t0); fg.gain.exponentialRampToValueAtTime(v * 0.32 * k, t0 + 0.02); fg.gain.exponentialRampToValueAtTime(0.0001, t0 + 1.3);
+  const fg = ctx.createGain(); fg.gain.setValueAtTime(0.0001, t0); fg.gain.exponentialRampToValueAtTime(v * 0.12 * k, t0 + 0.04); fg.gain.exponentialRampToValueAtTime(0.0001, t0 + 1.3);
   const lfo = ctx.createOscillator(), lg = ctx.createGain(); lfo.frequency.value = 13 + Math.random() * 6; lg.gain.value = 9; lfo.connect(lg);
   for (const det of [0, 7]) { const a = ctx.createOscillator(); a.type = 'sawtooth'; a.frequency.setValueAtTime(180 + det + Math.random() * 20, t0); a.frequency.exponentialRampToValueAtTime(70 + det, t0 + 1.2); lg.connect(a.frequency); a.connect(f); a.start(t0); a.stop(t0 + 1.35); }
   lfo.start(t0); lfo.stop(t0 + 1.35); f.connect(fg); fg.connect(out);
   // the crackle: tiny bright zaps scattered over the first third of a second
-  if (SND.noise) for (let i = 0; i < 6; i++) { const t = t0 + Math.random() * 0.32, n = ctx.createBufferSource(); n.buffer = SND.noise; const hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 4200 + Math.random() * 2500;
+  if (SND.noise && k > 1.2) for (let i = 0; i < 3; i++) { const t = t0 + Math.random() * 0.32, n = ctx.createBufferSource(); n.buffer = SND.noise; const hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 4200 + Math.random() * 2500;
     const ng = ctx.createGain(); ng.gain.setValueAtTime(0.0001, t); ng.gain.exponentialRampToValueAtTime(v * 0.35 * k, t + 0.003); ng.gain.exponentialRampToValueAtTime(0.0001, t + 0.035); n.connect(hp); hp.connect(ng); ng.connect(out); n.start(t, Math.random() * 3, 0.05); }
 }
+/* a howl from far out in the White: rare, barely there, never the same twice */
+let howlT = 25;
+function stepHowl(dt) {
+  if (!SND.ctx || !SND.on || !hollow.length) return; howlT -= dt; if (howlT > 0) return; howlT = 45 + Math.random() * 75;
+  const B = hollow[Math.floor(Math.random() * hollow.length)], ctx = SND.ctx, t0 = ctx.currentTime + 0.05, dur = 4 + Math.random() * 3;
+  const pan = ctx.createStereoPanner(); pan.pan.value = THREE.MathUtils.clamp((B.root.position.x - controls.target.x) / 14, -1, 1);
+  const out = ctx.createGain(); out.gain.setValueAtTime(0.0001, t0); out.gain.exponentialRampToValueAtTime(0.022 + Math.random() * 0.012, t0 + dur * 0.35); out.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 900; lp.Q.value = 0.7; out.connect(lp); lp.connect(pan); pan.connect(SND.verb || SND.sfx);
+  const f0 = 150 + Math.random() * 70, vib = ctx.createOscillator(), vg = ctx.createGain(); vib.frequency.value = 4.5 + Math.random() * 2; vg.gain.value = 6; vib.connect(vg);
+  for (const [mul, gain] of [[1, 1], [1.5, 0.45], [2.02, 0.25]]) { const o = ctx.createOscillator(), og = ctx.createGain(), bp = ctx.createBiquadFilter(); o.type = 'sawtooth'; bp.type = 'bandpass'; bp.frequency.value = 600 * mul; bp.Q.value = 6;
+    o.frequency.setValueAtTime(f0 * mul * 0.85, t0); o.frequency.linearRampToValueAtTime(f0 * mul * 1.15, t0 + dur * 0.4); o.frequency.linearRampToValueAtTime(f0 * mul * 0.7, t0 + dur); vg.connect(o.frequency);
+    og.gain.value = gain; o.connect(bp); bp.connect(og); og.connect(out); o.start(t0); o.stop(t0 + dur + 0.1); }
+  vib.start(t0); vib.stop(t0 + dur + 0.1);
+}
 function scratchSound(B, k = 1) {
-  if (!SND.ctx || !SND.noise) return; const d = B.root.position.distanceTo(controls.target), v = Math.max(0, 1 - d / 26) * 0.5 * k; if (v < 0.02) return;
+  if (!SND.ctx || !SND.noise) return; const d = B.root.position.distanceTo(controls.target), v = Math.max(0, 1 - d / 26) * 0.12 * k; if (v < 0.008) return; if (Math.random() < 0.45 && k < 1.2) return;
   const ctx = SND.ctx, t0 = ctx.currentTime, pan = ctx.createStereoPanner(); pan.pan.value = THREE.MathUtils.clamp((B.root.position.x - controls.target.x) / 12, -1, 1); pan.connect(SND.sfx);
   for (let i = 0; i < 3; i++) { const t = t0 + i * 0.13 + Math.random() * 0.04, s = ctx.createBufferSource(); s.buffer = SND.noise; s.playbackRate.value = 0.7 + Math.random() * 0.4;
     const f = ctx.createBiquadFilter(); f.type = 'bandpass'; f.frequency.setValueAtTime(2600 + Math.random() * 1500, t); f.frequency.exponentialRampToValueAtTime(900, t + 0.18); f.Q.value = 6;
@@ -6270,7 +6338,7 @@ function loop(now = performance.now()) {
   if ((spriteClock += dt) > 1) { spriteClock = 0; spriteCache = []; scene.traverse(o => { if (o.isSprite && (o.userData.flicker || o.userData.blink)) spriteCache.push(o); }); } U.uTime.value += dt; const t = U.uTime.value;
   U.uHeat.value += (heatTarget - U.uHeat.value) * Math.min(1, dt * 0.8);
   U.uBoost.value = Math.max(0, U.uBoost.value - dt * 0.45);
-  stepPrints(); stepWaves(dt); stepEmbers(dt); stepMotes(dt); if (!ACT1) stepFauna(dt); else { stepStorm(dt); stepHollow(dt); stepFow(); stepPylons(dt); if ((tick & 31) === 0) renderVeil(); }
+  stepPrints(); stepDoorFx(dt); if (ACT1) stepHowl(dt); stepWaves(dt); stepEmbers(dt); stepMotes(dt); if (!ACT1) stepFauna(dt); else { stepStorm(dt); stepHollow(dt); stepFow(); stepPylons(dt); if ((tick & 31) === 0) renderVeil(); }
   if (S.town.B > 0 && (waveClock += dt) > Math.max(2.2, 6 - S.town.B * 0.15)) { waveClock = 0; pulse(0.25); }
   snowNow += (snowTarget - snowNow) * Math.min(1, dt * 0.6);
   if (SOFT && snow && snow.visible) { snow.visible = false; startSnow2D(); }
@@ -6314,5 +6382,5 @@ function loop(now = performance.now()) {
 }
 requestAnimationFrame(loop);
 addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); DPR = Math.min(DPR, dprFor()); renderer.setPixelRatio(DPR); composer.setPixelRatio?.(DPR); renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight); fxaaSize(); });
-window.__w4w = { S, settle, X: () => ({ XV, avatars, predicted, xact, hexAt, warp: ms => XW.warp?.(ms), planTo, goTrip, NOTES, rimeFx, openLibrary, trip, prints: prints.length, rimeAt: (q, r) => XW._rime?.(q, r), stash: o => XW._stash?.(o), letter: o => XW._letter?.(o), acts: h => { actEl.hidden = false; actEl.innerHTML = h; actSig = h; dressActs(); }, story: o => XW._story?.(o), openGate, openChronicle, openPylon, walkTo, UI, renderFrames, unfollow: () => { follow = false; fly = null; }, hollow, act1Mark: id => act1Mark(id), openBeast: id => openBeast(id), openLibraryRoom: () => openLibraryRoom() }), freePlots, openMaria, ask, addWood, refreshTown, draft: v => (draft = v), camera, controls, updateIce, renderer, scene, __composer: LITE ? null : composer };
+window.__w4w = { S, settle, X: () => ({ XV, avatars, predicted, xact, hexAt, warp: ms => XW.warp?.(ms), planTo, goTrip, NOTES, rimeFx, openLibrary, trip, prints: prints.length, rimeAt: (q, r) => XW._rime?.(q, r), stash: o => XW._stash?.(o), letter: o => XW._letter?.(o), flash: () => { flashT = 0; }, acts: h => { actEl.hidden = false; actEl.innerHTML = h; actSig = h; dressActs(); }, story: o => XW._story?.(o), openGate, openChronicle, openPylon, walkTo, UI, renderFrames, unfollow: () => { follow = false; fly = null; }, hollow, act1Mark: id => act1Mark(id), openBeast: id => openBeast(id), openLibraryRoom: () => openLibraryRoom() }), freePlots, openMaria, ask, addWood, refreshTown, draft: v => (draft = v), camera, controls, updateIce, renderer, scene, __composer: LITE ? null : composer };
 </script>
