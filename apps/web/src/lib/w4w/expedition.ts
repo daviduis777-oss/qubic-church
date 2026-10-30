@@ -7,21 +7,25 @@ import * as W from './world'
  * loads the world, lets the rules run, and writes back what changed. The server walks every character and
  * counts the cold even while their tab is closed.
  */
-export const KX = { chars: 'w4w:c:chars', hearths: 'w4w:c:hearths', bags: 'w4w:c:bags', nodes: 'w4w:c:nodes', rime: 'w4w:c:rime', library: 'w4w:c:library' }
+export const KX = { chars: 'w4w:c:chars', hearths: 'w4w:c:hearths', bags: 'w4w:c:bags', nodes: 'w4w:c:nodes', rime: 'w4w:c:rime', library: 'w4w:c:library', shards: 'w4w:c:shards', anna: 'w4w:c:anna', delivered: 'w4w:c:delivered' }
 
 const safe = (v: string | null | undefined) => { if (!v) return null; try { return JSON.parse(v) } catch { return null } }
 const parseAll = <T>(m: unknown) => Object.fromEntries(Object.entries(pairs(m)).map(([k, v]) => [k, safe(v) as T]).filter(([, v]) => v)) as Record<string, T>
 
 async function load(now = Date.now()): Promise<W.WState> {
-  const [h, c, he, b, n, o, alive, rm, lb] = await pipe([
+  const [h, c, he, b, n, o, alive, rm, lb, sh, an, dv] = await pipe([
     ['HGETALL', K.houses], ['HGETALL', KX.chars], ['HGETALL', KX.hearths], ['HGETALL', KX.bags], ['HGETALL', KX.nodes], ['HGETALL', K.orders],
     ['ZRANGEBYSCORE', K.presence, now - 30_000, '+inf'],
     ['GET', KX.rime],
     ['HGETALL', KX.library],
+    ['HGETALL', KX.shards], ['GET', KX.anna], ['GET', KX.delivered],
   ])
+  const week = String(W.weekOf(now)) + ':'
+  const shards = Object.fromEntries(Object.entries(parseAll<{ by: string; nick: string; t: number }>(sh)).filter(([k]) => k.startsWith(week)))
   const orders = parseAll<{ state?: string }>(o)
   const nodes = Object.fromEntries(Object.entries(pairs(n)).map(([k, v]) => [k, Number(v)]).filter(([, v]) => (v as number) > now)) as Record<string, number>
-  return { now, houses: parseAll<W.HouseLite>(h), chars: parseAll<W.Char>(c), hearths: parseAll<W.Hearth>(he), bags: parseAll<W.Bag>(b), nodes, online: ((alive as string[]) ?? []).length, doneOrders: Object.values(orders).filter(x => x.state === 'done').length, rime: (safe(rm as string | null) as W.Rime | null) ?? undefined, library: parseAll<{ by: string; nick: string; at: number }>(lb) }
+  return { now, houses: parseAll<W.HouseLite>(h), chars: parseAll<W.Char>(c), hearths: parseAll<W.Hearth>(he), bags: parseAll<W.Bag>(b), nodes, online: ((alive as string[]) ?? []).length, doneOrders: Object.values(orders).filter(x => x.state === 'done').length, rime: (safe(rm as string | null) as W.Rime | null) ?? undefined, library: parseAll<{ by: string; nick: string; at: number }>(lb),
+    shards, anna: (safe(an as string | null) as W.WState['anna']) ?? undefined, delivered: (safe(dv as string | null) as W.WState['delivered']) ?? undefined }
 }
 
 async function save(ws: W.WState, d: W.Dirty) {
@@ -33,6 +37,9 @@ async function save(ws: W.WState, d: W.Dirty) {
   for (const k of d.nodes) cmds.push(['HSET', KX.nodes, k, ws.nodes[k] ?? 0])
   if (d.rime && ws.rime) cmds.push(['SET', KX.rime, JSON.stringify(ws.rime)])
   for (const id of d.library ?? []) if (ws.library?.[id]) cmds.push(['HSET', KX.library, id, JSON.stringify(ws.library[id])])
+  for (const id of d.shards ?? []) if (ws.shards?.[id]) cmds.push(['HSET', KX.shards, id, JSON.stringify(ws.shards[id])])
+  if (d.anna && ws.anna) cmds.push(['SET', KX.anna, JSON.stringify(ws.anna)])
+  if (d.delivered && ws.delivered) cmds.push(['SET', KX.delivered, JSON.stringify(ws.delivered)])
   for (const f of d.feed) cmds.push(['LPUSH', K.events, JSON.stringify({ ...f, tab: 'server' })])
   if (d.feed.length) cmds.push(['LTRIM', K.events, 0, 99])
   if (cmds.length) await pipe(cmds)
