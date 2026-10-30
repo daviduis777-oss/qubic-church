@@ -32,6 +32,7 @@ export type Char = {
   renown?: number // what the town owes you: rank comes from it
   deeds?: Record<string, number> // firsts that earned renown, once each
   orders?: { day: number; done: string[] } // today's town orders you have filled
+  tended?: Record<string, number> // when you last gave warmth to each pylon
 }
 export type Ctx = {
   heatR: number // radius of the town's warm circle, world units
@@ -42,6 +43,7 @@ export type Ctx = {
   hearths: Record<string, number> // key -> burning until (ms)
   insulation: number
   veil?: number // the dome's strength 0..1, from the town's mining power
+  pylons?: number[] // the six pylons' strength now, 0..100
   rime?: [number, number, number][] // where the Rime stood: [since t, q, r], oldest first
   noDrift?: boolean // planning a trip: no wind luck
 }
@@ -369,6 +371,33 @@ export const greyAt = (t: number) => Math.floor(t / 3_600_000) % 6 >= 4
 export function bellAt(t: number) { const d = new Date(t); return d.getUTCDay() === 3 && d.getUTCHours() >= 12 && d.getUTCHours() < 14 }
 
 /** How much cold bites on a cell at a moment, before clothing. 0 inside the warm circle. */
+/* ---------- the six pylons that hold the Veil's edge ---------- */
+export const PYLON_N = 6
+export const PYLON_GIVE = 15 // strength a pylon gains from one person's warmth
+export const PYLON_COST = 12 // warmth it costs you
+export const PYLON_WAIT = 20 * 60_000 // before you can give to the same pylon again
+export const PYLON_PRESS_MS = 6 * 3600_000 // the Hollow picks a new sector to press every six hours
+export type Pylon = { s: number; t: number; by?: string; nick?: string; at?: number }
+export const pylonAngle = (i: number) => (i + 0.5) * Math.PI / 3
+/** Pylon i stands on a cell just inside the wall. */
+export function pylonCell(i: number): Cell {
+  const a = pylonAngle(i), R = DOME_RADIUS - 2.4, x = Math.cos(a) * R, z = Math.sin(a) * R
+  const r = z / 1.7320508, q = x / 2 - r / 2, s = -q - r
+  let rq = Math.round(q), rr = Math.round(r); const rs = Math.round(s), dq = Math.abs(rq - q), dr = Math.abs(rr - r), ds = Math.abs(rs - s)
+  if (dq > dr && dq > ds) rq = -rr - rs; else if (dr > ds) rr = -rq - rs
+  return [rq, rr]
+}
+/** Which sector the Hollow presses in the window that contains t. */
+export const pressedAt = (t: number) => Math.floor(hash(Math.floor(t / PYLON_PRESS_MS), 77, 5) * PYLON_N)
+/** Strength lost per hour: the weak Veil lets them closer; the pressed sector loses three times as fast. */
+const pylonRate = (i: number, t: number, veil: number) => (1.5 + 5 * (1 - veil)) * (pressedAt(t) === i ? 3 : 0.7)
+export function pylonNow(p: Pylon | undefined, i: number, now: number, veil: number) {
+  let s = p?.s ?? 80, t = p?.t ?? now
+  if (now - t > 7 * 24 * 3600_000) t = now - 7 * 24 * 3600_000
+  while (t < now && s > 0) { const end = Math.min(now, (Math.floor(t / 3600_000) + 1) * 3600_000); s -= pylonRate(i, t, veil) * (end - t) / 3600_000; t = end }
+  return Math.max(0, Math.min(100, s))
+}
+
 /** The Veil's strength from the town's mining power, sol/h: logarithmic, full at VEIL_FULL. */
 export const VEIL_FULL = 30_000
 export const veilOf = (power: number) => Math.max(0, Math.min(1, Math.log10(1 + power / 400) / Math.log10(1 + VEIL_FULL / 400)))
@@ -380,6 +409,8 @@ export function coldAt(q: number, r: number, t: number, ctx: Ctx) {
   if (STAGE === 1 && insideDome(q, r)) {
     const V = ctx.veil ?? 0.6, d = Math.hypot(x, z) / DOME_RADIUS
     let c = VEIL_COLD * Math.pow(1 - V, 1.2) * (0.25 + 0.75 * d) // the outer streets, by the wall, freeze first
+    // a failing pylon lets the cold through its sector: the houses nearest it freeze first
+    if (ctx.pylons) for (let i = 0; i < PYLON_N; i++) { const a = pylonAngle(i), px = Math.cos(a) * (DOME_RADIUS - 2.4), pz = Math.sin(a) * (DOME_RADIUS - 2.4), prox = Math.max(0, 1 - Math.hypot(x - px, z - pz) / 10); if (prox > 0) c += 18 * Math.pow(1 - (ctx.pylons[i] ?? 80) / 100, 1.5) * prox }
     if (greyAt(t)) c -= 3
     if (bellAt(t)) c += 8
     return Math.max(0, c) * weatherAt(t, ctx.netStorm).mult
@@ -610,11 +641,12 @@ export type WState = {
   shards?: Record<string, { by: string; nick: string; t: number }> // this week's shards already picked up
   anna?: { n: number; heroes: Record<string, { nick: string; n: number }> } // shards brought to Anna, and by whom
   delivered?: { day: number; n: number } // town orders filled today, by everyone
+  pylons?: Record<string, Pylon> // the six pylons, by index
   rime?: Rime
   rimeTrail?: [number, number, number][] // computed on load, not stored
 }
-export type Feed = { id: string; t: number; topic: 'froze' | 'hearth' | 'took' | 'library' | 'found' | 'shard' | 'anna' | 'order'; by: string; data: Record<string, unknown> }
-export type Dirty = { chars: Set<string>; hearths: Set<string>; bags: Set<string>; bagsGone: Set<string>; nodes: Set<string>; feed: Feed[]; rime?: boolean; library?: Set<string>; shards?: Set<string>; anna?: boolean; delivered?: boolean }
+export type Feed = { id: string; t: number; topic: 'froze' | 'hearth' | 'took' | 'library' | 'found' | 'shard' | 'anna' | 'order' | 'pylon'; by: string; data: Record<string, unknown> }
+export type Dirty = { chars: Set<string>; hearths: Set<string>; bags: Set<string>; bagsGone: Set<string>; nodes: Set<string>; feed: Feed[]; rime?: boolean; library?: Set<string>; shards?: Set<string>; anna?: boolean; delivered?: boolean; pylons?: Set<string> }
 export const newDirty = (): Dirty => ({ chars: new Set(), hearths: new Set(), bags: new Set(), bagsGone: new Set(), nodes: new Set(), feed: [] })
 
 export function townOfState(ws: WState) {
@@ -628,7 +660,8 @@ export function ctxOf(ws: WState, uid: string): Ctx {
   const t = townOfState(ws)
   const cells = Object.values(ws.houses).filter(x => x.q != null && x.r != null).map(x => [x.q!, x.r!] as Cell)
   const home = ws.chars[uid]?.home ?? [ws.houses[uid]?.q ?? 0, ws.houses[uid]?.r ?? 0]
-  return { veil: t.veil, heatR: t.heatR, holds: t.holds, netStorm: false, shelters: townShelters(cells), home: key(home[0], home[1]), hearths: Object.fromEntries(Object.entries(ws.hearths).map(([k, v]) => [k, v.until])), insulation: INSULATION_T1, rime: ws.rimeTrail }
+  const pyl = Array.from({ length: PYLON_N }, (_, i) => pylonNow(ws.pylons?.[i], i, ws.now, t.veil))
+  return { pylons: pyl, veil: t.veil, heatR: t.heatR, holds: t.holds, netStorm: false, shelters: townShelters(cells), home: key(home[0], home[1]), hearths: Object.fromEntries(Object.entries(ws.hearths).map(([k, v]) => [k, v.until])), insulation: INSULATION_T1, rime: ws.rimeTrail }
 }
 const nickIn = (ws: WState, uid: string) => ws.houses[uid]?.nick ?? 'someone'
 export const zoneName = (z: number) => (ZONES as readonly { name: string }[])[z]?.name ?? 'the far cold'
@@ -676,6 +709,8 @@ export function viewOf(ws: WState, uid: string, events: Event[] = []) {
     shards: shardsFor(weekOf(ws.now)).map(s => ({ ...s, taken: ws.shards?.[s.id] ? ws.shards[s.id]!.nick : null })),
     anna: ws.anna ?? { n: 0, heroes: {} },
     orders: ordersFor(dayOf(ws.now)), delivered: ws.delivered?.day === dayOf(ws.now) ? ws.delivered.n : 0,
+    pylons: Array.from({ length: PYLON_N }, (_, i) => { const p = ws.pylons?.[i]; return { i, at: pylonCell(i), s: pylonNow(p, i, ws.now, veilOf(townOfState(ws).power)), nick: p?.nick ?? null, at_t: p?.at ?? 0 } }),
+    pressed: pressedAt(ws.now), pressNext: (Math.floor(ws.now / PYLON_PRESS_MS) + 1) * PYLON_PRESS_MS,
     ranks: Object.fromEntries(Object.entries(ws.chars).map(([k, x]) => [k, rankOf(x.renown ?? 0)])),
   }
 }
@@ -812,7 +847,7 @@ export function action(ws: WState, uid: string, op: string, b: Record<string, un
       if (!['worn', 'pack', 'home'].includes(to)) return fail('Where to?')
       const atHome = key(...here) === key(...c.home)
       if ((to === 'home' || items[id] === 'home') && !atHome) return fail('That stays at home. Go home first.')
-      if (to === 'worn' && (it.slot === 'tool' || it.slot === 'flask')) return fail('That goes in the bag, not on you.')
+      if (to === 'worn' && (it.slot === 'tool' || it.slot === 'flask')) return fail('That goes in the bag.')
       if (to === 'pack' && items[id] !== 'pack' && slotsUsed(c) + 1 > bagSize(c)) return fail('Your bag is full.')
       if (it.slot === 'bag' && items[id] === 'worn' && to !== 'worn') return fail('Put on another bag instead; this one holds everything you carry.')
       if (it.slot === 'bag' && to === 'worn') { const cur = Object.keys(items).find(k => items[k] === 'worn' && ITEMS[k]?.slot === 'bag'); const after = POCKETS + (it.bag ?? 0); if (slotsUsed(c) - (items[id] === 'pack' ? 1 : 0) + (cur && items[id] === 'pack' ? 1 : 0) > after) return fail('Everything you carry would not fit in that bag.') }
@@ -840,6 +875,18 @@ export function action(ws: WState, uid: string, op: string, b: Record<string, un
     case 'study': {
       if (key(...here) !== key(SPECIAL.library[0], SPECIAL.library[1])) return fail('The book stays in the Library. Go there to copy it.')
       const kn = knownOf(c); for (const id of Object.keys(ws.library ?? {})) if (!kn.includes(id)) kn.push(id)
+      return ok()
+    }
+    case 'tend': {
+      const i = Number(b.i); if (!(i >= 0 && i < PYLON_N)) return fail('Which pylon?')
+      if (c.path.length) return fail('Stop walking first.')
+      if (dist(here, pylonCell(i)) > 1) return fail('Stand next to the pylon.')
+      const last = c.tended?.[i] ?? 0; if (now - last < PYLON_WAIT) return fail(`You gave this pylon your warmth not long ago. Again in ${Math.ceil((PYLON_WAIT - (now - last)) / 60_000)} min.`)
+      if (c.warmth < PYLON_COST + 8) return fail('You are too cold to give any warmth. Get indoors first.')
+      ws.pylons ??= {}; const V = veilOf(townOfState(ws).power), cur = pylonNow(ws.pylons[i], i, now, V)
+      ws.pylons[i] = { s: Math.min(100, cur + PYLON_GIVE), t: now, by: uid, nick: nickIn(ws, uid), at: now }; (d.pylons ??= new Set()).add(String(i))
+      c.warmth -= PYLON_COST; (c.tended ??= {})[i] = now; addRenown(c, cur < 30 ? 4 : 2)
+      d.feed.push({ id: `py${uid}${i}${now}`, t: now, topic: 'pylon', by: uid, data: { nick: nickIn(ws, uid), i, s: Math.round(ws.pylons[i]!.s), was: Math.round(cur) } })
       return ok()
     }
     case 'pick': {
