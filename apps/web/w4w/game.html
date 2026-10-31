@@ -2672,7 +2672,7 @@ function buildCore() {
       void main(){ float f=pow(1.-abs(dot(vN,vV)),3.); gl_FragColor=vec4(uCol*(f*.95+.06)*(1.+uBoost*1.6)*uFade, 1.); }` });
   const rim = new THREE.Mesh(ice.geometry, rimMat); rim.scale.setScalar(1.006); ice.add(rim);
   // iron bands and heating coils bolted onto the block, fed by four boilers on the dug earth
-  const iron = new THREE.MeshStandardMaterial({ color: 0x8a7868, metalness: 0.55, roughness: 0.42, emissive: 0x4a2010, emissiveIntensity: 0.55 }); iron.userData.noFow = true;
+  const iron = ironize(new THREE.MeshStandardMaterial({ color: 0x8a7868, metalness: 0.55, roughness: 0.42, emissive: 0x4a2010, emissiveIntensity: 0.45 })); iron.userData.noFow = true;
   const copper = new THREE.MeshStandardMaterial({ color: 0xb06a3a, metalness: 0.75, roughness: 0.32, emissive: 0xff5a14, emissiveIntensity: 0.8 });
   const hot = new THREE.MeshStandardMaterial({ color: 0x1a1210, emissive: 0xff7a22, emissiveIntensity: 1.6, roughness: 0.6 });
   [0.36].forEach(y => { for (let i = 0; i < 4; i++) { const an = i * Math.PI / 2; const bnd = new THREE.Mesh(new THREE.BoxGeometry(W - 0.3, 0.14, 0.08), iron); bnd.position.set(Math.sin(an) * (hw + 0.04), y, Math.cos(an) * (hw + 0.04)); bnd.rotation.y = an; bnd.castShadow = true; block.add(bnd); } });
@@ -5912,11 +5912,14 @@ function buildDome() {
 /* six pylons hold the Veil's edge: dark stone, a crystal of Anna's light on top */
 const PYLON_NAMES = ['The Kiln', 'The Widow', 'The Choir', 'The Old Bell', 'The North Tooth', 'The Lantern'];
 const PYL = [];
+const IRON_TEX = (() => { const tl = new THREE.TextureLoader(), map = tl.load('q/tex/iron.webp'), normal = tl.load('q/tex/iron_n.webp');
+  map.colorSpace = THREE.SRGBColorSpace; map.anisotropy = 8; [map, normal].forEach(t => { t.wrapS = t.wrapT = THREE.RepeatWrapping; }); return { map, normal }; })();
+function ironize(m, tint = 0xd9d2cc) { m.map = IRON_TEX.map; m.normalMap = IRON_TEX.normal; if (m.normalScale) m.normalScale.set(0.8, 0.8); m.color.set(tint); m.metalness = Math.min(m.metalness ?? 0.5, 0.55); m.roughness = Math.max(m.roughness ?? 0.5, 0.5); m.needsUpdate = true; return m; }
 const PYL_STONE = new THREE.MeshStandardMaterial({ color: 0xa79d8e, roughness: 0.9, emissive: 0x3a2a1c, emissiveIntensity: 0.6 }), PYL_IRON = new THREE.MeshStandardMaterial({ color: 0x9a8f86, metalness: 0.55, roughness: 0.4, emissive: 0x4a2c18, emissiveIntensity: 0.55 });
-PYL_STONE.userData.noFow = PYL_IRON.userData.noFow = true;
+PYL_STONE.userData.noFow = PYL_IRON.userData.noFow = true; ironize(PYL_IRON, 0xffffff);
 const BRZ_STONE = PYL_STONE, BRZ_IRON = new THREE.MeshStandardMaterial({ color: 0x8a7a6a, metalness: 0.6, roughness: 0.45, emissive: 0x5a2a10, emissiveIntensity: 0.7, side: THREE.DoubleSide }),
   BRZ_COAL = new THREE.MeshBasicMaterial({ color: 0xff6a20 }), BRZ_FLAME = new THREE.MeshBasicMaterial({ color: 0xffb050, transparent: true, opacity: 0.85, blending: THREE.AdditiveBlending, depthWrite: false }), GATE_FLAMES = [];
-BRZ_IRON.userData.noFow = BRZ_COAL.userData.noFow = BRZ_FLAME.userData.noFow = true;
+BRZ_IRON.userData.noFow = BRZ_COAL.userData.noFow = BRZ_FLAME.userData.noFow = true; ironize(BRZ_IRON);
 [PYL_STONE, PYL_IRON].forEach(m => { m.userData.noFow = true; });
 function energyColumn() {
   const g = new THREE.Group(), add = (geo, mat, y, sc) => { const m = new THREE.Mesh(geo, mat); m.position.y = y; if (sc) m.scale.set(...sc); m.castShadow = true; g.add(m); return m; };
@@ -5984,7 +5987,7 @@ const PYLON_LORE = [
 /* the North Gate: sealed since the ninth night */
 function buildGate() {
   const g = new THREE.Group(), M = (c, o = {}) => { const m = new THREE.MeshStandardMaterial({ color: c, roughness: 0.85, ...o }); m.userData.noFow = true; return m; };
-  const stone = M(0x9a938a, { emissive: 0x2a2018, emissiveIntensity: 0.35 }), stoneD = M(0x6e6760, { emissive: 0x1a140e, emissiveIntensity: 0.3 }), wood = M(0x7a5030, { emissive: 0x2a1408, emissiveIntensity: 0.35 }), iron = M(0x3c3836, { metalness: 0.6, roughness: 0.5 }), frost = M(0xe4f0ff, { roughness: 0.45, emissive: 0x24405a, emissiveIntensity: 0.4 });
+  const stone = M(0x9a938a, { emissive: 0x2a2018, emissiveIntensity: 0.35 }), stoneD = M(0x6e6760, { emissive: 0x1a140e, emissiveIntensity: 0.3 }), wood = ironize(M(0x7a5030, { emissive: 0x2a1408, emissiveIntensity: 0.4, metalness: 0.4, roughness: 0.6 }), 0xe6ddd4), iron = ironize(M(0x3c3836, { metalness: 0.6, roughness: 0.5, emissive: 0x2a1408, emissiveIntensity: 0.35 }), 0xcfc7c0), frost = M(0xe4f0ff, { roughness: 0.45, emissive: 0x24405a, emissiveIntensity: 0.4 });
   const seal = M(0xffb35a, { emissive: 0xff7a1a, emissiveIntensity: 2.4, roughness: 0.3 });
   const box = (w, h, d, m, x, y, z, ry = 0) => { const o = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m); o.position.set(x, y, z); o.rotation.y = ry; o.castShadow = true; o.receiveShadow = true; g.add(o); return o; };
   // two squat towers with stepped tops
