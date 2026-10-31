@@ -6162,13 +6162,13 @@ function stepFow() {
 
 /* ---------- the Hollow: what walks round the Veil and scratches at it ---------- */
 const HOLLOW = [
-  { id: 'scratcher', name: 'The Scratcher', model: 'h/tallman', h: 2.9, speed: 0.42, r: DOME_R + 2.8, reach: 2.05,
+  { id: 'scratcher', name: 'The Scratcher', model: 'h/tallman', h: 2.9, speed: 1.15, walkRate: 0.9, r: DOME_R + 2.8, reach: 2.05,
     text: 'Twice the height of a door and thin as a winter tree, with arms that reach the snow. Every night it picks a place on the Veil and drags its claws down it until the light ripples. The children say it is looking for the thin places. The children are right.' },
-  { id: 'hollow', name: 'The Hollow Man', model: 'h/crawler', h: 2.3, speed: 0.6, r: DOME_R + 2.0, reach: 1.15,
+  { id: 'hollow', name: 'The Hollow Man', model: 'h/crawler', h: 2.3, speed: 1.1, walkRate: 1.1, r: DOME_R + 2.0, reach: 1.15,
     text: 'Six long legs, and slung underneath them, what is left of a man in what is left of a coat. It walks the edge the way you walk past a house you used to live in. Sometimes it stops at the North Gate and stands there for an hour. Nobody has said out loud whose coat it is.' },
   { id: 'wailer', name: 'The Wailer', model: 'h/shroud', h: 2.3, speed: 0.5, r: DOME_R + 1.6, reach: 0.95, float: 0.35,
     text: 'A hanging drape with a light inside it, and things like hands beneath. You hear it before you see it: singing, in voices you know. Your mother. A friend who went with the expedition. If it calls you by name, go indoors and do not answer.' },
-  { id: 'scratcher2', name: 'The Scratcher', model: 'h/tallman', h: 2.9, speed: 0.36, r: DOME_R + 3.2, reach: 2.3, hidden: true, text: '' },
+  { id: 'scratcher2', name: 'The Scratcher', model: 'h/tallman', h: 2.9, speed: 0.95, walkRate: 0.8, r: DOME_R + 3.2, reach: 2.3, hidden: true, text: '' },
 ];
 const hollow = [];
 function darken(root, eyes) {
@@ -6186,6 +6186,7 @@ async function buildHorrors() {
     const root = new THREE.Group(); root.add(body); scene.add(root);
     const mx = new THREE.AnimationMixer(body), acts = Object.fromEntries(g.animations.map(a => [a.name.replace(/^.*\|/, ''), mx.clipAction(a)]));
     const B = { ...H, walk: 'Walk', idle: 'Idle', hit: 'Scratch', root, body, mx, acts, cur: '', a: i / HOLLOW.length * Math.PI * 2 + 0.3, dir: i % 2 ? -1 : 1, rad: H.r, mode: 'walk', t: 6 + Math.random() * 8, strikeT: 0 };
+    if (H.walkRate && acts.Walk) acts.Walk.timeScale = H.walkRate;
     tag(root, 'beast', H.id.replace(/2$/, '')); hollowPlay(B, B.walk); hollow.push(B);
   }
 }
