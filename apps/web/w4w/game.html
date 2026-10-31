@@ -2458,7 +2458,9 @@ const KIT_OVR = { mine: 'q/b/mine.glb', home_A: 'q/b/home_a.glb', home_B: 'q/b/h
 let PYLON_MODEL = null;
 function loadGlb(url) { return new Promise(res => { const l = new GLTFLoader(); l.setMeshoptDecoder(MeshoptDecoder); l.load(url, g => res(g), undefined, e => { console.warn(url, e); res(null); }); }); }
 function meshyMats(o, snow, noFow) { o.traverse(m => { if (!m.isMesh) return; m.castShadow = m.receiveShadow = true; let mt = m.material;
-  if (mt.isMeshStandardMaterial) { mt.metalness = Math.min(mt.metalness, 0.35); mt.metalnessMap = null; mt.roughness = Math.max(mt.roughness, 0.55); mt.needsUpdate = true; }
+  // painted for daylight renders, they read black under our night: no metal sheen without a sky to reflect, and a little of their own paint let through
+  if (mt.isMeshStandardMaterial) { mt.metalness = 0; mt.metalnessMap = null; mt.roughness = Math.max(mt.roughness, 0.8); mt.roughnessMap = null; mt.color.multiplyScalar(1.35);
+    if (mt.map) { mt.emissive = new THREE.Color(0xd8dcff); mt.emissiveMap = mt.map; mt.emissiveIntensity = 0.45; } mt.needsUpdate = true; }
   if (snow) m.material = mt = snowify(mt); if (noFow) mt.userData.noFow = true; }); }
 function fitTo(o, ref) {
   o.updateMatrixWorld(true); const b = new THREE.Box3().setFromObject(o), rb = new THREE.Box3().setFromObject(ref), s = b.getSize(new THREE.Vector3()), rs = rb.getSize(new THREE.Vector3());
@@ -4146,6 +4148,8 @@ const avatars = {};
   syncAvatars();
 }, undefined, e => console.warn('hero', e));
 // (the old hooded wanderer, hero.glb, stays in the folder as a fallback for one release)
+/* how fast each clip's feet go, in body heights per second, measured from the clips: the game pace sets the playback */
+const HERO_H = 0.5, GAIT = { Walking_A: 0.40, Walking_C: 0.25, Running_A: 0.80, Jog: 2.04 };
 const BLOB_GEO = new THREE.PlaneGeometry(0.62, 0.62).rotateX(-Math.PI / 2);
 const BLOB_MAT = (() => { const cv = document.createElement('canvas'); cv.width = cv.height = 64; const x = cv.getContext('2d'); const g = x.createRadialGradient(32, 32, 0, 32, 32, 32);
   g.addColorStop(0, 'rgba(0,0,8,.55)'); g.addColorStop(0.6, 'rgba(0,0,8,.25)'); g.addColorStop(1, 'rgba(0,0,8,0)'); x.fillStyle = g; x.fillRect(0, 0, 64, 64);
@@ -4161,7 +4165,7 @@ function makeAvatar(uid, nick, mine) {
   body.traverse(m => { if (m.isMesh) { m.castShadow = false; m.frustumCulled = false; m.material = heroMat(m.material); } }); g.add(body); scene.add(g);
   // a soft round shadow under the feet instead of the blocky shadow-map one
   const blob = new THREE.Mesh(BLOB_GEO, BLOB_MAT); blob.position.y = 0.02; blob.renderOrder = 1; g.add(blob);
-  const mixer = new THREE.AnimationMixer(body); const actions = {}; for (const [n, c] of Object.entries(heroClips)) actions[n] = mixer.clipAction(c); if (actions.Running_A) actions.Running_A.timeScale = 0.8; if (actions.Walking_A) actions.Walking_A.timeScale = 0.9; if (actions.Walking_C) actions.Walking_C.timeScale = 0.75;
+  const mixer = new THREE.AnimationMixer(body); const actions = {}; for (const [n, c] of Object.entries(heroClips)) actions[n] = mixer.clipAction(c); 
   const L = label(mine ? 'you' : nick, g, 0.62, mine ? 'me' : 'walker');
   const a = { g, body, mixer, actions, cur: null, label: L, mine, ice: null, uid };
   play(a, 'Idle'); return a;
@@ -4237,7 +4241,7 @@ function stepAvatars(dt) {
     const stand = !walking && d.path?.length ? d.path[d.path.length - 1] : [d.q, d.r]; if (!walking) p.copy(HX(...stand));
     // inside a building you are gone from the map: through the door, the body fades, the walls keep you
     const indoor = !walking && !!SHEL[W4W.key(...stand)] && SHEL[W4W.key(...stand)] !== 'fire';
-    if (indoor !== !!a.wasIn) { a.wasIn = indoor; a.enterT = 0; a.label.el.textContent = (a.mine ? 'you' : d.nick) + (indoor ? ' · inside' : ''); if (indoor) play(a, 'Interact', true); else if (a.mine) sfx.door(); }
+    if (indoor !== !!a.wasIn) { a.wasIn = indoor; a.enterT = 0; a.label.el.textContent = (a.mine ? 'you' : d.nick) + (indoor ? ' · inside' : ''); if (indoor) play(a, 'Walking_A'); else if (a.mine) sfx.door(); }
     if (indoor) { const was = a.enterT || 0; a.enterT = was + dt; if (was < 0.4 && a.enterT >= 0.4) { if (a.mine) sfx.door(); doorGlow(p.clone().add(new THREE.Vector3(-p.x, 0, -p.z).normalize().multiplyScalar(0.8))); } }
     a.fade = THREE.MathUtils.clamp((a.fade ?? 1) + (indoor ? (a.enterT > 0.5 ? -dt * 1.5 : 0) : dt * 3), 0, 1);
     a.body.scale.setScalar(heroScale * Math.max(0.001, a.fade)); a.g.visible = a.fade > 0.02 || indoor;
@@ -4258,7 +4262,13 @@ function stepAvatars(dt) {
     const chop = d.act?.res === 'fiber' ? 'PickUp' : d.act?.res === 'stone' || d.act?.res === 'flint' ? '2H_Melee_Attack_Chop' : '1H_Melee_Attack_Chop';
     // the tool comes out of the bag for the work, and goes back after
     a.toolId = busy && !walking ? toolInHand(d, a.mine) : null; syncTool(a.tool ||= { id: null, m: null }, a.body, a.toolId);
-    if (!(indoor && a.cur === 'Interact')) play(a, walking ? (out ? (bad && a.actions.Walking_C ? 'Walking_C' : 'Walking_A') : 'Running_A') : busy ? (a.actions[chop] ? chop : 'PickUp') : sittingAt(d) || (!walking && SHEL[W4W.key(d.q, d.r)] === 'fire') ? 'Sit_Floor_Idle' : 'Idle');
+    // the feet keep pace with the ground: pick the gait by how fast the body really goes, then match the clip to it
+    const nowMs = performance.now(), rdt = a.spdT ? Math.max(1e-3, (nowMs - a.spdT) / 1000) : 0; a.spdT = nowMs; // real seconds: the pace on the ground is real time, whatever the frame rate
+    const sp = a.spdP && rdt ? a.g.position.distanceTo(a.spdP) / rdt / HERO_H : 0; (a.spdP ||= a.g.position.clone()).copy(a.g.position); a.spd = THREE.MathUtils.lerp(a.spd || 0, Math.min(sp, 4), Math.min(1, rdt * 4));
+    const gait = !walking ? null : bad && a.actions.Walking_C ? 'Walking_C' : a.spd > 1.5 && a.actions.Jog ? 'Jog' : a.spd > 0.6 || !out ? 'Running_A' : 'Walking_A';
+    if (gait && a.actions[gait]) a.actions[gait].timeScale = THREE.MathUtils.clamp(a.spd / (GAIT[gait] || 1), 0.55, 1.6);
+    if (indoor) { const w = a.actions.Walking_A; if (w) w.timeScale = 0.8; }
+    else play(a, walking ? gait : busy ? (a.actions[chop] ? chop : 'PickUp') : sittingAt(d) || (!walking && SHEL[W4W.key(d.q, d.r)] === 'fire') ? 'Sit_Floor_Idle' : 'Idle');
     if (walking) { const lp = a.lastP || (a.lastP = a.g.position.clone()); a.walkD = (a.walkD || 0) + Math.min(0.5, lp.distanceTo(a.g.position)); lp.copy(a.g.position);
       const stride = out ? 0.2 : 0.16; if (a.walkD > stride) { a.walkD = 0; footPrint(a); if (a.mine) sfx.step(out, wx); if (out && (a.stepN = (a.stepN || 0) + 1) % 3 === 0) snowStep(a.g.position, bad || W4W.zoneOf(d.q, d.r) >= 2); } }
     else if (a.lastP) a.lastP.copy(a.g.position);
