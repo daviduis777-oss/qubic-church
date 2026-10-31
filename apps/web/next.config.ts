@@ -15,6 +15,11 @@ const nextConfig: NextConfig = {
     },
   },
   serverExternalPackages: ['pino', 'pino-pretty', '@qubic-lib/qubic-ts-library'],
+  // The link-preview route reads only public/fonts and public/og-src, but its dynamic path makes the tracer
+  // pull in all of public/, which pushed the function past Vercel's 250 MB limit.
+  outputFileTracingExcludes: {
+    '/og/**': ['./public/images/**', './public/data/**', './public/books/**', './public/w4w-assets/**', './public/blog-og/**'],
+  },
   async headers() {
     return [
       {
