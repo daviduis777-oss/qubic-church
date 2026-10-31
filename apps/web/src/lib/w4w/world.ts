@@ -648,7 +648,7 @@ export type WState = {
   rime?: Rime
   rimeTrail?: [number, number, number][] // computed on load, not stored
 }
-export type Feed = { id: string; t: number; topic: 'froze' | 'hearth' | 'took' | 'library' | 'found' | 'shard' | 'anna' | 'order' | 'pylon' | 'letter' | 'drain' | 'bar' | 'unveil'; by: string; data: Record<string, unknown> }
+export type Feed = { id: string; t: number; topic: 'froze' | 'hearth' | 'took' | 'library' | 'found' | 'shard' | 'anna' | 'order' | 'pylon' | 'letter' | 'drain' | 'bar' | 'unveil' | 'mail'; by: string; data: Record<string, unknown> }
 export type Dirty = { chars: Set<string>; hearths: Set<string>; bags: Set<string>; bagsGone: Set<string>; nodes: Set<string>; feed: Feed[]; rime?: boolean; library?: Set<string>; shards?: Set<string>; anna?: boolean; delivered?: boolean; pylons?: Set<string>; story?: boolean }
 export const newDirty = (): Dirty => ({ chars: new Set(), hearths: new Set(), bags: new Set(), bagsGone: new Set(), nodes: new Set(), feed: [] })
 
@@ -667,6 +667,7 @@ export function townOfState(ws: WState) {
  * Phases are set by the admin. The Hush is set by players. */
 export type Story = { phase: number; hush: number; ht: number; unveil?: { at: number; until: number } | null }
 export const GATE_CELL: Cell = [0, -TOWN_RING]
+export const POST_CELL: Cell = [-2, 5] // the post office: letters are written here and wait in the sack
 export const HUSH_MAX = 100
 export const HUSH_FADE = 2 // per hour, by itself
 export const UNVEIL_MS = 3 * 3600_000

@@ -7,7 +7,7 @@ import * as W from './world'
  * loads the world, lets the rules run, and writes back what changed. The server walks every character and
  * counts the cold even while their tab is closed.
  */
-export const KX = { chars: 'w4w:c:chars', hearths: 'w4w:c:hearths', bags: 'w4w:c:bags', nodes: 'w4w:c:nodes', rime: 'w4w:c:rime', library: 'w4w:c:library', shards: 'w4w:c:shards', anna: 'w4w:c:anna', delivered: 'w4w:c:delivered', pylons: 'w4w:c:pylons', story: 'w4w:c:story', letters: 'w4w:c:letters', lread: 'w4w:c:lread', say: 'w4w:c:say', sayT: 'w4w:c:sayT', replies: 'w4w:c:replies', replyT: 'w4w:c:replyT' }
+export const KX = { chars: 'w4w:c:chars', hearths: 'w4w:c:hearths', bags: 'w4w:c:bags', nodes: 'w4w:c:nodes', rime: 'w4w:c:rime', library: 'w4w:c:library', shards: 'w4w:c:shards', anna: 'w4w:c:anna', delivered: 'w4w:c:delivered', pylons: 'w4w:c:pylons', story: 'w4w:c:story', letters: 'w4w:c:letters', lread: 'w4w:c:lread', say: 'w4w:c:say', sayT: 'w4w:c:sayT', replies: 'w4w:c:replies', replyT: 'w4w:c:replyT', mail: 'w4w:c:mail' }
 
 const safe = (v: string | null | undefined) => { if (!v) return null; try { return JSON.parse(v) } catch { return null } }
 const parseAll = <T>(m: unknown) => Object.fromEntries(Object.entries(pairs(m)).map(([k, v]) => [k, safe(v) as T]).filter(([, v]) => v)) as Record<string, T>
@@ -69,6 +69,7 @@ export async function act(uid: string, op: string, b: Record<string, unknown>) {
   const ws = await load(); const d = W.newDirty()
   if (op === 'readletter') return readLetter(ws, d, uid, String(b.id ?? ''))
   if (op === 'say') return sayAloud(ws, d, uid, b.text)
+  if (op.startsWith('mail')) return mailAct(ws, d, uid, op, b)
   if (op === 'reply') return replyUnderGate(ws, d, uid, b.text)
   const r = W.action(ws, uid, op, b, d)
   await save(ws, d)
@@ -95,7 +96,67 @@ async function withLetters<T extends object>(v: T, uid: string, now = Date.now()
   // what you heard: only words said within earshot of where you stand, in the last quarter of an hour
   const me = (v as { me?: { q: number; r: number } | null }).me
   const heard = !me ? [] : said.map(x => safe(x) as Said | null).filter((x): x is Said => !!x && now - x.t < SAY_KEEP && (x.uid === uid || W.dist([x.q, x.r], [me.q, me.r]) <= EARSHOT)).slice(0, 30).reverse()
-  return { ...v, letters, heard }
+  return { ...v, letters, heard, mail: await mailView(uid) }
+}
+
+/* ================= the post: a letter is a thing in someone's hands =================
+ * You write it at the post office. It waits in the sack, or you carry it yourself. Anyone may take it and carry it;
+ * it reaches the reader only when someone stands at their door with it. A carrier can break the seal and read it,
+ * and the seal stays broken. The reader sees every hand it passed through. Nothing delivers itself. */
+type Mail = { id: string; at: number; from: string; fromNick: string; to: string; toNick: string; text: string; where: 'sack' | 'hands' | 'delivered'; holder: string | null; sealBy: string | null; trail: { uid: string; nick: string; t: number }[]; deliveredAt?: number }
+const MAIL_CARRY = 3
+async function mailAll(): Promise<Mail[]> { const [m] = await pipe([['HGETALL', KX.mail]]); return Object.values(parseAll<Mail>(m)).sort((a, b) => a.at - b.at) }
+const putMail = (m: Mail) => pipe([['HSET', KX.mail, m.id, JSON.stringify(m)]])
+async function mailView(uid: string) {
+  const all = await mailAll(), hand = (m: Mail) => m.trail.map(x => x.nick)
+  return {
+    carrying: all.filter(m => m.where === 'hands' && m.holder === uid).map(m => ({ id: m.id, at: m.at, toNick: m.toNick, to: m.to, fromNick: m.fromNick, sealed: !m.sealBy, text: m.sealBy === uid ? m.text : undefined })),
+    sack: all.filter(m => m.where === 'sack').map(m => ({ id: m.id, at: m.at, toNick: m.toNick, fromNick: m.fromNick, sealed: !m.sealBy })),
+    inbox: all.filter(m => m.where === 'delivered' && m.to === uid).slice(-30).map(m => ({ id: m.id, at: m.at, deliveredAt: m.deliveredAt, fromNick: m.fromNick, text: m.text, sealBy: m.sealBy ? (m.trail.find(x => x.uid === m.sealBy)?.nick ?? 'someone') : null, hands: hand(m) })),
+    sent: all.filter(m => m.from === uid).slice(-20).map(m => ({ id: m.id, at: m.at, toNick: m.toNick, where: m.where, holderNick: m.holder ? (m.trail.at(-1)?.nick ?? null) : null })),
+  }
+}
+type R = { ok: true; data: object } | { ok: false; error: string; status?: number }
+async function mailAct(ws: W.WState, d: W.Dirty, uid: string, op: string, b: Record<string, unknown>): Promise<R> {
+  W.stepAll(ws, d); const c = ws.chars[uid]; if (!c) return { ok: false, error: 'No character yet.' }
+  const here: W.Cell = [c.q, c.r], still = !c.path.length, nick = W.nickIn(ws, uid), atPost = still && W.dist(here, W.POST_CELL) <= 1
+  const all = await mailAll(), m = all.find(x => x.id === String(b.id ?? '')), mine = all.filter(x => x.where === 'hands' && x.holder === uid)
+  const done = async () => { await save(ws, d); return { ok: true as const, data: await withLetters(W.viewOf(ws, uid), uid) } }
+  if (op === 'mailwrite') {
+    if (!atPost) return { ok: false, error: 'Letters are written at the post office.' }
+    const text = clean(b.text, 1200); if (text.length < 2) return { ok: false, error: 'Write something first.' }
+    const want = String(b.to ?? '').trim().toLowerCase(); const to = Object.entries(ws.houses).find(([k, h]) => k.toLowerCase() === want || (h.nick ?? '').toLowerCase() === want)
+    if (!to) return { ok: false, error: 'Nobody in Aigarth goes by that name.' }
+    if (to[0] === uid) return { ok: false, error: 'You would have to carry it to your own door. Write to someone else.' }
+    const keep = b.keep === true; if (keep && mine.length >= MAIL_CARRY) return { ok: false, error: 'Your hands are full. Leave one in the sack first.' }
+    const x: Mail = { id: `m${ws.now.toString(36)}${uid.slice(-3)}`, at: ws.now, from: uid, fromNick: nick, to: to[0], toNick: to[1].nick ?? 'someone', text, where: keep ? 'hands' : 'sack', holder: keep ? uid : null, sealBy: null, trail: [{ uid, nick, t: ws.now }] }
+    await putMail(x); return done()
+  }
+  if (!m) return { ok: false, error: 'That letter is not here.' }
+  if (op === 'mailtake') {
+    if (!atPost) return { ok: false, error: 'The sack hangs in the post office.' }
+    if (m.where !== 'sack') return { ok: false, error: 'Someone already took it.' }
+    if (mine.length >= MAIL_CARRY) return { ok: false, error: `You can carry ${MAIL_CARRY} letters at most.` }
+    Object.assign(m, { where: 'hands', holder: uid }); if (m.trail.at(-1)?.uid !== uid) m.trail.push({ uid, nick, t: ws.now }); await putMail(m); return done()
+  }
+  if (m.where !== 'hands' || m.holder !== uid) return { ok: false, error: 'You are not carrying that letter.' }
+  if (op === 'mailleave') { if (!atPost) return { ok: false, error: 'Leave it in the sack at the post office.' }; Object.assign(m, { where: 'sack', holder: null }); await putMail(m); return done() }
+  if (op === 'mailopen') { if (!m.sealBy) { m.sealBy = uid; await putMail(m) } return done() }
+  if (op === 'mailgive') {
+    const who = String(b.who ?? ''), o = ws.chars[who]; if (!o || who === uid) return { ok: false, error: 'Hand it to whom?' }
+    if (!still || o.path.length || W.dist(here, [o.q, o.r]) > 1) return { ok: false, error: 'Stand next to them to hand it over.' }
+    if (all.filter(x => x.where === 'hands' && x.holder === who).length >= MAIL_CARRY) return { ok: false, error: 'Their hands are full.' }
+    Object.assign(m, { holder: who }); m.trail.push({ uid: who, nick: W.nickIn(ws, who), t: ws.now }); await putMail(m); return done()
+  }
+  if (op === 'maildeliver') {
+    const h = ws.houses[m.to]; if (h?.q == null || h.r == null) return { ok: false, error: 'They have no house yet. Keep the letter until they do.' }
+    if (!still || W.dist(here, [h.q, h.r]) > 1) return { ok: false, error: `Walk to ${m.toNick}'s door.` }
+    Object.assign(m, { where: 'delivered', holder: null, deliveredAt: ws.now })
+    if (uid !== m.from) { c.renown = (c.renown ?? 0) + 2; d.chars.add(uid) }
+    d.feed.push({ id: `ml${m.id}`, t: ws.now, topic: 'mail', by: uid, data: { nick, to: m.toNick } })
+    await putMail(m); return done()
+  }
+  return { ok: false, error: 'unknown action' }
 }
 
 /* ================= talking: only people standing near you hear what you say ================= */
@@ -153,6 +214,16 @@ export async function storyDesk(b: Record<string, unknown>) {
     const to = b.to ? String(b.to).trim().slice(0, 80) : ''
     const l: Letter = { id: 'l' + at.toString(36), at, until: at + hours * 3600_000, from: String(b.from ?? 'the twelve').slice(0, 60), title, text, ...(to ? { to } : {}) }
     await pipe([['HSET', KX.letters, l.id, JSON.stringify(l)]])
+  } else if (cmd === 'mail') {
+    const text = clean(b.text, 1200), to = String(b.to ?? '').trim(), hands = String(b.hands ?? '').trim()
+    if (!text || !to) return { ok: false as const, error: 'A letter needs a reader and a text.' }
+    const [hs] = await pipe([['HGETALL', K.houses]]); const houses = parseAll<W.HouseLite>(hs)
+    const find = (w: string) => Object.entries(houses).find(([k, h]) => k.toLowerCase() === w.toLowerCase() || (h.nick ?? '').toLowerCase() === w.toLowerCase())
+    const reader = find(to); if (!reader) return { ok: false as const, error: 'No such reader.' }
+    const carrier = hands ? find(hands) : null; if (hands && !carrier) return { ok: false as const, error: 'No such carrier.' }
+    const from = String(b.from ?? 'T. V.').slice(0, 60)
+    const x: Mail = { id: `m${now.toString(36)}adm`, at: now, from: 'story', fromNick: from, to: reader[0], toNick: reader[1].nick ?? 'someone', text, where: carrier ? 'hands' : 'sack', holder: carrier ? carrier[0] : null, sealBy: null, trail: carrier ? [{ uid: carrier[0], nick: carrier[1].nick ?? 'someone', t: now }] : [] }
+    await putMail(x)
   } else if (cmd === 'del') await pipe([['HDEL', KX.letters, String(b.id ?? '')]])
   else if (cmd === 'phase') { story.phase = Math.max(0, Math.min(3, Number(b.phase) || 0)); await pipe([['SET', KX.story, JSON.stringify(story)]]) }
   else if (cmd === 'hush') { story.hush = Math.max(0, Math.min(W.HUSH_MAX, Number(b.hush) || 0)); story.ht = now; await pipe([['SET', KX.story, JSON.stringify(story)]]) }
@@ -161,5 +232,6 @@ export async function storyDesk(b: Record<string, unknown>) {
   const [cnt] = await pipe([['HGETALL', KX.letters + ':n']]); const n = pairs(cnt)
   const [rl] = await pipe([['LRANGE', KX.replies, 0, 99]])
   const replies = ((rl as string[]) ?? []).map(x => safe(x)).filter(Boolean)
-  return { ok: true as const, data: { story: { ...story, hush: Math.round(W.hushNow(story, now)) }, letters: (await lettersAll()).map(l => ({ ...l, reads: Number(n[l.id] ?? 0) })), replies } }
+  const mail = (await mailAll()).slice(-60).reverse().map(m => ({ id: m.id, at: m.at, fromNick: m.fromNick, toNick: m.toNick, where: m.where, holder: m.holder, sealBy: m.sealBy, hands: m.trail.map(x => x.nick), text: m.text }))
+  return { ok: true as const, data: { story: { ...story, hush: Math.round(W.hushNow(story, now)) }, letters: (await lettersAll()).map(l => ({ ...l, reads: Number(n[l.id] ?? 0) })), replies, mail } }
 }
