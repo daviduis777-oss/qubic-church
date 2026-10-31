@@ -2522,8 +2522,8 @@ function build() {
   const before = new Set(scene.children);
   // the same map the server walks: world.ts decides what stands on every cell, the kit only dresses it
   const MTS = ['mountain_A', 'mountain_B', 'mountain_C'], ICE = []; CHOIR.length = 0; NATURE.length = 0;
-  for (let n = W4W.TOWN_RING + 1; n <= (ACT1 ? 0 : W4W.MAX_RING + 2); n++) ring(n).forEach(([q, r]) => {
-    if (reserved.has(key(q, r))) return; const t = n > W4W.MAX_RING ? 'mountain' : W4W.terrain(q, r), v = rnd();
+  for (let n = W4W.TOWN_RING + 1; n <= W4W.MAX_RING + 2; n++) ring(n).forEach(([q, r]) => {
+    if (reserved.has(key(q, r)) || (ACT1 && W4W.insideDome(q, r))) return; const t = n > W4W.MAX_RING ? 'mountain' : W4W.terrain(q, r), v = rnd();
     const z = W4W.zoneOf(q, r), c = HX(q, r);
     const lm = W4W.landmarkAt(q, r);
     if (W4W.roadAt(q, r) || (lm === 'lake' && W4W.lakeAt(q, r))) return;
@@ -2547,7 +2547,7 @@ function build() {
   for (let n = W4W.TOWN_RING - 1; n <= (ACT1 ? 0 : W4W.TOWN_RING); n++) ring(n).forEach(([q, r]) => { if (reserved.has(key(q, r)) || (q === GATE_CELL[0] && r === GATE_CELL[1]) || rnd() >= (n === W4W.TOWN_RING ? 0.45 : 0.18)) return; const c = HX(q, r), v = rnd();
     if (v < 0.6) NATURE.push([c.x + (rnd() - 0.5) * 0.8, c.z + (rnd() - 0.5) * 0.8, 'pine', 1.5 + rnd() * 0.6]); else if (v < 0.75) NATURE.push([c.x + (rnd() - 0.5) * 0.8, c.z + (rnd() - 0.5) * 0.8, 'rock', 0.45]); else place(['tent', 'crate'][Math.floor(rnd() * 2)], q, r, { rot: rnd() * 6, jitter: 0.8 }); });
   mergeScenery(scene.children.filter(o => !before.has(o)));
-  if (!ACT1) { buildWastesGround(); buildIce(ICE); buildRoads(); buildLake(); buildChoir(); buildQProps(); }
+  if (!ACT1) { buildWastesGround(); buildIce(ICE); buildRoads(); buildLake(); buildChoir(); buildQProps(); } else { buildIce(ICE); buildDeadVillages(); }
   buildNature(); if (ACT1) buildDome();
   if (!ACT1) W4W.LANDMARKS.forEach(L => { const a = new THREE.Object3D(); a.position.copy(HX(...L.at)); scene.add(a); label(L.name, a, L.id === 'mouth' ? 2.2 : 1.6, 'place'); });
   // where the zones begin: a quiet sign in the snow
@@ -2555,6 +2555,14 @@ function build() {
   buildSnowfall(); buildSmoke(); buildEmbers();
 }
 /* forest, rocks and mountains never move: bake them into one mesh, one draw call instead of hundreds */
+/* what the White took: villages half under the snow, out where only the flash shows them */
+function buildDeadVillages() {
+  const before = new Set(scene.children), R = seeded(4040);
+  for (let v = 0; v < 6; v++) { const a = v / 6 * Math.PI * 2 + R() * 0.6, rr = DOME_R + 9 + R() * 9, cx = Math.cos(a) * rr, cz = Math.sin(a) * rr;
+    for (let k = 0; k < 4 + Math.floor(R() * 3); k++) { const name = ['destroyed', 'home_A', 'home_B', 'destroyed', 'tower_base', 'fence'][Math.floor(R() * 6)], src = kit[name]; if (!src) continue;
+      const o = src.clone(true), ox = cx + (R() - 0.5) * 5, oz = cz + (R() - 0.5) * 5; o.position.set(ox, -0.25 - R() * 0.35, oz); o.rotation.set((R() - 0.5) * 0.25, R() * 6, (R() - 0.5) * 0.25); o.scale.setScalar(0.85 + R() * 0.3); scene.add(o); } }
+  mergeScenery(scene.children.filter(o => !before.has(o)));
+}
 function mergeScenery(objs) {
   const groups = new Map();
   objs.forEach(o => { o.updateMatrixWorld(true); o.traverse(m => { if (!m.isMesh) return;
@@ -6166,9 +6174,9 @@ const HOLLOW = [
     text: 'Twice the height of a door and thin as a winter tree, with arms that reach the snow. Every night it picks a place on the Veil and drags its claws down it until the light ripples. The children say it is looking for the thin places. The children are right.' },
   { id: 'hollow', name: 'The Hollow Man', model: 'h/crawler', h: 2.3, speed: 1.1, walkRate: 1.1, r: DOME_R + 2.0, reach: 1.15,
     text: 'Six long legs, and slung underneath them, what is left of a man in what is left of a coat. It walks the edge the way you walk past a house you used to live in. Sometimes it stops at the North Gate and stands there for an hour. Nobody has said out loud whose coat it is.' },
-  { id: 'wailer', name: 'The Wailer', model: 'h/shroud', h: 2.3, speed: 0.5, r: DOME_R + 1.6, reach: 0.95, float: 0.35,
+  { id: 'wailer', name: 'The Wailer', model: 'h/saint', h: 2.6, speed: 0.8, r: DOME_R + 1.8, reach: 1.0, float: 0.5, rigid: true,
     text: 'A hanging drape with a light inside it, and things like hands beneath. You hear it before you see it: singing, in voices you know. Your mother. A friend who went with the expedition. If it calls you by name, go indoors and do not answer.' },
-  { id: 'scratcher2', name: 'The Scratcher', model: 'h/tallman', h: 2.9, speed: 0.95, walkRate: 0.8, r: DOME_R + 3.2, reach: 2.3, hidden: true, text: '' },
+  { id: 'mourner', name: 'The Mourner', model: 'h/harbinger', h: 2.2, speed: 0.9, walkRate: 1.0, r: DOME_R + 3.4, reach: 1.3, single: true, mourns: true },
 ];
 const hollow = [];
 function darken(root, eyes) {
@@ -6182,17 +6190,65 @@ async function buildHorrors() {
     const g = await qModel(H.model); if (!g) continue;
     const body = cloneSkinned(g.scene); body.updateMatrixWorld(true); const bb = new THREE.Box3().setFromObject(body, true), s = H.h / Math.max(1e-4, bb.max.y - bb.min.y);
     body.scale.multiplyScalar(s); body.position.y = -bb.min.y * s;
-    body.traverse(m => { if (m.isMesh) { m.castShadow = true; m.frustumCulled = false; if (m.material?.emissive && m.material.emissiveIntensity > 0.5) { m.material.emissiveIntensity = 3; m.material.userData.noFow = true; } } });
+    body.traverse(m => { if (m.isMesh) { m.castShadow = true; m.frustumCulled = false; if (m.material?.isMeshStandardMaterial) { m.material.metalness = Math.min(m.material.metalness, 0.2); m.material.roughness = Math.max(m.material.roughness, 0.55); if (m.material.metalnessMap) m.material.metalnessMap = null; } if (m.material?.emissive && m.material.emissiveIntensity > 0.5) { m.material.emissiveIntensity = 3; m.material.userData.noFow = true; } } });
     const root = new THREE.Group(); root.add(body); scene.add(root);
     const mx = new THREE.AnimationMixer(body), acts = Object.fromEntries(g.animations.map(a => [a.name.replace(/^.*\|/, ''), mx.clipAction(a)]));
     const B = { ...H, walk: 'Walk', idle: 'Idle', hit: 'Scratch', root, body, mx, acts, cur: '', a: i / HOLLOW.length * Math.PI * 2 + 0.3, dir: i % 2 ? -1 : 1, rad: H.r, mode: 'walk', t: 6 + Math.random() * 8, strikeT: 0 };
     if (H.walkRate && acts.Walk) acts.Walk.timeScale = H.walkRate;
+    if (H.single && acts.Walk) { acts.Idle = acts.Walk; acts.Scratch = acts.Walk; } // one clip: slowed it is a sway, fast it is a frenzy
     tag(root, 'beast', H.id.replace(/2$/, '')); hollowPlay(B, B.walk); hollow.push(B);
   }
 }
+/* the Hollow keep a rhythm. Most of the time they are about their own business out in the dark: wandering, standing
+ * still, watching the town, waiting at the Gate. Then something calls them, they gather at one sector, and strike
+ * in turn, a slow drum on the Veil, with one blow all together at the end. Then they melt back into the White. */
+const HD = { phase: 'roam', t: 30 + Math.random() * 20, at: 0, beat: 0, n: 0 };
+const wrapA = a => Math.atan2(Math.sin(a), Math.cos(a));
+function hollowGo(B, dt, ta, tr, rate = 1) {
+  const da = wrapA(ta - B.a), dr = tr - B.rad, arc = da * B.rad, len = Math.hypot(arc, dr), step = B.speed * rate * dt;
+  if (len < 0.15) return true; const k = Math.min(1, step / len); B.a += da * k; B.rad = Math.max(DOME_R + B.reach * 0.9, B.rad + dr * k); return false;
+}
+function stepDirector(dt) {
+  HD.t -= dt; const walkers = hollow.filter(B => !B.fly);
+  if (HD.phase === 'roam' && HD.t <= 0) { HD.phase = 'gather'; HD.t = 16; HD.at = XV?.pressed >= 0 ? W4W.pylonAngle(XV.pressed) + (Math.random() - 0.5) * 0.4 : Math.random() * Math.PI * 2;
+    walkers.forEach((B, k) => { B.slot = HD.at + (k - (walkers.length - 1) / 2) * 0.16; B.mode = 'gather'; }); }
+  else if (HD.phase === 'gather' && (HD.t <= 0 || walkers.every(B => B.mode === 'ready'))) { HD.phase = 'assault'; HD.t = 9 + walkers.length * 1.5; HD.beat = 0.6; HD.n = 0; walkers.forEach(B => { B.mode = 'ready'; }); }
+  else if (HD.phase === 'assault') {
+    HD.beat -= dt;
+    const hit = walkers.filter(B => !B.mourns); // the Mourner never strikes: it stands back with its head bowed
+    if (HD.t > 1.6 && HD.beat <= 0 && hit.length) { const B = hit[HD.n++ % hit.length]; HD.beat = 1.05; strike(B, 1); }
+    if (HD.t <= 1.6 && !HD.final) { HD.final = true; hit.forEach(B => strike(B, 1.7)); pulse(0.2); }
+    if (HD.t <= 0) { HD.phase = 'retreat'; HD.t = 7; HD.final = false; walkers.forEach(B => { B.mode = 'retreat'; B.home = B.a + (Math.random() - 0.5) * 1.2; }); }
+  }
+  else if (HD.phase === 'retreat' && HD.t <= 0) { HD.phase = 'roam'; HD.t = 40 + Math.random() * 30; walkers.forEach(B => { B.mode = 'roam'; B.t = 0; }); }
+}
+function strike(B, k) {
+  B.mode = 'strike'; B.strikeT = 0.9; hollowPlay(B, B.hit, true); B.acts[B.hit] && (B.acts[B.hit].timeScale = B.single ? 2.2 : 1);
+  setTimeout(() => { domeHit(domeAt(B.a, B.h * (0.5 + Math.random() * 0.4))); if (k > 1.2) domeHit(domeAt(B.a, B.h * 0.3)); scratchSound(B, k);
+    const me0 = avatars[myUid()]?.g.position; if (me0 && me0.distanceTo(B.root.position) < 9) observe(B.id.replace(/2$/, '')); }, 380);
+}
+function hollowBrain(B, dt, tt, me0) {
+  B.watch = null; if (me0 && me0.distanceTo(B.root.position) < 7) observe(B.id);
+  if (B.mode === 'gather') { if (hollowGo(B, dt, B.slot, DOME_R + B.reach + (B.mourns ? 3.5 : 0), B.mourns ? 0.8 : 1.4)) { B.mode = 'ready'; } hollowPlay(B, B.walk); return; }
+  if (B.mode === 'ready') { B.watch = 'in'; hollowPlay(B, B.idle); B.acts.Idle && (B.acts.Idle.timeScale = B.single ? 0.2 : 1); return; }
+  if (B.mode === 'strike') { B.watch = 'in'; B.strikeT -= dt; if (B.strikeT <= 0) { B.mode = 'ready'; } return; }
+  if (B.mode === 'retreat') { hollowGo(B, dt, B.home, B.r + 5, 1.2); hollowPlay(B, B.walk); return; }
+  // roam: each one has its own business, changed every so often
+  if (!B.task || B.t <= 0) {
+    const r = Math.random(), gateA = Math.atan2(HX(...GATE_CELL).z, HX(...GATE_CELL).x);
+    B.task = B.id === 'hollow' && r < 0.45 ? 'gate' : r < 0.35 ? 'wander' : r < 0.6 ? 'stand' : r < 0.85 ? 'stalk' : 'drift';
+    B.t = B.task === 'gate' ? 25 : 8 + Math.random() * 10;
+    B.ta = B.task === 'gate' ? gateA : B.a + (Math.random() - 0.5) * (B.task === 'wander' ? 1.6 : 0.6);
+    B.tr = B.task === 'stalk' || B.task === 'gate' ? DOME_R + B.reach + 0.4 : B.r + 3 + Math.random() * 7;
+  }
+  const there = hollowGo(B, dt, B.ta, B.tr, B.task === 'drift' ? 0.5 : 0.8);
+  if (!there) { hollowPlay(B, B.walk); if (B.single && B.acts.Walk) B.acts.Walk.timeScale = B.walkRate || 1; return; }
+  // arrived: stand and watch: the town if close, the dark if far. The Hollow Man lifts his face to the bar
+  B.watch = B.task === 'stand' ? 'out' : 'in'; hollowPlay(B, B.idle); if (B.single && B.acts.Idle) B.acts.Idle.timeScale = 0.15;
+}
 function hollowPlay(B, n, once = false) { if (B.cur === n || !B.acts[n]) return; const a = B.acts[n], o = B.acts[B.cur]; a.reset(); a.setLoop(once ? THREE.LoopOnce : THREE.LoopRepeat); a.fadeIn(0.3).play(); o?.fadeOut(0.3); B.cur = n; }
 function stepHollow(dt) {
-  if (!hollow.length) return; const tt = U.uTime.value, me0 = avatars[myUid()]?.g.position;
+  if (!hollow.length) return; stepDirector(dt); const tt = U.uTime.value, me0 = avatars[myUid()]?.g.position;
   for (const B of hollow) {
     B.mx.update(dt); B.t -= dt;
     if (B.fly) { // the Circler: round and round, sometimes down onto the top of the Veil
@@ -6204,20 +6260,14 @@ function stepHollow(dt) {
       else if (B.mode === 'dive') { if (!B.struck && B.t < 1.5) { B.struck = true; domeHit(domeAt(B.a, DOME_H * 0.85)); scratchSound(B, 1.4); } if (B.t <= 0) { B.mode = 'walk'; B.struck = false; B.t = 14 + Math.random() * 16; hollowPlay(B, B.walk); } }
       continue;
     }
-    if (B.mode === 'walk') {
-      // they drift toward the sector the Hollow is pressing, and the weakest pylon
-      const w = XV?.pressed >= 0 ? W4W.pylonAngle(XV.pressed) : null, da = w == null ? 0 : Math.atan2(Math.sin(w - B.a), Math.cos(w - B.a));
-      if (w != null && Math.abs(da) > 0.7) B.dir = Math.sign(da);
-      B.a += dt * B.speed / B.rad * B.dir; B.rad += (B.r - B.rad) * Math.min(1, dt * 0.8); hollowPlay(B, B.walk);
-      if (B.t <= 0) { if (w == null || Math.abs(da) < 0.9 || Math.random() < 0.3) { B.mode = 'close'; B.t = 2.2; } else B.t = 1.5; } }
-    else if (B.mode === 'close') { B.rad += (DOME_R + B.reach - B.rad) * Math.min(1, dt * 1.6); hollowPlay(B, B.walk); if (B.t <= 0) { B.mode = 'scratch'; B.t = 2.5 + Math.random() * 3; B.strikeT = 0.2; hollowPlay(B, B.hit); } }
-    else if (B.mode === 'scratch') { B.strikeT -= dt; if (B.strikeT <= 0) { B.strikeT = 0.9 + Math.random() * 0.4; domeHit(domeAt(B.a, B.h * (0.5 + Math.random() * 0.4))); scratchSound(B, 1); B.seenBy = me0 && me0.distanceTo(B.root.position) < 9; if (B.seenBy) observe(B.id.replace(/2$/, '')); }
-      if (B.t <= 0) { B.mode = 'walk'; B.t = 8 + Math.random() * 14; hollowPlay(B, B.walk); } }
-    const y0 = B.float ? B.float + Math.sin(tt * 1.3 + B.a * 3) * 0.2 : 0;
+    hollowBrain(B, dt, tt, me0);
+    const y0 = B.float ? B.float + Math.sin(tt * 1.3 + B.a * 3) * 0.25 : 0, prev = B.root.position.clone();
     B.root.position.set(Math.cos(B.a) * B.rad, y0, Math.sin(B.a) * B.rad);
-    // walking: face along the way; at the Veil: face the light
-    const face = B.mode === 'walk' ? Math.atan2(-Math.sin(B.a) * B.dir, Math.cos(B.a) * B.dir) : Math.atan2(-Math.cos(B.a), -Math.sin(B.a));
+    // moving: face the way; standing: face what they watch (the light, or the dark)
+    const mv = B.root.position.clone().sub(prev); mv.y = 0;
+    const face = mv.lengthSq() > 1e-6 && !B.watch ? Math.atan2(mv.x, mv.z) : B.watch === 'out' ? Math.atan2(Math.cos(B.a), Math.sin(B.a)) : Math.atan2(-Math.cos(B.a), -Math.sin(B.a));
     const r0 = B.root.rotation.y; B.root.rotation.y = r0 + Math.atan2(Math.sin(face - r0), Math.cos(face - r0)) * Math.min(1, dt * 4);
+    if (B.rigid) { const lean = B.mode === 'strike' ? 0.35 * Math.max(0, Math.sin(tt * 7)) : 0; B.body.rotation.x = lean + Math.sin(tt * 0.9 + B.a) * 0.06; B.body.rotation.z = Math.sin(tt * 0.7 + B.a * 2) * 0.08; }
   }
 }
 /** Claws on the Veil: a dry rasp, three strokes, louder the closer the camera. */
@@ -6278,6 +6328,12 @@ const BESTIARY = [
     ['Overheard at the plaza fire', 'It sings. The song changes with whoever listens. Marta heard her son, who went with the twelve. Old Ivo heard a hymn from the south that he swears no one alive should know.'],
     ['The astronomer, week 35', 'I wrote down the words of its song as it sang. While the ink was wet the letters crawled into a different order. I have burned the page. The words are still in the ash, if you hold it to the light.'],
     ['Chalked on the inside of the North Gate', 'If it says your name, it has already learned it. Ask who taught it. Then go indoors and keep away from the windows.'],
+  ] },
+  { id: 'mourner', name: 'The Mourner', seen: 'Follows the others, always last', notes: [
+    ['The astronomer, week 32', 'Bent double under rags that hang like a widow\'s veil. It walks behind the others the way the bereaved walk behind a cart, and it is always the last to reach the Veil.'],
+    ['Overheard at the plaza fire', 'Juri\'s brother swears the rags are cable. Black cable, the thick kind they ran north to the server halls before the cold, grown over with frost and something like bark.'],
+    ['The astronomer, week 37', 'When the others strike, it does not. It stands a little apart with its head bowed, as if someone had to be there to grieve for what they were doing.'],
+    ['Maria, in the margin', 'Do not pity it. Pity is a door too.'],
   ] },
   { id: 'chthon', name: '???', seen: 'Far out, past where the White thins', notes: [
     ['The astronomer, week 34', 'Far out, past the place where the White thins, something stands that is taller than the pines and older than the cold. The other things keep far from it, as a dog keeps far from a fire.'],
@@ -6674,5 +6730,5 @@ function loop(now = performance.now()) {
 }
 requestAnimationFrame(loop);
 addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); DPR = Math.min(DPR, dprFor()); renderer.setPixelRatio(DPR); composer.setPixelRatio?.(DPR); renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight); fxaaSize(); });
-window.__w4w = { S, settle, X: () => ({ XV, avatars, predicted, xact, hexAt, warp: ms => XW.warp?.(ms), planTo, goTrip, NOTES, rimeFx, openLibrary, trip, prints: prints.length, rimeAt: (q, r) => XW._rime?.(q, r), stash: o => XW._stash?.(o), letter: o => XW._letter?.(o), hollowList: () => hollow, openPost, openHouse, flash: (show) => { flashT = 0; if (show) setTimeout(() => { if (flashFig) flashFig.position.y = 0; }, 30); }, flashFig: () => flashFig, flashDbg: () => ({ k: flashK, f: FOW_U.uFowFlash.value, back: flashBack?.material.opacity, vis: flashFig?.visible, on: FOW_U.uFowOn.value }), acts: h => { actEl.hidden = false; actEl.innerHTML = h; actSig = h; dressActs(); }, story: o => XW._story?.(o), openGate, openChronicle, openPylon, walkTo, UI, renderFrames, unfollow: () => { follow = false; fly = null; }, hollow, act1Mark: id => act1Mark(id), openBeast: id => openBeast(id), openLibraryRoom: () => openLibraryRoom() }), freePlots, openMaria, ask, addWood, refreshTown, draft: v => (draft = v), camera, controls, updateIce, renderer, scene, __composer: LITE ? null : composer };
+window.__w4w = { S, settle, X: () => ({ HD, XV, avatars, predicted, xact, hexAt, warp: ms => XW.warp?.(ms), planTo, goTrip, NOTES, rimeFx, openLibrary, trip, prints: prints.length, rimeAt: (q, r) => XW._rime?.(q, r), stash: o => XW._stash?.(o), letter: o => XW._letter?.(o), hollowList: () => hollow, openPost, openHouse, flash: (show) => { flashT = 0; if (show) setTimeout(() => { if (flashFig) flashFig.position.y = 0; }, 30); }, flashFig: () => flashFig, flashDbg: () => ({ k: flashK, f: FOW_U.uFowFlash.value, back: flashBack?.material.opacity, vis: flashFig?.visible, on: FOW_U.uFowOn.value }), acts: h => { actEl.hidden = false; actEl.innerHTML = h; actSig = h; dressActs(); }, story: o => XW._story?.(o), openGate, openChronicle, openPylon, walkTo, UI, renderFrames, unfollow: () => { follow = false; fly = null; }, hollow, act1Mark: id => act1Mark(id), openBeast: id => openBeast(id), openLibraryRoom: () => openLibraryRoom() }), freePlots, openMaria, ask, addWood, refreshTown, draft: v => (draft = v), camera, controls, updateIce, renderer, scene, __composer: LITE ? null : composer };
 </script>
