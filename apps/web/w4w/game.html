@@ -4619,9 +4619,19 @@ function poseRime(R, dt, t) {
   for (const G of R.rags) { const top = s2.clone().add(V(Math.cos(G.a) * 0.45, 0.1, Math.sin(G.a) * 0.35)), wind = Math.sin(t * 0.9 + G.ph) * 0.35;
     lay(G.L, top, top.clone().add(V(Math.cos(G.a) * 0.25 + wind, -G.len, Math.sin(G.a) * 0.25 - 0.3 + wind * 0.4))); }
 }
+/* the thing that walks the White: the same tall saint the flash shows, black, too many arms, lit here and there like windows */
+function buildRimeBody() {
+  const g = new THREE.Group(); g.visible = false; scene.add(g); const lights = [];
+  qModel(FAR_MODEL).then(m => { if (!m) return; const b = m.scene.clone(true); b.updateMatrixWorld(true); const bb = new THREE.Box3().setFromObject(b), H = 7.5, k = H / (bb.max.y - bb.min.y), c = bb.getCenter(new THREE.Vector3());
+    b.scale.multiplyScalar(k); b.position.set(-c.x * k, -bb.min.y * k - 0.3, -c.z * k);
+    b.traverse(o => { if (o.isMesh) { o.material = o.material.clone(); o.material.color?.setRGB(0.2, 0.22, 0.28); o.material.transparent = false; o.material.alphaTest = 0.4; o.material.depthWrite = true; if (o.material.isMeshStandardMaterial) { o.material.metalness = 0; o.material.metalnessMap = null; o.material.roughness = 0.9; } o.castShadow = true; } });
+    writhe(b, 0.03, 0.6); g.add(b); tag(g, 'chthon', 'chthon');
+    for (let i = 0; i < 11; i++) { const y = 1.5 + Math.random() * (H - 2.2), a = (Math.random() - 0.5) * 2.2, l = sprite(GLOW, Math.sin(a) * 0.5, y, Math.cos(a) * 0.45, i < 3 ? 0.5 : 0.2 + Math.random() * 0.15, 0x9fdcff, 1); scene.remove(l); g.add(l); lights.push({ l, s: l.scale.x, next: Math.random() * 5, shut: 0 }); } });
+  return { g, lights, p: new THREE.Vector3(), yaw: 0, look: 0, warned: 0, body: true };
+}
 function stepRime(dt) {
   const R = XV?.rime; if (!R) { if (rimeFx) rimeFx.g.visible = false; return; }
-  if (!rimeFx) rimeFx = buildRime();
+  if (!rimeFx) rimeFx = buildRimeBody();
   const t = xnow(), n = R.next || R, e = THREE.MathUtils.clamp((t - R.t) / W4W.RIME_MS, 0, 1);
   const want = HX(R.q, R.r).lerp(HX(n.q, n.r), e * e * (3 - 2 * e));
   // it never glides across the map: a jump in what the server says is a jump on the screen
@@ -4632,7 +4642,8 @@ function stepRime(dt) {
   rimeFx.g.rotation.y = rimeFx.yaw;
   const mine = avatars[myUid()]?.g.position, tgt = mine && mine.distanceTo(rimeFx.p) < 14 ? mine : camera.position;
   const ly = Math.atan2(tgt.x - rimeFx.p.x, tgt.z - rimeFx.p.z) - rimeFx.yaw; rimeFx.look = THREE.MathUtils.clamp(Math.atan2(Math.sin(ly), Math.cos(ly)), -1.1, 1.1);
-  if (rimeFx.g.position.distanceTo(controls.target) < 40) poseRime(rimeFx, dt, U.uTime.value);
+  if (rimeFx.body) for (const L of rimeFx.lights) { L.next -= dt; if (L.next < 0) { L.next = 0.6 + Math.random() * 5; L.shut = 0.12 + Math.random() * 0.25; } if (L.shut > 0) L.shut -= dt; L.l.scale.setScalar(L.shut > 0 ? 0.001 : L.s); }
+  else if (rimeFx.g.position.distanceTo(controls.target) < 40) poseRime(rimeFx, dt, U.uTime.value);
   stepMouth(dt);
 }
 /* ---------- the Mouth: the cave under the last tooth, and the two smaller ones that keep it ---------- */
@@ -6123,18 +6134,32 @@ function stepFlash() {
   if (window.__flashHold) flashK = 0.6;
   if (flashK > 0) { flashK = Math.max(0, flashK - dt * 1.6); const t = 1 - flashK; FOW_U.uFowFlash.value = flashK * (t < 0.12 ? 1 : t < 0.2 ? 0.25 : t < 0.32 ? 0.8 : 0.5); }
   else FOW_U.uFowFlash.value = 0;
+  if (gateMan) gateMan.visible = !!gateMan.userData.on && FOW_U.uFowFlash.value > 0.05;
   if (flashFig) { flashFig.visible = FOW_U.uFowFlash.value > 0.05 && flashFig.position.y > -1; flashBack.visible = flashFig.visible; flashBack.position.copy(flashFig.position).multiplyScalar(1.12); flashBack.material.opacity = FOW_U.uFowFlash.value * 0.9; }
 }
 function showFigure() {
   // something far taller than the pines, standing still past where the light reaches
-  if (!flashFig) { // the thing far out, from Bob's drawing: a cut-out that only the flash lights
-    const t = new THREE.TextureLoader().load('q/h/chthon.webp'); t.colorSpace = THREE.SRGBColorSpace;
-    flashFig = new THREE.Sprite(new THREE.SpriteMaterial({ map: t, color: 0x9aa6c0, transparent: true, alphaTest: 0.2, depthWrite: false, fog: false }));
-    flashFig.center.set(0.5, 0); flashFig.scale.set(9, 13.5, 1); flashFig.renderOrder = 2; scene.add(flashFig);
+  if (!flashFig) { // the thing far out: taller than the pines, black against the lit snow, never still
+    flashFig = new THREE.Group(); scene.add(flashFig); flashFig.position.y = -40;
+    qModel(FAR_MODEL).then(g => { if (!g) return; const b = g.scene.clone(true); b.updateMatrixWorld(true); const bb = new THREE.Box3().setFromObject(b), k = 14 / (bb.max.y - bb.min.y), c = bb.getCenter(new THREE.Vector3());
+      b.scale.multiplyScalar(k); b.position.set(-c.x * k, -bb.min.y * k - 0.6, -c.z * k);
+      b.traverse(m => { if (m.isMesh) { m.material = m.material.clone(); m.material.color?.setRGB(0.16, 0.17, 0.22); m.material.transparent = false; m.material.alphaTest = 0.4; m.material.depthWrite = true; if (m.material.isMeshStandardMaterial) { m.material.metalness = 0; m.material.roughness = 1; m.material.metalnessMap = null; } m.frustumCulled = false; } });
+      writhe(b, 0.025, 0.5); flashFig.add(b); });
     // the flash lights the snow behind it, so it stands out black against the White
     flashBack = new THREE.Sprite(new THREE.SpriteMaterial({ map: GLOW, color: 0x9fb4e0, transparent: true, opacity: 0, depthWrite: false, fog: false })); flashBack.center.set(0.5, 0.3); flashBack.scale.set(34, 30, 1); flashBack.renderOrder = 1; scene.add(flashBack); }
-  const a = Math.random() * Math.PI * 2, r = DOME_R + 9 + Math.random() * 7; flashFig.position.set(Math.cos(a) * r, 0, Math.sin(a) * r);
-  if (Math.random() < 0.55) flashFig.position.y = -20; // most nights there is nothing there. Most.
+  const a = Math.random() * Math.PI * 2, r = DOME_R + 9 + Math.random() * 7; flashFig.position.set(Math.cos(a) * r, 0, Math.sin(a) * r); flashFig.rotation.y = Math.atan2(-Math.cos(a), -Math.sin(a));
+  if (Math.random() < 0.55) flashFig.position.y = -40; // most nights there is nothing there. Most.
+  standAtGate(flashFig.position.y < -1 && (XV?.story?.phase || 0) >= 1 && Math.random() < 0.25);
+}
+/* once the letters have begun, some flashes show a man standing beyond the North Gate, looking in. No name. He is gone with the light */
+const FAR_MODEL = 'h/saint', GATE_MAN = 'h/k'; let gateMan = null;
+function standAtGate(on) {
+  if (!gateMan) { gateMan = new THREE.Group(); gateMan.visible = false; scene.add(gateMan);
+    qModel(GATE_MAN).then(g => { if (!g) return; const b = g.scene.clone(true); b.updateMatrixWorld(true); const bb = new THREE.Box3().setFromObject(b), k = 2.25 / (bb.max.y - bb.min.y), c = bb.getCenter(new THREE.Vector3());
+      b.scale.multiplyScalar(k); b.position.set(-c.x * k, -bb.min.y * k, -c.z * k); b.traverse(m => { if (m.isMesh) { m.material = m.material.clone(); m.material.color?.multiplyScalar(0.55); if (m.material.isMeshStandardMaterial) { m.material.metalness = Math.min(0.3, m.material.metalness); m.material.metalnessMap = null; } } });
+      writhe(b, 0.006, 0.4); gateMan.add(b); }); }
+  gateMan.userData.on = on; if (!on) return;
+  const g = HX(...GATE_CELL), a = Math.atan2(g.z, g.x) + (Math.random() - 0.5) * 0.12, r = DOME_R + 3.5 + Math.random() * 2; gateMan.position.set(Math.cos(a) * r, 0, Math.sin(a) * r); gateMan.rotation.y = Math.atan2(-Math.cos(a), -Math.sin(a));
 }
 function rumble() {
   const ctx = SND.ctx, t0 = ctx.currentTime + 0.4 + Math.random() * 0.8, n = ctx.createBufferSource(); if (!SND.noise) return; n.buffer = SND.noise;
@@ -6196,11 +6221,11 @@ function stepFow() {
 const HOLLOW = [
   { id: 'scratcher', name: 'The Scratcher', model: 'h/tallman', h: 2.9, speed: 1.15, walkRate: 0.9, r: DOME_R + 2.8, reach: 2.05,
     text: 'Twice the height of a door and thin as a winter tree, with arms that reach the snow. Every night it picks a place on the Veil and drags its claws down it until the light ripples. The children say it is looking for the thin places. The children are right.' },
-  { id: 'hollow', name: 'The Hollow Man', model: 'h/crawler', h: 2.3, speed: 1.1, walkRate: 1.1, r: DOME_R + 2.0, reach: 1.15,
+  { id: 'hollow', name: 'The Hollow Man', model: 'h/crawler', h: 2.3, speed: 1.1, walkRate: 1.1, r: DOME_R + 2.0, reach: 1.15, writhe: 0.01,
     text: 'Six long legs, and slung underneath them, what is left of a man in what is left of a coat. It walks the edge the way you walk past a house you used to live in. Sometimes it stops at the North Gate and stands there for an hour. Nobody has said out loud whose coat it is.' },
-  { id: 'wailer', name: 'The Wailer', model: 'h/saint', h: 2.6, speed: 0.8, r: DOME_R + 1.8, reach: 1.0, float: 0.5, rigid: true,
+  { id: 'wailer', name: 'The Wailer', model: 'h/wailer', h: 2.7, speed: 0.8, r: DOME_R + 1.8, reach: 1.0, float: 0.5, rigid: true, writhe: 0.035, glow: 0.55,
     text: 'A hanging drape with a light inside it, and things like hands beneath. You hear it before you see it: singing, in voices you know. Your mother. A friend who went with the expedition. If it calls you by name, go indoors and do not answer.' },
-  { id: 'mourner', name: 'The Mourner', model: 'h/harbinger', h: 2.2, speed: 0.9, walkRate: 1.0, r: DOME_R + 3.4, reach: 1.3, single: true, mourns: true },
+  { id: 'mourner', name: 'The Mourner', model: 'h/harbinger', h: 2.3, speed: 0.9, walkRate: 0.9, r: DOME_R + 3.4, reach: 1.3, mourns: true, tint: 0.42 },
 ];
 const hollow = [];
 function darken(root, eyes) {
@@ -6209,12 +6234,35 @@ function darken(root, eyes) {
     if (/Wood|Straps|Teeth|Tongue|Belly|Secondary/.test(n) && !/Ghost_Secondary/.test(n)) m.material = dark;
     else if (eyes.test(n)) m.material = glow; else m.material = dark; if (/Wood/.test(n)) m.visible = false; });
 }
+/* flesh that will not hold still: the cloth breathes, the long arms drift, now and then a shudder runs up it */
+function writhe(o, amp = 0.03, speed = 1) {
+  o.traverse(m => { if (!m.isMesh) return; const g = m.geometry; g.computeBoundingBox(); const bb = g.boundingBox, H = Math.max(1e-4, bb.max.y - bb.min.y), seed = (Math.random() * 10).toFixed(2), f = x => (x / H).toFixed(5);
+    const mat = m.material = m.material.clone(), prev = mat.onBeforeCompile;
+    mat.onBeforeCompile = (sh, r) => { prev?.call(mat, sh, r); sh.uniforms.uWT = U.uTime;
+      sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nuniform float uWT;').replace('#include <begin_vertex>', `#include <begin_vertex>
+      { float h = clamp((position.y - ${bb.min.y.toFixed(5)}) / ${H.toFixed(5)}, 0.0, 1.0), t = uWT * ${speed.toFixed(3)} + ${seed};
+        float shud = pow(max(0.0, sin(t * 0.37 + ${seed})), 24.0) * 2.5;
+        float w = ${(amp * H).toFixed(6)} * (0.3 + h) * (1.0 + shud);
+        transformed.x += w * (sin(t * 1.3 + position.y * ${f(6)} + position.z * ${f(3)}) + 0.6 * sin(t * 5.1 + position.y * ${f(19)}) * shud);
+        transformed.z += w * cos(t * 1.1 + position.y * ${f(5)} + position.x * ${f(4)});
+        transformed.y += w * 0.35 * sin(t * 1.7 + position.x * ${f(9)}); }`); };
+    mat.customProgramCacheKey = () => 'writhe' + seed; });
+}
+/* nothing out there moves like a living thing: it freezes, then lurches, then goes on as if it had never stopped */
+function jerk(B, dt) {
+  B.jt = (B.jt ?? Math.random() * 3) - dt;
+  if (B.jt <= 0) { const r = Math.random(); B.jm = r < 0.22 ? 0 : r < 0.4 ? 1.9 : 0.6 + Math.random() * 0.6; B.jt = B.jm === 0 ? 0.4 + Math.random() * 1.4 : B.jm > 1.5 ? 0.25 + Math.random() * 0.4 : 1 + Math.random() * 3;
+    if (B.jm === 0 && Math.random() < 0.5) B.snap = (Math.random() - 0.5) * 1.1; } // and sometimes the head snaps round
+  const a = B.acts[B.cur]; if (a && B.mode !== 'strike') a.timeScale = (B.cur === B.walk ? (B.walkRate || 1) : 1) * (B.jm === 0 ? 0.04 : B.jm ?? 1);
+  return B.jm ?? 1;
+}
 async function buildHorrors() {
   for (const [i, H] of HOLLOW.entries()) {
     const g = await qModel(H.model); if (!g) continue;
     const body = cloneSkinned(g.scene); body.updateMatrixWorld(true); const bb = new THREE.Box3().setFromObject(body, true), s = H.h / Math.max(1e-4, bb.max.y - bb.min.y);
     body.scale.multiplyScalar(s); body.position.y = -bb.min.y * s;
-    body.traverse(m => { if (m.isMesh) { m.castShadow = true; m.frustumCulled = false; if (m.material?.isMeshStandardMaterial) { m.material.metalness = Math.min(m.material.metalness, 0.2); m.material.roughness = Math.max(m.material.roughness, 0.55); if (m.material.metalnessMap) m.material.metalnessMap = null; } if (m.material?.emissive && m.material.emissiveIntensity > 0.5) { m.material.emissiveIntensity = 3; m.material.userData.noFow = true; } } });
+    body.traverse(m => { if (m.isMesh) { m.castShadow = true; m.frustumCulled = false; if (m.material?.isMeshStandardMaterial) { m.material.metalness = Math.min(m.material.metalness, 0.2); m.material.roughness = Math.max(m.material.roughness, 0.55); if (m.material.metalnessMap) m.material.metalnessMap = null; if (H.tint) m.material.color.multiplyScalar(H.tint); if (m.material.emissiveMap && !H.glow) { m.material.emissiveMap = null; m.material.emissive?.set(0); } if (H.glow) { m.material.emissive = new THREE.Color(0x9fb8f0); m.material.emissiveMap = m.material.map; m.material.emissiveIntensity = H.glow; m.material.userData.noFow = true; } } if (m.material?.emissive && m.material.emissiveIntensity > 0.5) { m.material.emissiveIntensity = 3; m.material.userData.noFow = true; } } });
+    if (H.writhe) writhe(body, H.writhe, 0.9);
     const root = new THREE.Group(); root.add(body); scene.add(root);
     const mx = new THREE.AnimationMixer(body), acts = Object.fromEntries(g.animations.map(a => [a.name.replace(/^.*\|/, ''), mx.clipAction(a)]));
     const B = { ...H, walk: 'Walk', idle: 'Idle', hit: 'Scratch', root, body, mx, acts, cur: '', a: i / HOLLOW.length * Math.PI * 2 + 0.3, dir: i % 2 ? -1 : 1, rad: H.r, mode: 'walk', t: 6 + Math.random() * 8, strikeT: 0 };
@@ -6229,7 +6277,7 @@ async function buildHorrors() {
 const HD = { phase: 'roam', t: 30 + Math.random() * 20, at: 0, beat: 0, n: 0 };
 const wrapA = a => Math.atan2(Math.sin(a), Math.cos(a));
 function hollowGo(B, dt, ta, tr, rate = 1) {
-  const da = wrapA(ta - B.a), dr = tr - B.rad, arc = da * B.rad, len = Math.hypot(arc, dr), step = B.speed * rate * dt;
+  rate *= B.jm ?? 1; const da = wrapA(ta - B.a), dr = tr - B.rad, arc = da * B.rad, len = Math.hypot(arc, dr), step = B.speed * rate * dt;
   if (len < 0.15) return true; const k = Math.min(1, step / len); B.a += da * k; B.rad = Math.max(DOME_R + B.reach * 0.9, B.rad + dr * k); return false;
 }
 function stepDirector(dt) {
@@ -6241,19 +6289,19 @@ function stepDirector(dt) {
     HD.beat -= dt;
     const hit = walkers.filter(B => !B.mourns); // the Mourner never strikes: it stands back with its head bowed
     if (HD.t > 1.6 && HD.beat <= 0 && hit.length) { const B = hit[HD.n++ % hit.length]; HD.beat = 1.05; strike(B, 1); }
-    if (HD.t <= 1.6 && !HD.final) { HD.final = true; hit.forEach(B => strike(B, 1.7)); pulse(0.2); }
+    if (HD.t <= 1.6 && !HD.final) { HD.final = true; hit.forEach(B => strike(B, 1.7)); walkers.filter(B => B.mourns).forEach(B => hollowPlay(B, 'Scream', true)); pulse(0.2); }
     if (HD.t <= 0) { HD.phase = 'retreat'; HD.t = 7; HD.final = false; walkers.forEach(B => { B.mode = 'retreat'; B.home = B.a + (Math.random() - 0.5) * 1.2; }); }
   }
   else if (HD.phase === 'retreat' && HD.t <= 0) { HD.phase = 'roam'; HD.t = 40 + Math.random() * 30; walkers.forEach(B => { B.mode = 'roam'; B.t = 0; }); }
 }
 function strike(B, k) {
-  B.mode = 'strike'; B.strikeT = 0.9; hollowPlay(B, B.hit, true); B.acts[B.hit] && (B.acts[B.hit].timeScale = B.single ? 2.2 : 1);
+  B.mode = 'strike'; B.strikeT = k > 1.2 && B.acts.Scream ? 1.8 : 0.9; hollowPlay(B, k > 1.2 && B.acts.Scream ? 'Scream' : B.hit, true); B.acts[B.hit] && (B.acts[B.hit].timeScale = B.single ? 2.2 : 1);
   setTimeout(() => { domeHit(domeAt(B.a, B.h * (0.5 + Math.random() * 0.4))); if (k > 1.2) domeHit(domeAt(B.a, B.h * 0.3)); scratchSound(B, k);
     const me0 = avatars[myUid()]?.g.position; if (me0 && me0.distanceTo(B.root.position) < 9) observe(B.id.replace(/2$/, '')); }, 380);
 }
 function hollowBrain(B, dt, tt, me0) {
   B.watch = null; if (me0 && me0.distanceTo(B.root.position) < 7) observe(B.id);
-  if (B.mode === 'gather') { if (hollowGo(B, dt, B.slot, DOME_R + B.reach + (B.mourns ? 3.5 : 0), B.mourns ? 0.8 : 1.4)) { B.mode = 'ready'; } hollowPlay(B, B.walk); return; }
+  if (B.mode === 'gather') { if (hollowGo(B, dt, B.slot, DOME_R + B.reach + (B.mourns ? 3.5 : 0), B.mourns ? 0.8 : 1.4)) { B.mode = 'ready'; } hollowPlay(B, B.acts.Stagger ? 'Stagger' : B.walk); return; }
   if (B.mode === 'ready') { B.watch = 'in'; hollowPlay(B, B.idle); B.acts.Idle && (B.acts.Idle.timeScale = B.single ? 0.2 : 1); return; }
   if (B.mode === 'strike') { B.watch = 'in'; B.strikeT -= dt; if (B.strikeT <= 0) { B.mode = 'ready'; } return; }
   if (B.mode === 'retreat') { hollowGo(B, dt, B.home, B.r + 5, 1.2); hollowPlay(B, B.walk); return; }
@@ -6284,13 +6332,13 @@ function stepHollow(dt) {
       else if (B.mode === 'dive') { if (!B.struck && B.t < 1.5) { B.struck = true; domeHit(domeAt(B.a, DOME_H * 0.85)); scratchSound(B, 1.4); } if (B.t <= 0) { B.mode = 'walk'; B.struck = false; B.t = 14 + Math.random() * 16; hollowPlay(B, B.walk); } }
       continue;
     }
-    hollowBrain(B, dt, tt, me0);
+    jerk(B, dt); hollowBrain(B, dt, tt, me0);
     const y0 = B.float ? B.float + Math.sin(tt * 1.3 + B.a * 3) * 0.25 : 0, prev = B.root.position.clone();
     B.root.position.set(Math.cos(B.a) * B.rad, y0, Math.sin(B.a) * B.rad);
     // moving: face the way; standing: face what they watch (the light, or the dark)
     const mv = B.root.position.clone().sub(prev); mv.y = 0;
     const face = mv.lengthSq() > 1e-6 && !B.watch ? Math.atan2(mv.x, mv.z) : B.watch === 'out' ? Math.atan2(Math.cos(B.a), Math.sin(B.a)) : Math.atan2(-Math.cos(B.a), -Math.sin(B.a));
-    const r0 = B.root.rotation.y; B.root.rotation.y = r0 + Math.atan2(Math.sin(face - r0), Math.cos(face - r0)) * Math.min(1, dt * 4);
+    const r0 = B.root.rotation.y, f2 = face + (B.jm === 0 ? B.snap || 0 : 0); B.root.rotation.y = r0 + Math.atan2(Math.sin(f2 - r0), Math.cos(f2 - r0)) * Math.min(1, dt * (B.jm === 0 ? 14 : 4));
     if (B.rigid) { const lean = B.mode === 'strike' ? 0.35 * Math.max(0, Math.sin(tt * 7)) : 0; B.body.rotation.x = lean + Math.sin(tt * 0.9 + B.a) * 0.06; B.body.rotation.z = Math.sin(tt * 0.7 + B.a * 2) * 0.08; }
   }
 }
