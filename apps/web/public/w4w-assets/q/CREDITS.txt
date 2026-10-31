@@ -7,7 +7,7 @@ Models and textures in this folder are public domain (CC0 1.0).
 - h/tallman.glb, h/crawler.glb: generated for W4W with Meshy (meshy.ai) from Qubic Church concept art; crawler hand-rigged in Blender.
 - h/saint.glb (the Wailer), h/harbinger.glb (the Mourner): Meshy community models "The Hollow Saint" and
   "Harbinger of Decay", downloaded by Qubic Church from the Meshy community; decimated, re-rigged and repacked for W4W.
-- b/pylon.glb, b/mine.glb, b/home_a.glb, b/home_b.glb, hero_w.glb: generated for W4W with Meshy (meshy.ai, Pro plan) from
+- b/*.glb (pylon, mine, homes, observatory, library, well, campfire, ruin, gate, heater, boiler, pit, marker), hero_w.glb: generated for W4W with Meshy (meshy.ai, Pro plan) from
   Qubic Church prompts; the hero rigged and animated with Meshy's rigging and animation library.
 - h/shroud.glb: built for W4W from code in Blender 5.2 (own work), no longer used in the game.
 - tex/tex_rock.jpg, tex/tex_ice.jpg: generated for W4W (own work). hero.glb: KayKit Rogue (CC0) with a recoloured cloak.
