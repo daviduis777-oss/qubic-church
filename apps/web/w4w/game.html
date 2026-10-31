@@ -2454,7 +2454,10 @@ function banner(b, s) { $('#bannerB').textContent = b; $('#bannerS').textContent
 const kit = {}; let KIT_MAT;
 const interactive = [], labels = [];
 /* generated models that stand in for kit pieces: same footprint, on the ground, in the same snow */
-const KIT_OVR = { mine: 'q/b/mine.glb', home_A: 'q/b/home_a.glb', home_B: 'q/b/home_b.glb' };
+const KIT_OVR = { mine: 'q/b/mine.glb', home_A: 'q/b/home_a.glb', home_B: 'q/b/home_b.glb', tower: 'q/b/observatory.glb', barracks: 'q/b/library.glb', well: 'q/b/well.glb', destroyed: 'q/b/ruin.glb' };
+// props with no kit piece to stand in for: loaded once, stood on the ground, one unit tall, scaled where they are used
+const PROPS = {}, PROP_URLS = { gate: 'q/b/gate.glb', campfire: 'q/b/campfire.glb', heater: 'q/b/heater.glb', boiler: 'q/b/boiler.glb', pit: 'q/b/pit.glb', marker: 'q/b/marker.glb' };
+function prop(n, h, noFow = true) { const P = PROPS[n]; if (!P) return null; const o = P.clone(true); o.scale.setScalar(h); if (noFow) o.traverse(m => { if (m.isMesh) m.material.userData.noFow = true; }); return o; }
 let PYLON_MODEL = null;
 function loadGlb(url) { return new Promise(res => { const l = new GLTFLoader(); l.setMeshoptDecoder(MeshoptDecoder); l.load(url, g => res(g), undefined, e => { console.warn(url, e); res(null); }); }); }
 function meshyMats(o, snow, noFow) { o.traverse(m => { if (!m.isMesh) return; m.castShadow = m.receiveShadow = true; let mt = m.material;
@@ -2469,6 +2472,8 @@ function fitTo(o, ref) {
 }
 async function loadOverrides() {
   await Promise.all([...Object.entries(KIT_OVR).map(async ([n, url]) => { const g = await loadGlb(url); if (!g || !kit[n]) return; meshyMats(g.scene, false); /* their own paint already carries the snow */ kit[n] = fitTo(g.scene, kit[n]); }),
+    ...Object.entries(PROP_URLS).map(([n, url]) => loadGlb(url).then(g => { if (!g) return; meshyMats(g.scene, false); g.scene.updateMatrixWorld(true); const b = new THREE.Box3().setFromObject(g.scene), c = b.getCenter(new THREE.Vector3()), k = 1 / (b.max.y - b.min.y);
+      g.scene.scale.multiplyScalar(k); g.scene.position.set(-c.x * k, -b.min.y * k, -c.z * k); PROPS[n] = new THREE.Group(); PROPS[n].add(g.scene); PROPS[n].userData.w = (b.max.x - b.min.x) * k; PROPS[n].userData.d = (b.max.z - b.min.z) * k; })),
     loadGlb('q/b/pylon.glb').then(g => { if (!g) return; meshyMats(g.scene, false, true); g.scene.updateMatrixWorld(true); const b = new THREE.Box3().setFromObject(g.scene), k = 3.5 / (b.max.y - b.min.y);
       // stand the column itself on the cell: centre on the top of it, where the lantern is, whatever hangs off the side
       const top = new THREE.Box3(), v = new THREE.Vector3(), y0 = b.min.y + (b.max.y - b.min.y) * 0.72;
@@ -2526,7 +2531,8 @@ function build() {
   const board = buildBoard(); board.position.set(pp.x + 0.75, 0, pp.z - 0.1); scene.add(board); tag(board, 'board', 'board');
   fireSprite = sprite(GLOW, pp.x + 0.1, 0.35, pp.z + 0.75, 1.1, 0xff9a3c, 1); fireSprite.userData.flicker = true; tag(fireSprite, 'fire', 'fire');
   glowDecal(pp.x + 0.1, pp.z + 0.75, 2.4, 0xffb060, 0.7);
-  for (let i = 0; i < 3; i++) { const l = place('lumber', ...SPECIAL.plaza, { scale: 0.6, rot: i * 1.1 }); l.position.add(new THREE.Vector3(0.1, 0, 0.75)); tag(l, 'fire', 'fire'); }
+  { const cf = prop('campfire', 0.62, false); if (cf) { cf.position.set(pp.x + 0.1, 0, pp.z + 0.75); cf.rotation.y = 0.6; scene.add(cf); tag(cf, 'fire', 'fire'); fireSprite.position.y = 0.3; }
+    else for (let i = 0; i < 3; i++) { const l = place('lumber', ...SPECIAL.plaza, { scale: 0.6, rot: i * 1.1 }); l.position.add(new THREE.Vector3(0.1, 0, 0.75)); tag(l, 'fire', 'fire'); } }
   label('PLAZA · FIRE · ORDERS', board, 1.9, 'key');
   const ob = place('tower', ...SPECIAL.observatory, { scale: 1.25, rot: 0.4 }); tag(ob, 'observatory', 'observatory');
   const op = HX(...SPECIAL.observatory); sprite(GLOW, op.x, 2.6, op.z, 0.9, 0x9fc3ff, 0.9); glowDecal(op.x, op.z, 1.6, 0x9fc3ff, 0.25);
@@ -2669,9 +2675,11 @@ function buildCore() {
   const mound = new THREE.Mesh(mg, snowify(new THREE.MeshStandardMaterial({ color: 0x4a3326, roughness: 1, flatShading: true, side: THREE.DoubleSide })));
   const pit = new THREE.Mesh(new THREE.RingGeometry(1.2, 1.75, 48), new THREE.MeshBasicMaterial({ color: 0x0c0806 })); pit.rotation.x = -Math.PI / 2; pit.position.y = 0.04; scene.add(pit);
   mound.receiveShadow = true; mound.castShadow = true; scene.add(mound); tag(mound, 'core', 'core');
+  const PIT = PROPS.pit ? prop('pit', 1, false) : null; // the dug earth, modelled: timber shoring, stones, tools left in the dirt
+  if (PIT) { PIT.scale.setScalar(5.8 / Math.max(PROPS.pit.userData.w, PROPS.pit.userData.d)); PIT.scale.y *= 0.38; PIT.position.y = -0.12; scene.add(PIT); tag(PIT, 'core', 'core'); mound.visible = false; pit.visible = false; }
   const R0 = seeded(11);
-  for (let i = 0; i < 7; i++) { const an = i / 7 * 6.283 + R0() * 0.5, r = 2.0 + R0() * 0.45; const o = place(['rock_A', 'rock_C', 'rock_A'][i % 3], 0, 0, { scale: 0.45 + R0() * 0.3, rot: R0() * 6 }); if (o) { o.position.set(Math.cos(an) * r, 0.62, Math.sin(an) * r); tag(o, 'core', 'core'); } }
-  [[2.75, 0.9, 'lumber', 0.6], [2.7, 3.6, 'crate', 0.55], [2.85, 5.2, 'lumber', 0.5]].forEach(([r, an, m, sc]) => { const o = place(m, 0, 0, { scale: sc, rot: an * 2 }); if (o) o.position.set(Math.cos(an) * r, 0.05, Math.sin(an) * r); });
+  if (!PIT) for (let i = 0; i < 7; i++) { const an = i / 7 * 6.283 + R0() * 0.5, r = 2.0 + R0() * 0.45; const o = place(['rock_A', 'rock_C', 'rock_A'][i % 3], 0, 0, { scale: 0.45 + R0() * 0.3, rot: R0() * 6 }); if (o) { o.position.set(Math.cos(an) * r, 0.62, Math.sin(an) * r); tag(o, 'core', 'core'); } }
+  if (!PIT) [[2.75, 0.9, 'lumber', 0.6], [2.7, 3.6, 'crate', 0.55], [2.85, 5.2, 'lumber', 0.5]].forEach(([r, an, m, sc]) => { const o = place(m, 0, 0, { scale: sc, rot: an * 2 }); if (o) o.position.set(Math.cos(an) * r, 0.05, Math.sin(an) * r); });
   // Anna, opaque so the ice shows her; the lines on her face glow like the marks of an avatar
   const annaMat = new THREE.ShaderMaterial({ side: THREE.DoubleSide,
     uniforms: { map: { value: sleepTex }, glow: { value: glowTex }, uBright: { value: 1.1 }, uGlow: { value: 0.6 }, uCol: { value: new THREE.Color(0x6fe2ff) } },
@@ -2712,7 +2720,7 @@ function buildCore() {
   const rim = new THREE.Mesh(ice.geometry, rimMat); rim.scale.setScalar(1.006); ice.add(rim);
   // iron bands and heating coils bolted onto the block, fed by four boilers on the dug earth
   const iron = ironize(new THREE.MeshStandardMaterial({ color: 0x8a7868, metalness: 0.55, roughness: 0.42, emissive: 0x4a2010, emissiveIntensity: 0.45 })); iron.userData.noFow = true;
-  const copper = new THREE.MeshStandardMaterial({ color: 0xb06a3a, metalness: 0.75, roughness: 0.32, emissive: 0xff5a14, emissiveIntensity: 0.8 });
+  const copper = copperMat({ emissive: 0xff5a14, emissiveIntensity: 0.8 });
   const hot = new THREE.MeshStandardMaterial({ color: 0x1a1210, emissive: 0xff7a22, emissiveIntensity: 1.6, roughness: 0.6 });
   [0.36].forEach(y => { for (let i = 0; i < 4; i++) { const an = i * Math.PI / 2; const bnd = new THREE.Mesh(new THREE.BoxGeometry(W - 0.3, 0.14, 0.08), iron); bnd.position.set(Math.sin(an) * (hw + 0.04), y, Math.cos(an) * (hw + 0.04)); bnd.rotation.y = an; bnd.castShadow = true; block.add(bnd); } });
   const pts = []; for (let r = 0; r < 4; r++) { const y = 0.66 + r * 0.17, d = r % 2 ? -1 : 1; for (let j = 0; j <= 6; j++) pts.push(new THREE.Vector3(0, y + (j === 0 || j === 6 ? 0 : 0), d * (0.9 - j * 0.3))); }
@@ -2720,13 +2728,17 @@ function buildCore() {
   const steam = [];
   for (let i = 0; i < 4; i++) { const an = i * Math.PI / 2, nx = Math.sin(an), nz = Math.cos(an);
     const unit = new THREE.Group(); unit.position.set(nx * (hw + 0.08), 0, nz * (hw + 0.08)); unit.rotation.y = an - Math.PI / 2; block.add(unit);
-    const plate = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.78, 2.05), iron); plate.position.set(-0.02, 0.92, 0); unit.add(plate);
-    const coil = new THREE.Mesh(coilGeo, copper); coil.position.x = 0.03; unit.add(coil);
+    const HT = PROPS.heater ? prop('heater', 1) : null;
+    if (HT) { const h = Math.min(1.1, 2.0 / PROPS.heater.userData.w); HT.scale.setScalar(h); HT.rotation.y = Math.PI / 2; HT.position.set(0.02, 0.92 - h / 2, 0); unit.add(HT); }
+    else { const plate = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.78, 2.05), iron); plate.position.set(-0.02, 0.92, 0); unit.add(plate);
+      const coil = new THREE.Mesh(coilGeo, copper); coil.position.x = 0.03; unit.add(coil); }
     // boiler on the earth, piped up to its coil
     const fa = an + ROT, bx = Math.sin(fa + 0.62) * 2.45, bz = Math.cos(fa + 0.62) * 2.45, by = 0.55;
-    const boiler = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.3, 0.66, 10), iron); boiler.position.set(bx, by + 0.33, bz); boiler.castShadow = true; scene.add(boiler); tag(boiler, 'core', 'core');
-    const grate = new THREE.Mesh(new THREE.CylinderGeometry(0.272, 0.272, 0.12, 10, 1, true), hot); grate.position.set(bx, by + 0.22, bz); scene.add(grate);
-    const cap = new THREE.Mesh(new THREE.ConeGeometry(0.3, 0.2, 10), iron); cap.position.set(bx, by + 0.76, bz); scene.add(cap);
+    const BO = PROPS.boiler ? prop('boiler', 0.9) : null;
+    if (BO) { BO.position.set(bx, by - 0.05, bz); BO.rotation.y = Math.atan2(-bx, -bz); scene.add(BO); tag(BO, 'core', 'core'); }
+    else { const boiler = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.3, 0.66, 10), iron); boiler.position.set(bx, by + 0.33, bz); boiler.castShadow = true; scene.add(boiler); tag(boiler, 'core', 'core');
+      const grate = new THREE.Mesh(new THREE.CylinderGeometry(0.272, 0.272, 0.12, 10, 1, true), hot); grate.position.set(bx, by + 0.22, bz); scene.add(grate);
+      const cap = new THREE.Mesh(new THREE.ConeGeometry(0.3, 0.2, 10), iron); cap.position.set(bx, by + 0.76, bz); scene.add(cap); }
     const end = new THREE.Vector3(Math.sin(fa) * (hw + 0.12) + Math.cos(fa) * 0.95, 1.05, Math.cos(fa) * (hw + 0.12) - Math.sin(fa) * 0.95);
     const pipe = new THREE.Mesh(new THREE.TubeGeometry(new THREE.QuadraticBezierCurve3(new THREE.Vector3(bx, by + 0.8, bz), new THREE.Vector3(bx * 0.93, 1.75, bz * 0.93), end), 24, 0.055, 8, false), copper);
     pipe.castShadow = true; scene.add(pipe);
@@ -2818,8 +2830,20 @@ function disposeHouse(id) { const h = houses[id]; if (!h) return; if (hoverOn ==
   h.label.el.remove(); labels.splice(labels.indexOf(h.label), 1);
   for (let i = interactive.length - 1; i >= 0; i--) if (interactive[i].userData.id === id) interactive.splice(i, 1);
   delete houses[id]; }
-const PIPE_COPPER = new THREE.MeshStandardMaterial({ color: 0xb06a38, metalness: 0.7, roughness: 0.36, emissive: 0x3a1406, emissiveIntensity: 0.7 });
-const PIPE_IRON = new THREE.MeshStandardMaterial({ color: 0x6e625a, metalness: 0.55, roughness: 0.5, emissive: 0x2a140a, emissiveIntensity: 0.5 });
+const IRON_TEX = (() => { const tl = new THREE.TextureLoader(), map = tl.load('q/tex/iron.webp'), normal = tl.load('q/tex/iron_n.webp');
+  map.colorSpace = THREE.SRGBColorSpace; map.anisotropy = 8; [map, normal].forEach(t => { t.wrapS = t.wrapT = THREE.RepeatWrapping; }); return { map, normal }; })();
+/* old copper, painted once on a canvas: warm metal under green-blue patina, darker where water ran, a seam every arm's length.
+ * The u of a tube runs along it, so the seams and streaks follow the pipe. */
+const COPPER_TEX = (() => { const W = 512, H = 128, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const x = cv.getContext('2d'), R = seeded(77);
+  const g = x.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#5a2c16'); g.addColorStop(0.35, '#b8693a'); g.addColorStop(0.5, '#d88a52'); g.addColorStop(0.65, '#b8693a'); g.addColorStop(1, '#4a2412'); x.fillStyle = g; x.fillRect(0, 0, W, H);
+  for (let i = 0; i < 900; i++) { x.fillStyle = `rgba(${R() < 0.5 ? '40,18,8' : '240,170,110'},${0.04 + R() * 0.06})`; x.fillRect(R() * W, R() * H, 2 + R() * 30, 1 + R() * 2); }
+  for (let i = 0; i < 70; i++) { const px = R() * W, py = R() * H, r = 4 + R() * 22, gg = x.createRadialGradient(px, py, 0, px, py, r); gg.addColorStop(0, `rgba(${80 + R() * 40},${150 + R() * 40},${130 + R() * 40},${0.35 + R() * 0.35})`); gg.addColorStop(1, 'rgba(80,160,140,0)'); x.fillStyle = gg; x.fillRect(px - r, py - r, r * 2, r * 2); }
+  for (let i = 0; i < 18; i++) { x.fillStyle = `rgba(20,10,4,${0.12 + R() * 0.12})`; x.fillRect(R() * W, H * 0.55, 3 + R() * 6, H * 0.45); }
+  for (let sx = 0; sx < W; sx += 128) { x.fillStyle = 'rgba(30,14,6,.7)'; x.fillRect(sx, 0, 5, H); x.fillStyle = 'rgba(255,190,130,.35)'; x.fillRect(sx + 5, 0, 2, H); }
+  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = 4; return t; })();
+const copperMat = (o = {}) => { const m = new THREE.MeshStandardMaterial({ map: COPPER_TEX, color: 0xffffff, metalness: 0.35, roughness: 0.5, emissive: 0x3a1406, emissiveIntensity: 0.55, ...o }); m.normalMap = IRON_TEX.normal; m.normalScale = new THREE.Vector2(0.4, 0.4); return m; };
+const PIPE_COPPER = copperMat();
+const PIPE_IRON = ironize(new THREE.MeshStandardMaterial({ color: 0x6e625a, metalness: 0.55, roughness: 0.5, emissive: 0x2a140a, emissiveIntensity: 0.5 }), 0xb8aea6);
 const PIPE_FLOW_V = `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.); }`;
 const PIPE_FLOW_F = `uniform float uTime; uniform float uOn; uniform float uMine; uniform float uBoost; varying vec2 vUv;
   uniform float uFlow; void main(){ float p = fract(vUv.x * 6. - uFlow); float band = smoothstep(0.82, 1., p) + (1. - smoothstep(0., 0.12, p)) * 0.6;
@@ -4630,15 +4654,16 @@ function poseRime(R, dt, t) {
     lay(G.L, top, top.clone().add(V(Math.cos(G.a) * 0.25 + wind, -G.len, Math.sin(G.a) * 0.25 - 0.3 + wind * 0.4))); }
 }
 /* the thing that walks the White: the same tall saint the flash shows, black, too many arms, lit here and there like windows */
-function buildRimeBody() {
+function buildRimeBody(H = 7.5) {
   const g = new THREE.Group(); g.visible = false; scene.add(g); const lights = [];
-  qModel(FAR_MODEL).then(m => { if (!m) return; const b = m.scene.clone(true); b.updateMatrixWorld(true); const bb = new THREE.Box3().setFromObject(b), H = 7.5, k = H / (bb.max.y - bb.min.y), c = bb.getCenter(new THREE.Vector3());
+  qModel(FAR_MODEL).then(m => { if (!m) return; const b = m.scene.clone(true); b.updateMatrixWorld(true); const bb = new THREE.Box3().setFromObject(b), k = H / (bb.max.y - bb.min.y), c = bb.getCenter(new THREE.Vector3());
     b.scale.multiplyScalar(k); b.position.set(-c.x * k, -bb.min.y * k - 0.3, -c.z * k);
     b.traverse(o => { if (o.isMesh) { o.material = o.material.clone(); o.material.color?.setRGB(0.2, 0.22, 0.28); o.material.transparent = false; o.material.alphaTest = 0.4; o.material.depthWrite = true; if (o.material.isMeshStandardMaterial) { o.material.metalness = 0; o.material.metalnessMap = null; o.material.roughness = 0.9; } o.castShadow = true; } });
     writhe(b, 0.03, 0.6); g.add(b); tag(g, 'chthon', 'chthon');
-    for (let i = 0; i < 11; i++) { const y = 1.5 + Math.random() * (H - 2.2), a = (Math.random() - 0.5) * 2.2, l = sprite(GLOW, Math.sin(a) * 0.5, y, Math.cos(a) * 0.45, i < 3 ? 0.5 : 0.2 + Math.random() * 0.15, 0x9fdcff, 1); scene.remove(l); g.add(l); lights.push({ l, s: l.scale.x, next: Math.random() * 5, shut: 0 }); } });
+    for (let i = 0; i < 11; i++) { const y = H * (0.2 + Math.random() * 0.7), a = (Math.random() - 0.5) * 2.2, l = sprite(GLOW, Math.sin(a) * 0.5 * H / 7.5, y, Math.cos(a) * 0.45 * H / 7.5, (i < 3 ? 0.5 : 0.2 + Math.random() * 0.15) * Math.sqrt(H / 7.5), 0x9fdcff, 1); scene.remove(l); g.add(l); lights.push({ l, s: l.scale.x, next: Math.random() * 5, shut: 0 }); } });
   return { g, lights, p: new THREE.Vector3(), yaw: 0, look: 0, warned: 0, body: true };
 }
+function blinkLights(R, dt) { for (const L of R.lights) { L.next -= dt; if (L.next < 0) { L.next = 0.6 + Math.random() * 5; L.shut = 0.12 + Math.random() * 0.25; } if (L.shut > 0) L.shut -= dt; L.l.scale.setScalar(L.shut > 0 ? 0.001 : L.s); } }
 function stepRime(dt) {
   const R = XV?.rime; if (!R) { if (rimeFx) rimeFx.g.visible = false; return; }
   if (!rimeFx) rimeFx = buildRimeBody();
@@ -4652,7 +4677,7 @@ function stepRime(dt) {
   rimeFx.g.rotation.y = rimeFx.yaw;
   const mine = avatars[myUid()]?.g.position, tgt = mine && mine.distanceTo(rimeFx.p) < 14 ? mine : camera.position;
   const ly = Math.atan2(tgt.x - rimeFx.p.x, tgt.z - rimeFx.p.z) - rimeFx.yaw; rimeFx.look = THREE.MathUtils.clamp(Math.atan2(Math.sin(ly), Math.cos(ly)), -1.1, 1.1);
-  if (rimeFx.body) for (const L of rimeFx.lights) { L.next -= dt; if (L.next < 0) { L.next = 0.6 + Math.random() * 5; L.shut = 0.12 + Math.random() * 0.25; } if (L.shut > 0) L.shut -= dt; L.l.scale.setScalar(L.shut > 0 ? 0.001 : L.s); }
+  if (rimeFx.body) blinkLights(rimeFx, dt);
   else if (rimeFx.g.position.distanceTo(controls.target) < 40) poseRime(rimeFx, dt, U.uTime.value);
   stepMouth(dt);
 }
@@ -4665,7 +4690,7 @@ function stepMouth(dt) {
     const ring = new THREE.Mesh(new THREE.RingGeometry(0.4, 1.05, 40), new THREE.MeshBasicMaterial({ color: 0x9fd8ff, transparent: true, opacity: 0.35, blending: THREE.AdditiveBlending, depthWrite: false })); ring.rotation.x = -Math.PI / 2; ring.position.set(cp.x, 0.05, cp.z); scene.add(ring);
     const mouth = new THREE.Mesh(new THREE.CircleGeometry(0.75, 24), new THREE.MeshBasicMaterial({ color: 0x010306 })); mouth.rotation.x = -Math.PI / 2; mouth.position.set(cp.x, 0.04, cp.z); scene.add(mouth);
     const a = new THREE.Object3D(); a.position.copy(cp); scene.add(a); label('THE MOUTH', a, 1.2, 'red');
-    mouthFx = { glow, ring, keepers: [buildRime(0.34), buildRime(0.34)], pos: [new THREE.Vector3(), new THREE.Vector3()] };
+    mouthFx = { glow, ring, keepers: [buildRimeBody(3.4), buildRimeBody(3.4)], pos: [new THREE.Vector3(), new THREE.Vector3()] };
     mouthFx.keepers.forEach(k => k.g.visible = true);
   }
   const t = xnow(), k = U.uTime.value; mouthFx.ring.material.opacity = 0.25 + Math.sin(k * 1.3) * 0.1;
@@ -4673,7 +4698,7 @@ function stepMouth(dt) {
   mouthFx.keepers.forEach((K, i) => { const want = HX(...now[i]).lerp(HX(...next[i]), THREE.MathUtils.smoothstep(e, 0.7, 1));
     const p = mouthFx.pos[i]; if (p.lengthSq() === 0 || p.distanceTo(want) > 3) p.copy(want); else p.lerp(want, Math.min(1, dt * 2));
     K.g.position.set(p.x, 0, p.z); K.g.rotation.y += dt * 0.15 * (i ? -1 : 1);
-    if (p.distanceTo(controls.target) < 30) poseRime(K, dt, k + i * 7); });
+    if (K.body) blinkLights(K, dt); else if (p.distanceTo(controls.target) < 30) poseRime(K, dt, k + i * 7); });
 }
 
 /** How close it is to you, in cells, when you are out in the Wastes; null otherwise. */
@@ -4731,6 +4756,8 @@ let trip = null; const prints = [];
 const DEST_WOOD = new THREE.MeshStandardMaterial({ color: 0x8a6a48, roughness: 0.9, emissive: 0x2a1408, emissiveIntensity: 0.5 }), DEST_IRON = new THREE.MeshStandardMaterial({ color: 0x9a8c80, metalness: 0.6, roughness: 0.4, emissive: 0x3a1a0a, emissiveIntensity: 0.6 });
 DEST_WOOD.userData.noFow = DEST_IRON.userData.noFow = true;
 function destMarker(p, cold) {
+  const st = prop('marker', 0.95); if (st) { const g = new THREE.Group(); g.position.set(p.x, 0, p.z); st.rotation.y = Math.random() * 6; g.add(st); scene.add(g);
+    const glow = sprite(GLOW, p.x, 0.12, p.z, 0.7, cold ? 0x9fd0ff : 0xffb060, 0.55); return [g, glow]; }
   const g = new THREE.Group(); g.position.set(p.x, 0, p.z);
   const post = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.03, 0.78, 6), DEST_WOOD); post.position.y = 0.39; post.rotation.z = 0.05; g.add(post);
   const arm = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.025, 0.025), DEST_WOOD); arm.position.set(0.09, 0.74, 0); g.add(arm);
@@ -5450,17 +5477,24 @@ let borderFx = null;
    No saws, no drones you feel in the chest. The wind stays underneath. */
 const LYD = [293.7, 329.6, 370.0, 415.3, 440.0, 493.9, 554.4, 587.3, 659.3, 740.0, 880.0];
 const PADS = [[146.8, 220.0, 329.6, 415.3], [123.5, 185.0, 293.7, 370.0], [164.8, 246.9, 329.6, 493.9], [110.0, 220.0, 277.2, 370.0]];
-let chordI = 0, tuneI = 4;
+let chordI = 0, tuneI = 4, motifN = 0;
+// index into LYD, then the beat that follows it
+const MOTIFS = [[[4, 0.6], [5, 0.6], [7, 1.2], [6, 0.6], [4, 1.8]], [[7, 0.9], [6, 0.45], [4, 0.45], [5, 1.4], [2, 1.8]],
+  [[4, 0.6], [5, 0.6], [7, 1.2], [9, 0.9], [8, 0.45], [7, 1.8]], [[2, 0.9], [4, 0.9], [3, 0.45], [4, 0.45], [0, 2.0]]];
+function cello(f, len) {
+  const ctx = SND.ctx, t = ctx.currentTime + 0.5, g = ctx.createGain(), lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 700; lp.Q.value = 0.7;
+  g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.022, t + 3.5); g.gain.setValueAtTime(0.022, t + len - 4); g.gain.linearRampToValueAtTime(0, t + len); g.connect(lp); lp.connect(SND.music);
+  const vib = ctx.createOscillator(), vg = ctx.createGain(); vib.frequency.value = 4.6; vg.gain.value = 6; vib.connect(vg); vib.start(t); vib.stop(t + len + 0.2);
+  [0, 7].forEach(det => { const o = ctx.createOscillator(); o.type = 'sawtooth'; o.frequency.value = f; o.detune.value = det; vg.connect(o.detune); o.connect(g); o.start(t); o.stop(t + len + 0.2); });
+}
 function musicLoop() {
   const ctx = SND.ctx; if (!ctx) return;
   chordI = (chordI + 1) % PADS.length; padChord(PADS[chordI], 16);
-  // a short phrase on the music box, wandering by steps, with rests
-  let at = 1.2;
-  for (let i = 0, n = 5 + Math.floor(Math.random() * 6); i < n; i++) {
-    tuneI = Math.max(0, Math.min(LYD.length - 1, tuneI + [-2, -1, -1, 1, 1, 2, 0][Math.floor(Math.random() * 7)]));
-    if (Math.random() < 0.82) musicBox(LYD[tuneI], at, 0.05 + Math.random() * 0.02);
-    at += [0.45, 0.6, 0.9, 1.2][Math.floor(Math.random() * 4)];
-  }
+  // a low bowed note under the chord, like a cello far off in the cold
+  cello(PADS[chordI][0] / 2, 14);
+  // a real tune now and then, the same few phrases coming back, so the ear has something to hold
+  const M = MOTIFS[motifN++ % MOTIFS.length]; let at = 1.5;
+  if (Math.random() < 0.85) for (const [n, d] of M) { if (n != null) musicBox(LYD[n], at, 0.065); at += d; }
   if (Math.random() < 0.35) setTimeout(() => SND.ctx && shimmer(), 6000 + Math.random() * 5000);
   setTimeout(musicLoop, 15000 + Math.random() * 4000);
 }
@@ -5791,16 +5825,18 @@ function sndBoot() {
   SND.master.gain.linearRampToValueAtTime(0.75, ctx.currentTime + 4);
   // a long cold hall for everything metal to ring in
   const ir = ctx.createBuffer(2, ctx.sampleRate * 5, ctx.sampleRate);
-  for (let ch = 0; ch < 2; ch++) { const d = ir.getChannelData(ch); for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 3.2); }
-  SND.verb = ctx.createConvolver(); SND.verb.buffer = ir; const vg = ctx.createGain(); vg.gain.value = 0.55; SND.verb.connect(vg); vg.connect(SND.master);
+  // a dark hall, not a hiss: the tail is filtered noise that loses its top as it dies, like stone and snow swallowing the highs
+  for (let ch = 0; ch < 2; ch++) { const d = ir.getChannelData(ch); let y = 0, y2 = 0; for (let i = 0; i < d.length; i++) { const u = i / d.length, a = 0.35 * Math.pow(1 - u, 2) + 0.012;
+    y += a * ((Math.random() * 2 - 1) - y); y2 += a * (y - y2); d[i] = y2 * 3 * Math.exp(-u * 5.5) * (i < ctx.sampleRate * 0.012 ? i / (ctx.sampleRate * 0.012) : 1); } }
+  SND.verb = ctx.createConvolver(); SND.verb.buffer = ir; const vg = ctx.createGain(); vg.gain.value = 0.32; SND.verb.connect(vg); vg.connect(SND.master);
   SND.music = ctx.createGain(); SND.music.gain.value = 0.9; SND.music.connect(SND.master); SND.music.connect(SND.verb);
-  SND.sfx = ctx.createGain(); SND.sfx.gain.value = 1; SND.sfx.connect(SND.master); SND.sfx.connect(SND.verb);
+  SND.sfx = ctx.createGain(); SND.sfx.gain.value = 1; SND.sfx.connect(SND.master); { const sv = ctx.createGain(); sv.gain.value = 0.45; SND.sfx.connect(sv); sv.connect(SND.verb); }
   const noise = ctx.createBuffer(1, ctx.sampleRate * 4, ctx.sampleRate); { const d = noise.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; }
   SND.noise = noise;
   // wind: noise through a wandering band, louder when the weather turns
   const src = ctx.createBufferSource(); src.buffer = noise; src.loop = true;
   SND.windF = ctx.createBiquadFilter(); SND.windF.type = 'bandpass'; SND.windF.frequency.value = 500; SND.windF.Q.value = 0.8;
-  SND.wind = ctx.createGain(); SND.wind.gain.value = 0.07; src.connect(SND.windF); SND.windF.connect(SND.wind); SND.wind.connect(SND.music); src.start();
+  SND.wind = ctx.createGain(); SND.wind.gain.value = 0.035; const wlp = ctx.createBiquadFilter(); wlp.type = 'lowpass'; wlp.frequency.value = 1400; src.connect(SND.windF); SND.windF.connect(wlp); wlp.connect(SND.wind); SND.wind.connect(SND.master); src.start();
   // the drone: two low saws, a little apart, under a dark lowpass
   const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 320; lp.Q.value = 1; const dg = ctx.createGain(); dg.gain.value = 0.02; lp.connect(dg); dg.connect(SND.music);
   const lfo = ctx.createOscillator(); lfo.frequency.value = 0.05; const lg = ctx.createGain(); lg.gain.value = 90; lfo.connect(lg); lg.connect(lp.frequency); lfo.start();
@@ -5830,8 +5866,8 @@ function chain() {
 /** Weather and warmth steer the music every frame or so. */
 function stepSound() {
   if (!SND.ctx) return; const t = SND.ctx.currentTime, wx = W4W.weatherAt(xnow()).id;
-  const w = wx === 'blizzard' ? 0.36 : wx === 'wind' ? 0.18 : 0.07; SND.wind.gain.setTargetAtTime(w, t, 2);
-  SND.windF.frequency.setTargetAtTime(380 + Math.sin(t * 0.13) * 220 + (wx === 'blizzard' ? 500 : 0), t, 1.5);
+  const w = wx === 'blizzard' ? 0.14 : wx === 'wind' ? 0.07 : 0.03; SND.wind.gain.setTargetAtTime(w, t, 2);
+  SND.windF.frequency.setTargetAtTime(340 + Math.sin(t * 0.13) * 180 + (wx === 'blizzard' ? 260 : 0), t, 1.5);
   // the Rime is heard before it is seen
   if (SND.rime && rimeFx?.g.visible) { const d = rimeFx.g.position.distanceTo(controls.target), k = Math.pow(THREE.MathUtils.clamp(1 - d / 26, 0, 1), 1.6);
     SND.rime.gain.gain.setTargetAtTime(k * 0.9, t, 0.8);
@@ -5971,8 +6007,7 @@ function buildDome() {
 /* six pylons hold the Veil's edge: dark stone, a crystal of Anna's light on top */
 const PYLON_NAMES = ['The Kiln', 'The Widow', 'The Choir', 'The Old Bell', 'The North Tooth', 'The Lantern'];
 const PYL = [];
-const IRON_TEX = (() => { const tl = new THREE.TextureLoader(), map = tl.load('q/tex/iron.webp'), normal = tl.load('q/tex/iron_n.webp');
-  map.colorSpace = THREE.SRGBColorSpace; map.anisotropy = 8; [map, normal].forEach(t => { t.wrapS = t.wrapT = THREE.RepeatWrapping; }); return { map, normal }; })();
+/* IRON_TEX moved up: the pipes use it */
 function ironize(m, tint = 0xd9d2cc) { m.map = IRON_TEX.map; m.normalMap = IRON_TEX.normal; if (m.normalScale) m.normalScale.set(0.8, 0.8); m.color.set(tint); m.metalness = Math.min(m.metalness ?? 0.5, 0.55); m.roughness = Math.max(m.roughness ?? 0.5, 0.5); m.needsUpdate = true; return m; }
 const PYL_STONE = new THREE.MeshStandardMaterial({ color: 0xa79d8e, roughness: 0.9, emissive: 0x3a2a1c, emissiveIntensity: 0.6 }), PYL_IRON = new THREE.MeshStandardMaterial({ color: 0x9a8f86, metalness: 0.55, roughness: 0.4, emissive: 0x4a2c18, emissiveIntensity: 0.55 });
 PYL_STONE.userData.noFow = PYL_IRON.userData.noFow = true; PYL_STONE.map = themeTex('tex_rock'); PYL_STONE.color.set(0xf0ece6); ironize(PYL_IRON, 0xffffff);
@@ -6064,7 +6099,11 @@ function buildGate() {
   const sl = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 0.06, 16), seal); sl.rotation.x = Math.PI / 2; sl.position.set(0, 1.4, 0.33); g.add(sl);
   for (let k = 0; k < 5; k++) { const m = new THREE.Mesh(new THREE.SphereGeometry(0.35 + Math.random() * 0.25, 10, 6, 0, Math.PI * 2, 0, Math.PI / 2), frost); m.scale.y = 0.55; m.position.set(-1.4 + k * 0.7, 0, 0.35 + Math.random() * 0.25); g.add(m); }
   const dir = HX(...GATE_CELL).setY(0).normalize(), p = dir.clone().multiplyScalar(DOME_R - 0.7);
-  g.position.copy(p); g.rotation.y = Math.atan2(dir.x, dir.z) + Math.PI; g.scale.setScalar(0.62); scene.add(g); tag(g, 'gate', 'gate');
+  sl.visible = false; // the glowing seal is gone: the bar is what holds the Gate
+  g.position.copy(p); g.rotation.y = Math.atan2(dir.x, dir.z) + Math.PI; g.scale.setScalar(0.62); scene.add(g);
+  // the Gate as it should be: iron leaves in a frame of field anchors, the bar across them, set right into the Veil
+  if (PROPS.gate) { g.clear(); const gm = prop('gate', 1); gm.scale.setScalar(3.4 / PROPS.gate.userData.w / 0.62); g.add(gm); }
+  tag(g, 'gate', 'gate');
   // braziers either side: the Gate is always watched
   for (const sx of [-1, 1]) { const b = p.clone().add(new THREE.Vector3(-dir.z, 0, dir.x).multiplyScalar(sx * 1.6)).sub(dir.clone().multiplyScalar(0.8));
     const bz = new THREE.Group(); bz.position.set(b.x, 0, b.z); scene.add(bz);
@@ -6073,7 +6112,6 @@ function buildGate() {
     const coals = new THREE.Mesh(new THREE.CircleGeometry(0.24, 10), BRZ_COAL); coals.rotation.x = -Math.PI / 2; coals.position.y = 0.6; bz.add(coals);
     const flame = new THREE.Mesh(new THREE.ConeGeometry(0.13, 0.42, 7), BRZ_FLAME); flame.position.y = 0.82; bz.add(flame); flame.userData.lick = true; GATE_FLAMES.push(flame);
     const f = sprite(GLOW, b.x, 0.85, b.z, 1.0, 0xff9a3c, 1); f.userData.flicker = true; glowDecal(b.x, b.z, 1.6, 0xffb060, 0.5); }
-  const sg = sprite(GLOW, p.x - dir.x * 0.3, 0.9, p.z - dir.z * 0.3, 0.32, 0xff7a2a, 0.8); sg.userData.base = 0.8;
   // the watch fires light the doors from the town's side
   const lamp = new THREE.PointLight(0xffb070, 9, 7, 1.6); lamp.position.copy(p).sub(dir.clone().multiplyScalar(2.2)).setY(1.6); scene.add(lamp);
   const a = new THREE.Object3D(); a.position.copy(dir.clone().multiplyScalar(DOME_R - 1.6)); scene.add(a); label('THE NORTH GATE · SEALED', a, 2.8, 'red');
