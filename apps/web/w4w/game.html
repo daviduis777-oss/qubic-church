@@ -4655,13 +4655,21 @@ function poseRime(R, dt, t) {
 }
 /* the thing that walks the White: the same tall saint the flash shows, black, too many arms, lit here and there like windows */
 function buildRimeBody(H = 7.5) {
-  const g = new THREE.Group(); g.visible = false; scene.add(g); const lights = [];
-  qModel(FAR_MODEL).then(m => { if (!m) return; const b = m.scene.clone(true); b.updateMatrixWorld(true); const bb = new THREE.Box3().setFromObject(b), k = H / (bb.max.y - bb.min.y), c = bb.getCenter(new THREE.Vector3());
-    b.scale.multiplyScalar(k); b.position.set(-c.x * k, -bb.min.y * k - 0.3, -c.z * k);
-    b.traverse(o => { if (o.isMesh) { o.material = o.material.clone(); o.material.color?.setRGB(0.2, 0.22, 0.28); o.material.transparent = false; o.material.alphaTest = 0.4; o.material.depthWrite = true; if (o.material.isMeshStandardMaterial) { o.material.metalness = 0; o.material.metalnessMap = null; o.material.roughness = 0.9; } o.castShadow = true; } });
-    writhe(b, 0.03, 0.6); g.add(b); tag(g, 'chthon', 'chthon');
-    for (let i = 0; i < 11; i++) { const y = H * (0.2 + Math.random() * 0.7), a = (Math.random() - 0.5) * 2.2, l = sprite(GLOW, Math.sin(a) * 0.5 * H / 7.5, y, Math.cos(a) * 0.45 * H / 7.5, (i < 3 ? 0.5 : 0.2 + Math.random() * 0.15) * Math.sqrt(H / 7.5), 0x9fdcff, 1); scene.remove(l); g.add(l); lights.push({ l, s: l.scale.x, next: Math.random() * 5, shut: 0 }); } });
-  return { g, lights, p: new THREE.Vector3(), yaw: 0, look: 0, warned: 0, body: true };
+  const g = new THREE.Group(); g.visible = false; scene.add(g); const R = { g, lights: [], p: new THREE.Vector3(), yaw: 0, look: 0, warned: 0, body: true, mx: null, acts: {}, cur: '', screamT: 15 + Math.random() * 25 };
+  qModel(FAR_MODEL).then(m => { if (!m) return; const b = cloneSkinned(m.scene); b.updateMatrixWorld(true); const bb = new THREE.Box3().setFromObject(b, true), k = H / (bb.max.y - bb.min.y), c = bb.getCenter(new THREE.Vector3());
+    b.scale.multiplyScalar(k); b.position.set(-c.x * k, -bb.min.y * k - 0.2, -c.z * k);
+    b.traverse(o => { if (o.isMesh) { o.frustumCulled = false; o.material = o.material.clone(); o.material.color?.setRGB(0.2, 0.22, 0.28); o.material.transparent = false; o.material.alphaTest = 0.4; o.material.depthWrite = true; if (o.material.isMeshStandardMaterial) { o.material.metalness = 0; o.material.metalnessMap = null; o.material.roughness = 0.9; o.material.emissiveMap = null; o.material.emissive?.set(0); } o.castShadow = true; } });
+    writhe(b, 0.012, 0.6); g.add(b); tag(g, 'chthon', 'chthon');
+    R.mx = new THREE.AnimationMixer(b); m.animations.forEach(a => { R.acts[a.name.replace(/^.*\|/, '')] = R.mx.clipAction(a); }); farPlay(R, 'Idle'); });
+  return R;
+}
+/* it walks hunched when it moves, stands reaching when it stops, and now and then throws its head back */
+function farPlay(R, n, once = false) { if (R.cur === n || !R.acts[n]) return; const a = R.acts[n], o = R.acts[R.cur]; a.reset(); a.setLoop(once ? THREE.LoopOnce : THREE.LoopRepeat); a.clampWhenFinished = once; a.fadeIn(0.8).play(); if (o) o.fadeOut(0.8); R.cur = n; }
+function stepFar(R, dt, moving) {
+  if (!R?.mx) return; R.mx.update(dt); R.screamT -= dt;
+  if (R.cur === 'Scream') { if (R.screamT < -3.2) { R.screamT = 25 + Math.random() * 40; farPlay(R, moving ? 'Walk' : 'Idle'); } return; }
+  if (R.screamT <= 0) { farPlay(R, 'Scream', true); return; }
+  farPlay(R, moving ? 'Walk' : 'Idle'); if (R.acts.Walk) R.acts.Walk.timeScale = 0.55; if (R.acts.Idle) R.acts.Idle.timeScale = 0.7;
 }
 function blinkLights(R, dt) { for (const L of R.lights) { L.next -= dt; if (L.next < 0) { L.next = 0.6 + Math.random() * 5; L.shut = 0.12 + Math.random() * 0.25; } if (L.shut > 0) L.shut -= dt; L.l.scale.setScalar(L.shut > 0 ? 0.001 : L.s); } }
 function stepRime(dt) {
@@ -4677,7 +4685,7 @@ function stepRime(dt) {
   rimeFx.g.rotation.y = rimeFx.yaw;
   const mine = avatars[myUid()]?.g.position, tgt = mine && mine.distanceTo(rimeFx.p) < 14 ? mine : camera.position;
   const ly = Math.atan2(tgt.x - rimeFx.p.x, tgt.z - rimeFx.p.z) - rimeFx.yaw; rimeFx.look = THREE.MathUtils.clamp(Math.atan2(Math.sin(ly), Math.cos(ly)), -1.1, 1.1);
-  if (rimeFx.body) blinkLights(rimeFx, dt);
+  if (rimeFx.body) { const mv = rimeFx.lastP ? rimeFx.lastP.distanceTo(rimeFx.p) / Math.max(1e-3, dt) : 0; (rimeFx.lastP ||= rimeFx.p.clone()).copy(rimeFx.p); stepFar(rimeFx, dt, mv > 0.05); }
   else if (rimeFx.g.position.distanceTo(controls.target) < 40) poseRime(rimeFx, dt, U.uTime.value);
   stepMouth(dt);
 }
@@ -4698,7 +4706,7 @@ function stepMouth(dt) {
   mouthFx.keepers.forEach((K, i) => { const want = HX(...now[i]).lerp(HX(...next[i]), THREE.MathUtils.smoothstep(e, 0.7, 1));
     const p = mouthFx.pos[i]; if (p.lengthSq() === 0 || p.distanceTo(want) > 3) p.copy(want); else p.lerp(want, Math.min(1, dt * 2));
     K.g.position.set(p.x, 0, p.z); K.g.rotation.y += dt * 0.15 * (i ? -1 : 1);
-    if (K.body) blinkLights(K, dt); else if (p.distanceTo(controls.target) < 30) poseRime(K, dt, k + i * 7); });
+    if (K.body) stepFar(K, dt, false); else if (p.distanceTo(controls.target) < 30) poseRime(K, dt, k + i * 7); });
 }
 
 /** How close it is to you, in cells, when you are out in the Wastes; null otherwise. */
@@ -6185,16 +6193,17 @@ function stepFlash() {
   if (flashK > 0) { flashK = Math.max(0, flashK - dt * 1.6); const t = 1 - flashK; FOW_U.uFowFlash.value = flashK * (t < 0.12 ? 1 : t < 0.2 ? 0.25 : t < 0.32 ? 0.8 : 0.5); }
   else FOW_U.uFowFlash.value = 0;
   if (gateMan) gateMan.visible = !!gateMan.userData.on && FOW_U.uFowFlash.value > 0.05;
+  if (flashFig?.userData.R) stepFar(flashFig.userData.R, dt, false);
   if (flashFig) { flashFig.visible = FOW_U.uFowFlash.value > 0.05 && flashFig.position.y > -1; flashBack.visible = flashFig.visible; flashBack.position.copy(flashFig.position).multiplyScalar(1.12); flashBack.material.opacity = FOW_U.uFowFlash.value * 0.9; }
 }
 function showFigure() {
   // something far taller than the pines, standing still past where the light reaches
   if (!flashFig) { // the thing far out: taller than the pines, black against the lit snow, never still
     flashFig = new THREE.Group(); scene.add(flashFig); flashFig.position.y = -40;
-    qModel(FAR_MODEL).then(g => { if (!g) return; const b = g.scene.clone(true); b.updateMatrixWorld(true); const bb = new THREE.Box3().setFromObject(b), k = 14 / (bb.max.y - bb.min.y), c = bb.getCenter(new THREE.Vector3());
+    qModel(FAR_MODEL).then(g => { if (!g) return; const b = cloneSkinned(g.scene); b.updateMatrixWorld(true); const bb = new THREE.Box3().setFromObject(b, true), k = 14 / (bb.max.y - bb.min.y), c = bb.getCenter(new THREE.Vector3());
       b.scale.multiplyScalar(k); b.position.set(-c.x * k, -bb.min.y * k - 0.6, -c.z * k);
       b.traverse(m => { if (m.isMesh) { m.material = m.material.clone(); m.material.color?.setRGB(0.16, 0.17, 0.22); m.material.transparent = false; m.material.alphaTest = 0.4; m.material.depthWrite = true; if (m.material.isMeshStandardMaterial) { m.material.metalness = 0; m.material.roughness = 1; m.material.metalnessMap = null; } m.frustumCulled = false; } });
-      writhe(b, 0.025, 0.5); flashFig.add(b); });
+      writhe(b, 0.025, 0.5); flashFig.add(b); b.traverse(o => { if (o.isMesh) o.frustumCulled = false; }); const R = flashFig.userData.R = { mx: new THREE.AnimationMixer(b), acts: {}, cur: '', screamT: 9e9 }; g.animations.forEach(a => { R.acts[a.name.replace(/^.*\|/, '')] = R.mx.clipAction(a); }); farPlay(R, 'Idle'); });
     // the flash lights the snow behind it, so it stands out black against the White
     flashBack = new THREE.Sprite(new THREE.SpriteMaterial({ map: GLOW, color: 0x9fb4e0, transparent: true, opacity: 0, depthWrite: false, fog: false })); flashBack.center.set(0.5, 0.3); flashBack.scale.set(34, 30, 1); flashBack.renderOrder = 1; scene.add(flashBack); }
   const a = Math.random() * Math.PI * 2, r = DOME_R + 9 + Math.random() * 7; flashFig.position.set(Math.cos(a) * r, 0, Math.sin(a) * r); flashFig.rotation.y = Math.atan2(-Math.cos(a), -Math.sin(a));
@@ -6852,5 +6861,5 @@ function loop(now = performance.now()) {
 }
 requestAnimationFrame(loop);
 addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); DPR = Math.min(DPR, dprFor()); renderer.setPixelRatio(DPR); composer.setPixelRatio?.(DPR); renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight); fxaaSize(); });
-window.__w4w = { S, settle, X: () => ({ HD, PYL, houses, SPECIAL, HX, XV, avatars, predicted, xact, hexAt, warp: ms => XW.warp?.(ms), planTo, goTrip, NOTES, rimeFx, openLibrary, trip, prints: prints.length, rimeAt: (q, r) => XW._rime?.(q, r), stash: o => XW._stash?.(o), letter: o => XW._letter?.(o), hollowList: () => hollow, openPost, openHouse, flash: (show) => { flashT = 0; if (show) setTimeout(() => { if (flashFig) flashFig.position.y = 0; }, 30); }, flashFig: () => flashFig, flashDbg: () => ({ k: flashK, f: FOW_U.uFowFlash.value, back: flashBack?.material.opacity, vis: flashFig?.visible, on: FOW_U.uFowOn.value }), acts: h => { actEl.hidden = false; actEl.innerHTML = h; actSig = h; dressActs(); }, story: o => XW._story?.(o), openGate, openChronicle, openPylon, walkTo, UI, renderFrames, unfollow: () => { follow = false; fly = null; }, hollow, act1Mark: id => act1Mark(id), openBeast: id => openBeast(id), openLibraryRoom: () => openLibraryRoom() }), freePlots, openMaria, ask, addWood, refreshTown, draft: v => (draft = v), camera, controls, updateIce, renderer, scene, __composer: LITE ? null : composer };
+window.__w4w = { S, settle, X: () => ({ rimeFx, mouthFx, HD, PYL, houses, SPECIAL, HX, XV, avatars, predicted, xact, hexAt, warp: ms => XW.warp?.(ms), planTo, goTrip, NOTES, rimeFx, openLibrary, trip, prints: prints.length, rimeAt: (q, r) => XW._rime?.(q, r), stash: o => XW._stash?.(o), letter: o => XW._letter?.(o), hollowList: () => hollow, openPost, openHouse, flash: (show) => { flashT = 0; if (show) setTimeout(() => { if (flashFig) flashFig.position.y = 0; }, 30); }, flashFig: () => flashFig, flashDbg: () => ({ k: flashK, f: FOW_U.uFowFlash.value, back: flashBack?.material.opacity, vis: flashFig?.visible, on: FOW_U.uFowOn.value }), acts: h => { actEl.hidden = false; actEl.innerHTML = h; actSig = h; dressActs(); }, story: o => XW._story?.(o), openGate, openChronicle, openPylon, walkTo, UI, renderFrames, unfollow: () => { follow = false; fly = null; }, hollow, act1Mark: id => act1Mark(id), openBeast: id => openBeast(id), openLibraryRoom: () => openLibraryRoom() }), freePlots, openMaria, ask, addWood, refreshTown, draft: v => (draft = v), camera, controls, updateIce, renderer, scene, __composer: LITE ? null : composer };
 </script>
