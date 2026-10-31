@@ -2207,7 +2207,8 @@ function snowify(mat) {
         wp4 = instanceMatrix * wp4; wn3 = mat3(instanceMatrix) * wn3;
       #endif
       wp4 = modelMatrix * wp4; vWP = wp4.xyz; vWN = normalize(mat3(modelMatrix) * wn3);`);
-    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nuniform float uHeat; uniform float uSnow; uniform float uTime; uniform float uBoost; varying vec3 vWP; varying vec3 vWN;\n' + SNOW_NOISE).replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
+    if (mat.userData.roof) sh.uniforms.uRoof = { value: themeTex('tex_roof') };
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nuniform float uHeat; uniform float uSnow; uniform float uTime; uniform float uBoost; varying vec3 vWP; varying vec3 vWN;' + (mat.userData.roof ? ' uniform sampler2D uRoof;' : '') + '\n' + SNOW_NOISE).replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
       totalEmissiveRadiance += vec3(0.62,0.80,1.0) * edgeGlow;`).replace('#include <map_fragment>', `#include <map_fragment>
       float up = smoothstep(0.05, 0.7, vWN.y);
       float n = vnoise(vWP.xz*2.3)*0.6 + vnoise(vWP.xz*7.0)*0.4;
@@ -2218,7 +2219,14 @@ function snowify(mat) {
       #ifdef SNOW_TEX
         snowc = diffuseColor.rgb * (0.9 + 0.16 * n);
       #endif
-      diffuseColor.rgb = mix(diffuseColor.rgb, snowc, snow);
+      float roofK = 0.0;
+      #ifdef ROOF_TEX
+      { vec3 c0 = diffuseColor.rgb; float red = smoothstep(0.02, 0.08, c0.r - max(c0.g, c0.b) * 1.25) * step(0.06, c0.r); roofK = red;
+        vec3 an = abs(vWN); vec2 ruv = (an.x > an.z ? vec2(vWP.z, vWP.y) : vec2(vWP.x, vWP.y)) * 0.9;
+        vec3 sh = pow(texture2D(uRoof, ruv).rgb, vec3(2.2));
+        diffuseColor.rgb = mix(c0, sh * 2.1, red); }
+      #endif
+      diffuseColor.rgb = mix(diffuseColor.rgb, snowc, snow * (1.0 - roofK * 0.9));
       float ground = step(vWP.y, 0.03) * up;
       float patches = smoothstep(0.55, 0.62, vnoise(vWP.xz*1.6)*0.75 + n*0.25);
       vec3 earth = mix(vec3(0.11,0.09,0.09), vec3(0.70,0.72,0.80), patches);
@@ -2462,7 +2470,7 @@ fetch('kit.txt').then(r => { if (!r.ok) throw new Error('kit.txt ' + r.status); 
     return new Promise((res, rej) => new GLTFLoader().parse(bin.buffer, '', res, rej)); })
   .then(gltf => {
     for (const sc of gltf.scenes) { const g = new THREE.Group(); [...sc.children].forEach(c => g.add(c)); kit[sc.name] = g; }
-    Object.values(kit).forEach(g => g.traverse(m => { if (m.isMesh) { if (!KIT_MAT) KIT_MAT = snowify(m.material); m.material = KIT_MAT; } }));
+    Object.values(kit).forEach(g => g.traverse(m => { if (m.isMesh) { if (!KIT_MAT) { m.material.userData.roof = true; m.material.defines = { ...(m.material.defines || {}), ROOF_TEX: 1 }; KIT_MAT = snowify(m.material); KIT_MAT.userData.roof = true; KIT_MAT.defines = { ...(KIT_MAT.defines || {}), ROOF_TEX: 1 }; } m.material = KIT_MAT; } }));
     KIT_MAT.map = ATLAS; KIT_MAT.roughness = 0.9; KIT_MAT.metalness = 0; KIT_MAT.needsUpdate = true;
     build(); demoHistory(); refreshTown();
     setTimeout(() => $('#load').classList.add('off'), 300);
@@ -5489,7 +5497,7 @@ async function buildNature() {
       const m4 = new THREE.Matrix4(), qt = new THREE.Quaternion(), sc = new THREE.Vector3(), ps = new THREE.Vector3(), e = new THREE.Euler();
       for (const part of parts) {
         const mat = part.material.clone(); mat.color = new THREE.Color(tint[kind]);
-        if (kind === 'rock') { mat.map = themeTex('tex_rock'); mat.color = new THREE.Color(0xe2e6ee); } if (mat.alphaTest === 0 && mat.map && kind === 'pine') mat.alphaTest = 0.4;
+        if (kind === 'rock') { mat.map = themeTex('tex_rock'); mat.color = new THREE.Color(0xf2f4f8); } if (/bark/i.test(mat.name || '')) { mat.map = themeTex('tex_bark'); mat.color = new THREE.Color(0xe8e4e0); } if (mat.alphaTest === 0 && mat.map && kind === 'pine') mat.alphaTest = 0.4;
         const inst = new THREE.InstancedMesh(part.geometry, snowify(mat), mine.length);
         mine.forEach(([x, z, , h], i) => { const k = h / H; e.set(0, (x * 7.13 + z * 3.7) % 6.28, 0); qt.setFromEuler(e); sc.setScalar(k); ps.set(x, -bb.min.y * k, z); m4.compose(ps, qt, sc).multiply(part.matrixWorld); inst.setMatrixAt(i, m4); });
         inst.castShadow = true; inst.receiveShadow = true; scene.add(inst);
@@ -5916,7 +5924,7 @@ const IRON_TEX = (() => { const tl = new THREE.TextureLoader(), map = tl.load('q
   map.colorSpace = THREE.SRGBColorSpace; map.anisotropy = 8; [map, normal].forEach(t => { t.wrapS = t.wrapT = THREE.RepeatWrapping; }); return { map, normal }; })();
 function ironize(m, tint = 0xd9d2cc) { m.map = IRON_TEX.map; m.normalMap = IRON_TEX.normal; if (m.normalScale) m.normalScale.set(0.8, 0.8); m.color.set(tint); m.metalness = Math.min(m.metalness ?? 0.5, 0.55); m.roughness = Math.max(m.roughness ?? 0.5, 0.5); m.needsUpdate = true; return m; }
 const PYL_STONE = new THREE.MeshStandardMaterial({ color: 0xa79d8e, roughness: 0.9, emissive: 0x3a2a1c, emissiveIntensity: 0.6 }), PYL_IRON = new THREE.MeshStandardMaterial({ color: 0x9a8f86, metalness: 0.55, roughness: 0.4, emissive: 0x4a2c18, emissiveIntensity: 0.55 });
-PYL_STONE.userData.noFow = PYL_IRON.userData.noFow = true; ironize(PYL_IRON, 0xffffff);
+PYL_STONE.userData.noFow = PYL_IRON.userData.noFow = true; PYL_STONE.map = themeTex('tex_rock'); PYL_STONE.color.set(0xf0ece6); ironize(PYL_IRON, 0xffffff);
 const BRZ_STONE = PYL_STONE, BRZ_IRON = new THREE.MeshStandardMaterial({ color: 0x8a7a6a, metalness: 0.6, roughness: 0.45, emissive: 0x5a2a10, emissiveIntensity: 0.7, side: THREE.DoubleSide }),
   BRZ_COAL = new THREE.MeshBasicMaterial({ color: 0xff6a20 }), BRZ_FLAME = new THREE.MeshBasicMaterial({ color: 0xffb050, transparent: true, opacity: 0.85, blending: THREE.AdditiveBlending, depthWrite: false }), GATE_FLAMES = [];
 BRZ_IRON.userData.noFow = BRZ_COAL.userData.noFow = BRZ_FLAME.userData.noFow = true; ironize(BRZ_IRON);
@@ -5987,7 +5995,7 @@ const PYLON_LORE = [
 /* the North Gate: sealed since the ninth night */
 function buildGate() {
   const g = new THREE.Group(), M = (c, o = {}) => { const m = new THREE.MeshStandardMaterial({ color: c, roughness: 0.85, ...o }); m.userData.noFow = true; return m; };
-  const stone = M(0x9a938a, { emissive: 0x2a2018, emissiveIntensity: 0.35 }), stoneD = M(0x6e6760, { emissive: 0x1a140e, emissiveIntensity: 0.3 }), wood = ironize(M(0x7a5030, { emissive: 0x2a1408, emissiveIntensity: 0.4, metalness: 0.4, roughness: 0.6 }), 0xe6ddd4), iron = ironize(M(0x3c3836, { metalness: 0.6, roughness: 0.5, emissive: 0x2a1408, emissiveIntensity: 0.35 }), 0xcfc7c0), frost = M(0xe4f0ff, { roughness: 0.45, emissive: 0x24405a, emissiveIntensity: 0.4 });
+  const stone = M(0xe6e2dc, { map: themeTex('tex_rock'), emissive: 0x2a2018, emissiveIntensity: 0.35 }), stoneD = M(0xb8b2aa, { map: themeTex('tex_rock'), emissive: 0x1a140e, emissiveIntensity: 0.3 }), wood = ironize(M(0x7a5030, { emissive: 0x2a1408, emissiveIntensity: 0.4, metalness: 0.4, roughness: 0.6 }), 0xe6ddd4), iron = ironize(M(0x3c3836, { metalness: 0.6, roughness: 0.5, emissive: 0x2a1408, emissiveIntensity: 0.35 }), 0xcfc7c0), frost = M(0xe4f0ff, { roughness: 0.45, emissive: 0x24405a, emissiveIntensity: 0.4 });
   const seal = M(0xffb35a, { emissive: 0xff7a1a, emissiveIntensity: 2.4, roughness: 0.3 });
   const box = (w, h, d, m, x, y, z, ry = 0) => { const o = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m); o.position.set(x, y, z); o.rotation.y = ry; o.castShadow = true; o.receiveShadow = true; g.add(o); return o; };
   // two squat towers with stepped tops
