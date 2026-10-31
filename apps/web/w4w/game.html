@@ -2581,7 +2581,7 @@ function build() {
   const lp = HX(...SPECIAL.library); glowDecal(lp.x, lp.z, 2, 0xffd6a0, 0.45); sprite(GLOW, lp.x + 0.6, 0.6, lp.z + 0.5, 0.8, 0xffc070, 0.9);
   label('LIBRARY', lib, 2.8, 'key');
   const mn = place('mine', ...SPECIAL.mine, { rot: 0.9, scale: 1.3 }); tag(mn, 'mine', 'mine');
-  const mp = HX(...SPECIAL.mine); sprite(GLOW, mp.x, 0.5, mp.z + 0.6, 0.7, 0xffb060, 0.9); glowDecal(mp.x, mp.z, 1.6, 0xffb060, 0.35);
+  const mp = HX(...SPECIAL.mine); glowDecal(mp.x, mp.z, 1.6, 0xffb060, 0.25);
   label('THE MINE', mn, 2.1, 'key');
   STAGE2.forEach((s, i) => { const at = HX(...s.at), face = Math.atan2(-at.x, -at.z);
     const PR = s.prop && PROPS[s.prop] ? prop(s.prop, 1.55, false) : null; if (PR) { PR.position.set(at.x, 0, at.z); PR.rotation.y = face; scene.add(PR); }
@@ -4744,7 +4744,7 @@ function buildRimeBody(H = 7.5) {
 /* it walks hunched when it moves, stands reaching when it stops, and now and then throws its head back */
 function farPlay(R, n, once = false) { if (R.cur === n || !R.acts[n]) return; const a = R.acts[n], o = R.acts[R.cur]; a.reset(); a.setLoop(once ? THREE.LoopOnce : THREE.LoopRepeat); a.clampWhenFinished = once; a.fadeIn(0.8).play(); if (o) o.fadeOut(0.8); R.cur = n; }
 function stepFar(R, dt, moving) {
-  if (!R?.mx) return; R.mx.update(dt); R.screamT -= dt;
+  if (!R?.mx) return; R.acc = (R.acc || 0) + dt; const g = R.g || R.root; if (g && (!g.visible || g.position.distanceTo(controls.target) > 55)) return; R.mx.update(R.acc); R.acc = 0; R.screamT -= dt;
   if (R.cur === 'Scream') { if (R.screamT < -3.2) { R.screamT = 25 + Math.random() * 40; farPlay(R, moving ? 'Walk' : 'Idle'); } return; }
   if (R.screamT <= 0) { farPlay(R, 'Scream', true); return; }
   farPlay(R, moving ? 'Walk' : 'Idle'); if (R.acts.Walk) R.acts.Walk.timeScale = 0.55; if (R.acts.Idle) R.acts.Idle.timeScale = 0.7;
@@ -4756,6 +4756,7 @@ function stepRime(dt) {
   const t = xnow(), n = R.next || R, e = THREE.MathUtils.clamp((t - R.t) / W4W.RIME_MS, 0, 1);
   const want = HX(R.q, R.r).lerp(HX(n.q, n.r), e * e * (3 - 2 * e));
   // it never glides across the map: a jump in what the server says is a jump on the screen
+  { const L = Math.hypot(want.x, want.z), min = DOME_R + 4.8; if (L < min) want.multiplyScalar(min / Math.max(0.01, L)); }
   if (!rimeFx.g.visible || rimeFx.p.distanceTo(want) > 3) { rimeFx.p.copy(want); rimeFx.g.visible = true; } else rimeFx.p.lerp(want, Math.min(1, dt * 0.8));
   rimeFx.g.position.set(rimeFx.p.x, 0, rimeFx.p.z);
   // it faces where it drifts; the head turns to whoever is closest
@@ -6684,7 +6685,8 @@ function buildStreets() {
       if (i < N) { const k = i * 2; idx.push(k, k + 1, k + 2, k + 1, k + 3, k + 2); }
       if (i % 9 === 4 && W4W.ringOf(...line[Math.min(line.length - 1, Math.floor(u * line.length))]) >= 3 && (lampN++ % 2 === 0)) {
         const LP = prop('lamp', 1.05); const m = LP || new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.032, 0.85, 5), post); if (LP) m.position.set(p.x + n.x * 0.82, 0, p.z + n.z * 0.82); else m.position.set(p.x + n.x * 0.82, 0.42, p.z + n.z * 0.82); scene.add(m); STREET_OBJS.push(m);
-        const sp = sprite(GLOW, p.x + n.x * 0.82, LP ? 0.95 : 0.9, p.z + n.z * 0.82, 0.42, 0xffc070, 0.75); sp.userData.flicker = true; STREET_OBJS.push(sp); } }
+        const lx = p.x + n.x * 0.82, lz = p.z + n.z * 0.82, sp = sprite(GLOW, lx, LP ? 0.93 : 0.9, lz, 0.2, 0xffe2b0, 0.85); sp.userData.flicker = true; STREET_OBJS.push(sp);
+        const pool = glowDecal(lx, lz, 1.5, 0xffc27a, 0.32); if (pool) STREET_OBJS.push(pool); } }
     const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); geo.setIndex(idx); geo.computeVertexNormals();
     const m = new THREE.Mesh(geo, mat); m.receiveShadow = true; m.renderOrder = 1; scene.add(m); STREET_OBJS.push(m);
     // things people leave by a lane: a cart, a sled of wood, a stack of barrels, now and then
@@ -6968,5 +6970,5 @@ function loop(now = performance.now()) {
 }
 requestAnimationFrame(loop);
 addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); DPR = Math.min(DPR, dprFor()); renderer.setPixelRatio(DPR); composer.setPixelRatio?.(DPR); renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight); fxaaSize(); });
-window.__w4w = { S, settle, X: () => ({ scene, moon, renderer, camera, THREE, rimeFx, mouthFx, HD, PYL, houses, SPECIAL, HX, XV, avatars, predicted, xact, hexAt, warp: ms => XW.warp?.(ms), planTo, goTrip, NOTES, rimeFx, openLibrary, trip, prints: prints.length, rimeAt: (q, r) => XW._rime?.(q, r), stash: o => XW._stash?.(o), letter: o => XW._letter?.(o), hollowList: () => hollow, openPost, openHouse, flash: (show) => { flashT = 0; if (show) setTimeout(() => { if (flashFig) flashFig.position.y = 0; }, 30); }, flashFig: () => flashFig, flashDbg: () => ({ k: flashK, f: FOW_U.uFowFlash.value, back: flashBack?.material.opacity, vis: flashFig?.visible, on: FOW_U.uFowOn.value }), acts: h => { actEl.hidden = false; actEl.innerHTML = h; actSig = h; dressActs(); }, story: o => XW._story?.(o), openGate, openChronicle, openPylon, walkTo, UI, renderFrames, unfollow: () => { follow = false; fly = null; }, hollow, act1Mark: id => act1Mark(id), openBeast: id => openBeast(id), openLibraryRoom: () => openLibraryRoom() }), freePlots, openMaria, ask, addWood, refreshTown, draft: v => (draft = v), camera, controls, updateIce, renderer, scene, __composer: LITE ? null : composer };
+window.__w4w = { S, settle, X: () => ({ scene, moon, renderer, composer, fxaaSize, camera, THREE, rimeFx, mouthFx, HD, PYL, houses, SPECIAL, HX, XV, avatars, predicted, xact, hexAt, warp: ms => XW.warp?.(ms), planTo, goTrip, NOTES, rimeFx, openLibrary, trip, prints: prints.length, rimeAt: (q, r) => XW._rime?.(q, r), stash: o => XW._stash?.(o), letter: o => XW._letter?.(o), hollowList: () => hollow, openPost, openHouse, flash: (show) => { flashT = 0; if (show) setTimeout(() => { if (flashFig) flashFig.position.y = 0; }, 30); }, flashFig: () => flashFig, flashDbg: () => ({ k: flashK, f: FOW_U.uFowFlash.value, back: flashBack?.material.opacity, vis: flashFig?.visible, on: FOW_U.uFowOn.value }), acts: h => { actEl.hidden = false; actEl.innerHTML = h; actSig = h; dressActs(); }, story: o => XW._story?.(o), openGate, openChronicle, openPylon, walkTo, UI, renderFrames, unfollow: () => { follow = false; fly = null; }, hollow, act1Mark: id => act1Mark(id), openBeast: id => openBeast(id), openLibraryRoom: () => openLibraryRoom() }), freePlots, openMaria, ask, addWood, refreshTown, draft: v => (draft = v), camera, controls, updateIce, renderer, scene, __composer: LITE ? null : composer };
 </script>
