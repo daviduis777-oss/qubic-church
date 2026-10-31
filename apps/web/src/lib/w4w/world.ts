@@ -35,6 +35,7 @@ export type Char = {
   tended?: Record<string, number> // when you last gave warmth to each pylon
   drained?: number // when you last took warmth back from a pylon (phase 1+)
   barred?: number // when you last lifted the bar of the North Gate (phase 2+)
+  valved?: number // when you last put your hands on the Iron Rose (phase 3)
 }
 export type Ctx = {
   heatR: number // radius of the town's warm circle, world units
@@ -648,7 +649,7 @@ export type WState = {
   rime?: Rime
   rimeTrail?: [number, number, number][] // computed on load, not stored
 }
-export type Feed = { id: string; t: number; topic: 'froze' | 'hearth' | 'took' | 'library' | 'found' | 'shard' | 'anna' | 'order' | 'pylon' | 'letter' | 'drain' | 'bar' | 'unveil' | 'mail'; by: string; data: Record<string, unknown> }
+export type Feed = { id: string; t: number; topic: 'froze' | 'hearth' | 'took' | 'library' | 'found' | 'shard' | 'anna' | 'order' | 'pylon' | 'letter' | 'drain' | 'bar' | 'unveil' | 'mail' | 'valve'; by: string; data: Record<string, unknown> }
 export type Dirty = { chars: Set<string>; hearths: Set<string>; bags: Set<string>; bagsGone: Set<string>; nodes: Set<string>; feed: Feed[]; rime?: boolean; library?: Set<string>; shards?: Set<string>; anna?: boolean; delivered?: boolean; pylons?: Set<string>; story?: boolean }
 export const newDirty = (): Dirty => ({ chars: new Set(), hearths: new Set(), bags: new Set(), bagsGone: new Set(), nodes: new Set(), feed: [] })
 
@@ -667,6 +668,8 @@ export function townOfState(ws: WState) {
  * Phases are set by the admin. The Hush is set by players. */
 export type Story = { phase: number; hush: number; ht: number; unveil?: { at: number; until: number } | null }
 export const GATE_CELL: Cell = [0, -TOWN_RING]
+export const ROSE_CELL: Cell = [-1, 2] // the Iron Rose: the valve on the copper ring round Anna
+export const ROSE_WAIT = 6 * 3600_000
 export const POST_CELL: Cell = [-2, 5] // the post office: letters are written here and wait in the sack
 export const HUSH_MAX = 100
 export const HUSH_FADE = 2 // per hour, by itself
@@ -939,6 +942,15 @@ export function action(ws: WState, uid: string, op: string, b: Record<string, un
       if (c.warmth < BAR_COST + 8) return fail('Your hands are too cold to grip the iron.')
       c.warmth -= BAR_COST; c.barred = now; addHush(ws, 4, d)
       d.feed.push({ id: `br${now}`, t: now, topic: 'bar', by: '', data: {} })
+      return ok()
+    }
+    case 'valve': {
+      // phase 3: the Iron Rose. Every turn shuts the town's warmth a little further out of the Veil
+      if ((ws.story?.phase ?? 0) < 3) return fail('The wheel does not move. It has never moved.')
+      if (c.path.length || dist(here, ROSE_CELL) > 1) return fail('Stand at the copper ring, by the rose.')
+      if (now - (c.valved ?? 0) < ROSE_WAIT) return fail('Your hands remember the cold of it. Not yet.')
+      c.valved = now; addHush(ws, 10, d)
+      d.feed.push({ id: `rv${now}`, t: now, topic: 'valve', by: '', data: {} })
       return ok()
     }
     case 'pick': {
