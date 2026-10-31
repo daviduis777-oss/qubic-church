@@ -2215,6 +2215,9 @@ function snowify(mat) {
       float thaw = 1.0 - smoothstep(uHeat-1.6, uHeat+1.2, d);
       float snow = clamp(up*(0.8+0.35*n) + 0.24, 0.0, 1.0) * (1.0 - 0.8*thaw) * uSnow;
       vec3 snowc = mix(vec3(0.78,0.84,0.97), vec3(0.94,0.96,1.0), n);
+      #ifdef SNOW_TEX
+        snowc = diffuseColor.rgb * (0.9 + 0.16 * n);
+      #endif
       diffuseColor.rgb = mix(diffuseColor.rgb, snowc, snow);
       float ground = step(vWP.y, 0.03) * up;
       float patches = smoothstep(0.55, 0.62, vnoise(vWP.xz*1.6)*0.75 + n*0.25);
@@ -2475,7 +2478,10 @@ const reserved = new Set();
 function build() {
   const far = new THREE.Mesh(new THREE.CircleGeometry(140, 96), snowify(new THREE.MeshStandardMaterial({ color: 0x9aa7c4, roughness: 1 })));
   far.rotation.x = -Math.PI / 2; far.receiveShadow = true; scene.add(far);
-  { const tl = new THREE.TextureLoader(); tl.load('q/tex/snow_n.jpg', t => { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(60, 60); if (far.material.isMeshStandardMaterial) { far.material.normalMap = t; far.material.normalScale.set(0.9, 0.9); far.material.needsUpdate = true; } }); }
+  // the ground of the town: hand-painted snow, one tile about eight steps across
+  { const tl = new THREE.TextureLoader(), R = 35, m = far.material;
+    tl.load('q/tex/snow_ground.webp', t => { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(R, R); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; m.map = t; m.color.set(0xffffff); m.defines = { ...(m.defines || {}), SNOW_TEX: 1 }; m.needsUpdate = true; });
+    tl.load('q/tex/snow_ground_n.webp', t => { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(R, R); if (m.normalScale) { m.normalMap = t; m.normalScale.set(0.8, 0.8); m.needsUpdate = true; } }); }
   buildSeams();
   Object.values(SPECIAL).forEach(([q, r]) => reserved.add(key(q, r))); DEMO.forEach(n => reserved.add(key(...n.at))); STAGE2.forEach(s => reserved.add(key(...s.at)));
   ring(1).forEach(([q, r]) => reserved.add(key(q, r)));
