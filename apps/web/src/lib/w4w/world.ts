@@ -36,6 +36,9 @@ export type Char = {
   drained?: number // when you last took warmth back from a pylon (phase 1+)
   barred?: number // when you last lifted the bar of the North Gate (phase 2+)
   valved?: number // when you last put your hands on the Iron Rose (phase 3)
+  rounds?: number // when you last stood the whole bar a round
+  toasts?: { nick: string; t: number }[] // glasses raised to you at the bar while you were away
+  toasted?: Record<string, number> // whom you last raised a glass to, and when
 }
 export type Ctx = {
   heatR: number // radius of the town's warm circle, world units
@@ -616,6 +619,7 @@ export function townShelters(houseCells: Cell[]): Record<string, 'house' | 'chur
   const out: Record<string, 'house' | 'church' | 'fire'> = {}
   for (const [q, r] of [...DEMO_CELLS, ...houseCells]) out[key(q, r)] = 'house'
   for (const [k, [q, r]] of Object.entries(SPECIAL)) if (k !== 'core') out[key(q, r)] = k === 'church' ? 'church' : k === 'plaza' ? 'fire' : 'house'
+  out[key(BAR_CELL[0], BAR_CELL[1])] = 'house'
   return out
 }
 
@@ -649,7 +653,7 @@ export type WState = {
   rime?: Rime
   rimeTrail?: [number, number, number][] // computed on load, not stored
 }
-export type Feed = { id: string; t: number; topic: 'froze' | 'hearth' | 'took' | 'library' | 'found' | 'shard' | 'anna' | 'order' | 'pylon' | 'letter' | 'drain' | 'bar' | 'unveil' | 'mail' | 'valve'; by: string; data: Record<string, unknown> }
+export type Feed = { id: string; t: number; topic: 'froze' | 'hearth' | 'took' | 'library' | 'found' | 'shard' | 'anna' | 'order' | 'pylon' | 'letter' | 'drain' | 'bar' | 'unveil' | 'mail' | 'valve' | 'round' | 'toast'; by: string; data: Record<string, unknown> }
 export type Dirty = { chars: Set<string>; hearths: Set<string>; bags: Set<string>; bagsGone: Set<string>; nodes: Set<string>; feed: Feed[]; rime?: boolean; library?: Set<string>; shards?: Set<string>; anna?: boolean; delivered?: boolean; pylons?: Set<string>; story?: boolean }
 export const newDirty = (): Dirty => ({ chars: new Set(), hearths: new Set(), bags: new Set(), bagsGone: new Set(), nodes: new Set(), feed: [] })
 
@@ -670,6 +674,8 @@ export type Story = { phase: number; hush: number; ht: number; unveil?: { at: nu
 export const GATE_CELL: Cell = [0, -TOWN_RING]
 export const ROSE_CELL: Cell = [-1, 2] // the Iron Rose: the valve on the copper ring round Anna
 export const ROSE_WAIT = 6 * 3600_000
+export const BAR_CELL: Cell = [-4, 5] // the bar: a warm room, everyone inside hears everyone
+export const ROUND_COST = 10, ROUND_GIFT = 5, ROUND_WAIT = 4 * 3600_000, TOAST_WAIT = 20 * 3600_000
 export const POST_CELL: Cell = [-2, 5] // the post office: letters are written here and wait in the sack
 export const HUSH_MAX = 100
 export const HUSH_FADE = 2 // per hour, by itself
@@ -983,6 +989,27 @@ export function action(ws: WState, uid: string, op: string, b: Record<string, un
       consume(c, o.need, false); c.orders.done.push(o.id); addRenown(c, o.pts)
       ws.delivered = ws.delivered?.day === dayOf(now) ? { day: ws.delivered.day, n: ws.delivered.n + 1 } : { day: dayOf(now), n: 1 }; d.delivered = true
       d.feed.push({ id: `or${uid}${o.id}${now}`, t: now, topic: 'order', by: uid, data: { nick: nickIn(ws, uid), text: o.text } })
+      return ok()
+    }
+    case 'round': {
+      // stand the whole room a drink: your warmth goes into everyone else's cup
+      if (c.path.length || dist(here, BAR_CELL) > 0) return fail('Go inside the bar first.')
+      if (now - (c.rounds ?? 0) < ROUND_WAIT) return fail(`You stood a round not long ago. Again in ${Math.ceil((ROUND_WAIT - (now - (c.rounds ?? 0))) / 60_000)} min.`)
+      if (c.warmth < ROUND_COST + 15) return fail('You have too little warmth of your own to give.')
+      const inside = Object.entries(ws.chars).filter(([k, o]) => k !== uid && !o.path.length && o.q === BAR_CELL[0] && o.r === BAR_CELL[1] && !(o.frozenUntil > now))
+      c.warmth -= ROUND_COST; c.rounds = now
+      for (const [k, o] of inside) { o.warmth = Math.min(100, o.warmth + ROUND_GIFT); d.chars.add(k) }
+      if (inside.length) addRenown(c, 1)
+      d.feed.push({ id: `rd${uid}${now}`, t: now, topic: 'round', by: uid, data: { nick: nickIn(ws, uid), n: inside.length } })
+      return ok()
+    }
+    case 'toast': {
+      // a glass raised at the bar to someone who is not here: they find it on their door when they come back
+      if (c.path.length || dist(here, BAR_CELL) > 0) return fail('Go inside the bar first.')
+      const to = String(b.to ?? ''), o = ws.chars[to]; if (!o || to === uid) return fail('Raise it to someone in town.')
+      c.toasted ??= {}; if (now - (c.toasted[to] ?? 0) < TOAST_WAIT) return fail('You already drank to them today.')
+      c.toasted[to] = now; o.toasts = [{ nick: nickIn(ws, uid), t: now }, ...(o.toasts ?? [])].slice(0, 8); d.chars.add(to)
+      d.feed.push({ id: `ts${uid}${to}${now}`, t: now, topic: 'toast', by: uid, data: { nick: nickIn(ws, uid), to: nickIn(ws, to) } })
       return ok()
     }
     default: return fail('unknown action')
