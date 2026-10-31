@@ -2453,6 +2453,27 @@ function banner(b, s) { $('#bannerB').textContent = b; $('#bannerS').textContent
 /* ================= load kit ================= */
 const kit = {}; let KIT_MAT;
 const interactive = [], labels = [];
+/* generated models that stand in for kit pieces: same footprint, on the ground, in the same snow */
+const KIT_OVR = { mine: 'q/b/mine.glb', home_A: 'q/b/home_a.glb', home_B: 'q/b/home_b.glb' };
+let PYLON_MODEL = null;
+function loadGlb(url) { return new Promise(res => { const l = new GLTFLoader(); l.setMeshoptDecoder(MeshoptDecoder); l.load(url, g => res(g), undefined, e => { console.warn(url, e); res(null); }); }); }
+function meshyMats(o, snow, noFow) { o.traverse(m => { if (!m.isMesh) return; m.castShadow = m.receiveShadow = true; let mt = m.material;
+  if (mt.isMeshStandardMaterial) { mt.metalness = Math.min(mt.metalness, 0.35); mt.metalnessMap = null; mt.roughness = Math.max(mt.roughness, 0.55); mt.needsUpdate = true; }
+  if (snow) m.material = mt = snowify(mt); if (noFow) mt.userData.noFow = true; }); }
+function fitTo(o, ref) {
+  o.updateMatrixWorld(true); const b = new THREE.Box3().setFromObject(o), rb = new THREE.Box3().setFromObject(ref), s = b.getSize(new THREE.Vector3()), rs = rb.getSize(new THREE.Vector3());
+  const k = Math.max(rs.x, rs.z) / Math.max(1e-4, s.x, s.z), c = b.getCenter(new THREE.Vector3()), rc = rb.getCenter(new THREE.Vector3());
+  o.scale.multiplyScalar(k); o.position.set(rc.x - c.x * k, -b.min.y * k, rc.z - c.z * k); const g = new THREE.Group(); g.add(o); return g;
+}
+async function loadOverrides() {
+  await Promise.all([...Object.entries(KIT_OVR).map(async ([n, url]) => { const g = await loadGlb(url); if (!g || !kit[n]) return; meshyMats(g.scene, false); /* their own paint already carries the snow */ kit[n] = fitTo(g.scene, kit[n]); }),
+    loadGlb('q/b/pylon.glb').then(g => { if (!g) return; meshyMats(g.scene, false, true); g.scene.updateMatrixWorld(true); const b = new THREE.Box3().setFromObject(g.scene), k = 3.5 / (b.max.y - b.min.y);
+      // stand the column itself on the cell: centre on the top of it, where the lantern is, whatever hangs off the side
+      const top = new THREE.Box3(), v = new THREE.Vector3(), y0 = b.min.y + (b.max.y - b.min.y) * 0.72;
+      g.scene.traverse(m => { if (!m.isMesh) return; const P = m.geometry.attributes.position; for (let i = 0; i < P.count; i += 3) { v.fromBufferAttribute(P, i).applyMatrix4(m.matrixWorld); if (v.y > y0) top.expandByPoint(v); } });
+      const c = (top.isEmpty() ? b : top).getCenter(new THREE.Vector3());
+      g.scene.scale.multiplyScalar(k); g.scene.position.set(-c.x * k, -b.min.y * k, -c.z * k); PYLON_MODEL = new THREE.Group(); PYLON_MODEL.add(g.scene); PYL_CORE_Y = 3.5 * 0.83; })]);
+}
 function place(name, q, r, { rot = 0, scale = 1, cast = true, dy = 0, jitter = 0 } = {}) {
   const src = kit[name]; if (!src) return null;
   const o = src.clone(true); const p = HX(q, r);
@@ -2468,11 +2489,11 @@ const ATLAS = new THREE.TextureLoader().load('atlas.png'); ATLAS.flipY = false; 
 fetch('kit.txt').then(r => { if (!r.ok) throw new Error('kit.txt ' + r.status); return r.text(); })
   .then(b64 => { const s = atob(b64.trim()), bin = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) bin[i] = s.charCodeAt(i);
     return new Promise((res, rej) => new GLTFLoader().parse(bin.buffer, '', res, rej)); })
-  .then(gltf => {
+  .then(async gltf => {
     for (const sc of gltf.scenes) { const g = new THREE.Group(); [...sc.children].forEach(c => g.add(c)); kit[sc.name] = g; }
     Object.values(kit).forEach(g => g.traverse(m => { if (m.isMesh) { if (!KIT_MAT) { m.material.userData.roof = true; m.material.defines = { ...(m.material.defines || {}), ROOF_TEX: 1 }; KIT_MAT = snowify(m.material); KIT_MAT.userData.roof = true; KIT_MAT.defines = { ...(KIT_MAT.defines || {}), ROOF_TEX: 1 }; } m.material = KIT_MAT; } }));
     KIT_MAT.map = ATLAS; KIT_MAT.roughness = 0.9; KIT_MAT.metalness = 0; KIT_MAT.needsUpdate = true;
-    build(); demoHistory(); refreshTown();
+    await loadOverrides(); build(); demoHistory(); refreshTown();
     setTimeout(() => $('#load').classList.add('off'), 300);
     initCaps().catch(e => console.warn('caps', e)).finally(() => { try { startX(); } catch (e) { console.warn('wastes', e); } });
     startIntro();
@@ -4116,7 +4137,7 @@ function predicted() { if (!XV?.me) return null; const n = performance.now(); if
 /* ---------- avatars ---------- */
 let HERO = null, heroClips = {}, heroScale = 1;
 const avatars = {};
-(() => { const l = new GLTFLoader(); l.setMeshoptDecoder(MeshoptDecoder); return l; })().load('hero.glb', g => {
+(() => { const l = new GLTFLoader(); l.setMeshoptDecoder(MeshoptDecoder); return l; })().load('q/hero_w.glb', g => {
   HERO = g; heroClips = Object.fromEntries(g.animations.map(a => [a.name.replace(/^.*\|/, ''), a]));
   // the hooded wanderer speaks a different animation language: give the old names to the closest moves
   const alias = { Walking_A: 'Walk', Walking_C: 'Walk', Running_A: 'Run', PickUp: 'Interact', Death_A: 'Death', Lie_Idle: 'Death', Sit_Floor_Idle: 'Idle_Neutral', Hit_B: 'HitRecieve', '1H_Melee_Attack_Chop': 'Sword_Slash', '2H_Melee_Attack_Chop': 'Punch_Right' };
@@ -4124,6 +4145,7 @@ const avatars = {};
   g.scene.updateMatrixWorld(true); const box = new THREE.Box3().setFromObject(g.scene, true); heroScale = 0.5 / Math.max(0.01, box.max.y - box.min.y);
   syncAvatars();
 }, undefined, e => console.warn('hero', e));
+// (the old hooded wanderer, hero.glb, stays in the folder as a fallback for one release)
 const BLOB_GEO = new THREE.PlaneGeometry(0.62, 0.62).rotateX(-Math.PI / 2);
 const BLOB_MAT = (() => { const cv = document.createElement('canvas'); cv.width = cv.height = 64; const x = cv.getContext('2d'); const g = x.createRadialGradient(32, 32, 0, 32, 32, 32);
   g.addColorStop(0, 'rgba(0,0,8,.55)'); g.addColorStop(0.6, 'rgba(0,0,8,.25)'); g.addColorStop(1, 'rgba(0,0,8,0)'); x.fillStyle = g; x.fillRect(0, 0, 64, 64);
@@ -4850,7 +4872,7 @@ function toolMesh(id) {
 function syncTool(holder, body, id) {
   if (holder.id === id) return; holder.id = id;
   if (holder.m) { holder.m.parent?.remove(holder.m); holder.m = null; }
-  if (!id) return; const hand = body.getObjectByName('handslotr') || body.getObjectByName('WristR') || body.getObjectByName('handr'); if (!hand) return;
+  if (!id) return; const hand = body.getObjectByName('handslotr') || body.getObjectByName('WristR') || body.getObjectByName('handr') || body.getObjectByName('RightHand'); if (!hand) return;
   holder.m = toolMesh(id); hand.add(holder.m); body.updateMatrixWorld(true); const ws = new THREE.Vector3(); hand.getWorldScale(ws); holder.m.scale.setScalar(1.2 / Math.max(1e-5, ws.x));
 }
 /** What a walker would hold for the work in hand. */
@@ -5937,6 +5959,7 @@ const BRZ_STONE = PYL_STONE, BRZ_IRON = new THREE.MeshStandardMaterial({ color: 
   BRZ_COAL = new THREE.MeshBasicMaterial({ color: 0xff6a20 }), BRZ_FLAME = new THREE.MeshBasicMaterial({ color: 0xffb050, transparent: true, opacity: 0.85, blending: THREE.AdditiveBlending, depthWrite: false }), GATE_FLAMES = [];
 BRZ_IRON.userData.noFow = BRZ_COAL.userData.noFow = BRZ_FLAME.userData.noFow = true; ironize(BRZ_IRON);
 [PYL_STONE, PYL_IRON].forEach(m => { m.userData.noFow = true; });
+let PYL_CORE_Y = 2.85; // set to the lantern of the forged pylon
 function energyColumn() {
   const g = new THREE.Group(), add = (geo, mat, y, sc) => { const m = new THREE.Mesh(geo, mat); m.position.y = y; if (sc) m.scale.set(...sc); m.castShadow = true; g.add(m); return m; };
   add(new THREE.CylinderGeometry(0.55, 0.62, 0.32, 6), PYL_STONE, 0.16); add(new THREE.CylinderGeometry(0.42, 0.5, 0.22, 6), PYL_STONE, 0.43);
@@ -5945,6 +5968,7 @@ function energyColumn() {
   const coil = []; for (let i = 0; i <= 120; i++) { const t = i / 120, a = t * Math.PI * 2 * 9; coil.push(new THREE.Vector3(Math.cos(a) * 0.2, 0.6 + t * 1.6, Math.sin(a) * 0.2)); }
   g.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(coil), 240, 0.022, 5, false), copper));
   const coreMat = new THREE.MeshStandardMaterial({ color: 0xffd08a, emissive: 0xff8a2a, emissiveIntensity: 2.2, roughness: 0.2, transparent: true, opacity: 0.95 }); coreMat.userData.noFow = true;
+  if (PYLON_MODEL) { g.clear(); g.add(PYLON_MODEL.clone(true)); const core = add(new THREE.OctahedronGeometry(0.17, 0), coreMat, PYL_CORE_Y, [1, 1.6, 1]); return { g, mats: [copper, coreMat], core }; }
   const core = add(new THREE.OctahedronGeometry(0.2, 0), coreMat, 2.85, [1, 1.7, 1]);
   add(new THREE.CylinderGeometry(0.34, 0.26, 0.12, 6), PYL_IRON, 2.6); add(new THREE.ConeGeometry(0.3, 0.32, 6), PYL_IRON, 3.32);
   return { g, mats: [copper, coreMat], core };
@@ -5952,7 +5976,7 @@ function energyColumn() {
 async function buildPylons() {
   for (let i = 0; i < W4W.PYLON_N; i++) { const p = HX(...W4W.pylonCell(i)), P = { i, p }, col = energyColumn();
     col.g.position.copy(p); col.g.rotation.y = W4W.pylonAngle(i); scene.add(col.g); tag(col.g, 'pylon', String(i)); P.col = col; P.mats = col.mats; P.core = col.core;
-    P.glow = sprite(GLOW, p.x, 2.85, p.z, 1.6, 0xffa64a, 0.9); P.glow.userData.base = 0.9; P.decal = glowDecal(p.x, p.z, 2.2, 0xffa64a, 0.4);
+    P.glow = sprite(GLOW, p.x, PYLON_MODEL ? PYL_CORE_Y : 2.85, p.z, 1.6, 0xffa64a, 0.9); P.glow.userData.base = 0.9; P.decal = glowDecal(p.x, p.z, 2.2, 0xffa64a, 0.4);
     const an = new THREE.Object3D(); an.position.copy(p); scene.add(an); P.L = label(PYLON_NAMES[i], an, 3.6, 'pyl');
     PYL.push(P); }
 }
@@ -5967,7 +5991,7 @@ function stepPylons(dt) {
     P.glow.material.color.copy(AMBER).lerp(WOUND, Math.max(0, 0.5 - s) * 2);
     P.decal.material.opacity = 0.1 + 0.3 * s;
     P.mats?.forEach((m, k) => { m.emissiveIntensity = (k ? 0.6 + 2.2 * s : 0.15 + 0.9 * s) * flick; m.emissive.copy(AMBER).lerp(WOUND, Math.max(0, 0.5 - s) * 2); });
-    if (P.core) { P.core.rotation.y += dt * (0.4 + 1.6 * s); P.core.position.y = 2.85 + Math.sin(tt * 1.4 + P.i) * 0.06; }
+    if (P.core) { P.core.rotation.y += dt * (0.4 + 1.6 * s); P.core.position.y = PYL_CORE_Y + Math.sin(tt * 1.4 + P.i) * 0.06; }
     DOME_U.uPyl.value[P.i] = s;
     P.L.el.textContent = `${PYLON_NAMES[P.i]} · ${Math.round(s * 100)}%${pressed ? ' · pressed' : ''}`; P.L.el.classList.toggle('crack', crack);
     if (crack && !pylWarn[P.i]) { pylWarn[P.i] = 1; log(`${PYLON_NAMES[P.i]} is cracking. The houses on that side will freeze first.`, 'bad', 'world'); }
@@ -6730,5 +6754,5 @@ function loop(now = performance.now()) {
 }
 requestAnimationFrame(loop);
 addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); DPR = Math.min(DPR, dprFor()); renderer.setPixelRatio(DPR); composer.setPixelRatio?.(DPR); renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight); fxaaSize(); });
-window.__w4w = { S, settle, X: () => ({ HD, XV, avatars, predicted, xact, hexAt, warp: ms => XW.warp?.(ms), planTo, goTrip, NOTES, rimeFx, openLibrary, trip, prints: prints.length, rimeAt: (q, r) => XW._rime?.(q, r), stash: o => XW._stash?.(o), letter: o => XW._letter?.(o), hollowList: () => hollow, openPost, openHouse, flash: (show) => { flashT = 0; if (show) setTimeout(() => { if (flashFig) flashFig.position.y = 0; }, 30); }, flashFig: () => flashFig, flashDbg: () => ({ k: flashK, f: FOW_U.uFowFlash.value, back: flashBack?.material.opacity, vis: flashFig?.visible, on: FOW_U.uFowOn.value }), acts: h => { actEl.hidden = false; actEl.innerHTML = h; actSig = h; dressActs(); }, story: o => XW._story?.(o), openGate, openChronicle, openPylon, walkTo, UI, renderFrames, unfollow: () => { follow = false; fly = null; }, hollow, act1Mark: id => act1Mark(id), openBeast: id => openBeast(id), openLibraryRoom: () => openLibraryRoom() }), freePlots, openMaria, ask, addWood, refreshTown, draft: v => (draft = v), camera, controls, updateIce, renderer, scene, __composer: LITE ? null : composer };
+window.__w4w = { S, settle, X: () => ({ HD, PYL, houses, SPECIAL, HX, XV, avatars, predicted, xact, hexAt, warp: ms => XW.warp?.(ms), planTo, goTrip, NOTES, rimeFx, openLibrary, trip, prints: prints.length, rimeAt: (q, r) => XW._rime?.(q, r), stash: o => XW._stash?.(o), letter: o => XW._letter?.(o), hollowList: () => hollow, openPost, openHouse, flash: (show) => { flashT = 0; if (show) setTimeout(() => { if (flashFig) flashFig.position.y = 0; }, 30); }, flashFig: () => flashFig, flashDbg: () => ({ k: flashK, f: FOW_U.uFowFlash.value, back: flashBack?.material.opacity, vis: flashFig?.visible, on: FOW_U.uFowOn.value }), acts: h => { actEl.hidden = false; actEl.innerHTML = h; actSig = h; dressActs(); }, story: o => XW._story?.(o), openGate, openChronicle, openPylon, walkTo, UI, renderFrames, unfollow: () => { follow = false; fly = null; }, hollow, act1Mark: id => act1Mark(id), openBeast: id => openBeast(id), openLibraryRoom: () => openLibraryRoom() }), freePlots, openMaria, ask, addWood, refreshTown, draft: v => (draft = v), camera, controls, updateIce, renderer, scene, __composer: LITE ? null : composer };
 </script>
