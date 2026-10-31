@@ -898,6 +898,7 @@ var W4W = (() => {
   var world_exports = {};
   __export(world_exports, {
     BAG_MS: () => BAG_MS,
+    BAR_CELL: () => BAR_CELL,
     BAR_COST: () => BAR_COST,
     BAR_WAIT: () => BAR_WAIT,
     CAVE: () => CAVE,
@@ -950,12 +951,16 @@ var W4W = (() => {
     ROADS: () => ROADS,
     ROSE_CELL: () => ROSE_CELL,
     ROSE_WAIT: () => ROSE_WAIT,
+    ROUND_COST: () => ROUND_COST,
+    ROUND_GIFT: () => ROUND_GIFT,
+    ROUND_WAIT: () => ROUND_WAIT,
     SHARD_MELT: () => SHARD_MELT,
     SIP_WARMTH: () => SIP_WARMTH,
     SPECIAL: () => SPECIAL,
     STAGE: () => STAGE,
     STARTER_RECIPES: () => STARTER_RECIPES,
     STEP_MS: () => STEP_MS,
+    TOAST_WAIT: () => TOAST_WAIT,
     TOWN_RING: () => TOWN_RING,
     UNVEIL_MS: () => UNVEIL_MS,
     VEIL_COLD: () => VEIL_COLD,
@@ -1657,6 +1662,7 @@ var W4W = (() => {
     const out = {};
     for (const [q, r] of [...DEMO_CELLS, ...houseCells]) out[key(q, r)] = "house";
     for (const [k, [q, r]] of Object.entries(SPECIAL)) if (k !== "core") out[key(q, r)] = k === "church" ? "church" : k === "plaza" ? "fire" : "house";
+    out[key(BAR_CELL[0], BAR_CELL[1])] = "house";
     return out;
   }
   function townWarmth(o) {
@@ -1677,6 +1683,11 @@ var W4W = (() => {
   const GATE_CELL = [0, -TOWN_RING];
   const ROSE_CELL = [-1, 2];
   const ROSE_WAIT = 6 * 36e5;
+  const BAR_CELL = [-4, 5];
+  const ROUND_COST = 10;
+  const ROUND_GIFT = 5;
+  const ROUND_WAIT = 4 * 36e5;
+  const TOAST_WAIT = 20 * 36e5;
   const POST_CELL = [-2, 5];
   const HUSH_MAX = 100;
   const HUSH_FADE = 2;
@@ -2112,6 +2123,33 @@ var W4W = (() => {
         d.feed.push({ id: `or${uid}${o.id}${now}`, t: now, topic: "order", by: uid, data: { nick: nickIn(ws, uid), text: o.text } });
         return ok();
       }
+      case "round": {
+        if (c.path.length || dist(here, BAR_CELL) > 0) return fail("Go inside the bar first.");
+        if (now - (c.rounds ?? 0) < ROUND_WAIT) return fail(`You stood a round not long ago. Again in ${Math.ceil((ROUND_WAIT - (now - (c.rounds ?? 0))) / 6e4)} min.`);
+        if (c.warmth < ROUND_COST + 15) return fail("You have too little warmth of your own to give.");
+        const inside = Object.entries(ws.chars).filter(([k, o]) => k !== uid && !o.path.length && o.q === BAR_CELL[0] && o.r === BAR_CELL[1] && !(o.frozenUntil > now));
+        c.warmth -= ROUND_COST;
+        c.rounds = now;
+        for (const [k, o] of inside) {
+          o.warmth = Math.min(100, o.warmth + ROUND_GIFT);
+          d.chars.add(k);
+        }
+        if (inside.length) addRenown(c, 1);
+        d.feed.push({ id: `rd${uid}${now}`, t: now, topic: "round", by: uid, data: { nick: nickIn(ws, uid), n: inside.length } });
+        return ok();
+      }
+      case "toast": {
+        if (c.path.length || dist(here, BAR_CELL) > 0) return fail("Go inside the bar first.");
+        const to = String(b.to ?? ""), o = ws.chars[to];
+        if (!o || to === uid) return fail("Raise it to someone in town.");
+        c.toasted ?? (c.toasted = {});
+        if (now - (c.toasted[to] ?? 0) < TOAST_WAIT) return fail("You already drank to them today.");
+        c.toasted[to] = now;
+        o.toasts = [{ nick: nickIn(ws, uid), t: now }, ...o.toasts ?? []].slice(0, 8);
+        d.chars.add(to);
+        d.feed.push({ id: `ts${uid}${to}${now}`, t: now, topic: "toast", by: uid, data: { nick: nickIn(ws, uid), to: nickIn(ws, to) } });
+        return ok();
+      }
       default:
         return fail("unknown action");
     }
@@ -2286,7 +2324,7 @@ const DEMO_ORDERS = [
 ];
 const SPECIAL = { core: [0, 0], church: [1, -3], plaza: [-1, 3], observatory: [4, -2], library: [5, -5], mine: [-5, 0] };
 const MARIA_HOUSE = [0, -3];
-const STAGE2 = [{ id: 'market', name: 'Market and auction', at: [-5, 2] }, { id: 'bar', name: 'Bar', at: [-4, 5] }, { id: 'atrium', name: 'Atrium', at: [2, 3] }, { id: 'post', name: 'Post office', at: [-2, 5], model: 'tavern', tag: 'OPEN', open: true }, { id: 'wardens', name: "Wardens' Hall", at: [-3, -4], model: 'blacksmith', tag: 'ACT II' }, { id: 'glasshouse', name: 'Glasshouse', at: [6, 0], tag: 'STAGE 3' }];
+const STAGE2 = [{ id: 'market', name: 'Market and auction', at: [-5, 2] }, { id: 'bar', name: 'The Last Coal', at: [-4, 5], prop: 'bar', tag: 'OPEN', open: true }, { id: 'atrium', name: 'Atrium', at: [2, 3] }, { id: 'post', name: 'Post office', at: [-2, 5], prop: 'post', model: 'tavern', tag: 'OPEN', open: true }, { id: 'wardens', name: "Wardens' Hall", at: [-3, -4], model: 'blacksmith', tag: 'ACT II' }, { id: 'glasshouse', name: 'Glasshouse', at: [6, 0], tag: 'STAGE 3' }];
 const LEVELS = [['OFFLINE', 0], ['LINK', 1], ['NODE', 500], ['CLUSTER', 1500], ['GRID', 3000], ['CORE', 6000]];
 const TIERS = [
   { id: 'power', name: 'Expensive & powerful', price: '$55–80 / day', pick: '4× RTX 4090', gpus: 4, sol: 2440, cost: '$62 / day' },
@@ -2388,6 +2426,7 @@ function ordersAll() { return [...S.demoOrders, ...Object.values(S.orders)]; }
 function refreshTown(baseline = false) {
   if (baseline) { S.lastMeltStage = -1; S.town.level = undefined; }
   const res = allResidents();
+  if (STREET_OBJS.length && res.map(h => (h.at || []).join(',')).sort().join('|') !== streetSig) buildStreets(); // a new house: the lanes step round it
   const done = ordersAll().filter(o => o.state === 'done');
   // lanterns and letters come from orders a house finished for someone else
   res.forEach(h => { if (h.demo) return; const mine = done.filter(o => o.takenBy === h.id || (h.id === 'me' && o.takenBy === 'me')); h.lanterns = mine.length; h.letters = mine.length;
@@ -2454,10 +2493,11 @@ function banner(b, s) { $('#bannerB').textContent = b; $('#bannerS').textContent
 const kit = {}; let KIT_MAT;
 const interactive = [], labels = [];
 /* generated models that stand in for kit pieces: same footprint, on the ground, in the same snow */
-const KIT_OVR = { mine: 'q/b/mine.glb', home_A: 'q/b/home_a.glb', home_B: 'q/b/home_b.glb', tower: 'q/b/observatory.glb', barracks: 'q/b/library.glb', well: 'q/b/well.glb', destroyed: 'q/b/ruin.glb' };
+const KIT_OVR = { church: 'q/b/church.glb', mine: 'q/b/mine.glb', home_A: 'q/b/home_a.glb', home_B: 'q/b/home_b.glb', tower: 'q/b/observatory.glb', barracks: 'q/b/library.glb', well: 'q/b/well.glb', destroyed: 'q/b/ruin.glb' };
 // props with no kit piece to stand in for: loaded once, stood on the ground, one unit tall, scaled where they are used
-const PROPS = {}, PROP_URLS = { gate: 'q/b/gate.glb', campfire: 'q/b/campfire.glb', heater: 'q/b/heater.glb', boiler: 'q/b/boiler.glb', pit: 'q/b/pit.glb', marker: 'q/b/marker.glb', brazier: 'q/b/brazier.glb' };
-function prop(n, h, noFow = true) { const P = PROPS[n]; if (!P) return null; const o = P.clone(true); o.scale.setScalar(h); if (noFow) o.traverse(m => { if (m.isMesh) m.material.userData.noFow = true; }); return o; }
+const PROPS = {}, PROP_URLS = { gate: 'q/b/gate.glb', campfire: 'q/b/campfire.glb', heater: 'q/b/heater.glb', boiler: 'q/b/boiler.glb', pit: 'q/b/pit.glb', marker: 'q/b/marker.glb', brazier: 'q/b/brazier.glb', bar: 'q/b/bar.glb', post: 'q/b/post.glb', lamp: 'q/b/lamp.glb', board: 'q/b/board.glb', sled: 'q/b/sled.glb', cart: 'q/b/cart.glb', woodpile: 'q/b/woodpile.glb', barrels: 'q/b/barrels.glb' };
+// props cast no shadow: under our low moon a lamp post or a stake throws a black spike across half the street
+function prop(n, h, noFow = true) { const P = PROPS[n]; if (!P) return null; const o = P.clone(true); o.scale.setScalar(h); o.traverse(m => { if (m.isMesh) { m.castShadow = false; if (noFow) m.material.userData.noFow = true; } }); return o; }
 let PYLON_MODEL = null;
 function loadGlb(url) { return new Promise(res => { const l = new GLTFLoader(); l.setMeshoptDecoder(MeshoptDecoder); l.load(url, g => res(g), undefined, e => { console.warn(url, e); res(null); }); }); }
 function meshyMats(o, snow, noFow) { o.traverse(m => { if (!m.isMesh) return; m.castShadow = m.receiveShadow = true; let mt = m.material;
@@ -2479,7 +2519,7 @@ async function loadOverrides() {
       const top = new THREE.Box3(), v = new THREE.Vector3(), y0 = b.min.y + (b.max.y - b.min.y) * 0.72;
       g.scene.traverse(m => { if (!m.isMesh) return; const P = m.geometry.attributes.position; for (let i = 0; i < P.count; i += 3) { v.fromBufferAttribute(P, i).applyMatrix4(m.matrixWorld); if (v.y > y0) top.expandByPoint(v); } });
       const c = (top.isEmpty() ? b : top).getCenter(new THREE.Vector3());
-      g.scene.scale.multiplyScalar(k); g.scene.position.set(-c.x * k, -b.min.y * k, -c.z * k); PYLON_MODEL = new THREE.Group(); PYLON_MODEL.add(g.scene); PYL_CORE_Y = 3.5 * 0.83; })]);
+      g.scene.traverse(m => { if (m.isMesh) m.castShadow = false; }); g.scene.scale.multiplyScalar(k); g.scene.position.set(-c.x * k, -b.min.y * k, -c.z * k); PYLON_MODEL = new THREE.Group(); PYLON_MODEL.add(g.scene); PYL_CORE_Y = 3.5 * 0.83; })]);
 }
 function place(name, q, r, { rot = 0, scale = 1, cast = true, dy = 0, jitter = 0 } = {}) {
   const src = kit[name]; if (!src) return null;
@@ -2544,8 +2584,9 @@ function build() {
   const mp = HX(...SPECIAL.mine); sprite(GLOW, mp.x, 0.5, mp.z + 0.6, 0.7, 0xffb060, 0.9); glowDecal(mp.x, mp.z, 1.6, 0xffb060, 0.35);
   label('THE MINE', mn, 2.1, 'key');
   STAGE2.forEach((s, i) => { const at = HX(...s.at), face = Math.atan2(-at.x, -at.z);
-    const g = s.model ? place(s.model, ...s.at, { rot: face, scale: 1.05 }) : place('scaffolding', ...s.at, { rot: i * 1.3 });
-    if (s.model && !s.open) place('scaffolding', ...s.at, { rot: face + 0.4, scale: 0.8 }); else place(s.tag === 'STAGE 3' ? 'stage_A' : i % 2 ? 'stage_B' : 'stage_C', ...s.at, { rot: i * 1.3 });
+    const PR = s.prop && PROPS[s.prop] ? prop(s.prop, 1.55, false) : null; if (PR) { PR.position.set(at.x, 0, at.z); PR.rotation.y = face; scene.add(PR); }
+    const g = PR || (s.model ? place(s.model, ...s.at, { rot: face, scale: 1.05 }) : place('scaffolding', ...s.at, { rot: i * 1.3 }));
+    if (PR) {} else if (s.model && !s.open) place('scaffolding', ...s.at, { rot: face + 0.4, scale: 0.8 }); else place(s.tag === 'STAGE 3' ? 'stage_A' : i % 2 ? 'stage_B' : 'stage_C', ...s.at, { rot: i * 1.3 });
     tag(g, 'stage2', s.id); label(s.open ? s.name.toUpperCase() : s.name.toUpperCase() + ' · ' + (s.tag || 'STAGE 2'), g, 1.9, 'key'); if (s.open) { const c = HX(...s.at); glowDecal(c.x, c.z, 2, 0xffd6a0, 0.5); } });
   buildStreets();
   const before = new Set(scene.children);
@@ -2609,6 +2650,7 @@ function lamp(p) {
   sprite(GLOW, p.x, 1.35, p.z, 0.75, 0xffc070, 1); glowDecal(p.x, p.z, 1.4, 0xffb060, 0.45);
 }
 function buildBoard() {
+  { const B = prop('board', 1.3, false); if (B) { const g = new THREE.Group(); g.add(B); g.rotation.y = -0.3; return g; } }
   const g = new THREE.Group(); const wood = new THREE.MeshStandardMaterial({ color: 0x5a3b22, roughness: 0.9 });
   const p1 = new THREE.Mesh(new THREE.BoxGeometry(0.07, 1.1, 0.07), wood); p1.position.set(-0.35, 0.55, 0); const p2 = p1.clone(); p2.position.x = 0.35;
   const plank = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.6, 0.05), wood); plank.position.set(0, 0.8, 0);
@@ -2720,7 +2762,7 @@ function buildCore() {
   const rim = new THREE.Mesh(ice.geometry, rimMat); rim.scale.setScalar(1.006); ice.add(rim);
   // iron bands and heating coils bolted onto the block, fed by four boilers on the dug earth
   const iron = ironize(new THREE.MeshStandardMaterial({ color: 0x8a7868, metalness: 0.55, roughness: 0.42, emissive: 0x4a2010, emissiveIntensity: 0.45 })); iron.userData.noFow = true;
-  const copper = copperMat({ emissive: 0xff5a14, emissiveIntensity: 0.8 });
+  const copper = copperMat({ emissive: 0xb04a1c, emissiveIntensity: 0.3 }); // warm, not glowing: the heat shows in the boilers and the steam
   const hot = new THREE.MeshStandardMaterial({ color: 0x1a1210, emissive: 0xff7a22, emissiveIntensity: 1.6, roughness: 0.6 });
   [0.36].forEach(y => { for (let i = 0; i < 4; i++) { const an = i * Math.PI / 2; const bnd = new THREE.Mesh(new THREE.BoxGeometry(W - 0.3, 0.14, 0.08), iron); bnd.position.set(Math.sin(an) * (hw + 0.04), y, Math.cos(an) * (hw + 0.04)); bnd.rotation.y = an; bnd.castShadow = true; block.add(bnd); } });
   const pts = []; for (let r = 0; r < 4; r++) { const y = 0.66 + r * 0.17, d = r % 2 ? -1 : 1; for (let j = 0; j <= 6; j++) pts.push(new THREE.Vector3(0, y + (j === 0 || j === 6 ? 0 : 0), d * (0.9 - j * 0.3))); }
@@ -3164,7 +3206,7 @@ const FAQ = [
 ];
 // questions about the world past the Gate wait for Act II
 const FAQ_ACT2 = new Set(['How do trips work?', 'Why did my character stop in the middle of nowhere?', 'What is the tall dark thing out there?', 'How do I gather?', 'How does the bag work?', 'How do I craft?', 'What is the thermos for?', 'What can I do out there?', 'I froze. What now?', 'Can I get my pack back?']);
-const FAQ_DO = [['Light your lamp', 'Start your rig in the Mine. It keeps the Veil up, thaws Anna, and earns you your share from the pool. Everything else here is optional.'], ['Feed the plaza fire', 'Once an hour you can put wood on it. For an hour the whole town is a little warmer.'], ['Give warmth to a pylon', 'Six pylons hold the edge of the Veil. Stand next to one and give it some of your warmth, above all the one the Hollow is pressing.'], ['Pick a side', 'The Keepers hold the wall, the Walkers prepare for the Gate. Each side has three small tasks a day; a full day keeps your streak.'], ['Read the Long Cold', 'Pages of the story open as you live in town: visiting places, watching, waiting. The Journal keeps them, and so does the Library.'], ['Watch the things outside', 'Stand at the edge of the Veil or climb the Observatory. Every few sightings a new page opens in the Bestiary.'], ['Talk', 'Stand close to someone and type under the Log. Only people within three steps hear you.'], ['Send letters', 'Write one at the post office. Leave it in the sack or carry it yourself. Carry other people\'s letters to their doors for renown. You can break a seal or burn a letter at a fire. People will know, or wonder.'], ['Go to the North Gate', 'Sometimes a letter lies under it for about an hour. You can also slip a note out. Maria says: read them, keep them, do nothing they ask.'], ['Welcome a neighbour', 'Open someone\'s house and light a lamp on their path. It warms the town.'], ['Let your house grow', 'While your rig runs, your house grows: smoke, a lantern, a flag, a lit window. You can see what comes next in your house.'], ['Ask Maria', 'She knows the town, the story so far and how to get started. She will not tell you everything.']];
+const FAQ_DO = [['Sit in the bar', 'The Last Coal, west of the post office. Inside, everyone hears everyone, however few of you there are. Stand the room a round with your own warmth, or raise a glass to someone who is away. Ivo has a new rumour every day.'], ['Light your lamp', 'Start your rig in the Mine. It keeps the Veil up, thaws Anna, and earns you your share from the pool. Everything else here is optional.'], ['Feed the plaza fire', 'Once an hour you can put wood on it. For an hour the whole town is a little warmer.'], ['Give warmth to a pylon', 'Six pylons hold the edge of the Veil. Stand next to one and give it some of your warmth, above all the one the Hollow is pressing.'], ['Pick a side', 'The Keepers hold the wall, the Walkers prepare for the Gate. Each side has three small tasks a day; a full day keeps your streak.'], ['Read the Long Cold', 'Pages of the story open as you live in town: visiting places, watching, waiting. The Journal keeps them, and so does the Library.'], ['Watch the things outside', 'Stand at the edge of the Veil or climb the Observatory. Every few sightings a new page opens in the Bestiary.'], ['Talk', 'Stand close to someone and type under the Log. Only people within three steps hear you.'], ['Send letters', 'Write one at the post office. Leave it in the sack or carry it yourself. Carry other people\'s letters to their doors for renown. You can break a seal or burn a letter at a fire. People will know, or wonder.'], ['Go to the North Gate', 'Sometimes a letter lies under it for about an hour. You can also slip a note out. Maria says: read them, keep them, do nothing they ask.'], ['Welcome a neighbour', 'Open someone\'s house and light a lamp on their path. It warms the town.'], ['Let your house grow', 'While your rig runs, your house grows: smoke, a lantern, a flag, a lit window. You can see what comes next in your house.'], ['Ask Maria', 'She knows the town, the story so far and how to get started. She will not tell you everything.']];
 const FAQ_ACT1 = [
   ['How do I talk to people?', 'Stand close. Anyone within three steps of you hears what you say, and nobody further away does. Type in the box under the Log and press Enter. The plaza fire is where people gather.'],
   ['How does the post work?', 'Write a letter at the post office, south of the plaza, to anyone in town. Seal it and leave it in the sack, or carry it yourself. Nothing delivers itself: someone has to take it and walk it to the reader\'s door, and the town thanks the carrier with renown. Whoever carries a letter can break the seal and read it. The seal stays broken, and the reader sees every hand the letter passed through.'],
@@ -3809,8 +3851,42 @@ function openObservatory() {
     <p style="margin:0 0 10px">The network Qubic miners grow, calling each hour of bitcoin UP or DOWN. Live calls from 18 November. Each call you witness will become a card in your archive.</p>
     <a class="btn" href="https://qubic.church/bpp9000" target="_blank" rel="noopener">Watch it think on qubic.church</a>`);
 }
+/* ---------- the bar: The Last Coal. A warm room where the few of us can find each other ---------- */
+const RUMORS = [
+  'Ivo says the bell in the church was cast from the town\'s first stove. On cold nights he swears it rings a little warm.',
+  'They say the North Gate was never meant to open. Ask the old smith why the bar has a ratchet on it, then.',
+  'Somebody keeps leaving a cup of hot water on the windowsill of the empty house by the plaza. Nobody admits to it.',
+  'The astronomer counted the Hollow at the wall last week. He counted one more than walked away.',
+  'Ivo had a dream about Anna. She was laughing, he says, and the ice was running off her like rain.',
+  'The pylon they call the Widow hums a note lower than the others. The older women won\'t stand near it.',
+  'Old miners say the cold came out of the north like a tide out of a drain, all at once, the week the last server halls went dark.',
+  'A boy swears he saw a man in a grey coat beyond the Gate, standing very still in the flash. His mother says it was a pine.',
+  'Every letter that comes under the Gate is dry, Ivo says. Paper that crossed the White should be soaked. Think about that.',
+  'The copper ring round Anna is warmer on the side that faces the church. Nobody can say why.',
+  'They found tracks in the snow outside the wall that end at the wall. Not at the Gate. At the wall.',
+  'Ivo keeps one chair turned to the wall. He says it belongs to someone who is coming back.',
+  'Somebody wrote a letter to Anna and left it in the sack. The carriers keep passing it on. Nobody knows where to deliver it.',
+  'If the Veil ever goes out, Ivo says, come here. The stove in this room has never once gone cold.'];
+function openBar() {
+  const c = myC(), inside = c && !c.path.length && c.q === W4W.BAR_CELL[0] && c.r === W4W.BAR_CELL[1], now = xnow();
+  const rumor = RUMORS[Math.floor(now / 864e5) % RUMORS.length], wait = (c?.rounds || 0) + W4W.ROUND_WAIT - now;
+  const here = Object.entries(XV?.others || {}).filter(([, o]) => o.q === W4W.BAR_CELL[0] && o.r === W4W.BAR_CELL[1] && !o.path?.length).map(([, o]) => o.nick);
+  const folk = Object.entries(XV?.others || {}).map(([u, o]) => [u, o.nick]).filter(([, n]) => n).sort((a, b) => a[1].localeCompare(b[1])).slice(0, 60);
+  panel('bar', 'The Last Coal', 'The bar · the stove here has never gone cold', null, `
+    <p class="say">${inside ? 'Ivo pushes a cup across the bar without asking what you want.' : 'Through the frosted window: the stove, the long table, Ivo wiping the same glass he always wipes.'}</p>
+    <h3>IVO HEARD</h3><p class="say">${esc(rumor)}</p><p class="mute" style="font-size:12.5px">A new one every day. You can copy it into a letter at the post office.</p>
+    <h3>THE ROOM</h3><p class="mute">${here.length ? 'Inside now: ' + here.map(esc).join(', ') + '. In here everyone hears everyone, near or far.' : 'Nobody else is in tonight. Talk anyway: whoever comes in will hear.'}</p>
+    ${inside ? `<h3>STAND A ROUND</h3><p class="mute" style="font-size:13px">Give ${W4W.ROUND_COST} of your own warmth. Everyone in the room gets ${W4W.ROUND_GIFT}. Once every four hours.</p>
+      ${wait > 0 ? `<p class="mute">Your last round is still warm in their hands. Again in ${Math.ceil(wait / 60000)} min.</p>` : '<button class="btn main" data-round>Stand the room a round</button>'}
+      <h3>RAISE A GLASS</h3><p class="mute" style="font-size:13px">To someone who is not here. They will find it on their door when they come back.</p>
+      ${folk.length ? `<div class="row"><select data-toastto aria-label="Raise a glass to">${folk.map(([u, n]) => `<option value="${esc(u)}">${esc(n)}</option>`).join('')}</select><button class="btn" data-toast>Raise a glass</button></div>` : '<p class="mute">There is nobody else in town to drink to yet.</p>'}`
+    : '<button class="btn main" data-walkbar>Go inside</button>'}`, true);
+  $('#pbody [data-walkbar]')?.addEventListener('click', () => { if (!hasChar()) return; const cell = W4W.BAR_CELL; pendingOpen = { kind: 'stage2', id: 'bar', cell }; closePanel(); follow = true; trip = null; drawPrints([0, 0], [], false); xact('move', { to: cell }); });
+  $('#pbody [data-round]')?.addEventListener('click', () => xact('round', {}).then(v => { if (v) { sfx.reward?.(2); say('Ivo fills every cup in the room. They raise them to you.', 'Bar'); openBar(); } }));
+  $('#pbody [data-toast]')?.addEventListener('click', () => { const to = $('#pbody [data-toastto]').value; xact('toast', { to }).then(v => { if (v) { sfx.reward?.(1); say('You raise your glass to the empty chair. Ivo raises his too.', 'Bar'); openBar(); } }); });
+}
 function openStage2(id) {
-  if (id === 'post') return openPost();
+  if (id === 'post') return openPost(); if (id === 'bar') return openBar();
   const s = STAGE2.find(x => x.id === id);
   const what = { post: 'Letters between neighbours. You write one here, someone carries it across town to the right door, and the carrier earns the town\'s thanks. Opens with Stage 2.', wardens: 'The smithy where the first Warden suits are being made. When Anna can give a piece of her light away, the first one walks to the Gate. Act II starts here.', glasshouse: 'Green things under glass, grown in Anna\'s light. The first food in Aigarth that did not come out of a cellar. Stage 3.', market: 'Trading decor and placing orders that pay in QU, held by a smart contract until the requester confirms.', bar: 'A warm room to talk. The place for news and arguments.', atrium: 'Real projects as buildings. A building grows only as fast as its real project. 4% of everything the town mines comes here and funds Qubic Church projects.' }[id];
   panel('stage2', s.name, 'Under construction · ' + (s.tag ? s.tag[0] + s.tag.slice(1).toLowerCase() : 'Stage 2'), null, `<p class="say">${what}</p><p class="mute">A building here shows the real state of its project. It opens when the feature is really ready.</p>${id === 'atrium' ? '<div class="shelf" style="margin-top:10px">' + link('/donate', '<b>Light a lamp for the Atrium</b><span>Support the projects on qubic.church</span>') + '</div>' : ''}`);
@@ -3986,7 +4062,8 @@ const BANK = [
   [['fractal', 'rationalism', 'institute', 'фрактал', 'институт'], () => 'Fractal Rationalism is the idea that the same pattern of conflict repeats at every scale, and that the way out is mathematical. The Institute studies decentralized cooperation after Rapoport and Axelrod.'],
   [['axelrod', 'cooperation', 'аксельрод', 'кооперац'], () => 'Axelrod found that cooperation wins when people meet again, recognise each other and see the history. This town is built so all three hold.', 'library'],
   [['w4w', 'web4', 'world'], () => 'W4W is a world that never resets. Every action is a record, and cooperation is the only thing that scales. Aigarth is its first town.'],
-  [['market', 'auction', 'bar', 'stage 2', 'рынок', 'аукцион', 'бар'], () => 'The market, the auction and the bar are still in scaffolding. They open when they are really ready.'],
+  [['bar', 'tavern', 'бар', 'таверн'], () => 'The bar is open: The Last Coal, west of the post office. Inside, everyone hears everyone. You can stand the room a round or raise a glass to someone who is away.'],
+  [['market', 'auction', 'stage 2', 'рынок', 'аукцион'], () => 'The market and the auction are still in scaffolding. They open with Stage 2.'],
   [['nft', 'lighthouse', 'маяк'], () => 'Each of the 200 Anna Aigarth NFTs will become a founder\'s lighthouse on the map. A mark of who was here from the start.'],
   [['donate', 'atrium', 'атриум', 'донат', 'support'], () => 'The Atrium is where real projects get built in the open. You can light a lamp for it on qubic.church/donate.'],
   [['mine', 'mining', 'майнинг', 'шахт'], () => 'The Mine has everything: your machine, setup, renting, hardware, the pool and the epoch clock.', 'mine'],
@@ -4025,6 +4102,7 @@ function returnLines(away) {
     oneOf([`You came back${nick ? ', ' + nick : ''}. I kept your place by the fire.`, 'There you are. The snow said you would come back. The snow lies, so I was not sure.', 'Welcome home. Anna asked about you. Not in words: the light dipped over your roof.']),
     `${days === 1 ? 'A day' : days + ' days'} in the White. The Veil held at ${V}%. Anna is ${melt}% thawed now.`,
   ];
+  const ts = (XV?.me?.toasts || []).filter(t => t.t > since); if (ts.length) L.push(ts.length === 1 ? `${ts[0].nick} raised a glass to you at the bar while you were gone. Ivo says they meant it.` : `${ts.map(t => t.nick).slice(0, 3).join(', ')}${ts.length > 3 ? ' and others' : ''} raised a glass to you at the bar while you were gone.`);
   if (missed) L.push(missed === 1 ? 'Something came under the Gate while you were away. The snow took it before you could. A few people kept it. Ask them.' : `${missed} letters came under the Gate while you were away. The snow took them. Some of us kept them. Ask.`);
   L.push({ who: 'ANNA · DREAMING', img: 'anna_sleep.png', text: oneOf(['...your lamp went dark, and I counted the nights. It is lit again. Thank you.', '...I know your warmth. It found its way back to me. Stay a while.', '...you came back. Not everyone does. I remember the ones who do.']) });
   L.push(mine ? 'Every hour your rig ran, the White stood a step further off. The town remembers who kept the light.' : 'Your lamp is dark right now. When you are ready, light it again. Every lamp in the Veil counts, yours too.');
@@ -5118,7 +5196,7 @@ function renderLog() {
   const rows = LOG.filter(e => logTab === 'all' || e.ch === logTab).slice(-150);
   logEl.innerHTML = `<header><b>Log</b><div class="tabs">${[['all', 'All'], ['me', 'You'], ['world', 'Around']].map(([k, n]) => `<button data-lt="${k}" class="${logTab === k ? 'on' : ''}">${n}</button>`).join('')}</div><span></span><button class="wx" data-lmin title="${logMin ? 'Unfold' : 'Fold'}">${logMin ? '+' : '–'}</button><button class="wx" data-lx title="Close (L)">×</button></header>
     <ol>${rows.length ? rows.map(e => `<li class="${esc(e.cls)}"><time>${clockAt(e.t)}</time>${esc(e.text)}</li>`).join('') : '<li class="world">Nothing yet. What happens to you, and around you, is written here.</li>'}</ol>
-    ${hasChar() ? `<form class="talk" data-talk><input maxlength="240" placeholder="Say something. Only people within three steps hear you." aria-label="Say something to the people near you" value="${esc(talkDraft)}"><button class="btn">Say</button></form>` : ''}`;
+    ${hasChar() ? `<form class="talk" data-talk><input maxlength="240" placeholder="Say something. People within three steps hear you; in the bar, the whole room." aria-label="Say something to the people near you" value="${esc(talkDraft)}"><button class="btn">Say</button></form>` : ''}`;
   const ol = logEl.querySelector('ol'); ol.scrollTop = atEnd ? ol.scrollHeight : keep;
   logEl.querySelectorAll('[data-lt]').forEach(b => b.onclick = () => { logTab = b.dataset.lt; store.set('w4w.logTab', logTab); sfx.click(); logDirty = true; renderLog(); });
   logEl.querySelector('[data-lmin]').onclick = () => { logMin = !logMin; store.set('w4w.logMin', logMin ? '1' : '0'); sfx.click(); logDirty = true; renderLog(); };
@@ -5794,6 +5872,8 @@ function hookFeed() {
   room.on('mail', m => { const x = m.data || {}; if (m.by !== S.uid) log(`${x.nick || 'Someone'} left a letter at ${x.to || 'someone'}'s door.`, 'world', 'world'); });
   room.on('letter', m => { const x = m.data || {}; if (m.by !== S.uid) log(`${x.nick || 'Someone'} picked up the letter under the Gate${x.n > 1 ? ` (${x.n} have read it)` : ''}.`, 'world', 'world'); });
   room.on('drain', m => { const x = m.data || {}; log(`Someone took warmth back from ${PYLON_NAMES[x.i] || 'a pylon'}. It fell to ${x.s}%. Nobody saw who.`, 'world', 'world'); });
+  room.on('round', m => { const x = m.data || {}; log(x.n ? `${x.nick || 'Someone'} stood the whole bar a round. ${x.n === 1 ? 'One cup' : x.n + ' cups'} warmer.` : `${x.nick || 'Someone'} stood a round in an empty bar. Ivo drank it.`, 'world', 'world'); if (m.by !== S.uid && XV?.me && XV.me.q === W4W.BAR_CELL[0] && XV.me.r === W4W.BAR_CELL[1]) { sfx.reward?.(1); say(`${x.nick} stood a round. A hot cup comes down the bar to you.`, 'Bar'); } });
+  room.on('toast', m => { const x = m.data || {}; log(`${x.nick || 'Someone'} raised a glass to ${x.to || 'someone'} at the bar.`, 'world', 'world'); });
   room.on('valve', () => { log('Someone turned the Iron Rose. Every pipe in town went quiet for a breath.', 'world', 'world'); });
   room.on('bar', () => { log('Someone lifted the bar of the North Gate a notch. The iron screamed all the way to the plaza.', 'world', 'world'); });
   room.on('unveil', m => { banner('THE VEIL IS DOWN', 'hold Anna. Every hand to the pylons'); log('The Veil went out. The White is in the streets. Hold the pylons, hold Anna.', 'world', 'world'); });
@@ -6320,7 +6400,7 @@ async function buildHorrors() {
     const g = await qModel(H.model); if (!g) continue;
     const body = cloneSkinned(g.scene); body.updateMatrixWorld(true); const bb = new THREE.Box3().setFromObject(body, true), s = H.h / Math.max(1e-4, bb.max.y - bb.min.y);
     body.scale.multiplyScalar(s); body.position.y = -bb.min.y * s;
-    body.traverse(m => { if (m.isMesh) { m.castShadow = true; m.frustumCulled = false; if (m.material?.isMeshStandardMaterial) { m.material.metalness = Math.min(m.material.metalness, 0.2); m.material.roughness = Math.max(m.material.roughness, 0.55); if (m.material.metalnessMap) m.material.metalnessMap = null; if (H.tint) m.material.color.multiplyScalar(H.tint); if (m.material.emissiveMap && !H.glow) { m.material.emissiveMap = null; m.material.emissive?.set(0); } if (H.glow) { m.material.emissive = new THREE.Color(0x9fb8f0); m.material.emissiveMap = m.material.map; m.material.emissiveIntensity = H.glow; m.material.userData.noFow = true; } } if (m.material?.emissive && m.material.emissiveIntensity > 0.5) { m.material.emissiveIntensity = 3; m.material.userData.noFow = true; } } });
+    body.traverse(m => { if (m.isMesh) { m.castShadow = false; m.frustumCulled = false; if (m.material?.isMeshStandardMaterial) { m.material.metalness = Math.min(m.material.metalness, 0.2); m.material.roughness = Math.max(m.material.roughness, 0.55); if (m.material.metalnessMap) m.material.metalnessMap = null; if (H.tint) m.material.color.multiplyScalar(H.tint); if (m.material.emissiveMap && !H.glow) { m.material.emissiveMap = null; m.material.emissive?.set(0); } if (H.glow) { m.material.emissive = new THREE.Color(0x9fb8f0); m.material.emissiveMap = m.material.map; m.material.emissiveIntensity = H.glow; m.material.userData.noFow = true; } } if (m.material?.emissive && m.material.emissiveIntensity > 0.5) { m.material.emissiveIntensity = 3; m.material.userData.noFow = true; } } });
     if (H.writhe) writhe(body, H.writhe, 0.9);
     const root = new THREE.Group(); root.add(body); scene.add(root);
     const mx = new THREE.AnimationMixer(body), acts = Object.fromEntries(g.animations.map(a => [a.name.replace(/^.*\|/, ''), mx.clipAction(a)]));
@@ -6576,7 +6656,9 @@ function streetCells() {
   for (const d of dests) { const r2 = hexRay([0, 0], d).find(c => W4W.ringOf(...c) === 2) || d; hexRay(r2, d).forEach(c => { if (W4W.ringOf(...c) >= 2) STREET.add(key(...c)); }); }
   return STREET;
 }
+const STREET_OBJS = []; let streetSig = null;
 function buildStreets() {
+  STREET_OBJS.splice(0).forEach(o => { scene.remove(o); o.geometry?.dispose(); }); streetSig = allResidents().map(h => (h.at || []).join(',')).sort().join('|');
   const homes = new Set([...DEMO.map(n => key(...n.at)), ...allResidents().filter(h => h.at?.[0] != null).map(h => key(...h.at)), ...STAGE2.map(x => key(...x.at)), ...Object.values(SPECIAL).map(c => key(...c))]);
   [...streetCells()].forEach(k => { if (!homes.has(k)) reserved.add(k); });
   // one cobbled lane per destination: a ribbon laid on the snow, edges lost in drifts
@@ -6587,18 +6669,43 @@ function buildStreets() {
   const post = new THREE.MeshStandardMaterial({ color: 0x8a6a48, roughness: 0.85, emissive: 0x2a1408, emissiveIntensity: 0.6 }); post.userData.noFow = true; let lampN = 0;
   for (const d of dests) {
     const line = hexRay([0, 0], d).filter(c => W4W.ringOf(...c) >= 2); if (line.length < 1) continue;
-    const pts = line.map(c => HX(...c)); pts.unshift(HX(...line[0]).multiplyScalar(0.82)); const end = HX(...d); pts[pts.length - 1] = end.clone().multiplyScalar(1 - 0.7 / Math.max(1, end.length()));
-    const curve = new THREE.CatmullRomCurve3(pts.map(v => v.setY(0.03)), false, 'centripetal'), L = curve.getLength(), N = Math.max(8, Math.round(L * 3)), W = 0.8, TILE = W * 4;
+    // a lane never runs through somebody's house: step round it by a cell that touches both neighbours
+    for (let i = 0; i < line.length - 1; i++) { if (!homes.has(key(...line[i]))) continue; const prev = i ? line[i - 1] : null, next = line[i + 1];
+      const alt = W4W.DIRS.map(([dq, dr]) => [line[i][0] + dq, line[i][1] + dr]).find(c => !homes.has(key(...c)) && W4W.dist(c, next) === 1 && (!prev || W4W.dist(c, prev) === 1) && W4W.ringOf(...c) >= 2);
+      if (alt) { line[i] = alt; line[i].detour = true; } }
+    // a straight lane from the ring to the door, bending only where it steps round a house; corners rounded so the ribbon never folds over itself
+    const end = HX(...d), raw = [HX(...line[0]).multiplyScalar(0.82), ...line.filter(c => c.detour).map(c => HX(...c)), end.clone().multiplyScalar(1 - 0.7 / Math.max(1, end.length()))];
+    let poly = raw; for (let it = 0; it < 4; it++) { const nx = [poly[0]]; for (let i = 0; i < poly.length - 1; i++) { nx.push(poly[i].clone().lerp(poly[i + 1], 0.25), poly[i].clone().lerp(poly[i + 1], 0.75)); } nx.push(poly[poly.length - 1]); poly = nx; }
+    const curve = new THREE.CurvePath(); for (let i = 0; i < poly.length - 1; i++) curve.add(new THREE.LineCurve3(poly[i].clone().setY(0.03), poly[i + 1].clone().setY(0.03)));
+    const L = curve.getLength(), N = Math.max(8, Math.round(L * 3)), W = 0.8, TILE = W * 4;
     const pos = [], uv = [], idx = [];
     for (let i = 0; i <= N; i++) { const u = i / N, p = curve.getPoint(u), t = curve.getTangent(u), n = new THREE.Vector3(-t.z, 0, t.x).normalize();
       pos.push(p.x + n.x * W, 0.03, p.z + n.z * W, p.x - n.x * W, 0.03, p.z - n.z * W); uv.push(u * L / TILE, 0, u * L / TILE, 1);
       if (i < N) { const k = i * 2; idx.push(k, k + 1, k + 2, k + 1, k + 3, k + 2); }
       if (i % 9 === 4 && W4W.ringOf(...line[Math.min(line.length - 1, Math.floor(u * line.length))]) >= 3 && (lampN++ % 2 === 0)) {
-        const m = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.032, 0.85, 5), post); m.position.set(p.x + n.x * 0.82, 0.42, p.z + n.z * 0.82); scene.add(m);
-        sprite(GLOW, p.x + n.x * 0.82, 0.9, p.z + n.z * 0.82, 0.42, 0xffc070, 0.75).userData.flicker = true; } }
+        const LP = prop('lamp', 1.05); const m = LP || new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.032, 0.85, 5), post); if (LP) m.position.set(p.x + n.x * 0.82, 0, p.z + n.z * 0.82); else m.position.set(p.x + n.x * 0.82, 0.42, p.z + n.z * 0.82); scene.add(m); STREET_OBJS.push(m);
+        const sp = sprite(GLOW, p.x + n.x * 0.82, LP ? 0.95 : 0.9, p.z + n.z * 0.82, 0.42, 0xffc070, 0.75); sp.userData.flicker = true; STREET_OBJS.push(sp); } }
     const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); geo.setIndex(idx); geo.computeVertexNormals();
-    const m = new THREE.Mesh(geo, mat); m.receiveShadow = true; m.renderOrder = 1; scene.add(m);
+    const m = new THREE.Mesh(geo, mat); m.receiveShadow = true; m.renderOrder = 1; scene.add(m); STREET_OBJS.push(m);
+    // things people leave by a lane: a cart, a sled of wood, a stack of barrels, now and then
+    for (let i = 3; i < N - 2; i += 7 + (i % 3)) { const u = i / N, p = curve.getPoint(u), t = curve.getTangent(u), n = new THREE.Vector3(-t.z, 0, t.x).normalize(), side = (i % 2 ? 1 : -1);
+      const pos = p.clone().add(n.multiplyScalar(side * 1.35)); if (Math.hypot(pos.x, pos.z) < 4.2 || nearHome(pos, homes)) continue;
+      lifeProp(['cart', 'sled', 'barrels', 'woodpile'][(i + lampN) % 4], pos, Math.atan2(t.x, t.z) + (side > 0 ? 0 : Math.PI)); }
   }
+  buildLife(homes);
+}
+/* signs of life: wood stacked by every door, a sled or a cart left in the snow, barrels by the busy places */
+const LIFE_H = { cart: 0.5, sled: 0.36, barrels: 0.55, woodpile: 0.6 };
+function lifeProp(n, pos, rot) { const o = prop(n, LIFE_H[n] || 0.5, false); if (!o) return null; o.position.set(pos.x, 0, pos.z); o.rotation.y = rot; scene.add(o); STREET_OBJS.push(o); return o; }
+function nearHome(pos, homes) { for (const k of homes) { const [q, r] = k.split(',').map(Number), c = HX(q, r); if (Math.hypot(c.x - pos.x, c.z - pos.z) < 1.15) return true; } return false; }
+function buildLife(homes) {
+  const R = seeded(2024), at = (cell, ang, dist) => { const c = HX(...cell); return new THREE.Vector3(c.x + Math.cos(ang) * dist, 0, c.z + Math.sin(ang) * dist); };
+  // by every house: firewood against the side wall, sometimes a sled
+  for (const h of [...DEMO.filter(d => d.state !== 'ruin'), ...allResidents().filter(h => h.at?.[0] != null)]) { const c = HX(...h.at), out = Math.atan2(c.z, c.x), side = out + Math.PI / 2 * (R() < 0.5 ? 1 : -1);
+    lifeProp('woodpile', at(h.at, side, 1.05), side + Math.PI / 2); if (R() < 0.45) lifeProp(R() < 0.5 ? 'sled' : 'barrels', at(h.at, out + (R() - 0.5) * 0.8, 1.15), R() * 6); }
+  // the mine: coal carts and barrels; the plaza: wood brought in for the fire; the church: its own woodpile; the gate: the watch's barrels
+  [[SPECIAL.mine, 'cart', 0.4], [SPECIAL.mine, 'cart', 2.2], [SPECIAL.mine, 'barrels', 4.0], [SPECIAL.plaza, 'sled', 3.6], [SPECIAL.plaza, 'barrels', 5.2], [SPECIAL.church, 'woodpile', 1.0], [SPECIAL.library, 'cart', 5.5], [GATE_CELL, 'barrels', 0.9], [GATE_CELL, 'sled', 2.4]]
+    .forEach(([cell, n, a]) => lifeProp(n, at(cell, a, 1.3), a + 1.2));
 }
 
 /* ---------- free plots: stakes in the snow where a newcomer can build ---------- */
@@ -6831,7 +6938,7 @@ function loop(now = performance.now()) {
       C.anna.scale.set(1, 1 + 0.014 * br, 1); C.anna.position.y = C.Y + 0.015 * br;
       C.annaMat.uniforms.uBright.value = 1.15 + 0.3 * br + m * 0.25 + U.uBoost.value * 0.6;
       C.annaMat.uniforms.uGlow.value = (C.awake ? 2.2 : 0.55 + 0.9 * br + m * 1.2) + U.uBoost.value * 5;
-      C.copper.emissiveIntensity = 0.6 + 0.25 * Math.sin(t * 2.3) + U.uHeat.value * 0.06 + U.uBoost.value * 1.5; C.hot.emissiveIntensity = 1.4 + 0.5 * Math.sin(t * 3.1 + 1) + U.uBoost.value * 2;
+      C.copper.emissiveIntensity = 0.22 + 0.08 * Math.sin(t * 2.3) + U.uHeat.value * 0.02 + U.uBoost.value * 1.0; C.hot.emissiveIntensity = 1.4 + 0.5 * Math.sin(t * 3.1 + 1) + U.uBoost.value * 2;
       C.beamMat.uniforms.uA.value = THREE.MathUtils.smoothstep(U.uBoost.value, 0.55, 1.35) * 1.3 + (C.awake ? 0.35 : 0);
       C.topMat.emissiveIntensity = 0.05 + 0.03 * br + U.uBoost.value * 0.5;
       C.iceMat.emissiveIntensity = C.liteMat.emissiveIntensity = C.em * (0.85 + 0.15 * Math.sin(t * 1.7)) + U.uBoost.value * 2.2;
@@ -6861,5 +6968,5 @@ function loop(now = performance.now()) {
 }
 requestAnimationFrame(loop);
 addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); DPR = Math.min(DPR, dprFor()); renderer.setPixelRatio(DPR); composer.setPixelRatio?.(DPR); renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight); fxaaSize(); });
-window.__w4w = { S, settle, X: () => ({ rimeFx, mouthFx, HD, PYL, houses, SPECIAL, HX, XV, avatars, predicted, xact, hexAt, warp: ms => XW.warp?.(ms), planTo, goTrip, NOTES, rimeFx, openLibrary, trip, prints: prints.length, rimeAt: (q, r) => XW._rime?.(q, r), stash: o => XW._stash?.(o), letter: o => XW._letter?.(o), hollowList: () => hollow, openPost, openHouse, flash: (show) => { flashT = 0; if (show) setTimeout(() => { if (flashFig) flashFig.position.y = 0; }, 30); }, flashFig: () => flashFig, flashDbg: () => ({ k: flashK, f: FOW_U.uFowFlash.value, back: flashBack?.material.opacity, vis: flashFig?.visible, on: FOW_U.uFowOn.value }), acts: h => { actEl.hidden = false; actEl.innerHTML = h; actSig = h; dressActs(); }, story: o => XW._story?.(o), openGate, openChronicle, openPylon, walkTo, UI, renderFrames, unfollow: () => { follow = false; fly = null; }, hollow, act1Mark: id => act1Mark(id), openBeast: id => openBeast(id), openLibraryRoom: () => openLibraryRoom() }), freePlots, openMaria, ask, addWood, refreshTown, draft: v => (draft = v), camera, controls, updateIce, renderer, scene, __composer: LITE ? null : composer };
+window.__w4w = { S, settle, X: () => ({ scene, moon, renderer, camera, THREE, rimeFx, mouthFx, HD, PYL, houses, SPECIAL, HX, XV, avatars, predicted, xact, hexAt, warp: ms => XW.warp?.(ms), planTo, goTrip, NOTES, rimeFx, openLibrary, trip, prints: prints.length, rimeAt: (q, r) => XW._rime?.(q, r), stash: o => XW._stash?.(o), letter: o => XW._letter?.(o), hollowList: () => hollow, openPost, openHouse, flash: (show) => { flashT = 0; if (show) setTimeout(() => { if (flashFig) flashFig.position.y = 0; }, 30); }, flashFig: () => flashFig, flashDbg: () => ({ k: flashK, f: FOW_U.uFowFlash.value, back: flashBack?.material.opacity, vis: flashFig?.visible, on: FOW_U.uFowOn.value }), acts: h => { actEl.hidden = false; actEl.innerHTML = h; actSig = h; dressActs(); }, story: o => XW._story?.(o), openGate, openChronicle, openPylon, walkTo, UI, renderFrames, unfollow: () => { follow = false; fly = null; }, hollow, act1Mark: id => act1Mark(id), openBeast: id => openBeast(id), openLibraryRoom: () => openLibraryRoom() }), freePlots, openMaria, ask, addWood, refreshTown, draft: v => (draft = v), camera, controls, updateIce, renderer, scene, __composer: LITE ? null : composer };
 </script>

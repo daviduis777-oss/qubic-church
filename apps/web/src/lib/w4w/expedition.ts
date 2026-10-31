@@ -95,7 +95,9 @@ async function withLetters<T extends object>(v: T, uid: string, now = Date.now()
       : now < l.until ? { id: l.id, at: l.at, until: l.until, from: l.from, title: l.title, open: true, reads, mine } : { id: l.id, at: l.at, until: l.until, from: l.from, title: l.title, missed: true, reads, mine } })
   // what you heard: only words said within earshot of where you stand, in the last quarter of an hour
   const me = (v as { me?: { q: number; r: number } | null }).me
-  const heard = !me ? [] : said.map(x => safe(x) as Said | null).filter((x): x is Said => !!x && now - x.t < SAY_KEEP && (x.uid === uid || W.dist([x.q, x.r], [me.q, me.r]) <= EARSHOT)).slice(0, 30).reverse()
+  // inside the bar the room carries every voice: no need to stand close
+  const inBar = (p: { q: number; r: number }) => p.q === W.BAR_CELL[0] && p.r === W.BAR_CELL[1]
+  const heard = !me ? [] : said.map(x => safe(x) as Said | null).filter((x): x is Said => !!x && now - x.t < SAY_KEEP && (x.uid === uid || W.dist([x.q, x.r], [me.q, me.r]) <= EARSHOT || (inBar(x) && inBar(me)))).slice(0, 30).reverse()
   return { ...v, letters, heard, mail: await mailView(uid) }
 }
 
