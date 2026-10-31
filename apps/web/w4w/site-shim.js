@@ -194,7 +194,7 @@ ${fresh ? `<div class="code"><span>${esc(fresh)}</span><span><button class="q" d
     swrap.innerHTML = '<div class="box" role="dialog" aria-label="Story desk"></div>'
     document.body.append(sbtn, swrap)
     const sbox = swrap.querySelector('.box')
-    const PH = ['0 · Unseen. Only letters from the twelve.', '1 · Whispers. His letters ask; a pylon can be drained for warmth.', '2 · Knocking. The Hush shows; the Gate bar can be lifted.', '3 · Unveiling. When the Hush is full, the Veil falls for 3 hours.']
+    const PH = ['0 · Unseen. Only letters from the twelve.', '1 · Whispers. His letters ask; a pylon can be drained for warmth.', '2 · Knocking. The Hush shows; the Gate bar can be lifted.', '3 · Unveiling. The Iron Rose can be turned (+10 Hush each). When the Hush is full, the Veil falls for 3 hours.']
     const when = t => new Date(t).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
     async function story(body) {
       sbox.innerHTML = '<p>Loading…</p>'

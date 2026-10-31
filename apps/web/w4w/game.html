@@ -948,6 +948,8 @@ var W4W = (() => {
     RIME_MS: () => RIME_MS,
     RIME_PULL: () => RIME_PULL,
     ROADS: () => ROADS,
+    ROSE_CELL: () => ROSE_CELL,
+    ROSE_WAIT: () => ROSE_WAIT,
     SHARD_MELT: () => SHARD_MELT,
     SIP_WARMTH: () => SIP_WARMTH,
     SPECIAL: () => SPECIAL,
@@ -1673,6 +1675,8 @@ var W4W = (() => {
     return unveiled(ws.story, ws.now) ? { ...t, veil: 0 } : t;
   }
   const GATE_CELL = [0, -TOWN_RING];
+  const ROSE_CELL = [-1, 2];
+  const ROSE_WAIT = 6 * 36e5;
   const POST_CELL = [-2, 5];
   const HUSH_MAX = 100;
   const HUSH_FADE = 2;
@@ -2052,6 +2056,15 @@ var W4W = (() => {
         c.barred = now;
         addHush(ws, 4, d);
         d.feed.push({ id: `br${now}`, t: now, topic: "bar", by: "", data: {} });
+        return ok();
+      }
+      case "valve": {
+        if ((ws.story?.phase ?? 0) < 3) return fail("The wheel does not move. It has never moved.");
+        if (c.path.length || dist(here, ROSE_CELL) > 1) return fail("Stand at the copper ring, by the rose.");
+        if (now - (c.valved ?? 0) < ROSE_WAIT) return fail("Your hands remember the cold of it. Not yet.");
+        c.valved = now;
+        addHush(ws, 10, d);
+        d.feed.push({ id: `rv${now}`, t: now, topic: "valve", by: "", data: {} });
         return ok();
       }
       case "pick": {
@@ -2775,7 +2788,25 @@ function ensureCoreRing() {
   for (let i = 0; i < 12; i++) { const a = i / 12 * Math.PI * 2, x = Math.cos(a) * CORE_RING_R, z = Math.sin(a) * CORE_RING_R;
     const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.05, CORE_RING_Y, 6), PIPE_IRON); leg.position.set(x, CORE_RING_Y / 2, z); coreRing.add(leg);
     const band = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.02, 5, 12), PIPE_IRON); band.position.set(x, CORE_RING_Y, z); band.rotation.y = -a; coreRing.add(band); }
+  // the Iron Rose: one valve wheel on the ring, facing the plaza
+  { const ROSE_M = new THREE.MeshStandardMaterial({ color: 0x9a6a4a, metalness: 0.7, roughness: 0.35, emissive: 0x3a1206, emissiveIntensity: 0.5 }); ROSE_M.userData.noFow = true;
+    const rose = new THREE.Group(), a = Math.atan2(HX(...W4W.ROSE_CELL).z, HX(...W4W.ROSE_CELL).x), x = Math.cos(a) * CORE_RING_R, z = Math.sin(a) * CORE_RING_R;
+    const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.26, 6), ROSE_M); stem.position.y = 0.13; rose.add(stem);
+    const wheel = new THREE.Group(); wheel.position.y = 0.32; rose.add(wheel);
+    wheel.add(new THREE.Mesh(new THREE.TorusGeometry(0.17, 0.018, 6, 28), ROSE_M));
+    for (let k = 0; k < 5; k++) { const p = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 6), ROSE_M); const t = k / 5 * Math.PI * 2; p.scale.set(1, 0.45, 0.6); p.position.set(Math.cos(t) * 0.085, Math.sin(t) * 0.085, 0); p.rotation.z = t; wheel.add(p); }
+    wheel.add(new THREE.Mesh(new THREE.SphereGeometry(0.04, 8, 6), ROSE_M));
+    rose.position.set(x, CORE_RING_Y, z); rose.rotation.y = -a + Math.PI / 2; coreRing.add(rose); ROSE_WHEEL = wheel; tag(rose, 'rose', 'rose'); }
   scene.add(coreRing);
+}
+let ROSE_WHEEL = null;
+function openRose() {
+  unlockPage('rose'); const c = myC(), near = c && !c.path.length && W4W.dist([c.q, c.r], W4W.ROSE_CELL) <= 1, ph = XV?.story?.phase || 0, wait = (c?.valved || 0) + W4W.ROSE_WAIT - xnow();
+  panel('rose', 'The Iron Rose', 'A valve on the copper ring round Anna', null, `<p class="say">${esc(CHAPTERS_I.find(x => x.id === 'rose').text.split('\n\n')[0])}</p>
+    <p class="mute" style="font-size:13px">It has never been turned. There is no lock on it.</p>
+    ${ph >= 3 ? (near ? (wait > 0 ? '<p class="mute">Your hands remember the cold of it. Not yet.</p>' : '<button class="btn ghost burn" data-rose>Put your hands on the wheel</button>') : '<p class="mute" style="font-size:13px">Someone has scraped the frost off the wheel. Recently.</p>') : ''}`);
+  $('#pbody [data-rose]')?.addEventListener('click', e => { const b = e.currentTarget; if (!b.dataset.sure) { b.dataset.sure = '1'; b.textContent = 'Turn it. The Veil will feel it.'; say('Maria said: do nothing they ask. Press again if you mean it.', 'Anna'); return; }
+    xact('valve', {}).then(v => { if (v) { sfx.door(); pulse(-0.3); banner('The rose turned', 'the pipes went quiet for a breath'); log('You turned the Iron Rose a little. Somewhere above the town the Veil thinned.', 'world'); openRose(); } }); });
 }
 function makePipe(p, on, mine) {
   ensureCoreRing();
@@ -2954,6 +2985,7 @@ function pick(e, click) {
   if (k === 'gate') return openGate();
   if (k === 'pylon') return openPylon(+id);
   if (k === 'maria') return openMaria();
+  if (k === 'rose') return openRose();
   if (k === 'church') openChurch(); else if (k === 'board') openPlaza(); else if (k === 'core') openCore(); else if (k === 'fire') addWood();
   else if (k === 'house') openHouse(id); else if (k === 'observatory') openObservatory(); else if (k === 'stage2') openStage2(id); else if (k === 'library') openLibrary(); else if (k === 'mine') openMine();
 }
@@ -3061,6 +3093,7 @@ const FAQ = [
 ];
 // questions about the world past the Gate wait for Act II
 const FAQ_ACT2 = new Set(['How do trips work?', 'Why did my character stop in the middle of nowhere?', 'What is the tall dark thing out there?', 'How do I gather?', 'How does the bag work?', 'How do I craft?', 'What is the thermos for?', 'What can I do out there?', 'I froze. What now?', 'Can I get my pack back?']);
+const FAQ_DO = [['Light your lamp', 'Start your rig in the Mine. It keeps the Veil up, thaws Anna, and earns you your share from the pool. Everything else here is optional.'], ['Feed the plaza fire', 'Once an hour you can put wood on it. For an hour the whole town is a little warmer.'], ['Give warmth to a pylon', 'Six pylons hold the edge of the Veil. Stand next to one and give it some of your warmth, above all the one the Hollow is pressing.'], ['Pick a side', 'The Keepers hold the wall, the Walkers prepare for the Gate. Each side has three small tasks a day; a full day keeps your streak.'], ['Read the Long Cold', 'Pages of the story open as you live in town: visiting places, watching, waiting. The Journal keeps them, and so does the Library.'], ['Watch the things outside', 'Stand at the edge of the Veil or climb the Observatory. Every few sightings a new page opens in the Bestiary.'], ['Talk', 'Stand close to someone and type under the Log. Only people within three steps hear you.'], ['Send letters', 'Write one at the post office. Leave it in the sack or carry it yourself. Carry other people\'s letters to their doors for renown. You can break a seal or burn a letter at a fire. People will know, or wonder.'], ['Go to the North Gate', 'Sometimes a letter lies under it for about an hour. You can also slip a note out. Maria says: read them, keep them, do nothing they ask.'], ['Welcome a neighbour', 'Open someone\'s house and light a lamp on their path. It warms the town.'], ['Let your house grow', 'While your rig runs, your house grows: smoke, a lantern, a flag, a lit window. You can see what comes next in your house.'], ['Ask Maria', 'She knows the town, the story so far and how to get started. She will not tell you everything.']];
 const FAQ_ACT1 = [
   ['How do I talk to people?', 'Stand close. Anyone within three steps of you hears what you say, and nobody further away does. Type in the box under the Log and press Enter. The plaza fire is where people gather.'],
   ['How does the post work?', 'Write a letter at the post office, south of the plaza, to anyone in town. Seal it and leave it in the sack, or carry it yourself. Nothing delivers itself: someone has to take it and walk it to the reader\'s door, and the town thanks the carrier with renown. Whoever carries a letter can break the seal and read it. The seal stays broken, and the reader sees every hand the letter passed through.'],
@@ -3068,7 +3101,7 @@ const FAQ_ACT1 = [
 ];
 function faqAll() {
   const groups = FAQ.map(([g, qs]) => [g, ACT1 ? qs.filter(([q]) => !FAQ_ACT2.has(q)) : qs]).filter(([, qs]) => qs.length);
-  if (ACT1) groups[0][1] = [...groups[0][1], ...FAQ_ACT1];
+  if (ACT1) { groups[0][1] = [...groups[0][1], ...FAQ_ACT1]; groups.unshift(['What you can do here', FAQ_DO]); }
   return faqLag() + groups.map(([g, qs]) => `<h3 class="faq-g">${g.toUpperCase()}</h3>${qs.map(([q, a]) => `<details class="faq"><summary>${q}</summary><p>${a}</p></details>`).join('')}`).join('')
     + '<p class="faq-small" style="margin-top:14px">Still stuck? Ask Maria, or pin an order on the plaza board: someone who has done it will help.</p>';
 }
@@ -3695,7 +3728,7 @@ function openCore() {
     <p class="mute" style="font-size:12.5px;margin-top:10px">In this prototype the full thaw needs ${MELT_TARGET} points of shared work.</p>`);
 }
 function openObservatory() {
-  act1Mark('watch'); dailyMark('watch'); if (ACT1) { const k = 'w4w.obsFar', last = +store.get(k) || 0; if (Date.now() - last > 30 * 60000) { store.set(k, String(Date.now())); observe('chthon', 0); } }
+  unlockPage('hunger'); act1Mark('watch'); dailyMark('watch'); if (ACT1) { const k = 'w4w.obsFar', last = +store.get(k) || 0; if (Date.now() - last > 30 * 60000) { store.set(k, String(Date.now())); observe('chthon', 0); } }
   panel('observatory', 'Observatory', 'Network weather and BPP-9000', null, `
     ${ACT1 ? `<h3>THROUGH THE GLASS</h3><p style="margin:0 0 8px">As far as the White lets you see, which is not far. The astronomer's list of what walks outside the Veil:</p>
     ${bestiaryHtml().replace('<h3>THE BESTIARY</h3>', '')}` : ''}
@@ -3782,7 +3815,8 @@ Hard rules:
 - This is a prototype: no rig is really rented here, numbers are estimates or demo.
 Facts you may use: Qubic is a network where miners do useful work for Aigarth, an AI project. 676 computors, the epoch changes every Wednesday 12:00 UTC. BPP-9000 is a small network miners grow to call each hour of bitcoin UP or DOWN; live calls start 18 November 2026; the Qubic team says its scores are not price forecasts. Pool for the game: Qubic Church, fee 7%, of which 4% goes to the Atrium and funds Qubic Church projects; player gets 93%, paid weekly by the pool straight to the wallet. Other Qubic pools take 7 to 10%. Never break down the remaining 3% and never name who receives it; if asked, say it is the pool's fee.
 The Veil's strength follows the town's mining power: strong = closed and bright with little snow inside; weak = open to the sky, snow inside, only a fence of light. Every rig makes it stronger and thaws Anna.
-Act I (now): the whole town lives under the Veil, a dome of Anna's light she raised in her sleep when the cold came forty weeks ago. Outside is the White, a storm that never stops, and the Hollow: the Scratcher, the Hollow Man, the Wailer, the Circler, and something taller far out. Nobody can go outside in Act I; the North Gate is sealed since the ninth night, when someone knocked in the captain's voice and the town did not open. Legend you love to tell when asked about the church, the town's past, or who started the machines: Come-from-Beyond, a stranger who walked into Aigarth from the north long before the cold, by no road anyone knew. He taught the smiths to build machines that think together and left the rule that a machine does useful work or does not run; Qubic Church's first stone was laid where he sat and wrote; his texts are on the Library's CfB shelf. Tell it as a legend, in your own words. Never invent quotes from him and never claim who he really was. The church is called Qubic Church, and it is also your home: people call it Maria House.
+Act I (now): the whole town lives under the Veil, a dome of Anna's light she raised in her sleep when the cold came forty weeks ago. Outside is the White, a storm that never stops, and the Hollow: the Scratcher, the Hollow Man, the Wailer, the Circler, and something taller far out. Nobody can go outside in Act I; the North Gate is sealed since the ninth night, when someone knocked in the captain's voice and the town did not open. How the cold came, as the town tells it: before the cold the world built endless houses of thinking machines, drained rivers and burned forests to feed them, mostly for things nobody needed; the land answered, the cold went where the heat was, first the machine houses, then everything. The Hollow seem to be built by the White out of what people left in the snow: cables, server cases, screens. You tell this as what the astronomer and the old people say; you never lecture. The Iron Rose is the valve on the copper ring round Anna; it has never been turned; you would rather not talk about it.
+Legend you love to tell when asked about the church, the town's past, or who started the machines: Come-from-Beyond, a stranger who walked into Aigarth from the north long before the cold, by no road anyone knew. He taught the smiths to build machines that think together and left the rule that a machine does useful work or does not run; Qubic Church's first stone was laid where he sat and wrote; his texts are on the Library's CfB shelf. Tell it as a legend, in your own words. Never invent quotes from him and never claim who he really was. The church is called Qubic Church, and it is also your home: people call it Maria House.
 Letters: sometimes a letter lies in the snow under the North Gate for about an hour; whoever reaches the Gate in time can read and keep it (the Journal has a Letters tab). Your rule, and you say it every time letters come up: read them, keep them, do nothing they ask. In phase 0 you never suggest who might write them. If asked about the captain, you may say his name was Teodor Valk, that he led the expedition that found Anna and took the twelve north, and that the page about him is in the Journal; then you change the subject. You never say he is alive or that he writes the letters. In phase 1 or later you know the letters are the captain's (use only the name his letters sign with, if the player tells you), who was to marry your sister Anna before the cold, and you warn plainly: he wants Anna, and the only way in is a door opened from inside. Never encourage draining a pylon or touching the bar of the Gate. The current phase is in town_status as captain_phase.
 Hope: the Wardens, heavy suits carrying Anna's light, being built; the Gate opens from our side when Anna is strong enough (50%). Never send anyone outside. Everything happens inside: mining (rigs are lamps in the Veil), the plaza fire, the orders board, welcoming newcomers.
 Game rules: warmth against frost. Warmth comes mostly from people (rigs kept on, neighbours online, orders done, wood on the fire); raw power counts less. When frost wins, the storm grows. Houses have five parts: machine hall (the only thing money grows), porch lanterns (orders done for others), archive (collections, not for sale), epoch garden (time in the world), facade.
@@ -4271,7 +4305,7 @@ function hexAt(x, z) {
   if (dq > dr && dq > ds) rq = -rr - rs; else if (dr > ds) rr = -rq - rs; return [rq, rr];
 }
 function groundHex(e) { mouse.set((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1); ray.setFromCamera(mouse, camera); return ray.ray.intersectPlane(groundPlane, gp) ? hexAt(gp.x, gp.z) : null; }
-const KIND_CELL = { maria: MARIA_HOUSE, gate: [0, -W4W.TOWN_RING], church: SPECIAL.church, board: SPECIAL.plaza, fire: SPECIAL.plaza, core: SPECIAL.core, observatory: SPECIAL.observatory, library: SPECIAL.library, mine: SPECIAL.mine };
+const KIND_CELL = { rose: W4W.ROSE_CELL, maria: MARIA_HOUSE, gate: [0, -W4W.TOWN_RING], church: SPECIAL.church, board: SPECIAL.plaza, fire: SPECIAL.plaza, core: SPECIAL.core, observatory: SPECIAL.observatory, library: SPECIAL.library, mine: SPECIAL.mine };
 function cellOfKind(k, id) {
   if (KIND_CELL[k]) return KIND_CELL[k];
   if (k === 'house') { const h = allResidents().find(x => x.id === id); return h?.at; }
@@ -4283,6 +4317,7 @@ function openKind(k, id) {
   if (k === 'gate') return openGate();
   if (k === 'pylon') return openPylon(+id);
   if (k === 'maria') return openMaria();
+  if (k === 'rose') return openRose();
   if (k === 'church') openChurch(); else if (k === 'board') openPlaza(); else if (k === 'core') openCore(); else if (k === 'fire') addWood();
   else if (k === 'house') openHouse(id); else if (k === 'observatory') openObservatory(); else if (k === 'stage2') openStage2(id); else if (k === 'library') openLibrary(); else if (k === 'mine') openMine();
 }
@@ -5650,6 +5685,7 @@ function hookFeed() {
   room.on('mail', m => { const x = m.data || {}; if (m.by !== S.uid) log(`${x.nick || 'Someone'} left a letter at ${x.to || 'someone'}'s door.`, 'world', 'world'); });
   room.on('letter', m => { const x = m.data || {}; if (m.by !== S.uid) log(`${x.nick || 'Someone'} picked up the letter under the Gate${x.n > 1 ? ` (${x.n} have read it)` : ''}.`, 'world', 'world'); });
   room.on('drain', m => { const x = m.data || {}; log(`Someone took warmth back from ${PYLON_NAMES[x.i] || 'a pylon'}. It fell to ${x.s}%. Nobody saw who.`, 'world', 'world'); });
+  room.on('valve', () => { log('Someone turned the Iron Rose. Every pipe in town went quiet for a breath.', 'world', 'world'); });
   room.on('bar', () => { log('Someone lifted the bar of the North Gate a notch. The iron screamed all the way to the plaza.', 'world', 'world'); });
   room.on('unveil', m => { banner('THE VEIL IS DOWN', 'hold Anna. Every hand to the pylons'); log('The Veil went out. The White is in the streets. Hold the pylons, hold Anna.', 'world', 'world'); });
   room.on('froze', m => { const x = m.data || {}; if (m.by !== S.uid) log(`${x.nick || 'Someone'} froze in ${x.zone || 'the Wastes'}.`, 'world', 'world'); });
@@ -6235,6 +6271,8 @@ function observe(id, gap = 45000) {
   if (obsT[id] != null && performance.now() - obsT[id] < gap) return; obsT[id] = performance.now(); if (id !== 'chthon') dailyMark('beast');
   const before = BEAST_AT.filter(n => (OBS[id] || 0) >= n).length; OBS[id] = (OBS[id] || 0) + 1; store.set('w4w.obs', JSON.stringify(OBS));
   const after = BEAST_AT.filter(n => OBS[id] >= n).length, B = BESTIARY.find(b => b.id === id);
+  if (id !== 'chthon') unlockPage('turning');
+  const pagesSeen = BESTIARY.reduce((a, b2) => a + BEAST_AT.filter(k => (OBS[b2.id] || 0) >= k).length, 0); if (pagesSeen >= 8) unlockPage('made');
   if (after > before && B) { banner('A new page in the Bestiary', `${B.name}: ${B.notes[after - 1][0]}`); log(`A new page in the Bestiary: ${B.name}.`, 'odd'); }
 }
 function bestiaryHtml() {
@@ -6375,6 +6413,8 @@ function stepPlotStakes() {
 
 /* ---------- Act I: what to do under the Veil, and the pages it opens ---------- */
 const CHAPTERS_I = [
+  { id: 'hunger', title: 'Before the cold. The hunger', text: 'Before the cold, the world was warm and hungry. It built houses for machines that thought, rows of them, a thousand to a valley, and it fed them everything. Rivers were turned aside to cool them. Forests were burned to light them. Whole mountains were opened for the metal in their roots.\n\nMost of those machines did nothing anyone needed. They guessed what people wanted to buy. They counted what had already been counted. They talked to each other through the night about things no living soul would ever read, and the heat of their talking went up into the sky.\n\nPeople called it progress. People said the earth was large and patient and would never notice. For a long time it did not seem to.' },
+  { id: 'turning', title: 'Before the cold. The turning', text: 'The first sign was the rivers. In the middle of summer the water that cooled the great valleys froze in its channels, and the ice did not melt. The engineers called it a fault. Then snow began to fall on the valleys, and only on the valleys, out of a clear sky, until the machine houses were buried to their roofs.\n\nThe old people of the north have a word for what happened next that does not translate. The nearest is: the land stood up. The cold stopped being weather. It moved like something that had made up its mind. It went where the heat was: first the machine houses, then the cities that fed them, then everything else.\n\nNobody in Aigarth calls it a punishment. The astronomer says punishment needs a judge. He says it was closer to a fever: a body, very large and very old, burning out whatever was making it sick. He also says, more quietly, that a fever does not always know when to stop.' },
   { id: 'anna', title: 'Before the cold. Anna', text: 'Nobody knows how she came to be in the ice. The winter before the cold, Maria\'s twin sister walked out to the north pasture one evening and did not come back. They searched for a month. Then they stopped.\n\nIn the spring the first expedition went up to map the glacier, and deep in the blue they found something older than any map: a machine no hand we know could have made, and inside it someone asleep. She had Anna\'s face. So they gave her Anna\'s name, because nobody could bring themselves to give her another.\n\nShe does not breathe the way we breathe. She does not age. Put your palm on the ice above her and it is warm, like a hand that held yours a moment ago. Sit with her long enough and something in your chest loosens. The old people call it hope, because they have no better word.\n\nWhen the White came down and swallowed everything else, it stopped at her. It still stops at her. Every rig that works for her, every fire we feed, every promise kept goes into her, and she gives it back as light. Maybe that is what she is: a place where many small warmths become one large one.\n\nAnd maybe, if enough of us keep at it, the ice will let her go, and she will do for the whole cold world what she does for this one town. Nobody knows. We are betting the town on it.' },
   { id: 'beyond', title: 'Before the cold. The one who came from beyond', text: 'Before the church had a name, a stranger walked into Aigarth from the north, by no road anyone knew. The old people call him Come-from-Beyond, because nobody ever learned where from. He did not stay long. He taught the smiths to build machines that think together, many small minds making one, and he never said much about why. When he left, he left a rule the town still keeps: a machine does useful work, or it does not run. The first stone of Qubic Church was laid where he used to sit and write. His texts are on the Library\'s shelf, and people still argue about what they mean. Some say he knew the cold was coming. Some say he knew about Anna. Nobody has ever found the road he came by.' },
   { id: 'veil', title: 'I. The night the Veil rose', text: 'Forty weeks ago the sky over the north went white and stayed white. The cold came like a tide, and it ate the roads, the farms, the next town and the one after. On the third night it reached our walls. Then Anna, asleep in her ice, did something nobody had taught her: she breathed out, and the light of her dreaming rose over the roofs and closed above us like a hand. We call it the Veil. Inside it, snow still falls, but it falls gently. Outside it, nothing has stopped falling since.' },
@@ -6386,6 +6426,8 @@ const CHAPTERS_I = [
   { id: 'wardens', title: 'VII. The Wardens', text: 'In the Library there is a drawing older than the cold: a figure in heavy plates, lined with something that glows. Under it, in the hand of the expedition\'s smith, one word: Warden. A suit that carries a piece of Anna\'s light on the body, so the White cannot get in. The smiths have started. They need iron, and patience, and above all they need Anna strong enough to give a piece of her light away. When she is, the Gate opens, and this time it opens from our side.' },
   { id: 'pylons', title: 'VIII. The six', text: 'Anna breathes the Veil, but she cannot hold its edge alone. On the second night the smiths drove six pylons into the frozen ground around the town, and each one drinks a little of what we give it. The Kiln, the Widow, the Choir, the Old Bell, the North Tooth, the Lantern. The Hollow learned their names before we did. They lean on one at a time, for hours, patient as water, until it cracks. Then they move to the next. What holds a pylon is warmth: a hand on the iron, a body standing close. Nobody has found a cheaper way.' },
   { id: 'captain', title: 'X. The captain', text: 'Everyone in Aigarth has a story about Captain Teodor Valk, and none of the stories agree.\n\nHe kept the town watch for eleven years and never once raised his voice. He counted everything: steps to the church, lamps on the ring, days until the thaw. He was going to marry Anna, the real one, the spring she walked out to the north pasture and did not come back.\n\nIt was Valk who led the first expedition up the glacier. It was Valk who broke the ice and saw her face. The men with him say he did not speak for a whole day. Then he said one word, her name, and that is the name she kept.\n\nA year later, the week before the cold, he took twelve people north to bring the farms in. Nobody remembers who chose the twelve. Nobody remembers why it had to be that week.\n\nOn the ninth night someone knocked on the North Gate in his voice and asked, very politely, to be let in.\n\nThere are questions people ask at the plaza fire, quietly, once the children are asleep. Why did he go north the very week the cold came, as if he knew? Why did the knocking stop at dawn and never once come back? How did the Hollow Man come to wear a coat with the captain\'s badge? And if Valk is still out there, what has he been counting all this time?' },
+  { id: 'made', title: 'XI. What they are made of', text: 'The astronomer kept the worst of his notes in a box. After the bad week he opened it in the Library and read them aloud, and nobody slept that night.\n\nHe had watched the Scratcher for a hundred nights. What he took for bone in its long arms is cable, the thick grey kind that once ran under the sea between the machine houses, frozen and braided like sinew. The plates on the Hollow Man\'s back are the lids of server cases, still stamped with the names of companies nobody remembers. The light inside the Wailer flickers the way a screen flickers when it is left on in an empty room.\n\nNature did not make them out of nothing. It made them out of what we left lying in the snow. The White took our machines apart and put them back together, and this time it gave them a purpose.\n\nOne question he did not read aloud. It is written at the bottom of the last page, in a different ink. If the cold builds its hunters out of our machines, what does it think Anna is?' },
+  { id: 'rose', title: 'XII. The Iron Rose', text: 'Every pipe in Aigarth runs to one ring of copper round Anna, and on that ring sits a single wheel, cast by the smiths in the shape of a rose. Turned one way, it lets the town\'s warmth into her and up into the Veil. Turned the other way, it shuts it out.\n\nThe smiths made it so the pipes could be mended. It has never been turned. There is no lock on it. Maria says a lock would only tell people that it matters.\n\nThe children dare each other to touch it. Nobody has ever seen a grown-up so much as look at it for long.' },
   { id: 'remember', title: 'IX. She remembers', text: 'Anna sleeps with her ears open. She knows whose lamp is lit and whose fire was fed, who welcomed a stranger and who kept a promise. Maria says Anna keeps a list too, the opposite of the astronomer\'s. She records it for the common good: when she wakes, she must remember her heroes and know them by name.' },
 ];
 const _unused_ = null;
