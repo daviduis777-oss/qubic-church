@@ -661,6 +661,13 @@ body:has(#panel.open) #goals{visibility:hidden}
 #pbody .mail .mbtns{display:flex;flex-direction:column;gap:6px} #pbody .mtext{margin:8px 0 0;font:16px/1.6 var(--f-print);color:#ece3d0;white-space:pre-wrap}
 #pbody details.mail{display:block} #pbody details.mail summary{cursor:pointer;list-style:none}
 #pbody .mailw{display:grid;gap:8px;margin:0 0 14px} #pbody .mailw input,#pbody .mailw textarea{padding:9px 10px;border:0;border-radius:6px;background:rgba(0,0,0,.45);box-shadow:inset 0 0 0 1px rgba(201,160,74,.28);color:#efe6d2;font:15px/1.5 var(--f-print)} #pbody .mailw textarea{resize:vertical}
+#pbody .mailw .anon{display:flex;gap:8px;align-items:center;font-size:13.5px;color:var(--mute)}
+#pbody .mail .burn{color:#ff9a7a}
+#pbody details.doc{background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.015))} #pbody details.doc summary{display:flex;align-items:center;gap:10px;flex-wrap:wrap} #pbody details.doc summary b{flex:1}
+#pbody .stamp{font:700 11px var(--f-label);letter-spacing:.12em;text-transform:uppercase;padding:3px 8px;border:2px solid;border-radius:4px;transform:rotate(-4deg);font-style:normal}
+#pbody .stamp.ok{color:#9fdc8a;border-color:rgba(159,220,138,.7)} #pbody .stamp.broken{color:#ff8a6a;border-color:rgba(255,138,106,.8)}
+#pbody .marks{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 4px} #pbody .pm{font:600 11px var(--f-label);letter-spacing:.06em;font-style:normal;padding:4px 9px;border-radius:999px;border:1.5px dashed rgba(201,160,74,.55);color:#e8c98a;transform:rotate(-2deg)} #pbody .pm.red{border-color:rgba(255,138,106,.7);color:#ff9a7a}
+#pbody .btn.small{padding:5px 10px;font-size:12px;margin-top:8px}
 #veil .vhush{display:flex;align-items:center;gap:8px;margin-top:5px;font:600 10.5px var(--f-label);letter-spacing:.14em;color:#9fb6d8}
 #veil .vhush i{flex:1;height:5px;border-radius:3px;background:rgba(0,0,0,.55);overflow:hidden} #veil .vhush b{display:block;height:100%;background:linear-gradient(90deg,#2c3a55,#8fa8d8)} #veil .vhush em{font-style:normal;color:#cfe0ff}
 #veil.unveiled{box-shadow:0 0 0 1px #000,inset 0 0 0 1px rgba(255,90,70,.8),0 0 30px rgba(255,40,20,.4);animation:hr 1.6s infinite} #veil.unveiled .vp,#veil.unveiled b{color:#ff8a70}
@@ -3400,7 +3407,7 @@ function openHouse(id) {
   const locked = [['BPP-9000 witness', 'from 18.11'], ['Qubic chronicle', 'next big event']];
   const canWelcome = !mine && !d.demo && me()?.state === 'mining' && !(me().welcomes || []).includes(d.id);
   panel('house', d.nick, `${mine ? 'Your house' : d.demo ? 'A demo resident' : 'A neighbour'} · in Aigarth since E${d.since}`, null, `
-    <div class="row" style="margin-bottom:6px">${stateTag(d)} ${d.cracked ? '<span class="tag bad">Cracked lantern · a promise not kept yet</span>' : ''}</div>
+    ${repHtml(d.id === 'me' ? 'me' : d.id)}<div class="row" style="margin-bottom:6px">${stateTag(d)} ${d.cracked ? '<span class="tag bad">Cracked lantern · a promise not kept yet</span>' : ''}</div>
     ${phases}
     ${mine && d.own ? `<div class="row" style="margin:8px 0 2px"><span class="mute" style="font-size:12.5px">Worker ${esc(d.worker)}</span></div><div class="row"><button class="btn" id="toHub">Open the Mine</button>${d.state === 'waiting' ? '<button class="btn main" id="toStarted">I started the miner</button>' : ''}</div>` : ''}
     ${d.state === 'mining' ? (() => { const G = growthOf(d), up = uptimeH(d), nx = GROWTH[G], dd = Math.floor(up / 24), hh = Math.floor(up % 24);
@@ -3714,32 +3721,48 @@ function openPost() {
   panel('post', 'Post office', near ? 'The sack hangs by the door' : 'By the plaza, on the south lane', null, `
     <p class="say">Nothing in Aigarth delivers itself. You write a letter here, and it waits in the sack until someone carries it to the right door. Whoever carries it can break the seal. The reader will know, and will see every hand it passed through.</p>
     ${near ? `<h3>WRITE A LETTER</h3><form class="mailw" data-mailw><input list="mailnames" maxlength="40" placeholder="To whom: their name in town" required><datalist id="mailnames">${names.map(n => `<option value="${esc(n)}">`).join('')}</datalist>
-      <textarea maxlength="1200" rows="5" placeholder="Your letter" required></textarea><div class="row"><button class="btn main" data-keep="0">Seal it, leave it in the sack</button><button class="btn" data-keep="1">Seal it, carry it myself</button></div></form>` : `<button class="btn main" data-walkpost>Walk to the post office</button>`}
+      <textarea maxlength="1200" rows="5" placeholder="Your letter" required></textarea><label class="anon"><input type="checkbox" data-anon> Leave it unsigned</label><div class="row"><button class="btn main" data-keep="0">Seal it, leave it in the sack</button><button class="btn" data-keep="1">Seal it, carry it myself</button></div></form>` : `<button class="btn main" data-walkpost>Walk to the post office</button>`}
     <h3>THE SACK</h3>${M.sack.length ? `<div class="mails">${M.sack.map(m => `<div class="mail"><div><b>For ${esc(m.toNick)}</b><span>from ${esc(m.fromNick)}${m.sealed ? '' : ' · <em>the seal is broken</em>'}</span></div>${near ? `<button class="btn" data-take="${esc(m.id)}">Take it</button>` : ''}</div>`).join('')}</div>` : '<p class="mute">Empty. Every letter written in Aigarth is in somebody\'s hands.</p>'}
     ${carryingHtml(near)}
-    ${M.sent.length ? `<h3>LETTERS YOU SENT</h3><div class="mails">${M.sent.slice().reverse().map(m => `<div class="mail"><div><b>To ${esc(m.toNick)}</b><span>${m.where === 'delivered' ? 'delivered' : m.where === 'sack' ? 'waiting in the sack' : 'in ' + esc(m.holderNick || 'someone') + '\'s hands'} · written ${when(m.at)}</span></div></div>`).join('')}</div>` : ''}`);
+    ${M.sent.length ? `<h3>LETTERS YOU SENT</h3><div class="mails">${M.sent.slice().reverse().map(m => `<div class="mail"><div><b>To ${esc(m.toNick)}</b><span>${m.where === 'delivered' ? 'delivered' : m.where === 'sack' ? 'waiting in the sack' : m.where === 'lost' ? 'it never arrived. The last hands it was in were ' + esc(m.holderNick || 'someone') + '\'s' : m.holderNick === me()?.nick || m.holderNick === 'you' ? 'in your coat' : 'in ' + esc(m.holderNick || 'someone') + '\'s hands'} · written ${when(m.at)}</span></div></div>`).join('')}</div>` : ''}`);
   const pb = $('#pbody');
   pb.querySelector('[data-walkpost]')?.addEventListener('click', () => { closePanel(); walkTo('stage2', 'post'); });
   const f = pb.querySelector('[data-mailw]'); if (f) f.querySelectorAll('[data-keep]').forEach(b => b.onclick = e => { e.preventDefault(); const to = f.querySelector('input').value.trim(), text = f.querySelector('textarea').value.trim(); if (!to || !text) return;
-    xact('mailwrite', { to, text, keep: b.dataset.keep === '1' }).then(v => { if (!v) return; sfx.paper(); log(`You sealed a letter for ${to}${b.dataset.keep === '1' ? ' and put it in your coat' : ' and left it in the sack'}.`, 'me'); openPost(); }); });
+    xact('mailwrite', { to, text, keep: b.dataset.keep === '1', anon: !!f.querySelector('[data-anon]')?.checked }).then(v => { if (!v) return; sfx.paper(); log(`You sealed a letter for ${to}${b.dataset.keep === '1' ? ' and put it in your coat' : ' and left it in the sack'}.`, 'me'); openPost(); }); });
   pb.querySelectorAll('[data-take]').forEach(b => b.onclick = () => xact('mailtake', { id: b.dataset.take }).then(v => { if (v) { sfx.pack(); openPost(); } }));
   wireCarrying(pb, openPost);
 }
+const nearFire = () => { const c = myC(); return c && !c.path.length && (W4W.dist([c.q, c.r], SPECIAL.plaza) <= 1 || W4W.dist([c.q, c.r], XV?.me?.home || [99, 99]) <= 1); };
 function carryingHtml(near) {
-  const C = mailOf().carrying; if (!C.length) return '';
-  return `<h3>IN YOUR COAT</h3><div class="mails">${C.map(m => `<div class="mail"><div><b>For ${esc(m.toNick)}</b><span>from ${esc(m.fromNick)}${m.sealed ? ' · sealed' : ' · <em>the seal is broken</em>'}</span>${m.text ? `<p class="mtext">${esc(m.text)}</p>` : ''}</div>
-    <div class="mbtns">${near ? `<button class="btn" data-leave="${esc(m.id)}">Leave in the sack</button>` : ''}${m.sealed ? `<button class="btn ghost" data-open="${esc(m.id)}">Break the seal</button>` : ''}</div></div>`).join('')}</div>
-    <p class="mute" style="font-size:12.5px">Walk to the reader's door to deliver. Standing next to someone, you can hand a letter over.</p>`;
+  const C = mailOf().carrying; if (!C.length) return ''; const fire = nearFire();
+  return `<h3>IN YOUR COAT</h3><div class="mails">${C.map(m => `<div class="mail"><div><b>${m.gate ? 'For whoever signs ' + esc(m.toNick) : 'For ' + esc(m.toNick)}</b><span>${m.mine ? 'your own letter' : 'from ' + esc(m.fromNick)}${m.gate ? ' · it goes under the North Gate' : ''}${m.sealed ? ' · sealed' : ' · <em>the seal is broken</em>'}</span>${m.text ? `<p class="mtext">${esc(m.text)}</p>` : ''}</div>
+    <div class="mbtns">${near ? `<button class="btn" data-leave="${esc(m.id)}">Leave in the sack</button>` : ''}${m.sealed && !m.mine ? `<button class="btn ghost" data-open="${esc(m.id)}">Break the seal</button>` : ''}${fire ? `<button class="btn ghost burn" data-burn="${esc(m.id)}">Burn it</button>` : ''}</div></div>`).join('')}</div>
+    <p class="mute" style="font-size:12.5px">Walk to the reader's door to deliver. Standing next to someone, you can hand a letter over.${fire ? ' There is a fire here. A letter that burns never arrives, and nobody reads it.' : ''}</p>`;
 }
 let sealAsk = '';
 function wireCarrying(pb, again) {
   pb.querySelectorAll('[data-leave]').forEach(b => b.onclick = () => xact('mailleave', { id: b.dataset.leave }).then(v => { if (v) { sfx.pack(); again(); } }));
+  pb.querySelectorAll('[data-burn]').forEach(b => b.onclick = () => { if (sealAsk !== 'burn' + b.dataset.burn) { sealAsk = 'burn' + b.dataset.burn; b.textContent = 'Nobody will ever read it. Burn?'; return; }
+    xact('mailburn', { id: b.dataset.burn }).then(v => { if (v) { sfx.wood(); log('The letter curled, went black and was gone. The last hands it was in were yours.', 'world'); again(); } }); });
+  pb.querySelectorAll('[data-mreply]').forEach(f => f.onsubmit = e => { e.preventDefault(); const t = f.querySelector('textarea'), text = t.value.trim(); if (!text) return;
+    xact('mailreply', { id: f.dataset.mreply, text }).then(v => { if (v) { sfx.paper(); log(f.dataset.valk ? 'You sealed an answer. It goes under the North Gate, and someone has to take it there.' : 'You sealed an answer. It is in your coat: carry it, or leave it in the sack.', 'me'); again(); } }); });
+  pb.querySelectorAll('[data-mreport]').forEach(b => b.onclick = () => xact('mailreport', { id: b.dataset.mreport }).then(v => { if (v) { b.textContent = 'Reported'; b.disabled = true; } }));
   pb.querySelectorAll('[data-open]').forEach(b => b.onclick = () => { if (sealAsk !== b.dataset.open) { sealAsk = b.dataset.open; b.textContent = 'The reader will know. Break it?'; return; }
     xact('mailopen', { id: b.dataset.open }).then(v => { if (v) { sfx.paper(); log('You broke the seal. It will not close again.', 'world'); again(); } }); });
 }
 function mailboxHtml() {
   const I = mailOf().inbox; if (!I.length) return '';
-  return `<h3>AT YOUR DOOR</h3><div class="mails">${I.slice().reverse().map(m => `<details class="mail lore"><summary><b>From ${esc(m.fromNick)}</b><span>${when(m.deliveredAt || m.at)} · carried by ${esc(m.hands.filter(n => n !== m.fromNick).join(', ') || m.fromNick)}${m.sealBy ? ` · <em>the seal was broken by ${esc(m.sealBy)}</em>` : ' · sealed'}</span></summary><p class="mtext">${esc(m.text)}</p></details>`).join('')}</div>`;
+  // each letter as a document: the seal, then a postmark for every hand it passed through
+  return `<h3>AT YOUR DOOR</h3><div class="mails">${I.slice().reverse().map(m => { const hands = m.hands.filter(n => n !== m.fromNick);
+    return `<details class="mail doc"><summary><b>From ${esc(m.fromNick)}</b><span>${when(m.deliveredAt || m.at)}</span><i class="stamp ${m.sealBy ? 'broken' : 'ok'}">${m.sealBy ? 'Seal broken' : 'Sealed'}</i></summary>
+      <div class="marks">${hands.length ? hands.map(n => `<i class="pm">${esc(n)}</i>`).join('') : '<i class="pm">by its writer</i>'}${m.sealBy ? `<i class="pm red">opened by ${esc(m.sealBy)}</i>` : ''}</div>
+      <p class="mtext">${esc(m.text)}</p>
+      ${m.fromNick !== 'no name' && !m.answered ? `<form class="mailw" data-mreply="${esc(m.id)}" ${m.fromValk ? 'data-valk="1"' : ''}><textarea maxlength="1200" rows="3" placeholder="${m.fromValk ? 'An answer. It will have to go under the North Gate.' : 'An answer. It goes into your coat, and someone has to carry it.'}"></textarea><button class="btn">Seal the answer</button></form>` : m.answered ? '<p class="mute" style="font-size:12.5px">You answered this one.</p>' : ''}
+      <button class="btn ghost small" data-mreport="${esc(m.id)}" ${m.reported ? 'disabled' : ''}>${m.reported ? 'Reported' : 'Report this letter'}</button></details>`; }).join('')}</div>`;
+}
+function repHtml(uid) {
+  const r = (mailOf().rep || {})[uid]; if (!r) return '';
+  return `<p class="mute" style="font-size:13px;margin:6px 0 0">Letters carried to a door: <b style="color:var(--cream)">${r.d || 0}</b> · seals broken: <b style="color:${r.b ? '#ff9a7a' : 'var(--cream)'}">${r.b || 0}</b></p>`;
 }
 const INBOX_SEEN = (() => { try { return new Set(JSON.parse(store.get('w4w.inbox') || '[]')); } catch { return new Set(); } })();
 function stepMail() {
@@ -3972,7 +3995,7 @@ function localWorld() {
   const keep = () => store.set('w4w.xworld', JSON.stringify(st));
   const emit = v => subs.forEach(f => { try { f(v); } catch (e) { console.warn(e); } });
   // letters in the prototype: the same shapes the server sends
-  const lview = v => { const now = Date.now(); const M = st.mail || []; v.mail = { carrying: M.filter(m => m.where === 'hands' && m.holder === 'me').map(m => ({ ...m, sealed: !m.sealBy, text: m.sealBy === 'me' ? m.text : undefined })), sack: M.filter(m => m.where === 'sack').map(m => ({ ...m, text: undefined, sealed: !m.sealBy })), inbox: [], sent: M.filter(m => m.from === 'me').map(m => ({ ...m, holderNick: m.holder ? 'you' : null })) }; v.heard = (st.said || []).filter(x => now - x.t < 15 * 60000).slice(0, 30).reverse(); v.letters = st.letters.filter(l => l.at <= now).map(l => st.lread[l.id] ? { ...l, read: st.lread[l.id] } : now < l.until ? { id: l.id, at: l.at, until: l.until, from: l.from, title: l.title, open: true } : { id: l.id, at: l.at, until: l.until, title: l.title, missed: true }); return v; };
+  const lview = v => { const now = Date.now(); const M = st.mail || []; v.mail = { carriers: { me: M.filter(m => m.where === 'hands' && m.holder === 'me').length }, rep: {}, carrying: M.filter(m => m.where === 'hands' && m.holder === 'me').map(m => ({ ...m, sealed: !m.sealBy, mine: m.from === 'me', text: m.sealBy === 'me' || m.from === 'me' ? m.text : undefined })), sack: M.filter(m => m.where === 'sack').map(m => ({ ...m, text: undefined, sealed: !m.sealBy })), inbox: [], sent: M.filter(m => m.from === 'me').map(m => ({ ...m, holderNick: m.holder ? 'you' : null })) }; v.heard = (st.said || []).filter(x => now - x.t < 15 * 60000).slice(0, 30).reverse(); v.letters = st.letters.filter(l => l.at <= now).map(l => st.lread[l.id] ? { ...l, read: st.lread[l.id] } : now < l.until ? { id: l.id, at: l.at, until: l.until, from: l.from, title: l.title, open: true } : { id: l.id, at: l.at, until: l.until, title: l.title, missed: true }); return v; };
   const view = (events = []) => { const ws = wsNow(); const d = W4W.newDirty(); W4W.stepAll(ws, d); st.rime = ws.rime; keep(); return lview(W4W.viewOf(ws, 'me', events)); };
   setInterval(() => { if (me()) emit(view()); }, 4000);
   return {
@@ -4128,6 +4151,7 @@ function stepAvatars(dt) {
       a.label.el.textContent = `${a.mine ? 'you' : d.nick} · frozen ${hms(d.frozenUntil - t)}`; continue;
     }
     if (a.ice) { a.g.remove(a.ice); a.ice = null; a.label.el.textContent = a.mine ? 'you' : d.nick; }
+    syncSatchel(a, (mailOf().carriers || {})[a.mine ? (S.shared ? S.uid : 'me') : a.uid] || 0);
     const { p, walking, dir, out } = posOf(d, t, a);
     // standing still: measure the door from the middle of the cell you stopped at, wherever the route curve ended
     const stand = !walking && d.path?.length ? d.path[d.path.length - 1] : [d.q, d.r]; if (!walking) p.copy(HX(...stand));
@@ -4186,6 +4210,17 @@ function footPrint(a) {
   const ab = printMesh.geometry.getAttribute('aBorn'); ab.array[i] = U.uTime.value; ab.needsUpdate = true;
 }
 function stepPrints() { if (printMesh) printMesh.material.uniforms.uNow.value = U.uTime.value; }
+const SATCHEL_MAT = new THREE.MeshStandardMaterial({ color: 0x7a5232, roughness: 0.85, emissive: 0x2a1406, emissiveIntensity: 0.4 }), PAPER_MAT = new THREE.MeshStandardMaterial({ color: 0xf1e2c0, roughness: 0.9, emissive: 0x3a3020, emissiveIntensity: 0.3 });
+SATCHEL_MAT.userData.noFow = PAPER_MAT.userData.noFow = true;
+function syncSatchel(a, n) {
+  if (!n) { if (a.satchel) a.satchel.visible = false; return; }
+  if (!a.satchel) { const g = new THREE.Group(); const bag = new THREE.Mesh(new THREE.BoxGeometry(0.11, 0.09, 0.045), SATCHEL_MAT); g.add(bag);
+    const flap = new THREE.Mesh(new THREE.BoxGeometry(0.115, 0.035, 0.05), SATCHEL_MAT); flap.position.set(0, 0.04, 0.003); g.add(flap);
+    for (let i = 0; i < 3; i++) { const e = new THREE.Mesh(new THREE.BoxGeometry(0.075, 0.05, 0.004), PAPER_MAT); e.position.set(-0.02 + i * 0.02, 0.06, -0.012 + i * 0.008); e.rotation.z = (i - 1) * 0.18; e.userData.paper = i; g.add(e); }
+    const strap = new THREE.Mesh(new THREE.TorusGeometry(0.16, 0.007, 4, 18, Math.PI * 1.15), SATCHEL_MAT); strap.rotation.set(0, Math.PI / 2, 2.2); strap.position.set(0.02, 0.15, 0); g.add(strap);
+    g.position.set(0.085, 0.22, -0.01); a.g.add(g); a.satchel = g; }
+  a.satchel.visible = true; a.satchel.children.forEach(c => { if (c.userData.paper != null) c.visible = c.userData.paper < n; });
+}
 const sittingAt = d => !!XV?.hearths?.[W4W.key(d.q, d.r)] && XV.hearths[W4W.key(d.q, d.r)].until > xnow();
 const hms = ms => { ms = Math.max(0, ms); const h = Math.floor(ms / 36e5), m = Math.floor(ms % 36e5 / 6e4), s = Math.floor(ms % 6e4 / 1e3); return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`; };
 
@@ -4366,7 +4401,8 @@ function actions(c, here, t, frozen) {
     if (!ACT1 && W4W.key(...here) === W4W.key(...c.home)) { btns.push('<button class="btn" data-x="bench">Workbench</button>'); for (const tl of ['saw', 'pickaxe']) if (W4W.itemsOf(c)[tl] === 'home') btns.push(`<button class="btn main" data-x="item" data-id="${tl}" data-to="pack">Take the ${W4W.ITEMS[tl].name.toLowerCase()}</button>`); if (W4W.weightOf(c.inv) > 0) btns.push('<button class="btn" data-x="unload">Unload at home</button>'); }
     if ((c.inv.shard || 0) > 0 && W4W.dist(here, [0, 0]) <= 2) btns.unshift(`<button class="btn main" data-x="give">Give Anna your ${c.inv.shard > 1 ? c.inv.shard + ' shards' : 'shard'}</button>`);
     if (W4W.dist(here, W4W.SPECIAL.plaza) <= 1) { const done = W4W.ordersDone(c, t); for (const o of XV.orders || []) if (!done.includes(o.id) && Object.entries(o.need).every(([m, n]) => (c.inv[m] || 0) >= n)) btns.unshift(`<button class="btn main" data-x="deliver" data-id="${o.id}">Deliver: ${esc(o.text.toLowerCase())} (+${o.pts} renown)</button>`); }
-    for (const m of mailOf().carrying) { const h = allResidents().find(x => x.id === m.to); if (h?.at && W4W.dist(here, h.at) <= 1) btns.unshift(`<button class="btn main" data-x="maildeliver" data-id="${esc(m.id)}">Leave the letter at ${esc(m.toNick)}'s door</button>`); }
+    for (const m of mailOf().carrying) if (m.gate && W4W.dist(here, GATE_CELL) <= 1) btns.unshift(`<button class="btn main" data-x="maildeliver" data-id="${esc(m.id)}">Push the letter under the Gate</button>`);
+    for (const m of mailOf().carrying) { if (m.gate) continue; const h = allResidents().find(x => x.id === m.to); if (h?.at && W4W.dist(here, h.at) <= 1) btns.unshift(`<button class="btn main" data-x="maildeliver" data-id="${esc(m.id)}">Leave the letter at ${esc(m.toNick)}'s door</button>`); }
     if (mailOf().carrying.length) for (const [uid, o] of Object.entries(XV.others || {})) if (!o.path?.length && W4W.dist(here, [o.q, o.r]) <= 1) btns.push(`<button class="btn" data-x="mailgive" data-id="${esc(mailOf().carrying[0].id)}" data-who="${esc(uid)}">Hand a letter to ${esc(o.nick)}</button>`);
     const nt = noteAt(...here); if (nt) btns.push(`<button class="btn main" data-x="note" data-id="${nt.id}">Read the note</button>`);
     if (!btns.length) btns.push(`<span class="xt">${W4W.zoneOf(...here) === 0 ? (ACT1 ? 'Click the ground to walk. The Veil is as far as anyone goes now.' : 'Click the ground to walk. The lantern posts mark the edge of the warmth: past them the cold begins.') : 'Stand next to a tree or a rock to work it: a saw for wood, a pickaxe for stone. Click the ground to plan the next trip.'}</span>`);
@@ -4383,7 +4419,7 @@ function actions(c, here, t, frozen) {
     if (x === 'stop') { drawPrints([0, 0], [], false); printSig = ''; }
     if (x === 'give') { const n = c.inv.shard || 0; return xact(x, body).then(v => { if (v) { sfx.reward(3); annaTakes(n); } }); }
     if (x === 'deliver') return xact(x, body).then(v => { if (v) { sfx.reward(2); const o = (XV.orders || []).find(o => o.id === body.id); banner('The town thanks you', o ? `${o.text}: +${o.pts} renown` : ''); pulse(0.6); } });
-    xact(x, body).then(v => { if (!v) return; if (x === 'feed') sfx.wood(); else if (x === 'hearth') sfx.reward(2); else if (x === 'take') sfx.pack(); else if (x === 'maildeliver') { sfx.reward(2); banner('Delivered', 'the town thanks you: +2 renown'); } else if (x === 'mailgive') sfx.paper(); });
+    xact(x, body).then(v => { if (!v) return; if (x === 'feed') sfx.wood(); else if (x === 'hearth') sfx.reward(2); else if (x === 'take') sfx.pack(); else if (x === 'maildeliver') { sfx.reward(2); dailyMark('courier'); banner('Delivered', 'the town thanks you: +2 renown'); } else if (x === 'mailgive') sfx.paper(); });
   });
 }
 
@@ -6383,7 +6419,7 @@ const FACTIONS = {
 };
 const ROLES = {
   keepers: [['pressed', 'Give warmth to the pylon under pressure'], ['round', 'Walk the wall: stand by three pylons'], ['fire', 'Feed the plaza fire']],
-  walkers: [['watch', 'Watch the White from the Observatory'], ['beast', 'Watch one of the Hollow at the wall'], ['study', 'Study the Warden drawing in the Library']],
+  walkers: [['watch', 'Watch the White from the Observatory'], ['beast', 'Watch one of the Hollow at the wall'], ['study', 'Study the Warden drawing in the Library'], ['courier', 'Carry a letter to someone\'s door']],
 };
 const myFaction = () => me()?.faction || null;
 const dayKey = () => new Date().toISOString().slice(0, 10);
