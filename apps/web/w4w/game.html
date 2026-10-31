@@ -2456,7 +2456,7 @@ const interactive = [], labels = [];
 /* generated models that stand in for kit pieces: same footprint, on the ground, in the same snow */
 const KIT_OVR = { mine: 'q/b/mine.glb', home_A: 'q/b/home_a.glb', home_B: 'q/b/home_b.glb', tower: 'q/b/observatory.glb', barracks: 'q/b/library.glb', well: 'q/b/well.glb', destroyed: 'q/b/ruin.glb' };
 // props with no kit piece to stand in for: loaded once, stood on the ground, one unit tall, scaled where they are used
-const PROPS = {}, PROP_URLS = { gate: 'q/b/gate.glb', campfire: 'q/b/campfire.glb', heater: 'q/b/heater.glb', boiler: 'q/b/boiler.glb', pit: 'q/b/pit.glb', marker: 'q/b/marker.glb' };
+const PROPS = {}, PROP_URLS = { gate: 'q/b/gate.glb', campfire: 'q/b/campfire.glb', heater: 'q/b/heater.glb', boiler: 'q/b/boiler.glb', pit: 'q/b/pit.glb', marker: 'q/b/marker.glb', brazier: 'q/b/brazier.glb' };
 function prop(n, h, noFow = true) { const P = PROPS[n]; if (!P) return null; const o = P.clone(true); o.scale.setScalar(h); if (noFow) o.traverse(m => { if (m.isMesh) m.material.userData.noFow = true; }); return o; }
 let PYLON_MODEL = null;
 function loadGlb(url) { return new Promise(res => { const l = new GLTFLoader(); l.setMeshoptDecoder(MeshoptDecoder); l.load(url, g => res(g), undefined, e => { console.warn(url, e); res(null); }); }); }
@@ -6107,9 +6107,11 @@ function buildGate() {
   // braziers either side: the Gate is always watched
   for (const sx of [-1, 1]) { const b = p.clone().add(new THREE.Vector3(-dir.z, 0, dir.x).multiplyScalar(sx * 1.6)).sub(dir.clone().multiplyScalar(0.8));
     const bz = new THREE.Group(); bz.position.set(b.x, 0, b.z); scene.add(bz);
-    const ped = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.22, 0.46, 6), BRZ_STONE); ped.position.y = 0.23; bz.add(ped);
-    const bowl = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.14, 0.16, 10, 1, true), BRZ_IRON); bowl.position.y = 0.54; bz.add(bowl);
-    const coals = new THREE.Mesh(new THREE.CircleGeometry(0.24, 10), BRZ_COAL); coals.rotation.x = -Math.PI / 2; coals.position.y = 0.6; bz.add(coals);
+    const BR = prop('brazier', 0.66);
+    if (BR) { bz.add(BR); const coals = new THREE.Mesh(new THREE.CircleGeometry(0.2, 12), BRZ_COAL); coals.rotation.x = -Math.PI / 2; coals.position.y = 0.6; bz.add(coals); }
+    else { const ped = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.22, 0.46, 6), BRZ_STONE); ped.position.y = 0.23; bz.add(ped);
+      const bowl = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.14, 0.16, 10, 1, true), BRZ_IRON); bowl.position.y = 0.54; bz.add(bowl);
+      const coals = new THREE.Mesh(new THREE.CircleGeometry(0.24, 10), BRZ_COAL); coals.rotation.x = -Math.PI / 2; coals.position.y = 0.6; bz.add(coals); }
     const flame = new THREE.Mesh(new THREE.ConeGeometry(0.13, 0.42, 7), BRZ_FLAME); flame.position.y = 0.82; bz.add(flame); flame.userData.lick = true; GATE_FLAMES.push(flame);
     const f = sprite(GLOW, b.x, 0.85, b.z, 1.0, 0xff9a3c, 1); f.userData.flicker = true; glowDecal(b.x, b.z, 1.6, 0xffb060, 0.5); }
   // the watch fires light the doors from the town's side
