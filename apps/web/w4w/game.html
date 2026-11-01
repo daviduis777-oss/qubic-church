@@ -966,6 +966,7 @@ var W4W = (() => {
     PASSES: () => PASSES,
     POCKETS: () => POCKETS,
     POST_CELL: () => POST_CELL,
+    PROP_BLOCK: () => PROP_BLOCK,
     PYLON_COST: () => PYLON_COST,
     PYLON_GIVE: () => PYLON_GIVE,
     PYLON_N: () => PYLON_N,
@@ -990,6 +991,7 @@ var W4W = (() => {
     STARTER_RECIPES: () => STARTER_RECIPES,
     STEP_MS: () => STEP_MS,
     TOAST_WAIT: () => TOAST_WAIT,
+    TOWN_PROPS: () => TOWN_PROPS,
     TOWN_RING: () => TOWN_RING,
     UNVEIL_MS: () => UNVEIL_MS,
     VEIL_COLD: () => VEIL_COLD,
@@ -1348,6 +1350,22 @@ var W4W = (() => {
   const DIRS = [[1, 0], [1, -1], [0, -1], [-1, 0], [-1, 1], [0, 1]];
   const key = (q, r) => `${q},${r}`;
   const ringOf = (q, r) => (Math.abs(q) + Math.abs(r) + Math.abs(q + r)) / 2;
+  const TOWN_PROPS = [
+    { kit: "campfire", at: [0, 3] },
+    // Hearth Square: the fire with the kettle
+    { kit: "memorial", at: [2, -4] },
+    // the Twelve, beside the church
+    { kit: "telescope", at: [5, -3] },
+    // the Rise, by the observatory
+    { kit: "coal", at: [-4, -1] },
+    // the Coal Works, by the mine
+    { kit: "crane", at: [-5, 3] },
+    // the market yard, still being built
+    { kit: "signal", at: [1, -8] },
+    // the Gate's two fires
+    { kit: "signal", at: [-1, -7] }
+  ];
+  const PROP_BLOCK = new Set(TOWN_PROPS.map((p) => `${p.at[0]},${p.at[1]}`));
   const dist = (a, b) => ringOf(a[0] - b[0], a[1] - b[1]);
   const worldXZ = (q, r) => [2 * (q + r / 2), 1.7320508 * r];
   function zoneOf(q, r) {
@@ -1414,6 +1432,7 @@ var W4W = (() => {
     return h < 0.22 && !nearRoad(q, r) ? "mountain" : h < 0.52 ? "rock" : h < 0.6 ? "tree" : "open";
   }
   const passable = (q, r) => {
+    if (PROP_BLOCK.has(`${q},${r}`)) return false;
     const t = terrain(q, r);
     return t !== "mountain" && t !== "void";
   };
@@ -2570,14 +2589,31 @@ const KIT_OVR = { church: 'q/b/church.glb', mine: 'q/b/mine.glb', home_A: 'q/b/h
 // props with no kit piece to stand in for: loaded once, stood on the ground, one unit tall, scaled where they are used
 const PROPS = {}, PROP_URLS = { gate: 'q/b/gate.glb', campfire: 'q/b/campfire.glb', pit: 'q/b/pit.glb', marker: 'q/b/marker.glb', brazier: 'q/b/brazier.glb', bar: 'q/b/bar.glb', post: 'q/b/post.glb', lamp: 'q/b/lamp.glb', site: 'q/b/site.glb', board: 'q/b/board.glb' };
 // props cast no shadow: under our low moon a lamp post or a stake throws a black spike across half the street
+/* the kit marks where its lanterns hang: a pool of light on the snow and a soft glow at each, once the prop stands where it stays */
+function propMarks(o, r = 1.3, col = 0xffb868, op = 0.5) { o.updateMatrixWorld(true); const v = new THREE.Vector3(), out = [];
+  o.traverse(m => { if (/^smoke_/.test(m.name)) { m.getWorldPosition(v); coreSteam.push({ x: v.x, y: v.y, z: v.z }); return; }
+    if (!/^light_/.test(m.name)) return; m.getWorldPosition(v); const L = glowDecal(v.x, v.z, r, col, op, Math.max(0.3, v.y)), S = sprite(GLOW, v.x, v.y, v.z, 0.32, 0xffd9a0, 0.9); out.push(L, S); if (o.userData.lights) o.userData.lights.push(L, S); }); return out; }
 function prop(n, h, noFow = true) { const P = PROPS[n]; if (!P) return null; const o = P.clone(true); o.scale.setScalar(h); o.traverse(m => { if (m.isMesh) { m.castShadow = false; if (noFow) m.material.userData.noFow = true; } }); return o; }
+/* the kit: Aigrad's own pieces, built by hand after Bob's paintings, kept in metres; a metre is 0.27 of a step between cells */
+const KIT_P = {}, METER = 0.27, KIT_NAMES = ['bar', 'campfire', 'board', 'well', 'benchlamp', 'lamppost', 'mailbox', 'memorial', 'sentry', 'signal', 'barricade', 'telescope', 'crane', 'coal', 'pipes', 'vent', 'snowman', 'clothesline', 'coldframes', 'atrium', 'glasshouse'];
+/* baked in daylight with their shadows painted in: matte, no metal, a little of their paint let through so the night keeps their colour; glass and fire lit from inside */
+function kitMats(o) { o.traverse(m => { if (!m.isMesh) return; m.receiveShadow = true; m.castShadow = false; const mt = m.material; mt.metalness = 0; mt.metalnessMap = null; mt.roughness = 0.92; mt.roughnessMap = null;
+  if (mt.name === 'glow' && mt.map) { mt.emissive = new THREE.Color(0xffffff); mt.emissiveMap = mt.map; mt.emissiveIntensity = 1.3; mt.color.setScalar(0.6); }
+  else if (mt.map) { mt.emissive = new THREE.Color(0xc8d0ff); mt.emissiveMap = mt.map; mt.emissiveIntensity = 0.32; }
+  mt.needsUpdate = true; }); }
+function loadKit() { return Promise.all(KIT_NAMES.map(n => loadGlb(`q/k/${n}.glb`).then(g => { if (!g) return; kitMats(g.scene); KIT_P[n] = g.scene; }))); }
+/* one piece of the kit, standing at x,z and facing the direction rot (0 faces +z), lit by its own lanterns */
+function kitAt(n, x, z, rot = 0, s = 1, parent = scene) { const P = KIT_P[n]; if (!P) return null; const o = P.clone(true); o.scale.setScalar(METER * s); o.position.set(x, 0, z); o.rotation.y = rot; o.userData.lights = []; parent.add(o); propMarks(o); return o; }
 let PYLON_MODEL = null;
 function loadGlb(url) { return new Promise(res => { const l = new GLTFLoader(); l.setMeshoptDecoder(MeshoptDecoder); l.load(url, g => res(g), undefined, e => { console.warn(url, e); res(null); }); }); }
 function meshyMats(o, snow, noFow) { o.traverse(m => { if (!m.isMesh) return; m.castShadow = m.receiveShadow = true; let mt = m.material;
   // painted for daylight renders, they read black under our night: no metal sheen without a sky to reflect, and a little of their own paint let through
   mt.transparent = false; mt.opacity = 1; mt.alphaTest = 0; mt.depthWrite = true; mt.alphaMap = null;
   if (mt.isMeshStandardMaterial) { mt.metalness = 0; mt.metalnessMap = null; mt.roughness = Math.max(mt.roughness, 0.8); mt.roughnessMap = null; mt.color.multiplyScalar(1.35);
-    if (mt.map) { mt.emissive = new THREE.Color(0xd8dcff); mt.emissiveMap = mt.map; mt.emissiveIntensity = 0.45; } mt.needsUpdate = true; }
+    if (mt.map) { mt.emissive = new THREE.Color(0xd8dcff); mt.emissiveMap = mt.map; mt.emissiveIntensity = 0.45; }
+    // the kit's own glass and fire: lit from inside, warm, whatever the moon does
+    if (mt.name === 'glow' && mt.map) { mt.emissive = new THREE.Color(0xffffff); mt.emissiveIntensity = 1.25; mt.color.setScalar(0.6); }
+    mt.needsUpdate = true; }
   if (snow) m.material = mt = snowify(mt); if (noFow) mt.userData.noFow = true; }); }
 function fitTo(o, ref) {
   o.updateMatrixWorld(true); const b = new THREE.Box3().setFromObject(o), rb = new THREE.Box3().setFromObject(ref), s = b.getSize(new THREE.Vector3()), rs = rb.getSize(new THREE.Vector3());
@@ -2585,7 +2621,7 @@ function fitTo(o, ref) {
   o.scale.multiplyScalar(k); o.position.set(rc.x - c.x * k, -b.min.y * k, rc.z - c.z * k); const g = new THREE.Group(); g.add(o); return g;
 }
 async function loadOverrides() {
-  await Promise.all([...Object.entries(KIT_OVR).map(async ([n, url]) => { const g = await loadGlb(url); if (!g || !kit[n]) return; meshyMats(g.scene, KIT_SNOW.has(n)); kit[n] = fitTo(g.scene, kit[n]); }),
+  await Promise.all([loadKit(), ...Object.entries(KIT_OVR).map(async ([n, url]) => { const g = await loadGlb(url); if (!g || !kit[n]) return; meshyMats(g.scene, KIT_SNOW.has(n)); kit[n] = fitTo(g.scene, kit[n]); }),
     ...Object.entries(PROP_URLS).map(([n, url]) => loadGlb(url).then(g => { if (!g) return; meshyMats(g.scene, false); g.scene.updateMatrixWorld(true); const b = new THREE.Box3().setFromObject(g.scene), c = b.getCenter(new THREE.Vector3()), k = 1 / (b.max.y - b.min.y);
       g.scene.scale.multiplyScalar(k); g.scene.position.set(-c.x * k, -b.min.y * k, -c.z * k); PROPS[n] = new THREE.Group(); PROPS[n].add(g.scene); PROPS[n].userData.w = (b.max.x - b.min.x) * k; PROPS[n].userData.d = (b.max.z - b.min.z) * k; })),
     loadGlb('q/b/pylon.glb').then(g => { if (!g) return; meshyMats(g.scene, false, true); g.scene.updateMatrixWorld(true); const b = new THREE.Box3().setFromObject(g.scene), k = 3.5 / (b.max.y - b.min.y);
@@ -2642,6 +2678,14 @@ function build() {
   label('QUBIC CHURCH', ch, 3.2, 'key');
   { const f = cp0.clone().setY(0).normalize().negate(), side = new THREE.Vector3(-f.z, 0, f.x); { const at = cp0.clone().add(side.multiplyScalar(0.78)).add(f.clone().multiplyScalar(0.62)); makePipe(at, true, false, 0.12, true); const col = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.27, 0.12, 18), PIPE_IRON); col.position.set(at.x, 0.06, at.z); scene.add(col); }; } // the church's main: the thickest pipe in town, straight into Anna's ring
   const pp = HX(...SPECIAL.plaza);
+  if (KIT_P.board && KIT_P.campfire && KIT_P.well) {
+    // Hearth Square: the board at the back of the square, the well beside it, the fire with the kettle on the next cell where the benches are
+    const bp = cornerAt(...SPECIAL.plaza, 90), board = kitAt('board', bp.x, bp.z, faceTo(bp, pp), 1.15); tag(board, 'board', 'board');
+    const wp = cornerAt(...SPECIAL.plaza, 150), well = kitAt('well', wp.x, wp.z, faceTo(wp, pp) + 0.5); tag(well, 'board', 'board');
+    const fc = HX(...FIRE_CELL), fire = kitAt('campfire', fc.x, fc.z, faceTo(fc, pp)); tag(fire, 'fire', 'fire');
+    fireSprite = sprite(GLOW, fc.x, 0.28, fc.z, 1.1, 0xff9a3c, 1); fireSprite.userData.flicker = true; tag(fireSprite, 'fire', 'fire'); glowDecal(fc.x, fc.z, 2.8, 0xffb060, 0.75);
+    label('PLAZA · FIRE · ORDERS', board, 1.9, 'key');
+  } else {
   const well = place('well', ...SPECIAL.plaza, { scale: 1.2 }); well.position.x -= 0.7; tag(well, 'board', 'board');
   const board = buildBoard(); board.position.set(pp.x + 0.75, 0, pp.z - 0.1); scene.add(board); tag(board, 'board', 'board');
   fireSprite = sprite(GLOW, pp.x + 0.1, 0.35, pp.z + 0.75, 1.1, 0xff9a3c, 1); fireSprite.userData.flicker = true; tag(fireSprite, 'fire', 'fire');
@@ -2649,6 +2693,7 @@ function build() {
   { const cf = prop('campfire', 0.62, false); if (cf) { cf.position.set(pp.x + 0.1, 0, pp.z + 0.75); cf.rotation.y = 0.6; scene.add(cf); tag(cf, 'fire', 'fire'); fireSprite.position.y = 0.3; }
     else for (let i = 0; i < 3; i++) { const l = place('lumber', ...SPECIAL.plaza, { scale: 0.6, rot: i * 1.1 }); l.position.add(new THREE.Vector3(0.1, 0, 0.75)); tag(l, 'fire', 'fire'); } }
   label('PLAZA · FIRE · ORDERS', board, 1.9, 'key');
+  }
   const ob = place('tower', ...SPECIAL.observatory, { scale: 1.25, rot: 0.4 }); tag(ob, 'observatory', 'observatory');
   const op = HX(...SPECIAL.observatory); sprite(GLOW, op.x, 2.6, op.z, 0.9, 0x9fc3ff, 0.9); glowDecal(op.x, op.z, 1.6, 0x9fc3ff, 0.25);
   label('OBSERVATORY', ob, 3.6, 'key');
@@ -2659,7 +2704,9 @@ function build() {
   const mp = HX(...SPECIAL.mine); glowDecal(mp.x, mp.z, 1.6, 0xffb060, 0.25);
   label('THE MINE', mn, 2.1, 'key');
   STAGE2.forEach((s, i) => { const at = HX(...s.at), face = Math.atan2(-at.x, -at.z);
-    const PR = s.build === 'glasshouse' ? buildGlasshouse() : s.prop && PROPS[s.prop] ? prop(s.prop, 1.55, false) : null; if (PR) { PR.position.set(at.x, 0, at.z); PR.rotation.y = face; scene.add(PR); }
+    // the kit's own Atrium and Glasshouse where they are built; the glasshouse turned side-on, its long glass wall to Anna
+    let PR = KIT_P[s.id] ? kitAt(s.id, at.x, at.z, face, s.id === 'glasshouse' ? 0.72 : 1) : null;
+    if (!PR) { PR = s.build === 'glasshouse' ? buildGlasshouse() : s.prop && PROPS[s.prop] ? prop(s.prop, 1.55, false) : null; if (PR) { PR.position.set(at.x, 0, at.z); PR.rotation.y = face; scene.add(PR); propMarks(PR); } }
     const g = PR || (s.model ? place(s.model, ...s.at, { rot: face, scale: 1.05 }) : place('scaffolding', ...s.at, { rot: i * 1.3 }));
     if (PR) {} else if (s.model && !s.open) place('scaffolding', ...s.at, { rot: face + 0.4, scale: 0.8 }); else place(s.tag === 'STAGE 3' ? 'stage_A' : i % 2 ? 'stage_B' : 'stage_C', ...s.at, { rot: i * 1.3 });
     tag(g, 'stage2', s.id); label(s.open ? s.name.toUpperCase() : s.name.toUpperCase() + ' · ' + (s.tag || 'STAGE 2'), g, 1.9, 'key'); if (s.open) { const c = HX(...s.at); glowDecal(c.x, c.z, 2, 0xffd6a0, 0.5); } });
@@ -2717,8 +2764,13 @@ function mergeScenery(objs) {
   groups.forEach(({ mat, list }) => { const g = mergeGeometries(list, false); list.forEach(x => x.dispose()); if (!g) return;
     const mesh = new THREE.Mesh(g, mat); mesh.castShadow = true; mesh.receiveShadow = true; mesh.matrixAutoUpdate = false; scene.add(mesh); });
 }
-function freePlots() { const taken = new Set(reserved); allResidents().forEach(h => taken.add(key(...h.at))); const out = [];
-  for (let n = 2; n <= W4W.DOME_RING; n++) ring(n).forEach(([q, r]) => { if (W4W.insideDome(q, r) && !taken.has(key(q, r)) && !(q === GATE_CELL[0] && r === GATE_CELL[1])) out.push([q, r]); }); return out; }
+/* homes stand outside the public ring, from ring 6 to the Veil: never on a lane, never against a public house or a pylon,
+ * and never in the Wardens' ground before the Gate. Only when that belt is full does the town let homes in closer */
+function freePlots() { const taken = new Set(reserved); allResidents().forEach(h => taken.add(key(...h.at))); const out = [], near = [];
+  const keep = [...Object.values(SPECIAL), ...STAGE2.map(s => s.at), ...W4W.TOWN_PROPS.map(p => p.at), ...Array.from({ length: W4W.PYLON_N }, (_, i) => W4W.pylonCell(i))];
+  const ok = (q, r) => W4W.insideDome(q, r) && !taken.has(key(q, r)) && W4W.passable(q, r) && W4W.dist([q, r], GATE_CELL) > 2 && !keep.some(c => W4W.dist(c, [q, r]) <= 1);
+  for (let n = 2; n <= W4W.DOME_RING; n++) ring(n).forEach(([q, r]) => { if (ok(q, r)) (n >= 6 ? out : near).push([q, r]); });
+  return out.length ? out : near; }
 function lamp(p) {
   const post = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.05, 1.3, 6), new THREE.MeshStandardMaterial({ color: 0x241c18, roughness: 0.8 }));
   post.position.set(p.x, 0.65, p.z); post.castShadow = true; scene.add(post);
@@ -2994,9 +3046,10 @@ function makeHouse(d, mine) {
   tag(g, 'house', d.id);
   const cls = mine ? 'me' : d.state === 'nosignal' ? 'red' : d.demo ? 'demo' : '';
   const Lb = label(mine ? `${d.nick} (you)` : d.demo ? `${d.nick} · demo` : d.nick, main, 2.0, cls); Lb.hover = !mine && !d.real && d.state !== 'nosignal';
+  dressYard(g, q, r, d.id); g.traverse(o => (o.userData.lights || []).forEach(l => fx.lights.push(l)));
   houses[d.id] = { g, data: d, fx, label: Lb, mine };
 }
-function disposeHouse(id) { const h = houses[id]; if (!h) return; if (hoverOn === id) { hoverMeshes.length = 0; hoverOn = null; } scene.remove(h.g); h.fx.lights.forEach(o => scene.remove(o)); if (h.fx.pipe) { scene.remove(h.fx.pipe); pipes.splice(pipes.indexOf(h.fx.pipe), 1); }
+function disposeHouse(id) { const h = houses[id]; if (!h) return; for (const [k, o] of YARD_CORNERS) if (o === id) YARD_CORNERS.delete(k); if (hoverOn === id) { hoverMeshes.length = 0; hoverOn = null; } scene.remove(h.g); h.fx.lights.forEach(o => scene.remove(o)); if (h.fx.pipe) { scene.remove(h.fx.pipe); pipes.splice(pipes.indexOf(h.fx.pipe), 1); }
   h.label.el.remove(); labels.splice(labels.indexOf(h.label), 1);
   for (let i = interactive.length - 1; i >= 0; i--) if (interactive[i].userData.id === id) interactive.splice(i, 1);
   delete houses[id]; }
@@ -6904,8 +6957,8 @@ function buildGlasshouse() {
 }
 const STREET_OBJS = [], STREET_PATHS = []; let streetSig = null;
 function buildStreets() {
-  STREET_PATHS.length = 0;
-  STREET_OBJS.splice(0).forEach(o => { scene.remove(o); o.geometry?.dispose(); }); streetSig = allResidents().map(h => (h.at || []).join(',')).sort().join('|');
+  STREET_PATHS.length = 0; STREET_PTS = null;
+  STREET_OBJS.splice(0).forEach(o => { scene.remove(o); o.geometry?.dispose(); (o.userData?.lights || []).forEach(l => scene.remove(l)); }); streetSig = allResidents().map(h => (h.at || []).join(',')).sort().join('|');
   const homes = new Set([...allResidents().filter(h => h.at?.[0] != null).map(h => key(...h.at)), ...STAGE2.map(x => key(...x.at)), ...Object.values(SPECIAL).map(c => key(...c))]);
   [...streetCells()].forEach(k => { if (!homes.has(k)) reserved.add(k); });
   // one cobbled lane per destination: a ribbon laid on the snow, edges lost in drifts
@@ -6930,44 +6983,69 @@ function buildStreets() {
       pos.push(p.x + n.x * W, 0.03, p.z + n.z * W, p.x - n.x * W, 0.03, p.z - n.z * W); uv.push(u * L / TILE, 0, u * L / TILE, 1);
       if (i < N) { const k = i * 2; idx.push(k, k + 1, k + 2, k + 1, k + 3, k + 2); }
       if (i % 9 === 4 && W4W.ringOf(...line[Math.min(line.length - 1, Math.floor(u * line.length))]) >= 3 && (lampN++ % 2 === 0)) {
-        const LP = prop('lamp', 1.05); const m = LP || new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.032, 0.85, 5), post); if (LP) m.position.set(p.x + n.x * 0.82, 0, p.z + n.z * 0.82); else m.position.set(p.x + n.x * 0.82, 0.42, p.z + n.z * 0.82); scene.add(m); STREET_OBJS.push(m);
-        const lx = p.x + n.x * 0.82, lz = p.z + n.z * 0.82, sp = sprite(GLOW, lx, LP ? 0.93 : 0.9, lz, 0.2, 0xffe2b0, 0.85); sp.userData.flicker = true; STREET_OBJS.push(sp);
-        const pool = glowDecal(lx, lz, 2.4, 0xffc27a, 0.55, 0.95); STREET_OBJS.push(pool); } }
+        const lx = p.x + n.x * 0.86, lz = p.z + n.z * 0.86;
+        if (KIT_P.lamppost) { const bench = KIT_P.benchlamp && lampN % 3 === 1, K = kitAt(bench ? 'benchlamp' : 'lamppost', lx, lz, Math.atan2(-n.x, -n.z)); STREET_OBJS.push(K); }
+        else { const LP = prop('lamp', 1.05); const m = LP || new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.032, 0.85, 5), post); if (LP) m.position.set(lx, 0, lz); else m.position.set(lx, 0.42, lz); scene.add(m); STREET_OBJS.push(m);
+          const sp = sprite(GLOW, lx, LP ? 0.93 : 0.9, lz, 0.2, 0xffe2b0, 0.85); sp.userData.flicker = true; STREET_OBJS.push(sp);
+          const pool = glowDecal(lx, lz, 2.4, 0xffc27a, 0.55, 0.95); STREET_OBJS.push(pool); } } }
     const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); geo.setIndex(idx); geo.computeVertexNormals();
     const m = new THREE.Mesh(geo, mat); m.receiveShadow = true; m.renderOrder = 1; scene.add(m); STREET_OBJS.push(m);
   }
   buildDecor();
 }
-/* signs of life: wood stacked by every door, a sled or a cart left in the snow, barrels by the busy places */
-const LIFE_H = { cart: 0.42, sled: 0.3, barrels: 0.42, woodpile: 0.48, wagon: 0.58, barrel: 0.3 };
-function lifeProp(n, pos, rot) { const P = PROPS[n]; if (!P) return null; const h = Math.min(LIFE_H[n] || 0.5, 0.55 / Math.max(P.userData.w || 1, P.userData.d || 1, 0.01)); const o = prop(n, h, false); if (!o) return null; o.position.set(pos.x, 0, pos.z); o.rotation.y = rot; scene.add(o); return o; }
-function nearHome(pos, homes) { for (const k of homes) { const [q, r] = k.split(',').map(Number), c = HX(q, r); if (Math.hypot(c.x - pos.x, c.z - pos.z) < 1.15) return true; } return false; }
-/* the town's clutter lives only on the corners where three cells meet: nobody's path ever crosses a corner,
- * so nothing stands in the way and nothing gets walked through. Spread evenly, never the same thing twice side by side */
-let decorDone = false;
-function buildDecor() {
-  return; // the old clutter is gone; the new props come placed by district
-  if (decorDone || !PROPS.woodpile) return; decorDone = true;
-  const big = new Set([...Object.values(SPECIAL), ...STAGE2.map(x => x.at), GATE_CELL, ...Array.from({ length: W4W.PYLON_N }, (_, i) => W4W.pylonCell(i))].map(c => key(...c)));
-  const homes = new Set([...allResidents().filter(h => h.at?.[0] != null).map(h => key(...h.at))]);
-  const R = seeded(77), seen = new Map(), placed = [], KINDS = ['pines', 'woodpile', 'pines', 'barrel', 'pines', 'cart', 'sled', 'barrels', 'pines'];
-  for (let n = 2; n <= W4W.TOWN_RING; n++) for (const [q, r] of ring(n)) for (let k = 0; k < 6; k++) {
-    const c = HX(q, r), a = Math.PI / 6 + k * Math.PI / 3, v = new THREE.Vector3(c.x + Math.cos(a) * 1.155, 0, c.z + Math.sin(a) * 1.155), id = v.x.toFixed(1) + ',' + v.z.toFixed(1);
-    if (seen.has(id)) continue; seen.set(id, 1); if (Math.hypot(v.x, v.z) > DOME_R - 1.6 || Math.hypot(v.x, v.z) < 4.4) continue;
-    // the three cells that meet here: none of them may be a big building; a house is fine, the corner is outside its walls
-    const cells = [[q, r], ...W4W.DIRS.map(([dq, dr]) => [q + dq, r + dr])].filter(cc => HX(...cc).distanceTo(v) < 1.3);
-    if (cells.some(cc => big.has(key(...cc)))) continue;
-    const nearHouse = cells.some(cc => homes.has(key(...cc)));
-    if (R() > (nearHouse ? 0.3 : 0.2)) continue;
-    let kind = nearHouse ? (R() < 0.6 ? 'woodpile' : 'barrel') : KINDS[Math.floor(R() * KINDS.length)];
-    if (placed.some(p => p.kind === kind && p.v.distanceTo(v) < 4.2)) kind = kind === 'pines' ? 'barrel' : 'pines';
-    if (placed.some(p => p.kind === kind && p.v.distanceTo(v) < 3)) continue;
-    placed.push({ kind, v });
-    if (kind === 'pines') { for (let i = 0; i < 2 + Math.floor(R() * 2); i++) { const t = kit.tree_A?.clone(true); if (!t) break; t.position.set(v.x + (R() - 0.5) * 0.45, 0, v.z + (R() - 0.5) * 0.45); t.scale.setScalar(0.3 + R() * 0.18); t.rotation.y = R() * 6; scene.add(t); } }
-    else lifeProp(kind, v, R() * 6);
-  }
+/* ---------- Aigrad by quarters: each public house has its yard dressed for its trade ----------
+ * Hearth Square to the south (the board, the well, the fire with the kettle, a mailbox by the post, a snowman by the bar),
+ * the Coal Works and the market yard to the west, the Wardens' Watch and the Gate to the north-west, the Twelve by the church,
+ * the telescope on the scholars' Rise, cold frames at the Glass Gardens, the Atrium's yard to the south-east.
+ * Big pieces fill their own cell (world.ts keeps people out of it); small ones stand on corners, where no path ever runs. */
+const USED_CORNERS = new Set();
+const cornerId = v => v.x.toFixed(1) + ',' + v.z.toFixed(1);
+/* the corner of a cell that lies most toward turn degrees off its face to Anna (0 = the front, 180 = the back, + is to its right) */
+function cornerTurn(q, r, turn) { const c = HX(q, r), f = Math.atan2(-c.z, -c.x) * 180 / Math.PI + turn; let best = null, bd = 1e9;
+  for (let k = 0; k < 6; k++) { const a = 30 + k * 60, d = Math.abs(((a - f) % 360 + 540) % 360 - 180); if (d < bd) { bd = d; best = a; } } return cornerAt(q, r, best); }
+let STREET_PTS = null;
+function streetPts() { if (STREET_PTS) return STREET_PTS; STREET_PTS = []; for (const C of STREET_PATHS) { const L = C.getLength(); for (let u = 0; u <= 1; u += 0.25 / L) STREET_PTS.push(C.getPoint(u)); } return STREET_PTS; }
+/* keep a piece off the cobbles: push it out to clear the lane by r */
+function offStreet(v, r) { let best = null, bd = 1e9; for (const p of streetPts()) { const d = (p.x - v.x) ** 2 + (p.z - v.z) ** 2; if (d < bd) { bd = d; best = p; } }
+  const d = Math.sqrt(bd), need = 0.82 + r; if (best && d < need) { const away = new THREE.Vector3(v.x - best.x, 0, v.z - best.z); if (away.lengthSq() < 1e-6) away.set(1, 0, 0); away.normalize().multiplyScalar(need - d); v.add(away); } return v; }
+/* stand a kit piece on a corner of a cell; face: 'out' away from the cell, 'in' toward it, 'anna' toward the middle, or an angle */
+const YARD_CORNERS = new Map(); // corner -> the home whose yard it is
+function onCorner(n, q, r, turn, face = 'in', s = 1, parent = scene, rad = 0.3, owner = null) {
+  const v = cornerTurn(q, r, turn), id = cornerId(v); if (USED_CORNERS.has(id) || !KIT_P[n]) return null;
+  if (owner) { const o = YARD_CORNERS.get(id); if (o && o !== owner) return null; YARD_CORNERS.set(id, owner); } else { if (YARD_CORNERS.has(id)) return null; USED_CORNERS.add(id); } offStreet(v, rad);
+  const c = HX(q, r), rot = typeof face === 'number' ? face : face === 'in' ? faceTo(v, c) : face === 'out' ? faceTo(c, v) : Math.atan2(-v.x, -v.z);
+  return kitAt(n, v.x, v.z, rot, s, parent); }
+let quartersDone = false;
+function buildQuarters() {
+  if (quartersDone || !KIT_P.board) return; quartersDone = true;
+  // the big pieces, one cell each
+  for (const { kit: n, at } of W4W.TOWN_PROPS) { if (n === 'campfire') continue; const c = HX(...at), near = [...Object.values(SPECIAL), ...STAGE2.map(x => x.at)].filter(x => W4W.dist(x, at) === 1)[0];
+    const look = near ? HX(...near) : new THREE.Vector3(0, 0, 0); const o = kitAt(n, c.x, c.z, n === 'signal' ? faceTo(c, new THREE.Vector3(0, 0, 0)) : faceTo(c, look), n === 'memorial' ? 1.15 : 1); }
+  const P = W4W.SPECIAL, S2 = id => STAGE2.find(x => x.id === id)?.at;
+  // Hearth Square
+  onCorner('mailbox', ...S2('post'), 30, 'anna'); onCorner('benchlamp', ...S2('post'), -30, 'anna');
+  onCorner('snowman', ...S2('bar'), -30, 'anna', 1.1); onCorner('benchlamp', ...P.plaza, 210, 'in');
+  { const fc = FIRE_CELL; onCorner('benchlamp', ...fc, 30, 'in'); onCorner('benchlamp', ...fc, 150, 'in'); }
+  // the Coal Works and the market yard
+  onCorner('vent', ...P.mine, -30, 'anna', 1, scene, 0.35); onCorner('pipes', ...P.mine, 30, 'anna', 1, scene, 0.45);
+  onCorner('pipes', ...S2('market'), -30, 'anna', 1, scene, 0.45); onCorner('vent', ...S2('market'), 30, 'anna', 1, scene, 0.35);
+  // the Wardens' Watch and the Gate
+  onCorner('sentry', ...S2('wardens'), 30, 'anna'); onCorner('barricade', ...S2('wardens'), -90, 'out', 0.9, scene, 0.4);
+  onCorner('sentry', ...GATE_CELL, 30, 'anna'); onCorner('barricade', ...GATE_CELL, 90, 'out', 0.9, scene, 0.4); onCorner('barricade', ...GATE_CELL, -90, 'out', 0.9, scene, 0.4);
+  // the Twelve, the Rise, the Glass Gardens, the Atrium
+  { const m = W4W.TOWN_PROPS.find(x => x.kit === 'memorial')?.at; if (m) { onCorner('benchlamp', ...m, 30, 'in'); onCorner('benchlamp', ...m, -30, 'in'); } }
+  onCorner('benchlamp', ...P.library, 30, 'anna'); onCorner('benchlamp', ...P.observatory, -30, 'anna');
+  onCorner('coldframes', ...S2('glasshouse'), 30, 'anna', 1, scene, 0.35); onCorner('coldframes', ...S2('glasshouse'), -30, 'anna', 1, scene, 0.35); onCorner('vent', ...S2('glasshouse'), 180, 'anna');
+  onCorner('benchlamp', ...S2('atrium'), 30, 'anna'); onCorner('pipes', ...S2('atrium'), -30, 'anna', 0.9, scene, 0.45);
+  // warm pipes under Anna's ring breathe through the snow
+  [[2, -1], [-1, -1], [-1, 2]].forEach(([q, r], i) => onCorner('vent', q, r, 180, 'anna', 0.9, scene, 0.35));
 }
-
+/* a home's yard: its mailbox by the door; a line of washing behind some, a snowman in front of others */
+function dressYard(g, q, r, id) { if (!KIT_P.mailbox) return; const h = [...String(id)].reduce((a, ch) => (a * 31 + ch.charCodeAt(0)) >>> 0, 7);
+  onCorner('mailbox', q, r, 30, 'anna', 1, g, 0.25, id);
+  if (h % 3 === 0) onCorner('clothesline', q, r, 150 + (h % 2) * 60, 'out', 0.9, g, 0.4, id);
+  if (h % 4 === 1) onCorner('snowman', q, r, -30, 'anna', 1, g, 0.3, id); }
+function buildDecor() { buildQuarters(); }
 /* ---------- free plots: stakes in the snow where a newcomer can build ---------- */
 let plotStakes = null, plotSig = '', plotT = 0;
 function stepPlotStakes() {
