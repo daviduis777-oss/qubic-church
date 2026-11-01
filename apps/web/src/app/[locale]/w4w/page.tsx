@@ -123,7 +123,7 @@ export default async function W4WPage(props: { params: Promise<{ locale: string 
     return (
       <div className="w4w-play">
         <style>{css}</style>
-        <iframe allow="fullscreen; clipboard-write" src="/api/w4w/play" title="W4W · Aigarth" />
+        <iframe allow="fullscreen; clipboard-write" src="/api/w4w/play" title="W4W · Aigrad" />
       </div>
     )
 
@@ -175,7 +175,7 @@ export default async function W4WPage(props: { params: Promise<{ locale: string 
         <p>And inside it, someone was sleeping.</p>
         <p className="name">They named her Anna.</p>
         <p>The machine was never meant to keep one person alive. The ice around her does not answer to one fire. It answers to many. Signals travel through the frozen ground, and something beneath the surface is listening.</p>
-        <p>So every survivor in Aigarth faces the same choice, every single night:</p>
+        <p>So every survivor in Aigrad faces the same choice, every single night:</p>
         <p className="choice">Burn your heat to stay alive. Or give it to the ice.</p>
         <p>Alone, you last a few nights. Together, you might wake what sleeps.</p>
       </article>

@@ -163,7 +163,7 @@
     btn.textContent = 'Gate · invites'
     const wrap = document.createElement('div')
     wrap.id = 'gate'
-    wrap.innerHTML = '<div class="box" role="dialog" aria-label="Who can enter Aigarth"></div>'
+    wrap.innerHTML = '<div class="box" role="dialog" aria-label="Who can enter Aigrad"></div>'
     document.body.append(btn, wrap)
     const box = wrap.querySelector('.box')
     let fresh = null
@@ -171,10 +171,10 @@
       box.innerHTML = '<p>Loading…</p>'
       let v
       try { v = await post({ op: 'admin' }) } catch (e) { box.innerHTML = `<p>${esc(e.message)}</p>`; return }
-      box.innerHTML = `<button class="q x" data-close>Close</button><h3>Who can enter Aigarth</h3>
+      box.innerHTML = `<button class="q x" data-close>Close</button><h3>Who can enter Aigrad</h3>
 <p>The town is closed. Make a one-time code for each tester. They log in on qubic.church/w4w with the same account as the Crypt and BPP-9000, then enter the code.</p>
 <div class="row"><input id="gNote" maxlength="60" placeholder="Who is it for (only you see this)"><button id="gMake">Make a code</button></div>
-${fresh ? `<div class="code"><span>${esc(fresh)}</span><span><button class="q" data-copy="${esc(fresh)}">Copy code</button> <button class="q" data-copy="${esc(link(fresh))}">Copy link</button></span></div><p>Send the link: it opens the beta entrance with the code already filled in. The tester logs in (or makes an account in the same box), then presses Enter Aigarth.</p>` : ''}
+${fresh ? `<div class="code"><span>${esc(fresh)}</span><span><button class="q" data-copy="${esc(fresh)}">Copy code</button> <button class="q" data-copy="${esc(link(fresh))}">Copy link</button></span></div><p>Send the link: it opens the beta entrance with the code already filled in. The tester logs in (or makes an account in the same box), then presses Enter Aigrad.</p>` : ''}
 <table><tr><th>Code</th><th>For</th><th>Used by</th><th></th></tr>${v.invites.map(i => `<tr><td><code>${esc(i.code)}</code></td><td>${esc(i.note || '')}</td><td>${i.usedBy ? esc(i.usedName || i.usedBy) : '<span style="color:#8e806e">not yet</span>'}</td><td>${i.usedBy ? '' : `<button class="q" data-copy="${esc(link(i.code))}">Link</button> <button class="q" data-drop="${esc(i.code)}">Cancel</button>`}</td></tr>`).join('') || '<tr><td colspan="4" style="color:#8e806e">No codes yet.</td></tr>'}</table>
 <h3 style="font-size:15px">Inside now</h3>
 <table><tr><th>Name</th><th>Account</th><th></th></tr>${v.players.map(p => `<tr><td>${esc(p.name)}${p.admin ? ' · admin' : ''}</td><td><code>${esc(p.handle)}</code></td><td>${p.admin ? '' : `<button class="q" data-revoke="${esc(p.handle)}">Close the gate</button>`}</td></tr>`).join('')}</table>`

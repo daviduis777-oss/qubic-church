@@ -134,7 +134,7 @@ async function mailAct(ws: W.WState, d: W.Dirty, uid: string, op: string, b: Rec
     if (!atPost) return { ok: false, error: 'Letters are written at the post office.' }
     const text = clean(b.text, 1200); if (text.length < 2) return { ok: false, error: 'Write something first.' }
     const want = String(b.to ?? '').trim().toLowerCase(); const to = Object.entries(ws.houses).find(([k, h]) => k.toLowerCase() === want || (h.nick ?? '').toLowerCase() === want)
-    if (!to) return { ok: false, error: 'Nobody in Aigarth goes by that name.' }
+    if (!to) return { ok: false, error: 'Nobody in Aigrad goes by that name.' }
     if (to[0] === uid) return { ok: false, error: 'You would have to carry it to your own door. Write to someone else.' }
     const keep = b.keep === true; if (keep && mine.length >= MAIL_CARRY) return { ok: false, error: 'Your hands are full. Leave one in the sack first.' }
     const anon = b.anon === true

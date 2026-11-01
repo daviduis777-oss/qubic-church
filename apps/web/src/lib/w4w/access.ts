@@ -4,7 +4,7 @@ import { type ForumUser, modKeyOk } from '@/lib/forum/auth'
 import { K, pairs, pipe, run } from './store'
 
 /**
- * Who can enter Aigarth while it is closed.
+ * Who can enter Aigrad while it is closed.
  * - admins: whoever entered the mod key once while logged in (or is listed in W4W_ADMINS).
  * - players: people who redeemed an invite code an admin made.
  * The account is the same one the Crypt and BPP-9000 use.

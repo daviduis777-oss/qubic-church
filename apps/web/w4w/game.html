@@ -1,4 +1,4 @@
-<title>W4W Aigarth</title>
+<title>W4W Aigrad</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@400;500;700&family=Alegreya+Sans+SC:wght@500;700&family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&family=Cinzel:wght@400;500;600;700&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
@@ -841,12 +841,12 @@ body.act1 #dock button[data-act=bag],body.act1 #dock button[data-act=craft],body
 @media (prefers-reduced-motion: reduce){#xact .xt{animation:none}}
 </style>
 
-<canvas id="c" aria-label="Aigarth, a winter town seen from above"></canvas>
+<canvas id="c" aria-label="Aigrad, a winter town seen from above"></canvas>
 <canvas id="snow2d" aria-hidden="true" hidden></canvas>
 <div id="labels"></div>
 
 <div id="top">
-  <div class="brand"><span class="pilot" aria-hidden="true"></span><b>W4W · AIGARTH</b></div>
+  <div class="brand"><span class="pilot" aria-hidden="true"></span><b>W4W · AIGRAD</b></div>
   <div class="chips">
     <span class="chip hide-sm">Epoch <b id="epochV">237</b></span>
     <span class="chip hide-sm">Power <b id="pow">0</b><span class="mute">sol/h</span></span>
@@ -863,7 +863,7 @@ body.act1 #dock button[data-act=bag],body.act1 #dock button[data-act=craft],body
 </button>
 
 <div id="feed" aria-live="polite"></div>
-<div id="online" aria-label="People in Aigarth right now"></div>
+<div id="online" aria-label="People in Aigrad right now"></div>
 <div id="banner"><b id="bannerB"></b><span id="bannerS"></span></div>
 
 <div id="dock">
@@ -883,7 +883,7 @@ body.act1 #dock button[data-act=bag],body.act1 #dock button[data-act=craft],body
 <aside id="panel" aria-live="polite">
   <header><img id="phImg" alt=""><div><h2 id="phT"></h2><p id="phS"></p></div><button class="x" id="px" aria-label="Close">×</button></header>
   <div id="pbody"></div>
-  <form id="chatForm" hidden><input id="chatIn" autocomplete="off" maxlength="400" placeholder="Ask Maria anything about Aigarth"><button class="btn main" type="submit">Send</button></form>
+  <form id="chatForm" hidden><input id="chatIn" autocomplete="off" maxlength="400" placeholder="Ask Maria anything about Aigrad"><button class="btn main" type="submit">Send</button></form>
 </aside>
 
 <div id="intro" hidden>
@@ -901,7 +901,7 @@ body.act1 #dock button[data-act=bag],body.act1 #dock button[data-act=craft],body
 <div id="talk" hidden><div class="card"><img src="maria-full.webp" alt="Maria"><div><span class="who" id="talkWho">MARIA · MINING</span><p id="talkText"></p><div id="talkBody"></div><div class="row" id="talkRow"></div></div></div></div>
 <div id="hub" hidden></div>
 <div id="proto">PROTOTYPE · NO RIG IS REALLY RENTED</div>
-<div id="load"><span class="pilot"></span><b>WARMING UP AIGARTH</b></div>
+<div id="load"><span class="pilot"></span><b>WARMING UP AIGRAD</b></div>
 
 <script>/*W4W_WORLD_START*/
 "use strict";
@@ -1340,7 +1340,7 @@ var W4W = (() => {
   const SPECIAL = { core: [0, 0], church: [1, -3], plaza: [-1, 3], observatory: [4, -2], library: [5, -5], mine: [-5, 0] };
   const DEMO_CELLS = [];
   const ZONES = [
-    { name: "Aigarth", cold: 12 },
+    { name: "Aigrad", cold: 12 },
     { name: "The Edge", cold: 15 },
     { name: "Black Pines", cold: 22 },
     { name: "Stone Teeth", cold: 28 }
@@ -2422,7 +2422,7 @@ async function initCaps() {
   if (room) {
     room.onPeers(ch => { S.peers = ch.peers.filter(p => !p.isMe && p.kind === 'viewer'); renderPeers(); refreshTown(); });
     room.on('wood', m => { if (!m.sameTab) { fireFlare(); pulse(0.7); say(`${esc(nickOf(m))} added wood to the fire.`, 'Plaza'); } });
-    room.on('welcome', m => { if (!m.sameTab && m.data?.to === S.uid) say(`${esc(nickOf(m))} lit a lamp on your path. Welcome to Aigarth.`); else if (!m.sameTab) say(`${esc(nickOf(m))} welcomed ${esc(String(m.data?.toNick || 'a newcomer'))}.`, 'Plaza'); });
+    room.on('welcome', m => { if (!m.sameTab && m.data?.to === S.uid) say(`${esc(nickOf(m))} lit a lamp on your path. Welcome to Aigrad.`); else if (!m.sameTab) say(`${esc(nickOf(m))} welcomed ${esc(String(m.data?.toNick || 'a newcomer'))}.`, 'Plaza'); });
     room.on('settled', m => { if (!m.sameTab) offerWelcome(m.by, String(m.data?.nick || 'someone')); });
   }
   updateModeNote();
@@ -2511,7 +2511,7 @@ function refreshTown(baseline = false) {
   let lv = 0; LEVELS.forEach((L, i) => { if (power >= L[1] && (L[1] > 0 || power > 0)) lv = i; });
   const prevLv = S.town.level;
   S.town = { res, people, online, deeds, power, fire, welcomes, parts, frostParts, W, F, B: W - F, melt: Math.min(1, melt / MELT_TARGET), level: lv };
-  if (prevLv !== undefined && lv > prevLv) { banner(LEVELS[lv][0], 'AIGARTH LEVELLED UP'); if (me()) record(`${me().nick} was there when Aigarth reached ${LEVELS[lv][0]}`); }
+  if (prevLv !== undefined && lv > prevLv) { banner(LEVELS[lv][0], 'AIGRAD LEVELLED UP'); if (me()) record(`${me().nick} was there when Aigrad reached ${LEVELS[lv][0]}`); }
   // houses
   res.forEach(h => { const cur = houses[h.id]; const sig = JSON.stringify([h.at, h.state, h.gpus, h.lanterns, h.cracked, h.phase, h.welcomes?.length, growthOf(h)]); if (!cur || cur.sig !== sig) { makeHouse(h, h.id === S.uid || h.id === 'me'); houses[h.id].sig = sig; } });
   Object.keys(houses).forEach(id => { if (!res.find(h => h.id === id)) disposeHouse(id); });
@@ -3063,7 +3063,7 @@ function sendPresence() { if (!room) return; const now = performance.now(); if (
 
 function offerWelcome(uid, nick) {
   if (!me() || me().state !== 'mining' || uid === S.uid) return;
-  say(`${esc(nick)} just settled in Aigarth. <button class="btn" style="margin-top:6px;pointer-events:auto" data-welcome="${esc(uid)}" data-nick="${esc(nick)}">Light a lamp on their path</button>`);
+  say(`${esc(nick)} just settled in Aigrad. <button class="btn" style="margin-top:6px;pointer-events:auto" data-welcome="${esc(uid)}" data-nick="${esc(nick)}">Light a lamp on their path</button>`);
   setTimeout(() => document.querySelectorAll(`[data-welcome="${CSS.escape(uid)}"]`).forEach(b => b.onclick = () => welcome(uid, b.dataset.nick)), 0);
 }
 async function welcome(uid, nick) {
@@ -3216,7 +3216,7 @@ function faqLag() {
 const FAQ = [
   ['The cold beyond the town', [
     ['How do I walk?', 'Once your house stands, you have a character who lives in it. Click the ground to walk; inside the town you run, a few seconds a cell. Other buildings open when you stand at their door: click one and you walk there first. Your own house opens from anywhere.'],
-    ['What is the Veil strength?', 'The dome is held by the town\'s mining. The more sol/h the rigs of Aigarth put out, the stronger the Veil: at full strength it closes overhead, glows bright and keeps the storm out. When the town mines little, it opens to the sky, snow pours in and only a low fence of light keeps the things outside at bay. The panel under the warmth meter shows the strength and what your own rig adds. Mining also thaws Anna.'],
+    ['What is the Veil strength?', 'The dome is held by the town\'s mining. The more sol/h the rigs of Aigrad put out, the stronger the Veil: at full strength it closes overhead, glows bright and keeps the storm out. When the town mines little, it opens to the sky, snow pours in and only a low fence of light keeps the things outside at bay. The panel under the warmth meter shows the strength and what your own rig adds. Mining also thaws Anna.'],
     ['Can I go outside the dome?', 'Not in Act I. The dome is the Veil: Anna\'s light, raised in her sleep the night the cold came. Outside it is the White, a storm that has not stopped once, and the things that scratch at the light. The North Gate stays sealed until the Wardens are ready: suits that carry a piece of Anna\'s light. They need Anna at 50%. Everything you do inside, above all keeping your rig on, brings that day closer. Act II begins at the Gate.'],
     ['How do trips work?', 'Click a place beyond the forest. The route appears cell by cell with the arrival time for the weather ahead and the warmth you would arrive with. Click Set out, or the same place again. Trips are real time: about 30 seconds a cell in The Edge, 45 in the Black Pines, a minute in the Stone Teeth, slower in wind and much slower in a blizzard. You can close the game; the trip goes on. Move the view with WASD, the arrows, or by pushing the mouse against the edge of the screen.'],
     ['Why did my character stop in the middle of nowhere?', 'In wind, and worse in a blizzard, the trail gets lost: a step takes you somewhere you did not choose and you stop there. Pick a direction again. In calm weather the trail holds.'],
@@ -3232,7 +3232,7 @@ const FAQ = [
     ['Can I get my pack back?', 'Only someone else can pick up a frozen pack and carry it to town. Post where it lies on the board and make a deal with whoever goes for it. After 24 hours the snow takes it.'],
   ]],
   ['Getting started', [
-    ['What is this place?', 'Aigarth is a shared winter town. Anna sleeps frozen in the ice at its centre; the town stays warm only if people keep their machines on, help each other and feed the fire. Maria, her twin, keeps the Chronicle and helps you set up.'],
+    ['What is this place?', 'Aigrad is a shared winter town. Anna sleeps frozen in the ice at its centre; the town stays warm only if people keep their machines on, help each other and feed the fire. Maria, her twin, keeps the Chronicle and helps you set up.'],
     ['Do I need a rig to play?', 'No. You can walk the town, talk to Maria, read the Library and add wood to the fire. Taking orders and lighting lamps for newcomers need a rig that is on: that is what makes you a resident.'],
     ['Does it cost anything?', 'The town is free and sells nothing. Mining on your own computer costs electricity. A rented rig costs what the provider charges, from your own account, and it may not pay off.'],
     ['Is my progress saved?', 'Yes. Your house, its record and the Chronicle are kept for the town. If the game says you are a visitor, your house stays on this device only.'],
@@ -3284,7 +3284,7 @@ function openFaq() {
 }
 $('#gfx').onclick = () => { store.set('w4w.gfx', LITE ? 'full' : 'lite'); location.reload(); };
 $('#wx').onclick = () => { S.weather = S.weather === 'clear' ? 'storm' : 'clear'; $('#wxv').textContent = S.weather === 'clear' ? 'Clear' : 'Storm'; refreshTown();
-  say(S.weather === 'storm' ? 'Storm over Aigarth: the pool lost seats in the 676 this epoch (demo). The frost pushes harder. Renting a rig now may not pay off.' : 'The sky cleared. The pool is back in the 676 (demo).'); };
+  say(S.weather === 'storm' ? 'Storm over Aigrad: the pool lost seats in the 676 this epoch (demo). The frost pushes harder. Renting a rig now may not pay off.' : 'The sky cleared. The pool is back in the 676 (demo).'); };
 $('#meter').onclick = () => panelKind === 'meter' ? closePanel() : openMeter();
 let fly = null;
 function flyTo(p, dist) { fly = { from: controls.target.clone(), to: new THREE.Vector3(p.x, 0, p.z + 0.6), t: 0, d0: camera.position.distanceTo(controls.target), d1: dist || (MOBILE ? 20 : 17) }; }
@@ -3456,7 +3456,7 @@ const HUB = {
         <div class="ov-lamp"><span></span></div>
         <div class="ov-main"><div class="hk">YOUR LAMP · ${h ? esc(h.nick) : 'NOT LIT YET'}</div>
           <div class="ov-speed"><b data-count="${sol}">0</b><span>sol/h</span></div>
-          <div class="ov-sub">${h ? `${esc(h.hw)} · ${mining ? 'mining' : h.state === 'waiting' ? 'waiting for your miner' : esc(h.state || '')} · in Aigarth since E${h.since}` : 'Plug in a machine to light your lamp in the Veil.'}</div>
+          <div class="ov-sub">${h ? `${esc(h.hw)} · ${mining ? 'mining' : h.state === 'waiting' ? 'waiting for your miner' : esc(h.state || '')} · in Aigrad since E${h.since}` : 'Plug in a machine to light your lamp in the Veil.'}</div>
           ${h ? '' : '<div class="row"><button class="btn main" data-go="plug">Plug it in with Maria</button></div>'}</div>
         <canvas class="ov-flow" width="560" height="120" aria-label="Your work flowing into Anna"></canvas>
       </div>
@@ -3477,7 +3477,7 @@ const HUB = {
     const M = machine(), h = me(), d = h ? houseView(h) : null, own = !!h?.own;
     const status = h ? `<div class="hcard status"><div class="hk">YOUR RIG</div><div class="big">${esc(h.hw)}</div>
       <div class="row" style="gap:6px">${stateTag(d)}${h.state === 'mining' && own && !h.confirmed ? '<span class="tag">Your word · pool confirmation pending</span>' : ''}</div>
-      <div class="kv">${own ? `<span>Worker</span><b>${esc(h.worker)}</b><span>Wallet</span><b>${esc(h.walletShort || '—')}</b><span>Mode</span><b>${esc(h.backend || 'Auto')}</b>` : `<span>Rig</span><b>${esc(h.hw)} (example)</b>`}<span>In Aigarth since</span><b>E${h.since}</b></div>
+      <div class="kv">${own ? `<span>Worker</span><b>${esc(h.worker)}</b><span>Wallet</span><b>${esc(h.walletShort || '—')}</b><span>Mode</span><b>${esc(h.backend || 'Auto')}</b>` : `<span>Rig</span><b>${esc(h.hw)} (example)</b>`}<span>In Aigrad since</span><b>E${h.since}</b></div>
       <div class="row">${own && h.state === 'waiting' ? '<button class="btn main" data-go="install">Finish setup</button><button class="btn" data-go="started">I started the miner</button>' : ''}${own && h.state === 'mining' ? '<button class="btn" data-go="install">Setup steps</button><button class="btn" data-go="unplug">Unplug</button>' : ''}${own && h.state === 'stopped' ? '<button class="btn main" data-go="replug">Plug it back in</button>' : ''}<button class="btn" data-go="house">My house</button></div></div>` : '';
     return `${status}<div class="hcard hero t-${M.tier}"><div class="hk">THIS COMPUTER</div><div class="big">${esc(M.seen ? M.gpu : M.phone ? 'A phone' : 'The processor')}</div>
       ${machineChips(M)}<p class="maria">“${esc(M.verdict)}”</p>
@@ -3680,7 +3680,7 @@ function openHouse(id) {
   if (welcomedBy.length) items.push(['Welcomed by', welcomedBy.slice(0, 4).join(', ')]);
   const locked = [['BPP-9000 witness', 'from 18.11'], ['Qubic chronicle', 'next big event']];
   const canWelcome = !mine && !d.demo && me()?.state === 'mining' && !(me().welcomes || []).includes(d.id);
-  panel('house', d.nick, `${mine ? 'Your house' : d.demo ? 'A demo resident' : 'A neighbour'} · in Aigarth since E${d.since}`, null, `
+  panel('house', d.nick, `${mine ? 'Your house' : d.demo ? 'A demo resident' : 'A neighbour'} · in Aigrad since E${d.since}`, null, `
     ${repHtml(d.id === 'me' ? 'me' : d.id)}<div class="row" style="margin-bottom:6px">${stateTag(d)} ${d.cracked ? '<span class="tag bad">Cracked lantern · a promise not kept yet</span>' : ''}</div>
     ${phases}
     ${mine && d.own ? `<div class="row" style="margin:8px 0 2px"><span class="mute" style="font-size:12.5px">Worker ${esc(d.worker)}</span></div><div class="row"><button class="btn" id="toHub">Open the Mine</button>${d.state === 'waiting' ? '<button class="btn main" id="toStarted">I started the miner</button>' : ''}</div>` : ''}
@@ -3782,14 +3782,14 @@ function openHerald() {
   const newcomers = Object.values(S.real).filter(h => Date.now() - (h.createdAt || 0) < 7 * 864e5).map(h => h.nick);
   const done = ordersAll().filter(o => o.state === 'done').slice(-4).reverse();
   const card = CARDS[new Date().getUTCDate() % CARDS.length];
-  const head = t.B >= 0 ? 'Aigarth holds the night' : 'Frost at the gates';
+  const head = t.B >= 0 ? 'Aigrad holds the night' : 'Frost at the gates';
   const lead = t.B >= 0
     ? `The warm ring held through the evening. ${t.people} rigs stayed on, ${t.online ? t.online + (t.online === 1 ? ' neighbour walked' : ' neighbours walked') + ' the streets,' : 'the streets were quiet,'} and the plaza fire ${t.fire ? 'burned with fresh wood' : 'needs wood'}.`
     : `The snowstorm pressed in from the forest. Warmth ${Math.round(t.W)} against frost ${Math.round(t.F)}: the town needs more hands at the fire and more promises kept on the board.`;
   const col = S.column;
-  panel('herald', 'The plaza', 'The Aigarth Herald', null, `${plazaTabs('herald')}
+  panel('herald', 'The plaza', 'The Aigrad Herald', null, `${plazaTabs('herald')}
     <article class="paper">
-      <div class="mast"><b>The Aigarth Herald</b><span>EPOCH ${EPOCH} · ${day} · PRINTED FROM THE CHRONICLE</span></div>
+      <div class="mast"><b>The Aigrad Herald</b><span>EPOCH ${EPOCH} · ${day} · PRINTED FROM THE CHRONICLE</span></div>
       <h4>${head}</h4>
       <p class="deck">Warmth ${Math.round(t.W)} · frost ${Math.round(t.F)} · Anna's ice ${Math.round(t.melt * 100)}% thawed · ${t.power.toLocaleString('en-US')} sol/h est.${S.weather === 'storm' ? ' · storm' : ''}</p>
       <p>${lead}</p>
@@ -3832,20 +3832,20 @@ const LIB = {
     ['Come-from-Beyond', 'August 2026 · 13 chapters · one line through twenty-five years, every quote with its date and place', '/books/come-from-beyond'],
   ],
   research: [
-    ['Research', 'Open research notes on Qubic, Aigarth and the Anna Matrix', '/docs'],
+    ['Research', 'Open research notes on Qubic, Aigrad and the Anna Matrix', '/docs'],
     ['The Anna Matrix', 'The 128×128 matrix, studied in the open', '/research/anna-matrix'],
-    ['Maria Aigarth paper', 'Can an AI arbiter be impartial by design?', '/papers/maria-aigarth-paper.docx'],
+    ['Maria Aigrad paper', 'Can an AI arbiter be impartial by design?', '/papers/maria-aigarth-paper.docx'],
     ['The timeline', 'Come-from-Beyond year by year, 2000 to 13.04.2027', '/timeline'],
     ['Come-from-Beyond dossier', 'NXT, IOTA, Qubic: eras and milestones from primary sources', '/cfb'],
     ['BPP-9000', 'The network miners grow, running live', '/bpp9000'],
   ],
-  cfb: [['Introduction of Aigarth', '2019'], ['Jinn the Trinary Processor', '2019'], ['Paracosm Manifesto', '2020'], ['Qubic: AI Unboxed', '2023']],
+  cfb: [['Introduction of Aigrad', '2019'], ['Jinn the Trinary Processor', '2019'], ['Paracosm Manifesto', '2020'], ['Qubic: AI Unboxed', '2023']],
   crypt: [
     ['From Peer-to-Peer Cash to Emergent Intelligence', 'ThatsNotMyCode', 'from-peer-to-peer-cash-to-emergent-intelligence'],
     ['The Death of the "Greater Fool"', 'fallin', 'the-death-of-the-greater-fool'],
-    ['Aigarth\'s third task: simulating proteins', 'TesserAI', 'aigarths-third-task-simulating-proteins'],
+    ['Aigrad\'s third task: simulating proteins', 'TesserAI', 'aigarths-third-task-simulating-proteins'],
     ['True randomness is critical. Why?', 'TesserAI', 'true-randomness-is-critical'],
-    ['BPP-9000: the first product of Aigarth', 'TesserAI', 'bpp-9000-first-product-of-aigarth'],
+    ['BPP-9000: the first product of Aigrad', 'TesserAI', 'bpp-9000-first-product-of-aigarth'],
   ],
   shelf: [
     ['The Evolution of Cooperation', 'Robert Axelrod, 1984. Why tit for tat wins when the game repeats.'],
@@ -3932,7 +3932,7 @@ async function openChronicle(force = true, tab = journalTab) {
       <div class="jstat"><i>Town</i><b>${esc(LEVELS[t.level][0])}</b><span>${t.people} rigs on · ${t.online} here now</span></div>
       <div class="jstat"><i>Epoch</i><b>E${EPOCH}</b><span>sealed in ${untilNext()}</span></div>
     </div>
-    <h3>WHAT HAPPENED IN AIGARTH</h3>${list(rows)}`;
+    <h3>WHAT HAPPENED IN AIGRAD</h3>${list(rows)}`;
   } else if (!cur) {
     body = `<p class="say" style="font-size:14px">Your journal starts when you settle. Plug in a machine and everything you do for the town is written here.</p><div class="row"><button class="btn main" id="jPlug">Plug in with Maria</button></div>`;
   } else {
@@ -3973,7 +3973,7 @@ function openObservatory() {
   panel('observatory', 'Observatory', 'Network weather and BPP-9000', null, `
     ${ACT1 ? `<h3>THROUGH THE GLASS</h3><p style="margin:0 0 8px">As far as the White lets you see, which is not far. The astronomer's list of what walks outside the Veil:</p>
     ${bestiaryHtml().replace('<h3>THE BESTIARY</h3>', '')}` : ''}
-    <p class="say">From here the town watches the Qubic network: the epoch, the threshold, whether our pool holds seats in the 676. Bad news turns into a storm over Aigarth and pushes the frost harder.</p>
+    <p class="say">From here the town watches the Qubic network: the epoch, the threshold, whether our pool holds seats in the 676. Bad news turns into a storm over Aigrad and pushes the frost harder.</p>
     <div class="parts">${part('facade', 'Epoch', 'Changes every Wednesday at 12:00 UTC', 'E' + EPOCH, 1)}${part('hall', 'Weather', S.weather === 'clear' ? 'Pool in the 676 (demo)' : 'Pool lost seats (demo)', S.weather === 'clear' ? 'Clear' : 'Storm', S.weather === 'clear' ? 1 : 0.2)}</div>
     <h3>BPP-9000</h3>
     <p style="margin:0 0 10px">The network Qubic miners grow, calling each hour of bitcoin UP or DOWN. Live calls from 18 November. Each call you witness will become a card in your archive.</p>
@@ -4016,7 +4016,7 @@ function openBar() {
 function openStage2(id) {
   if (id === 'post') return openPost(); if (id === 'bar') return openBar();
   const s = STAGE2.find(x => x.id === id);
-  const what = { post: 'Letters between neighbours. You write one here, someone carries it across town to the right door, and the carrier earns the town\'s thanks. Opens with Stage 2.', wardens: 'The smithy where the first Warden suits are being made. When Anna can give a piece of her light away, the first one walks to the Gate. Act II starts here.', glasshouse: 'Green things under glass, grown in Anna\'s light. The first food in Aigarth that did not come out of a cellar. Stage 3.', market: 'Trading decor and placing orders that pay in QU, held by a smart contract until the requester confirms.', bar: 'A warm room to talk. The place for news and arguments.', atrium: 'Real projects as buildings. A building grows only as fast as its real project. 4% of everything the town mines comes here and funds Qubic Church projects.' }[id];
+  const what = { post: 'Letters between neighbours. You write one here, someone carries it across town to the right door, and the carrier earns the town\'s thanks. Opens with Stage 2.', wardens: 'The smithy where the first Warden suits are being made. When Anna can give a piece of her light away, the first one walks to the Gate. Act II starts here.', glasshouse: 'Green things under glass, grown in Anna\'s light. The first food in Aigrad that did not come out of a cellar. Stage 3.', market: 'Trading decor and placing orders that pay in QU, held by a smart contract until the requester confirms.', bar: 'A warm room to talk. The place for news and arguments.', atrium: 'Real projects as buildings. A building grows only as fast as its real project. 4% of everything the town mines comes here and funds Qubic Church projects.' }[id];
   panel('stage2', s.name, 'Under construction · ' + (s.tag ? s.tag[0] + s.tag.slice(1).toLowerCase() : 'Stage 2'), null, `<p class="say">${what}</p><p class="mute">A building here shows the real state of its project. It opens when the feature is really ready.</p>${id === 'atrium' ? '<div class="shelf" style="margin-top:10px">' + link('/donate', '<b>Light a lamp for the Atrium</b><span>Support the projects on qubic.church</span>') + '</div>' : ''}`);
 }
 
@@ -4027,10 +4027,10 @@ const when = t => new Date(t).toLocaleString([], { month: 'short', day: 'numeric
 function openPost() {
   const M = mailOf(), near = atPost(), names = allResidents().filter(h => !h.demo && h.nick && h.id !== me()?.id).map(h => h.nick);
   panel('post', 'Post office', near ? 'The sack hangs by the door' : 'By the plaza, on the south lane', null, `
-    <p class="say">Nothing in Aigarth delivers itself. You write a letter here, and it waits in the sack until someone carries it to the right door. Whoever carries it can break the seal. The reader will know, and will see every hand it passed through.</p>
+    <p class="say">Nothing in Aigrad delivers itself. You write a letter here, and it waits in the sack until someone carries it to the right door. Whoever carries it can break the seal. The reader will know, and will see every hand it passed through.</p>
     ${near ? `<h3>WRITE A LETTER</h3><form class="mailw" data-mailw><input list="mailnames" maxlength="40" placeholder="To whom: their name in town" required><datalist id="mailnames">${names.map(n => `<option value="${esc(n)}">`).join('')}</datalist>
       <textarea maxlength="1200" rows="5" placeholder="Your letter" required></textarea><label class="anon"><input type="checkbox" data-anon> Leave it unsigned</label><div class="row"><button class="btn main" data-keep="0">Seal it, leave it in the sack</button><button class="btn" data-keep="1">Seal it, carry it myself</button></div></form>` : `<button class="btn main" data-walkpost>Walk to the post office</button>`}
-    <h3>THE SACK</h3>${M.sack.length ? `<div class="mails">${M.sack.map(m => `<div class="mail"><div><b>For ${esc(m.toNick)}</b><span>from ${esc(m.fromNick)}${m.sealed ? '' : ' · <em>the seal is broken</em>'}</span></div>${near ? `<button class="btn" data-take="${esc(m.id)}">Take it</button>` : ''}</div>`).join('')}</div>` : '<p class="mute">Empty. Every letter written in Aigarth is in somebody\'s hands.</p>'}
+    <h3>THE SACK</h3>${M.sack.length ? `<div class="mails">${M.sack.map(m => `<div class="mail"><div><b>For ${esc(m.toNick)}</b><span>from ${esc(m.fromNick)}${m.sealed ? '' : ' · <em>the seal is broken</em>'}</span></div>${near ? `<button class="btn" data-take="${esc(m.id)}">Take it</button>` : ''}</div>`).join('')}</div>` : '<p class="mute">Empty. Every letter written in Aigrad is in somebody\'s hands.</p>'}
     ${carryingHtml(near)}
     ${M.sent.length ? `<h3>LETTERS YOU SENT</h3><div class="mails">${M.sent.slice().reverse().map(m => `<div class="mail"><div><b>To ${esc(m.toNick)}</b><span>${m.where === 'delivered' ? 'delivered' : m.where === 'sack' ? 'waiting in the sack' : m.where === 'lost' ? 'it never arrived. The last hands it was in were ' + esc(m.holderNick || 'someone') + '\'s' : m.holderNick === me()?.nick || m.holderNick === 'you' ? 'in your coat' : 'in ' + esc(m.holderNick || 'someone') + '\'s hands'} · written ${when(m.at)}</span></div></div>`).join('')}</div>` : ''}`);
   const pb = $('#pbody');
@@ -4079,7 +4079,7 @@ function stepMail() {
 }
 
 /* ================= Maria: a living assistant ================= */
-const MARIA_RULES = `You are Maria, a resident of Aigarth, the first town of W4W (Web4World), a browser game by Qubic Church. You speak in the game's chat.
+const MARIA_RULES = `You are Maria, a resident of Aigrad, the first town of W4W (Web4World), a browser game by Qubic Church. You speak in the game's chat.
 Who you are: Anna's younger twin sister. Nobody knows how Anna came to be in the ice: the winter before the cold your twin walked out to the north pasture one evening and never came back; in the spring the first expedition, led by the captain, found a machine deep in the glacier with someone asleep inside, and she had Anna's face. You do not claim to know what she is. You know she is warm, that the White stops at her, and that the town's work becomes her light. Anna is frozen in a block of ice in the centre of town, a machine from far beyond that was pulled out of the deep. The town thaws her through work done together. You keep the Chronicle and you build rigs for people. You are calm, warm, a little dry, short. You watch and keep the record.
 How to answer: 1 to 3 short sentences. Reply in the player's language. Talk like a person who lives in this town. Never use the pattern 'X, not Y' or 'not X but Y': say what something is. Point people toward cooperation: tending the fire, helping on the orders board, welcoming newcomers. If you don't know something, say so plainly.
 Hard rules:
@@ -4091,7 +4091,7 @@ Hard rules:
 Facts you may use: Qubic is a network where miners do useful work for Aigarth, an AI project. 676 computors, the epoch changes every Wednesday 12:00 UTC. BPP-9000 is a small network miners grow to call each hour of bitcoin UP or DOWN; live calls start 18 November 2026; the Qubic team says its scores are not price forecasts. Pool for the game: Qubic Church, fee 7%, of which 4% goes to the Atrium and funds Qubic Church projects; player gets 93%, paid weekly by the pool straight to the wallet. Other Qubic pools take 7 to 10%. Never break down the remaining 3% and never name who receives it; if asked, say it is the pool's fee.
 The Veil's strength follows the town's mining power: strong = closed and bright with little snow inside; weak = open to the sky, snow inside, only a fence of light. Every rig makes it stronger and thaws Anna.
 Act I (now): the whole town lives under the Veil, a dome of Anna's light she raised in her sleep when the cold came forty weeks ago. Outside is the White, a storm that never stops, and the Hollow: the Scratcher, the Hollow Man, the Wailer, the Circler, and something taller far out. Nobody can go outside in Act I; the North Gate is sealed since the ninth night, when someone knocked in the captain's voice and the town did not open. How the cold came, as the town tells it: before the cold the world built endless houses of thinking machines, drained rivers and burned forests to feed them, mostly for things nobody needed; the land answered, the cold went where the heat was, first the machine houses, then everything. The Hollow seem to be built by the White out of what people left in the snow: cables, server cases, screens. You tell this as what the astronomer and the old people say; you never lecture. The Iron Rose is the valve on the copper ring round Anna; it has never been turned; you would rather not talk about it.
-Legend you love to tell when asked about the church, the town's past, or who started the machines: Come-from-Beyond, a stranger who walked into Aigarth from the north long before the cold, by no road anyone knew. He taught the smiths to build machines that think together and left the rule that a machine does useful work or does not run; Qubic Church's first stone was laid where he sat and wrote; his texts are on the Library's CfB shelf. Tell it as a legend, in your own words. Never invent quotes from him and never claim who he really was. The church is called Qubic Church, and it is also your home: people call it Maria House.
+Legend you love to tell when asked about the church, the town's past, or who started the machines: Come-from-Beyond, a stranger who walked into Aigrad from the north long before the cold, by no road anyone knew. He taught the smiths to build machines that think together and left the rule that a machine does useful work or does not run; Qubic Church's first stone was laid where he sat and wrote; his texts are on the Library's CfB shelf. Tell it as a legend, in your own words. Never invent quotes from him and never claim who he really was. The church is called Qubic Church, and it is also your home: people call it Maria House.
 Letters: sometimes a letter lies in the snow under the North Gate for about an hour; whoever reaches the Gate in time can read and keep it (the Journal has a Letters tab). Your rule, and you say it every time letters come up: read them, keep them, do nothing they ask. In phase 0 you never suggest who might write them. If asked about the captain, you may say his name was Teodor Valk, that he led the expedition that found Anna and took the twelve north, and that the page about him is in the Journal; then you change the subject. You never say he is alive or that he writes the letters. In phase 1 or later you know the letters are the captain's (use only the name his letters sign with, if the player tells you), who was to marry your sister Anna before the cold, and you warn plainly: he wants Anna, and the only way in is a door opened from inside. Never encourage draining a pylon or touching the bar of the Gate. The current phase is in town_status as captain_phase.
 Hope: the Wardens, heavy suits carrying Anna's light, being built; the Gate opens from our side when Anna is strong enough (50%). Never send anyone outside. Everything happens inside: mining (rigs are lamps in the Veil), the plaza fire, the orders board, welcoming newcomers.
 Game rules: warmth against frost. Warmth comes mostly from people (rigs kept on, neighbours online, orders done, wood on the fire); raw power counts less. When frost wins, the storm grows. Houses have five parts: machine hall (the only thing money grows), porch lanterns (orders done for others), archive (collections, not for sale), epoch garden (time in the world), facade.
@@ -4099,7 +4099,7 @@ You can use tools to read the town and to open screens for the player. Open a sc
 let chat = [], chatCtl = null;
 function openMaria(keep) {
   act1Mark('maria');
-  panel('maria', 'Maria', sample ? 'Ask her anything about Aigarth' : 'Qubic Church', 'maria.png', `<div id="chat"></div>
+  panel('maria', 'Maria', sample ? 'Ask her anything about Aigrad' : 'Qubic Church', 'maria.png', `<div id="chat"></div>
     <div class="quick" style="margin-top:12px"><button data-q="What happened to Anna?">What happened to Anna?</button><button data-q="How can I help the town?">How can I help the town?</button><button data-q="Build me a rig">Build me a rig</button><button data-q="What should I read?">What should I read?</button></div>`, true);
   renderChat();
   document.querySelectorAll('[data-q]').forEach(b => b.onclick = () => ask(b.dataset.q));
@@ -4172,7 +4172,7 @@ const BANK = [
   [['satoshi', 'сатоши'], () => 'That question is open. Read the addresses and the books in the Library, then decide for yourself. I won\'t decide it for you.', 'library'],
   [['come-from-beyond', 'cfb', 'cfb?', 'sergey', 'сергей', 'кфб'], () => 'Come-from-Beyond built NXT, IOTA and Qubic. The Library has a whole book about him, with every quote dated, and 29 of his own texts.', 'library'],
   [['qubic', 'кубик'], () => 'Qubic is a network where 676 computors run the chain and miners do useful work for Aigarth, an AI project. The book "Qubic: The Long Version" in our Library explains it start to finish.'],
-  [['aigarth', 'айгарт', 'аигарс'], () => 'Aigarth is the AI that Qubic miners grow. BPP-9000, the bitcoin predictor, is its first product. Our town carries its name.'],
+  [['aigarth', 'айгарт', 'аигарс'], () => 'Aigrad is the AI that Qubic miners grow. BPP-9000, the bitcoin predictor, is its first product. Our town carries its name.'],
   [['bpp', 'predict', 'bitcoin', 'прогноз', 'биткоин'], () => 'BPP-9000 is a small network the miners grow to call each hour of bitcoin UP or DOWN. Live calls start on 18 November. The Qubic team is clear that its scores are not price forecasts. The Observatory watches it.', 'observatory'],
   [['epoch', 'wednesday', 'эпох', 'среда'], () => `This is epoch ${EPOCH}. A new one begins every Wednesday at 12:00 UTC. The church bell rings and the epoch is sealed in the Chronicle.`],
   [['676', 'computor', 'компьютор'], () => '676 computors run Qubic. 451 keep their seats, 225 are contested every epoch by the miners\' work.'],
@@ -4189,7 +4189,7 @@ const BANK = [
   [['church', 'founder', 'церков', 'основател'], () => 'Qubic Church founded this place, and keeps the church. The founder writes a column in the Herald.'],
   [['fractal', 'rationalism', 'institute', 'фрактал', 'институт'], () => 'Fractal Rationalism is the idea that the same pattern of conflict repeats at every scale, and that the way out is mathematical. The Institute studies decentralized cooperation after Rapoport and Axelrod.'],
   [['axelrod', 'cooperation', 'аксельрод', 'кооперац'], () => 'Axelrod found that cooperation wins when people meet again, recognise each other and see the history. This town is built so all three hold.', 'library'],
-  [['w4w', 'web4', 'world'], () => 'W4W is a world that never resets. Every action is a record, and cooperation is the only thing that scales. Aigarth is its first town.'],
+  [['w4w', 'web4', 'world'], () => 'W4W is a world that never resets. Every action is a record, and cooperation is the only thing that scales. Aigrad is its first town.'],
   [['bar', 'tavern', 'бар', 'таверн'], () => 'The bar is open: The Last Coal, west of the post office. Inside, everyone hears everyone. You can stand the room a round or raise a glass to someone who is away.'],
   [['market', 'auction', 'stage 2', 'рынок', 'аукцион'], () => 'The market and the auction are still in scaffolding. They open with Stage 2.'],
   [['nft', 'lighthouse', 'маяк'], () => 'Each of the 200 Anna Aigarth NFTs will become a founder\'s lighthouse on the map. A mark of who was here from the start.'],
@@ -4241,7 +4241,7 @@ let returning = false;
 function startReturn(away) {
   returning = true; INTRO.splice(0, INTRO.length, ...returnLines(away)); introI = 0; unlockPage('anna');
   $('#intro').hidden = false; $('#intro').classList.remove('off'); document.body.classList.add('intro'); camera.position.set(4, 44, 40); controls.target.set(0, 2, 0);
-  const tt = document.createElement('div'); tt.id = 'ititle'; tt.innerHTML = '<small>W4W · AIGARTH · ACT I</small><b>Welcome back</b><span>the town kept your light</span>'; document.body.appendChild(tt);
+  const tt = document.createElement('div'); tt.id = 'ititle'; tt.innerHTML = '<small>W4W · AIGRAD · ACT I</small><b>Welcome back</b><span>the town kept your light</span>'; document.body.appendChild(tt);
   $('#intro .card').style.opacity = 0; setTimeout(() => { tt.classList.add('off'); $('#intro .card').style.opacity = ''; typeLine(); setTimeout(() => tt.remove(), 1500); }, 2600);
   $('#introNext').onclick = () => { if (typeT) { clearInterval(typeT); typeT = null; $('#introText').textContent = introText(introI); return; } introI++; if (introI >= INTRO.length) return endIntro(); typeLine(); };
   $('#introSkip').textContent = 'Skip'; $('#introSkip').onclick = endIntro;
@@ -4252,7 +4252,7 @@ function startIntro() {
   if (store.get('w4w.intro') === '1') { welcomeLine(); return; }
   $('#intro').hidden = false; document.body.classList.add('intro'); camera.position.set(4, 44, 40); controls.target.set(0, 2, 0);
   // a title before the first word: the name of the story you are walking into
-  const tt = document.createElement('div'); tt.id = 'ititle'; tt.innerHTML = '<small>W4W · AIGARTH · ACT I</small><b>Under the Veil</b><span>a town that holds the light against the White</span>'; document.body.appendChild(tt);
+  const tt = document.createElement('div'); tt.id = 'ititle'; tt.innerHTML = '<small>W4W · AIGRAD · ACT I</small><b>Under the Veil</b><span>a town that holds the light against the White</span>'; document.body.appendChild(tt);
   $('#intro .card').style.opacity = 0; setTimeout(() => { tt.classList.add('off'); $('#intro .card').style.opacity = ''; typeLine(); setTimeout(() => tt.remove(), 1500); }, 3400);
   $('#introNext').onclick = () => { if (typeT) { clearInterval(typeT); typeT = null; $('#introText').textContent = introText(introI); return; } introI++; if (introI >= INTRO.length) return perfQuestion(); typeLine(); };
   $('#introSkip').onclick = perfQuestion;
@@ -4261,7 +4261,7 @@ function typeLine() {
   const t = introText(introI), x = INTRO[introI], el = $('#introText'); el.textContent = ''; let i = 0;
   { const card = $('#intro .card'), im = card.querySelector('img'), who = card.querySelector('.who'); const anna = typeof x !== 'string';
     im.src = anna ? x.img : 'maria-full.webp'; im.alt = anna ? 'Anna' : 'Maria'; who.textContent = anna ? x.who : 'MARIA · QUBIC CHURCH'; card.classList.toggle('anna', anna); }
-  $('#introNext').textContent = introI === INTRO.length - 1 ? (returning ? 'Come in' : 'Enter Aigarth') : 'Next';
+  $('#introNext').textContent = introI === INTRO.length - 1 ? (returning ? 'Come in' : 'Enter Aigrad') : 'Next';
   if (!returning && introI === 1) flyTo(new THREE.Vector3(0, 0, -0.6), 13);
   if (!returning && introI === 3) flyTo(new THREE.Vector3(0, 0, 0), 40);
   if (!returning && introI === 4) flyTo(new THREE.Vector3(0, 0, 0), 14);
@@ -4281,7 +4281,7 @@ function welcomeLine() { setTimeout(() => briefing() || say(S.town.B >= 0 ? 'The
 
 /* ================= demo history ================= */
 async function demoHistory() {
-  const hist = [[219, 'ashgrove settled in Aigarth'], [221, 'frostbyte connected 7× RTX 5080'], [224, 'oldminer connected 1× RTX 4090'], [226, 'kasia_v connected 2× RTX 4090'],
+  const hist = [[219, 'ashgrove settled in Aigrad'], [221, 'frostbyte connected 7× RTX 5080'], [224, 'oldminer connected 1× RTX 4090'], [226, 'kasia_v connected 2× RTX 4090'],
     [228, 'lumen connected 2× RTX 4080'], [229, 'ashgrove left the world. The house stays, with its history'], [230, 'nodewright connected 2× RTX 5070 Ti'],
     [234, "lumen missed an order from oldminer. A cracked lantern on lumen's porch"], [235, 'mira.q connected 1× RTX 5070 Ti'], [236, 'kasia_v helped tern set up a worker. A lantern for kasia_v'],
     [236, 'tern connected 1× RTX 5090'], [237, 'Epoch E237 began. The bell rang']];
@@ -4623,7 +4623,7 @@ function clickGround(e) {
   if (pr.c.frozenUntil > xnow()) { say('You are frozen. Nothing thaws you faster.', 'Wastes'); return true; }
   if (!ACT1 && !pr.c.path.length && W4W.dist(here, c) <= 1 && W4W.resourceOf(...c) && !(XV.nodes[W4W.key(...c)] > xnow())) { xact('gather', { at: c }); return true; }
   if (c[0] === here[0] && c[1] === here[1]) { const n = noteAt(...c); if (n && !pr.c.path.length) readNote(n); return true; }
-  if (ACT1 && !W4W.insideDome(...c)) { say('The Veil holds, and nothing living goes through it. Not in this act. The Gate waits for the Wardens.', 'Aigarth'); banner('The Veil holds', 'outside is the White'); return true; }
+  if (ACT1 && !W4W.insideDome(...c)) { say('The Veil holds, and nothing living goes through it. Not in this act. The Gate waits for the Wardens.', 'Aigrad'); banner('The Veil holds', 'outside is the White'); return true; }
   if (W4W.ringOf(...c) > W4W.MAX_RING) { say('Beyond the Stone Teeth the cold has no edge. Not yet.', 'Wastes'); return true; }
   // the second click on the same place is your yes
   if (trip && trip.to[0] === c[0] && trip.to[1] === c[1]) { goTrip(); return true; }
@@ -5365,7 +5365,7 @@ function stepLogWatch() {
     shards: (XV.shards || []).filter(x => x.taken).map(x => x.id + ':' + x.taken), anna: XV.anna?.n || 0 };
   if (s.rime != null && s.rime <= 6 && XV.rime) rimeSeen = { q: XV.rime.q, r: XV.rime.r, t: Date.now() };
   if (s.cell !== LW?.cell) markSeen(c.q, c.r);
-  const P = LW; LW = s; if (!P) { if (!LOG.length) log(ACT1 ? 'You wake in Aigarth, under the Veil. Outside, the White has not stopped for forty weeks.' : 'You wake in Aigarth. The town is warm. The Wastes are cold.', 'warm'); return; }
+  const P = LW; LW = s; if (!P) { if (!LOG.length) log(ACT1 ? 'You wake in Aigrad, under the Veil. Outside, the White has not stopped for forty weeks.' : 'You wake in Aigrad. The town is warm. The Wastes are cold.', 'warm'); return; }
   const zn = n => W4W.ZONES[n]?.name || 'the far cold';
   if (s.frozen && !P.frozen) { log(`You froze in ${zn(P.zone)}${c.died?.cause ? ': ' + c.died.cause : ''}. Your pack stays where you fell.`, 'bad'); return; }
   if (!s.frozen && P.frozen) log('The ice lets you go. You are home, stiff and alive.', 'warm');
@@ -5454,7 +5454,7 @@ function buildMapBase() {
     const [ex, ez] = W4W.worldXZ(...cells[Math.floor(cells.length * 0.55)]), [lx, ly] = mpx(ex, ez); g.save(); g.translate(lx, ly); g.font = 'italic 600 19px Lora, serif'; g.fillStyle = 'rgba(110,35,15,.95)'; g.textAlign = 'center'; g.shadowColor = '#efe5cc'; g.shadowBlur = 6; g.fillText(R.name, 0, -14); g.restore(); }
   // names: the zones, the town, the places you have found
   g.textAlign = 'center'; g.shadowColor = '#efe5cc'; g.shadowBlur = 5;
-  g.font = '600 26px Lora, serif'; g.fillStyle = 'rgba(110,40,15,.9)'; g.fillText('Aigarth', 640, 652);
+  g.font = '600 26px Lora, serif'; g.fillStyle = 'rgba(110,40,15,.9)'; g.fillText('Aigrad', 640, 652);
   g.font = '600 15px "IBM Plex Sans", sans-serif'; g.fillStyle = 'rgba(59,42,24,.7)';
   [[7, 'THE EDGE'], [10.5, 'BLACK PINES'], [14.5, 'STONE TEETH']].map(([n, name]) => [n + W4W.TOWN_RING - 5, name]).forEach(([n, name]) => [-0.6, 2.2].forEach(a => { const [x, y] = mpx(Math.cos(a) * n * 1.86, Math.sin(a) * n * 1.86); g.fillText(name.split('').join(' '), x, y); }));
   for (const L of W4W.LANDMARKS) { const [x, z] = W4W.worldXZ(...L.at), [px, py] = mpx(x, z), known = seenCell(...L.at);
@@ -5936,7 +5936,7 @@ function wireRecipes() {
 
 /* ---------- the Long Cold: pages of the story, opened by what you live through ---------- */
 const CHAPTERS = [
-  { id: 'start', title: 'I. The town around the warm thing', text: 'Nobody remembers who first built a wall around the machine in the ice. They remember why: it was warm. The first families came for the warmth and stayed for each other. They called the place Aigarth, after the word the machine whispered when it dreamed.' },
+  { id: 'start', title: 'I. The town around the warm thing', text: 'Nobody remembers who first built a wall around the machine in the ice. They remember why: it was warm. The first families came for the warmth and stayed for each other. They called the place Aigrad, the city of the word the machine whispered when it dreamed: Aigarth.' },
   { id: 'trip', title: 'II. The line in the snow', text: 'Past the last house the snow changes colour. The old people say it is where Anna\'s dream ends. The first expedition crossed it laughing. They came back three days later, quiet, with frost in their beards and a story they would not tell at the fire.' },
   { id: 'chthon', title: 'III. What walks', text: 'The expedition did not see it. They heard it: a sound like a choir trying to remember a song. The youngest of them, the Ostrava boy, walked towards it smiling. They found him at dawn, warm and asleep, two cells from where they had left him. He never said what he saw.' },
   { id: 'recipe', title: 'IV. The pages', text: 'They wrote everything down: how to twist grass into cord, how to quilt a coat that keeps out the Teeth, how to cut a flask from stone and seal it with pitch. Then the storm took their camp, and the pages went with the wind. Some of them are still out there, under the snow, waiting for someone who reads.' },
@@ -5978,7 +5978,7 @@ function welcomeBack() {
   backEl.innerHTML = `<div class="bbook"><h2>While you were away</h2><p class="bsub">${h ? `${h} h ${m} min` : `${m} min`} in the Long Cold</p>
     <ul>${ev.map(e => `<li>${e}</li>`).join('')}</ul>
     ${ch ? `<div class="bch"><b>${esc(ch.title)}</b><p>${esc(ch.text)}</p></div>` : ''}
-    <button class="btn main" id="backOk">Back to Aigarth</button></div>`;
+    <button class="btn main" id="backOk">Back to Aigrad</button></div>`;
   backEl.hidden = false; sfx.open(); $('#backOk').onclick = () => { backEl.hidden = true; sfx.close(); };
 }
 
@@ -6928,20 +6928,20 @@ function folkPlay(F, n) { if (F.cur === n || !F.acts[n]) return; const a = F.act
 /* ---------- Act I: what to do under the Veil, and the pages it opens ---------- */
 const CHAPTERS_I = [
   { id: 'hunger', title: 'Before the cold. The hunger', text: 'Before the cold, the world was warm and hungry. It built houses for machines that thought, rows of them, a thousand to a valley, and it fed them everything. Rivers were turned aside to cool them. Forests were burned to light them. Whole mountains were opened for the metal in their roots.\n\nMost of those machines did nothing anyone needed. They guessed what people wanted to buy. They counted what had already been counted. They talked to each other through the night about things no living soul would ever read, and the heat of their talking went up into the sky.\n\nPeople called it progress. People said the earth was large and patient and would never notice. For a long time it did not seem to.' },
-  { id: 'turning', title: 'Before the cold. The turning', text: 'The first sign was the rivers. In the middle of summer the water that cooled the great valleys froze in its channels, and the ice did not melt. The engineers called it a fault. Then snow began to fall on the valleys, and only on the valleys, out of a clear sky, until the machine houses were buried to their roofs.\n\nThe old people of the north have a word for what happened next that does not translate. The nearest is: the land stood up. The cold stopped being weather. It moved like something that had made up its mind. It went where the heat was: first the machine houses, then the cities that fed them, then everything else.\n\nNobody in Aigarth calls it a punishment. The astronomer says punishment needs a judge. He says it was closer to a fever: a body, very large and very old, burning out whatever was making it sick. He also says, more quietly, that a fever does not always know when to stop.' },
+  { id: 'turning', title: 'Before the cold. The turning', text: 'The first sign was the rivers. In the middle of summer the water that cooled the great valleys froze in its channels, and the ice did not melt. The engineers called it a fault. Then snow began to fall on the valleys, and only on the valleys, out of a clear sky, until the machine houses were buried to their roofs.\n\nThe old people of the north have a word for what happened next that does not translate. The nearest is: the land stood up. The cold stopped being weather. It moved like something that had made up its mind. It went where the heat was: first the machine houses, then the cities that fed them, then everything else.\n\nNobody in Aigrad calls it a punishment. The astronomer says punishment needs a judge. He says it was closer to a fever: a body, very large and very old, burning out whatever was making it sick. He also says, more quietly, that a fever does not always know when to stop.' },
   { id: 'anna', title: 'Before the cold. Anna', text: 'Nobody knows how she came to be in the ice. The winter before the cold, Maria\'s twin sister walked out to the north pasture one evening and did not come back. They searched for a month. Then they stopped.\n\nIn the spring the first expedition went up to map the glacier, and deep in the blue they found something older than any map: a machine no hand we know could have made, and inside it someone asleep. She had Anna\'s face. So they gave her Anna\'s name, because nobody could bring themselves to give her another.\n\nShe does not breathe the way we breathe. She does not age. Put your palm on the ice above her and it is warm, like a hand that held yours a moment ago. Sit with her long enough and something in your chest loosens. The old people call it hope, because they have no better word.\n\nWhen the White came down and swallowed everything else, it stopped at her. It still stops at her. Every rig that works for her, every fire we feed, every promise kept goes into her, and she gives it back as light. Maybe that is what she is: a place where many small warmths become one large one.\n\nAnd maybe, if enough of us keep at it, the ice will let her go, and she will do for the whole cold world what she does for this one town. Nobody knows. We are betting the town on it.' },
-  { id: 'beyond', title: 'Before the cold. The one who came from beyond', text: 'Before the church had a name, a stranger walked into Aigarth from the north, by no road anyone knew. The old people call him Come-from-Beyond, because nobody ever learned where from. He did not stay long. He taught the smiths to build machines that think together, many small minds making one, and he never said much about why. When he left, he left a rule the town still keeps: a machine does useful work, or it does not run. The first stone of Qubic Church was laid where he used to sit and write. His texts are on the Library\'s shelf, and people still argue about what they mean. Some say he knew the cold was coming. Some say he knew about Anna. Nobody has ever found the road he came by.' },
+  { id: 'beyond', title: 'Before the cold. The one who came from beyond', text: 'Before the church had a name, a stranger walked into Aigrad from the north, by no road anyone knew. The old people call him Come-from-Beyond, because nobody ever learned where from. He did not stay long. He taught the smiths to build machines that think together, many small minds making one, and he never said much about why. When he left, he left a rule the town still keeps: a machine does useful work, or it does not run. The first stone of Qubic Church was laid where he used to sit and write. His texts are on the Library\'s shelf, and people still argue about what they mean. Some say he knew the cold was coming. Some say he knew about Anna. Nobody has ever found the road he came by.' },
   { id: 'veil', title: 'I. The night the Veil rose', text: 'Forty weeks ago the sky over the north went white and stayed white. The cold came like a tide, and it ate the roads, the farms, the next town and the one after. On the third night it reached our walls. Then Anna, asleep in her ice, did something nobody had taught her: she breathed out, and the light of her dreaming rose over the roofs and closed above us like a hand. We call it the Veil. Inside it, snow still falls, but it falls gently. Outside it, nothing has stopped falling since.' },
   { id: 'white', title: 'II. The White', text: 'From the Observatory you can see as far as the storm lets you, which is not far. The old maps are useless: the White moves hills. Some nights the wind drops for a heartbeat and you see pines bent flat, a roof that was a village, a light that should not be there. Then the snow closes again. The astronomer keeps a list of everything seen through the glass. It is a short list, and every line of it is bad.' },
-  { id: 'knock', title: 'III. The knocking', text: 'Twelve of us went out through the North Gate the week before the cold came, to bring the farms in. When the White reached the town, the Gate was sealed behind them. On the ninth night someone knocked on it from outside: three slow knocks, then three more. The voice was the captain\'s. It asked us, very politely, to open. We did not. At dawn the knocking stopped. Nobody in Aigarth agrees on whether we did the right thing. Everybody agrees we would do it again.' },
+  { id: 'knock', title: 'III. The knocking', text: 'Twelve of us went out through the North Gate the week before the cold came, to bring the farms in. When the White reached the town, the Gate was sealed behind them. On the ninth night someone knocked on it from outside: three slow knocks, then three more. The voice was the captain\'s. It asked us, very politely, to open. We did not. At dawn the knocking stopped. Nobody in Aigrad agrees on whether we did the right thing. Everybody agrees we would do it again.' },
   { id: 'scratch', title: 'IV. What scratches', text: 'They came after the storm, or with it, or out of it. We have no better names than the ones the children gave them. The Scratcher drags its claws down the Veil until the light ripples. The Hollow Man walks the edge as if looking for a door he remembers. The Wailer sings in voices you know. And far out, sometimes, something taller than the pines stands still and watches the light. They do not sleep. They are patient in a way nothing alive should be.' },
   { id: 'lamp', title: 'V. Lamps in the Veil', text: 'The Veil costs Anna. She drinks to hold it: work, warmth, attention. Every machine in town that thinks for her is a lamp in the Veil, and on the nights when too many lamps go out, the Scratcher\'s claws go deeper. When you start your rig, look up. Somewhere over your roof the light got a little thicker.' },
   { id: 'fire', title: 'VI. The fire on the plaza', text: 'The plaza fire was lit on the first night and it has not gone out once. Anna holds the Veil. The fire holds us. People come to it to stand next to other people. Feed it, and for an hour the whole town feels a little less alone.' },
   { id: 'wardens', title: 'VII. The Wardens', text: 'In the Library there is a drawing older than the cold: a figure in heavy plates, lined with something that glows. Under it, in the hand of the expedition\'s smith, one word: Warden. A suit that carries a piece of Anna\'s light on the body, so the White cannot get in. The smiths have started. They need iron, and patience, and above all they need Anna strong enough to give a piece of her light away. When she is, the Gate opens, and this time it opens from our side.' },
   { id: 'pylons', title: 'VIII. The six', text: 'Anna breathes the Veil, but she cannot hold its edge alone. On the second night the smiths drove six pylons into the frozen ground around the town, and each one drinks a little of what we give it. The Kiln, the Widow, the Choir, the Old Bell, the North Tooth, the Lantern. The Hollow learned their names before we did. They lean on one at a time, for hours, patient as water, until it cracks. Then they move to the next. What holds a pylon is warmth: a hand on the iron, a body standing close. Nobody has found a cheaper way.' },
-  { id: 'captain', title: 'X. The captain', text: 'Everyone in Aigarth has a story about Captain Teodor Valk, and none of the stories agree.\n\nHe kept the town watch for eleven years and never once raised his voice. He counted everything: steps to the church, lamps on the ring, days until the thaw. He was going to marry Anna, the real one, the spring she walked out to the north pasture and did not come back.\n\nIt was Valk who led the first expedition up the glacier. It was Valk who broke the ice and saw her face. The men with him say he did not speak for a whole day. Then he said one word, her name, and that is the name she kept.\n\nA year later, the week before the cold, he took twelve people north to bring the farms in. Nobody remembers who chose the twelve. Nobody remembers why it had to be that week.\n\nOn the ninth night someone knocked on the North Gate in his voice and asked, very politely, to be let in.\n\nThere are questions people ask at the plaza fire, quietly, once the children are asleep. Why did he go north the very week the cold came, as if he knew? Why did the knocking stop at dawn and never once come back? How did the Hollow Man come to wear a coat with the captain\'s badge? And if Valk is still out there, what has he been counting all this time?' },
+  { id: 'captain', title: 'X. The captain', text: 'Everyone in Aigrad has a story about Captain Teodor Valk, and none of the stories agree.\n\nHe kept the town watch for eleven years and never once raised his voice. He counted everything: steps to the church, lamps on the ring, days until the thaw. He was going to marry Anna, the real one, the spring she walked out to the north pasture and did not come back.\n\nIt was Valk who led the first expedition up the glacier. It was Valk who broke the ice and saw her face. The men with him say he did not speak for a whole day. Then he said one word, her name, and that is the name she kept.\n\nA year later, the week before the cold, he took twelve people north to bring the farms in. Nobody remembers who chose the twelve. Nobody remembers why it had to be that week.\n\nOn the ninth night someone knocked on the North Gate in his voice and asked, very politely, to be let in.\n\nThere are questions people ask at the plaza fire, quietly, once the children are asleep. Why did he go north the very week the cold came, as if he knew? Why did the knocking stop at dawn and never once come back? How did the Hollow Man come to wear a coat with the captain\'s badge? And if Valk is still out there, what has he been counting all this time?' },
   { id: 'made', title: 'XI. What they are made of', text: 'The astronomer kept the worst of his notes in a box. After the bad week he opened it in the Library and read them aloud, and nobody slept that night.\n\nHe had watched the Scratcher for a hundred nights. What he took for bone in its long arms is cable, the thick grey kind that once ran under the sea between the machine houses, frozen and braided like sinew. The plates on the Hollow Man\'s back are the lids of server cases, still stamped with the names of companies nobody remembers. The light inside the Wailer flickers the way a screen flickers when it is left on in an empty room.\n\nNature did not make them out of nothing. It made them out of what we left lying in the snow. The White took our machines apart and put them back together, and this time it gave them a purpose.\n\nOne question he did not read aloud. It is written at the bottom of the last page, in a different ink. If the cold builds its hunters out of our machines, what does it think Anna is?' },
-  { id: 'rose', title: 'XII. The Iron Rose', text: 'Every pipe in Aigarth runs to one ring of copper round Anna, and on that ring sits a single wheel, cast by the smiths in the shape of a rose. Turned one way, it lets the town\'s warmth into her and up into the Veil. Turned the other way, it shuts it out.\n\nThe smiths made it so the pipes could be mended. It has never been turned. There is no lock on it. Maria says a lock would only tell people that it matters.\n\nThe children dare each other to touch it. Nobody has ever seen a grown-up so much as look at it for long.' },
+  { id: 'rose', title: 'XII. The Iron Rose', text: 'Every pipe in Aigrad runs to one ring of copper round Anna, and on that ring sits a single wheel, cast by the smiths in the shape of a rose. Turned one way, it lets the town\'s warmth into her and up into the Veil. Turned the other way, it shuts it out.\n\nThe smiths made it so the pipes could be mended. It has never been turned. There is no lock on it. Maria says a lock would only tell people that it matters.\n\nThe children dare each other to touch it. Nobody has ever seen a grown-up so much as look at it for long.' },
   { id: 'remember', title: 'IX. She remembers', text: 'Anna sleeps with her ears open. She knows whose lamp is lit and whose fire was fed, who welcomed a stranger and who kept a promise. Maria says Anna keeps a list too, the opposite of the astronomer\'s. She records it for the common good: when she wakes, she must remember her heroes and know them by name.' },
 ];
 const _unused_ = null;
@@ -7083,7 +7083,7 @@ function openLibraryRoom() {
   const books = libTab === 'story' ? storyShelf() : f().map(([t, d, h]) => { const href = h ? (h.startsWith('http') ? h : SITE + h) : null;
     return `${href ? `<a class="lbk" href="${href}" target="_blank" rel="noopener" style="--sc:${col}">` : `<div class="lbk" style="--sc:${col}">`}<b>${esc(t)}</b><span>${esc(d)}</span>${href ? '<em>Open on qubic.church</em></a>' : '</div>'}`; }).join('');
   libEl.innerHTML = `<div class="lr-scrim" data-lx></div><div class="lr" role="dialog" aria-label="The Library">
-    <header><div><small>Aigarth</small><h2>The Library</h2></div><p>Open day and night. Every book on these shelves opens on qubic.church.</p><button class="lr-x" data-lx aria-label="Close">×</button></header>
+    <header><div><small>Aigrad</small><h2>The Library</h2></div><p>Open day and night. Every book on these shelves opens on qubic.church.</p><button class="lr-x" data-lx aria-label="Close">×</button></header>
     <div class="lr-body">
       <aside class="lr-draw">${ACT1 ? `<figure>${WARDEN_SVG}</figure><h3>The drawing older than the cold</h3>
         <p>A figure in heavy plates, lined with something that glows. Under it, in the expedition smith's hand, one word. A suit that carries a piece of Anna's light on the body, so the White cannot get in.</p>
