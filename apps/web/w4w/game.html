@@ -717,6 +717,14 @@ body:has(#panel.open) #veil{visibility:hidden}
 #goals .gbar{height:6px;margin-top:6px;border-radius:3px;background:rgba(0,0,0,.5);box-shadow:inset 0 0 0 1px rgba(201,160,74,.25);overflow:hidden} #goals .gbar i{display:block;height:100%;background:linear-gradient(90deg,#5ab8ff,#bfe8ff);box-shadow:0 0 8px rgba(143,208,255,.8)}
 body.act1 #dock button[data-act=bag],body.act1 #dock button[data-act=craft],body.act1 #dock button[data-act=map]{display:none}
 #goals .wall{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;height:34px;margin:2px 0 6px} #goals .wall i{position:relative;border-radius:3px;background:rgba(0,0,0,.5);box-shadow:inset 0 0 0 1px rgba(255,166,74,.25);overflow:hidden} #goals .wall i b{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(0deg,#c4561a,#ffc46b)} #goals .wall i.crack b{background:linear-gradient(0deg,#7a1006,#ff3a1a)} #goals .wall i.pr{box-shadow:inset 0 0 0 1px #ff6a3a,0 0 8px rgba(255,90,40,.6)}
+/* the Stone of the Twelve: dark lanterns, lit ones warm, and traces found in the town */
+.lamps{display:grid;gap:8px;margin:12px 0} .lamp{padding:10px 14px;border-radius:6px;background:rgba(0,0,0,.28);box-shadow:inset 0 0 0 1px rgba(201,160,74,.14)}
+.lamp b{display:block;font-family:var(--f-label);font-weight:600;font-size:13px;letter-spacing:.06em;color:#8a8070} .lamp small{display:block;font-size:12.5px;color:#7d7566;margin-top:3px}
+.lamp p{margin:6px 0 4px;font-family:var(--f-print);font-size:15.5px;line-height:1.55;color:#ece3d0} .lamp .btn{margin-top:8px}
+.lamp.on{background:linear-gradient(180deg,rgba(255,190,110,.1),rgba(255,190,110,.02));box-shadow:inset 0 0 0 1px rgba(242,163,71,.35),inset 3px 0 0 rgba(255,190,110,.85)} .lamp.on b{color:#f2c27a} .lamp.on small{color:#c9a46a}
+.lamp.hold{box-shadow:inset 0 0 0 1px rgba(242,163,71,.45)} .lamp.hold b{color:#e8a75a}
+.trace{margin-top:14px;padding:13px 16px;border-radius:6px;background:rgba(255,190,110,.06);box-shadow:inset 0 0 0 1px rgba(242,163,71,.3),inset 3px 0 0 rgba(242,163,71,.7)}
+.trace small{display:block;font-family:var(--f-label);font-weight:600;font-size:12px;letter-spacing:.08em;color:#e8a75a;margin-bottom:6px} .trace p{margin:0 0 10px;font-family:var(--f-print);font-size:16px;line-height:1.6;color:#ece3d0} .trace.lit p{margin:0;color:#c9b99a}
 .bestiary{display:grid;gap:10px;margin-bottom:12px} .bnote{padding:13px 16px 14px;border-radius:6px;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.015));box-shadow:inset 0 0 0 1px rgba(201,160,74,.2),inset 3px 0 0 rgba(242,163,71,.6);color:#ece3d0}
 .bnote small{display:block;font-family:var(--f-label);font-weight:600;font-size:12px;letter-spacing:.08em;color:#e8a75a;margin-bottom:6px} .bnote p{margin:0;font-family:var(--f-print);font-size:16.5px;line-height:1.62;color:#ece3d0}
 .bnote.locked{background:rgba(0,0,0,.3);color:#8a8070;box-shadow:inset 0 0 0 1px rgba(201,160,74,.14)} .bnote.locked p{color:#8a8070} .bnote.locked small{color:#6d6658} .bnote.locked p{font-style:normal;font-family:var(--f-body);font-size:13px}
@@ -990,9 +998,11 @@ var W4W = (() => {
     STAGE: () => STAGE,
     STARTER_RECIPES: () => STARTER_RECIPES,
     STEP_MS: () => STEP_MS,
+    STONE_CELL: () => STONE_CELL,
     TOAST_WAIT: () => TOAST_WAIT,
     TOWN_PROPS: () => TOWN_PROPS,
     TOWN_RING: () => TOWN_RING,
+    TWELVE: () => TWELVE,
     UNVEIL_MS: () => UNVEIL_MS,
     VEIL_COLD: () => VEIL_COLD,
     VEIL_FULL: () => VEIL_FULL,
@@ -1366,6 +1376,21 @@ var W4W = (() => {
     { kit: "signal", at: [-1, -7] }
   ];
   const PROP_BLOCK = new Set(TOWN_PROPS.map((p) => `${p.at[0]},${p.at[1]}`));
+  const STONE_CELL = [2, -4];
+  const TWELVE = [
+    { id: "ilya", name: "Ilya Marten", act: 1, at: "veil" },
+    { id: "teresa", name: "Teresa Holm", act: 1, at: "gate" },
+    { id: "pavel", name: "Pavel Rusk", act: 1, at: "veil" },
+    { id: "odile", name: "Sister Odile", act: 1, at: "bar" },
+    { id: "lida", name: "Lida Ferro", act: 1, at: "library" },
+    { id: "brann", name: "Brann Ostrow", act: 1, at: "oldbell" },
+    { id: "mirek", name: "Mirek Dal", act: 1, at: "observatory" },
+    { id: "agnes", name: "Agnes Vey", act: 1, at: "plaza" },
+    { id: "yusuf", name: "Yusuf Karam", act: 2, at: "wastes" },
+    { id: "hedda", name: "Hedda Sorn", act: 2, at: "wastes" },
+    { id: "toma", name: "Old Toma", act: 2, at: "wastes" },
+    { id: "nils", name: "Nils Arendt", act: 2, at: "wastes" }
+  ];
   const dist = (a, b) => ringOf(a[0] - b[0], a[1] - b[1]);
   const worldXZ = (q, r) => [2 * (q + r / 2), 1.7320508 * r];
   function zoneOf(q, r) {
@@ -1846,6 +1871,7 @@ var W4W = (() => {
       library: ws.library ?? {},
       shards: shardsFor(weekOf(ws.now)).map((s) => ({ ...s, taken: ws.shards?.[s.id] ? ws.shards[s.id].nick : null })),
       anna: ws.anna ?? { n: 0, heroes: {} },
+      twelve: ws.twelve ?? {},
       orders: ordersFor(dayOf(ws.now)),
       delivered: ws.delivered?.day === dayOf(ws.now) ? ws.delivered.n : 0,
       pylons: Array.from({ length: PYLON_N }, (_, i) => {
@@ -2224,6 +2250,33 @@ var W4W = (() => {
         o.toasts = [{ nick: nickIn(ws, uid), t: now }, ...o.toasts ?? []].slice(0, 8);
         d.chars.add(to);
         d.feed.push({ id: `ts${uid}${to}${now}`, t: now, topic: "toast", by: uid, data: { nick: nickIn(ws, uid), to: nickIn(ws, to) } });
+        return ok();
+      }
+      case "trace": {
+        const T = TWELVE.find((x) => x.id === b.id);
+        if (!T) return fail("Nothing of theirs here.");
+        if (c.path.length) return fail("Stand still and look.");
+        if (ws.twelve?.[T.id]) return fail("Their lantern already burns on the Stone.");
+        if (c.traces?.includes(T.id)) return fail("You already carry it.");
+        const at = (cell, n = 1) => dist(here, cell) <= n;
+        const there = T.at === "veil" ? insideDome(here[0], here[1]) && DIRS.some(([dq, dr]) => !insideDome(here[0] + dq, here[1] + dr)) : T.at === "gate" ? at(GATE_CELL) : T.at === "bar" ? at(BAR_CELL, 0) : T.at === "library" ? at(SPECIAL.library) : T.at === "oldbell" ? at(pylonCell(3)) : T.at === "observatory" ? at(SPECIAL.observatory) : T.at === "plaza" ? at(SPECIAL.plaza) : false;
+        if (!there) return fail(T.act === 2 ? "Whatever is left of them is out in the White." : "Nothing of theirs here.");
+        c.traces = [...c.traces ?? [], T.id];
+        return ok();
+      }
+      case "light": {
+        const T = TWELVE.find((x) => x.id === b.id);
+        if (!T) return fail("There is no such lantern.");
+        if (c.path.length || dist(here, STONE_CELL) > 1) return fail("Bring it to the Stone of the Twelve, by the church.");
+        if (!c.traces?.includes(T.id)) return fail("You have nothing of theirs to bring.");
+        c.traces = c.traces.filter((x) => x !== T.id);
+        if (ws.twelve?.[T.id]) return ok();
+        ws.twelve ?? (ws.twelve = {});
+        ws.twelve[T.id] = { by: uid, nick: nickIn(ws, uid), t: now };
+        (d.twelve ?? (d.twelve = /* @__PURE__ */ new Set())).add(T.id);
+        addRenown(c, 3);
+        addGold(c, 2, now);
+        d.feed.push({ id: `tw${T.id}${now}`, t: now, topic: "twelve", by: uid, data: { nick: nickIn(ws, uid), name: T.name, n: Object.keys(ws.twelve).length } });
         return ok();
       }
       default:
@@ -3291,6 +3344,7 @@ function pick(e, click) {
   if (k === 'pylon') return openPylon(+id);
   if (k === 'maria') return openMaria();
   if (k === 'rose') return openRose();
+  if (k === 'stone') return openStone();
   if (k === 'church') openChurch(); else if (k === 'board') openPlaza(); else if (k === 'core') openCore(); else if (k === 'fire') addWood();
   else if (k === 'house') openHouse(id); else if (k === 'observatory') openObservatory(); else if (k === 'stage2') openStage2(id); else if (k === 'library') openLibrary(); else if (k === 'mine') openMine();
 }
@@ -3299,7 +3353,7 @@ function pick(e, click) {
 let panelKind = null, openHouseId = null;
 function panel(kind, title, sub, img, html, chat = false) {
   panelKind = kind; $('#panel').dataset.kind = kind; $('#mariaStand').classList.toggle('on', img === 'maria.png' && innerWidth > 1100); $('#phT').textContent = title; $('#phS').textContent = sub; const im = $('#phImg'); im.style.display = img ? '' : 'none'; if (img) im.src = img;
-  $('#pbody').innerHTML = html; $('#chatForm').hidden = !chat; $('#panel').classList.add('open');
+  $('#pbody').innerHTML = html; $('#chatForm').hidden = !chat; $('#panel').classList.add('open'); try { twelveHook(kind); } catch (e) { console.warn(e); }
   document.querySelectorAll('#dock button').forEach(b => b.classList.toggle('on', b.dataset.act === kind || (kind === 'church' && b.dataset.act === 'connect') || (['herald', 'notices', 'orders'].includes(kind) && b.dataset.act === 'plaza')));
 }
 function closePanel() { $('#mariaStand').classList.remove('on'); $('#panel').classList.remove('open'); panelKind = null; openHouseId = null; document.querySelectorAll('#dock button').forEach(b => b.classList.remove('on')); }
@@ -4723,7 +4777,7 @@ function hexAt(x, z) {
   if (dq > dr && dq > ds) rq = -rr - rs; else if (dr > ds) rr = -rq - rs; return [rq, rr];
 }
 function groundHex(e) { mouse.set((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1); ray.setFromCamera(mouse, camera); return ray.ray.intersectPlane(groundPlane, gp) ? hexAt(gp.x, gp.z) : null; }
-const KIND_CELL = { rose: W4W.ROSE_CELL, maria: MARIA_HOUSE, gate: [0, -W4W.TOWN_RING], church: SPECIAL.church, board: SPECIAL.plaza, fire: SPECIAL.plaza, core: SPECIAL.core, observatory: SPECIAL.observatory, library: SPECIAL.library, mine: SPECIAL.mine };
+const KIND_CELL = { stone: W4W.STONE_CELL, rose: W4W.ROSE_CELL, maria: MARIA_HOUSE, gate: [0, -W4W.TOWN_RING], church: SPECIAL.church, board: SPECIAL.plaza, fire: SPECIAL.plaza, core: SPECIAL.core, observatory: SPECIAL.observatory, library: SPECIAL.library, mine: SPECIAL.mine };
 function cellOfKind(k, id) {
   if (KIND_CELL[k]) return KIND_CELL[k];
   if (k === 'house') { const h = allResidents().find(x => x.id === id); return h?.at; }
@@ -4736,6 +4790,7 @@ function openKind(k, id) {
   if (k === 'pylon') return openPylon(+id);
   if (k === 'maria') return openMaria();
   if (k === 'rose') return openRose();
+  if (k === 'stone') return openStone();
   if (k === 'church') openChurch(); else if (k === 'board') openPlaza(); else if (k === 'core') openCore(); else if (k === 'fire') addWood();
   else if (k === 'house') openHouse(id); else if (k === 'observatory') openObservatory(); else if (k === 'stage2') openStage2(id); else if (k === 'library') openLibrary(); else if (k === 'mine') openMine();
 }
@@ -6142,6 +6197,7 @@ function hookFeed() {
   room.on('letter', m => { const x = m.data || {}; if (m.by !== S.uid) log(`${x.nick || 'Someone'} picked up the letter under the Gate${x.n > 1 ? ` (${x.n} have read it)` : ''}.`, 'world', 'world'); });
   room.on('drain', m => { const x = m.data || {}; log(`Someone took warmth back from ${PYLON_NAMES[x.i] || 'a pylon'}. It fell to ${x.s}%. Nobody saw who.`, 'world', 'world'); });
   room.on('round', m => { const x = m.data || {}; log(x.n ? `${x.nick || 'Someone'} stood the whole bar a round. ${x.n === 1 ? 'One cup' : x.n + ' cups'} warmer.` : `${x.nick || 'Someone'} stood a round in an empty bar. Ivo drank it.`, 'world', 'world'); if (m.by !== S.uid && XV?.me && XV.me.q === W4W.BAR_CELL[0] && XV.me.r === W4W.BAR_CELL[1]) { sfx.reward?.(1); say(`${x.nick} stood a round. A hot cup comes down the bar to you.`, 'Bar'); } });
+  room.on('twelve', m => { const x = m.data || {}; log(`${x.nick || 'Someone'} lit ${x.name ? x.name + '\'s' : 'a'} lantern on the Stone of the Twelve. ${x.n || 1} of twelve burn.`, 'warm', 'world'); });
   room.on('toast', m => { const x = m.data || {}; log(`${x.nick || 'Someone'} raised a glass to ${x.to || 'someone'} at the bar.`, 'world', 'world'); });
   room.on('valve', () => { log('Someone turned the Iron Rose. Every pipe in town went quiet for a breath.', 'world', 'world'); });
   room.on('bar', () => { log('Someone lifted the bar of the North Gate a notch. The iron screamed all the way to the plaza.', 'world', 'world'); });
@@ -6413,6 +6469,7 @@ function stepPylons(dt) {
 }
 const weakestPylon = () => (XV?.pylons || []).reduce((a, p) => (!a || p.s < a.s ? p : a), null);
 function openPylon(i) {
+  pylonOpen = i;
   const P = XV?.pylons?.[i]; if (!P) return; const c = myC(), t = xnow(), near = c && !c.path.length && W4W.dist([c.q, c.r], P.at) <= 1;
   const last = c?.tended?.[i] || 0, wait = W4W.PYLON_WAIT - (t - last), pressed = XV.pressed === i;
   const rows = XV.pylons.map(p => `<div class="pbar ${p.i === i ? 'on' : ''} ${p.s < 30 ? 'crack' : ''}"><span>${esc(PYLON_NAMES[p.i])}${XV.pressed === p.i ? ' · pressed' : ''}</span><i><b style="width:${Math.round(p.s)}%"></b></i><em>${Math.round(p.s)}%</em></div>`).join('');
@@ -6843,6 +6900,7 @@ function bestiaryHtml() {
       return `<button class="book" style="width:100%;text-align:left;background:none;cursor:pointer" data-${B.id === 'chthon' ? 'chthon' : 'beast'}="${B.id}"><b>${n ? esc(B.name) : '? ? ?'}</b><span>${n ? `${n} of 4 pages · ${esc(B.seen)}` : 'Not yet seen. Watch the edge of the Veil.'}</span></button>`; }).join('')}</div>`;
 }
 function openBeast(id, fromBook) {
+  beastOpen = id;
   const B = BESTIARY.find(x => x.id === id); if (!B) return; const from = fromBook ? panelKind : null; act1Mark('watch2'); if (!fromBook) observe(id);
   const n = BEAST_AT.filter(k => (OBS[id] || 0) >= k).length;
   const pages = B.notes.map(([who, txt], k) => k < n ? `<div class="bnote"><small>${esc(who)}</small><p>${esc(txt)}</p></div>` : `<div class="bnote locked"><small>A page still unread</small><p>Watch it ${BEAST_AT[k] - (OBS[id] || 0)} more ${BEAST_AT[k] - (OBS[id] || 0) === 1 ? 'time' : 'times'} at the edge of the Veil.</p></div>`).join('');
@@ -7025,7 +7083,9 @@ function buildQuarters() {
   if (quartersDone || !KIT_P.board) return; quartersDone = true;
   // the big pieces, one cell each
   for (const { kit: n, at } of W4W.TOWN_PROPS) { if (n === 'campfire') continue; const c = HX(...at), near = [...Object.values(SPECIAL), ...STAGE2.map(x => x.at)].filter(x => W4W.dist(x, at) === 1)[0];
-    const look = near ? HX(...near) : new THREE.Vector3(0, 0, 0); const o = kitAt(n, c.x, c.z, n === 'signal' ? faceTo(c, new THREE.Vector3(0, 0, 0)) : faceTo(c, look), n === 'memorial' ? 1.15 : 1); }
+    const look = near ? HX(...near) : new THREE.Vector3(0, 0, 0); const o = kitAt(n, c.x, c.z, n === 'signal' ? faceTo(c, new THREE.Vector3(0, 0, 0)) : faceTo(c, look), n === 'memorial' ? 1.15 : 1);
+    if (o && n === 'memorial') { tag(o, 'stone', 'stone'); label('THE STONE OF THE TWELVE', o, 1.6, 'key'); const v = new THREE.Vector3(); o.updateMatrixWorld(true);
+      o.traverse(m => { const k = /^lamp_(\d+)$/.exec(m.name); if (k) { m.getWorldPosition(v); STONE_LAMPS[+k[1]] = v.clone(); } }); } }
   const P = W4W.SPECIAL, S2 = id => STAGE2.find(x => x.id === id)?.at;
   // Hearth Square
   onCorner('mailbox', ...S2('post'), 30, 'anna'); onCorner('benchlamp', ...S2('post'), -30, 'anna');
@@ -7042,6 +7102,63 @@ function buildQuarters() {
   onCorner('coldframes', ...S2('glasshouse'), 30, 'anna', 1, scene, 0.35); onCorner('coldframes', ...S2('glasshouse'), -30, 'anna', 1, scene, 0.35); onCorner('vent', ...S2('glasshouse'), 180, 'anna');
   onCorner('benchlamp', ...S2('atrium'), 30, 'anna'); onCorner('pipes', ...S2('atrium'), -30, 'anna', 0.9, scene, 0.45);
 }
+/* ---------- the Stone of the Twelve: a lantern for each of the twelve who went north, lit as the town finds what they left ---------- */
+const STONE_LAMPS = [], STONE_LIT = {};
+const TWELVE_TXT = {
+  ilya: { hint: 'Listen to what the Wailer sings, at the edge of the Veil.', item: 'Ilya Marten\'s whistle', find: 'Under the place where the Wailer sang, half buried in the snow: a drover\'s whistle cut from a goat\'s horn, with I.M. scratched into it. Marta will know it the moment she sees it.', card: 'Ilya Marten, nineteen, the youngest drover on the north farms. He went because his mother was afraid he would, and he wanted to show her there was nothing to be afraid of. The Wailer sings in his voice.' },
+  teresa: { hint: 'Look at the North Gate, close to the iron.', item: 'Teresa Holm\'s map', find: 'Wedged in the hinge of the Gate, folded small: a map in Teresa Holm\'s hand. The road north is drawn twice. The second line runs where no road has ever been.', card: 'Teresa Holm, pathfinder. She walked the north roads for thirty winters and never once got lost. Her last map says the road moved under her feet.' },
+  pavel: { hint: 'Watch the Scratcher at the edge of the Veil.', item: 'a link of Rusk\'s chain', find: 'Where the Scratcher drags its claws, a link of forge chain lies at the foot of the Veil, warm through the glove. Stamped into it: R, the smithy\'s mark for Rusk.', card: 'Pavel Rusk, the smith\'s apprentice. He carried the tools north on his back so the others could carry food. The Scratcher\'s arms are bound in chain from his forge.' },
+  odile: { hint: 'Ask at the bar about the southern hymn.', item: 'Sister Odile\'s hymn book', find: 'Ivo hums the southern hymn while he wipes the cups, the one the Wailer sings. Ask him and he tells you who taught it to the choir: Sister Odile, the winter before she went north. He hands you her hymn book from under the bar.', card: 'Sister Odile of Qubic Church. She sang for the sick and for the dead and saw no difference in the work. Her hymn is still sung in the bar on bad nights, and out in the White on all of them.' },
+  lida: { hint: 'The Library keeps the old signal codes.', item: 'Lida Ferro\'s code book', find: 'On the signals shelf, Lida Ferro\'s code book. Page one, in her neat hand: three slow knocks, then three more. All well. Open.', card: 'Lida Ferro kept the signal lamps and the codes. Every knock and flash in town meant what she said it meant. On the ninth night somebody outside the Gate knew her code.' },
+  brann: { hint: 'Stand by the Old Bell pylon and listen.', item: 'Brann Ostrow\'s cattle bell', find: 'In the snow under the Old Bell, a brass cattle bell with a cracked clapper. Brann Ostrow\'s farm mark is burned into the strap. People near the pylon say they hear it at night.', card: 'Brann Ostrow farmed the north pastures and knew every cow by her bell. He went to bring his herd in before the cold. The Old Bell rings at night with a bell much smaller than its own.' },
+  mirek: { hint: 'Ask the astronomer about his best lens.', item: 'the lens with Mirek Dal\'s name', find: 'The astronomer shows you the only lens that sees as far as the Rime. Scratched on its brass rim: M. Dal, ground the summer before. He lets you take it to the Stone, as long as you bring it back.', card: 'Mirek Dal, glazier. He made the town\'s windows and the astronomer\'s best lens. He went north to see the glacier for himself, and the glass he left behind is how we see what is out there now.' },
+  agnes: { hint: 'Read the oldest order on the plaza board.', item: 'Agnes Vey\'s order', find: 'On the plaza board, under newer notices, an old order nobody took down: cord for the healer\'s splints. It is signed Agnes Vey, and dated the morning the twelve left.', card: 'Agnes Vey, the town healer. She went north because twelve people on a long road would need one. Her order is still on the board. Nobody has the heart to take it down.' },
+  yusuf: { hint: 'A wagon track runs into the White and never comes back.' },
+  hedda: { hint: 'Somewhere in the Black Pines, an axe left in a stump.' },
+  toma: { hint: 'A pipe that still smells of his tobacco, out by the Mouth.' },
+  nils: { hint: 'The expedition\'s ledger. Whoever finds it will know how many set out.' },
+};
+const STONE_TXT = 'Twelve went out through the North Gate the week before the cold, to bring the farms in. The town raised this stone for them on the first night of the Veil and hung a lantern for each, and nobody has had the heart to light them. A lantern is lit when someone finds a trace of the one it stands for and carries it here.';
+const STONE_COUNT = 'A procession climbs the spiral cut into the stone, small hooded figures one behind the other, up toward the light at the top. You count them twice. Twelve climb. One more, low on the stone, walks the other way, down, and the carver took care over the badge on its sleeve.';
+const twelveLit = id => XV?.twelve?.[id] || null, carrying = id => !!myC()?.traces?.includes(id);
+/* is the player standing where this trace lies (the server checks the same) */
+function atTrace(T) { const c = myC(); if (!c || c.path.length) return false; const h = [c.q, c.r], at = (cell, n = 1) => W4W.dist(h, cell) <= n;
+  return T.at === 'veil' ? atVeil(c.q, c.r) : T.at === 'gate' ? at(GATE_CELL) : T.at === 'bar' ? at(W4W.BAR_CELL, 0) : T.at === 'library' ? at(SPECIAL.library) : T.at === 'oldbell' ? at(W4W.pylonCell(3)) : T.at === 'observatory' ? at(SPECIAL.observatory) : T.at === 'plaza' ? at(SPECIAL.plaza) : false; }
+function traceHtml(id) {
+  const T = W4W.TWELVE.find(x => x.id === id), X = TWELVE_TXT[id]; if (!T || !X?.find || !hasChar()) return '';
+  const L = twelveLit(id); if (L) return `<div class="trace lit"><small>The Stone of the Twelve</small><p>${esc(T.name)}'s lantern already burns on the Stone. ${esc(L.nick)} lit it.</p></div>`;
+  if (carrying(id)) return `<div class="trace"><small>You carry ${esc(X.item)}</small><p>Bring it to the Stone of the Twelve, beside the church, and their lantern will be lit.</p><button class="btn" data-gostone>Walk to the Stone</button></div>`;
+  if (!atTrace(T)) return '';
+  return `<div class="trace"><small>Something of the twelve</small><p>${esc(X.find)}</p><button class="btn main" data-trace="${id}">Take ${esc(X.item)}</button></div>`;
+}
+let beastOpen = null, pylonOpen = null;
+/* every place where a trace lies shows it in its own panel */
+function traceFor(kind) {
+  if (kind === 'gate') return 'teresa'; if (kind === 'bar') return 'odile'; if (kind === 'library') return 'lida'; if (kind === 'observatory') return 'mirek';
+  if (['orders', 'herald', 'notices'].includes(kind)) return 'agnes'; if (kind === 'pylon' && pylonOpen === 3) return 'brann';
+  if (kind === 'beast') { const n = BEAST_AT.filter(k => (OBS[beastOpen] || 0) >= k).length; if (beastOpen === 'wailer' && n >= 2) return 'ilya'; if (beastOpen === 'scratcher' && n >= 1) return 'pavel'; }
+  return null; }
+function twelveHook(kind) { const id = traceFor(kind); if (!id) return; const h = traceHtml(id); if (!h) return; const box = document.createElement('div'); box.innerHTML = h; $('#pbody').appendChild(box); bindTrace(box); }
+function bindTrace(root) {
+  root.querySelector('[data-trace]')?.addEventListener('click', e => { const id = e.currentTarget.dataset.trace; sfx.click(); xact('trace', { id }).then(v => { if (!v) return; const X = TWELVE_TXT[id]; sfx.open?.(); say(`You take ${esc(X.item)}. It belongs on the Stone of the Twelve.`, 'Aigrad'); const b = root.closest('div') || root; b.innerHTML = traceHtml(id); bindTrace(b); }); });
+  root.querySelector('[data-gostone]')?.addEventListener('click', () => { sfx.click(); closePanel(); walkTo('stone', 'stone') || openStone(); });
+}
+function openStone() {
+  const c = myC(), near = c && !c.path.length && W4W.dist([c.q, c.r], W4W.STONE_CELL) <= 1, n = W4W.TWELVE.filter(T => twelveLit(T.id)).length;
+  const rows = W4W.TWELVE.map((T, i) => { const L = twelveLit(T.id), X = TWELVE_TXT[T.id];
+    if (L) return `<div class="lamp on"><b>${esc(T.name)}</b><p>${esc(X.card || '')}</p><small>Lit by ${esc(L.nick)}</small></div>`;
+    if (carrying(T.id)) return `<div class="lamp hold"><b>${esc(T.name)}</b><p>You carry ${esc(X.item)}.</p>${near ? `<button class="btn main" data-light="${T.id}">Light the lantern</button>` : '<small>Bring it here to light the lantern.</small>'}</div>`;
+    return `<div class="lamp"><b>${esc(T.name)}</b><small>${esc(X.hint)}</small></div>`; }).join('');
+  panel('stone', 'The Stone of the Twelve', `${n} of 12 lanterns lit`, null, `<p class="say">${esc(STONE_TXT)}</p><div class="lamps">${rows}</div>
+    <details class="gnote"><summary>Count the figures on the stone</summary><p style="margin:8px 0 0">${esc(STONE_COUNT)}</p></details>
+    <p class="mute" style="font-size:12.5px">Eight of them left something in Aigrad. The other four are out in the White.</p>`);
+  act1Mark('stone');
+  $('#pbody details.gnote')?.addEventListener('toggle', e => { if (e.target.open) unlockPage('thirteen'); });
+  $('#pbody').querySelectorAll('[data-light]').forEach(b => b.addEventListener('click', () => { const id = b.dataset.light; sfx.click(); xact('light', { id }).then(v => { if (!v) return; sfx.reward?.(2); const T = W4W.TWELVE.find(x => x.id === id); banner('A LANTERN ON THE STONE', T.name); log(`You lit ${T.name}'s lantern on the Stone of the Twelve.`, 'warm'); openStone(); }); }));
+}
+/* the lanterns themselves: lit on the stone in the town for everyone to see */
+function stepStoneLamps() { const tw = XV?.twelve || {}; W4W.TWELVE.forEach((T, i) => { if (!tw[T.id] || STONE_LIT[T.id] || !STONE_LAMPS[i]) return; const v = STONE_LAMPS[i];
+  STONE_LIT[T.id] = [sprite(GLOW, v.x, v.y, v.z, 0.42, 0xffd9a0, 1), glowDecal(v.x, v.z, 0.9, 0xffb868, 0.4, v.y)]; }); }
 /* a home's yard: its mailbox by the door; a line of washing behind some, a snowman in front of others */
 function dressYard(g, q, r, id) { if (!KIT_P.mailbox) return; const h = [...String(id)].reduce((a, ch) => (a * 31 + ch.charCodeAt(0)) >>> 0, 7);
   onCorner('mailbox', q, r, 30, 'anna', 1, g, 0.25, id);
@@ -7101,6 +7218,7 @@ const CHAPTERS_I = [
   { id: 'captain', title: 'X. The captain', text: 'Everyone in Aigrad has a story about Captain Teodor Valk, and none of the stories agree.\n\nHe kept the town watch for eleven years and never once raised his voice. He counted everything: steps to the church, lamps on the ring, days until the thaw. He was going to marry Anna, the real one, the spring she walked out to the north pasture and did not come back.\n\nIt was Valk who led the first expedition up the glacier. It was Valk who broke the ice and saw her face. The men with him say he did not speak for a whole day. Then he said one word, her name, and that is the name she kept.\n\nA year later, the week before the cold, he took twelve people north to bring the farms in. Nobody remembers who chose the twelve. Nobody remembers why it had to be that week.\n\nOn the ninth night someone knocked on the North Gate in his voice and asked, very politely, to be let in.\n\nThere are questions people ask at the plaza fire, quietly, once the children are asleep. Why did he go north the very week the cold came, as if he knew? Why did the knocking stop at dawn and never once come back? How did the Hollow Man come to wear a coat with the captain\'s badge? And if Valk is still out there, what has he been counting all this time?' },
   { id: 'made', title: 'XI. What they are made of', text: 'The astronomer kept the worst of his notes in a box. After the bad week he opened it in the Library and read them aloud, and nobody slept that night.\n\nHe had watched the Scratcher for a hundred nights. What he took for bone in its long arms is cable, the thick grey kind that once ran under the sea between the machine houses, frozen and braided like sinew. The plates on the Hollow Man\'s back are the lids of server cases, still stamped with the names of companies nobody remembers. The light inside the Wailer flickers the way a screen flickers when it is left on in an empty room.\n\nNature did not make them out of nothing. It made them out of what we left lying in the snow. The White took our machines apart and put them back together, and this time it gave them a purpose.\n\nOne question he did not read aloud. It is written at the bottom of the last page, in a different ink. If the cold builds its hunters out of our machines, what does it think Anna is?' },
   { id: 'rose', title: 'XII. The Iron Rose', text: 'Every pipe in Aigrad runs to one ring of copper round Anna, and on that ring sits a single wheel, cast by the smiths in the shape of a rose. Turned one way, it lets the town\'s warmth into her and up into the Veil. Turned the other way, it shuts it out.\n\nThe smiths made it so the pipes could be mended. It has never been turned. There is no lock on it. Maria says a lock would only tell people that it matters.\n\nThe children dare each other to touch it. Nobody has ever seen a grown-up so much as look at it for long.' },
+  { id: 'thirteen', title: 'XIII. The one walking down', text: 'Old Hamm the mason cut the Stone of the Twelve in the first days of the Veil. He carved twelve figures climbing toward the light, and one more below them, walking down. The captain\'s badge is on its sleeve, small and careful.\n\nHamm carved that figure on the third night. The knocking came on the ninth.\n\nHe died before anyone thought to ask him how he knew. The Chronicle keeps one line in his hand, written on the back of his last bill: he counted them going out, and he counted them coming back.' },
   { id: 'remember', title: 'IX. She remembers', text: 'Anna sleeps with her ears open. She knows whose lamp is lit and whose fire was fed, who welcomed a stranger and who kept a promise. Maria says Anna keeps a list too, the opposite of the astronomer\'s. She records it for the common good: when she wakes, she must remember her heroes and know them by name.' },
 ];
 const _unused_ = null;
@@ -7112,6 +7230,7 @@ const ACT1_TASKS = [
   { id: 'edge', page: 'scratch', title: 'Walk to the edge of the Veil', why: 'Stand where the light meets the snow, and watch what comes to scratch at it.', cta: 'Walk to the edge', go: () => { const c = myC(); if (!c) return; let best = null, bd = 99; for (let n = 6; n <= W4W.DOME_RING; n++) for (const cell of ring(n)) { if (reserved.has(key(...cell)) || !atVeil(...cell)) continue; const d = W4W.dist(cell, [c.q, c.r]); if (d < bd) { bd = d; best = cell; } } if (best) planTo(best); } },
   { id: 'pylon', page: 'pylons', title: 'Give your warmth to a pylon', why: 'Six pylons hold the edge of the Veil. The Hollow presses one sector at a time; the weakest one is cracking. Stand next to it and give it your warmth.', cta: 'Walk to the weakest pylon', go: () => { const w = weakestPylon(); if (w) walkTo('pylon', String(w.i)); } },
   { id: 'gate', page: 'knock', title: 'Go to the North Gate', why: 'It has been sealed since the ninth night. Read what is written on it.', cta: 'Walk to the Gate', go: () => walkTo('gate', 'gate') },
+  { id: 'stone', page: 'thirteen', title: 'Visit the Stone of the Twelve', why: 'Beside the church: twelve lanterns for the twelve who went north. None of them is lit.', cta: 'Walk to the Stone', go: () => walkTo('stone', 'stone') || openStone() },
   { id: 'library', page: 'wardens', title: 'Find the drawing in the Library', why: 'The one thing in town older than the cold. It is the reason anyone still hopes.', cta: 'Walk to the Library', go: () => walkTo('library', 'library') },
 ];
 const act1Done = (() => { try { return new Set(JSON.parse(store.get('w4w.act1') || '[]')); } catch { return new Set(); } })();
@@ -7320,7 +7439,7 @@ function loop(now = performance.now()) {
   spriteCache.forEach(o => { {
     if (o.userData.flicker) { if (o.userData.flare) { o.userData.flare = Math.max(0, o.userData.flare - dt * 0.6); } const f = o.userData.flare || 0; o.material.opacity = 0.8 + Math.sin(t * 13) * 0.08 + Math.sin(t * 7.3) * 0.1; o.scale.setScalar(1.1 + f * 1.2 + (S.town.fire || 0) * 0.08); }
     if (o.userData.blink) o.material.opacity = 0.35 + 0.65 * (Math.sin(t * 4) > 0 ? 1 : 0.2); } });
-  stepCamera(dt); stepAvatars(dt); stepSnowFx(dt); hud(); stepSound(); stepPlaces(dt); if (XV?.me) { stepFrames(dt); if (!ACT1) stepShards(predicted()?.c, dt); } if (XV) { stepRime(dt); if ((tick & 15) === 0) { stepNotes(); stepLogWatch(); stepLog(); } stepLocalGrid(predicted()?.c); }
+  stepCamera(dt); stepAvatars(dt); stepSnowFx(dt); hud(); stepSound(); stepPlaces(dt); if (XV?.me) { stepFrames(dt); if (!ACT1) stepShards(predicted()?.c, dt); } if (XV) { stepRime(dt); if ((tick & 15) === 0) { stepNotes(); stepLogWatch(); stepLog(); stepStoneLamps(); } stepLocalGrid(predicted()?.c); }
   for (const k in walkers) { const w = walkers[k]; w.g.position.lerp(w.target, Math.min(1, dt * 1.5)); w.g.position.y = 0; w.light.position.set(w.g.position.x + 0.15, 0.45, w.g.position.z); }
   if (fly) { fly.t = Math.min(1, fly.t + dt * 0.9); const k = 1 - Math.pow(1 - fly.t, 3);
     const tgt = fly.from.clone().lerp(fly.to, k); const off = camera.position.clone().sub(controls.target).normalize().multiplyScalar(fly.d0 + (fly.d1 - fly.d0) * k);
@@ -7330,5 +7449,5 @@ function loop(now = performance.now()) {
 }
 requestAnimationFrame(loop);
 addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); DPR = Math.min(DPR, dprFor()); renderer.setPixelRatio(DPR); composer.setPixelRatio?.(DPR); renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight); fxaaSize(); });
-window.__w4w = { S, settle, X: () => ({ LIGHT_U, LIGHTS, scene, moon, renderer, composer, fxaaSize, camera, THREE, rimeFx, mouthFx, HD, PYL, houses, SPECIAL, HX, XV, avatars, predicted, xact, hexAt, warp: ms => XW.warp?.(ms), planTo, goTrip, NOTES, rimeFx, openLibrary, trip, prints: prints.length, rimeAt: (q, r) => XW._rime?.(q, r), stash: o => XW._stash?.(o), letter: o => XW._letter?.(o), hollowList: () => hollow, openPost, openHouse, flash: (show) => { flashT = 0; if (show) setTimeout(() => { if (flashFig) flashFig.position.y = 0; }, 30); }, flashFig: () => flashFig, flashDbg: () => ({ k: flashK, f: FOW_U.uFowFlash.value, back: flashBack?.material.opacity, vis: flashFig?.visible, on: FOW_U.uFowOn.value }), acts: h => { actEl.hidden = false; actEl.innerHTML = h; actSig = h; dressActs(); }, story: o => XW._story?.(o), openGate, openChronicle, openPylon, walkTo, UI, renderFrames, unfollow: () => { follow = false; fly = null; }, hollow, act1Mark: id => act1Mark(id), openBeast: id => openBeast(id), openLibraryRoom: () => openLibraryRoom() }), freePlots, openMaria, ask, addWood, refreshTown, draft: v => (draft = v), camera, controls, updateIce, renderer, scene, __composer: LITE ? null : composer };
+window.__w4w = { S, settle, X: () => ({ LIGHT_U, LIGHTS, scene, moon, renderer, composer, fxaaSize, camera, THREE, rimeFx, mouthFx, HD, PYL, houses, SPECIAL, HX, XV, avatars, predicted, xact, hexAt, warp: ms => XW.warp?.(ms), planTo, goTrip, NOTES, rimeFx, openLibrary, trip, prints: prints.length, rimeAt: (q, r) => XW._rime?.(q, r), stash: o => XW._stash?.(o), letter: o => XW._letter?.(o), hollowList: () => hollow, openPost, openHouse, flash: (show) => { flashT = 0; if (show) setTimeout(() => { if (flashFig) flashFig.position.y = 0; }, 30); }, flashFig: () => flashFig, flashDbg: () => ({ k: flashK, f: FOW_U.uFowFlash.value, back: flashBack?.material.opacity, vis: flashFig?.visible, on: FOW_U.uFowOn.value }), acts: h => { actEl.hidden = false; actEl.innerHTML = h; actSig = h; dressActs(); }, story: o => XW._story?.(o), openGate, openChronicle, openPylon, walkTo, UI, renderFrames, unfollow: () => { follow = false; fly = null; }, hollow, act1Mark: id => act1Mark(id), openBeast: id => openBeast(id), openLibraryRoom: () => openLibraryRoom(), openStone: () => openStone(), openGate: () => openGate() }), freePlots, openMaria, ask, addWood, refreshTown, draft: v => (draft = v), camera, controls, updateIce, renderer, scene, __composer: LITE ? null : composer };
 </script>
