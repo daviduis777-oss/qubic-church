@@ -43,6 +43,7 @@ export type Char = {
   rounds?: number // when you last stood the whole bar a round
   toasts?: { nick: string; t: number }[] // glasses raised to you at the bar while you were away
   toasted?: Record<string, number> // whom you last raised a glass to, and when
+  traces?: string[] // what you have found of the twelve and not yet brought to the Stone
 }
 export type Ctx = {
   heatR: number // radius of the town's warm circle, world units
@@ -310,6 +311,24 @@ export const TOWN_PROPS: { kit: string; at: Cell }[] = [
   { kit: 'signal', at: [-1, -7] },
 ]
 export const PROP_BLOCK = new Set(TOWN_PROPS.map(p => `${p.at[0]},${p.at[1]}`))
+
+/** The Stone of the Twelve: twelve went north the week before the cold, and the town lights a lantern on the Stone
+ * for each one as somebody finds a trace of them and carries it there. Eight traces lie in Aigrad; four are out in the White. */
+export const STONE_CELL: Cell = [2, -4]
+export const TWELVE: { id: string; name: string; act: 1 | 2; at: 'veil' | 'gate' | 'bar' | 'library' | 'oldbell' | 'observatory' | 'plaza' | 'wastes' }[] = [
+  { id: 'ilya', name: 'Ilya Marten', act: 1, at: 'veil' },
+  { id: 'teresa', name: 'Teresa Holm', act: 1, at: 'gate' },
+  { id: 'pavel', name: 'Pavel Rusk', act: 1, at: 'veil' },
+  { id: 'odile', name: 'Sister Odile', act: 1, at: 'bar' },
+  { id: 'lida', name: 'Lida Ferro', act: 1, at: 'library' },
+  { id: 'brann', name: 'Brann Ostrow', act: 1, at: 'oldbell' },
+  { id: 'mirek', name: 'Mirek Dal', act: 1, at: 'observatory' },
+  { id: 'agnes', name: 'Agnes Vey', act: 1, at: 'plaza' },
+  { id: 'yusuf', name: 'Yusuf Karam', act: 2, at: 'wastes' },
+  { id: 'hedda', name: 'Hedda Sorn', act: 2, at: 'wastes' },
+  { id: 'toma', name: 'Old Toma', act: 2, at: 'wastes' },
+  { id: 'nils', name: 'Nils Arendt', act: 2, at: 'wastes' },
+]
 export const dist = (a: Cell, b: Cell) => ringOf(a[0] - b[0], a[1] - b[1])
 export const worldXZ = (q: number, r: number) => [2 * (q + r / 2), 1.7320508 * r] as const
 export function zoneOf(q: number, r: number) {
@@ -676,11 +695,12 @@ export type WState = {
   delivered?: { day: number; n: number } // town orders filled today, by everyone
   pylons?: Record<string, Pylon> // the six pylons, by index
   story?: Story // the antagonist's progress: set by the admin and by what players do
+  twelve?: Record<string, { by: string; nick: string; t: number }> // lanterns lit on the Stone of the Twelve, by whom
   rime?: Rime
   rimeTrail?: [number, number, number][] // computed on load, not stored
 }
-export type Feed = { id: string; t: number; topic: 'froze' | 'hearth' | 'took' | 'library' | 'found' | 'shard' | 'anna' | 'order' | 'pylon' | 'letter' | 'drain' | 'bar' | 'unveil' | 'mail' | 'valve' | 'round' | 'toast'; by: string; data: Record<string, unknown> }
-export type Dirty = { chars: Set<string>; hearths: Set<string>; bags: Set<string>; bagsGone: Set<string>; nodes: Set<string>; feed: Feed[]; rime?: boolean; library?: Set<string>; shards?: Set<string>; anna?: boolean; delivered?: boolean; pylons?: Set<string>; story?: boolean }
+export type Feed = { id: string; t: number; topic: 'froze' | 'hearth' | 'took' | 'library' | 'found' | 'shard' | 'anna' | 'order' | 'pylon' | 'letter' | 'drain' | 'bar' | 'unveil' | 'mail' | 'valve' | 'round' | 'toast' | 'twelve'; by: string; data: Record<string, unknown> }
+export type Dirty = { chars: Set<string>; hearths: Set<string>; bags: Set<string>; bagsGone: Set<string>; nodes: Set<string>; feed: Feed[]; rime?: boolean; library?: Set<string>; shards?: Set<string>; anna?: boolean; delivered?: boolean; pylons?: Set<string>; twelve?: Set<string>; story?: boolean }
 export const newDirty = (): Dirty => ({ chars: new Set(), hearths: new Set(), bags: new Set(), bagsGone: new Set(), nodes: new Set(), feed: [] })
 
 export function townOfState(ws: WState) {
@@ -769,6 +789,7 @@ export function viewOf(ws: WState, uid: string, events: Event[] = []) {
     library: ws.library ?? {},
     shards: shardsFor(weekOf(ws.now)).map(s => ({ ...s, taken: ws.shards?.[s.id] ? ws.shards[s.id]!.nick : null })),
     anna: ws.anna ?? { n: 0, heroes: {} },
+    twelve: ws.twelve ?? {},
     orders: ordersFor(dayOf(ws.now)), delivered: ws.delivered?.day === dayOf(ws.now) ? ws.delivered.n : 0,
     pylons: Array.from({ length: PYLON_N }, (_, i) => { const p = ws.pylons?.[i]; return { i, at: pylonCell(i), s: pylonNow(p, i, ws.now, veilOf(townOfState(ws).power)), nick: p?.nick ?? null, at_t: p?.at ?? 0 } }),
     story: { phase: ws.story?.phase ?? 0, hush: (ws.story?.phase ?? 0) >= 2 ? Math.round(hushNow(ws.story, ws.now)) : null, unveil: unveiled(ws.story, ws.now) ? ws.story!.unveil! : null },
@@ -1047,6 +1068,32 @@ export function action(ws: WState, uid: string, op: string, b: Record<string, un
       c.toasted ??= {}; if (now - (c.toasted[to] ?? 0) < TOAST_WAIT) return fail('You already drank to them today.')
       c.toasted[to] = now; o.toasts = [{ nick: nickIn(ws, uid), t: now }, ...(o.toasts ?? [])].slice(0, 8); d.chars.add(to)
       d.feed.push({ id: `ts${uid}${to}${now}`, t: now, topic: 'toast', by: uid, data: { nick: nickIn(ws, uid), to: nickIn(ws, to) } })
+      return ok()
+    }
+    case 'trace': {
+      // something of one of the twelve, found where they left it: you carry it until you bring it to the Stone
+      const T = TWELVE.find(x => x.id === b.id); if (!T) return fail('Nothing of theirs here.')
+      if (c.path.length) return fail('Stand still and look.')
+      if (ws.twelve?.[T.id]) return fail('Their lantern already burns on the Stone.')
+      if (c.traces?.includes(T.id)) return fail('You already carry it.')
+      const at = (cell: Cell, n = 1) => dist(here, cell) <= n
+      const there = T.at === 'veil' ? insideDome(here[0], here[1]) && DIRS.some(([dq, dr]) => !insideDome(here[0] + dq, here[1] + dr))
+        : T.at === 'gate' ? at(GATE_CELL) : T.at === 'bar' ? at(BAR_CELL, 0) : T.at === 'library' ? at(SPECIAL.library as unknown as Cell)
+        : T.at === 'oldbell' ? at(pylonCell(3)) : T.at === 'observatory' ? at(SPECIAL.observatory as unknown as Cell) : T.at === 'plaza' ? at(SPECIAL.plaza as unknown as Cell) : false
+      if (!there) return fail(T.act === 2 ? 'Whatever is left of them is out in the White.' : 'Nothing of theirs here.')
+      c.traces = [...(c.traces ?? []), T.id]
+      return ok()
+    }
+    case 'light': {
+      // carry a trace to the Stone and its lantern is lit for everyone, with your name beside it
+      const T = TWELVE.find(x => x.id === b.id); if (!T) return fail('There is no such lantern.')
+      if (c.path.length || dist(here, STONE_CELL) > 1) return fail('Bring it to the Stone of the Twelve, by the church.')
+      if (!c.traces?.includes(T.id)) return fail('You have nothing of theirs to bring.')
+      c.traces = c.traces.filter(x => x !== T.id)
+      if (ws.twelve?.[T.id]) return ok() // somebody got here first: the lantern already burns
+      ws.twelve ??= {}; ws.twelve[T.id] = { by: uid, nick: nickIn(ws, uid), t: now }; (d.twelve ??= new Set()).add(T.id)
+      addRenown(c, 3); addGold(c, 2, now)
+      d.feed.push({ id: `tw${T.id}${now}`, t: now, topic: 'twelve', by: uid, data: { nick: nickIn(ws, uid), name: T.name, n: Object.keys(ws.twelve).length } })
       return ok()
     }
     default: return fail('unknown action')
