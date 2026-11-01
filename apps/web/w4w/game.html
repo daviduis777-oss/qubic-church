@@ -2345,11 +2345,25 @@ function radialTex(stops, size = 128) {
 const GLOW = radialTex([[0, 'rgba(255,190,110,1)'], [0.25, 'rgba(255,150,60,.55)'], [1, 'rgba(255,120,30,0)']]);
 const DOT = radialTex([[0, 'rgba(255,255,255,1)'], [0.5, 'rgba(255,255,255,.45)'], [1, 'rgba(255,255,255,0)']], 64);
 const RED = radialTex([[0, 'rgba(255,90,70,1)'], [0.3, 'rgba(255,60,40,.5)'], [1, 'rgba(255,40,20,0)']], 64);
-function glowDecal(x, z, r, col = 0xffffff, op = 0.55) {
-  const m = new THREE.Mesh(new THREE.PlaneGeometry(r * 2, r * 2), new THREE.MeshBasicMaterial({ map: GLOW, color: col, transparent: true, opacity: op, blending: THREE.AdditiveBlending, depthWrite: false }));
-  m.rotation.x = -Math.PI / 2; m.position.set(x, 0.03, z); m.renderOrder = 2; m.userData.base = op; scene.add(m); return m;
+/* a light in the world. The scene's shader lights every surface near it, ground and walls alike, falling off softly:
+ * no more flat glowing discs on the snow. The returned object keeps the old interface: move it, scale it, fade its opacity */
+const LIGHTS = [], LIGHT_N = 40;
+function glowDecal(x, z, r, col = 0xffffff, op = 0.55, y = 0.6) {
+  const o = new THREE.Object3D(); o.position.set(x, y, z); o.userData.r = r; o.userData.col = new THREE.Color(col); o.userData.base = op; o.material = { opacity: op }; o.isLight0 = true; scene.add(o); LIGHTS.push(o); return o;
+}
+const LIGHT_U = { uLP: { value: Array.from({ length: LIGHT_N }, () => new THREE.Vector4()) }, uLC: { value: Array.from({ length: LIGHT_N }, () => new THREE.Vector3()) } };
+const _lv = new THREE.Vector3(), _ls = [];
+function stepLights() {
+  // the nearest lights to where you are looking, as many as the shader holds
+  for (let i = LIGHTS.length - 1; i >= 0; i--) if (!LIGHTS[i].parent) LIGHTS.splice(i, 1);
+  _ls.length = 0; for (const o of LIGHTS) { let vis = true; for (let a = o; a; a = a.parent) if (!a.visible) { vis = false; break; } if (!vis || o.material.opacity <= 0.01) continue; o.getWorldPosition(_lv); _ls.push([_lv.distanceToSquared(controls.target), o, _lv.clone()]); }
+  _ls.sort((a, b) => a[0] - b[0]);
+  for (let i = 0; i < LIGHT_N; i++) { const e = _ls[i], P = LIGHT_U.uLP.value[i], C = LIGHT_U.uLC.value[i];
+    if (!e) { P.set(0, -99, 0, 0.01); C.set(0, 0, 0); continue; } const o = e[1], k = Math.min(1.6, o.material.opacity * 1.6);
+    P.set(e[2].x, e[2].y, e[2].z, o.userData.r * 1.25 * o.scale.x); const cc = o.userData.col; C.set(cc.r * k, cc.g * k, cc.b * k); }
 }
 function sprite(tex, x, y, z, s, col = 0xffffff, op = 1) {
+  if (tex === GLOW) { s *= 0.5; op *= 0.85; }
   const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, color: col, transparent: true, opacity: op, blending: THREE.AdditiveBlending, depthWrite: false }));
   sp.position.set(x, y, z); sp.scale.set(s, s, s); sp.userData.base = op; scene.add(sp); return sp;
 }
@@ -2626,7 +2640,7 @@ function build() {
   const cp0 = HX(...SPECIAL.church), ch = place('church', ...SPECIAL.church, { rot: Math.atan2(-cp0.x, -cp0.z), scale: 1.9 }); // door to Anna; // the heart of the town: bigger than any house tag(ch, 'church', 'church');
   const cp = HX(...SPECIAL.church); glowDecal(cp.x, cp.z + 0.9, 2.2, 0xffd6a0, 0.5); sprite(GLOW, cp.x, 0.75, cp.z + 0.95, 0.9, 0xffc070, 0.9);
   label('QUBIC CHURCH', ch, 3.2, 'key');
-  { const f = cp0.clone().setY(0).normalize().negate(), side = new THREE.Vector3(-f.z, 0, f.x); makePipe(cp0.clone().add(side.multiplyScalar(0.78)).add(f.clone().multiplyScalar(0.62)), true, false, 0.12, true) /* it rises out of the ground where the church's own main goes down */; } // the church's main: the thickest pipe in town, straight into Anna's ring
+  { const f = cp0.clone().setY(0).normalize().negate(), side = new THREE.Vector3(-f.z, 0, f.x); { const at = cp0.clone().add(side.multiplyScalar(0.78)).add(f.clone().multiplyScalar(0.62)); makePipe(at, true, false, 0.12, true); const col = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.27, 0.12, 18), PIPE_IRON); col.position.set(at.x, 0.06, at.z); scene.add(col); }; } // the church's main: the thickest pipe in town, straight into Anna's ring
   const pp = HX(...SPECIAL.plaza);
   const well = place('well', ...SPECIAL.plaza, { scale: 1.2 }); well.position.x -= 0.7; tag(well, 'board', 'board');
   const board = buildBoard(); board.position.set(pp.x + 0.75, 0, pp.z - 0.1); scene.add(board); tag(board, 'board', 'board');
@@ -2995,7 +3009,7 @@ const PIPE_TX = (() => { const tl = new THREE.TextureLoader(), L = (f, srgb = tr
 const COPPER_TEX = PIPE_TX.cu;
 /* one look for every pipe in town: the texture wraps once round the pipe and repeats along it, square, however long or thin */
 function pipeUV(geo, len, r) { const uv = geo.attributes.uv, k = len / Math.max(0.01, 2 * Math.PI * r) * 0.5; for (let i = 0; i < uv.count; i++) uv.setX(i, uv.getX(i) * k); uv.needsUpdate = true; return geo; }
-const copperMat = (o = {}) => { const m = new THREE.MeshStandardMaterial({ map: PIPE_TX.cu, color: 0xffffff, metalness: 0.3, roughness: 0.5, emissive: 0x3a1406, emissiveIntensity: 0.4, ...o }); m.normalMap = PIPE_TX.cuN; m.normalScale = new THREE.Vector2(0.9, 0.9); return m; };
+const copperMat = (o = {}) => { const m = new THREE.MeshStandardMaterial({ map: PIPE_TX.cu, color: 0xffffff, metalness: 0.3, roughness: 0.5, emissive: 0x3a1406, emissiveIntensity: 0.15, ...o }); m.normalMap = PIPE_TX.cuN; m.normalScale = new THREE.Vector2(0.9, 0.9); return m; };
 const PIPE_COPPER = copperMat();
 const PIPE_IRON = new THREE.MeshStandardMaterial({ map: PIPE_TX.fe, normalMap: PIPE_TX.feN, color: 0xffffff, metalness: 0.4, roughness: 0.6, emissive: 0x1a0c06, emissiveIntensity: 0.5 });
 const PIPE_FLOW_V = `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.); }`;
@@ -3033,6 +3047,13 @@ function openRose() {
   $('#pbody [data-rose]')?.addEventListener('click', e => { const b = e.currentTarget; if (!b.dataset.sure) { b.dataset.sure = '1'; b.textContent = 'Turn it. The Veil will feel it.'; say('Maria said: do nothing they ask. Press again if you mean it.', 'Anna'); return; }
     xact('valve', {}).then(v => { if (v) { sfx.door(); pulse(-0.3); banner('The rose turned', 'the pipes went quiet for a breath'); log('You turned the Iron Rose a little. Somewhere above the town the Veil thinned.', 'world'); openRose(); } }); });
 }
+/* copper that carries heat: a slow warm swell travels along it toward Anna, the metal brightening and dimming like a breath */
+const HEAT_MATS = {};
+function heatCopper(k) { const key = k.toFixed(2); if (HEAT_MATS[key]) return HEAT_MATS[key]; const m = copperMat(); m.userData.heat = k;
+  m.onBeforeCompile = sh => { sh.uniforms.uT = U.uTime; sh.uniforms.uK = { value: k };
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nuniform float uT; uniform float uK;').replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
+      { float w = 0.5 + 0.5 * sin(vMapUv.x * 0.9 - uT * 1.4); totalEmissiveRadiance += vec3(1.0, 0.45, 0.16) * uK * (0.05 + 0.32 * pow(w, 5.0)) * (0.55 + 0.45 * diffuseColor.r); }`); };
+  m.customProgramCacheKey = () => 'heatcu' + key; return (HEAT_MATS[key] = m); }
 function makePipe(p, on, mine, R0 = 0, ground = false) {
   ensureCoreRing();
   const g = new THREE.Group(), dir = p.clone().setY(0).normalize(), side = new THREE.Vector3(-dir.z, 0, dir.x), r = R0 || (mine ? 0.055 : 0.042);
@@ -3044,7 +3065,8 @@ function makePipe(p, on, mine, R0 = 0, ground = false) {
   pts.push(foot, dir.clone().multiplyScalar(3.05).setY(0.42), dir.clone().multiplyScalar(2.72).setY(0.78), dir.clone().multiplyScalar(2.42).setY(0.98), end);
   const curve = new THREE.CatmullRomCurve3(pts, false, 'centripetal'), segs = Math.max(20, Math.round(L * 10));
   const CL = curve.getLength(), metal = new THREE.Mesh(pipeUV(new THREE.TubeGeometry(curve, segs, r, 10, false), CL, r), PIPE_COPPER); metal.castShadow = true; g.add(metal);
-  g.add(new THREE.Mesh(new THREE.TubeGeometry(curve, segs, r * 1.18, 8, false), new THREE.ShaderMaterial({ vertexShader: PIPE_FLOW_V, fragmentShader: PIPE_FLOW_F, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, uniforms: { uTime: U.uTime, uFlow: U.uFlow, uBoost: U.uBoost, uOn: { value: on ? 1 : 0.12 }, uMine: { value: mine ? 1 : 0 }, uLen: { value: CL } } })));
+  metal.material = heatCopper(on ? (mine ? 1 : 0.7) : 0);
+  if (false) g.add(new THREE.Mesh(new THREE.TubeGeometry(curve, segs, r * 1.18, 8, false), new THREE.ShaderMaterial({ vertexShader: PIPE_FLOW_V, fragmentShader: PIPE_FLOW_F, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, uniforms: { uTime: U.uTime, uFlow: U.uFlow, uBoost: U.uBoost, uOn: { value: on ? 1 : 0.12 }, uMine: { value: mine ? 1 : 0 }, uLen: { value: CL } } })));
   // flanges where the pipe meets the house and the ring, so it is plainly bolted on
   for (const [u, big] of ground ? [[1, 1.7]] : [[0, 1.9], [1, 1.7]]) { const q = curve.getPoint(u), f = new THREE.Mesh(new THREE.CylinderGeometry(r * big, r * big, 0.05, 12), PIPE_IRON); f.position.copy(q); f.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), curve.getTangent(u)); g.add(f); }
   for (let i = 1; i < n; i++) { const q = curve.getPoint(i / n);
@@ -6514,7 +6536,11 @@ function fowPatch(m) {
         fw = instanceMatrix * fw;
       #endif
         vFowW = (modelMatrix * fw).xyz; }`);
-    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vFowW; uniform sampler2D uFowTex; uniform vec2 uFowP; uniform float uFowR; uniform float uFowDome; uniform float uFowOn; uniform float uFowT; uniform float uFowFlash; uniform float uFowVeil;').replace('#include <dithering_fragment>', `#include <dithering_fragment>
+    Object.assign(sh.uniforms, LIGHT_U);
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nuniform vec4 uLP[' + LIGHT_N + ']; uniform vec3 uLC[' + LIGHT_N + '];\nvarying vec3 vFowW; uniform sampler2D uFowTex; uniform vec2 uFowP; uniform float uFowR; uniform float uFowDome; uniform float uFowOn; uniform float uFowT; uniform float uFowFlash; uniform float uFowVeil;').replace('#include <dithering_fragment>', `#include <dithering_fragment>
+      { vec3 lamp = vec3(0.0);
+        for (int i = 0; i < ${LIGHT_N}; i++) { vec3 dv = vFowW - uLP[i].xyz; dv.y *= 1.6; float q = clamp(1.0 - length(dv) / uLP[i].w, 0.0, 1.0); lamp += uLC[i] * q * q; }
+        gl_FragColor.rgb += diffuseColor.rgb * lamp * 0.9 + lamp * 0.04; }
       { float d = distance(vFowW.xz, uFowP), near = 1.0 - smoothstep(uFowR * 0.4, uFowR, d), rr = length(vFowW.xz);
         float inside = 1.0 - smoothstep(uFowDome - 0.6, uFowDome + 0.6, rr);
         float seen = texture2D(uFowTex, vFowW.xz / ${FOW_W.toFixed(1)} + 0.5).r, core = 1.0 - smoothstep(4.5, 8.0, rr);
@@ -6906,7 +6932,7 @@ function buildStreets() {
       if (i % 9 === 4 && W4W.ringOf(...line[Math.min(line.length - 1, Math.floor(u * line.length))]) >= 3 && (lampN++ % 2 === 0)) {
         const LP = prop('lamp', 1.05); const m = LP || new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.032, 0.85, 5), post); if (LP) m.position.set(p.x + n.x * 0.82, 0, p.z + n.z * 0.82); else m.position.set(p.x + n.x * 0.82, 0.42, p.z + n.z * 0.82); scene.add(m); STREET_OBJS.push(m);
         const lx = p.x + n.x * 0.82, lz = p.z + n.z * 0.82, sp = sprite(GLOW, lx, LP ? 0.93 : 0.9, lz, 0.2, 0xffe2b0, 0.85); sp.userData.flicker = true; STREET_OBJS.push(sp);
-        const pool = glowDecal(lx, lz, 1.5, 0xffc27a, 0.32); if (pool) STREET_OBJS.push(pool); } }
+        const pool = glowDecal(lx, lz, 2.4, 0xffc27a, 0.55, 0.95); STREET_OBJS.push(pool); } }
     const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); geo.setIndex(idx); geo.computeVertexNormals();
     const m = new THREE.Mesh(geo, mat); m.receiveShadow = true; m.renderOrder = 1; scene.add(m); STREET_OBJS.push(m);
   }
@@ -7179,7 +7205,7 @@ function loop(now = performance.now()) {
   if ((spriteClock += dt) > 1) { spriteClock = 0; spriteCache = []; scene.traverse(o => { if (o.isSprite && (o.userData.flicker || o.userData.blink)) spriteCache.push(o); }); } U.uTime.value += dt; const t = U.uTime.value;
   U.uHeat.value += (heatTarget - U.uHeat.value) * Math.min(1, dt * 0.8);
   U.uBoost.value = Math.max(0, U.uBoost.value - dt * 0.3); U.uFlow.value += dt * (0.4 + U.uBoost.value * 0.45);
-  stepPrints(); stepDest(); stepDoorFx(dt); if (ACT1) stepHowl(dt); stepWaves(dt); stepEmbers(dt); stepMotes(dt); if (!ACT1) stepFauna(dt); else { stepStorm(dt); stepHollow(dt); stepFow(); stepPylons(dt); if ((tick & 31) === 0) renderVeil(); }
+  stepLights(); stepPrints(); stepDest(); stepDoorFx(dt); if (ACT1) stepHowl(dt); stepWaves(dt); stepEmbers(dt); stepMotes(dt); if (!ACT1) stepFauna(dt); else { stepStorm(dt); stepHollow(dt); stepFow(); stepPylons(dt); if ((tick & 31) === 0) renderVeil(); }
   if (S.town.B > 0 && (waveClock += dt) > Math.max(2.2, 6 - S.town.B * 0.15)) { waveClock = 0; pulse(0.25); }
   snowNow += (snowTarget - snowNow) * Math.min(1, dt * 0.6);
   if (SOFT && snow && snow.visible) { snow.visible = false; startSnow2D(); }
@@ -7223,5 +7249,5 @@ function loop(now = performance.now()) {
 }
 requestAnimationFrame(loop);
 addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); DPR = Math.min(DPR, dprFor()); renderer.setPixelRatio(DPR); composer.setPixelRatio?.(DPR); renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight); fxaaSize(); });
-window.__w4w = { S, settle, X: () => ({ scene, moon, renderer, composer, fxaaSize, camera, THREE, rimeFx, mouthFx, HD, PYL, houses, SPECIAL, HX, XV, avatars, predicted, xact, hexAt, warp: ms => XW.warp?.(ms), planTo, goTrip, NOTES, rimeFx, openLibrary, trip, prints: prints.length, rimeAt: (q, r) => XW._rime?.(q, r), stash: o => XW._stash?.(o), letter: o => XW._letter?.(o), hollowList: () => hollow, openPost, openHouse, flash: (show) => { flashT = 0; if (show) setTimeout(() => { if (flashFig) flashFig.position.y = 0; }, 30); }, flashFig: () => flashFig, flashDbg: () => ({ k: flashK, f: FOW_U.uFowFlash.value, back: flashBack?.material.opacity, vis: flashFig?.visible, on: FOW_U.uFowOn.value }), acts: h => { actEl.hidden = false; actEl.innerHTML = h; actSig = h; dressActs(); }, story: o => XW._story?.(o), openGate, openChronicle, openPylon, walkTo, UI, renderFrames, unfollow: () => { follow = false; fly = null; }, hollow, act1Mark: id => act1Mark(id), openBeast: id => openBeast(id), openLibraryRoom: () => openLibraryRoom() }), freePlots, openMaria, ask, addWood, refreshTown, draft: v => (draft = v), camera, controls, updateIce, renderer, scene, __composer: LITE ? null : composer };
+window.__w4w = { S, settle, X: () => ({ LIGHT_U, LIGHTS, scene, moon, renderer, composer, fxaaSize, camera, THREE, rimeFx, mouthFx, HD, PYL, houses, SPECIAL, HX, XV, avatars, predicted, xact, hexAt, warp: ms => XW.warp?.(ms), planTo, goTrip, NOTES, rimeFx, openLibrary, trip, prints: prints.length, rimeAt: (q, r) => XW._rime?.(q, r), stash: o => XW._stash?.(o), letter: o => XW._letter?.(o), hollowList: () => hollow, openPost, openHouse, flash: (show) => { flashT = 0; if (show) setTimeout(() => { if (flashFig) flashFig.position.y = 0; }, 30); }, flashFig: () => flashFig, flashDbg: () => ({ k: flashK, f: FOW_U.uFowFlash.value, back: flashBack?.material.opacity, vis: flashFig?.visible, on: FOW_U.uFowOn.value }), acts: h => { actEl.hidden = false; actEl.innerHTML = h; actSig = h; dressActs(); }, story: o => XW._story?.(o), openGate, openChronicle, openPylon, walkTo, UI, renderFrames, unfollow: () => { follow = false; fly = null; }, hollow, act1Mark: id => act1Mark(id), openBeast: id => openBeast(id), openLibraryRoom: () => openLibraryRoom() }), freePlots, openMaria, ask, addWood, refreshTown, draft: v => (draft = v), camera, controls, updateIce, renderer, scene, __composer: LITE ? null : composer };
 </script>
