@@ -787,6 +787,7 @@ export function action(ws: WState, uid: string, op: string, b: Record<string, un
     }
     case 'stop': Object.assign(c, { q: here[0], r: here[1], path: [], t0: now, lost: false }); return ok()
     case 'gather': {
+      if (STAGE === 1) return fail('Gathering and making things open in Act II.') // Act I is the town under the Veil: no crafting yet
       const at = cellArg(b.at); if (!at) return fail('Gather what?')
       if (c.path.length) return fail('Stop walking first.')
       if (!near(at)) return fail('Too far. Stand next to it.')
