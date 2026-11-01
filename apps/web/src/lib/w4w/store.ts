@@ -1,7 +1,7 @@
 import 'server-only'
 
 /**
- * Storage for W4W (the town of Aigarth). Same Upstash Redis as BPP-9000, keys under "w4w:".
+ * Storage for W4W (the town of Aigrad). Same Upstash Redis as BPP-9000, keys under "w4w:".
  * Without Redis, development keeps everything in memory.
  */
 const URL_ = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL

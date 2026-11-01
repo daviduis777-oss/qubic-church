@@ -51,7 +51,7 @@ export function W4WGate({ name, code: given = '' }: { name: string | null; code?
       <div className="w4w-row">
         <input autoComplete="off" id="w4w-code" maxLength={64} onChange={e => setCode(e.target.value)} placeholder="Invite code" spellCheck={false} value={code} />
         <button disabled={busy || !code.trim()} type="submit">
-          {busy ? 'Opening…' : 'Enter Aigarth'}
+          {busy ? 'Opening…' : 'Enter Aigrad'}
         </button>
       </div>
       {err && (

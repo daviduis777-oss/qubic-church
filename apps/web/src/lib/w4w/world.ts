@@ -286,7 +286,7 @@ export const SPECIAL = { core: [0, 0], church: [1, -3], plaza: [-1, 3], observat
 export const DEMO_CELLS: Cell[] = [] // the demo neighbours are gone: only living players have houses
 
 export const ZONES = [
-  { name: 'Aigarth', cold: 12 },
+  { name: 'Aigrad', cold: 12 },
   { name: 'The Edge', cold: 15 },
   { name: 'Black Pines', cold: 22 },
   { name: 'Stone Teeth', cold: 28 },
