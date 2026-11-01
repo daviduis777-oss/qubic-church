@@ -305,7 +305,7 @@ export const TOWN_PROPS: { kit: string; at: Cell }[] = [
   { kit: 'memorial', at: [2, -4] },  // the Twelve, beside the church
   { kit: 'telescope', at: [5, -3] }, // the Rise, by the observatory
   { kit: 'coal', at: [-4, -1] },     // the Coal Works, by the mine
-  { kit: 'crane', at: [-5, 3] },     // the market yard, still being built
+  { kit: 'crane', at: [-6, 3] },     // the market yard, the crane still behind the hall
   { kit: 'signal', at: [1, -8] },    // the Gate's two fires
   { kit: 'signal', at: [-1, -7] },
 ]
