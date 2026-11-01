@@ -2390,6 +2390,11 @@ function sprite(tex, x, y, z, s, col = 0xffffff, op = 1) {
 /* ================= hex grid ================= */
 const HX = (q, r) => new THREE.Vector3(2 * (q + r / 2), 0, 1.7320508 * r);
 const DIRS = [[1, 0], [1, -1], [0, -1], [-1, 0], [-1, 1], [0, 1]];
+/* the corners of a cell, where three cells meet: no path ever crosses one, so a corner is where things can stand */
+const CORNER_R = 2 / Math.sqrt(3);
+function cornerAt(q, r, deg) { const c = HX(q, r), a = deg * Math.PI / 180; return new THREE.Vector3(c.x + Math.cos(a) * CORNER_R, 0, c.z + Math.sin(a) * CORNER_R); }
+const faceTo = (from, to) => Math.atan2(to.x - from.x, to.z - from.z);
+const FIRE_CELL = (W4W.TOWN_PROPS.find(p => p.kit === 'campfire') || { at: [0, 3] }).at;
 function ring(n) { if (n === 0) return [[0, 0]]; const out = []; let q = -n, r = n;
   for (let i = 0; i < 6; i++) for (let j = 0; j < n; j++) { out.push([q, r]); q += DIRS[i][0]; r += DIRS[i][1]; } return out; }
 const key = (q, r) => q + ',' + r;
@@ -6456,8 +6461,8 @@ function buildGate() {
   // the Gate as it should be: iron leaves in a frame of field anchors, the bar across them, set right into the Veil
   if (PROPS.gate) { g.clear(); const gm = prop('gate', 1); gm.scale.setScalar(3.4 / PROPS.gate.userData.w / 0.62); g.add(gm); }
   tag(g, 'gate', 'gate');
-  // braziers either side: the Gate is always watched
-  for (const sx of [-1, 1]) { const b = p.clone().add(new THREE.Vector3(-dir.z, 0, dir.x).multiplyScalar(sx * 1.6)).sub(dir.clone().multiplyScalar(0.8));
+  // braziers either side: the Gate is always watched (the kit's two signal towers do it now, when they are there)
+  if (!KIT_P.signal) for (const sx of [-1, 1]) { const b = p.clone().add(new THREE.Vector3(-dir.z, 0, dir.x).multiplyScalar(sx * 1.6)).sub(dir.clone().multiplyScalar(0.8));
     const bz = new THREE.Group(); bz.position.set(b.x, 0, b.z); scene.add(bz);
     const BR = prop('brazier', 0.66);
     if (BR) { bz.add(BR); const coals = new THREE.Mesh(new THREE.CircleGeometry(0.2, 12), BRZ_COAL); coals.rotation.x = -Math.PI / 2; coals.position.y = 0.6; bz.add(coals); }
@@ -7037,8 +7042,6 @@ function buildQuarters() {
   onCorner('benchlamp', ...P.library, 30, 'anna'); onCorner('benchlamp', ...P.observatory, -30, 'anna');
   onCorner('coldframes', ...S2('glasshouse'), 30, 'anna', 1, scene, 0.35); onCorner('coldframes', ...S2('glasshouse'), -30, 'anna', 1, scene, 0.35); onCorner('vent', ...S2('glasshouse'), 180, 'anna');
   onCorner('benchlamp', ...S2('atrium'), 30, 'anna'); onCorner('pipes', ...S2('atrium'), -30, 'anna', 0.9, scene, 0.45);
-  // warm pipes under Anna's ring breathe through the snow
-  [[2, -1], [-1, -1], [-1, 2]].forEach(([q, r], i) => onCorner('vent', q, r, 180, 'anna', 0.9, scene, 0.35));
 }
 /* a home's yard: its mailbox by the door; a line of washing behind some, a snowman in front of others */
 function dressYard(g, q, r, id) { if (!KIT_P.mailbox) return; const h = [...String(id)].reduce((a, ch) => (a * 31 + ch.charCodeAt(0)) >>> 0, 7);
