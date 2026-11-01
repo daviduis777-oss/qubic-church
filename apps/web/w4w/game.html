@@ -2554,7 +2554,7 @@ const interactive = [], labels = [];
 const KIT_SNOW = new Set(); // every model now comes with its own painted snow // painted bare: the town's snow goes on them
 const KIT_OVR = { church: 'q/b/church.glb', mine: 'q/b/mine.glb', home_A: 'q/b/home_a.glb', home_B: 'q/b/home_b.glb', blacksmith: 'q/b/home_b.glb', tower: 'q/b/observatory.glb', barracks: 'q/b/library.glb', well: 'q/b/well.glb', destroyed: 'q/b/ruin.glb' };
 // props with no kit piece to stand in for: loaded once, stood on the ground, one unit tall, scaled where they are used
-const PROPS = {}, PROP_URLS = { gate: 'q/b/gate.glb', campfire: 'q/b/campfire.glb', heater: 'q/b/heater.glb', boiler: 'q/b/boiler.glb', pit: 'q/b/pit.glb', marker: 'q/b/marker.glb', brazier: 'q/b/brazier.glb', bar: 'q/b/bar.glb', post: 'q/b/post.glb', lamp: 'q/b/lamp.glb', wagon: 'q/b/wagon.glb', site: 'q/b/site.glb', barrel: 'q/b/barrel.glb', board: 'q/b/board.glb', sled: 'q/b/sled.glb', cart: 'q/b/cart.glb', woodpile: 'q/b/woodpile.glb', barrels: 'q/b/barrels.glb' };
+const PROPS = {}, PROP_URLS = { gate: 'q/b/gate.glb', campfire: 'q/b/campfire.glb', pit: 'q/b/pit.glb', marker: 'q/b/marker.glb', brazier: 'q/b/brazier.glb', bar: 'q/b/bar.glb', post: 'q/b/post.glb', lamp: 'q/b/lamp.glb', wagon: 'q/b/wagon.glb', site: 'q/b/site.glb', barrel: 'q/b/barrel.glb', board: 'q/b/board.glb', sled: 'q/b/sled.glb', cart: 'q/b/cart.glb', woodpile: 'q/b/woodpile.glb', barrels: 'q/b/barrels.glb' };
 // props cast no shadow: under our low moon a lamp post or a stake throws a black spike across half the street
 function prop(n, h, noFow = true) { const P = PROPS[n]; if (!P) return null; const o = P.clone(true); o.scale.setScalar(h); o.traverse(m => { if (m.isMesh) { m.castShadow = false; if (noFow) m.material.userData.noFow = true; } }); return o; }
 let PYLON_MODEL = null;
@@ -2763,6 +2763,60 @@ function zSprite() {
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
   const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: t, transparent: true, depthWrite: false, opacity: 0 })); scene.add(s); return s;
 }
+/* ---------- Anna's heaters and boilers, built from Bob's concepts in the town's own copper and iron ---------- */
+const uvScale = (geo, sx, sy) => { const uv = geo.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) * sx, uv.getY(i) * sy); uv.needsUpdate = true; return geo; };
+const SNOW_M = new THREE.MeshStandardMaterial({ color: 0xf2f6ff, roughness: 0.95, emissive: 0x30405a, emissiveIntensity: 0.35 });
+const BRASS_M = new THREE.MeshStandardMaterial({ color: 0xc8a050, metalness: 0.6, roughness: 0.35, emissive: 0x3a2808, emissiveIntensity: 0.4 });
+const FACE_M = new THREE.MeshStandardMaterial({ color: 0xf0e6cc, roughness: 0.6, emissive: 0x403828, emissiveIntensity: 0.5 });
+/** a ring of rivets: one instanced mesh, n studs round a circle of radius r at height y */
+function studRing(n, r, y, size = 0.016) { const m = new THREE.InstancedMesh(new THREE.SphereGeometry(size, 6, 4), PIPE_IRON, n), o = new THREE.Object3D();
+  for (let i = 0; i < n; i++) { const a = i / n * Math.PI * 2; o.position.set(Math.cos(a) * r, y, Math.sin(a) * r); o.updateMatrix(); m.setMatrixAt(i, o.matrix); } return m; }
+/** the boiler: a riveted copper drum on iron legs, a domed lid under snow, a firebox glowing behind a barred door, a little chimney */
+function makeBoiler() {
+  const g = new THREE.Group(), R = 0.27, H = 0.46, Y0 = 0.16, cu = PIPE_COPPER;
+  const body = new THREE.Mesh(uvScale(new THREE.CylinderGeometry(R, R, H, 24, 1, true), 2.4, 1), cu); body.position.y = Y0 + H / 2; g.add(body);
+  const bottom = new THREE.Mesh(uvScale(new THREE.SphereGeometry(R, 24, 8, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2), 2.4, 0.5), cu); bottom.scale.y = 0.35; bottom.position.y = Y0; g.add(bottom);
+  const dome = new THREE.Mesh(uvScale(new THREE.SphereGeometry(R, 24, 10, 0, Math.PI * 2, 0, Math.PI / 2), 2.4, 0.5), cu); dome.scale.y = 0.55; dome.position.y = Y0 + H; g.add(dome);
+  const snow = new THREE.Mesh(new THREE.SphereGeometry(R * 1.04, 18, 8, 0, Math.PI * 2, 0, Math.PI / 2.6), SNOW_M); snow.scale.y = 0.5; snow.position.y = Y0 + H + 0.02; g.add(snow);
+  // iron bands with rivets, top, middle and bottom
+  for (const y of [Y0 + 0.03, Y0 + H * 0.55, Y0 + H - 0.02]) { const b = new THREE.Mesh(uvScale(new THREE.CylinderGeometry(R + 0.012, R + 0.012, 0.05, 24, 1, true), 4, 0.15), PIPE_IRON); b.position.y = y; g.add(b); g.add(studRing(18, R + 0.02, y)); }
+  // the firebox: a barred iron door with fire behind it, facing out
+  const door = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.15, 0.03), PIPE_IRON); door.position.set(0, Y0 + 0.13, R + 0.005); g.add(door);
+  const fire = new THREE.Mesh(new THREE.PlaneGeometry(0.11, 0.09), BRZ_COAL); fire.position.set(0, Y0 + 0.13, R + 0.023); g.add(fire);
+  for (let k = 0; k < 4; k++) { const bar = new THREE.Mesh(new THREE.BoxGeometry(0.012, 0.1, 0.012), PIPE_IRON); bar.position.set(-0.04 + k * 0.027, Y0 + 0.13, R + 0.03); g.add(bar); }
+  // three iron legs splayed out
+  for (let k = 0; k < 3; k++) { const a = k / 3 * Math.PI * 2 + Math.PI / 3, leg = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.2, 0.06), PIPE_IRON); leg.position.set(Math.cos(a) * (R - 0.04), 0.1, Math.sin(a) * (R - 0.04)); leg.rotation.set(Math.sin(a) * 0.25, 0, -Math.cos(a) * 0.25); g.add(leg);
+    const foot = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.03, 0.1), PIPE_IRON); foot.position.set(Math.cos(a) * (R + 0.01), 0.015, Math.sin(a) * (R + 0.01)); g.add(foot); }
+  // the chimney on the dome, off to one side, and the outlet the pipe leaves from in the middle
+  const ch = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.045, 0.14, 10), PIPE_IRON); ch.position.set(-0.12, Y0 + H + 0.14, 0); g.add(ch);
+  const chc = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.04, 0.03, 10), PIPE_IRON); chc.position.set(-0.12, Y0 + H + 0.22, 0); g.add(chc);
+  const out = new THREE.Mesh(new THREE.CylinderGeometry(0.075, 0.075, 0.05, 14), PIPE_IRON); out.position.y = Y0 + H + 0.14; g.add(out); g.add(studRing(8, 0.07, Y0 + H + 0.165, 0.011));
+  g.traverse(o => { if (o.isMesh) { o.castShadow = false; o.receiveShadow = true; } });
+  return g;
+}
+/** the heater on the ice: a frame of bolted iron with copper corners, ribs behind, a serpentine coil glowing in front, a brass gauge on top.
+ * Built in the plane facing +x, centred at the height of the coils it replaces */
+function makeHeater(coilMat) {
+  const g = new THREE.Group(), W = 1.7, H = 0.86, Y = 0.92, T = 0.07;
+  const bar = (w, h, d, m, x, y, z) => { const o = new THREE.Mesh(uvScale(new THREE.BoxGeometry(w, h, d), Math.max(w, d) / 0.3, h / 0.3), m); o.position.set(x, y, z); g.add(o); return o; };
+  bar(0.05, H, T, PIPE_IRON, 0, Y, -W / 2); bar(0.05, H, T, PIPE_IRON, 0, Y, W / 2); bar(0.05, T, W, PIPE_IRON, 0, Y + H / 2, 0); bar(0.05, T, W, PIPE_IRON, 0, Y - H / 2, 0);
+  // the ribs behind the coil
+  for (let k = 0; k < 9; k++) bar(0.03, H - 0.1, 0.06, PIPE_IRON, -0.03, Y, -W / 2 + 0.18 + k * (W - 0.36) / 8);
+  // copper plates on the corners, the way the concept bolts them on
+  for (const sz of [-1, 1]) for (const sy of [-1, 1]) bar(0.03, 0.16, 0.16, PIPE_COPPER, 0.03, Y + sy * (H / 2 - 0.05), sz * (W / 2 - 0.05));
+  // the coil: five runs, bent back and forth, glowing from inside
+  const pts = [], runs = 5; for (let i = 0; i < runs; i++) { const y = Y - H / 2 + 0.14 + i * (H - 0.28) / (runs - 1), d = i % 2 ? -1 : 1; for (let j = 0; j <= 8; j++) pts.push(new THREE.Vector3(0.05, y, d * (W / 2 - 0.2) * (1 - j / 4))); }
+  const cv = new THREE.CatmullRomCurve3(pts, false, 'centripetal', 0.2), coil = new THREE.Mesh(pipeUV(new THREE.TubeGeometry(cv, 260, 0.04, 8, false), cv.getLength(), 0.04), coilMat); g.add(coil);
+  // the gauge, the pipe stubs below and snow along the top
+  const gb = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.04, 18), BRASS_M); gb.rotation.z = Math.PI / 2; gb.position.set(0.04, Y + H / 2 + 0.1, 0); g.add(gb);
+  const gf = new THREE.Mesh(new THREE.CircleGeometry(0.065, 18), FACE_M); gf.rotation.y = Math.PI / 2; gf.position.set(0.065, Y + H / 2 + 0.1, 0); g.add(gf);
+  const nd = new THREE.Mesh(new THREE.BoxGeometry(0.004, 0.05, 0.006), PIPE_IRON); nd.position.set(0.07, Y + H / 2 + 0.11, 0.008); nd.rotation.x = 0.7; g.add(nd);
+  for (const sz of [-0.35, 0.35]) { const st = new THREE.Mesh(uvScale(new THREE.CylinderGeometry(0.045, 0.045, 0.22, 12, 1, true), 1, 0.6), PIPE_COPPER); st.position.set(0.02, Y - H / 2 - 0.11, sz); g.add(st);
+    const fl = new THREE.Mesh(new THREE.CylinderGeometry(0.075, 0.075, 0.035, 14), PIPE_IRON); fl.position.set(0.02, Y - H / 2 - 0.22, sz); g.add(fl); }
+  const sn = new THREE.Mesh(new THREE.BoxGeometry(0.11, 0.05, W + 0.04), SNOW_M); sn.position.set(0.01, Y + H / 2 + 0.05, 0); g.add(sn);
+  g.traverse(o => { if (o.isMesh) { o.castShadow = false; o.receiveShadow = true; } });
+  return g;
+}
 function buildCore() {
   // the block was dug out of the ground where it fell; the town wired heaters to it to wake her
   const W = 3.3, H = 3.8, BURY = 0.7, CY = H / 2 - BURY, TOP = CY + H / 2, ROT = 0.42, hw = W / 2, TX = iceTextures();
@@ -2831,13 +2885,12 @@ function buildCore() {
   const steam = [];
   for (let i = 0; i < 4; i++) { const an = i * Math.PI / 2, nx = Math.sin(an), nz = Math.cos(an);
     const unit = new THREE.Group(); unit.position.set(nx * (hw + 0.08), 0, nz * (hw + 0.08)); unit.rotation.y = an - Math.PI / 2; block.add(unit);
-    const HT = PROPS.heater ? prop('heater', 1) : null;
-    if (HT) { const h = Math.min(1.1, 2.0 / PROPS.heater.userData.w); HT.scale.setScalar(h); HT.rotation.y = Math.PI / 2; HT.position.set(0.02, 0.92 - h / 2, 0); unit.add(HT); }
-    else { const plate = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.78, 2.05), iron); plate.position.set(-0.02, 0.92, 0); unit.add(plate);
+    { const HT = makeHeater(copper); HT.position.set(0.04, 0, 0); unit.add(HT); }
+    if (false) { const plate = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.78, 2.05), iron); plate.position.set(-0.02, 0.92, 0); unit.add(plate);
       const coil = new THREE.Mesh(coilGeo, copper); coil.position.x = 0.03; unit.add(coil); }
     // boiler on the earth, piped up to its coil
     const fa = an + ROT, bx = Math.sin(fa + 0.62) * 2.45, bz = Math.cos(fa + 0.62) * 2.45, by = 0.55;
-    const BO = PROPS.boiler ? prop('boiler', 0.9) : null;
+    const BO = makeBoiler();
     if (BO) { BO.position.set(bx, by - 0.05, bz); BO.rotation.y = Math.atan2(-bx, -bz); scene.add(BO); tag(BO, 'core', 'core'); }
     else { const boiler = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.3, 0.66, 10), iron); boiler.position.set(bx, by + 0.33, bz); boiler.castShadow = true; scene.add(boiler); tag(boiler, 'core', 'core');
       const grate = new THREE.Mesh(new THREE.CylinderGeometry(0.272, 0.272, 0.12, 10, 1, true), hot); grate.position.set(bx, by + 0.22, bz); scene.add(grate);
