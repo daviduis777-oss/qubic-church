@@ -2626,6 +2626,7 @@ function build() {
   const ch = place('church', ...SPECIAL.church, { rot: Math.PI, scale: 1.55 }); tag(ch, 'church', 'church');
   const cp = HX(...SPECIAL.church); glowDecal(cp.x, cp.z + 0.9, 2.2, 0xffd6a0, 0.5); sprite(GLOW, cp.x, 0.75, cp.z + 0.95, 0.9, 0xffc070, 0.9);
   label('QUBIC CHURCH', ch, 3.2, 'key');
+  makePipe(HX(...SPECIAL.church).add(new THREE.Vector3(0, 0, 0.35)), true, false, 0.12); // the church's main: the thickest pipe in town, straight into Anna's ring
   const pp = HX(...SPECIAL.plaza);
   const well = place('well', ...SPECIAL.plaza, { scale: 1.2 }); well.position.x -= 0.7; tag(well, 'board', 'board');
   const board = buildBoard(); board.position.set(pp.x + 0.75, 0, pp.z - 0.1); scene.add(board); tag(board, 'board', 'board');
@@ -2981,9 +2982,9 @@ function openRose() {
   $('#pbody [data-rose]')?.addEventListener('click', e => { const b = e.currentTarget; if (!b.dataset.sure) { b.dataset.sure = '1'; b.textContent = 'Turn it. The Veil will feel it.'; say('Maria said: do nothing they ask. Press again if you mean it.', 'Anna'); return; }
     xact('valve', {}).then(v => { if (v) { sfx.door(); pulse(-0.3); banner('The rose turned', 'the pipes went quiet for a breath'); log('You turned the Iron Rose a little. Somewhere above the town the Veil thinned.', 'world'); openRose(); } }); });
 }
-function makePipe(p, on, mine) {
+function makePipe(p, on, mine, R0 = 0) {
   ensureCoreRing();
-  const g = new THREE.Group(), dir = p.clone().setY(0).normalize(), side = new THREE.Vector3(-dir.z, 0, dir.x), r = mine ? 0.055 : 0.042;
+  const g = new THREE.Group(), dir = p.clone().setY(0).normalize(), side = new THREE.Vector3(-dir.z, 0, dir.x), r = R0 || (mine ? 0.055 : 0.042);
   // out of the house wall, down to the snow, along the ground, up over the dug earth and into the collector ring round Anna
   const start = p.clone().sub(dir.clone().multiplyScalar(0.42)).setY(0.42), foot = dir.clone().multiplyScalar(3.45).setY(0.2), end = dir.clone().multiplyScalar(CORE_RING_R + 0.02).setY(CORE_RING_Y);
   const L = start.distanceTo(foot), n = Math.max(2, Math.round(L / 1.6)), wob = (rnd() - 0.5) * 0.8;
