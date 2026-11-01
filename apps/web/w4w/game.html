@@ -1317,7 +1317,7 @@ var W4W = (() => {
   }
   const DEMO_TOWN = { people: 5, power: 5190, deeds: 2 };
   const SPECIAL = { core: [0, 0], church: [1, -3], plaza: [-1, 3], observatory: [4, -2], library: [5, -5], mine: [-5, 0] };
-  const DEMO_CELLS = [[2, -1], [-2, 1], [1, 1], [-1, -1], [3, -3], [-3, 3], [3, 0]];
+  const DEMO_CELLS = [];
   const ZONES = [
     { name: "Aigarth", cold: 12 },
     { name: "The Edge", cold: 15 },
@@ -2374,7 +2374,7 @@ const S = {
   weather: 'clear',
   real: {},       // uid -> house doc
   orders: {},     // id -> order doc (real)
-  demoOrders: DEMO_ORDERS.map(o => ({ ...o })),
+  demoOrders: [],
   peers: [],      // room peers except me
   myLog: [],      // my chronicle records (newest last)
   localChron: [], // demo history + visitor-only records
@@ -2451,7 +2451,7 @@ function syncLocal() { if (!S.local) return; makeHouse(houseView(S.local), true)
 function allResidents() {
   const real = Object.values(S.real).map(houseView);
   const local = S.local && !S.real[S.uid] ? [houseView(S.local)] : [];
-  return [...DEMO, ...real, ...local];
+  return [...real, ...local]; // only the living: the demo neighbours are gone
 }
 function houseView(h) { // normalise a stored house to what the scene draws
   return { id: h.id, nick: h.nick || 'someone', at: [h.q ?? h.at?.[0], h.r ?? h.at?.[1]], gpus: h.gpus || 1, hw: h.hw || '', state: h.state || 'building', sol: h.sol || 0,
@@ -2468,10 +2468,11 @@ function refreshTown(baseline = false) {
   res.forEach(h => { if (h.demo) return; const mine = done.filter(o => o.takenBy === h.id || (h.id === 'me' && o.takenBy === 'me')); h.lanterns = mine.length; h.letters = mine.length;
     h.cracked = ordersAll().filter(o => o.takenBy === h.id && o.state === 'taken' && o.due && o.due < Date.now()).length; });
   const mining = res.filter(h => h.state === 'mining');
-  const people = mining.length;
+  // the town's own old machines, kept running since before the cold: the same baseline the server counts
+  const people = W4W.DEMO_TOWN.people + mining.length;
   const online = S.peers.length;
   const deeds = done.length + 2; // 2 = demo history
-  const power = mining.reduce((a, h) => a + h.sol, 0);
+  const power = W4W.DEMO_TOWN.power + mining.reduce((a, h) => a + h.sol, 0);
   const fire = res.filter(h => Date.now() - (h.lastWood || 0) < 3600e3).length;
   const welcomes = res.reduce((a, h) => a + (h.welcomes?.length || 0), 0);
   const parts = [
@@ -2539,6 +2540,7 @@ let PYLON_MODEL = null;
 function loadGlb(url) { return new Promise(res => { const l = new GLTFLoader(); l.setMeshoptDecoder(MeshoptDecoder); l.load(url, g => res(g), undefined, e => { console.warn(url, e); res(null); }); }); }
 function meshyMats(o, snow, noFow) { o.traverse(m => { if (!m.isMesh) return; m.castShadow = m.receiveShadow = true; let mt = m.material;
   // painted for daylight renders, they read black under our night: no metal sheen without a sky to reflect, and a little of their own paint let through
+  mt.transparent = false; mt.opacity = 1; mt.alphaTest = 0; mt.depthWrite = true; mt.alphaMap = null;
   if (mt.isMeshStandardMaterial) { mt.metalness = 0; mt.metalnessMap = null; mt.roughness = Math.max(mt.roughness, 0.8); mt.roughnessMap = null; mt.color.multiplyScalar(1.35);
     if (mt.map) { mt.emissive = new THREE.Color(0xd8dcff); mt.emissiveMap = mt.map; mt.emissiveIntensity = 0.45; } mt.needsUpdate = true; }
   if (snow) m.material = mt = snowify(mt); if (noFow) mt.userData.noFow = true; }); }
@@ -2577,7 +2579,7 @@ fetch('kit.txt').then(r => { if (!r.ok) throw new Error('kit.txt ' + r.status); 
     for (const sc of gltf.scenes) { const g = new THREE.Group(); [...sc.children].forEach(c => g.add(c)); kit[sc.name] = g; }
     Object.values(kit).forEach(g => g.traverse(m => { if (m.isMesh) { if (!KIT_MAT) { m.material.userData.roof = true; m.material.defines = { ...(m.material.defines || {}), ROOF_TEX: 1 }; KIT_MAT = snowify(m.material); KIT_MAT.userData.roof = true; KIT_MAT.defines = { ...(KIT_MAT.defines || {}), ROOF_TEX: 1 }; } m.material = KIT_MAT; } }));
     KIT_MAT.map = ATLAS; KIT_MAT.roughness = 0.9; KIT_MAT.metalness = 0; KIT_MAT.needsUpdate = true;
-    await loadOverrides(); build(); demoHistory(); refreshTown();
+    await loadOverrides(); build(); refreshTown();
     setTimeout(() => $('#load').classList.add('off'), 300);
     initCaps().catch(e => console.warn('caps', e)).finally(() => { try { startX(); } catch (e) { console.warn('wastes', e); } });
     startIntro();
@@ -2596,7 +2598,7 @@ function build() {
     tl.load('q/tex/snow_ground.webp', t => { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(R, R); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; m.map = t; m.color.set(0xffffff); m.defines = { ...(m.defines || {}), SNOW_TEX: 1 }; m.needsUpdate = true; });
     tl.load('q/tex/snow_ground_n.webp', t => { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(R, R); if (m.normalScale) { m.normalMap = t; m.normalScale.set(0.8, 0.8); m.needsUpdate = true; } }); }
   buildSeams();
-  Object.values(SPECIAL).forEach(([q, r]) => reserved.add(key(q, r))); DEMO.forEach(n => reserved.add(key(...n.at))); STAGE2.forEach(s => reserved.add(key(...s.at)));
+  Object.values(SPECIAL).forEach(([q, r]) => reserved.add(key(q, r))); STAGE2.forEach(s => reserved.add(key(...s.at)));
   ring(1).forEach(([q, r]) => reserved.add(key(q, r)));
   for (let i = 0; i < W4W.PYLON_N; i++) reserved.add(key(...W4W.pylonCell(i)));
   buildCore();
@@ -6706,7 +6708,7 @@ const STREET_OBJS = [], STREET_PATHS = []; let streetSig = null;
 function buildStreets() {
   STREET_PATHS.length = 0;
   STREET_OBJS.splice(0).forEach(o => { scene.remove(o); o.geometry?.dispose(); }); streetSig = allResidents().map(h => (h.at || []).join(',')).sort().join('|');
-  const homes = new Set([...DEMO.map(n => key(...n.at)), ...allResidents().filter(h => h.at?.[0] != null).map(h => key(...h.at)), ...STAGE2.map(x => key(...x.at)), ...Object.values(SPECIAL).map(c => key(...c))]);
+  const homes = new Set([...allResidents().filter(h => h.at?.[0] != null).map(h => key(...h.at)), ...STAGE2.map(x => key(...x.at)), ...Object.values(SPECIAL).map(c => key(...c))]);
   [...streetCells()].forEach(k => { if (!homes.has(k)) reserved.add(k); });
   // one cobbled lane per destination: a ribbon laid on the snow, edges lost in drifts
   const tl = new THREE.TextureLoader(), tex = tl.load('q/tex/street.webp'), nrm = tl.load('q/tex/street_n.webp');
@@ -6740,7 +6742,7 @@ function buildStreets() {
 }
 /* signs of life: wood stacked by every door, a sled or a cart left in the snow, barrels by the busy places */
 const LIFE_H = { cart: 0.42, sled: 0.3, barrels: 0.42, woodpile: 0.48, wagon: 0.58, barrel: 0.3 };
-function lifeProp(n, pos, rot) { const o = prop(n, LIFE_H[n] || 0.5, false); if (!o) return null; o.position.set(pos.x, 0, pos.z); o.rotation.y = rot; scene.add(o); return o; }
+function lifeProp(n, pos, rot) { const P = PROPS[n]; if (!P) return null; const h = Math.min(LIFE_H[n] || 0.5, 0.55 / Math.max(P.userData.w || 1, P.userData.d || 1, 0.01)); const o = prop(n, h, false); if (!o) return null; o.position.set(pos.x, 0, pos.z); o.rotation.y = rot; scene.add(o); return o; }
 function nearHome(pos, homes) { for (const k of homes) { const [q, r] = k.split(',').map(Number), c = HX(q, r); if (Math.hypot(c.x - pos.x, c.z - pos.z) < 1.15) return true; } return false; }
 /* the town's clutter lives only on the corners where three cells meet: nobody's path ever crosses a corner,
  * so nothing stands in the way and nothing gets walked through. Spread evenly, never the same thing twice side by side */
@@ -6748,8 +6750,8 @@ let decorDone = false;
 function buildDecor() {
   if (decorDone || !PROPS.woodpile) return; decorDone = true;
   const big = new Set([...Object.values(SPECIAL), ...STAGE2.map(x => x.at), GATE_CELL, ...Array.from({ length: W4W.PYLON_N }, (_, i) => W4W.pylonCell(i))].map(c => key(...c)));
-  const homes = new Set([...DEMO.map(n => key(...n.at)), ...allResidents().filter(h => h.at?.[0] != null).map(h => key(...h.at))]);
-  const R = seeded(77), seen = new Map(), placed = [], KINDS = ['pines', 'woodpile', 'pines', 'barrel', 'wagon', 'pines', 'cart', 'sled', 'barrels', 'pines'];
+  const homes = new Set([...allResidents().filter(h => h.at?.[0] != null).map(h => key(...h.at))]);
+  const R = seeded(77), seen = new Map(), placed = [], KINDS = ['pines', 'woodpile', 'pines', 'barrel', 'pines', 'cart', 'sled', 'barrels', 'pines'];
   for (let n = 2; n <= W4W.TOWN_RING; n++) for (const [q, r] of ring(n)) for (let k = 0; k < 6; k++) {
     const c = HX(q, r), a = Math.PI / 6 + k * Math.PI / 3, v = new THREE.Vector3(c.x + Math.cos(a) * 1.155, 0, c.z + Math.sin(a) * 1.155), id = v.x.toFixed(1) + ',' + v.z.toFixed(1);
     if (seen.has(id)) continue; seen.set(id, 1); if (Math.hypot(v.x, v.z) > DOME_R - 1.6 || Math.hypot(v.x, v.z) < 4.4) continue;
@@ -7039,7 +7041,7 @@ function loop(now = performance.now()) {
   spriteCache.forEach(o => { {
     if (o.userData.flicker) { if (o.userData.flare) { o.userData.flare = Math.max(0, o.userData.flare - dt * 0.6); } const f = o.userData.flare || 0; o.material.opacity = 0.8 + Math.sin(t * 13) * 0.08 + Math.sin(t * 7.3) * 0.1; o.scale.setScalar(1.1 + f * 1.2 + (S.town.fire || 0) * 0.08); }
     if (o.userData.blink) o.material.opacity = 0.35 + 0.65 * (Math.sin(t * 4) > 0 ? 1 : 0.2); } });
-  stepCamera(dt); stepAvatars(dt); stepSnowFx(dt); hud(); stepSound(); stepPlaces(dt); if (XV?.me) { stepFrames(dt); if (!ACT1) stepShards(predicted()?.c, dt); } stepFolk(dt); if (XV) { stepRime(dt); if ((tick & 15) === 0) { stepNotes(); stepLogWatch(); stepLog(); } stepLocalGrid(predicted()?.c); }
+  stepCamera(dt); stepAvatars(dt); stepSnowFx(dt); hud(); stepSound(); stepPlaces(dt); if (XV?.me) { stepFrames(dt); if (!ACT1) stepShards(predicted()?.c, dt); } if (XV) { stepRime(dt); if ((tick & 15) === 0) { stepNotes(); stepLogWatch(); stepLog(); } stepLocalGrid(predicted()?.c); }
   for (const k in walkers) { const w = walkers[k]; w.g.position.lerp(w.target, Math.min(1, dt * 1.5)); w.g.position.y = 0; w.light.position.set(w.g.position.x + 0.15, 0.45, w.g.position.z); }
   if (fly) { fly.t = Math.min(1, fly.t + dt * 0.9); const k = 1 - Math.pow(1 - fly.t, 3);
     const tgt = fly.from.clone().lerp(fly.to, k); const off = camera.position.clone().sub(controls.target).normalize().multiplyScalar(fly.d0 + (fly.d1 - fly.d0) * k);
