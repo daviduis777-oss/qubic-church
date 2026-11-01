@@ -2551,8 +2551,8 @@ function banner(b, s) { $('#bannerB').textContent = b; $('#bannerS').textContent
 const kit = {}; let KIT_MAT;
 const interactive = [], labels = [];
 /* generated models that stand in for kit pieces: same footprint, on the ground, in the same snow */
-const KIT_SNOW = new Set(['home_A', 'home_B']); // painted bare: the town's snow goes on them
-const KIT_OVR = { church: 'q/b/church.glb', mine: 'q/b/mine.glb', home_A: 'q/b/home_a.glb', home_B: 'q/b/home_b.glb', tower: 'q/b/observatory.glb', barracks: 'q/b/library.glb', well: 'q/b/well.glb', destroyed: 'q/b/ruin.glb' };
+const KIT_SNOW = new Set(); // every model now comes with its own painted snow // painted bare: the town's snow goes on them
+const KIT_OVR = { church: 'q/b/church.glb', mine: 'q/b/mine.glb', home_A: 'q/b/home_a.glb', home_B: 'q/b/home_b.glb', blacksmith: 'q/b/home_b.glb', tower: 'q/b/observatory.glb', barracks: 'q/b/library.glb', well: 'q/b/well.glb', destroyed: 'q/b/ruin.glb' };
 // props with no kit piece to stand in for: loaded once, stood on the ground, one unit tall, scaled where they are used
 const PROPS = {}, PROP_URLS = { gate: 'q/b/gate.glb', campfire: 'q/b/campfire.glb', heater: 'q/b/heater.glb', boiler: 'q/b/boiler.glb', pit: 'q/b/pit.glb', marker: 'q/b/marker.glb', brazier: 'q/b/brazier.glb', bar: 'q/b/bar.glb', post: 'q/b/post.glb', lamp: 'q/b/lamp.glb', wagon: 'q/b/wagon.glb', site: 'q/b/site.glb', barrel: 'q/b/barrel.glb', board: 'q/b/board.glb', sled: 'q/b/sled.glb', cart: 'q/b/cart.glb', woodpile: 'q/b/woodpile.glb', barrels: 'q/b/barrels.glb' };
 // props cast no shadow: under our low moon a lamp post or a stake throws a black spike across half the street
@@ -2638,10 +2638,10 @@ function build() {
   const ob = place('tower', ...SPECIAL.observatory, { scale: 1.25, rot: 0.4 }); tag(ob, 'observatory', 'observatory');
   const op = HX(...SPECIAL.observatory); sprite(GLOW, op.x, 2.6, op.z, 0.9, 0x9fc3ff, 0.9); glowDecal(op.x, op.z, 1.6, 0x9fc3ff, 0.25);
   label('OBSERVATORY', ob, 3.6, 'key');
-  const lib = place('barracks', ...SPECIAL.library, { rot: 2.4, scale: 1.45 }); tag(lib, 'library', 'library');
+  const lp0 = HX(...SPECIAL.library), lib = place('barracks', ...SPECIAL.library, { rot: Math.atan2(-lp0.x, -lp0.z), scale: 1.6 }); tag(lib, 'library', 'library');
   const lp = HX(...SPECIAL.library); glowDecal(lp.x, lp.z, 2, 0xffd6a0, 0.45); sprite(GLOW, lp.x + 0.6, 0.6, lp.z + 0.5, 0.8, 0xffc070, 0.9);
   label('LIBRARY', lib, 2.8, 'key');
-  const mn = place('mine', ...SPECIAL.mine, { rot: 0.9, scale: 1.3 }); tag(mn, 'mine', 'mine');
+  const mp0 = HX(...SPECIAL.mine), mn = place('mine', ...SPECIAL.mine, { rot: Math.atan2(-mp0.x, -mp0.z), scale: 1.6 }); tag(mn, 'mine', 'mine');
   const mp = HX(...SPECIAL.mine); glowDecal(mp.x, mp.z, 1.6, 0xffb060, 0.25);
   label('THE MINE', mn, 2.1, 'key');
   STAGE2.forEach((s, i) => { const at = HX(...s.at), face = Math.atan2(-at.x, -at.z);
@@ -2894,7 +2894,7 @@ function makeHouse(d, mine) {
   if (d.at[0] == null) return;
   const [q, r] = d.at; const p = HX(q, r); const rot = Math.atan2(-p.x, -p.z) + Math.PI;
   const g = new THREE.Group(); scene.add(g);
-  const main = place(modelFor(d), q, r, { rot, scale: d.gpus >= 5 ? 1.15 : 1.25 }); g.add(main);
+  const main = place(modelFor(d), q, r, { rot: rot - Math.PI, scale: d.gpus >= 5 ? 1.75 : d.gpus >= 3 ? 1.65 : 1.55 }); g.add(main); // the door faces Anna
   if (d.state === 'building') g.add(place('scaffolding', q, r, { rot, scale: 0.95 }));
   const fx = { lights: [], smoke: null, at: p };
   const facing = new THREE.Vector3(-p.x, 0, -p.z).normalize(); const front = p.clone().add(facing.clone().multiplyScalar(0.75));
