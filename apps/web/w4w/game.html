@@ -344,8 +344,7 @@ body.intro #dock,body.intro #feed,body.intro #online,body.intro #meter{visibilit
 .ngold{display:flex;align-items:center;gap:7px;margin:6px 0 2px;font-family:var(--f-label);font-weight:600;font-size:12.5px;letter-spacing:.06em;color:#bffcff;cursor:help}
 .ngold b{font-size:15px;color:#e9ffff;letter-spacing:.02em}
 .coin{width:17px;height:17px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#b8ffff,#23ffff 45%,#12b9c4);box-shadow:0 0 8px rgba(35,255,255,.45),inset 0 -1px 2px rgba(0,0,0,.35);position:relative;flex:none}
-.coin::before,.coin::after{content:'';position:absolute;background:#0c131b;border-radius:1.5px;width:3.4px}
-.coin::before{left:5px;top:4.2px;height:7px} .coin::after{left:9.2px;top:4.2px;height:10px}
+.coin::before{content:'G';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--f-title,serif);font-weight:700;font-size:12.5px;line-height:1;color:#f6c84c;text-shadow:0 1px 0 #7a5208,0 0 3px rgba(255,200,80,.6)}
 .goldpop{position:fixed;z-index:60;pointer-events:none;font-family:var(--f-label);font-weight:700;color:#bffcff;text-shadow:0 0 10px rgba(35,255,255,.6);display:flex;gap:6px;align-items:center;animation:goldup 1.8s ease-out forwards}
 @keyframes goldup{0%{opacity:0;transform:translateY(8px)}15%{opacity:1}100%{opacity:0;transform:translateY(-34px)}}
 .hwx .wind{color:#cfe6ff} .hwx .blizzard,.hwx .bad{color:#ff9a8c;background:rgba(255,106,90,.1)} .hwx .good{color:var(--green)}
@@ -2360,7 +2359,7 @@ const DEMO_ORDERS = [
 ];
 const SPECIAL = { core: [0, 0], church: [1, -3], plaza: [-1, 3], observatory: [4, -2], library: [5, -5], mine: [-5, 0] };
 const MARIA_HOUSE = [0, -3];
-const STAGE2 = [{ id: 'market', name: 'Market and auction', at: [-5, 2], prop: 'site' }, { id: 'bar', name: 'The Last Coal', at: [-4, 5], prop: 'bar', tag: 'OPEN', open: true }, { id: 'atrium', name: 'Atrium', at: [2, 3], prop: 'site' }, { id: 'post', name: 'Post office', at: [-2, 5], prop: 'post', model: 'tavern', tag: 'OPEN', open: true }, { id: 'wardens', name: "Wardens' Hall", at: [-3, -4], model: 'blacksmith', tag: 'ACT II' }, { id: 'glasshouse', name: 'Glasshouse', at: [6, 0], tag: 'STAGE 3', prop: 'glass' }];
+const STAGE2 = [{ id: 'market', name: 'Market and auction', at: [-5, 2], prop: 'site' }, { id: 'bar', name: 'The Last Coal', at: [-4, 5], prop: 'bar', tag: 'OPEN', open: true }, { id: 'atrium', name: 'Atrium', at: [2, 3], prop: 'site' }, { id: 'post', name: 'Post office', at: [-2, 5], prop: 'post', model: 'tavern', tag: 'OPEN', open: true }, { id: 'wardens', name: "Wardens' Hall", at: [-3, -4], model: 'blacksmith', tag: 'ACT II' }, { id: 'glasshouse', name: 'Glasshouse', at: [6, 0], tag: 'STAGE 3', build: 'glasshouse' }];
 const LEVELS = [['OFFLINE', 0], ['LINK', 1], ['NODE', 500], ['CLUSTER', 1500], ['GRID', 3000], ['CORE', 6000]];
 const TIERS = [
   { id: 'power', name: 'Expensive & powerful', price: '$55–80 / day', pick: '4× RTX 4090', gpus: 4, sol: 2440, cost: '$62 / day' },
@@ -2533,7 +2532,7 @@ const interactive = [], labels = [];
 const KIT_SNOW = new Set(['home_A', 'home_B', 'church']); // painted bare: the town's snow goes on them
 const KIT_OVR = { church: 'q/b/church.glb', mine: 'q/b/mine.glb', home_A: 'q/b/home_a.glb', home_B: 'q/b/home_b.glb', tower: 'q/b/observatory.glb', barracks: 'q/b/library.glb', well: 'q/b/well.glb', destroyed: 'q/b/ruin.glb' };
 // props with no kit piece to stand in for: loaded once, stood on the ground, one unit tall, scaled where they are used
-const PROPS = {}, PROP_URLS = { gate: 'q/b/gate.glb', campfire: 'q/b/campfire.glb', heater: 'q/b/heater.glb', boiler: 'q/b/boiler.glb', pit: 'q/b/pit.glb', marker: 'q/b/marker.glb', brazier: 'q/b/brazier.glb', bar: 'q/b/bar.glb', post: 'q/b/post.glb', lamp: 'q/b/lamp.glb', wagon: 'q/b/wagon.glb', glass: 'q/b/glass.glb', site: 'q/b/site.glb', barrel: 'q/b/barrel.glb', board: 'q/b/board.glb', sled: 'q/b/sled.glb', cart: 'q/b/cart.glb', woodpile: 'q/b/woodpile.glb', barrels: 'q/b/barrels.glb' };
+const PROPS = {}, PROP_URLS = { gate: 'q/b/gate.glb', campfire: 'q/b/campfire.glb', heater: 'q/b/heater.glb', boiler: 'q/b/boiler.glb', pit: 'q/b/pit.glb', marker: 'q/b/marker.glb', brazier: 'q/b/brazier.glb', bar: 'q/b/bar.glb', post: 'q/b/post.glb', lamp: 'q/b/lamp.glb', wagon: 'q/b/wagon.glb', site: 'q/b/site.glb', barrel: 'q/b/barrel.glb', board: 'q/b/board.glb', sled: 'q/b/sled.glb', cart: 'q/b/cart.glb', woodpile: 'q/b/woodpile.glb', barrels: 'q/b/barrels.glb' };
 // props cast no shadow: under our low moon a lamp post or a stake throws a black spike across half the street
 function prop(n, h, noFow = true) { const P = PROPS[n]; if (!P) return null; const o = P.clone(true); o.scale.setScalar(h); o.traverse(m => { if (m.isMesh) { m.castShadow = false; if (noFow) m.material.userData.noFow = true; } }); return o; }
 let PYLON_MODEL = null;
@@ -2623,7 +2622,7 @@ function build() {
   const mp = HX(...SPECIAL.mine); glowDecal(mp.x, mp.z, 1.6, 0xffb060, 0.25);
   label('THE MINE', mn, 2.1, 'key');
   STAGE2.forEach((s, i) => { const at = HX(...s.at), face = Math.atan2(-at.x, -at.z);
-    const PR = s.prop && PROPS[s.prop] ? prop(s.prop, 1.55, false) : null; if (PR) { PR.position.set(at.x, 0, at.z); PR.rotation.y = face; scene.add(PR); }
+    const PR = s.build === 'glasshouse' ? buildGlasshouse() : s.prop && PROPS[s.prop] ? prop(s.prop, 1.55, false) : null; if (PR) { PR.position.set(at.x, 0, at.z); PR.rotation.y = face; scene.add(PR); }
     const g = PR || (s.model ? place(s.model, ...s.at, { rot: face, scale: 1.05 }) : place('scaffolding', ...s.at, { rot: i * 1.3 }));
     if (PR) {} else if (s.model && !s.open) place('scaffolding', ...s.at, { rot: face + 0.4, scale: 0.8 }); else place(s.tag === 'STAGE 3' ? 'stage_A' : i % 2 ? 'stage_B' : 'stage_C', ...s.at, { rot: i * 1.3 });
     tag(g, 'stage2', s.id); label(s.open ? s.name.toUpperCase() : s.name.toUpperCase() + ' · ' + (s.tag || 'STAGE 2'), g, 1.9, 'key'); if (s.open) { const c = HX(...s.at); glowDecal(c.x, c.z, 2, 0xffd6a0, 0.5); } });
@@ -6703,6 +6702,37 @@ function streetCells() {
   if (STREET.size) return STREET; const dests = [...Object.entries(SPECIAL).filter(([k]) => k !== 'core').map(([, c]) => c), ...STAGE2.map(s => s.at), GATE_CELL];
   for (const d of dests) { const r2 = hexRay([0, 0], d).find(c => W4W.ringOf(...c) === 2) || d; hexRay(r2, d).forEach(c => { if (W4W.ringOf(...c) >= 2) STREET.add(key(...c)); }); }
   return STREET;
+}
+/* the glasshouse, built by hand rather than generated: thin iron and glass are exactly what the generator mangles.
+ * A stone footing, an arched iron frame, panes in most of the bays and a crate of the rest waiting by the door */
+function buildGlasshouse() {
+  const g = new THREE.Group(), L = 2.2, W = 1.5, H = 0.7, R = W / 2, iron = ironize(new THREE.MeshStandardMaterial({ color: 0x3a3a3c, metalness: 0.4, roughness: 0.55 }), 0x6a6a6e);
+  const stone = new THREE.MeshStandardMaterial({ map: themeTex('tex_rock'), color: 0xbab4ac, roughness: 0.95 });
+  const glass = new THREE.MeshStandardMaterial({ color: 0xcfe6ff, transparent: true, opacity: 0.32, roughness: 0.08, metalness: 0.1, emissive: 0x2a4a6a, emissiveIntensity: 0.25, side: THREE.DoubleSide, depthWrite: false });
+  const add = (geo, m, x, y, z, ry = 0) => { const o = new THREE.Mesh(geo, m); o.position.set(x, y, z); o.rotation.y = ry; g.add(o); return o; };
+  add(new THREE.BoxGeometry(L + 0.12, 0.22, W + 0.12), stone, 0, 0.11, 0);
+  const bays = 5, rib = new THREE.BoxGeometry(0.035, H, 0.035);
+  for (let i = 0; i <= bays; i++) { const x = -L / 2 + i * L / bays;
+    for (const z of [-R, R]) add(rib, iron, x, 0.22 + H / 2, z);
+    // the arch over the bay: a half ring of iron
+    const arch = new THREE.Mesh(new THREE.TorusGeometry(R, 0.018, 5, 18, Math.PI), iron); arch.position.set(x, 0.22 + H, 0); arch.rotation.y = Math.PI / 2; g.add(arch); }
+  for (const z of [-R, R]) { add(new THREE.BoxGeometry(L, 0.035, 0.035), iron, 0, 0.22 + H, z); add(new THREE.BoxGeometry(L, 0.03, 0.03), iron, 0, 0.22 + H * 0.5, z); }
+  add(new THREE.BoxGeometry(L, 0.03, 0.03), iron, 0, 0.22 + H + R, 0);
+  const Rr = seeded(606);
+  for (let i = 0; i < bays; i++) { const x = -L / 2 + (i + 0.5) * L / bays, w = L / bays - 0.04, done = i < 3 || Rr() < 0.4;
+    if (done) for (const z of [-R, R]) add(new THREE.PlaneGeometry(w, H - 0.04), glass, x, 0.22 + H / 2, z);
+    if (i < 2) { const roof = new THREE.Mesh(new THREE.CylinderGeometry(R - 0.01, R - 0.01, w, 16, 1, true, -Math.PI / 2, Math.PI), glass); roof.rotation.z = Math.PI / 2; roof.position.set(x, 0.22 + H, 0); g.add(roof); } }
+  // the gable ends: glass in the door end, open at the far end
+  const gable = new THREE.Mesh(new THREE.CircleGeometry(R - 0.02, 16, 0, Math.PI), glass); gable.position.set(-L / 2, 0.22 + H, 0); gable.rotation.y = -Math.PI / 2; g.add(gable);
+  add(new THREE.PlaneGeometry(W - 0.04, H - 0.04), glass, -L / 2, 0.22 + H / 2, 0, Math.PI / 2);
+  // what is waiting: a crate of panes, a few pots with dead stalks, a ladder against the open end
+  const wood = new THREE.MeshStandardMaterial({ color: 0x6a5038, roughness: 0.9 }), pot = new THREE.MeshStandardMaterial({ color: 0xa8582e, roughness: 0.85 });
+  add(new THREE.BoxGeometry(0.36, 0.3, 0.5), wood, L / 2 + 0.35, 0.15, 0.45); for (let k = 0; k < 4; k++) add(new THREE.PlaneGeometry(0.3, 0.42), glass, L / 2 + 0.26 + k * 0.05, 0.42, 0.45, Math.PI / 2);
+  for (let k = 0; k < 4; k++) add(new THREE.CylinderGeometry(0.07, 0.05, 0.12, 10), pot, -0.6 + k * 0.35, 0.28, (k % 2 ? 0.35 : -0.35));
+  const lad = new THREE.Group(); for (const z of [-0.12, 0.12]) { const r = new THREE.Mesh(new THREE.BoxGeometry(0.03, 1.1, 0.03), wood); r.position.z = z; lad.add(r); } for (let k = 0; k < 6; k++) { const r = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.02, 0.24), wood); r.position.y = -0.45 + k * 0.18; lad.add(r); }
+  lad.position.set(L / 2 + 0.12, 0.55, -0.35); lad.rotation.z = 0.28; g.add(lad);
+  g.traverse(o => { if (o.isMesh) { o.castShadow = o.material !== glass; o.receiveShadow = true; } }); g.scale.setScalar(0.95);
+  return g;
 }
 const STREET_OBJS = [], STREET_PATHS = []; let streetSig = null;
 function buildStreets() {
