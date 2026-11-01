@@ -295,6 +295,21 @@ export const ZONES = [
 export const DIRS: Cell[] = [[1, 0], [1, -1], [0, -1], [-1, 0], [-1, 1], [0, 1]]
 export const key = (q: number, r: number) => `${q},${r}`
 export const ringOf = (q: number, r: number) => (Math.abs(q) + Math.abs(r) + Math.abs(q + r)) / 2
+/** Aigrad by quarters. Anna in the middle; round her the public ring, each house dressed for its trade:
+ * Hearth Square (plaza, post, bar) to the south, the Coal Works and the market yard to the west, the Wardens' Watch
+ * and the Gate to the north-west, the church and the Twelve to the north, the scholars' Rise to the north-east,
+ * the Glass Gardens to the east, the Atrium to the south-east. Homes stand outside, from ring 6 to the Veil.
+ * The big pieces below fill a cell and nobody walks through them. */
+export const TOWN_PROPS: { kit: string; at: Cell }[] = [
+  { kit: 'campfire', at: [0, 3] },   // Hearth Square: the fire with the kettle
+  { kit: 'memorial', at: [2, -4] },  // the Twelve, beside the church
+  { kit: 'telescope', at: [5, -3] }, // the Rise, by the observatory
+  { kit: 'coal', at: [-4, -1] },     // the Coal Works, by the mine
+  { kit: 'crane', at: [-5, 3] },     // the market yard, still being built
+  { kit: 'signal', at: [1, -8] },    // the Gate's two fires
+  { kit: 'signal', at: [-1, -7] },
+]
+export const PROP_BLOCK = new Set(TOWN_PROPS.map(p => `${p.at[0]},${p.at[1]}`))
 export const dist = (a: Cell, b: Cell) => ringOf(a[0] - b[0], a[1] - b[1])
 export const worldXZ = (q: number, r: number) => [2 * (q + r / 2), 1.7320508 * r] as const
 export function zoneOf(q: number, r: number) {
@@ -365,7 +380,7 @@ export function terrain(q: number, r: number): Terrain {
   if (n === RIDGE_RING && !nearRoad(q, r) && !PASSES.some(p => dist(p, [q, r]) <= 1) && hash(q, r, 23) < 0.93) return 'mountain'
   return h < 0.22 && !nearRoad(q, r) ? 'mountain' : h < 0.52 ? 'rock' : h < 0.6 ? 'tree' : 'open'
 }
-export const passable = (q: number, r: number) => { const t = terrain(q, r); return t !== 'mountain' && t !== 'void' }
+export const passable = (q: number, r: number) => { if (PROP_BLOCK.has(`${q},${r}`)) return false; const t = terrain(q, r); return t !== 'mountain' && t !== 'void' }
 /** What a cell gives when you work it, or null. */
 export function resourceOf(q: number, r: number): string | null {
   const t = terrain(q, r), z = zoneOf(q, r), h = hash(q, r, 11)
