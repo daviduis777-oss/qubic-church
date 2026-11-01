@@ -19,6 +19,8 @@ const nextConfig: NextConfig = {
   // pull in all of public/, which pushed the function past Vercel's 250 MB limit.
   outputFileTracingExcludes: {
     '/og/**': ['./public/images/**', './public/data/**', './public/books/**', './public/w4w-assets/**', './public/blog-og/**'],
+    // Vercel runs glibc Linux: sharp's musl build (about 19 MB per function) is dead weight in every deployment
+    '/**': ['../../node_modules/.pnpm/@img+sharp-libvips-linuxmusl*/**', '../../node_modules/.pnpm/@img+sharp-linuxmusl*/**'],
   },
   async headers() {
     return [
