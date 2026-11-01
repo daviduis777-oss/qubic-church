@@ -283,7 +283,7 @@ export const DEMO_TOWN = { people: 5, power: 5190, deeds: 2 }
 
 /** Town buildings: they shelter anyone who reaches them. Same cells as the game's SPECIAL and DEMO houses. */
 export const SPECIAL = { core: [0, 0], church: [1, -3], plaza: [-1, 3], observatory: [4, -2], library: [5, -5], mine: [-5, 0] } as const
-export const DEMO_CELLS: Cell[] = [[2, -1], [-2, 1], [1, 1], [-1, -1], [3, -3], [-3, 3], [3, 0]]
+export const DEMO_CELLS: Cell[] = [] // the demo neighbours are gone: only living players have houses
 
 export const ZONES = [
   { name: 'Aigarth', cold: 12 },
