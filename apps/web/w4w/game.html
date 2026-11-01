@@ -2823,11 +2823,11 @@ function buildCore() {
   const rim = new THREE.Mesh(ice.geometry, rimMat); rim.scale.setScalar(1.006); ice.add(rim);
   // iron bands and heating coils bolted onto the block, fed by four boilers on the dug earth
   const iron = ironize(new THREE.MeshStandardMaterial({ color: 0x8a7868, metalness: 0.55, roughness: 0.42, emissive: 0x4a2010, emissiveIntensity: 0.45 })); iron.userData.noFow = true;
-  const copper = copperMat({ emissive: 0xb04a1c, emissiveIntensity: 0.3 }); // warm, not glowing: the heat shows in the boilers and the steam
+  const copper = copperMat({ emissive: 0xffffff, emissiveMap: PIPE_TX.glow, emissiveIntensity: 0.3 }); // the coils: copper that glows from inside with the heat // warm, not glowing: the heat shows in the boilers and the steam
   const hot = new THREE.MeshStandardMaterial({ color: 0x1a1210, emissive: 0xff7a22, emissiveIntensity: 1.6, roughness: 0.6 });
   [0.36].forEach(y => { for (let i = 0; i < 4; i++) { const an = i * Math.PI / 2; const bnd = new THREE.Mesh(new THREE.BoxGeometry(W - 0.3, 0.14, 0.08), iron); bnd.position.set(Math.sin(an) * (hw + 0.04), y, Math.cos(an) * (hw + 0.04)); bnd.rotation.y = an; bnd.castShadow = true; block.add(bnd); } });
   const pts = []; for (let r = 0; r < 4; r++) { const y = 0.66 + r * 0.17, d = r % 2 ? -1 : 1; for (let j = 0; j <= 6; j++) pts.push(new THREE.Vector3(0, y + (j === 0 || j === 6 ? 0 : 0), d * (0.9 - j * 0.3))); }
-  const coilGeo = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts, false, 'centripetal'), 220, 0.042, 8, false);
+  const ccv = new THREE.CatmullRomCurve3(pts, false, 'centripetal'), coilGeo = pipeUV(new THREE.TubeGeometry(ccv, 220, 0.042, 8, false), ccv.getLength(), 0.042);
   const steam = [];
   for (let i = 0; i < 4; i++) { const an = i * Math.PI / 2, nx = Math.sin(an), nz = Math.cos(an);
     const unit = new THREE.Group(); unit.position.set(nx * (hw + 0.08), 0, nz * (hw + 0.08)); unit.rotation.y = an - Math.PI / 2; block.add(unit);
@@ -2843,7 +2843,7 @@ function buildCore() {
       const grate = new THREE.Mesh(new THREE.CylinderGeometry(0.272, 0.272, 0.12, 10, 1, true), hot); grate.position.set(bx, by + 0.22, bz); scene.add(grate);
       const cap = new THREE.Mesh(new THREE.ConeGeometry(0.3, 0.2, 10), iron); cap.position.set(bx, by + 0.76, bz); scene.add(cap); }
     const end = new THREE.Vector3(Math.sin(fa) * (hw + 0.12) + Math.cos(fa) * 0.95, 1.05, Math.cos(fa) * (hw + 0.12) - Math.sin(fa) * 0.95);
-    const pipe = new THREE.Mesh(new THREE.TubeGeometry(new THREE.QuadraticBezierCurve3(new THREE.Vector3(bx, by + 0.8, bz), new THREE.Vector3(bx * 0.93, 1.75, bz * 0.93), end), 24, 0.055, 8, false), copper);
+    const bcv = new THREE.QuadraticBezierCurve3(new THREE.Vector3(bx, by + 0.8, bz), new THREE.Vector3(bx * 0.93, 1.75, bz * 0.93), end), pipe = new THREE.Mesh(pipeUV(new THREE.TubeGeometry(bcv, 24, 0.055, 10, false), bcv.getLength(), 0.055), PIPE_COPPER);
     pipe.castShadow = true; scene.add(pipe);
     sprite(GLOW, bx, by + 0.25, bz, 0.9, 0xff8a30, 0.9); glowDecal(bx, bz, 1.1, 0xff8a30, 0.5);
     steam.push(new THREE.Vector3(Math.sin(an + ROT) * (hw - 0.2), TOP + 0.05, Math.cos(an + ROT) * (hw - 0.2)));
@@ -2937,19 +2937,17 @@ const IRON_TEX = (() => { const tl = new THREE.TextureLoader(), map = tl.load('q
   map.colorSpace = THREE.SRGBColorSpace; map.anisotropy = 8; [map, normal].forEach(t => { t.wrapS = t.wrapT = THREE.RepeatWrapping; }); return { map, normal }; })();
 /* old copper, painted once on a canvas: warm metal under green-blue patina, darker where water ran, a seam every arm's length.
  * The u of a tube runs along it, so the seams and streaks follow the pipe. */
-const COPPER_TEX = (() => { const W = 512, H = 128, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const x = cv.getContext('2d'), R = seeded(77);
-  const g = x.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#5a2c16'); g.addColorStop(0.35, '#b8693a'); g.addColorStop(0.5, '#d88a52'); g.addColorStop(0.65, '#b8693a'); g.addColorStop(1, '#4a2412'); x.fillStyle = g; x.fillRect(0, 0, W, H);
-  for (let i = 0; i < 900; i++) { x.fillStyle = `rgba(${R() < 0.5 ? '40,18,8' : '240,170,110'},${0.04 + R() * 0.06})`; x.fillRect(R() * W, R() * H, 2 + R() * 30, 1 + R() * 2); }
-  for (let i = 0; i < 70; i++) { const px = R() * W, py = R() * H, r = 4 + R() * 22, gg = x.createRadialGradient(px, py, 0, px, py, r); gg.addColorStop(0, `rgba(${80 + R() * 40},${150 + R() * 40},${130 + R() * 40},${0.35 + R() * 0.35})`); gg.addColorStop(1, 'rgba(80,160,140,0)'); x.fillStyle = gg; x.fillRect(px - r, py - r, r * 2, r * 2); }
-  for (let i = 0; i < 18; i++) { x.fillStyle = `rgba(20,10,4,${0.12 + R() * 0.12})`; x.fillRect(R() * W, H * 0.55, 3 + R() * 6, H * 0.45); }
-  for (let sx = 0; sx < W; sx += 128) { x.fillStyle = 'rgba(30,14,6,.7)'; x.fillRect(sx, 0, 5, H); x.fillStyle = 'rgba(255,190,130,.35)'; x.fillRect(sx + 5, 0, 2, H); }
-  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = 4; return t; })();
-const copperMat = (o = {}) => { const m = new THREE.MeshStandardMaterial({ map: COPPER_TEX, color: 0xffffff, metalness: 0.35, roughness: 0.5, emissive: 0x3a1406, emissiveIntensity: 0.55, ...o }); m.normalMap = IRON_TEX.normal; m.normalScale = new THREE.Vector2(0.4, 0.4); return m; };
+const PIPE_TX = (() => { const tl = new THREE.TextureLoader(), L = (f, srgb = true) => { const t = tl.load('q/tex/' + f); if (srgb) t.colorSpace = THREE.SRGBColorSpace; t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = 4; return t; };
+  return { cu: L('pipe_cu.webp'), cuN: L('pipe_cu_n.webp', false), fe: L('pipe_fe.webp'), feN: L('pipe_fe_n.webp', false), glow: L('pipe_glow.webp') }; })();
+const COPPER_TEX = PIPE_TX.cu;
+/* one look for every pipe in town: the texture wraps once round the pipe and repeats along it, square, however long or thin */
+function pipeUV(geo, len, r) { const uv = geo.attributes.uv, k = len / Math.max(0.01, 2 * Math.PI * r) * 0.5; for (let i = 0; i < uv.count; i++) uv.setX(i, uv.getX(i) * k); uv.needsUpdate = true; return geo; }
+const copperMat = (o = {}) => { const m = new THREE.MeshStandardMaterial({ map: PIPE_TX.cu, color: 0xffffff, metalness: 0.3, roughness: 0.5, emissive: 0x3a1406, emissiveIntensity: 0.4, ...o }); m.normalMap = PIPE_TX.cuN; m.normalScale = new THREE.Vector2(0.9, 0.9); return m; };
 const PIPE_COPPER = copperMat();
-const PIPE_IRON = ironize(new THREE.MeshStandardMaterial({ color: 0x6e625a, metalness: 0.55, roughness: 0.5, emissive: 0x2a140a, emissiveIntensity: 0.5 }), 0xb8aea6);
+const PIPE_IRON = new THREE.MeshStandardMaterial({ map: PIPE_TX.fe, normalMap: PIPE_TX.feN, color: 0xffffff, metalness: 0.4, roughness: 0.6, emissive: 0x1a0c06, emissiveIntensity: 0.5 });
 const PIPE_FLOW_V = `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.); }`;
-const PIPE_FLOW_F = `uniform float uTime; uniform float uOn; uniform float uMine; uniform float uBoost; varying vec2 vUv;
-  uniform float uFlow; void main(){ float p = fract(vUv.x * 6. - uFlow); float band = smoothstep(0.82, 1., p) + (1. - smoothstep(0., 0.12, p)) * 0.6;
+const PIPE_FLOW_F = `uniform float uTime; uniform float uOn; uniform float uMine; uniform float uBoost; uniform float uLen; varying vec2 vUv;
+  uniform float uFlow; void main(){ float p = fract(vUv.x * max(uLen, 1.) * 0.9 - uFlow * 1.6); float band = smoothstep(0.86, 1., p) + (1. - smoothstep(0., 0.1, p)) * 0.6;
     float seam = smoothstep(0.42, 0.5, abs(fract(vUv.y * 2.) - 0.5));
     float a = (band * 0.95 + 0.07) * uOn * (0.35 + 0.65 * seam); vec3 c = mix(vec3(1., .5, .15), vec3(1., .86, .5), band) * (1. + uMine * .5);
     gl_FragColor = vec4(c * a, a); }`;
@@ -2958,7 +2956,7 @@ const CORE_RING_R = 2.2, CORE_RING_Y = 1.02;
 let coreRing = null;
 function ensureCoreRing() {
   if (coreRing) return; coreRing = new THREE.Group();
-  const ring = new THREE.Mesh(new THREE.TorusGeometry(CORE_RING_R, 0.075, 8, 96), PIPE_COPPER); ring.rotation.x = Math.PI / 2; ring.position.y = CORE_RING_Y; coreRing.add(ring);
+  const ring = new THREE.Mesh(pipeUV(new THREE.TorusGeometry(CORE_RING_R, 0.075, 10, 120).rotateZ(0), 2 * Math.PI * CORE_RING_R, 0.075), PIPE_COPPER); ring.rotation.x = Math.PI / 2; ring.position.y = CORE_RING_Y; coreRing.add(ring);
   for (let i = 0; i < 12; i++) { const a = i / 12 * Math.PI * 2, x = Math.cos(a) * CORE_RING_R, z = Math.sin(a) * CORE_RING_R;
     const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.05, CORE_RING_Y, 6), PIPE_IRON); leg.position.set(x, CORE_RING_Y / 2, z); coreRing.add(leg);
     const band = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.02, 5, 12), PIPE_IRON); band.position.set(x, CORE_RING_Y, z); band.rotation.y = -a; coreRing.add(band); }
@@ -2992,8 +2990,8 @@ function makePipe(p, on, mine, R0 = 0, ground = false) {
   for (let i = 1; i < n; i++) { const k = i / n; pts.push(start.clone().lerp(foot, k).setY(0.18).add(side.clone().multiplyScalar(Math.sin(k * Math.PI) * wob))); }
   pts.push(foot, dir.clone().multiplyScalar(3.05).setY(0.42), dir.clone().multiplyScalar(2.72).setY(0.78), dir.clone().multiplyScalar(2.42).setY(0.98), end);
   const curve = new THREE.CatmullRomCurve3(pts, false, 'centripetal'), segs = Math.max(20, Math.round(L * 10));
-  const metal = new THREE.Mesh(new THREE.TubeGeometry(curve, segs, r, 8, false), PIPE_COPPER); metal.castShadow = true; g.add(metal);
-  g.add(new THREE.Mesh(new THREE.TubeGeometry(curve, segs, r * 1.18, 8, false), new THREE.ShaderMaterial({ vertexShader: PIPE_FLOW_V, fragmentShader: PIPE_FLOW_F, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, uniforms: { uTime: U.uTime, uFlow: U.uFlow, uBoost: U.uBoost, uOn: { value: on ? 1 : 0.12 }, uMine: { value: mine ? 1 : 0 } } })));
+  const CL = curve.getLength(), metal = new THREE.Mesh(pipeUV(new THREE.TubeGeometry(curve, segs, r, 10, false), CL, r), PIPE_COPPER); metal.castShadow = true; g.add(metal);
+  g.add(new THREE.Mesh(new THREE.TubeGeometry(curve, segs, r * 1.18, 8, false), new THREE.ShaderMaterial({ vertexShader: PIPE_FLOW_V, fragmentShader: PIPE_FLOW_F, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, uniforms: { uTime: U.uTime, uFlow: U.uFlow, uBoost: U.uBoost, uOn: { value: on ? 1 : 0.12 }, uMine: { value: mine ? 1 : 0 }, uLen: { value: CL } } })));
   // flanges where the pipe meets the house and the ring, so it is plainly bolted on
   for (const [u, big] of ground ? [[1, 1.7]] : [[0, 1.9], [1, 1.7]]) { const q = curve.getPoint(u), f = new THREE.Mesh(new THREE.CylinderGeometry(r * big, r * big, 0.05, 12), PIPE_IRON); f.position.copy(q); f.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), curve.getTangent(u)); g.add(f); }
   for (let i = 1; i < n; i++) { const q = curve.getPoint(i / n);
@@ -7142,7 +7140,7 @@ function loop(now = performance.now()) {
       C.anna.scale.set(1, 1 + 0.014 * br, 1); C.anna.position.y = C.Y + 0.015 * br;
       C.annaMat.uniforms.uBright.value = 1.15 + 0.3 * br + m * 0.25 + U.uBoost.value * 0.6;
       C.annaMat.uniforms.uGlow.value = (C.awake ? 2.2 : 0.55 + 0.9 * br + m * 1.2) + U.uBoost.value * 5;
-      C.copper.emissiveIntensity = 0.22 + 0.08 * Math.sin(t * 2.3) + U.uHeat.value * 0.02 + U.uBoost.value * 1.0; C.hot.emissiveIntensity = 1.4 + 0.5 * Math.sin(t * 3.1 + 1) + U.uBoost.value * 2;
+      C.copper.emissiveIntensity = 0.5 + 0.18 * Math.sin(t * 2.3) + U.uBoost.value * 1.5; C.hot.emissiveIntensity = 1.4 + 0.5 * Math.sin(t * 3.1 + 1) + U.uBoost.value * 2;
       C.beamMat.uniforms.uA.value = THREE.MathUtils.smoothstep(U.uBoost.value, 0.55, 1.35) * 1.3 + (C.awake ? 0.35 : 0);
       C.topMat.emissiveIntensity = 0.05 + 0.03 * br + U.uBoost.value * 0.5;
       C.iceMat.emissiveIntensity = C.liteMat.emissiveIntensity = C.em * (0.85 + 0.15 * Math.sin(t * 1.7)) + U.uBoost.value * 2.2;
