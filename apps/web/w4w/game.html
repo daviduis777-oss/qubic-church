@@ -2568,7 +2568,7 @@ const interactive = [], labels = [];
 const KIT_SNOW = new Set(); // every model now comes with its own painted snow // painted bare: the town's snow goes on them
 const KIT_OVR = { church: 'q/b/church.glb', mine: 'q/b/mine.glb', home_A: 'q/b/home_a.glb', home_B: 'q/b/home_b.glb', blacksmith: 'q/b/home_b.glb', tower: 'q/b/observatory.glb', barracks: 'q/b/library.glb', well: 'q/b/well.glb', destroyed: 'q/b/ruin.glb' };
 // props with no kit piece to stand in for: loaded once, stood on the ground, one unit tall, scaled where they are used
-const PROPS = {}, PROP_URLS = { gate: 'q/b/gate.glb', campfire: 'q/b/campfire.glb', pit: 'q/b/pit.glb', marker: 'q/b/marker.glb', brazier: 'q/b/brazier.glb', bar: 'q/b/bar.glb', post: 'q/b/post.glb', lamp: 'q/b/lamp.glb', wagon: 'q/b/wagon.glb', site: 'q/b/site.glb', barrel: 'q/b/barrel.glb', board: 'q/b/board.glb', sled: 'q/b/sled.glb', cart: 'q/b/cart.glb', woodpile: 'q/b/woodpile.glb', barrels: 'q/b/barrels.glb' };
+const PROPS = {}, PROP_URLS = { gate: 'q/b/gate.glb', campfire: 'q/b/campfire.glb', pit: 'q/b/pit.glb', marker: 'q/b/marker.glb', brazier: 'q/b/brazier.glb', bar: 'q/b/bar.glb', post: 'q/b/post.glb', lamp: 'q/b/lamp.glb', site: 'q/b/site.glb', board: 'q/b/board.glb' };
 // props cast no shadow: under our low moon a lamp post or a stake throws a black spike across half the street
 function prop(n, h, noFow = true) { const P = PROPS[n]; if (!P) return null; const o = P.clone(true); o.scale.setScalar(h); o.traverse(m => { if (m.isMesh) { m.castShadow = false; if (noFow) m.material.userData.noFow = true; } }); return o; }
 let PYLON_MODEL = null;
@@ -6946,6 +6946,7 @@ function nearHome(pos, homes) { for (const k of homes) { const [q, r] = k.split(
  * so nothing stands in the way and nothing gets walked through. Spread evenly, never the same thing twice side by side */
 let decorDone = false;
 function buildDecor() {
+  return; // the old clutter is gone; the new props come placed by district
   if (decorDone || !PROPS.woodpile) return; decorDone = true;
   const big = new Set([...Object.values(SPECIAL), ...STAGE2.map(x => x.at), GATE_CELL, ...Array.from({ length: W4W.PYLON_N }, (_, i) => W4W.pylonCell(i))].map(c => key(...c)));
   const homes = new Set([...allResidents().filter(h => h.at?.[0] != null).map(h => key(...h.at))]);
