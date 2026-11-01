@@ -1847,6 +1847,7 @@ var W4W = (() => {
         Object.assign(c, { q: here[0], r: here[1], path: [], t0: now, lost: false });
         return ok();
       case "gather": {
+        if (STAGE === 1) return fail("Gathering and making things open in Act II.");
         const at = cellArg(b.at);
         if (!at) return fail("Gather what?");
         if (c.path.length) return fail("Stop walking first.");
@@ -2493,9 +2494,10 @@ function banner(b, s) { $('#bannerB').textContent = b; $('#bannerS').textContent
 const kit = {}; let KIT_MAT;
 const interactive = [], labels = [];
 /* generated models that stand in for kit pieces: same footprint, on the ground, in the same snow */
+const KIT_SNOW = new Set(['home_A', 'home_B', 'church']); // painted bare: the town's snow goes on them
 const KIT_OVR = { church: 'q/b/church.glb', mine: 'q/b/mine.glb', home_A: 'q/b/home_a.glb', home_B: 'q/b/home_b.glb', tower: 'q/b/observatory.glb', barracks: 'q/b/library.glb', well: 'q/b/well.glb', destroyed: 'q/b/ruin.glb' };
 // props with no kit piece to stand in for: loaded once, stood on the ground, one unit tall, scaled where they are used
-const PROPS = {}, PROP_URLS = { gate: 'q/b/gate.glb', campfire: 'q/b/campfire.glb', heater: 'q/b/heater.glb', boiler: 'q/b/boiler.glb', pit: 'q/b/pit.glb', marker: 'q/b/marker.glb', brazier: 'q/b/brazier.glb', bar: 'q/b/bar.glb', post: 'q/b/post.glb', lamp: 'q/b/lamp.glb', board: 'q/b/board.glb', sled: 'q/b/sled.glb', cart: 'q/b/cart.glb', woodpile: 'q/b/woodpile.glb', barrels: 'q/b/barrels.glb' };
+const PROPS = {}, PROP_URLS = { gate: 'q/b/gate.glb', campfire: 'q/b/campfire.glb', heater: 'q/b/heater.glb', boiler: 'q/b/boiler.glb', pit: 'q/b/pit.glb', marker: 'q/b/marker.glb', brazier: 'q/b/brazier.glb', bar: 'q/b/bar.glb', post: 'q/b/post.glb', lamp: 'q/b/lamp.glb', wagon: 'q/b/wagon.glb', barrel: 'q/b/barrel.glb', board: 'q/b/board.glb', sled: 'q/b/sled.glb', cart: 'q/b/cart.glb', woodpile: 'q/b/woodpile.glb', barrels: 'q/b/barrels.glb' };
 // props cast no shadow: under our low moon a lamp post or a stake throws a black spike across half the street
 function prop(n, h, noFow = true) { const P = PROPS[n]; if (!P) return null; const o = P.clone(true); o.scale.setScalar(h); o.traverse(m => { if (m.isMesh) { m.castShadow = false; if (noFow) m.material.userData.noFow = true; } }); return o; }
 let PYLON_MODEL = null;
@@ -2511,7 +2513,7 @@ function fitTo(o, ref) {
   o.scale.multiplyScalar(k); o.position.set(rc.x - c.x * k, -b.min.y * k, rc.z - c.z * k); const g = new THREE.Group(); g.add(o); return g;
 }
 async function loadOverrides() {
-  await Promise.all([...Object.entries(KIT_OVR).map(async ([n, url]) => { const g = await loadGlb(url); if (!g || !kit[n]) return; meshyMats(g.scene, false); /* their own paint already carries the snow */ kit[n] = fitTo(g.scene, kit[n]); }),
+  await Promise.all([...Object.entries(KIT_OVR).map(async ([n, url]) => { const g = await loadGlb(url); if (!g || !kit[n]) return; meshyMats(g.scene, KIT_SNOW.has(n)); kit[n] = fitTo(g.scene, kit[n]); }),
     ...Object.entries(PROP_URLS).map(([n, url]) => loadGlb(url).then(g => { if (!g) return; meshyMats(g.scene, false); g.scene.updateMatrixWorld(true); const b = new THREE.Box3().setFromObject(g.scene), c = b.getCenter(new THREE.Vector3()), k = 1 / (b.max.y - b.min.y);
       g.scene.scale.multiplyScalar(k); g.scene.position.set(-c.x * k, -b.min.y * k, -c.z * k); PROPS[n] = new THREE.Group(); PROPS[n].add(g.scene); PROPS[n].userData.w = (b.max.x - b.min.x) * k; PROPS[n].userData.d = (b.max.z - b.min.z) * k; })),
     loadGlb('q/b/pylon.glb').then(g => { if (!g) return; meshyMats(g.scene, false, true); g.scene.updateMatrixWorld(true); const b = new THREE.Box3().setFromObject(g.scene), k = 3.5 / (b.max.y - b.min.y);
@@ -4493,7 +4495,7 @@ function clickGround(e) {
   if (!hasChar()) return false; const c = groundHex(e); if (!c) return false;
   const pr = predicted(); const here = W4W.cellAt(pr.c, xnow());
   if (pr.c.frozenUntil > xnow()) { say('You are frozen. Nothing thaws you faster.', 'Wastes'); return true; }
-  if (!pr.c.path.length && W4W.dist(here, c) <= 1 && W4W.resourceOf(...c) && !(XV.nodes[W4W.key(...c)] > xnow())) { xact('gather', { at: c }); return true; }
+  if (!ACT1 && !pr.c.path.length && W4W.dist(here, c) <= 1 && W4W.resourceOf(...c) && !(XV.nodes[W4W.key(...c)] > xnow())) { xact('gather', { at: c }); return true; }
   if (c[0] === here[0] && c[1] === here[1]) { const n = noteAt(...c); if (n && !pr.c.path.length) readNote(n); return true; }
   if (ACT1 && !W4W.insideDome(...c)) { say('The Veil holds, and nothing living goes through it. Not in this act. The Gate waits for the Wardens.', 'Aigarth'); banner('The Veil holds', 'outside is the White'); return true; }
   if (W4W.ringOf(...c) > W4W.MAX_RING) { say('Beyond the Stone Teeth the cold has no edge. Not yet.', 'Wastes'); return true; }
@@ -4582,7 +4584,7 @@ function actions(c, here, t, frozen) {
     const near = [here, ...W4W.DIRS.map(([dq, dr]) => [here[0] + dq, here[1] + dr])];
     const kinds = new Set();
     const items = W4W.itemsOf(c), missing = new Set();
-    for (const cell of near) { const res = W4W.resourceOf(...cell); if (res && !(XV.nodes[W4W.key(...cell)] > t) && !kinds.has(res)) { kinds.add(res); const tool = W4W.toolFor(res);
+    for (const cell of ACT1 ? [] : near) { const res = W4W.resourceOf(...cell); if (res && !(XV.nodes[W4W.key(...cell)] > t) && !kinds.has(res)) { kinds.add(res); const tool = W4W.toolFor(res);
       const best = W4W.bestTool(c, res); if (!W4W.toolsFor(res).length || best) btns.push(`<button class="btn" data-x="gather" data-at="${cell.join(',')}">${res === 'fiber' ? 'Pull dry grass' : res === 'wood' || res === 'resin' ? (best === 'flint_axe' ? 'Chop' : 'Saw') + ' ' + res : 'Break ' + res}</button>`); else missing.add(W4W.ITEMS[tool].name.toLowerCase()); } }
     if (missing.size) btns.push(`<span class="xt">No ${[...missing].join(' and no ')} in your pack. Without tools you can only look. They are at home.</span>`);
     const hk = near.map(cell => W4W.key(...cell)).find(k => XV.hearths[k]);
@@ -6657,8 +6659,9 @@ function streetCells() {
   for (const d of dests) { const r2 = hexRay([0, 0], d).find(c => W4W.ringOf(...c) === 2) || d; hexRay(r2, d).forEach(c => { if (W4W.ringOf(...c) >= 2) STREET.add(key(...c)); }); }
   return STREET;
 }
-const STREET_OBJS = []; let streetSig = null;
+const STREET_OBJS = [], STREET_PATHS = []; let streetSig = null;
 function buildStreets() {
+  STREET_PATHS.length = 0;
   STREET_OBJS.splice(0).forEach(o => { scene.remove(o); o.geometry?.dispose(); }); streetSig = allResidents().map(h => (h.at || []).join(',')).sort().join('|');
   const homes = new Set([...DEMO.map(n => key(...n.at)), ...allResidents().filter(h => h.at?.[0] != null).map(h => key(...h.at)), ...STAGE2.map(x => key(...x.at)), ...Object.values(SPECIAL).map(c => key(...c))]);
   [...streetCells()].forEach(k => { if (!homes.has(k)) reserved.add(k); });
@@ -6678,7 +6681,7 @@ function buildStreets() {
     const end = HX(...d), raw = [HX(...line[0]).multiplyScalar(0.82), ...line.filter(c => c.detour).map(c => HX(...c)), end.clone().multiplyScalar(1 - 0.7 / Math.max(1, end.length()))];
     let poly = raw; for (let it = 0; it < 4; it++) { const nx = [poly[0]]; for (let i = 0; i < poly.length - 1; i++) { nx.push(poly[i].clone().lerp(poly[i + 1], 0.25), poly[i].clone().lerp(poly[i + 1], 0.75)); } nx.push(poly[poly.length - 1]); poly = nx; }
     const curve = new THREE.CurvePath(); for (let i = 0; i < poly.length - 1; i++) curve.add(new THREE.LineCurve3(poly[i].clone().setY(0.03), poly[i + 1].clone().setY(0.03)));
-    const L = curve.getLength(), N = Math.max(8, Math.round(L * 3)), W = 0.8, TILE = W * 4;
+    const L = curve.getLength(), N = Math.max(8, Math.round(L * 3)), W = 0.8, TILE = W * 4; if (d !== GATE_CELL) STREET_PATHS.push(curve); // nobody walks out through the Gate
     const pos = [], uv = [], idx = [];
     for (let i = 0; i <= N; i++) { const u = i / N, p = curve.getPoint(u), t = curve.getTangent(u), n = new THREE.Vector3(-t.z, 0, t.x).normalize();
       pos.push(p.x + n.x * W, 0.03, p.z + n.z * W, p.x - n.x * W, 0.03, p.z - n.z * W); uv.push(u * L / TILE, 0, u * L / TILE, 1);
@@ -6697,7 +6700,7 @@ function buildStreets() {
   buildLife(homes);
 }
 /* signs of life: wood stacked by every door, a sled or a cart left in the snow, barrels by the busy places */
-const LIFE_H = { cart: 0.5, sled: 0.36, barrels: 0.55, woodpile: 0.6 };
+const LIFE_H = { cart: 0.5, sled: 0.36, barrels: 0.55, woodpile: 0.6, wagon: 0.75, barrel: 0.32 };
 function lifeProp(n, pos, rot) { const o = prop(n, LIFE_H[n] || 0.5, false); if (!o) return null; o.position.set(pos.x, 0, pos.z); o.rotation.y = rot; scene.add(o); STREET_OBJS.push(o); return o; }
 function nearHome(pos, homes) { for (const k of homes) { const [q, r] = k.split(',').map(Number), c = HX(q, r); if (Math.hypot(c.x - pos.x, c.z - pos.z) < 1.15) return true; } return false; }
 function buildLife(homes) {
@@ -6722,7 +6725,36 @@ function stepPlotStakes() {
   for (const [q, r] of free) { const c = HX(q, r); m4.makeScale(0.82, 1, 0.82).setPosition(c.x, 0.03, c.z); inst.setMatrixAt(k++, m4); }
   inst.renderOrder = 2;
   inst.count = k; scene.add(inst); plotStakes = inst;
+  // an empty plot is never quite empty: somebody parked a wagon there, stacked barrels, left a few young pines. It all goes when a house comes
+  PLOT_DECO.splice(0).forEach(o => scene.remove(o));
+  for (const [q, r] of free) { const h = ((q * 73856093) ^ (r * 19349663)) >>> 0, R = seeded(h), c = HX(q, r); if (R() < 0.35 || Math.hypot(c.x, c.z) < 5) continue;
+    const pick = Math.floor(R() * 7), at = (dx, dz) => new THREE.Vector3(c.x + dx, 0, c.z + dz), add = o => { if (o) { scene.add(o); PLOT_DECO.push(o); } };
+    if (pick === 0 || pick === 1) for (let i = 0; i < 2 + Math.floor(R() * 3); i++) { const t = kit.tree_A?.clone(true); if (t) { t.position.copy(at((R() - 0.5) * 1.4, (R() - 0.5) * 1.4)); t.scale.setScalar(0.35 + R() * 0.25); t.rotation.y = R() * 6; add(t); } }
+    else { const n = ['wagon', 'barrel', 'woodpile', 'sled', 'barrels'][pick - 2], o = prop(n, LIFE_H[n] || 0.5, false); if (o) { o.position.copy(at((R() - 0.5) * 0.8, (R() - 0.5) * 0.8)); o.rotation.y = R() * 6; add(o);
+      if (n === 'barrel') for (let i = 0; i < 2; i++) { const b2 = prop('barrel', 0.3, false); if (b2) { b2.position.copy(o.position).add(new THREE.Vector3((R() - 0.5) * 0.7, 0, (R() - 0.5) * 0.7)); add(b2); } } } }
+  }
 }
+const PLOT_DECO = [];
+/* ---------- townsfolk: a few people going about their errands, so the town is never quite deserted ---------- */
+const FOLK = [], FOLK_TINT = [0x8a6a50, 0x5a6a58, 0x6a5a70, 0x7a7a7a, 0x504a44];
+function stepFolk(dt) {
+  if (!HERO || !STREET_PATHS.length) return;
+  while (FOLK.length < 5) { const body = cloneSkinned(HERO.scene), tint = new THREE.Color(FOLK_TINT[FOLK.length]); body.scale.setScalar(heroScale);
+    body.traverse(m => { if (m.isMesh) { m.material = heroMat(m.material).clone(); m.material.color.multiply(tint); m.castShadow = false; m.frustumCulled = false; } });
+    const g = new THREE.Group(); g.add(body); scene.add(g); const mx = new THREE.AnimationMixer(body), acts = {}; for (const [n, c] of Object.entries(heroClips)) acts[n] = mx.clipAction(c);
+    const F = { g, body, mx, acts, cur: '', path: Math.floor(Math.random() * STREET_PATHS.length), s: Math.random(), dir: Math.random() < 0.5 ? 1 : -1, wait: Math.random() * 6, speed: 0.32 + Math.random() * 0.12 }; FOLK.push(F); }
+  for (const F of FOLK) { const C = STREET_PATHS[F.path % STREET_PATHS.length], L = C.getLength();
+    if (F.wait > 0) { F.wait -= dt; folkPlay(F, 'Idle');
+      // through the door at the far end: gone for a while, then back out
+      F.g.visible = !(F.s >= 0.999 && F.wait > 0.6); if (F.wait <= 0) { if (F.s >= 0.999) F.dir = -1; else { F.path = Math.floor(Math.random() * STREET_PATHS.length); F.dir = 1; F.s = 0.02; } } }
+    else { F.g.visible = true; F.s = THREE.MathUtils.clamp(F.s + F.dir * F.speed * dt / L, 0, 1);
+      if ((F.dir > 0 && F.s >= 1) || (F.dir < 0 && F.s <= 0.02)) { F.s = F.dir > 0 ? 1 : 0.02; F.wait = F.dir > 0 ? 6 + Math.random() * 14 : 2 + Math.random() * 5; }
+      folkPlay(F, 'Running_A'); if (F.acts.Running_A) F.acts.Running_A.timeScale = F.speed / HERO_H / GAIT.Running_A; }
+    const side = (FOLK.indexOf(F) % 2 ? 0.28 : -0.28) * F.dir, p = C.getPoint(F.s), t = C.getTangent(F.s);
+    F.g.position.set(p.x - t.z * side, 0, p.z + t.x * side); if (F.wait <= 0) { const y = Math.atan2(t.x * F.dir, t.z * F.dir), r0 = F.g.rotation.y; F.g.rotation.y = r0 + Math.atan2(Math.sin(y - r0), Math.cos(y - r0)) * Math.min(1, dt * 6); }
+    if (F.g.position.distanceTo(controls.target) < 40) F.mx.update(dt); }
+}
+function folkPlay(F, n) { if (F.cur === n || !F.acts[n]) return; const a = F.acts[n], o = F.acts[F.cur]; a.reset().fadeIn(0.3).play(); if (o) o.fadeOut(0.3); F.cur = n; }
 
 /* ---------- Act I: what to do under the Veil, and the pages it opens ---------- */
 const CHAPTERS_I = [
@@ -6960,7 +6992,7 @@ function loop(now = performance.now()) {
   spriteCache.forEach(o => { {
     if (o.userData.flicker) { if (o.userData.flare) { o.userData.flare = Math.max(0, o.userData.flare - dt * 0.6); } const f = o.userData.flare || 0; o.material.opacity = 0.8 + Math.sin(t * 13) * 0.08 + Math.sin(t * 7.3) * 0.1; o.scale.setScalar(1.1 + f * 1.2 + (S.town.fire || 0) * 0.08); }
     if (o.userData.blink) o.material.opacity = 0.35 + 0.65 * (Math.sin(t * 4) > 0 ? 1 : 0.2); } });
-  stepCamera(dt); stepAvatars(dt); stepSnowFx(dt); hud(); stepSound(); stepPlaces(dt); if (XV?.me) { stepFrames(dt); if (!ACT1) stepShards(predicted()?.c, dt); } if (XV) { stepRime(dt); if ((tick & 15) === 0) { stepNotes(); stepLogWatch(); stepLog(); } stepLocalGrid(predicted()?.c); }
+  stepCamera(dt); stepAvatars(dt); stepSnowFx(dt); hud(); stepSound(); stepPlaces(dt); if (XV?.me) { stepFrames(dt); if (!ACT1) stepShards(predicted()?.c, dt); } stepFolk(dt); if (XV) { stepRime(dt); if ((tick & 15) === 0) { stepNotes(); stepLogWatch(); stepLog(); } stepLocalGrid(predicted()?.c); }
   for (const k in walkers) { const w = walkers[k]; w.g.position.lerp(w.target, Math.min(1, dt * 1.5)); w.g.position.y = 0; w.light.position.set(w.g.position.x + 0.15, 0.45, w.g.position.z); }
   if (fly) { fly.t = Math.min(1, fly.t + dt * 0.9); const k = 1 - Math.pow(1 - fly.t, 3);
     const tgt = fly.from.clone().lerp(fly.to, k); const off = camera.position.clone().sub(controls.target).normalize().multiplyScalar(fly.d0 + (fly.d1 - fly.d0) * k);
