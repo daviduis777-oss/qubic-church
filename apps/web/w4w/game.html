@@ -2551,7 +2551,7 @@ function banner(b, s) { $('#bannerB').textContent = b; $('#bannerS').textContent
 const kit = {}; let KIT_MAT;
 const interactive = [], labels = [];
 /* generated models that stand in for kit pieces: same footprint, on the ground, in the same snow */
-const KIT_SNOW = new Set(['home_A', 'home_B', 'church']); // painted bare: the town's snow goes on them
+const KIT_SNOW = new Set(['home_A', 'home_B']); // painted bare: the town's snow goes on them
 const KIT_OVR = { church: 'q/b/church.glb', mine: 'q/b/mine.glb', home_A: 'q/b/home_a.glb', home_B: 'q/b/home_b.glb', tower: 'q/b/observatory.glb', barracks: 'q/b/library.glb', well: 'q/b/well.glb', destroyed: 'q/b/ruin.glb' };
 // props with no kit piece to stand in for: loaded once, stood on the ground, one unit tall, scaled where they are used
 const PROPS = {}, PROP_URLS = { gate: 'q/b/gate.glb', campfire: 'q/b/campfire.glb', heater: 'q/b/heater.glb', boiler: 'q/b/boiler.glb', pit: 'q/b/pit.glb', marker: 'q/b/marker.glb', brazier: 'q/b/brazier.glb', bar: 'q/b/bar.glb', post: 'q/b/post.glb', lamp: 'q/b/lamp.glb', wagon: 'q/b/wagon.glb', site: 'q/b/site.glb', barrel: 'q/b/barrel.glb', board: 'q/b/board.glb', sled: 'q/b/sled.glb', cart: 'q/b/cart.glb', woodpile: 'q/b/woodpile.glb', barrels: 'q/b/barrels.glb' };
@@ -2623,10 +2623,10 @@ function build() {
   ring(1).forEach(([q, r]) => reserved.add(key(q, r)));
   for (let i = 0; i < W4W.PYLON_N; i++) reserved.add(key(...W4W.pylonCell(i)));
   buildCore();
-  const ch = place('church', ...SPECIAL.church, { rot: Math.PI, scale: 1.55 }); tag(ch, 'church', 'church');
+  const cp0 = HX(...SPECIAL.church), ch = place('church', ...SPECIAL.church, { rot: Math.atan2(-cp0.x, -cp0.z), scale: 1.9 }); // door to Anna; // the heart of the town: bigger than any house tag(ch, 'church', 'church');
   const cp = HX(...SPECIAL.church); glowDecal(cp.x, cp.z + 0.9, 2.2, 0xffd6a0, 0.5); sprite(GLOW, cp.x, 0.75, cp.z + 0.95, 0.9, 0xffc070, 0.9);
   label('QUBIC CHURCH', ch, 3.2, 'key');
-  makePipe(HX(...SPECIAL.church).add(new THREE.Vector3(0, 0, 0.35)), true, false, 0.12); // the church's main: the thickest pipe in town, straight into Anna's ring
+  { const f = cp0.clone().setY(0).normalize().negate(), side = new THREE.Vector3(-f.z, 0, f.x); makePipe(cp0.clone().add(side.multiplyScalar(0.78)).add(f.clone().multiplyScalar(0.62)), true, false, 0.12); } // the church's main: the thickest pipe in town, straight into Anna's ring
   const pp = HX(...SPECIAL.plaza);
   const well = place('well', ...SPECIAL.plaza, { scale: 1.2 }); well.position.x -= 0.7; tag(well, 'board', 'board');
   const board = buildBoard(); board.position.set(pp.x + 0.75, 0, pp.z - 0.1); scene.add(board); tag(board, 'board', 'board');
