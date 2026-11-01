@@ -725,6 +725,36 @@ body.act1 #dock button[data-act=bag],body.act1 #dock button[data-act=craft],body
 .lamp.hold{box-shadow:inset 0 0 0 1px rgba(242,163,71,.45)} .lamp.hold b{color:#e8a75a}
 .trace{margin-top:14px;padding:13px 16px;border-radius:6px;background:rgba(255,190,110,.06);box-shadow:inset 0 0 0 1px rgba(242,163,71,.3),inset 3px 0 0 rgba(242,163,71,.7)}
 .trace small{display:block;font-family:var(--f-label);font-weight:600;font-size:12px;letter-spacing:.08em;color:#e8a75a;margin-bottom:6px} .trace p{margin:0 0 10px;font-family:var(--f-print);font-size:16px;line-height:1.6;color:#ece3d0} .trace.lit p{margin:0;color:#c9b99a}
+/* ---------- rooms: you step through the door and stand inside, as in the old survival games ---------- */
+#door{position:fixed;inset:0;z-index:60;background:#000;display:flex;align-items:center;justify-content:center;perspective:900px;overflow:hidden;cursor:pointer}
+#door .dwrap{position:relative;width:min(44vh,46vw);height:min(80vh,84vw);transform-style:preserve-3d;animation:dolly var(--dt,2.4s) cubic-bezier(.45,0,.25,1) forwards}
+#door .dlight{position:absolute;inset:0;background:center/cover no-repeat;filter:brightness(1.25) saturate(1.1) blur(1px);box-shadow:0 0 120px 40px rgba(255,170,80,.25)}
+#door .dframe{position:absolute;inset:-6% -9% -2% -9%;border:min(3vh,26px) solid #1c120b;border-bottom:0;box-shadow:inset 0 0 40px #000,0 0 0 2000px #000;background:transparent;pointer-events:none}
+#door .dleaf{position:absolute;inset:0;transform-origin:0 50%;background:url(q/room/door_wood.webp) 0 0/40% auto repeat,#3a2617;box-shadow:inset 0 0 60px rgba(0,0,0,.75),inset -6px 0 12px rgba(0,0,0,.6);animation:swing var(--dt,2.4s) cubic-bezier(.55,0,.3,1) forwards;backface-visibility:hidden}
+#door .dleaf i{position:absolute;left:0;right:0;height:5.5%;background:linear-gradient(180deg,#4a4440,#2a2624);box-shadow:0 2px 3px rgba(0,0,0,.6)} #door .dleaf i::before,#door .dleaf i::after{content:'';position:absolute;top:30%;width:9px;height:9px;border-radius:50%;background:#b8783e;box-shadow:0 1px 2px #000} #door .dleaf i::before{left:12%} #door .dleaf i::after{right:12%}
+#door .dleaf b{position:absolute;right:9%;top:50%;width:13%;aspect-ratio:1;border-radius:50%;border:4px solid #6a5a48;box-shadow:0 2px 4px #000}
+#door .dleaf.arch{border-radius:50% 50% 0 0/22% 22% 0 0} #door .dleaf.iron{background:url(q/room/door_wood.webp) 0 0/40% auto repeat,#2e2a28;filter:saturate(.6)}
+#door.out{opacity:0;transition:opacity .5s ease}
+#door .dskip{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);font:600 11px var(--f-label);letter-spacing:.14em;color:rgba(236,227,208,.35)}
+@keyframes dolly{0%{transform:scale(.78)}100%{transform:scale(1.9)}}
+@keyframes swing{0%,28%{transform:rotateY(0)}100%{transform:rotateY(-108deg)}}
+#room{position:fixed;inset:0;z-index:4;background:#000;overflow:hidden;opacity:0;transition:opacity .5s ease}
+#room.on{opacity:1} body.inroom #panel{z-index:6} body.inroom #labels,body.inroom #goals{visibility:hidden} body.inroom:not(.inbar) #logf{visibility:hidden}
+#room .rimg{position:absolute;inset:-3%;background:center/cover no-repeat;transform:scale(1.04);transition:transform .25s ease-out;will-change:transform}
+#room .rfx span{position:absolute;border-radius:50%;pointer-events:none;mix-blend-mode:screen;background:radial-gradient(circle,rgba(255,176,88,.55),rgba(255,140,60,.18) 40%,transparent 70%);animation:flick 2.1s ease-in-out infinite alternate}
+#room .rfx span.cold{background:radial-gradient(circle,rgba(150,180,255,.22),transparent 70%);animation-duration:5s}
+@keyframes flick{0%{opacity:.55;transform:scale(.94)}35%{opacity:.85}60%{opacity:.62;transform:scale(1.04)}100%{opacity:.9;transform:scale(.98)}}
+#room .rvig{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 55%,transparent 55%,rgba(0,0,0,.55))}
+#room .rhot{position:absolute;inset:-3%;transform:scale(1.04);transition:transform .25s ease-out}
+#room .rhot button{position:absolute;background:transparent;border:0;border-radius:12px;cursor:pointer;transition:background .2s,box-shadow .2s}
+#room .rhot button:hover,#room .rhot button:focus-visible{background:rgba(255,200,120,.07);box-shadow:inset 0 0 0 2px rgba(255,200,120,.5),0 0 34px rgba(255,170,80,.22);outline:none}
+#room .rhot button span{position:absolute;left:50%;bottom:8px;transform:translateX(-50%);white-space:nowrap;padding:5px 11px;border-radius:4px;background:rgba(12,9,6,.82);font:600 12.5px var(--f-label);letter-spacing:.08em;color:#f2c27a;opacity:0;transition:opacity .2s;pointer-events:none}
+#room .rhot button:hover span,#room .rhot button:focus-visible span{opacity:1}
+#room .rbar{position:absolute;left:0;right:0;top:0;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:max(18px,env(safe-area-inset-top)) max(22px,env(safe-area-inset-right)) 30px max(22px,env(safe-area-inset-left));background:linear-gradient(180deg,rgba(0,0,0,.7),transparent)}
+#room .rbar h2{margin:0;font:600 clamp(20px,2.6vw,30px) var(--f-display,serif);letter-spacing:.06em;color:#f3e6c8;text-shadow:0 2px 12px #000} #room .rbar small{display:block;font:500 12.5px var(--f-body);color:#c9b99a;letter-spacing:.02em;margin-top:2px}
+#room .rnote{position:absolute;left:50%;bottom:118px;transform:translateX(-50%);max-width:min(560px,86vw);padding:12px 18px;border-radius:6px;background:rgba(12,9,6,.84);box-shadow:inset 0 0 0 1px rgba(201,160,74,.3);font:16px/1.55 var(--f-print);color:#ece3d0;opacity:0;transition:opacity .3s;pointer-events:none;text-align:center}
+#room .rnote.on{opacity:1}
+@media (prefers-reduced-motion:reduce){#door .dwrap,#door .dleaf{animation-duration:.01s}#room .rfx span{animation:none}}
 .bestiary{display:grid;gap:10px;margin-bottom:12px} .bnote{padding:13px 16px 14px;border-radius:6px;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.015));box-shadow:inset 0 0 0 1px rgba(201,160,74,.2),inset 3px 0 0 rgba(242,163,71,.6);color:#ece3d0}
 .bnote small{display:block;font-family:var(--f-label);font-weight:600;font-size:12px;letter-spacing:.08em;color:#e8a75a;margin-bottom:6px} .bnote p{margin:0;font-family:var(--f-print);font-size:16.5px;line-height:1.62;color:#ece3d0}
 .bnote.locked{background:rgba(0,0,0,.3);color:#8a8070;box-shadow:inset 0 0 0 1px rgba(201,160,74,.14)} .bnote.locked p{color:#8a8070} .bnote.locked small{color:#6d6658} .bnote.locked p{font-style:normal;font-family:var(--f-body);font-size:13px}
@@ -4786,6 +4816,7 @@ function cellOfKind(k, id) {
   return null;
 }
 function openKind(k, id) {
+  { const rm = roomOf(k, id); if (rm) return enterRoom(rm); }
   if (k === 'gate') return openGate();
   if (k === 'pylon') return openPylon(+id);
   if (k === 'maria') return openMaria();
@@ -7102,6 +7133,79 @@ function buildQuarters() {
   onCorner('coldframes', ...S2('glasshouse'), 30, 'anna', 1, scene, 0.35); onCorner('coldframes', ...S2('glasshouse'), -30, 'anna', 1, scene, 0.35); onCorner('vent', ...S2('glasshouse'), 180, 'anna');
   onCorner('benchlamp', ...S2('atrium'), 30, 'anna'); onCorner('pipes', ...S2('atrium'), -30, 'anna', 0.9, scene, 0.45);
 }
+/* ---------- rooms: step through the door and you are inside. One painted room each, things in it you can use ---------- */
+const ROOMS = {
+  home: { img: 'q/room/home.webp', title: 'Home', sub: 'The walls keep you. The stove keeps the walls.', door: '',
+    fx: [[7, 40, 9], [31, 24, 7], [57, 55, 15], [62, 8, 6, 'cold']],
+    hot: [
+      [0, 47, 29, 35, 'Your desk', () => { const h = me(); if (h) openHouse(h.id); setTimeout(() => $('#pbody .mails')?.scrollIntoView({ block: 'start' }), 60); }],
+      [6, 4, 19, 42, 'The window', () => roomNote('Your street under the Veil. Somebody\'s lamp is lit across the way.')],
+      [25, 24, 21, 40, 'The workbench', () => roomNote('Under the canvas the tools are waiting. Making things begins in Act II.')],
+      [48, 17, 17, 54, 'The stove', () => addWood()],
+      [68, 36, 30, 36, 'The bed', () => roomNote('You lie down for a while. Indoors the cold cannot reach you; warmth and strength come back while you rest.')],
+      [79, 70, 21, 30, 'The chest', () => { const h = me(); if (h) openHouse(h.id); }],
+    ] },
+  bar: { img: 'q/room/bar.webp', title: 'The Last Coal', sub: 'Everyone in the room hears everyone.', door: 'arch',
+    fx: [[27, 13, 8], [70, 22, 8], [39, 31, 5], [60, 34, 5], [88, 62, 20], [64, 49, 4]],
+    hot: [
+      [0, 10, 14, 52, 'The rumour board', () => openBar()],
+      [14, 5, 11, 50, 'The window', () => roomNote('Frost on the glass, and past it the White. Ivo never sits with his back to this window.')],
+      [26, 32, 45, 28, 'Ivo at the counter', () => openBar()],
+      [76, 28, 24, 50, 'The fire', () => roomNote('You hold your hands to the fire. The kettle has been on the hook since the first night.')],
+      [0, 62, 64, 38, 'Who is here tonight', () => openBarPeople()],
+    ] },
+  library: { img: 'q/room/library.webp', title: 'The Library', sub: 'Everything the town knows, and some things it would rather not.', door: 'arch',
+    fx: [[10, 27, 7], [49, 30, 6], [74, 30, 6], [40, 68, 5], [61, 56, 12], [36, 25, 9, 'cold']],
+    hot: [
+      [0, 5, 30, 85, 'The shelves', () => openLibrary()],
+      [51, 1, 22, 43, 'The Warden drawing', () => { act1Mark('library'); roomNote('A figure in heavy plates, lined with something that glows. Under it, in the hand of the expedition\'s smith, one word: Warden.'); }],
+      [82, 44, 18, 40, 'Letters from the other side', () => roomNote('The shelf is empty. Letters people bring here will lie on it for everyone to read.')],
+      [29, 61, 43, 39, 'The chronicle', () => openChronicle(true, 'story')],
+    ] },
+  observatory: { img: 'q/room/observatory.webp', title: 'The Observatory', sub: 'Everything in the Bestiary was seen from this room.', door: 'iron',
+    fx: [[9, 25, 7], [95, 28, 7], [41, 53, 5], [17, 55, 7], [55, 14, 14, 'cold']],
+    hot: [
+      [46, 13, 23, 68, 'The telescope', () => openObservatory()],
+      [71, 26, 29, 33, 'What scratches at the Veil', () => openChronicle(true, 'beasts')],
+      [79, 58, 15, 23, 'The astronomer\'s log', () => openChronicle(true, 'beasts')],
+      [21, 32, 26, 28, 'Star charts and lenses', () => openObservatory()],
+      [0, 57, 14, 38, 'The lens cabinet', () => openObservatory()],
+    ] },
+};
+let ROOM = null; const doorSeen = new Set();
+function roomOf(k, id) { if (k === 'house' && me() && (id === me().id || id === 'me')) return 'home'; if (k === 'stage2' && id === 'bar') return 'bar'; if (k === 'library' || k === 'observatory') return k; return null; }
+function roomNote(t) { const n = $('#room .rnote'); if (!n) return; n.textContent = t; n.classList.add('on'); clearTimeout(roomNote.t); roomNote.t = setTimeout(() => n.classList.remove('on'), 5200); }
+function creak() { sfx._t(150, 95, 0.9, 0.03, 'sawtooth', 0.55); sfx._t(210, 120, 0.7, 0.02, 'sawtooth', 0.8); sfx._n(1.1, 'bandpass', 420, 7, 0.05, 0.55); sfx._n(0.09, 'highpass', 2600, 1, 0.09, 0.2); sfx._t(80, 50, 0.14, 0.12, 'sine', 0.22); sfx._n(1.4, 'lowpass', 500, 0.7, 0.03, 1.1); }
+/* the door: a short walk through the dark while the room loads, the whole thing the first time, a breath after that; a click skips it */
+function enterRoom(name) {
+  const R = ROOMS[name]; if (!R) return; if (ROOM === name) return; const full = !doorSeen.has(name); doorSeen.add(name);
+  const dt = REDUCED ? 0.3 : full ? 2.4 : 1.1, img = new Image(); img.src = R.img;
+  const D = document.createElement('div'); D.id = 'door'; D.style.setProperty('--dt', dt + 's');
+  D.innerHTML = `<div class="dwrap"><div class="dlight" style="background-image:url(${R.img})"></div><div class="dleaf ${R.door}"><i style="top:14%"></i><i style="top:47%"></i><i style="top:80%"></i><b></b></div><div class="dframe"></div></div>${full ? '<div class="dskip">CLICK TO SKIP</div>' : ''}`;
+  document.body.appendChild(D); if (!REDUCED) creak();
+  let done = false; const go = () => { if (done) return; done = true; showRoom(name); D.classList.add('out'); setTimeout(() => D.remove(), 520); };
+  const ready = new Promise(res => { if (img.complete) res(); else { img.onload = img.onerror = res; } });
+  Promise.all([ready, new Promise(r => setTimeout(r, dt * 1000))]).then(go); D.onclick = () => ready.then(go);
+}
+function showRoom(name) {
+  const R = ROOMS[name]; ROOM = name; closePanel(); let el = $('#room'); if (!el) { el = document.createElement('div'); el.id = 'room'; document.body.appendChild(el); }
+  el.innerHTML = `<div class="rimg" style="background-image:url(${R.img})"></div><div class="rfx">${R.fx.map(([x, y, r, k]) => `<span class="${k || ''}" style="left:${x - r}%;top:calc(${y}% - ${r}vw);width:${r * 2}%;aspect-ratio:1;animation-delay:-${(x * 37 % 20) / 10}s"></span>`).join('')}</div><div class="rvig"></div>
+    <div class="rhot">${R.hot.map(([x, y, w, h, t], i) => `<button style="left:${x}%;top:${y}%;width:${w}%;height:${h}%" data-h="${i}" aria-label="${esc(t)}"><span>${esc(t)}</span></button>`).join('')}</div>
+    <div class="rbar"><div><h2>${esc(R.title)}</h2><small>${esc(R.sub)}</small></div><button class="btn" data-rexit>Step outside</button></div><div class="rnote"></div>`;
+  document.body.classList.add('inroom'); document.body.classList.toggle('inbar', name === 'bar'); requestAnimationFrame(() => el.classList.add('on'));
+  el.querySelectorAll('[data-h]').forEach(b => b.onclick = () => { sfx.click(); R.hot[+b.dataset.h][5](); });
+  el.querySelector('[data-rexit]').onclick = () => { sfx.close?.(); leaveRoom(); };
+  // a slow look round the room as the mouse moves
+  el.onpointermove = e => { if (MOBILE) return; const dx = e.clientX / innerWidth - 0.5, dy = e.clientY / innerHeight - 0.5, t = `scale(1.04) translate(${-dx * 1.6}%, ${-dy * 1.1}%)`; el.querySelector('.rimg').style.transform = t; el.querySelector('.rhot').style.transform = t; };
+}
+function leaveRoom() { const el = $('#room'); if (!el || !ROOM) return; ROOM = null; closePanel(); el.classList.remove('on'); document.body.classList.remove('inroom', 'inbar'); setTimeout(() => { if (!ROOM) el.remove(); }, 520); }
+addEventListener('keydown', e => { if (e.key === 'Escape' && ROOM && !$('#panel').classList.contains('open')) leaveRoom(); });
+/* walking off takes you outside */
+function stepRoom() { if (ROOM && myC()?.path?.length) leaveRoom(); }
+/* who is drinking at The Last Coal tonight */
+function openBarPeople() { const B = W4W.BAR_CELL, here = Object.values(XV?.others || {}).filter(o => o.q === B[0] && o.r === B[1] && !o.path?.length).map(o => o.nick).filter(Boolean);
+  const mine = myC() && myC().q === B[0] && myC().r === B[1];
+  panel('bar', 'Who is here tonight', 'The Last Coal', null, here.length ? `<p class="say">${here.length === 1 ? 'One other at the tables tonight' : here.length + ' others at the tables tonight'}: ${here.map(esc).join(', ')}.</p><p class="mute">Everyone inside hears everything said in this room.</p>` : `<p class="say">The tables are empty${mine ? ' but for you' : ''}. Ivo polishes the same cup for the third time.</p><p class="mute">Whoever comes in will hear what you say here.</p>`); }
 /* ---------- the Stone of the Twelve: a lantern for each of the twelve who went north, lit as the town finds what they left ---------- */
 const STONE_LAMPS = [], STONE_LIT = {};
 const TWELVE_TXT = {
@@ -7439,7 +7543,7 @@ function loop(now = performance.now()) {
   spriteCache.forEach(o => { {
     if (o.userData.flicker) { if (o.userData.flare) { o.userData.flare = Math.max(0, o.userData.flare - dt * 0.6); } const f = o.userData.flare || 0; o.material.opacity = 0.8 + Math.sin(t * 13) * 0.08 + Math.sin(t * 7.3) * 0.1; o.scale.setScalar(1.1 + f * 1.2 + (S.town.fire || 0) * 0.08); }
     if (o.userData.blink) o.material.opacity = 0.35 + 0.65 * (Math.sin(t * 4) > 0 ? 1 : 0.2); } });
-  stepCamera(dt); stepAvatars(dt); stepSnowFx(dt); hud(); stepSound(); stepPlaces(dt); if (XV?.me) { stepFrames(dt); if (!ACT1) stepShards(predicted()?.c, dt); } if (XV) { stepRime(dt); if ((tick & 15) === 0) { stepNotes(); stepLogWatch(); stepLog(); stepStoneLamps(); } stepLocalGrid(predicted()?.c); }
+  stepCamera(dt); stepAvatars(dt); stepSnowFx(dt); hud(); stepSound(); stepPlaces(dt); if (XV?.me) { stepFrames(dt); if (!ACT1) stepShards(predicted()?.c, dt); } if (XV) { stepRime(dt); if ((tick & 15) === 0) { stepNotes(); stepLogWatch(); stepLog(); stepStoneLamps(); stepRoom(); } stepLocalGrid(predicted()?.c); }
   for (const k in walkers) { const w = walkers[k]; w.g.position.lerp(w.target, Math.min(1, dt * 1.5)); w.g.position.y = 0; w.light.position.set(w.g.position.x + 0.15, 0.45, w.g.position.z); }
   if (fly) { fly.t = Math.min(1, fly.t + dt * 0.9); const k = 1 - Math.pow(1 - fly.t, 3);
     const tgt = fly.from.clone().lerp(fly.to, k); const off = camera.position.clone().sub(controls.target).normalize().multiplyScalar(fly.d0 + (fly.d1 - fly.d0) * k);
@@ -7449,5 +7553,5 @@ function loop(now = performance.now()) {
 }
 requestAnimationFrame(loop);
 addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); DPR = Math.min(DPR, dprFor()); renderer.setPixelRatio(DPR); composer.setPixelRatio?.(DPR); renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight); fxaaSize(); });
-window.__w4w = { S, settle, X: () => ({ LIGHT_U, LIGHTS, scene, moon, renderer, composer, fxaaSize, camera, THREE, rimeFx, mouthFx, HD, PYL, houses, SPECIAL, HX, XV, avatars, predicted, xact, hexAt, warp: ms => XW.warp?.(ms), planTo, goTrip, NOTES, rimeFx, openLibrary, trip, prints: prints.length, rimeAt: (q, r) => XW._rime?.(q, r), stash: o => XW._stash?.(o), letter: o => XW._letter?.(o), hollowList: () => hollow, openPost, openHouse, flash: (show) => { flashT = 0; if (show) setTimeout(() => { if (flashFig) flashFig.position.y = 0; }, 30); }, flashFig: () => flashFig, flashDbg: () => ({ k: flashK, f: FOW_U.uFowFlash.value, back: flashBack?.material.opacity, vis: flashFig?.visible, on: FOW_U.uFowOn.value }), acts: h => { actEl.hidden = false; actEl.innerHTML = h; actSig = h; dressActs(); }, story: o => XW._story?.(o), openGate, openChronicle, openPylon, walkTo, UI, renderFrames, unfollow: () => { follow = false; fly = null; }, hollow, act1Mark: id => act1Mark(id), openBeast: id => openBeast(id), openLibraryRoom: () => openLibraryRoom(), openStone: () => openStone(), openGate: () => openGate() }), freePlots, openMaria, ask, addWood, refreshTown, draft: v => (draft = v), camera, controls, updateIce, renderer, scene, __composer: LITE ? null : composer };
+window.__w4w = { S, settle, X: () => ({ LIGHT_U, LIGHTS, scene, moon, renderer, composer, fxaaSize, camera, THREE, rimeFx, mouthFx, HD, PYL, houses, SPECIAL, HX, XV, avatars, predicted, xact, hexAt, warp: ms => XW.warp?.(ms), planTo, goTrip, NOTES, rimeFx, openLibrary, trip, prints: prints.length, rimeAt: (q, r) => XW._rime?.(q, r), stash: o => XW._stash?.(o), letter: o => XW._letter?.(o), hollowList: () => hollow, openPost, openHouse, flash: (show) => { flashT = 0; if (show) setTimeout(() => { if (flashFig) flashFig.position.y = 0; }, 30); }, flashFig: () => flashFig, flashDbg: () => ({ k: flashK, f: FOW_U.uFowFlash.value, back: flashBack?.material.opacity, vis: flashFig?.visible, on: FOW_U.uFowOn.value }), acts: h => { actEl.hidden = false; actEl.innerHTML = h; actSig = h; dressActs(); }, story: o => XW._story?.(o), openGate, openChronicle, openPylon, walkTo, UI, renderFrames, unfollow: () => { follow = false; fly = null; }, hollow, act1Mark: id => act1Mark(id), openBeast: id => openBeast(id), openLibraryRoom: () => openLibraryRoom(), openStone: () => openStone(), openGate: () => openGate(), enterRoom: n => enterRoom(n), leaveRoom: () => leaveRoom() }), freePlots, openMaria, ask, addWood, refreshTown, draft: v => (draft = v), camera, controls, updateIce, renderer, scene, __composer: LITE ? null : composer };
 </script>
