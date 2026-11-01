@@ -182,13 +182,13 @@ async function mailAct(ws: W.WState, d: W.Dirty, uid: string, op: string, b: Rec
       Object.assign(m, { where: 'delivered', holder: null, deliveredAt: ws.now })
       const r: Reply = { id: `r${ws.now.toString(36)}m`, t: ws.now, uid: m.from, nick: m.fromNick, text: m.text, to: `carried by ${m.trail.map(x => x.nick).join(', ')}` }
       await pipe([['LPUSH', KX.replies, JSON.stringify(r)], ['LTRIM', KX.replies, 0, 499]])
-      if (uid !== m.from) { c.renown = (c.renown ?? 0) + 2; d.chars.add(uid); await bumpRep(uid, 'd') }
+      if (uid !== m.from) { c.renown = (c.renown ?? 0) + 2; W.addGold(c, 2, ws.now); d.chars.add(uid); await bumpRep(uid, 'd') }
       await putMail(m); return done()
     }
     const h = ws.houses[m.to]; if (h?.q == null || h.r == null) return { ok: false, error: 'They have no house yet. Keep the letter until they do.' }
     if (!still || W.dist(here, [h.q, h.r]) > 1) return { ok: false, error: `Walk to ${m.toNick}'s door.` }
     Object.assign(m, { where: 'delivered', holder: null, deliveredAt: ws.now })
-    if (uid !== m.from) { c.renown = (c.renown ?? 0) + 2; d.chars.add(uid); await bumpRep(uid, 'd') }
+    if (uid !== m.from) { c.renown = (c.renown ?? 0) + 2; W.addGold(c, 2, ws.now); d.chars.add(uid); await bumpRep(uid, 'd') }
     d.feed.push({ id: `ml${m.id}`, t: ws.now, topic: 'mail', by: uid, data: { nick, to: m.toNick } })
     await putMail(m); return done()
   }

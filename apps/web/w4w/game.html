@@ -341,6 +341,13 @@ body.intro #dock,body.intro #feed,body.intro #online,body.intro #meter{visibilit
 .hinv{display:flex;gap:6px} .hinv span{flex:1;padding:3px 0;border:1px solid var(--line);border-radius:8px;text-align:center;font-size:13px;color:var(--cream);font-variant-numeric:tabular-nums}
 .hinv i{display:block;font-style:normal;font-size:9.5px;color:var(--mute)}
 .hwx{display:flex;flex-wrap:wrap;gap:4px} .hwx span{padding:2px 7px;border-radius:999px;background:rgba(255,255,255,.05);font-size:11px;color:var(--ink)}
+.ngold{display:flex;align-items:center;gap:7px;margin:6px 0 2px;font-family:var(--f-label);font-weight:600;font-size:12.5px;letter-spacing:.06em;color:#bffcff;cursor:help}
+.ngold b{font-size:15px;color:#e9ffff;letter-spacing:.02em}
+.coin{width:17px;height:17px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#b8ffff,#23ffff 45%,#12b9c4);box-shadow:0 0 8px rgba(35,255,255,.45),inset 0 -1px 2px rgba(0,0,0,.35);position:relative;flex:none}
+.coin::before,.coin::after{content:'';position:absolute;background:#0c131b;border-radius:1.5px;width:3.4px}
+.coin::before{left:5px;top:4.2px;height:7px} .coin::after{left:9.2px;top:4.2px;height:10px}
+.goldpop{position:fixed;z-index:60;pointer-events:none;font-family:var(--f-label);font-weight:700;color:#bffcff;text-shadow:0 0 10px rgba(35,255,255,.6);display:flex;gap:6px;align-items:center;animation:goldup 1.8s ease-out forwards}
+@keyframes goldup{0%{opacity:0;transform:translateY(8px)}15%{opacity:1}100%{opacity:0;transform:translateY(-34px)}}
 .hwx .wind{color:#cfe6ff} .hwx .blizzard,.hwx .bad{color:#ff9a8c;background:rgba(255,106,90,.1)} .hwx .good{color:var(--green)}
 #xact{position:fixed;z-index:4;left:50%;transform:translateX(-50%);bottom:max(104px,calc(env(safe-area-inset-bottom) + 92px));max-width:calc(100vw - 32px);display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--line);border-radius:14px;background:var(--panel);backdrop-filter:blur(6px)}
 #xact .xt{font-size:13px;color:var(--ink);padding:0 4px}
@@ -919,6 +926,7 @@ var W4W = (() => {
     FROSTBITE: () => FROSTBITE,
     GATE_CELL: () => GATE_CELL,
     GATHER_MS: () => GATHER_MS,
+    GOLD_DAY: () => GOLD_DAY,
     GUARD_MS: () => GUARD_MS,
     HEARTH_COST: () => HEARTH_COST,
     HEARTH_MAX_MS: () => HEARTH_MAX_MS,
@@ -970,6 +978,7 @@ var W4W = (() => {
     ZONES: () => ZONES,
     ZONE_STEP_MS: () => ZONE_STEP_MS,
     action: () => action,
+    addGold: () => addGold,
     advance: () => advance,
     bagSize: () => bagSize,
     beginStep: () => beginStep,
@@ -1212,6 +1221,15 @@ var W4W = (() => {
   const addRenown = (c, n) => {
     c.renown = (c.renown ?? 0) + n;
   };
+  const GOLD_DAY = 12;
+  function addGold(c, n, now) {
+    const day = dayOf(now);
+    if (!c.goldDay || c.goldDay.day !== day) c.goldDay = { day, n: 0 };
+    const k = Math.max(0, Math.min(n, GOLD_DAY - c.goldDay.n));
+    c.goldDay.n += k;
+    c.gold = (c.gold ?? 0) + k;
+    return k;
+  }
   const ORDER_POOL = [
     { id: "fire", text: "Wood for the plaza fire", need: { wood: 5 }, pts: 5 },
     { id: "roof", text: "Stone for the Library roof", need: { stone: 4 }, pts: 6 },
@@ -2036,6 +2054,7 @@ var W4W = (() => {
         c.warmth -= PYLON_COST;
         (c.tended ?? (c.tended = {}))[i] = now;
         addRenown(c, cur < 30 ? 4 : 2);
+        addGold(c, cur < 30 ? 2 : 1, now);
         if (hushNow(ws.story, now) > 0) addHush(ws, -1, d);
         d.feed.push({ id: `py${uid}${i}${now}`, t: now, topic: "pylon", by: uid, data: { nick: nickIn(ws, uid), i, s: Math.round(ws.pylons[i].s), was: Math.round(cur) } });
         return ok();
@@ -2124,6 +2143,19 @@ var W4W = (() => {
         d.feed.push({ id: `or${uid}${o.id}${now}`, t: now, topic: "order", by: uid, data: { nick: nickIn(ws, uid), text: o.text } });
         return ok();
       }
+      case "stoke": {
+        if (now - (c.stoked ?? 0) < 36e5) return ok();
+        c.stoked = now;
+        addGold(c, 1, now);
+        return ok();
+      }
+      case "lamp": {
+        const day = dayOf(now);
+        if (c.lampDay === day) return ok();
+        c.lampDay = day;
+        addGold(c, 2, now);
+        return ok();
+      }
       case "round": {
         if (c.path.length || dist(here, BAR_CELL) > 0) return fail("Go inside the bar first.");
         if (now - (c.rounds ?? 0) < ROUND_WAIT) return fail(`You stood a round not long ago. Again in ${Math.ceil((ROUND_WAIT - (now - (c.rounds ?? 0))) / 6e4)} min.`);
@@ -2135,7 +2167,10 @@ var W4W = (() => {
           o.warmth = Math.min(100, o.warmth + ROUND_GIFT);
           d.chars.add(k);
         }
-        if (inside.length) addRenown(c, 1);
+        if (inside.length) {
+          addRenown(c, 1);
+          addGold(c, 1, now);
+        }
         d.feed.push({ id: `rd${uid}${now}`, t: now, topic: "round", by: uid, data: { nick: nickIn(ws, uid), n: inside.length } });
         return ok();
       }
@@ -2325,7 +2360,7 @@ const DEMO_ORDERS = [
 ];
 const SPECIAL = { core: [0, 0], church: [1, -3], plaza: [-1, 3], observatory: [4, -2], library: [5, -5], mine: [-5, 0] };
 const MARIA_HOUSE = [0, -3];
-const STAGE2 = [{ id: 'market', name: 'Market and auction', at: [-5, 2] }, { id: 'bar', name: 'The Last Coal', at: [-4, 5], prop: 'bar', tag: 'OPEN', open: true }, { id: 'atrium', name: 'Atrium', at: [2, 3] }, { id: 'post', name: 'Post office', at: [-2, 5], prop: 'post', model: 'tavern', tag: 'OPEN', open: true }, { id: 'wardens', name: "Wardens' Hall", at: [-3, -4], model: 'blacksmith', tag: 'ACT II' }, { id: 'glasshouse', name: 'Glasshouse', at: [6, 0], tag: 'STAGE 3' }];
+const STAGE2 = [{ id: 'market', name: 'Market and auction', at: [-5, 2], prop: 'site' }, { id: 'bar', name: 'The Last Coal', at: [-4, 5], prop: 'bar', tag: 'OPEN', open: true }, { id: 'atrium', name: 'Atrium', at: [2, 3], prop: 'site' }, { id: 'post', name: 'Post office', at: [-2, 5], prop: 'post', model: 'tavern', tag: 'OPEN', open: true }, { id: 'wardens', name: "Wardens' Hall", at: [-3, -4], model: 'blacksmith', tag: 'ACT II' }, { id: 'glasshouse', name: 'Glasshouse', at: [6, 0], tag: 'STAGE 3', prop: 'glass' }];
 const LEVELS = [['OFFLINE', 0], ['LINK', 1], ['NODE', 500], ['CLUSTER', 1500], ['GRID', 3000], ['CORE', 6000]];
 const TIERS = [
   { id: 'power', name: 'Expensive & powerful', price: '$55–80 / day', pick: '4× RTX 4090', gpus: 4, sol: 2440, cost: '$62 / day' },
@@ -2497,7 +2532,7 @@ const interactive = [], labels = [];
 const KIT_SNOW = new Set(['home_A', 'home_B', 'church']); // painted bare: the town's snow goes on them
 const KIT_OVR = { church: 'q/b/church.glb', mine: 'q/b/mine.glb', home_A: 'q/b/home_a.glb', home_B: 'q/b/home_b.glb', tower: 'q/b/observatory.glb', barracks: 'q/b/library.glb', well: 'q/b/well.glb', destroyed: 'q/b/ruin.glb' };
 // props with no kit piece to stand in for: loaded once, stood on the ground, one unit tall, scaled where they are used
-const PROPS = {}, PROP_URLS = { gate: 'q/b/gate.glb', campfire: 'q/b/campfire.glb', heater: 'q/b/heater.glb', boiler: 'q/b/boiler.glb', pit: 'q/b/pit.glb', marker: 'q/b/marker.glb', brazier: 'q/b/brazier.glb', bar: 'q/b/bar.glb', post: 'q/b/post.glb', lamp: 'q/b/lamp.glb', wagon: 'q/b/wagon.glb', barrel: 'q/b/barrel.glb', board: 'q/b/board.glb', sled: 'q/b/sled.glb', cart: 'q/b/cart.glb', woodpile: 'q/b/woodpile.glb', barrels: 'q/b/barrels.glb' };
+const PROPS = {}, PROP_URLS = { gate: 'q/b/gate.glb', campfire: 'q/b/campfire.glb', heater: 'q/b/heater.glb', boiler: 'q/b/boiler.glb', pit: 'q/b/pit.glb', marker: 'q/b/marker.glb', brazier: 'q/b/brazier.glb', bar: 'q/b/bar.glb', post: 'q/b/post.glb', lamp: 'q/b/lamp.glb', wagon: 'q/b/wagon.glb', glass: 'q/b/glass.glb', site: 'q/b/site.glb', barrel: 'q/b/barrel.glb', board: 'q/b/board.glb', sled: 'q/b/sled.glb', cart: 'q/b/cart.glb', woodpile: 'q/b/woodpile.glb', barrels: 'q/b/barrels.glb' };
 // props cast no shadow: under our low moon a lamp post or a stake throws a black spike across half the street
 function prop(n, h, noFow = true) { const P = PROPS[n]; if (!P) return null; const o = P.clone(true); o.scale.setScalar(h); o.traverse(m => { if (m.isMesh) { m.castShadow = false; if (noFow) m.material.userData.noFow = true; } }); return o; }
 let PYLON_MODEL = null;
@@ -3019,7 +3054,7 @@ async function addWood() {
   const wait = 3600e3 - (Date.now() - (cur.lastWood || 0));
   act1Mark('fire'); dailyMark('fire');
   if (wait > 0) { say(`You fed the fire not long ago. It can take your wood again in ${Math.ceil(wait / 60000)} min. Someone else can add theirs now.`); return; }
-  await saveMe({ wood: (cur.wood || 0) + 1, lastWood: Date.now() }); fireFlare(); pulse(0.6); sfx.wood();
+  await saveMe({ wood: (cur.wood || 0) + 1, lastWood: Date.now() }); fireFlare(); pulse(0.6); sfx.wood(); if (hasChar()) xact('stoke', {}).catch?.(() => {});
   room?.emit('wood', { nick: cur.nick }).catch(() => {});
   say('The fire flared. Everyone in town feels it for an hour.', 'Plaza');
 }
@@ -3208,7 +3243,7 @@ const FAQ = [
 ];
 // questions about the world past the Gate wait for Act II
 const FAQ_ACT2 = new Set(['How do trips work?', 'Why did my character stop in the middle of nowhere?', 'What is the tall dark thing out there?', 'How do I gather?', 'How does the bag work?', 'How do I craft?', 'What is the thermos for?', 'What can I do out there?', 'I froze. What now?', 'Can I get my pack back?']);
-const FAQ_DO = [['Sit in the bar', 'The Last Coal, west of the post office. Inside, everyone hears everyone, however few of you there are. Stand the room a round with your own warmth, or raise a glass to someone who is away. Ivo has a new rumour every day.'], ['Light your lamp', 'Start your rig in the Mine. It keeps the Veil up, thaws Anna, and earns you your share from the pool. Everything else here is optional.'], ['Feed the plaza fire', 'Once an hour you can put wood on it. For an hour the whole town is a little warmer.'], ['Give warmth to a pylon', 'Six pylons hold the edge of the Veil. Stand next to one and give it some of your warmth, above all the one the Hollow is pressing.'], ['Pick a side', 'The Keepers hold the wall, the Walkers prepare for the Gate. Each side has three small tasks a day; a full day keeps your streak.'], ['Read the Long Cold', 'Pages of the story open as you live in town: visiting places, watching, waiting. The Journal keeps them, and so does the Library.'], ['Watch the things outside', 'Stand at the edge of the Veil or climb the Observatory. Every few sightings a new page opens in the Bestiary.'], ['Talk', 'Stand close to someone and type under the Log. Only people within three steps hear you.'], ['Send letters', 'Write one at the post office. Leave it in the sack or carry it yourself. Carry other people\'s letters to their doors for renown. You can break a seal or burn a letter at a fire. People will know, or wonder.'], ['Go to the North Gate', 'Sometimes a letter lies under it for about an hour. You can also slip a note out. Maria says: read them, keep them, do nothing they ask.'], ['Welcome a neighbour', 'Open someone\'s house and light a lamp on their path. It warms the town.'], ['Let your house grow', 'While your rig runs, your house grows: smoke, a lantern, a flag, a lit window. You can see what comes next in your house.'], ['Ask Maria', 'She knows the town, the story so far and how to get started. She will not tell you everything.']];
+const FAQ_DO = [['Earn New Gold', 'The town pays a little for help: a lit lamp each day, wood on the plaza fire, warmth given to a pylon, a letter carried to the right door, a round stood in the bar. Twelve coins a day at most, so it takes saving. It opens the auction in Stage 2. It cannot be bought, sold or withdrawn, and your mining power does not change it.'], ['Sit in the bar', 'The Last Coal, west of the post office. Inside, everyone hears everyone, however few of you there are. Stand the room a round with your own warmth, or raise a glass to someone who is away. Ivo has a new rumour every day.'], ['Light your lamp', 'Start your rig in the Mine. It keeps the Veil up, thaws Anna, and earns you your share from the pool. Everything else here is optional.'], ['Feed the plaza fire', 'Once an hour you can put wood on it. For an hour the whole town is a little warmer.'], ['Give warmth to a pylon', 'Six pylons hold the edge of the Veil. Stand next to one and give it some of your warmth, above all the one the Hollow is pressing.'], ['Pick a side', 'The Keepers hold the wall, the Walkers prepare for the Gate. Each side has three small tasks a day; a full day keeps your streak.'], ['Read the Long Cold', 'Pages of the story open as you live in town: visiting places, watching, waiting. The Journal keeps them, and so does the Library.'], ['Watch the things outside', 'Stand at the edge of the Veil or climb the Observatory. Every few sightings a new page opens in the Bestiary.'], ['Talk', 'Stand close to someone and type under the Log. Only people within three steps hear you.'], ['Send letters', 'Write one at the post office. Leave it in the sack or carry it yourself. Carry other people\'s letters to their doors for renown. You can break a seal or burn a letter at a fire. People will know, or wonder.'], ['Go to the North Gate', 'Sometimes a letter lies under it for about an hour. You can also slip a note out. Maria says: read them, keep them, do nothing they ask.'], ['Welcome a neighbour', 'Open someone\'s house and light a lamp on their path. It warms the town.'], ['Let your house grow', 'While your rig runs, your house grows: smoke, a lantern, a flag, a lit window. You can see what comes next in your house.'], ['Ask Maria', 'She knows the town, the story so far and how to get started. She will not tell you everything.']];
 const FAQ_ACT1 = [
   ['How do I talk to people?', 'Stand close. Anyone within three steps of you hears what you say, and nobody further away does. Type in the box under the Log and press Enter. The plaza fire is where people gather.'],
   ['How does the post work?', 'Write a letter at the post office, south of the plaza, to anyone in town. Seal it and leave it in the sack, or carry it yourself. Nothing delivers itself: someone has to take it and walk it to the reader\'s door, and the town thanks the carrier with renown. Whoever carries a letter can break the seal and read it. The seal stays broken, and the reader sees every hand the letter passed through.'],
@@ -4537,6 +4572,13 @@ const diedEl = document.createElement('div'); diedEl.id = 'died'; diedEl.hidden 
 let hudT = 0, actSig = '', etaT = 0, eta = 0, printSig = ''; const seenEv = new Set();
 function drawPrintsOnce(c) { const sig = c.q + ',' + c.r + ':' + c.path.length; if (sig === printSig) return; printSig = sig; drawPrints([c.q, c.r], c.path, W4W.zoneOf(...c.path.at(-1)) >= 1); }
 const bar = (n, v, max, cls) => `<div class="hb ${cls}"><i>${n}</i><b style="width:${Math.max(0, Math.min(100, v / max * 100))}%"></b><span>${Math.round(v)}</span></div>`;
+/* a coin earned: it rises from the purse in the corner, with a small bright sound */
+let goldSeen = null;
+let lampAsked = -1;
+function stepGold() { const g = XV?.me?.gold ?? null; if (g == null) return;
+  { const day = Math.floor(xnow() / 864e5); if (me()?.state === 'mining' && XV.me.lampDay !== day && lampAsked !== day && !xBusy) { lampAsked = day; xact('lamp', {}); } } /* your lamp lit today: the town counts it once */ if (goldSeen != null && g > goldSeen) { const n = g - goldSeen, el = document.createElement('div'); el.className = 'goldpop'; el.innerHTML = `<span class="coin"></span>+${n} New Gold`;
+  const r = hudEl.querySelector('.ngold')?.getBoundingClientRect(); el.style.left = (r ? r.left + 90 : 40) + 'px'; el.style.top = (r ? r.top : 200) + 'px'; document.body.appendChild(el); setTimeout(() => el.remove(), 1900); sfx.reward?.(1); log(`+${n} New Gold. ${(XV.me.goldDay?.n || 0) >= W4W.GOLD_DAY ? 'That is all the town gives in a day.' : ''}`, 'you'); }
+  goldSeen = g; }
 function hud(force) {
   const now = performance.now(); if (!force && now - hudT < 250) return; hudT = now;
   if (!XV?.me) { hudEl.hidden = true; actEl.hidden = true; frostEl.style.opacity = 0; return; }
@@ -4544,10 +4586,11 @@ function hud(force) {
   const here = W4W.cellAt(c, t), zone = W4W.zoneOf(...here), ctx = xctx();
   const ins = W4W.insulationOf(c), cold = W4W.coldAt(...here, t, ctx), wx = W4W.weatherAt(t), deficit = Math.max(0, cold - ins);
   const kg = W4W.loadOf(c), frozen = c.frozenUntil > t, indoors = !c.path.length && !!SHEL[W4W.key(...here)];
-  hudEl.hidden = false;
+  hudEl.hidden = false; stepGold();
   hudEl.innerHTML = `<div class="hz"><b>${esc(W4W.ZONES[zone]?.name || 'The far cold')}</b><span>${frozen ? 'frozen' : indoors ? 'indoors · the walls keep you' : cold === 0 ? 'inside the warm circle' : `cold ${Math.round(cold)} · clothing ${ins}${deficit ? ` · −${(deficit * W4W.LOSS_K).toFixed(1)}/min` : ''}`}</span></div>
     ${bar('Warmth', c.warmth, 100, 'w')}${bar('Health', c.health, 100, 'h')}${bar('Energy', c.energy, 100, 'e')}${ACT1 ? '' : bar('Bag', kg, W4W.bagSize(c), kg >= W4W.bagSize(c) ? 'l over' : 'l')}
     ${ACT1 ? '' : `<div class="hinv">${['wood', 'stone', 'fiber', 'resin', 'flint'].map(k => `<span><i>${k === 'fiber' ? 'grass' : k}</i>${c.inv[k] || 0}</span>`).join('')}</div>`}
+    <div class="ngold" title="New Gold: earned slowly for helping the town. Saved for the auction in Stage 2. It has no link to real money."><span class="coin"></span><b>${c.gold || 0}</b> NEW GOLD</div>
     <div class="hwx"><span class="${wx.id}">${wx.name} ×${wx.mult}</span>${XV.grey ? '<span>grey light −5</span>' : ''}${XV.bell ? '<span class="bad">night of the bell +10</span>' : ''}<span class="${XV.town.holds ? 'good' : 'bad'}">${XV.town.holds ? 'town holds' : 'frost wins'}</span></div>
     ${ACT1 ? '' : '<div class="hbtns"><button class="hpack" data-pack>Bag and gear <kbd>I</kbd></button><button class="hpack" data-craftk>Workbench <kbd>K</kbd></button></div>'}`;
   if (!ACT1) { hudEl.querySelector('[data-pack]').onclick = openPack; hudEl.querySelector('[data-craftk]').onclick = () => { UI.craft = !UI.craft; UI.craft ? sfx.open() : sfx.close(); renderFrames(); }; }
@@ -6692,25 +6735,36 @@ function buildStreets() {
         const pool = glowDecal(lx, lz, 1.5, 0xffc27a, 0.32); if (pool) STREET_OBJS.push(pool); } }
     const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); geo.setIndex(idx); geo.computeVertexNormals();
     const m = new THREE.Mesh(geo, mat); m.receiveShadow = true; m.renderOrder = 1; scene.add(m); STREET_OBJS.push(m);
-    // things people leave by a lane: a cart, a sled of wood, a stack of barrels, now and then
-    for (let i = 3; i < N - 2; i += 7 + (i % 3)) { const u = i / N, p = curve.getPoint(u), t = curve.getTangent(u), n = new THREE.Vector3(-t.z, 0, t.x).normalize(), side = (i % 2 ? 1 : -1);
-      const pos = p.clone().add(n.multiplyScalar(side * 1.35)); if (Math.hypot(pos.x, pos.z) < 4.2 || nearHome(pos, homes)) continue;
-      lifeProp(['cart', 'sled', 'barrels', 'woodpile'][(i + lampN) % 4], pos, Math.atan2(t.x, t.z) + (side > 0 ? 0 : Math.PI)); }
   }
-  buildLife(homes);
+  buildDecor();
 }
 /* signs of life: wood stacked by every door, a sled or a cart left in the snow, barrels by the busy places */
-const LIFE_H = { cart: 0.5, sled: 0.36, barrels: 0.55, woodpile: 0.6, wagon: 0.75, barrel: 0.32 };
-function lifeProp(n, pos, rot) { const o = prop(n, LIFE_H[n] || 0.5, false); if (!o) return null; o.position.set(pos.x, 0, pos.z); o.rotation.y = rot; scene.add(o); STREET_OBJS.push(o); return o; }
+const LIFE_H = { cart: 0.42, sled: 0.3, barrels: 0.42, woodpile: 0.48, wagon: 0.58, barrel: 0.3 };
+function lifeProp(n, pos, rot) { const o = prop(n, LIFE_H[n] || 0.5, false); if (!o) return null; o.position.set(pos.x, 0, pos.z); o.rotation.y = rot; scene.add(o); return o; }
 function nearHome(pos, homes) { for (const k of homes) { const [q, r] = k.split(',').map(Number), c = HX(q, r); if (Math.hypot(c.x - pos.x, c.z - pos.z) < 1.15) return true; } return false; }
-function buildLife(homes) {
-  const R = seeded(2024), at = (cell, ang, dist) => { const c = HX(...cell); return new THREE.Vector3(c.x + Math.cos(ang) * dist, 0, c.z + Math.sin(ang) * dist); };
-  // by every house: firewood against the side wall, sometimes a sled
-  for (const h of [...DEMO.filter(d => d.state !== 'ruin'), ...allResidents().filter(h => h.at?.[0] != null)]) { const c = HX(...h.at), out = Math.atan2(c.z, c.x), side = out + Math.PI / 2 * (R() < 0.5 ? 1 : -1);
-    lifeProp('woodpile', at(h.at, side, 1.05), side + Math.PI / 2); if (R() < 0.45) lifeProp(R() < 0.5 ? 'sled' : 'barrels', at(h.at, out + (R() - 0.5) * 0.8, 1.15), R() * 6); }
-  // the mine: coal carts and barrels; the plaza: wood brought in for the fire; the church: its own woodpile; the gate: the watch's barrels
-  [[SPECIAL.mine, 'cart', 0.4], [SPECIAL.mine, 'cart', 2.2], [SPECIAL.mine, 'barrels', 4.0], [SPECIAL.plaza, 'sled', 3.6], [SPECIAL.plaza, 'barrels', 5.2], [SPECIAL.church, 'woodpile', 1.0], [SPECIAL.library, 'cart', 5.5], [GATE_CELL, 'barrels', 0.9], [GATE_CELL, 'sled', 2.4]]
-    .forEach(([cell, n, a]) => lifeProp(n, at(cell, a, 1.3), a + 1.2));
+/* the town's clutter lives only on the corners where three cells meet: nobody's path ever crosses a corner,
+ * so nothing stands in the way and nothing gets walked through. Spread evenly, never the same thing twice side by side */
+let decorDone = false;
+function buildDecor() {
+  if (decorDone || !PROPS.woodpile) return; decorDone = true;
+  const big = new Set([...Object.values(SPECIAL), ...STAGE2.map(x => x.at), GATE_CELL, ...Array.from({ length: W4W.PYLON_N }, (_, i) => W4W.pylonCell(i))].map(c => key(...c)));
+  const homes = new Set([...DEMO.map(n => key(...n.at)), ...allResidents().filter(h => h.at?.[0] != null).map(h => key(...h.at))]);
+  const R = seeded(77), seen = new Map(), placed = [], KINDS = ['pines', 'woodpile', 'pines', 'barrel', 'wagon', 'pines', 'cart', 'sled', 'barrels', 'pines'];
+  for (let n = 2; n <= W4W.TOWN_RING; n++) for (const [q, r] of ring(n)) for (let k = 0; k < 6; k++) {
+    const c = HX(q, r), a = Math.PI / 6 + k * Math.PI / 3, v = new THREE.Vector3(c.x + Math.cos(a) * 1.155, 0, c.z + Math.sin(a) * 1.155), id = v.x.toFixed(1) + ',' + v.z.toFixed(1);
+    if (seen.has(id)) continue; seen.set(id, 1); if (Math.hypot(v.x, v.z) > DOME_R - 1.6 || Math.hypot(v.x, v.z) < 4.4) continue;
+    // the three cells that meet here: none of them may be a big building; a house is fine, the corner is outside its walls
+    const cells = [[q, r], ...W4W.DIRS.map(([dq, dr]) => [q + dq, r + dr])].filter(cc => HX(...cc).distanceTo(v) < 1.3);
+    if (cells.some(cc => big.has(key(...cc)))) continue;
+    const nearHouse = cells.some(cc => homes.has(key(...cc)));
+    if (R() > (nearHouse ? 0.3 : 0.2)) continue;
+    let kind = nearHouse ? (R() < 0.6 ? 'woodpile' : 'barrel') : KINDS[Math.floor(R() * KINDS.length)];
+    if (placed.some(p => p.kind === kind && p.v.distanceTo(v) < 4.2)) kind = kind === 'pines' ? 'barrel' : 'pines';
+    if (placed.some(p => p.kind === kind && p.v.distanceTo(v) < 3)) continue;
+    placed.push({ kind, v });
+    if (kind === 'pines') { for (let i = 0; i < 2 + Math.floor(R() * 2); i++) { const t = kit.tree_A?.clone(true); if (!t) break; t.position.set(v.x + (R() - 0.5) * 0.45, 0, v.z + (R() - 0.5) * 0.45); t.scale.setScalar(0.3 + R() * 0.18); t.rotation.y = R() * 6; scene.add(t); } }
+    else lifeProp(kind, v, R() * 6);
+  }
 }
 
 /* ---------- free plots: stakes in the snow where a newcomer can build ---------- */
@@ -6725,14 +6779,7 @@ function stepPlotStakes() {
   for (const [q, r] of free) { const c = HX(q, r); m4.makeScale(0.82, 1, 0.82).setPosition(c.x, 0.03, c.z); inst.setMatrixAt(k++, m4); }
   inst.renderOrder = 2;
   inst.count = k; scene.add(inst); plotStakes = inst;
-  // an empty plot is never quite empty: somebody parked a wagon there, stacked barrels, left a few young pines. It all goes when a house comes
   PLOT_DECO.splice(0).forEach(o => scene.remove(o));
-  for (const [q, r] of free) { const h = ((q * 73856093) ^ (r * 19349663)) >>> 0, R = seeded(h), c = HX(q, r); if (R() < 0.35 || Math.hypot(c.x, c.z) < 5) continue;
-    const pick = Math.floor(R() * 7), at = (dx, dz) => new THREE.Vector3(c.x + dx, 0, c.z + dz), add = o => { if (o) { scene.add(o); PLOT_DECO.push(o); } };
-    if (pick === 0 || pick === 1) for (let i = 0; i < 2 + Math.floor(R() * 3); i++) { const t = kit.tree_A?.clone(true); if (t) { t.position.copy(at((R() - 0.5) * 1.4, (R() - 0.5) * 1.4)); t.scale.setScalar(0.35 + R() * 0.25); t.rotation.y = R() * 6; add(t); } }
-    else { const n = ['wagon', 'barrel', 'woodpile', 'sled', 'barrels'][pick - 2], o = prop(n, LIFE_H[n] || 0.5, false); if (o) { o.position.copy(at((R() - 0.5) * 0.8, (R() - 0.5) * 0.8)); o.rotation.y = R() * 6; add(o);
-      if (n === 'barrel') for (let i = 0; i < 2; i++) { const b2 = prop('barrel', 0.3, false); if (b2) { b2.position.copy(o.position).add(new THREE.Vector3((R() - 0.5) * 0.7, 0, (R() - 0.5) * 0.7)); add(b2); } } } }
-  }
 }
 const PLOT_DECO = [];
 /* ---------- townsfolk: a few people going about their errands, so the town is never quite deserted ---------- */

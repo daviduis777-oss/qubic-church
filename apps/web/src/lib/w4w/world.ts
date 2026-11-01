@@ -36,6 +36,10 @@ export type Char = {
   drained?: number // when you last took warmth back from a pylon (phase 1+)
   barred?: number // when you last lifted the bar of the North Gate (phase 2+)
   valved?: number // when you last put your hands on the Iron Rose (phase 3)
+  gold?: number // New Gold: earned a little at a time for useful things, spent at the auction (Stage 2). Never bought, never sold for money
+  goldDay?: { day: number; n: number } // how much was earned today: the day has a ceiling
+  stoked?: number // when you last fed the plaza fire (for the gold)
+  lampDay?: number // the last day your lamp was counted lit
   rounds?: number // when you last stood the whole bar a round
   toasts?: { nick: string; t: number }[] // glasses raised to you at the bar while you were away
   toasted?: Record<string, number> // whom you last raised a glass to, and when
@@ -198,6 +202,13 @@ export const DEEDS: Record<string, { pts: number; text: string }> = {
 }
 function award(c: Char, id: string, pts?: number) { c.deeds ??= {}; if (c.deeds[id]) return 0; const p = pts ?? DEEDS[id]?.pts ?? 1; c.deeds[id] = 1; c.renown = (c.renown ?? 0) + p; return p }
 const addRenown = (c: Char, n: number) => { c.renown = (c.renown ?? 0) + n }
+/* New Gold: a few coins for things that help the town. Slow on purpose: a day caps at GOLD_DAY, so it has to be saved up.
+ * No link to real money: it cannot be bought, sold or withdrawn, and mining power does not change how much you earn. */
+export const GOLD_DAY = 12
+export function addGold(c: Char, n: number, now: number): number {
+  const day = dayOf(now); if (!c.goldDay || c.goldDay.day !== day) c.goldDay = { day, n: 0 }
+  const k = Math.max(0, Math.min(n, GOLD_DAY - c.goldDay.n)); c.goldDay.n += k; c.gold = (c.gold ?? 0) + k; return k
+}
 /** What the town asks for today: three of these, the same for everyone, new every day at midnight UTC. Fill them at the plaza board. */
 export const ORDER_POOL: { id: string; text: string; need: Inv; pts: number }[] = [
   { id: 'fire', text: 'Wood for the plaza fire', need: { wood: 5 }, pts: 5 },
@@ -922,7 +933,7 @@ export function action(ws: WState, uid: string, op: string, b: Record<string, un
       if (c.warmth < PYLON_COST + 8) return fail('You are too cold to give any warmth. Get indoors first.')
       ws.pylons ??= {}; const V = veilOf(townOfState(ws).power), cur = pylonNow(ws.pylons[i], i, now, V)
       ws.pylons[i] = { s: Math.min(100, cur + PYLON_GIVE), t: now, by: uid, nick: nickIn(ws, uid), at: now }; (d.pylons ??= new Set()).add(String(i))
-      c.warmth -= PYLON_COST; (c.tended ??= {})[i] = now; addRenown(c, cur < 30 ? 4 : 2)
+      c.warmth -= PYLON_COST; (c.tended ??= {})[i] = now; addRenown(c, cur < 30 ? 4 : 2); addGold(c, cur < 30 ? 2 : 1, now)
       if (hushNow(ws.story, now) > 0) addHush(ws, -1, d)
       d.feed.push({ id: `py${uid}${i}${now}`, t: now, topic: 'pylon', by: uid, data: { nick: nickIn(ws, uid), i, s: Math.round(ws.pylons[i]!.s), was: Math.round(cur) } })
       return ok()
@@ -992,6 +1003,16 @@ export function action(ws: WState, uid: string, op: string, b: Record<string, un
       d.feed.push({ id: `or${uid}${o.id}${now}`, t: now, topic: 'order', by: uid, data: { nick: nickIn(ws, uid), text: o.text } })
       return ok()
     }
+    case 'stoke': {
+      // the plaza fire took your wood (the site keeps the fire itself; this is the town's thanks, once an hour)
+      if (now - (c.stoked ?? 0) < 3600_000) return ok()
+      c.stoked = now; addGold(c, 1, now); return ok()
+    }
+    case 'lamp': {
+      // your lamp is lit in the Veil today: the town counts it once a day
+      const day = dayOf(now); if (c.lampDay === day) return ok()
+      c.lampDay = day; addGold(c, 2, now); return ok()
+    }
     case 'round': {
       // stand the whole room a drink: your warmth goes into everyone else's cup
       if (c.path.length || dist(here, BAR_CELL) > 0) return fail('Go inside the bar first.')
@@ -1000,7 +1021,7 @@ export function action(ws: WState, uid: string, op: string, b: Record<string, un
       const inside = Object.entries(ws.chars).filter(([k, o]) => k !== uid && !o.path.length && o.q === BAR_CELL[0] && o.r === BAR_CELL[1] && !(o.frozenUntil > now))
       c.warmth -= ROUND_COST; c.rounds = now
       for (const [k, o] of inside) { o.warmth = Math.min(100, o.warmth + ROUND_GIFT); d.chars.add(k) }
-      if (inside.length) addRenown(c, 1)
+      if (inside.length) { addRenown(c, 1); addGold(c, 1, now) }
       d.feed.push({ id: `rd${uid}${now}`, t: now, topic: 'round', by: uid, data: { nick: nickIn(ws, uid), n: inside.length } })
       return ok()
     }
