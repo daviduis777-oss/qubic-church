@@ -7199,16 +7199,22 @@ function buildHill() {
   if (HILL_OBJ) return;
   // the height, sampled once: the slope, cut back wherever a lane runs past its foot
   const N = 97, R = HILL.R, st = 2 * R / (N - 1), G = new Float32Array(N * N), pts = streetPts();
+  // and it keeps clear of the houses at its foot: the church and the library stand on level snow, never in the slope
+  const walls = [], bx = new THREE.Box3();
+  scene.updateMatrixWorld(true); for (const m of scene.children) { if (m === HILL_OBJ || m.isLight || m.isSprite) continue; bx.setFromObject(m); if (bx.isEmpty()) continue;
+    const w = Math.max(bx.max.x - bx.min.x, bx.max.z - bx.min.z); if (bx.max.y - bx.min.y < 0.8 || w < 0.8 || w > 7) continue;
+    if (Math.hypot((bx.min.x + bx.max.x) / 2 - HILL.x, (bx.min.z + bx.max.z) / 2 - HILL.z) > R + 2.5) continue; walls.push([bx.min.x, bx.max.x, bx.min.z, bx.max.z]); }
   for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) { const x = HILL.x - R + i * st, z = HILL.z - R + j * st; let h = hillRaw(x, z);
     if (h > 0 && pts.length) { let bd = 1e9; for (const p of pts) { const d = (p.x - x) ** 2 + (p.z - z) ** 2; if (d < bd) bd = d; } h *= THREE.MathUtils.smoothstep(Math.sqrt(bd), 0.85, 1.55); }
+    if (h > 0) for (const [x0, x1, z0, z1] of walls) { const d = Math.hypot(Math.max(x0 - x, 0, x - x1), Math.max(z0 - z, 0, z - z1)); if (d < 1.1) h *= THREE.MathUtils.smoothstep(d, 0.2, 1.1); }
     G[j * N + i] = h; }
   HILL.grid = G; HILL.n = N; HILL.step = st;
   // the steps are cut into the town side: level treads, and the snow banked up either side so the cut shows, not the blocks
-  const S0 = 2.3, SD = 0.25, SN = 10, tread = []; for (let k = 1; k <= SN; k++) tread.push(groundH(HILL.x, HILL.z + S0 + SD * (k - 1)));
+  const S0 = 2.3, SD = 0.25, SN = 10, STX = HILL.x + 0.7, tread = []; for (let k = 1; k <= SN; k++) tread.push(groundH(STX, HILL.z + S0 + SD * (k - 1))); // a little east, clear of the church
   const G2 = G.slice();
-  for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) { const x = HILL.x - R + i * st, z = HILL.z - R + j * st, sx = Math.abs(x - HILL.x), sz = z - HILL.z;
+  for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) { const x = HILL.x - R + i * st, z = HILL.z - R + j * st, sx = Math.abs(x - STX), sz = z - HILL.z;
     if (sx > 1.15 || sz <= S0 || sz > S0 + SD * SN) continue;
-    const k = Math.min(SN, Math.ceil((sz - S0) / SD)), T = tread[k - 1], bank = Math.max(T, groundH(HILL.x, z - 0.3)) + 0.05, o = G[j * N + i];
+    const k = Math.min(SN, Math.ceil((sz - S0) / SD)), T = tread[k - 1], bank = Math.max(T, groundH(STX, z - 0.3)) + 0.05, o = G[j * N + i];
     G2[j * N + i] = sx < 0.5 ? T : sx < 0.62 ? bank : THREE.MathUtils.lerp(bank, o, THREE.MathUtils.smoothstep(sx, 0.62, 1.15)); }
   HILL.grid = G2;
   const g = new THREE.Group(); HILL_OBJ = g; scene.add(g);
@@ -7228,7 +7234,7 @@ function buildHill() {
     for (let k = 0; k < 6; k++) { const v = cornerAt(C[0] + dq, C[1] + dr, 30 + k * 60), id = cornerId(v); if (seen.has(id)) continue; seen.add(id);
       const d = Math.hypot(v.x - HILL.x, v.z - HILL.z), back = v.z < HILL.z - 0.4, roll = rr();
       if (d < 1 || (d > 1.3 && d < 2.6) || d > 4.8 || USED_CORNERS.has(id)) continue;
-      if (Math.abs(v.x - HILL.x) < 1.2 && v.z > HILL.z) continue; // the steps
+      if (Math.abs(v.x - STX) < 1.3 && v.z > HILL.z) continue; // the steps
       if (d < 1.3 && !(back && Math.abs(v.x - HILL.x) < 0.1)) continue; // on the crown only the one crag, right behind the Stone
       if (streetDist(v).d < 1.4) continue;
       const big = d < 1.3 ? [0.34, 1.45] : back ? (d > 3.5 ? [0.36, 1.0 + roll * 0.8] : [0.34, 0.6 + roll * 0.6]) : [0.3, 0.22 + roll * 0.28];
@@ -7237,9 +7243,9 @@ function buildHill() {
   // the steps cut up the town side, snow on every tread
   const stepM = snowify(new THREE.MeshStandardMaterial({ map: themeTex('tex_rock'), color: 0x9c9aa0, roughness: 0.95 }));
   tread.forEach((T, k) => { const top = T + 0.035, z = HILL.z + S0 + SD * k;
-    const b = new THREE.Mesh(new THREE.BoxGeometry(1.0, top + 0.25, SD + 0.02), stepM); b.position.set(HILL.x, (top - 0.25) / 2, z + SD / 2); b.castShadow = b.receiveShadow = true; g.add(b); });
+    const b = new THREE.Mesh(new THREE.BoxGeometry(1.0, top + 0.25, SD + 0.02), stepM); b.position.set(STX, (top - 0.25) / 2, z + SD / 2); b.castShadow = b.receiveShadow = true; g.add(b); });
   // two lamps at the foot of the steps
-  if (KIT_P.lamppost) for (const sx of [-1, 1]) { const x = HILL.x + sx * 0.95, z = HILL.z + S0 + SD * SN - 0.05; kitAt('lamppost', x, z, faceTo(new THREE.Vector3(x, 0, z), new THREE.Vector3(HILL.x, 0, z))); }
+  if (KIT_P.lamppost) for (const sx of [-1, 1]) { const x = STX + sx * 0.95, z = HILL.z + S0 + SD * SN - 0.05; kitAt('lamppost', x, z, faceTo(new THREE.Vector3(x, 0, z), new THREE.Vector3(STX, 0, z))); }
 }
 const STREET_OBJS = [], STREET_PATHS = []; let streetSig = null;
 function buildStreets() {
@@ -7281,7 +7287,7 @@ function buildStreets() {
   STREET_PTS = null; buildHill(); const taken = new Set(); LAMP_CORNERS.forEach(k => USED_CORNERS.delete(k)); LAMP_CORNERS.clear();
   for (const L of lampCand) { const [q, r] = hexAt(L.x, L.z), rad = L.bench ? 0.32 : 0.12; let best = null, bd = 1e9;
     for (const [dq, dr] of [[0, 0], ...W4W.DIRS]) for (let k = 0; k < 6; k++) { const v = cornerAt(q + dq, r + dr, 30 + k * 60), id = cornerId(v); if (taken.has(id) || USED_CORNERS.has(id) || YARD_CORNERS.has(id)) continue;
-      const sd = streetDist(v); if (sd.d < 0.82 + rad || sd.d > 1.6) continue; const dd = (v.x - L.x) ** 2 + (v.z - L.z) ** 2; if (dd < bd && dd < 1.6) { bd = dd; best = [v, sd.p]; } }
+      const sd = streetDist(v); if (sd.d < 0.82 + rad || sd.d > 1.6 || steep(v, rad + 0.1)) continue; const dd = (v.x - L.x) ** 2 + (v.z - L.z) ** 2; if (dd < bd && dd < 1.6) { bd = dd; best = [v, sd.p]; } }
     if (!best) continue; const [v, sp] = best; taken.add(cornerId(v)); USED_CORNERS.add(cornerId(v)); LAMP_CORNERS.add(cornerId(v));
     const K = kitAt(L.bench ? 'benchlamp' : 'lamppost', v.x, v.z, Math.atan2(sp.x - v.x, sp.z - v.z)); if (K) STREET_OBJS.push(K); }
   buildDecor();
@@ -7304,11 +7310,13 @@ function offStreet(v, r) { let best = null, bd = 1e9; for (const p of streetPts(
   const d = Math.sqrt(bd), need = 0.82 + r; if (best && d < need) { const away = new THREE.Vector3(v.x - best.x, 0, v.z - best.z); if (away.lengthSq() < 1e-6) away.set(1, 0, 0); away.normalize().multiplyScalar(need - d); v.add(away); } return v; }
 /* stand a kit piece on a corner of a cell; face: 'out' away from the cell, 'in' toward it, 'anna' toward the middle, or an angle */
 const YARD_CORNERS = new Map(); // corner -> the home whose yard it is
+/* a slope is no place for a bench: one end would stand in the snow and the other in the air */
+function steep(v, r = 0.35) { return Math.abs(groundH(v.x + r, v.z) - groundH(v.x - r, v.z)) > 0.06 || Math.abs(groundH(v.x, v.z + r) - groundH(v.x, v.z - r)) > 0.06; }
 function onCorner(n, q, r, turn, face = 'in', s = 1, parent = scene, rad = 0.3, owner = null) {
   if (!KIT_P[n]) return null;
   // a corner on the cobbles is no place for it: try the corners either side, and give up rather than stand in a lane
   let v = null, id = '';
-  for (const tt of [turn, turn + 60, turn - 60]) { const c = cornerTurn(q, r, tt), k = cornerId(c); if (USED_CORNERS.has(k) || (owner ? (YARD_CORNERS.get(k) && YARD_CORNERS.get(k) !== owner) : YARD_CORNERS.has(k))) continue; if (STREET_PATHS.length && streetDist(c).d < 0.8 + rad) continue; v = c; id = k; break; }
+  for (const tt of [turn, turn + 60, turn - 60]) { const c = cornerTurn(q, r, tt), k = cornerId(c); if (USED_CORNERS.has(k) || (owner ? (YARD_CORNERS.get(k) && YARD_CORNERS.get(k) !== owner) : YARD_CORNERS.has(k))) continue; if (STREET_PATHS.length && streetDist(c).d < 0.8 + rad) continue; if (steep(c, rad + 0.1)) continue; v = c; id = k; break; }
   if (!v) return null;
   if (owner) YARD_CORNERS.set(id, owner); else USED_CORNERS.add(id);
   const c = HX(q, r), rot = typeof face === 'number' ? face : face === 'in' ? faceTo(v, c) : face === 'out' ? faceTo(c, v) : Math.atan2(-v.x, -v.z);
