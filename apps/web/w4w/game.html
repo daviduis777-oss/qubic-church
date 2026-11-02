@@ -2519,7 +2519,7 @@ const DIRS = [[1, 0], [1, -1], [0, -1], [-1, 0], [-1, 1], [0, 1]];
 const HILL = (() => { const [q, r] = W4W.STONE_CELL, [sq, sr] = W4W.STAIR_CELL, x = 2 * (q + r / 2), z = 1.7320508 * r, ax = 2 * (sq + sr / 2) - x, az = 1.7320508 * sr - z, L = Math.hypot(ax, az);
   return { x, z, top: 2.35, rp: 2.25, rb: 5.2, R: 6, grid: null, n: 0, step: 0, stairs: { x: ax / L, z: az / L } }; })();
 /* walking up or down the hill you take the steps: the stair cell is drawn at the foot of the flight, so the body climbs the treads */
-const HILL_FOOT = 5.15;
+const HILL_FOOT = 4.7;
 function stairFoot() { return new THREE.Vector3(HILL.x + HILL.stairs.x * HILL_FOOT, 0, HILL.z + HILL.stairs.z * HILL_FOOT); }
 function hillRaw(x, z) { const dx = x - HILL.x, dz = z - HILL.z, d = Math.hypot(dx, dz); if (d > HILL.R) return 0;
   const a = Math.atan2(dz, dx), w = d * (1 + 0.06 * Math.sin(3 * a + 1.3) + 0.035 * Math.sin(5 * a - 0.4)), t = THREE.MathUtils.smoothstep(w, HILL.rp, HILL.rb);
@@ -4857,9 +4857,11 @@ function stepAvatars(dt) {
     const nowMs = performance.now(), rdt = a.spdT ? Math.max(1e-3, (nowMs - a.spdT) / 1000) : 0; a.spdT = nowMs; // real seconds: the pace on the ground is real time, whatever the frame rate
     const sp = a.spdP && rdt ? a.g.position.distanceTo(a.spdP) / rdt / HERO_H : 0; (a.spdP ||= a.g.position.clone()).copy(a.g.position); a.spd = THREE.MathUtils.lerp(a.spd || 0, Math.min(sp, 4), Math.min(1, rdt * 4));
     // one gait per stretch of walking: in town the brisk walk, out in the cold the slow one; a real run only when the pace stays fast, and it takes a clear change to switch back
-    const prevG = a.gaitG || null, fast = prevG === 'Jog' ? a.spd > 1.25 : a.spd > 1.9, brisk = prevG === 'Running_A' ? a.spd > 0.45 : a.spd > 0.75;
-    const gait = !walking ? null : bad && a.actions.Walking_C ? 'Walking_C' : fast && a.actions.Jog ? 'Jog' : !out || brisk ? 'Running_A' : 'Walking_A'; a.gaitG = gait;
-    if (gait && a.actions[gait]) a.actions[gait].timeScale = THREE.MathUtils.clamp(a.spd / (GAIT[gait] || 1), 0.55, 1.6);
+    // the gait is chosen once for the whole trip, from its average pace, and kept to the end: bends, steps and slopes change the speed, never the gait
+    if (walking && a.route && a.gaitR !== a.route) { a.gaitR = a.route; const L = a.route.cv.getLength(), T = Math.max(0.3, (a.route.cells.length - 1) * Math.max(1, d.stepMs || 1000) / 1000), avg = L / T / HERO_H;
+      a.tripG = out ? (avg > 1.1 ? 'Running_A' : 'Walking_A') : (avg > 1.7 && a.actions.Jog ? 'Jog' : 'Running_A'); }
+    const gait = !walking ? null : bad && a.actions.Walking_C ? 'Walking_C' : (a.tripG || (out ? 'Walking_A' : 'Running_A')); a.gaitG = gait;
+    if (gait && a.actions[gait]) { const want = THREE.MathUtils.clamp(a.spd / (GAIT[gait] || 1), 0.75, 1.45), ac = a.actions[gait]; ac.timeScale += (want - ac.timeScale) * Math.min(1, rdt * 2); }
     if (indoor) { const w = a.actions.Walking_A; if (w) w.timeScale = 0.8; }
     else play(a, walking ? gait : busy ? (a.actions[chop] ? chop : 'PickUp') : sittingAt(d) || (!walking && SHEL[W4W.key(d.q, d.r)] === 'fire') ? 'Sit_Floor_Idle' : 'Idle');
     if (walking) { const lp = a.lastP || (a.lastP = a.g.position.clone()); a.walkD = (a.walkD || 0) + Math.min(0.5, lp.distanceTo(a.g.position)); lp.copy(a.g.position);
@@ -5340,7 +5342,13 @@ const CELL_TEX = (() => { const S = 128, cv = document.createElement('canvas'); 
 const CELL_GEO = new THREE.PlaneGeometry(2.3, 2.3).rotateX(-Math.PI / 2);
 const cellMats = {};
 const cellMat = (col, op) => (cellMats[col + ':' + op] ||= new THREE.MeshBasicMaterial({ map: CELL_TEX, color: col, transparent: true, opacity: op, depthWrite: false, blending: THREE.AdditiveBlending }));
-function hexLine(q, r, col, op, y = 0.04) { const m = new THREE.Mesh(CELL_GEO, cellMat(col, op)); m.position.copy(HX(q, r)); m.position.y = y + groundH(m.position.x, m.position.z); m.renderOrder = 3; scene.add(m); return m; }
+/* on the hill a flat cell would cut through the slope: there the cell is laid over the ground, one sheet per cell, kept */
+const DRAPED = {};
+function cellGeo(q, r) { const c = HX(q, r), h0 = groundH(c.x, c.z); let flat = true; for (let k = 0; k < 6; k++) { const a = Math.PI / 6 + k * Math.PI / 3; if (Math.abs(groundH(c.x + Math.cos(a) * 1.15, c.z + Math.sin(a) * 1.15) - h0) > 0.02) { flat = false; break; } }
+  if (flat) return CELL_GEO; const k = q + ',' + r; if (DRAPED[k]) return DRAPED[k];
+  const g = new THREE.PlaneGeometry(2.3, 2.3, 18, 18).rotateX(-Math.PI / 2), P = g.attributes.position; for (let i = 0; i < P.count; i++) P.setY(i, groundH(c.x + P.getX(i), c.z + P.getZ(i)) - h0 + 0.03);
+  return (DRAPED[k] = g); }
+function hexLine(q, r, col, op, y = 0.04) { const m = new THREE.Mesh(cellGeo(q, r), cellMat(col, op)); m.position.copy(HX(q, r)); m.position.y = y + groundH(m.position.x, m.position.z); m.renderOrder = 3; scene.add(m); return m; }
 function hexFill(q, r, col, op, y = 0.03) { return hexLine(q, r, col, op, y); }
 let trip = null; const prints = [];
 /** Where you are going: a crooked post with a lantern hanging off it, swinging a little in the wind. */
@@ -5376,7 +5384,7 @@ function hoverCell(e) {
   if (!hasChar()) { if (hoverHex) { scene.remove(hoverHex); hoverHex = null; } return; }
   const c = groundHex(e); const k = c ? c.join(',') : ''; if (k === hoverKey) return; hoverKey = k;
   if (hoverHex) { scene.remove(hoverHex); hoverHex = null; }
-  if (!c || W4W.ringOf(...c) > W4W.MAX_RING || !W4W.passable(...c) && W4W.ringOf(...c) > 5) return;
+  if (!c || W4W.ringOf(...c) > W4W.MAX_RING || !W4W.passable(...c) && W4W.ringOf(...c) > 5 || W4W.hillRock(...c)) return;
   hoverHex = hexLine(c[0], c[1], W4W.zoneOf(...c) >= 1 ? 0xcfe8ff : 0xffe2b8, 0.55, 0.05);
 }
 function stepLocalGrid(c) {
@@ -7300,10 +7308,10 @@ function buildStreets() {
     const m = new THREE.Mesh(geo, mat); m.receiveShadow = true; m.renderOrder = 1; scene.add(m); STREET_OBJS.push(m);
   }
   // lamps and benches stand on cell corners just off the cobbles: a path never crosses a corner, so nobody walks through a bench
-  STREET_PTS = null; buildHill(); const taken = new Set(); LAMP_CORNERS.forEach(k => USED_CORNERS.delete(k)); LAMP_CORNERS.clear();
+  STREET_PTS = null; measureBuildings(); buildHill(); const taken = new Set(); LAMP_CORNERS.forEach(k => USED_CORNERS.delete(k)); LAMP_CORNERS.clear();
   for (const L of lampCand) { const [q, r] = hexAt(L.x, L.z), rad = L.bench ? 0.32 : 0.12; let best = null, bd = 1e9;
     for (const [dq, dr] of [[0, 0], ...W4W.DIRS]) for (let k = 0; k < 6; k++) { const v = cornerAt(q + dq, r + dr, 30 + k * 60), id = cornerId(v); if (taken.has(id) || USED_CORNERS.has(id) || YARD_CORNERS.has(id)) continue;
-      const sd = streetDist(v); if (sd.d < 0.82 + rad || sd.d > 1.6 || steep(v, rad + 0.1)) continue; const dd = (v.x - L.x) ** 2 + (v.z - L.z) ** 2; if (dd < bd && dd < 1.6) { bd = dd; best = [v, sd.p]; } }
+      const sd = streetDist(v); if (sd.d < 0.82 + rad || sd.d > 1.6 || steep(v, rad + 0.1) || inBuilding(v, rad * 0.6)) continue; const dd = (v.x - L.x) ** 2 + (v.z - L.z) ** 2; if (dd < bd && dd < 1.6) { bd = dd; best = [v, sd.p]; } }
     if (!best) continue; const [v, sp] = best; taken.add(cornerId(v)); USED_CORNERS.add(cornerId(v)); LAMP_CORNERS.add(cornerId(v));
     const K = kitAt(L.bench ? 'benchlamp' : 'lamppost', v.x, v.z, Math.atan2(sp.x - v.x, sp.z - v.z)); if (K) STREET_OBJS.push(K); }
   buildDecor();
@@ -7327,12 +7335,20 @@ function offStreet(v, r) { let best = null, bd = 1e9; for (const p of streetPts(
 /* stand a kit piece on a corner of a cell; face: 'out' away from the cell, 'in' toward it, 'anna' toward the middle, or an angle */
 const YARD_CORNERS = new Map(); // corner -> the home whose yard it is
 /* a slope is no place for a bench: one end would stand in the snow and the other in the air */
+/* the houses as they stand, measured before the lamps go up: a bench or a lamp is never set where a wall or an eave comes down */
+let BLD_OBJ = []; const _bray = new THREE.Raycaster(), _down = new THREE.Vector3(0, -1, 0), _bo = new THREE.Vector3();
+function measureBuildings() { const bx = new THREE.Box3(); BLD_OBJ = []; scene.updateMatrixWorld(true);
+  for (const m of scene.children) { if (m === HILL_OBJ || m.isLight || m.isSprite || STREET_OBJS.includes(m)) continue; bx.setFromObject(m); if (bx.isEmpty()) continue;
+    const w = Math.max(bx.max.x - bx.min.x, bx.max.z - bx.min.z); if (bx.max.y - bx.min.y < 0.8 || w < 0.8 || w > 7) continue; BLD_OBJ.push(m); } }
+function inBuilding(v, r = 0.3) { if (!BLD_OBJ.length) return false;
+  for (const [dx, dz] of [[0, 0], [r, 0], [-r, 0], [0, r], [0, -r]]) { _bray.set(_bo.set(v.x + dx, 8, v.z + dz), _down); _bray.far = 9;
+    if (_bray.intersectObjects(BLD_OBJ, true).some(h => h.point.y > 0.45 + groundH(v.x, v.z) && h.point.y < 1.6 + groundH(v.x, v.z))) return true; } return false; }
 function steep(v, r = 0.35) { return Math.abs(groundH(v.x + r, v.z) - groundH(v.x - r, v.z)) > 0.06 || Math.abs(groundH(v.x, v.z + r) - groundH(v.x, v.z - r)) > 0.06; }
 function onCorner(n, q, r, turn, face = 'in', s = 1, parent = scene, rad = 0.3, owner = null) {
   if (!KIT_P[n]) return null;
   // a corner on the cobbles is no place for it: try the corners either side, and give up rather than stand in a lane
   let v = null, id = '';
-  for (const tt of [turn, turn + 60, turn - 60]) { const c = cornerTurn(q, r, tt), k = cornerId(c); if (USED_CORNERS.has(k) || (owner ? (YARD_CORNERS.get(k) && YARD_CORNERS.get(k) !== owner) : YARD_CORNERS.has(k))) continue; if (STREET_PATHS.length && streetDist(c).d < 0.8 + rad) continue; if (steep(c, rad + 0.1)) continue; v = c; id = k; break; }
+  for (const tt of owner ? [turn, turn + 60, turn - 60] : [turn, turn + 60, turn - 60, turn + 120, turn - 120]) { const c = cornerTurn(q, r, tt), k = cornerId(c); if (USED_CORNERS.has(k) || (owner ? (YARD_CORNERS.get(k) && YARD_CORNERS.get(k) !== owner) : YARD_CORNERS.has(k))) continue; if (STREET_PATHS.length && streetDist(c).d < 0.8 + rad) continue; if (steep(c, rad + 0.1) || (!owner && /bench|lamp/.test(n) && inBuilding(c, rad * 0.6))) continue; v = c; id = k; break; }
   if (!v) return null;
   if (owner) YARD_CORNERS.set(id, owner); else USED_CORNERS.add(id);
   const c = HX(q, r), rot = typeof face === 'number' ? face : face === 'in' ? faceTo(v, c) : face === 'out' ? faceTo(c, v) : Math.atan2(-v.x, -v.z);
