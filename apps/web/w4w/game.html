@@ -1408,8 +1408,8 @@ var W4W = (() => {
   const TOWN_PROPS = [
     { kit: "campfire", at: [0, 3] },
     // Hearth Square: the fire with the kettle
-    { kit: "memorial", at: [2, -4] },
-    // the Twelve, beside the church
+    { kit: "memorial", at: [3, -6] },
+    // the Twelve, on the crown of the hill above the church
     { kit: "telescope", at: [5, -3] },
     // the Rise, by the observatory
     { kit: "coal", at: [-4, -1] },
@@ -1421,7 +1421,7 @@ var W4W = (() => {
     { kit: "signal", at: [-1, -7] }
   ];
   const PROP_BLOCK = new Set(TOWN_PROPS.map((p) => `${p.at[0]},${p.at[1]}`));
-  const STONE_CELL = [2, -4];
+  const STONE_CELL = [3, -6];
   const TWELVE = [
     { id: "ilya", name: "Ilya Marten", act: 1, at: "veil" },
     { id: "teresa", name: "Teresa Holm", act: 1, at: "gate" },
@@ -2334,7 +2334,7 @@ var W4W = (() => {
       case "light": {
         const T = TWELVE.find((x) => x.id === b.id);
         if (!T) return fail("There is no such lantern.");
-        if (c.path.length || dist(here, STONE_CELL) > 1) return fail("Bring it to the Stone of the Twelve, by the church.");
+        if (c.path.length || dist(here, STONE_CELL) > 1) return fail("Bring it to the Stone of the Twelve, on the hill above the church.");
         if (!c.traces?.includes(T.id)) return fail("You have nothing of theirs to bring.");
         c.traces = c.traces.filter((x) => x !== T.id);
         if (ws.twelve?.[T.id]) return ok();
@@ -2510,6 +2510,15 @@ function sprite(tex, x, y, z, s, col = 0xffffff, op = 1) {
 /* ================= hex grid ================= */
 const HX = (q, r) => new THREE.Vector3(2 * (q + r / 2), 0, 1.7320508 * r);
 const DIRS = [[1, 0], [1, -1], [0, -1], [-1, 0], [-1, 1], [0, 1]];
+/* the Hill of the Twelve: the one rise under the Veil, the Stone on its crown. Its height is the ground for everything that stands
+ * or walks there; where a lane runs past its foot the slope gives way to the cobbles */
+const HILL = (() => { const [q, r] = W4W.STONE_CELL; return { x: 2 * (q + r / 2), z: 1.7320508 * r, top: 2.35, rp: 2.25, rb: 5.2, R: 6, grid: null, n: 0, step: 0 }; })();
+function hillRaw(x, z) { const dx = x - HILL.x, dz = z - HILL.z, d = Math.hypot(dx, dz); if (d > HILL.R) return 0;
+  const a = Math.atan2(dz, dx), w = d * (1 + 0.06 * Math.sin(3 * a + 1.3) + 0.035 * Math.sin(5 * a - 0.4)), t = THREE.MathUtils.smoothstep(w, HILL.rp, HILL.rb);
+  return HILL.top * (1 - t); }
+function groundH(x, z) { const dx = x - HILL.x, dz = z - HILL.z; if (dx * dx + dz * dz > HILL.R * HILL.R) return 0; const G = HILL.grid; if (!G) return hillRaw(x, z);
+  const fx = (dx + HILL.R) / HILL.step, fz = (dz + HILL.R) / HILL.step, i = Math.min(HILL.n - 2, Math.max(0, Math.floor(fx))), j = Math.min(HILL.n - 2, Math.max(0, Math.floor(fz))), u = fx - i, v = fz - j, N = HILL.n;
+  return (G[j * N + i] * (1 - u) + G[j * N + i + 1] * u) * (1 - v) + (G[(j + 1) * N + i] * (1 - u) + G[(j + 1) * N + i + 1] * u) * v; }
 /* the corners of a cell, where three cells meet: no path ever crosses one, so a corner is where things can stand */
 const CORNER_R = 2 / Math.sqrt(3);
 function cornerAt(q, r, deg) { const c = HX(q, r), a = deg * Math.PI / 180; return new THREE.Vector3(c.x + Math.cos(a) * CORNER_R, 0, c.z + Math.sin(a) * CORNER_R); }
@@ -2728,7 +2737,7 @@ function kitMats(o) { o.traverse(m => { if (!m.isMesh) return; m.receiveShadow =
   mt.needsUpdate = true; }); }
 function loadKit() { return Promise.all(KIT_NAMES.map(n => loadGlb(`q/k/${n}.glb`).then(g => { if (!g) return; kitMats(g.scene); KIT_P[n] = g.scene; }))); }
 /* one piece of the kit, standing at x,z and facing the direction rot (0 faces +z), lit by its own lanterns */
-function kitAt(n, x, z, rot = 0, s = 1, parent = scene) { const P = KIT_P[n]; if (!P) return null; const o = P.clone(true); o.scale.setScalar(METER * s); o.position.set(x, 0, z); o.rotation.y = rot; o.userData.lights = []; parent.add(o); propMarks(o); if (n === 'mailbox') o.userData.flag = mailFlag(o); return o; }
+function kitAt(n, x, z, rot = 0, s = 1, parent = scene) { const P = KIT_P[n]; if (!P) return null; const o = P.clone(true); o.scale.setScalar(METER * s); o.position.set(x, parent === scene ? groundH(x, z) : 0, z); o.rotation.y = rot; o.userData.lights = []; parent.add(o); propMarks(o); if (n === 'mailbox') o.userData.flag = mailFlag(o); return o; }
 /* the red flag on a mailbox: up when a letter waits at that door, down when there is none */
 let FLAG_MAT = null;
 function mailFlag(o) { let mk = null; o.traverse(m => { if (m.name === 'flag') mk = m; }); if (!mk) return null;
@@ -2794,7 +2803,7 @@ let coreParts, fireSprite; const coreSteam = [];
 const reserved = new Set();
 function build() {
   const far = new THREE.Mesh(new THREE.CircleGeometry(140, 96), snowify(new THREE.MeshStandardMaterial({ color: 0x9aa7c4, roughness: 1 })));
-  far.rotation.x = -Math.PI / 2; far.receiveShadow = true; scene.add(far);
+  far.rotation.x = -Math.PI / 2; far.receiveShadow = true; scene.add(far); GROUND_MAT = far.material;
   // the ground of the town: hand-painted snow, one tile about eight steps across
   { const tl = new THREE.TextureLoader(), R = 35, m = far.material;
     tl.load('q/tex/snow_ground.webp', t => { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(R, R); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; m.map = t; m.color.set(0xffffff); m.defines = { ...(m.defines || {}), SNOW_TEX: 1 }; m.needsUpdate = true; });
@@ -2899,7 +2908,7 @@ function mergeScenery(objs) {
  * and never in the Wardens' ground before the Gate. Only when that belt is full does the town let homes in closer */
 function freePlots() { const taken = new Set(reserved); allResidents().forEach(h => taken.add(key(...h.at))); const out = [], near = [];
   const keep = [...Object.values(SPECIAL), ...STAGE2.map(s => s.at), ...W4W.TOWN_PROPS.map(p => p.at), ...Array.from({ length: W4W.PYLON_N }, (_, i) => W4W.pylonCell(i))];
-  const ok = (q, r) => W4W.insideDome(q, r) && !taken.has(key(q, r)) && W4W.passable(q, r) && W4W.dist([q, r], GATE_CELL) > 2 && !keep.some(c => W4W.dist(c, [q, r]) <= 1);
+  const ok = (q, r) => W4W.insideDome(q, r) && !taken.has(key(q, r)) && W4W.passable(q, r) && W4W.dist([q, r], GATE_CELL) > 2 && W4W.dist([q, r], W4W.STONE_CELL) > 2 && !keep.some(c => W4W.dist(c, [q, r]) <= 1);
   for (let n = 2; n <= W4W.DOME_RING; n++) ring(n).forEach(([q, r]) => { if (ok(q, r)) (n >= 6 ? out : near).push([q, r]); });
   return out.length ? out : near; }
 function lamp(p) {
@@ -3549,7 +3558,7 @@ $('#wx').onclick = () => { S.weather = S.weather === 'clear' ? 'storm' : 'clear'
   say(S.weather === 'storm' ? 'Storm over Aigrad: the pool lost seats in the 676 this epoch (demo). The frost pushes harder. Renting a rig now may not pay off.' : 'The sky cleared. The pool is back in the 676 (demo).'); };
 $('#meter').onclick = () => panelKind === 'meter' ? closePanel() : openMeter();
 let fly = null;
-function flyTo(p, dist) { fly = { from: controls.target.clone(), to: new THREE.Vector3(p.x, 0, p.z + 0.6), t: 0, d0: camera.position.distanceTo(controls.target), d1: dist || (MOBILE ? 20 : 17) }; }
+function flyTo(p, dist) { fly = { from: controls.target.clone(), to: new THREE.Vector3(p.x, groundH(p.x, p.z) * 0.7, p.z + 0.6), t: 0, d0: camera.position.distanceTo(controls.target), d1: dist || (MOBILE ? 20 : 17) }; }
 
 function openMeter() {
   const t = S.town;
@@ -4820,6 +4829,7 @@ function stepAvatars(dt) {
     if (walking) a.g.position.copy(p);
     else if (indoor && door.lengthSq() > 0) { const into = THREE.MathUtils.smoothstep(a.enterT || 0, 0.5, 1.4); a.g.position.lerp(p.clone().add(door.clone().multiplyScalar(1 - into * 0.45)), Math.min(1, dt * 6)); }
     else a.g.position.lerp(p.clone().add(door), Math.min(1, dt * 6));
+    a.g.position.y = groundH(a.g.position.x, a.g.position.z); // up the hill and down again
     // at work you face what you are working
     const busyNow = d.act && d.act.until > t && d.act.q != null && !walking;
     if (busyNow) { const w = HX(d.act.q, d.act.r); const y = Math.atan2(w.x - a.g.position.x, w.z - a.g.position.z), r0 = a.g.rotation.y; a.g.rotation.y = r0 + Math.atan2(Math.sin(y - r0), Math.cos(y - r0)) * Math.min(1, dt * 6); }
@@ -4868,7 +4878,7 @@ function footPrint(a) {
     const m4 = new THREE.Matrix4().makeScale(0, 0, 0); for (let i = 0; i < PRINT_N; i++) printMesh.setMatrixAt(i, m4); scene.add(printMesh);
   }
   const g = a.g, side = (a.foot = !a.foot) ? 1 : -1, yaw = g.rotation.y, px = g.position.x + Math.cos(yaw) * 0.028 * side, pz = g.position.z - Math.sin(yaw) * 0.028 * side;
-  const m4 = new THREE.Matrix4().makeRotationY(yaw); m4.setPosition(px, 0.035, pz); const i = printK++ % PRINT_N;
+  const m4 = new THREE.Matrix4().makeRotationY(yaw); m4.setPosition(px, 0.035 + groundH(px, pz), pz); const i = printK++ % PRINT_N;
   printMesh.setMatrixAt(i, m4); printMesh.instanceMatrix.needsUpdate = true;
   const ab = printMesh.geometry.getAttribute('aBorn'); ab.array[i] = U.uTime.value; ab.needsUpdate = true;
 }
@@ -4933,7 +4943,10 @@ function hexAt(x, z) {
   let rq = Math.round(q), rr = Math.round(r), rs = Math.round(s); const dq = Math.abs(rq - q), dr = Math.abs(rr - r), ds = Math.abs(rs - s);
   if (dq > dr && dq > ds) rq = -rr - rs; else if (dr > ds) rr = -rq - rs; return [rq, rr];
 }
-function groundHex(e) { mouse.set((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1); ray.setFromCamera(mouse, camera); return ray.ray.intersectPlane(groundPlane, gp) ? hexAt(gp.x, gp.z) : null; }
+function groundHex(e) { mouse.set((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1); ray.setFromCamera(mouse, camera);
+  // on the hill the ground is higher: find where the ray meets the slope, not the plain under it
+  let y = 0, hit = false; for (let i = 0; i < 6; i++) { groundPlane.constant = -y; if (!ray.ray.intersectPlane(groundPlane, gp)) break; hit = true; const h = groundH(gp.x, gp.z); if (Math.abs(h - y) < 0.01) break; y = i < 2 ? h : (y + h) / 2; }
+  groundPlane.constant = 0; return hit ? hexAt(gp.x, gp.z) : null; }
 const KIND_CELL = { stone: W4W.STONE_CELL, rose: W4W.ROSE_CELL, maria: MARIA_HOUSE, gate: [0, -W4W.TOWN_RING], church: SPECIAL.church, board: SPECIAL.plaza, fire: SPECIAL.plaza, core: SPECIAL.core, observatory: SPECIAL.observatory, library: SPECIAL.library, mine: SPECIAL.mine };
 function cellOfKind(k, id) {
   if (KIND_CELL[k]) return KIND_CELL[k];
@@ -5317,7 +5330,7 @@ const CELL_TEX = (() => { const S = 128, cv = document.createElement('canvas'); 
 const CELL_GEO = new THREE.PlaneGeometry(2.3, 2.3).rotateX(-Math.PI / 2);
 const cellMats = {};
 const cellMat = (col, op) => (cellMats[col + ':' + op] ||= new THREE.MeshBasicMaterial({ map: CELL_TEX, color: col, transparent: true, opacity: op, depthWrite: false, blending: THREE.AdditiveBlending }));
-function hexLine(q, r, col, op, y = 0.04) { const m = new THREE.Mesh(CELL_GEO, cellMat(col, op)); m.position.copy(HX(q, r)); m.position.y = y; m.renderOrder = 3; scene.add(m); return m; }
+function hexLine(q, r, col, op, y = 0.04) { const m = new THREE.Mesh(CELL_GEO, cellMat(col, op)); m.position.copy(HX(q, r)); m.position.y = y + groundH(m.position.x, m.position.z); m.renderOrder = 3; scene.add(m); return m; }
 function hexFill(q, r, col, op, y = 0.03) { return hexLine(q, r, col, op, y); }
 let trip = null; const prints = [];
 /** Where you are going: a crooked post with a lantern hanging off it, swinging a little in the wind. */
@@ -6244,8 +6257,8 @@ const PUFF_MAT = new THREE.SpriteMaterial({ map: null, color: 0xe8f0ff, transpar
 const TRAIL_GEO = new THREE.CircleGeometry(0.06, 8).rotateX(-Math.PI / 2), TRAIL_MAT = new THREE.MeshBasicMaterial({ color: 0x3a4a68, transparent: true, opacity: 0.5, depthWrite: false });
 function snowStep(pos, deep) {
   if (!PUFF_MAT.map) PUFF_MAT.map = GLOW;
-  const s = new THREE.Sprite(PUFF_MAT.clone()); s.position.set(pos.x + (Math.random() - 0.5) * 0.1, 0.06, pos.z + (Math.random() - 0.5) * 0.1); s.scale.setScalar(0.18); scene.add(s); puffs.push({ s, t: 0, deep });
-  const m = new THREE.Mesh(TRAIL_GEO, TRAIL_MAT.clone()); m.position.set(pos.x, 0.02, pos.z); m.scale.setScalar(deep ? 1.4 : 1); scene.add(m); trail.push({ m, t: 0 });
+  const s = new THREE.Sprite(PUFF_MAT.clone()); s.position.set(pos.x + (Math.random() - 0.5) * 0.1, 0.06 + pos.y, pos.z + (Math.random() - 0.5) * 0.1); s.scale.setScalar(0.18); scene.add(s); puffs.push({ s, t: 0, deep });
+  const m = new THREE.Mesh(TRAIL_GEO, TRAIL_MAT.clone()); m.position.set(pos.x, 0.02 + pos.y, pos.z); m.scale.setScalar(deep ? 1.4 : 1); scene.add(m); trail.push({ m, t: 0 });
   while (trail.length > 60) scene.remove(trail.shift().m);
 }
 function stepSnowFx(dt) {
@@ -7179,6 +7192,55 @@ function buildGlasshouse() {
   g.traverse(o => { if (o.isMesh) { o.castShadow = o.material !== glass; o.receiveShadow = true; } }); g.scale.setScalar(0.95);
   return g;
 }
+/* ---------- the Hill of the Twelve: snow over rock, crags at its corners, steps cut up the town side, the Stone on the crown ---------- */
+let GROUND_MAT = null, HILL_OBJ = null;
+const h3 = (x, y, z) => { const s = Math.sin(x * 12.9898 + y * 78.233 + z * 37.719) * 43758.5453; return s - Math.floor(s); };
+function buildHill() {
+  if (HILL_OBJ) return;
+  // the height, sampled once: the slope, cut back wherever a lane runs past its foot
+  const N = 97, R = HILL.R, st = 2 * R / (N - 1), G = new Float32Array(N * N), pts = streetPts();
+  for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) { const x = HILL.x - R + i * st, z = HILL.z - R + j * st; let h = hillRaw(x, z);
+    if (h > 0 && pts.length) { let bd = 1e9; for (const p of pts) { const d = (p.x - x) ** 2 + (p.z - z) ** 2; if (d < bd) bd = d; } h *= THREE.MathUtils.smoothstep(Math.sqrt(bd), 0.85, 1.55); }
+    G[j * N + i] = h; }
+  HILL.grid = G; HILL.n = N; HILL.step = st;
+  // the steps are cut into the town side: level treads, and the snow banked up either side so the cut shows, not the blocks
+  const S0 = 2.3, SD = 0.25, SN = 10, tread = []; for (let k = 1; k <= SN; k++) tread.push(groundH(HILL.x, HILL.z + S0 + SD * (k - 1)));
+  const G2 = G.slice();
+  for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) { const x = HILL.x - R + i * st, z = HILL.z - R + j * st, sx = Math.abs(x - HILL.x), sz = z - HILL.z;
+    if (sx > 1.15 || sz <= S0 || sz > S0 + SD * SN) continue;
+    const k = Math.min(SN, Math.ceil((sz - S0) / SD)), T = tread[k - 1], bank = Math.max(T, groundH(HILL.x, z - 0.3)) + 0.05, o = G[j * N + i];
+    G2[j * N + i] = sx < 0.5 ? T : sx < 0.62 ? bank : THREE.MathUtils.lerp(bank, o, THREE.MathUtils.smoothstep(sx, 0.62, 1.15)); }
+  HILL.grid = G2;
+  const g = new THREE.Group(); HILL_OBJ = g; scene.add(g);
+  // the slope wears the same snow as the plain, so the foot runs into the ground without a seam
+  const geo = new THREE.PlaneGeometry(2 * R, 2 * R, N - 1, N - 1).rotateX(-Math.PI / 2), P = geo.attributes.position, UV = geo.attributes.uv;
+  for (let k = 0; k < P.count; k++) { const x = P.getX(k) + HILL.x, z = P.getZ(k) + HILL.z, h = G2[k]; P.setXYZ(k, x, h > 0.004 ? h - 0.03 : -0.06, z); UV.setXY(k, x / 280 + 0.5, -z / 280 + 0.5); }
+  geo.computeVertexNormals();
+  const hill = new THREE.Mesh(geo, GROUND_MAT); hill.receiveShadow = hill.castShadow = true; g.add(hill);
+  const rock = snowify(new THREE.MeshStandardMaterial({ map: themeTex('tex_rock'), color: 0x939cb0, roughness: 1, flatShading: true }));
+  const crag = (x, z, rx, h, seed) => { const cg = new THREE.IcosahedronGeometry(1, 1), CP = cg.attributes.position;
+    for (let k = 0; k < CP.count; k++) { const vx = CP.getX(k), vy = CP.getY(k), vz = CP.getZ(k), n = 0.74 + 0.42 * h3(vx + seed, vy, vz); CP.setXYZ(k, vx * n * rx, vy * n * h * (vy > 0 ? 1 : 0.5), vz * n * rx * (0.8 + 0.3 * h3(seed, 1, 2))); }
+    cg.computeVertexNormals(); const m = new THREE.Mesh(cg, rock); m.position.set(x, groundH(x, z) - 0.12, z); m.rotation.set((h3(seed, 3, 1) - 0.5) * 0.25, h3(seed, 5, 7) * 6.3, (h3(seed, 2, 9) - 0.5) * 0.25);
+    m.castShadow = m.receiveShadow = true; g.add(m); return m; };
+  // crags stand on corners, where no path ever runs: the high ones behind the Stone, low ledges on the town side, none on the steps or by a lane
+  const C = W4W.STONE_CELL, seen = new Set(), rr = seeded(1212);
+  for (let dq = -3; dq <= 3; dq++) for (let dr = -3; dr <= 3; dr++) { if (W4W.ringOf(dq, dr) > 3) continue;
+    for (let k = 0; k < 6; k++) { const v = cornerAt(C[0] + dq, C[1] + dr, 30 + k * 60), id = cornerId(v); if (seen.has(id)) continue; seen.add(id);
+      const d = Math.hypot(v.x - HILL.x, v.z - HILL.z), back = v.z < HILL.z - 0.4, roll = rr();
+      if (d < 1 || (d > 1.3 && d < 2.6) || d > 4.8 || USED_CORNERS.has(id)) continue;
+      if (Math.abs(v.x - HILL.x) < 1.2 && v.z > HILL.z) continue; // the steps
+      if (d < 1.3 && !(back && Math.abs(v.x - HILL.x) < 0.1)) continue; // on the crown only the one crag, right behind the Stone
+      if (streetDist(v).d < 1.4) continue;
+      const big = d < 1.3 ? [0.34, 1.45] : back ? (d > 3.5 ? [0.36, 1.0 + roll * 0.8] : [0.34, 0.6 + roll * 0.6]) : [0.3, 0.22 + roll * 0.28];
+      if (d > 1.3 && roll < (back ? 0.15 : 0.4)) continue;
+      crag(v.x, v.z, big[0], big[1], k * 7.1 + d * 3.3); USED_CORNERS.add(id); } }
+  // the steps cut up the town side, snow on every tread
+  const stepM = snowify(new THREE.MeshStandardMaterial({ map: themeTex('tex_rock'), color: 0x9c9aa0, roughness: 0.95 }));
+  tread.forEach((T, k) => { const top = T + 0.035, z = HILL.z + S0 + SD * k;
+    const b = new THREE.Mesh(new THREE.BoxGeometry(1.0, top + 0.25, SD + 0.02), stepM); b.position.set(HILL.x, (top - 0.25) / 2, z + SD / 2); b.castShadow = b.receiveShadow = true; g.add(b); });
+  // two lamps at the foot of the steps
+  if (KIT_P.lamppost) for (const sx of [-1, 1]) { const x = HILL.x + sx * 0.95, z = HILL.z + S0 + SD * SN - 0.05; kitAt('lamppost', x, z, faceTo(new THREE.Vector3(x, 0, z), new THREE.Vector3(HILL.x, 0, z))); }
+}
 const STREET_OBJS = [], STREET_PATHS = []; let streetSig = null;
 function buildStreets() {
   STREET_PATHS.length = 0; STREET_PTS = null;
@@ -7216,7 +7278,7 @@ function buildStreets() {
     const m = new THREE.Mesh(geo, mat); m.receiveShadow = true; m.renderOrder = 1; scene.add(m); STREET_OBJS.push(m);
   }
   // lamps and benches stand on cell corners just off the cobbles: a path never crosses a corner, so nobody walks through a bench
-  STREET_PTS = null; const taken = new Set(); LAMP_CORNERS.forEach(k => USED_CORNERS.delete(k)); LAMP_CORNERS.clear();
+  STREET_PTS = null; buildHill(); const taken = new Set(); LAMP_CORNERS.forEach(k => USED_CORNERS.delete(k)); LAMP_CORNERS.clear();
   for (const L of lampCand) { const [q, r] = hexAt(L.x, L.z), rad = L.bench ? 0.32 : 0.12; let best = null, bd = 1e9;
     for (const [dq, dr] of [[0, 0], ...W4W.DIRS]) for (let k = 0; k < 6; k++) { const v = cornerAt(q + dq, r + dr, 30 + k * 60), id = cornerId(v); if (taken.has(id) || USED_CORNERS.has(id) || YARD_CORNERS.has(id)) continue;
       const sd = streetDist(v); if (sd.d < 0.82 + rad || sd.d > 1.6) continue; const dd = (v.x - L.x) ** 2 + (v.z - L.z) ** 2; if (dd < bd && dd < 1.6) { bd = dd; best = [v, sd.p]; } }
@@ -7226,7 +7288,7 @@ function buildStreets() {
 }
 /* ---------- Aigrad by quarters: each public house has its yard dressed for its trade ----------
  * Hearth Square to the south (the board, the well, the fire with the kettle, a mailbox by the post, a snowman by the bar),
- * the Coal Works and the market yard to the west, the Wardens' Watch and the Gate to the north-west, the Twelve by the church,
+ * the Coal Works and the market yard to the west, the Wardens' Watch and the Gate to the north-west, the Twelve on their hill above the church,
  * the telescope on the scholars' Rise, cold frames at the Glass Gardens, the Atrium's yard to the south-east.
  * Big pieces fill their own cell (world.ts keeps people out of it); small ones stand on corners, where no path ever runs. */
 const USED_CORNERS = new Set(), LAMP_CORNERS = new Set();
@@ -7256,7 +7318,7 @@ function buildQuarters() {
   if (quartersDone || !KIT_P.board) return; quartersDone = true;
   // the big pieces, one cell each
   for (const { kit: n, at } of W4W.TOWN_PROPS) { if (n === 'campfire') continue; const c = HX(...at), near = [...Object.values(SPECIAL), ...STAGE2.map(x => x.at)].filter(x => W4W.dist(x, at) === 1)[0];
-    const look = near ? HX(...near) : new THREE.Vector3(0, 0, 0); const o = kitAt(n, c.x, c.z, n === 'signal' ? faceTo(c, new THREE.Vector3(0, 0, 0)) : faceTo(c, look), n === 'memorial' ? 1.15 : 1);
+    const look = near ? HX(...near) : new THREE.Vector3(0, 0, 0); const o = kitAt(n, c.x, c.z, n === 'signal' ? faceTo(c, new THREE.Vector3(0, 0, 0)) : faceTo(c, look), n === 'memorial' ? 1.35 : 1);
     if (o && n === 'memorial') { tag(o, 'stone', 'stone'); label('THE STONE OF THE TWELVE', o, 1.6, 'key'); const v = new THREE.Vector3(); o.updateMatrixWorld(true);
       o.traverse(m => { const k = /^lamp_(\d+)$/.exec(m.name); if (k) { m.getWorldPosition(v); STONE_LAMPS[+k[1]] = v.clone(); } }); } }
   const P = W4W.SPECIAL, S2 = id => STAGE2.find(x => x.id === id)?.at;
@@ -7436,7 +7498,7 @@ function atTrace(T) { const c = myC(); if (!c || c.path.length) return false; co
 function traceHtml(id) {
   const T = W4W.TWELVE.find(x => x.id === id), X = TWELVE_TXT[id]; if (!T || !X?.find || !hasChar()) return '';
   const L = twelveLit(id); if (L) return `<div class="trace lit"><small>The Stone of the Twelve</small><p>${esc(T.name)}'s lantern already burns on the Stone. ${esc(L.nick)} lit it.</p></div>`;
-  if (carrying(id)) return `<div class="trace"><small>You carry ${esc(X.item)}</small><p>Bring it to the Stone of the Twelve, beside the church, and their lantern will be lit.</p><button class="btn" data-gostone>Walk to the Stone</button></div>`;
+  if (carrying(id)) return `<div class="trace"><small>You carry ${esc(X.item)}</small><p>Bring it to the Stone of the Twelve, on the hill above the church, and their lantern will be lit.</p><button class="btn" data-gostone>Walk to the Stone</button></div>`;
   if (!atTrace(T)) return '';
   return `<div class="trace"><small>Something of the twelve</small><p>${esc(X.find)}</p><button class="btn main" data-trace="${id}">Take ${esc(X.item)}</button></div>`;
 }
@@ -7539,7 +7601,7 @@ const ACT1_TASKS = [
   { id: 'edge', page: 'scratch', title: 'Walk to the edge of the Veil', why: 'Stand where the light meets the snow, and watch what comes to scratch at it.', cta: 'Walk to the edge', go: () => { const c = myC(); if (!c) return; let best = null, bd = 99; for (let n = 6; n <= W4W.DOME_RING; n++) for (const cell of ring(n)) { if (reserved.has(key(...cell)) || !atVeil(...cell)) continue; const d = W4W.dist(cell, [c.q, c.r]); if (d < bd) { bd = d; best = cell; } } if (best) planTo(best); } },
   { id: 'pylon', page: 'pylons', title: 'Give your warmth to a pylon', why: 'Six pylons hold the edge of the Veil. The Hollow presses one sector at a time; the weakest one is cracking. Stand next to it and give it your warmth.', cta: 'Walk to the weakest pylon', go: () => { const w = weakestPylon(); if (w) walkTo('pylon', String(w.i)); } },
   { id: 'gate', page: 'knock', title: 'Go to the North Gate', why: 'It has been sealed since the ninth night. Read what is written on it.', cta: 'Walk to the Gate', go: () => walkTo('gate', 'gate') },
-  { id: 'stone', page: 'thirteen', title: 'Visit the Stone of the Twelve', why: 'Beside the church: twelve lanterns for the twelve who went north. None of them is lit.', cta: 'Walk to the Stone', go: () => walkTo('stone', 'stone') || openStone() },
+  { id: 'stone', page: 'thirteen', title: 'Visit the Stone of the Twelve', why: 'On the hill above the church: twelve lanterns for the twelve who went north. None of them is lit.', cta: 'Walk to the Stone', go: () => walkTo('stone', 'stone') || openStone() },
   { id: 'library', page: 'wardens', title: 'Find the drawing in the Library', why: 'The one thing in town older than the cold. It is the reason anyone still hopes.', cta: 'Walk to the Library', go: () => walkTo('library', 'library') },
 ];
 const act1Done = (() => { try { return new Set(JSON.parse(store.get('w4w.act1') || '[]')); } catch { return new Set(); } })();

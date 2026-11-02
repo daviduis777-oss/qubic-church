@@ -303,7 +303,7 @@ export const ringOf = (q: number, r: number) => (Math.abs(q) + Math.abs(r) + Mat
  * The big pieces below fill a cell and nobody walks through them. */
 export const TOWN_PROPS: { kit: string; at: Cell }[] = [
   { kit: 'campfire', at: [0, 3] },   // Hearth Square: the fire with the kettle
-  { kit: 'memorial', at: [2, -4] },  // the Twelve, beside the church
+  { kit: 'memorial', at: [3, -6] },  // the Twelve, on the crown of the hill above the church
   { kit: 'telescope', at: [5, -3] }, // the Rise, by the observatory
   { kit: 'coal', at: [-4, -1] },     // the Coal Works, by the mine
   { kit: 'crane', at: [-6, 3] },     // the market yard, the crane still behind the hall
@@ -314,7 +314,7 @@ export const PROP_BLOCK = new Set(TOWN_PROPS.map(p => `${p.at[0]},${p.at[1]}`))
 
 /** The Stone of the Twelve: twelve went north the week before the cold, and the town lights a lantern on the Stone
  * for each one as somebody finds a trace of them and carries it there. Eight traces lie in Aigrad; four are out in the White. */
-export const STONE_CELL: Cell = [2, -4]
+export const STONE_CELL: Cell = [3, -6] // on the crown of the hill: nobody builds within two cells of it
 export const TWELVE: { id: string; name: string; act: 1 | 2; at: 'veil' | 'gate' | 'bar' | 'library' | 'oldbell' | 'observatory' | 'plaza' | 'wastes' }[] = [
   { id: 'ilya', name: 'Ilya Marten', act: 1, at: 'veil' },
   { id: 'teresa', name: 'Teresa Holm', act: 1, at: 'gate' },
@@ -1107,7 +1107,7 @@ export function action(ws: WState, uid: string, op: string, b: Record<string, un
     case 'light': {
       // carry a trace to the Stone and its lantern is lit for everyone, with your name beside it
       const T = TWELVE.find(x => x.id === b.id); if (!T) return fail('There is no such lantern.')
-      if (c.path.length || dist(here, STONE_CELL) > 1) return fail('Bring it to the Stone of the Twelve, by the church.')
+      if (c.path.length || dist(here, STONE_CELL) > 1) return fail('Bring it to the Stone of the Twelve, on the hill above the church.')
       if (!c.traces?.includes(T.id)) return fail('You have nothing of theirs to bring.')
       c.traces = c.traces.filter(x => x !== T.id)
       if (ws.twelve?.[T.id]) return ok() // somebody got here first: the lantern already burns
