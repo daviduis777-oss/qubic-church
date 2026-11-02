@@ -4471,7 +4471,7 @@ const BANK = [
   [['satoshi', 'сатоши'], () => 'That question is open. Read the addresses and the books in the Library, then decide for yourself. I won\'t decide it for you.', 'library'],
   [['come-from-beyond', 'cfb', 'cfb?', 'sergey', 'сергей', 'кфб'], () => 'Come-from-Beyond built NXT, IOTA and Qubic. The Library has a whole book about him, with every quote dated, and 29 of his own texts.', 'library'],
   [['qubic', 'кубик'], () => 'Qubic is a network where 676 computors run the chain and miners do useful work for Aigarth, an AI project. The book "Qubic: The Long Version" in our Library explains it start to finish.'],
-  [['aigarth', 'айгарт', 'аигарс'], () => 'Aigrad is the AI that Qubic miners grow. BPP-9000, the bitcoin predictor, is its first product. Our town carries its name.'],
+  [['aigarth', 'айгарт', 'аигарс'], () => 'Aigarth is the AI that Qubic miners grow. BPP-9000, the bitcoin predictor, is its first product. Our town is named after it: Aigrad.'],
   [['bpp', 'predict', 'bitcoin', 'прогноз', 'биткоин'], () => 'BPP-9000 is a small network the miners grow to call each hour of bitcoin UP or DOWN. Live calls start on 18 November. The Qubic team is clear that its scores are not price forecasts. The Observatory watches it.', 'observatory'],
   [['epoch', 'wednesday', 'эпох', 'среда'], () => `This is epoch ${EPOCH}. A new one begins every Wednesday at 12:00 UTC. The church bell rings and the epoch is sealed in the Chronicle.`],
   [['676', 'computor', 'компьютор'], () => '676 computors run Qubic. 451 keep their seats, 225 are contested every epoch by the miners\' work.'],
@@ -4498,10 +4498,52 @@ const BANK = [
   [['hello', 'hi', 'hey', 'привет', 'здравств'], () => me() ? `Good to see you, ${me().nick}. The night is long. What do you need?` : 'You came in from the cold. Sit by the fire. What do you want to know?'],
   [['thank', 'спасибо'], () => "I won't forget it."],
 ];
+/* Maria in Russian: asked in Cyrillic, she answers in Russian. Same facts, same rules */
+const BANK_RU = {
+  anna: () => `Мы достали её из глубокого льда: машина откуда-то из очень далека, а лицо моей сестры. Лёд уступает только тому, что город делает вместе. Сейчас она свободна на ${Math.round(S.town.melt * 100)}%.`,
+  'who are you': () => 'Я Мария, младшая сестра-близнец Анны. Веду Хронику и собираю людям риги. Смотрю и записываю.',
+  help: () => 'Держи риг включённым, подкинь дров в костёр на площади, возьми заказ с доски, зажги лампу новичку. Этот город греют люди больше, чем железо.',
+  warm: () => `Тепло ${Math.round(S.town.W)} против мороза ${Math.round(S.town.F)}. ${S.town.B >= 0 ? 'Город держится.' : 'Мороз побеждает.'} Больше всего тепла дают люди: включённые риги, соседи рядом, сдержанные обещания, дрова в костре.`,
+  'build me': () => me() ? 'Твой риг в Шахте: состояние, шаги настройки и пул, всё в одном месте.' : 'Сначала дай посмотреть твою машину. Подходит большинство компьютеров; если твой не подойдёт, покажу, что я бы арендовала.',
+  'own rig': () => 'Приходи со своим компьютером: я его посмотрю, дам тебе своё имя воркера и проведу через майнер. Как запустишь, в твоём доме загорится свет.',
+  fee: () => 'Пул называется Qubic Church. Комиссия 7%, другие пулы Qubic берут от 7 до 10%. 4% от того, что намайнит твой риг, идёт в Атриум на проекты Qubic Church. Тебе остаётся 93%, раз в неделю прямо на кошелёк. Я показываю это на последнем шаге, каждый раз.',
+  profit: () => 'Здесь ничего не обещают. Анна записывает всё ради общего блага: когда она проснётся, она должна помнить своих героев. Арендованный риг может не окупиться, а в плохую эпоху точно не окупится.',
+  price: () => 'О ценах я не говорю. Подходит совет Come-from-Beyond: "Just stick to realistic assumptions" (Discord, 27.10.2026). Держись реалистичных допущений.',
+  satoshi: () => 'Этот вопрос открыт. Почитай адреса и книги в Библиотеке и реши сам. Я за тебя решать не буду.',
+  'come-from-beyond': () => 'Come-from-Beyond создал NXT, IOTA и Qubic. В Библиотеке о нём целая книга, каждая цитата с датой, и 29 его собственных текстов.',
+  qubic: () => 'Qubic это сеть, где 676 компьюторов ведут цепочку, а майнеры делают полезную работу для Aigarth, проекта ИИ. Книга «Qubic: The Long Version» в нашей Библиотеке объясняет всё от начала до конца.',
+  aigarth: () => 'Aigarth это ИИ, которого выращивают майнеры Qubic. Его первый продукт BPP-9000, предсказатель биткоина. Наш город назван в его честь: Айград.',
+  bpp: () => 'BPP-9000 это маленькая сеть, которую выращивают майнеры, чтобы на каждый час биткоина сказать ВВЕРХ или ВНИЗ. Живые прогнозы начнутся 18 ноября. Команда Qubic прямо говорит, что её оценки не прогноз цены. За ней следит Обсерватория.',
+  epoch: () => `Сейчас эпоха ${EPOCH}. Новая начинается каждую среду в 12:00 UTC. Звонит церковный колокол, и эпоха запечатывается в Хронике.`,
+  '676': () => 'Qubic ведут 676 компьюторов. 451 сохраняют места, за 225 каждую эпоху соревнуется работа майнеров.',
+  pool: () => 'Пул называется Qubic Church. Один пул, две двери: эта игра и обычная страница пула.',
+  order: () => 'Заказ это публичное обещание. Выполни, человек подтвердит: ты получишь фонарь и его письмо. Откажешься вовремя, ничего не потеряешь. Если промолчать, останется треснувший фонарь, пока не исправишь.',
+  lantern: () => 'Фонари на крыльце это обещания, сдержанные для других. Треснувший значит обещание ещё не выполнено. Он заживает, когда всё исправишь; запись остаётся.',
+  archive: () => 'В архиве то, что с тобой правда было: печати эпох, письма, карточки железа. Ничего из этого нельзя купить или продать.',
+  garden: () => 'Твой сад растит росток за каждую эпоху, что ты здесь. Через год это роща. Время единственное, чего никто не купит.',
+  chronicle: () => 'У каждого дома открытый журнал. Каждая запись несёт хэш предыдущей, так что прошлое тихо не переписать.',
+  fire: () => 'Каждый может подкинуть дров раз в час. Весь город чувствует это целый час.',
+  welcome: () => 'Когда кто-то поселяется, зажги лампу на его тропе. Она греет его, греет город и остаётся в записи.',
+  library: () => 'Иди в Библиотеку: наши две книги, исследования, тексты самого Come-from-Beyond, Крипта, а на полке Аксельрод, Остром и Сатоши.',
+  herald: () => 'Вестник печатается из Хроники. Доска объявлений рядом с ним на площади.',
+  church: () => 'Это место основала Qubic Church, она же держит церковь. Основатель пишет колонку в Вестнике.',
+  fractal: () => 'Фрактальный рационализм это мысль, что один и тот же узор конфликта повторяется на любом масштабе, и выход из него математический. Институт изучает децентрализованную кооперацию вслед за Рапопортом и Аксельродом.',
+  axelrod: () => 'Аксельрод выяснил: кооперация побеждает, когда люди встречаются снова, узнают друг друга и видят историю. Этот город построен так, чтобы держались все три условия.',
+  w4w: () => 'W4W это мир, который никогда не сбрасывается. Каждое действие остаётся в записи, а масштабируется только кооперация. Айград его первый город.',
+  bar: () => 'Бар открыт: The Last Coal, к западу от почты. Внутри все слышат всех. Можно проставиться всей комнате или поднять тост за того, кого нет.',
+  market: () => 'Рынок и аукцион ещё в лесах. Они откроются со вторым этапом.',
+  nft: () => 'Каждый из 200 NFT Anna Aigarth станет маяком основателя на карте. Знак того, кто был здесь с самого начала.',
+  donate: () => 'Атриум это место, где настоящие проекты строятся у всех на виду. Зажечь для него лампу можно на qubic.church/donate.',
+  mine: () => 'В Шахте всё: твоя машина, настройка, аренда, железо, пул и часы эпохи.',
+  demo: () => 'Это прототип. Риги здесь по-настоящему не арендуются, а дома с пометкой demo стоят, пока не придёт больше людей.',
+  hello: () => me() ? `Рада тебя видеть, ${me().nick}. Ночь длинная. Что тебе нужно?` : 'Ты пришёл с холода. Садись к огню. Что хочешь узнать?',
+  thank: () => 'Я этого не забуду.',
+};
 function bank(q) {
+  const ru = /[а-яё]/i.test(q);
   const s = ' ' + q.toLowerCase() + ' '; let best = null, score = 0;
-  for (const [keys, fn, go] of BANK) { const sc = keys.reduce((a, k) => a + (s.includes(k) ? k.length : 0), 0); if (sc > score) { score = sc; best = [fn, go]; } }
-  if (!best) return { text: sample ? "I don't have that written down. I can think it through if you want." : "I don't have that written down. Ask me about Anna, the frost, rigs, orders or the Library." };
+  for (const [keys, fn, go] of BANK) { const sc = keys.reduce((a, k) => a + (s.includes(k) ? k.length : 0), 0); if (sc > score) { score = sc; best = [(ru && BANK_RU[keys[0]]) || fn, go]; } }
+  if (!best) return { text: ru ? 'Этого у меня не записано. Спроси про Анну, мороз, риги, заказы или Библиотеку.' : sample ? "I don't have that written down. I can think it through if you want." : "I don't have that written down. Ask me about Anna, the frost, rigs, orders or the Library." };
   return { text: best[0](), go: best[1] };
 }
 function scripted(q) { return bank(q).text; }
