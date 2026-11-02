@@ -7,6 +7,29 @@ const QUBIC_RPC_API = 'https://rpc.qubic.org/v1'
 export const dynamic = 'force-dynamic'
 export const revalidate = 30
 
+let qliToken: { v: string; until: number } | null = null
+let qliCache: { at: number; v: { solutionsPerHour: number; estimatedIts: number; averageScore: number; epoch: number } } | null = null
+async function networkHashrate() {
+  const user = process.env.QUBICLI_USER, pass = process.env.QUBICLI_PASS
+  if (!user || !pass) return null
+  if (qliCache && Date.now() - qliCache.at < 5 * 60_000) return qliCache.v
+  try {
+    if (!qliToken || qliToken.until < Date.now()) {
+      const r = await fetch('https://api.qubic.li/Auth/Login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userName: user, password: pass, twoFactorCode: '' }), cache: 'no-store' })
+      if (!r.ok) return null
+      const j = await r.json(); if (!j?.token) return null
+      qliToken = { v: j.token, until: Date.now() + 50 * 60_000 }
+    }
+    const r = await fetch('https://api.qubic.li/Score/Get', { headers: { Authorization: `Bearer ${qliToken.v}`, Accept: 'application/json' }, cache: 'no-store' })
+    if (!r.ok) { qliToken = null; return null }
+    const j = await r.json()
+    const v = { solutionsPerHour: Number(j?.solutionsPerHour) || 0, estimatedIts: Number(j?.estimatedIts) || 0, averageScore: Number(j?.averageScore) || 0, epoch: Number(j?.scoreStatistics?.[0]?.epoch) || 0 }
+    if (!v.solutionsPerHour) return null
+    qliCache = { at: Date.now(), v }
+    return v
+  } catch { return null }
+}
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
   const type = searchParams.get('type') || 'all'
@@ -58,6 +81,13 @@ export async function GET(request: Request) {
         timestamp: data?.timestamp || Date.now() / 1000,
         source: 'qubic-rpc',
       })
+    }
+
+    if (type === 'hashrate') {
+      // The whole network's pace, from qubic.li's score feed. It needs an account: set QUBICLI_USER and
+      // QUBICLI_PASS in the environment. Without them the game shows that the figure is not connected yet.
+      const hr = await networkHashrate()
+      return NextResponse.json(hr ?? { unavailable: true })
     }
 
     if (type === 'tick') {
