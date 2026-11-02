@@ -220,7 +220,11 @@ ${fresh ? `<div class="code"><span>${esc(fresh)}</span><span><button class="q" d
 <h3 style="font-size:15px">The Captain</h3>
 <p>Phase now: <b>${esc(PH[st.phase] || st.phase)}</b><br>Hush: <b>${st.hush}</b> of 100${un ? `<br><b style="color:#ff6a50">The Veil is down until ${when(st.unveil.until)}.</b>` : ''}</p>
 <div class="row" style="flex-wrap:wrap">${PH.map((t, i) => `<button class="q" data-phase="${i}" ${i === st.phase ? 'disabled' : ''}>Phase ${i}</button>`).join('')}</div>
-<div class="row" style="flex-wrap:wrap"><input id="sHush" type="number" min="0" max="100" value="${st.hush}" style="flex:0 0 90px"><button class="q" id="sHushSet">Set the Hush</button>${un ? '<button class="q" data-calm>Raise the Veil again</button>' : '<button class="q" data-unveil>Drop the Veil now (3 h)</button>'}</div>`
+<div class="row" style="flex-wrap:wrap"><input id="sHush" type="number" min="0" max="100" value="${st.hush}" style="flex:0 0 90px"><button class="q" id="sHushSet">Set the Hush</button>${un ? '<button class="q" data-calm>Raise the Veil again</button>' : '<button class="q" data-unveil>Drop the Veil now (3 h)</button>'}</div>
+<h3 style="font-size:15px">The one who listens</h3>
+<p>Only a player marked here sees the wheel move. Alone at the Iron Rose, in the dark, once a night: ${st.turns || 0} of 7 notches turned.${st.fallen ? ' <b style="color:#ff6a50">The Veil is down for good. Act I is over.</b>' : ''}<br>Marked now: <b>${(st.chosen || []).map(esc).join(', ') || 'nobody'}</b></p>
+<div class="row"><input id="cWho" maxlength="60" placeholder="Name in town or account"><button class="q" id="cOn">Mark as the one who listens</button><button class="q" id="cOff">Unmark</button></div>
+<div class="row"><input id="cTurns" type="number" min="0" max="7" value="${st.turns || 0}" style="flex:0 0 90px"><button class="q" id="cTurnsSet">Set the notches</button></div>`
       sbox.querySelector('[data-close]').onclick = () => swrap.classList.remove('on')
       sbox.querySelector('#sPost').onclick = () => { const at = sbox.querySelector('#sAt').value; story({ do: 'post', to: sbox.querySelector('#sTo').value.trim() || undefined, from: sbox.querySelector('#sFrom').value, hours: +sbox.querySelector('#sHours').value, title: sbox.querySelector('#sTitle').value, text: sbox.querySelector('#sText').value, at: at ? new Date(at).toISOString() : undefined }) }
       sbox.querySelectorAll('[data-mdel]').forEach(b => { b.onclick = () => { if (confirm('Delete this letter for everyone?')) story({ do: 'maildel', id: b.dataset.mdel }) } })
@@ -229,6 +233,9 @@ ${fresh ? `<div class="code"><span>${esc(fresh)}</span><span><button class="q" d
       sbox.querySelectorAll('[data-del]').forEach(b => { b.onclick = () => { if (confirm('Delete this letter for everyone?')) story({ do: 'del', id: b.dataset.del }) } })
       sbox.querySelectorAll('[data-phase]').forEach(b => { b.onclick = () => { if (confirm(`Move the Captain to phase ${b.dataset.phase}?`)) story({ do: 'phase', phase: +b.dataset.phase }) } })
       sbox.querySelector('#sHushSet').onclick = () => story({ do: 'hush', hush: +sbox.querySelector('#sHush').value })
+      sbox.querySelector('#cOn').onclick = () => { const w = sbox.querySelector('#cWho').value.trim(); if (w && confirm(`Mark ${w} as the one who listens?`)) story({ do: 'chosen', who: w, on: true }) }
+      sbox.querySelector('#cOff').onclick = () => { const w = sbox.querySelector('#cWho').value.trim(); if (w) story({ do: 'chosen', who: w, on: false }) }
+      sbox.querySelector('#cTurnsSet').onclick = () => story({ do: 'turns', turns: +sbox.querySelector('#cTurns').value })
       sbox.querySelector('[data-unveil]')?.addEventListener('click', () => { if (confirm('Drop the Veil for every player for 3 hours? This is the apocalypse.')) story({ do: 'unveil', hours: 3 }) })
       sbox.querySelector('[data-calm]')?.addEventListener('click', () => story({ do: 'calm' }))
     }
