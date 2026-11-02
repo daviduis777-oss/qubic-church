@@ -399,7 +399,10 @@ export function terrain(q: number, r: number): Terrain {
   if (n === RIDGE_RING && !nearRoad(q, r) && !PASSES.some(p => dist(p, [q, r]) <= 1) && hash(q, r, 23) < 0.93) return 'mountain'
   return h < 0.22 && !nearRoad(q, r) ? 'mountain' : h < 0.52 ? 'rock' : h < 0.6 ? 'tree' : 'open'
 }
-export const passable = (q: number, r: number) => { if (PROP_BLOCK.has(`${q},${r}`)) return false; const t = terrain(q, r); return t !== 'mountain' && t !== 'void' }
+/** The hill round the Stone has one way up: the steps from the library lane, through this cell. The rest of its flank is rock. */
+export const STAIR_CELL: Cell = [STONE_CELL[0], STONE_CELL[1] + 2]
+export const hillRock = (q: number, r: number) => dist(STONE_CELL, [q, r]) === 2 && !(q === STAIR_CELL[0] && r === STAIR_CELL[1])
+export const passable = (q: number, r: number) => { if (PROP_BLOCK.has(`${q},${r}`) || hillRock(q, r)) return false; const t = terrain(q, r); return t !== 'mountain' && t !== 'void' }
 /** What a cell gives when you work it, or null. */
 export function resourceOf(q: number, r: number): string | null {
   const t = terrain(q, r), z = zoneOf(q, r), h = hash(q, r, 11)
