@@ -727,18 +727,18 @@ body.act1 #dock button[data-act=bag],body.act1 #dock button[data-act=craft],body
 .trace small{display:block;font-family:var(--f-label);font-weight:600;font-size:12px;letter-spacing:.08em;color:#e8a75a;margin-bottom:6px} .trace p{margin:0 0 10px;font-family:var(--f-print);font-size:16px;line-height:1.6;color:#ece3d0} .trace.lit p{margin:0;color:#c9b99a}
 /* ---------- rooms: you step through the door and stand inside, as in the old survival games ---------- */
 #door{position:fixed;inset:0;z-index:60;background:#000;display:flex;align-items:center;justify-content:center;perspective:900px;overflow:hidden;cursor:pointer}
-#door .dwrap{position:relative;width:min(44vh,46vw);height:min(80vh,84vw);transform-style:preserve-3d;animation:dolly var(--dt,2.4s) cubic-bezier(.45,0,.25,1) forwards}
-#door .dlight{position:absolute;inset:0;background:center/cover no-repeat;filter:brightness(1.25) saturate(1.1) blur(1px);box-shadow:0 0 120px 40px rgba(255,170,80,.25)}
+#door .dwrap{position:relative;width:min(54vh,64vw);height:min(94vh,112vw);transform-style:preserve-3d;transform-origin:50% 55%;animation:dolly var(--dt,4s) cubic-bezier(.42,0,.3,1) forwards}
+#door .dlight{position:absolute;inset:0;transform:translateZ(-420px) scale(1.47);background:center/cover no-repeat;filter:brightness(1.12) saturate(1.05);box-shadow:0 0 140px 50px rgba(255,170,80,.22)}
 #door .dframe{position:absolute;inset:-6% -9% -2% -9%;border:min(3vh,26px) solid #1c120b;border-bottom:0;box-shadow:inset 0 0 40px #000,0 0 0 2000px #000;background:transparent;pointer-events:none}
-#door .dleaf{position:absolute;inset:0;transform-origin:0 50%;background:url(q/room/door_wood.webp) 0 0/40% auto repeat,#3a2617;box-shadow:inset 0 0 60px rgba(0,0,0,.75),inset -6px 0 12px rgba(0,0,0,.6);animation:swing var(--dt,2.4s) cubic-bezier(.55,0,.3,1) forwards;backface-visibility:hidden}
+#door .dleaf{position:absolute;inset:0;transform-origin:0 50%;background:url(q/room/door.webp) center/100% 100% no-repeat,#3a2617;box-shadow:inset 0 0 50px rgba(0,0,0,.55),inset -6px 0 12px rgba(0,0,0,.6);animation:swing var(--dt,4s) cubic-bezier(.5,0,.25,1) forwards;backface-visibility:hidden}
 #door .dleaf i{position:absolute;left:0;right:0;height:5.5%;background:linear-gradient(180deg,#4a4440,#2a2624);box-shadow:0 2px 3px rgba(0,0,0,.6)} #door .dleaf i::before,#door .dleaf i::after{content:'';position:absolute;top:30%;width:9px;height:9px;border-radius:50%;background:#b8783e;box-shadow:0 1px 2px #000} #door .dleaf i::before{left:12%} #door .dleaf i::after{right:12%}
 #door .dleaf b{position:absolute;right:9%;top:50%;width:13%;aspect-ratio:1;border-radius:50%;border:4px solid #6a5a48;box-shadow:0 2px 4px #000}
-#door .dleaf.arch{border-radius:50% 50% 0 0/22% 22% 0 0} #door .dleaf.iron{background:url(q/room/door_wood.webp) 0 0/40% auto repeat,#2e2a28;filter:saturate(.6)}
+#door .dleaf.arch,#door .dlight.arch{border-radius:50% 50% 0 0/20% 20% 0 0} #door .dleaf.iron{filter:saturate(.55) brightness(.85)}
 #door{animation:dfade .3s ease both} @keyframes dfade{from{opacity:0}to{opacity:1}} #door.out{opacity:0;transition:opacity .5s ease}
 .blkfade{position:fixed;inset:0;z-index:59;background:#000;opacity:0;transition:opacity .4s ease;pointer-events:none} .blkfade.on{opacity:1}
 #door .dskip{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);font:600 11px var(--f-label);letter-spacing:.14em;color:rgba(236,227,208,.35)}
-@keyframes dolly{0%{transform:scale(.78)}100%{transform:scale(1.9)}}
-@keyframes swing{0%,28%{transform:rotateY(0)}100%{transform:rotateY(-108deg)}}
+@keyframes dolly{0%{transform:scale(.5)}100%{transform:scale(1)}}
+@keyframes swing{0%,38%{transform:rotateY(0)}100%{transform:rotateY(96deg)}}
 #room{position:fixed;inset:0;z-index:4;background:#000;overflow:hidden;opacity:0;transition:opacity .5s ease}
 #room.on{opacity:1} body.inroom #panel{z-index:6} body.inroom #labels,body.inroom #goals{visibility:hidden} body.inroom:not(.inbar) #logf{visibility:hidden}
 #room .rimg{position:absolute;inset:-3%;background:center/cover no-repeat;transform:scale(1.04);transition:transform .25s ease-out;will-change:transform}
@@ -7331,15 +7331,15 @@ function enterRoom(name, world = false) {
   entering = true; const P = HX(...cell), toA = new THREE.Vector3(-P.x, 0, -P.z).normalize(), D = P.clone().add(toA.clone().multiplyScalar(0.85));
   flyTo(D, 5.2);
   setTimeout(() => { doorGlow(D); sfx.door(); const L = new THREE.PointLight(0xffb468, 0, 4, 1.6); L.position.copy(D).setY(0.7); scene.add(L); const t0 = performance.now();
-    const grow = () => { const k = (performance.now() - t0) / 900; L.intensity = 14 * Math.min(1, k); if (k < 1.6) requestAnimationFrame(grow); else scene.remove(L); }; grow(); }, 650);
+    const grow = () => { const k = (performance.now() - t0) / 1100; L.intensity = 14 * Math.min(1, k); if (k < 2) requestAnimationFrame(grow); else scene.remove(L); }; grow(); }, 1000);
   setTimeout(() => { const F = document.createElement('div'); F.className = 'blkfade'; document.body.appendChild(F); requestAnimationFrame(() => F.classList.add('on'));
-    setTimeout(() => { entering = false; throughDoor(name); setTimeout(() => F.remove(), 900); }, 420); }, 1500);
+    setTimeout(() => { entering = false; throughDoor(name); setTimeout(() => F.remove(), 900); }, 500); }, 2300);
 }
 function throughDoor(name) {
   const R = ROOMS[name]; if (!R) return; if (ROOM === name) return; const full = !doorSeen.has(name); doorSeen.add(name);
-  const dt = REDUCED ? 0.3 : full ? 2.4 : 1.1, img = new Image(); img.src = R.img;
+  const dt = REDUCED ? 0.3 : full ? 4 : 1.8, img = new Image(); img.src = R.img;
   const D = document.createElement('div'); D.id = 'door'; D.style.setProperty('--dt', dt + 's');
-  D.innerHTML = `<div class="dwrap"><div class="dlight" style="background-image:url(${R.img})"></div><div class="dleaf ${R.door}"><i style="top:14%"></i><i style="top:47%"></i><i style="top:80%"></i><b></b></div><div class="dframe"></div></div>${full ? '<div class="dskip">CLICK TO SKIP</div>' : ''}`;
+  D.innerHTML = `<div class="dwrap"><div class="dlight ${R.door === 'arch' ? 'arch' : ''}" style="background-image:url(${R.img})"></div><div class="dleaf ${R.door}"></div><div class="dframe"></div></div>${full ? '<div class="dskip">CLICK TO SKIP</div>' : ''}`;
   document.body.appendChild(D); if (!REDUCED) creak();
   let done = false; const go = () => { if (done) return; done = true; showRoom(name); D.classList.add('out'); setTimeout(() => D.remove(), 520); };
   const ready = new Promise(res => { if (img.complete) res(); else { img.onload = img.onerror = res; } });
