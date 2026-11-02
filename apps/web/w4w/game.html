@@ -752,6 +752,18 @@ body.act1 #dock button[data-act=bag],body.act1 #dock button[data-act=craft],body
 #room .rhot button:hover span,#room .rhot button:focus-visible span{opacity:1}
 #room .rbar{position:absolute;left:0;right:0;top:0;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:max(18px,env(safe-area-inset-top)) max(22px,env(safe-area-inset-right)) 30px max(22px,env(safe-area-inset-left));background:linear-gradient(180deg,rgba(0,0,0,.7),transparent)}
 #room .rbar h2{margin:0;font:600 clamp(20px,2.6vw,30px) var(--f-display,serif);letter-spacing:.06em;color:#f3e6c8;text-shadow:0 2px 12px #000} #room .rbar small{display:block;font:500 12.5px var(--f-body);color:#c9b99a;letter-spacing:.02em;margin-top:2px}
+#room .rhot button em.plq{position:absolute;left:var(--px,50%);top:var(--py,28%);transform:translate(-50%,-50%);display:flex;align-items:center;gap:7px;white-space:nowrap;padding:6px 12px 6px 10px;border-radius:5px;font:600 12.5px var(--f-label);font-style:normal;letter-spacing:.07em;color:#f6dfae;pointer-events:none;
+  background:linear-gradient(180deg,#33241a,#170f09);box-shadow:inset 0 0 0 1px #b8873f,inset 0 1px 0 rgba(255,220,160,.25),0 6px 18px rgba(0,0,0,.6);transition:transform .2s,filter .2s}
+#room .rhot button em.plq::before{content:'';width:7px;height:7px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ffe3a8,#c9772f);box-shadow:0 0 6px rgba(255,180,90,.7);flex:none}
+#room .rhot button em.plq b{font:700 11px var(--f-label);letter-spacing:.06em;padding:2px 7px;border-radius:3px;background:#d9853a;color:#1a0f06}
+#room .rhot button em.plq .coin{width:15px;height:15px}
+#room .rhot button em.plq i.g{font-style:normal;color:#7ff4f4;font-weight:700}
+#room .rhot button em.plq.glow{animation:plq 1.9s ease-out infinite}
+#room .rhot button em.plq.gold{box-shadow:inset 0 0 0 1px #ffd27a,0 0 18px rgba(255,200,110,.55),0 6px 18px rgba(0,0,0,.6);color:#fff1cf}
+#room .rhot button em.plq.lock{filter:grayscale(.8) brightness(.7)} #room .rhot button em.plq.lock::before{background:#6a6058;box-shadow:none}
+#room .rhot button:hover em.plq,#room .rhot button:focus-visible em.plq{transform:translate(-50%,-62%);filter:brightness(1.18)}
+@keyframes plq{0%{box-shadow:inset 0 0 0 1px #ffd27a,0 0 0 0 rgba(255,190,100,.55),0 6px 18px rgba(0,0,0,.6)}70%{box-shadow:inset 0 0 0 1px #ffd27a,0 0 0 12px rgba(255,190,100,0),0 6px 18px rgba(0,0,0,.6)}100%{box-shadow:inset 0 0 0 1px #ffd27a,0 0 0 0 rgba(255,190,100,0),0 6px 18px rgba(0,0,0,.6)}}
+@media (prefers-reduced-motion:reduce){#room .rhot button em.plq.glow{animation:none}}
 #room .rnote{position:absolute;left:50%;bottom:118px;transform:translateX(-50%);max-width:min(560px,86vw);padding:12px 18px;border-radius:6px;background:rgba(12,9,6,.84);box-shadow:inset 0 0 0 1px rgba(201,160,74,.3);font:16px/1.55 var(--f-print);color:#ece3d0;opacity:0;transition:opacity .3s;pointer-events:none;text-align:center}
 #room .rnote.on{opacity:1}
 @media (prefers-reduced-motion:reduce){#door .dwrap,#door .dleaf{animation-duration:.01s}#room .rfx span{animation:none}}
@@ -1018,6 +1030,8 @@ var W4W = (() => {
     RIME_PULL: () => RIME_PULL,
     ROADS: () => ROADS,
     ROSE_CELL: () => ROSE_CELL,
+    ROSE_TURNS: () => ROSE_TURNS,
+    ROSE_TURN_WAIT: () => ROSE_TURN_WAIT,
     ROSE_WAIT: () => ROSE_WAIT,
     ROUND_COST: () => ROUND_COST,
     ROUND_GIFT: () => ROUND_GIFT,
@@ -1793,6 +1807,8 @@ var W4W = (() => {
     const t = townWarmth({ people: DEMO_TOWN.people + mining.length, online: ws.online, deeds: DEMO_TOWN.deeds + ws.doneOrders + Math.floor(today / 2), fire, power: DEMO_TOWN.power + mining.reduce((a, x) => a + (x.sol ?? 0), 0), storm: false });
     return unveiled(ws.story, ws.now) ? { ...t, veil: 0 } : t;
   }
+  const ROSE_TURNS = 7;
+  const ROSE_TURN_WAIT = 18 * 36e5;
   const GATE_CELL = [0, -TOWN_RING];
   const ROSE_CELL = [-1, 2];
   const ROSE_WAIT = 6 * 36e5;
@@ -1908,7 +1924,7 @@ var W4W = (() => {
         const p = ws.pylons?.[i];
         return { i, at: pylonCell(i), s: pylonNow(p, i, ws.now, veilOf(townOfState(ws).power)), nick: p?.nick ?? null, at_t: p?.at ?? 0 };
       }),
-      story: { phase: ws.story?.phase ?? 0, hush: (ws.story?.phase ?? 0) >= 2 ? Math.round(hushNow(ws.story, ws.now)) : null, unveil: unveiled(ws.story, ws.now) ? ws.story.unveil : null },
+      story: { chosen: !!ws.story?.chosen?.includes(uid), turns: ws.story?.turns ?? 0, fallen: ws.story?.fallen ?? null, phase: ws.story?.phase ?? 0, hush: (ws.story?.phase ?? 0) >= 2 ? Math.round(hushNow(ws.story, ws.now)) : null, unveil: unveiled(ws.story, ws.now) ? ws.story.unveil : null },
       pressed: pressedAt(ws.now),
       pressNext: (Math.floor(ws.now / PYLON_PRESS_MS) + 1) * PYLON_PRESS_MS,
       ranks: Object.fromEntries(Object.entries(ws.chars).map(([k, x]) => [k, rankOf(x.renown ?? 0)]))
@@ -2192,6 +2208,26 @@ var W4W = (() => {
         c.valved = now;
         addHush(ws, 10, d);
         d.feed.push({ id: `rv${now}`, t: now, topic: "valve", by: "", data: {} });
+        return ok();
+      }
+      case "turn": {
+        const s = ws.story ?? (ws.story = { phase: 0, hush: 0, ht: now });
+        if (!s.chosen?.includes(uid)) return fail("The wheel does not move. It has never moved.");
+        if (s.fallen) return fail("There is nothing left to turn.");
+        if (c.path.length || dist(here, ROSE_CELL) > 1) return fail("Stand at the copper ring, by the rose.");
+        if (greyAt(now)) return fail("Not in the grey light. Somebody would see. Come back in the dark.");
+        const watched = Object.entries(ws.chars).some(([k, o]) => k !== uid && dist([o.q, o.r], ROSE_CELL) <= 2);
+        if (watched) return fail("Someone is standing by the ring. Your hands stay in your pockets.");
+        if (now - (s.turnedAt ?? 0) < ROSE_TURN_WAIT) return fail("Your hands remember the cold of it. Not tonight.");
+        s.turns = (s.turns ?? 0) + 1;
+        s.turnedAt = now;
+        d.story = true;
+        d.feed.push({ id: `rt${now}`, t: now, topic: "turn", by: "", data: { n: s.turns } });
+        if (s.turns >= ROSE_TURNS) {
+          s.fallen = now;
+          s.unveil = { at: now, until: now + 3650 * 24 * 36e5 };
+          d.feed.push({ id: `fl${now}`, t: now, topic: "fallen", by: "", data: {} });
+        }
         return ok();
       }
       case "pick": {
@@ -2691,7 +2727,13 @@ function kitMats(o) { o.traverse(m => { if (!m.isMesh) return; m.receiveShadow =
   mt.needsUpdate = true; }); }
 function loadKit() { return Promise.all(KIT_NAMES.map(n => loadGlb(`q/k/${n}.glb`).then(g => { if (!g) return; kitMats(g.scene); KIT_P[n] = g.scene; }))); }
 /* one piece of the kit, standing at x,z and facing the direction rot (0 faces +z), lit by its own lanterns */
-function kitAt(n, x, z, rot = 0, s = 1, parent = scene) { const P = KIT_P[n]; if (!P) return null; const o = P.clone(true); o.scale.setScalar(METER * s); o.position.set(x, 0, z); o.rotation.y = rot; o.userData.lights = []; parent.add(o); propMarks(o); return o; }
+function kitAt(n, x, z, rot = 0, s = 1, parent = scene) { const P = KIT_P[n]; if (!P) return null; const o = P.clone(true); o.scale.setScalar(METER * s); o.position.set(x, 0, z); o.rotation.y = rot; o.userData.lights = []; parent.add(o); propMarks(o); if (n === 'mailbox') o.userData.flag = mailFlag(o); return o; }
+/* the red flag on a mailbox: up when a letter waits at that door, down when there is none */
+let FLAG_MAT = null;
+function mailFlag(o) { let mk = null; o.traverse(m => { if (m.name === 'flag') mk = m; }); if (!mk) return null;
+  FLAG_MAT ||= new THREE.MeshStandardMaterial({ color: 0x8e2216, roughness: 0.75, emissive: 0x2a0604 });
+  const g = new THREE.Group(), arm = new THREE.Mesh(new THREE.BoxGeometry(0.025, 0.55, 0.06), FLAG_MAT), plate = new THREE.Mesh(new THREE.BoxGeometry(0.025, 0.13, 0.2), FLAG_MAT);
+  arm.position.y = 0.275; plate.position.set(0, 0.5, -0.07); g.add(arm, plate); mk.add(g); return g; }
 let PYLON_MODEL = null;
 function loadGlb(url) { return new Promise(res => { const l = new GLTFLoader(); l.setMeshoptDecoder(MeshoptDecoder); l.load(url, g => res(g), undefined, e => { console.warn(url, e); res(null); }); }); }
 function meshyMats(o, snow, noFow) { o.traverse(m => { if (!m.isMesh) return; m.castShadow = m.receiveShadow = true; let mt = m.material;
@@ -2769,7 +2811,7 @@ function build() {
   if (KIT_P.board && KIT_P.campfire && KIT_P.well) {
     // Hearth Square: the board at the back of the square, the well beside it, the fire with the kettle on the next cell where the benches are
     const bp = cornerAt(...SPECIAL.plaza, 90), board = kitAt('board', bp.x, bp.z, faceTo(bp, pp), 1.15); tag(board, 'board', 'board');
-    const wp = cornerAt(...SPECIAL.plaza, 150), well = kitAt('well', wp.x, wp.z, faceTo(wp, pp) + 0.5); tag(well, 'board', 'board');
+    const wp = cornerAt(...SPECIAL.plaza, 150), well = kitAt('well', wp.x, wp.z, faceTo(wp, pp) + 0.5); tag(well, 'board', 'board'); USED_CORNERS.add(cornerId(bp)); USED_CORNERS.add(cornerId(wp));
     const fc = HX(...FIRE_CELL), fire = kitAt('campfire', fc.x, fc.z, faceTo(fc, pp)); tag(fire, 'fire', 'fire');
     fireSprite = sprite(GLOW, fc.x, 0.28, fc.z, 1.1, 0xff9a3c, 1); fireSprite.userData.flicker = true; tag(fireSprite, 'fire', 'fire'); glowDecal(fc.x, fc.z, 2.8, 0xffb060, 0.75);
     label('PLAZA · FIRE · ORDERS', board, 1.9, 'key');
@@ -3183,8 +3225,11 @@ let ROSE_WHEEL = null;
 function openRose() {
   unlockPage('rose'); const c = myC(), near = c && !c.path.length && W4W.dist([c.q, c.r], W4W.ROSE_CELL) <= 1, ph = XV?.story?.phase || 0, wait = (c?.valved || 0) + W4W.ROSE_WAIT - xnow();
   panel('rose', 'The Iron Rose', 'A valve on the copper ring round Anna', null, `<p class="say">${esc(CHAPTERS_I.find(x => x.id === 'rose').text.split('\n\n')[0])}</p>
-    <p class="mute" style="font-size:13px">It has never been turned. There is no lock on it.</p>
+    ${(XV?.story?.turns || 0) ? `<p class="say" style="margin-top:8px">The wheel has moved ${XV.story.turns} ${XV.story.turns === 1 ? 'notch' : 'notches'} since the ninth night. Nobody admits to it. Nobody has seen who.</p>` : '<p class="mute" style="font-size:13px">It has never been turned. There is no lock on it.</p>'}
+    ${XV?.story?.chosen && !XV.story.fallen ? (near ? '<button class="btn ghost burn" data-turn>Turn it one notch</button><p class="mute" style="font-size:12.5px">Only in the dark, and only if nobody is near the ring.</p>' : '<p class="mute" style="font-size:12.5px">The wheel would move for your hands. You know it would.</p>') : ''}
     ${ph >= 3 ? (near ? (wait > 0 ? '<p class="mute">Your hands remember the cold of it. Not yet.</p>' : '<button class="btn ghost burn" data-rose>Put your hands on the wheel</button>') : '<p class="mute" style="font-size:13px">Someone has scraped the frost off the wheel. Recently.</p>') : ''}`);
+  $('#pbody [data-turn]')?.addEventListener('click', e => { const b = e.currentTarget; if (!b.dataset.sure) { b.dataset.sure = '1'; b.textContent = 'Turn it. The Veil will feel it.'; return; }
+    xact('turn', {}).then(v => { if (v) { sfx.door(); pulse(-0.3); banner('The rose turned', 'the pipes went quiet for a breath'); openRose(); } }); });
   $('#pbody [data-rose]')?.addEventListener('click', e => { const b = e.currentTarget; if (!b.dataset.sure) { b.dataset.sure = '1'; b.textContent = 'Turn it. The Veil will feel it.'; say('Maria said: do nothing they ask. Press again if you mean it.', 'Anna'); return; }
     xact('valve', {}).then(v => { if (v) { sfx.door(); pulse(-0.3); banner('The rose turned', 'the pipes went quiet for a breath'); log('You turned the Iron Rose a little. Somewhere above the town the Veil thinned.', 'world'); openRose(); } }); });
 }
@@ -4270,9 +4315,43 @@ function wireCarrying(pb, again) {
     xact('mailburn', { id: b.dataset.burn }).then(v => { if (v) { sfx.wood(); log('The letter curled, went black and was gone. The last hands it was in were yours.', 'world'); again(); } }); });
   pb.querySelectorAll('[data-mreply]').forEach(f => f.onsubmit = e => { e.preventDefault(); const t = f.querySelector('textarea'), text = t.value.trim(); if (!text) return;
     xact('mailreply', { id: f.dataset.mreply, text }).then(v => { if (v) { sfx.paper(); log(f.dataset.valk ? 'You sealed an answer. It goes under the North Gate, and someone has to take it there.' : 'You sealed an answer. It is in your coat: carry it, or leave it in the sack.', 'me'); again(); } }); });
+  wireFile(pb, again);
   pb.querySelectorAll('[data-mreport]').forEach(b => b.onclick = () => xact('mailreport', { id: b.dataset.mreport }).then(v => { if (v) { b.textContent = 'Reported'; b.disabled = true; } }));
   pb.querySelectorAll('[data-open]').forEach(b => b.onclick = () => { if (sealAsk !== b.dataset.open) { sealAsk = b.dataset.open; b.textContent = 'The reader will know. Break it?'; return; }
     xact('mailopen', { id: b.dataset.open }).then(v => { if (v) { sfx.paper(); log('You broke the seal. It will not close again.', 'world'); again(); } }); });
+}
+/* where a letter goes once it is read: the desk at home, the Library shelf for everyone (letters from beyond the Gate only), or the fire */
+const nearHomeNow = () => { const c = myC(); return !!c && !c.path.length && W4W.dist([c.q, c.r], c.home) <= 1; };
+const atLibNow = () => { const c = myC(); return !!c && !c.path.length && W4W.dist([c.q, c.r], SPECIAL.library) <= 1; };
+const atFireNow = () => { const c = myC(); return !!c && !c.path.length && (W4W.dist([c.q, c.r], SPECIAL.plaza) <= 1 || W4W.dist([c.q, c.r], c.home) <= 1); };
+function fileBtns(m, inDesk = false) {
+  const b = [];
+  if (!inDesk) b.push(nearHomeNow() ? `<button class="btn" data-file="${esc(m.id)}" data-to="desk">Put it in the desk</button>` : '');
+  if (m.fromValk) b.push(atLibNow() ? `<button class="btn main" data-file="${esc(m.id)}" data-to="library">Lay it on the Library shelf</button>` : `<span class="mute fileh">Carried to the Library, it lies on the shelf for the whole town to read.</span>`);
+  b.push(atFireNow() ? `<button class="btn ghost burn" data-file="${esc(m.id)}" data-to="burn">Burn it</button>` : '');
+  return `<div class="mbtns file">${b.join('')}</div>`;
+}
+function wireFile(pb, again) {
+  pb.querySelectorAll('[data-file]').forEach(b => b.onclick = () => { const to = b.dataset.to;
+    if (to !== 'desk' && sealAsk !== to + b.dataset.file) { sealAsk = to + b.dataset.file; b.textContent = to === 'burn' ? 'Nobody will ever read it again. Burn?' : 'Everyone in town will read it. Lay it down?'; return; }
+    xact('mailfile', { id: b.dataset.file, to }).then(v => { if (!v) return; if (to === 'burn') { sfx.wood?.(); log('The letter curled, went black and was gone.', 'world'); } else if (to === 'desk') { sfx.paper?.(); log('You put the letter away in your desk. Nobody else will see it there.', 'world'); } else { sfx.paper?.(); log('You laid the letter on the Library shelf. Now the whole town can read it.', 'warm'); } again?.(); }); });
+}
+/* the desk at home: letters at the door and letters kept */
+function openDesk() {
+  const M = mailOf(), D = M.desk || [], I = M.inbox || [];
+  const doc = (m, inDesk) => `<details class="mail doc"><summary><b>From ${esc(m.fromNick)}</b><span>${when(m.deliveredAt || m.at)}</span></summary><p class="mtext">${esc(m.text)}</p>${fileBtns(m, inDesk)}</details>`;
+  panel('desk', 'Your desk', D.length ? `${D.length} kept in the drawer` : 'The drawer is empty', null, `${I.length ? `<h3>AT YOUR DOOR</h3><div class="mails">${I.slice().reverse().map(m => doc(m, false)).join('')}</div>` : '<p class="mute">No letters at your door.</p>'}
+    <h3>IN THE DRAWER</h3>${D.length ? `<div class="mails">${D.slice().reverse().map(m => doc(m, true)).join('')}</div>` : '<p class="mute">Nothing kept yet. What you put in this drawer, nobody else will ever see.</p>'}
+    <p class="mute" style="font-size:12.5px">Answers and the rest of the post are on your house panel.</p>`);
+  wireFile($('#pbody'), openDesk);
+}
+/* the Library shelf: letters from beyond the Gate that somebody brought here for the town to read */
+function openShelf() {
+  const M = mailOf(), S = M.shelf || [], mineV = [...(M.inbox || []), ...(M.desk || [])].filter(m => m.fromValk);
+  panel('shelf', 'Letters from the other side', S.length ? `${S.length} on the shelf` : 'The shelf is empty', null, `<p class="say">Letters that came from beyond the North Gate, laid here by the people they were written to, so that nobody has to keep one alone.</p>
+    ${mineV.length ? `<h3>YOURS TO BRING</h3><div class="mails">${mineV.map(m => `<details class="mail doc"><summary><b>From ${esc(m.fromNick)}</b><span>${when(m.deliveredAt || m.at)}</span></summary><p class="mtext">${esc(m.text)}</p>${fileBtns(m, true)}</details>`).join('')}</div>` : ''}
+    <h3>ON THE SHELF</h3>${S.length ? `<div class="mails">${S.slice().reverse().map(m => `<details class="mail doc"><summary><b>From ${esc(m.fromNick)}</b><span>brought by ${esc(m.sharedBy)} · ${when(m.sharedAt)}</span></summary><p class="mtext">${esc(m.text)}</p></details>`).join('')}</div>` : '<p class="mute">Nobody has brought one yet.</p>'}`);
+  wireFile($('#pbody'), openShelf);
 }
 function mailboxHtml() {
   const I = mailOf().inbox; if (!I.length) return '';
@@ -4282,7 +4361,7 @@ function mailboxHtml() {
       <div class="marks">${hands.length ? hands.map(n => `<i class="pm">${esc(n)}</i>`).join('') : '<i class="pm">by its writer</i>'}${m.sealBy ? `<i class="pm red">opened by ${esc(m.sealBy)}</i>` : ''}</div>
       <p class="mtext">${esc(m.text)}</p>
       ${m.fromNick !== 'no name' && !m.answered ? `<form class="mailw" data-mreply="${esc(m.id)}" ${m.fromValk ? 'data-valk="1"' : ''}><textarea maxlength="1200" rows="3" placeholder="${m.fromValk ? 'An answer. It will have to go under the North Gate.' : 'An answer. It goes into your coat, and someone has to carry it.'}"></textarea><button class="btn">Seal the answer</button></form>` : m.answered ? '<p class="mute" style="font-size:12.5px">You answered this one.</p>' : ''}
-      <button class="btn ghost small" data-mreport="${esc(m.id)}" ${m.reported ? 'disabled' : ''}>${m.reported ? 'Reported' : 'Report this letter'}</button></details>`; }).join('')}</div>`;
+      ${fileBtns(m)}<button class="btn ghost small" data-mreport="${esc(m.id)}" ${m.reported ? 'disabled' : ''}>${m.reported ? 'Reported' : 'Report this letter'}</button></details>`; }).join('')}</div>`;
 }
 function repHtml(uid) {
   const r = (mailOf().rep || {})[uid]; if (!r) return '';
@@ -4711,7 +4790,9 @@ function stepAvatars(dt) {
     // the feet keep pace with the ground: pick the gait by how fast the body really goes, then match the clip to it
     const nowMs = performance.now(), rdt = a.spdT ? Math.max(1e-3, (nowMs - a.spdT) / 1000) : 0; a.spdT = nowMs; // real seconds: the pace on the ground is real time, whatever the frame rate
     const sp = a.spdP && rdt ? a.g.position.distanceTo(a.spdP) / rdt / HERO_H : 0; (a.spdP ||= a.g.position.clone()).copy(a.g.position); a.spd = THREE.MathUtils.lerp(a.spd || 0, Math.min(sp, 4), Math.min(1, rdt * 4));
-    const gait = !walking ? null : bad && a.actions.Walking_C ? 'Walking_C' : a.spd > 1.5 && a.actions.Jog ? 'Jog' : a.spd > 0.6 || !out ? 'Running_A' : 'Walking_A';
+    // one gait per stretch of walking: in town the brisk walk, out in the cold the slow one; a real run only when the pace stays fast, and it takes a clear change to switch back
+    const prevG = a.gaitG || null, fast = prevG === 'Jog' ? a.spd > 1.25 : a.spd > 1.9, brisk = prevG === 'Running_A' ? a.spd > 0.45 : a.spd > 0.75;
+    const gait = !walking ? null : bad && a.actions.Walking_C ? 'Walking_C' : fast && a.actions.Jog ? 'Jog' : !out || brisk ? 'Running_A' : 'Walking_A'; a.gaitG = gait;
     if (gait && a.actions[gait]) a.actions[gait].timeScale = THREE.MathUtils.clamp(a.spd / (GAIT[gait] || 1), 0.55, 1.6);
     if (indoor) { const w = a.actions.Walking_A; if (w) w.timeScale = 0.8; }
     else play(a, walking ? gait : busy ? (a.actions[chop] ? chop : 'PickUp') : sittingAt(d) || (!walking && SHEL[W4W.key(d.q, d.r)] === 'fire') ? 'Sit_Floor_Idle' : 'Idle');
@@ -6228,6 +6309,9 @@ function hookFeed() {
   room.on('letter', m => { const x = m.data || {}; if (m.by !== S.uid) log(`${x.nick || 'Someone'} picked up the letter under the Gate${x.n > 1 ? ` (${x.n} have read it)` : ''}.`, 'world', 'world'); });
   room.on('drain', m => { const x = m.data || {}; log(`Someone took warmth back from ${PYLON_NAMES[x.i] || 'a pylon'}. It fell to ${x.s}%. Nobody saw who.`, 'world', 'world'); });
   room.on('round', m => { const x = m.data || {}; log(x.n ? `${x.nick || 'Someone'} stood the whole bar a round. ${x.n === 1 ? 'One cup' : x.n + ' cups'} warmer.` : `${x.nick || 'Someone'} stood a round in an empty bar. Ivo drank it.`, 'world', 'world'); if (m.by !== S.uid && XV?.me && XV.me.q === W4W.BAR_CELL[0] && XV.me.r === W4W.BAR_CELL[1]) { sfx.reward?.(1); say(`${x.nick} stood a round. A hot cup comes down the bar to you.`, 'Bar'); } });
+  room.on('shelf', m => { const x = m.data || {}; log(`${x.nick || 'Someone'} laid a letter from beyond the Gate on the Library shelf. Anyone can read it now.`, 'warm', 'world'); });
+  room.on('turn', m => { const x = m.data || {}; log(`In the dark someone turned the Iron Rose. Every pipe in town went quiet for a breath. ${x.n || 1} ${x.n === 1 ? 'notch' : 'notches'} now.`, 'world', 'world'); });
+  room.on('fallen', () => { banner('THE VEIL IS DOWN', 'and it is not coming back'); log('The Iron Rose turned all the way. The Veil went out over Aigrad, and this time it is not coming back.', 'world', 'world'); });
   room.on('twelve', m => { const x = m.data || {}; log(`${x.nick || 'Someone'} lit ${x.name ? x.name + '\'s' : 'a'} lantern on the Stone of the Twelve. ${x.n || 1} of twelve burn.`, 'warm', 'world'); });
   room.on('toast', m => { const x = m.data || {}; log(`${x.nick || 'Someone'} raised a glass to ${x.to || 'someone'} at the bar.`, 'world', 'world'); });
   room.on('valve', () => { log('Someone turned the Iron Rose. Every pipe in town went quiet for a breath.', 'world', 'world'); });
@@ -7060,7 +7144,7 @@ function buildStreets() {
   tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 8; tex.wrapS = nrm.wrapS = THREE.RepeatWrapping;
   const mat = new THREE.MeshStandardMaterial({ map: tex, normalMap: nrm, normalScale: new THREE.Vector2(0.7, 0.7), transparent: true, roughness: 0.9, depthWrite: false, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -2 });
   const dests = [...Object.entries(SPECIAL).filter(([k]) => k !== 'core').map(([, c]) => c), ...STAGE2.map(x => x.at), GATE_CELL];
-  const post = new THREE.MeshStandardMaterial({ color: 0x8a6a48, roughness: 0.85, emissive: 0x2a1408, emissiveIntensity: 0.6 }); post.userData.noFow = true; let lampN = 0;
+  const post = new THREE.MeshStandardMaterial({ color: 0x8a6a48, roughness: 0.85, emissive: 0x2a1408, emissiveIntensity: 0.6 }); post.userData.noFow = true; let lampN = 0; const lampCand = [];
   for (const d of dests) {
     const line = hexRay([0, 0], d).filter(c => W4W.ringOf(...c) >= 2); if (line.length < 1) continue;
     // a lane never runs through somebody's house: step round it by a cell that touches both neighbours
@@ -7078,13 +7162,20 @@ function buildStreets() {
       if (i < N) { const k = i * 2; idx.push(k, k + 1, k + 2, k + 1, k + 3, k + 2); }
       if (i % 9 === 4 && W4W.ringOf(...line[Math.min(line.length - 1, Math.floor(u * line.length))]) >= 3 && (lampN++ % 2 === 0)) {
         const lx = p.x + n.x * 0.86, lz = p.z + n.z * 0.86;
-        if (KIT_P.lamppost) { const bench = KIT_P.benchlamp && lampN % 3 === 1, K = kitAt(bench ? 'benchlamp' : 'lamppost', lx, lz, Math.atan2(-n.x, -n.z)); STREET_OBJS.push(K); }
+        if (KIT_P.lamppost) lampCand.push({ x: lx, z: lz, bench: KIT_P.benchlamp && lampN % 3 === 1 });
         else { const LP = prop('lamp', 1.05); const m = LP || new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.032, 0.85, 5), post); if (LP) m.position.set(lx, 0, lz); else m.position.set(lx, 0.42, lz); scene.add(m); STREET_OBJS.push(m);
           const sp = sprite(GLOW, lx, LP ? 0.93 : 0.9, lz, 0.2, 0xffe2b0, 0.85); sp.userData.flicker = true; STREET_OBJS.push(sp);
           const pool = glowDecal(lx, lz, 2.4, 0xffc27a, 0.55, 0.95); STREET_OBJS.push(pool); } } }
     const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); geo.setIndex(idx); geo.computeVertexNormals();
     const m = new THREE.Mesh(geo, mat); m.receiveShadow = true; m.renderOrder = 1; scene.add(m); STREET_OBJS.push(m);
   }
+  // lamps and benches stand on cell corners just off the cobbles: a path never crosses a corner, so nobody walks through a bench
+  STREET_PTS = null; const taken = new Set(); LAMP_CORNERS.forEach(k => USED_CORNERS.delete(k)); LAMP_CORNERS.clear();
+  for (const L of lampCand) { const [q, r] = hexAt(L.x, L.z), rad = L.bench ? 0.32 : 0.12; let best = null, bd = 1e9;
+    for (const [dq, dr] of [[0, 0], ...W4W.DIRS]) for (let k = 0; k < 6; k++) { const v = cornerAt(q + dq, r + dr, 30 + k * 60), id = cornerId(v); if (taken.has(id) || USED_CORNERS.has(id) || YARD_CORNERS.has(id)) continue;
+      const sd = streetDist(v); if (sd.d < 0.82 + rad || sd.d > 1.6) continue; const dd = (v.x - L.x) ** 2 + (v.z - L.z) ** 2; if (dd < bd && dd < 1.6) { bd = dd; best = [v, sd.p]; } }
+    if (!best) continue; const [v, sp] = best; taken.add(cornerId(v)); USED_CORNERS.add(cornerId(v)); LAMP_CORNERS.add(cornerId(v));
+    const K = kitAt(L.bench ? 'benchlamp' : 'lamppost', v.x, v.z, Math.atan2(sp.x - v.x, sp.z - v.z)); if (K) STREET_OBJS.push(K); }
   buildDecor();
 }
 /* ---------- Aigrad by quarters: each public house has its yard dressed for its trade ----------
@@ -7092,21 +7183,26 @@ function buildStreets() {
  * the Coal Works and the market yard to the west, the Wardens' Watch and the Gate to the north-west, the Twelve by the church,
  * the telescope on the scholars' Rise, cold frames at the Glass Gardens, the Atrium's yard to the south-east.
  * Big pieces fill their own cell (world.ts keeps people out of it); small ones stand on corners, where no path ever runs. */
-const USED_CORNERS = new Set();
+const USED_CORNERS = new Set(), LAMP_CORNERS = new Set();
 const cornerId = v => v.x.toFixed(1) + ',' + v.z.toFixed(1);
 /* the corner of a cell that lies most toward turn degrees off its face to Anna (0 = the front, 180 = the back, + is to its right) */
 function cornerTurn(q, r, turn) { const c = HX(q, r), f = Math.atan2(-c.z, -c.x) * 180 / Math.PI + turn; let best = null, bd = 1e9;
   for (let k = 0; k < 6; k++) { const a = 30 + k * 60, d = Math.abs(((a - f) % 360 + 540) % 360 - 180); if (d < bd) { bd = d; best = a; } } return cornerAt(q, r, best); }
 let STREET_PTS = null;
 function streetPts() { if (STREET_PTS) return STREET_PTS; STREET_PTS = []; for (const C of STREET_PATHS) { const L = C.getLength(); for (let u = 0; u <= 1; u += 0.25 / L) STREET_PTS.push(C.getPoint(u)); } return STREET_PTS; }
+function streetDist(v) { let best = null, bd = 1e9; for (const p of streetPts()) { const d = (p.x - v.x) ** 2 + (p.z - v.z) ** 2; if (d < bd) { bd = d; best = p; } } return { d: Math.sqrt(bd), p: best || new THREE.Vector3() }; }
 /* keep a piece off the cobbles: push it out to clear the lane by r */
 function offStreet(v, r) { let best = null, bd = 1e9; for (const p of streetPts()) { const d = (p.x - v.x) ** 2 + (p.z - v.z) ** 2; if (d < bd) { bd = d; best = p; } }
   const d = Math.sqrt(bd), need = 0.82 + r; if (best && d < need) { const away = new THREE.Vector3(v.x - best.x, 0, v.z - best.z); if (away.lengthSq() < 1e-6) away.set(1, 0, 0); away.normalize().multiplyScalar(need - d); v.add(away); } return v; }
 /* stand a kit piece on a corner of a cell; face: 'out' away from the cell, 'in' toward it, 'anna' toward the middle, or an angle */
 const YARD_CORNERS = new Map(); // corner -> the home whose yard it is
 function onCorner(n, q, r, turn, face = 'in', s = 1, parent = scene, rad = 0.3, owner = null) {
-  const v = cornerTurn(q, r, turn), id = cornerId(v); if (USED_CORNERS.has(id) || !KIT_P[n]) return null;
-  if (owner) { const o = YARD_CORNERS.get(id); if (o && o !== owner) return null; YARD_CORNERS.set(id, owner); } else { if (YARD_CORNERS.has(id)) return null; USED_CORNERS.add(id); } offStreet(v, rad);
+  if (!KIT_P[n]) return null;
+  // a corner on the cobbles is no place for it: try the corners either side, and give up rather than stand in a lane
+  let v = null, id = '';
+  for (const tt of [turn, turn + 60, turn - 60]) { const c = cornerTurn(q, r, tt), k = cornerId(c); if (USED_CORNERS.has(k) || (owner ? (YARD_CORNERS.get(k) && YARD_CORNERS.get(k) !== owner) : YARD_CORNERS.has(k))) continue; if (STREET_PATHS.length && streetDist(c).d < 0.8 + rad) continue; v = c; id = k; break; }
+  if (!v) return null;
+  if (owner) YARD_CORNERS.set(id, owner); else USED_CORNERS.add(id);
   const c = HX(q, r), rot = typeof face === 'number' ? face : face === 'in' ? faceTo(v, c) : face === 'out' ? faceTo(c, v) : Math.atan2(-v.x, -v.z);
   return kitAt(n, v.x, v.z, rot, s, parent); }
 let quartersDone = false;
@@ -7138,7 +7234,7 @@ const ROOMS = {
   home: { img: 'q/room/home.webp', title: 'Home', sub: 'The walls keep you. The stove keeps the walls.', door: '',
     fx: [[7, 40, 9], [31, 24, 7], [57, 55, 15], [62, 8, 6, 'cold']],
     hot: [
-      [0, 47, 29, 35, 'Your desk', () => { const h = me(); if (h) openHouse(h.id); setTimeout(() => $('#pbody .mails')?.scrollIntoView({ block: 'start' }), 60); }],
+      [0, 47, 29, 35, 'Your desk', () => openDesk()],
       [6, 4, 19, 42, 'The window', () => roomNote('Your street under the Veil. Somebody\'s lamp is lit across the way.')],
       [25, 24, 21, 40, 'The workbench', () => roomNote('Under the canvas the tools are waiting. Making things begins in Act II.')],
       [48, 17, 17, 54, 'The stove', () => addWood()],
@@ -7159,7 +7255,7 @@ const ROOMS = {
     hot: [
       [0, 5, 30, 85, 'The shelves', () => openLibrary()],
       [51, 1, 22, 43, 'The Warden drawing', () => { act1Mark('library'); roomNote('A figure in heavy plates, lined with something that glows. Under it, in the hand of the expedition\'s smith, one word: Warden.'); }],
-      [82, 44, 18, 40, 'Letters from the other side', () => roomNote('The shelf is empty. Letters people bring here will lie on it for everyone to read.')],
+      [82, 44, 18, 40, 'Letters from the other side', () => openShelf()],
       [29, 61, 43, 39, 'The chronicle', () => openChronicle(true, 'story')],
     ] },
   observatory: { img: 'q/room/observatory.webp', title: 'The Observatory', sub: 'Everything in the Bestiary was seen from this room.', door: 'iron',
@@ -7190,18 +7286,65 @@ function enterRoom(name) {
 function showRoom(name) {
   const R = ROOMS[name]; ROOM = name; closePanel(); let el = $('#room'); if (!el) { el = document.createElement('div'); el.id = 'room'; document.body.appendChild(el); }
   el.innerHTML = `<div class="rimg" style="background-image:url(${R.img})"></div><div class="rfx">${R.fx.map(([x, y, r, k]) => `<span class="${k || ''}" style="left:${x - r}%;top:calc(${y}% - ${r}vw);width:${r * 2}%;aspect-ratio:1;animation-delay:-${(x * 37 % 20) / 10}s"></span>`).join('')}</div><div class="rvig"></div>
-    <div class="rhot">${R.hot.map(([x, y, w, h, t], i) => `<button style="left:${x}%;top:${y}%;width:${w}%;height:${h}%" data-h="${i}" aria-label="${esc(t)}"><span>${esc(t)}</span></button>`).join('')}</div>
+    <div class="rhot">${R.hot.map(([x, y, w, h, t], i) => `<button style="left:${x}%;top:${y}%;width:${w}%;height:${h}%" data-h="${i}" aria-label="${esc(t)}"><em class="plq"></em></button>`).join('')}</div>
     <div class="rbar"><div><h2>${esc(R.title)}</h2><small>${esc(R.sub)}</small></div><button class="btn" data-rexit>Step outside</button></div><div class="rnote"></div>`;
-  document.body.classList.add('inroom'); document.body.classList.toggle('inbar', name === 'bar'); requestAnimationFrame(() => el.classList.add('on'));
-  el.querySelectorAll('[data-h]').forEach(b => b.onclick = () => { sfx.click(); R.hot[+b.dataset.h][5](); });
+  document.body.classList.add('inroom'); document.body.classList.toggle('inbar', name === 'bar'); roomPlaques(); requestAnimationFrame(() => el.classList.add('on'));
+  el.querySelectorAll('[data-h]').forEach(b => b.onclick = () => { sfx.click(); seenPlq(name, +b.dataset.h); R.hot[+b.dataset.h][5](); roomPlaques(); });
   el.querySelector('[data-rexit]').onclick = () => { sfx.close?.(); leaveRoom(); };
   // a slow look round the room as the mouse moves
   el.onpointermove = e => { if (MOBILE) return; const dx = e.clientX / innerWidth - 0.5, dy = e.clientY / innerHeight - 0.5, t = `scale(1.04) translate(${-dx * 1.6}%, ${-dy * 1.1}%)`; el.querySelector('.rimg').style.transform = t; el.querySelector('.rhot').style.transform = t; };
 }
+/* the plaques: what each thing in the room offers right now. Warm when there is something new, a coin when it pays */
+const PLQ_SEEN = (() => { try { return JSON.parse(store.get('w4w.plq') || '{}'); } catch { return {}; } })();
+function seenPlq(room, i) { PLQ_SEEN[room + i] = Math.floor(xnow() / 864e5); try { store.set('w4w.plq', JSON.stringify(PLQ_SEEN)); } catch {} }
+const freshToday = (room, i) => PLQ_SEEN[room + i] !== Math.floor(xnow() / 864e5);
+const traceHere = id => { const T = W4W.TWELVE.find(x => x.id === id); return !!T && !twelveLit(id) && !carrying(id) && atTrace(T); };
+function plqState(room, i) {
+  const c = myC(), now = xnow(), M = mailOf(), coin = '<i class="coin"></i><i class="g">+1</i>';
+  const P = {
+    home: [
+      () => { const n = (M.inbox || []).length, k = (M.desk || []).length; return { t: 'Letters', b: n ? `${n} new` : k ? `${k} kept` : '', glow: n > 0 }; },
+      () => ({ t: 'Look outside' }),
+      () => ({ t: 'Workbench', b: 'ACT II', lock: true }),
+      () => { const g = now - (c?.stoked || 0) > 3600_000; return { t: 'Feed the stove', coin: g, glow: g }; },
+      () => ({ t: 'Rest' }),
+      () => ({ t: 'Your chest' }),
+    ],
+    bar: [
+      () => ({ t: 'Rumours', b: freshToday('bar', 0) ? 'new today' : '', glow: freshToday('bar', 0) }),
+      () => ({ t: 'Look outside' }),
+      () => traceHere('odile') ? { t: 'Ask Ivo about the hymn', b: 'the twelve', gold: true, glow: true } : (() => { const r = now - (c?.rounds || 0) > W4W.ROUND_WAIT; return { t: 'A round for the room', coin: r, glow: r }; })(),
+      () => ({ t: 'Warm your hands' }),
+      () => { const B = W4W.BAR_CELL, n = Object.values(XV?.others || {}).filter(o => o.q === B[0] && o.r === B[1] && !o.path?.length).length; return { t: 'Who is here', b: n ? `${n} here` : '', glow: n > 0 }; },
+    ],
+    library: [
+      () => traceHere('lida') ? { t: 'The signal codes', b: 'the twelve', gold: true, glow: true } : { t: 'Books and recipes' },
+      () => { const d = act1Done.has('library'); return { t: 'The Warden', b: d ? '' : 'find it', glow: !d }; },
+      () => { const S = (M.shelf || []).length, mine = [...(M.inbox || []), ...(M.desk || [])].some(m => m.fromValk); return { t: 'Letters from beyond', b: mine ? 'bring yours' : S ? `${S}` : '', glow: mine, gold: mine }; },
+      () => ({ t: 'The chronicle', b: `${pages1.length} pages` }),
+    ],
+    observatory: [
+      () => traceHere('mirek') ? { t: 'Ask about the lens', b: 'the twelve', gold: true, glow: true } : { t: 'Look into the White' },
+      () => { const n = BESTIARY.reduce((a, B) => a + BEAST_AT.filter(k => (OBS[B.id] || 0) >= k).length, 0), all = BESTIARY.length * BEAST_AT.length; return { t: 'Bestiary', b: `${n}/${all}` }; },
+      () => ({ t: 'The astronomer\'s log' }),
+      () => ({ t: 'Star charts' }),
+      () => ({ t: 'Lenses' }),
+    ],
+  };
+  const f = P[room]?.[i]; const st = f ? f() : {};
+  return { ...st, coinHtml: st.coin ? coin : '' };
+}
+const PLQ_AT = { home: [[56, 28], [50, 55], [50, 45], [50, 64], [45, 35], [45, 35]], bar: [[78, 42], [50, 55], [50, 42], [45, 55], [76, 28]], library: [[55, 42], [50, 88], [35, 30], [50, 22]], observatory: [[50, 50], [45, 45], [40, 30], [50, 30], [70, 40]] };
+function roomPlaques() { if (!ROOM) return; const R = ROOMS[ROOM]; document.querySelectorAll('#room [data-h]').forEach(b => { const i = +b.dataset.h, st = plqState(ROOM, i), e = b.querySelector('em.plq'); if (!e) return;
+  const at = PLQ_AT[ROOM]?.[i]; if (at) { e.style.setProperty('--px', at[0] + '%'); e.style.setProperty('--py', at[1] + '%'); }
+  const html = `${esc(st.t || R.hot[i][4])}${st.b ? ` <b>${esc(st.b)}</b>` : ''}${st.coinHtml}`; if (e.innerHTML !== html) e.innerHTML = html;
+  e.classList.toggle('glow', !!st.glow); e.classList.toggle('gold', !!st.gold); e.classList.toggle('lock', !!st.lock); }); }
 function leaveRoom() { const el = $('#room'); if (!el || !ROOM) return; ROOM = null; closePanel(); el.classList.remove('on'); document.body.classList.remove('inroom', 'inbar'); setTimeout(() => { if (!ROOM) el.remove(); }, 520); }
 addEventListener('keydown', e => { if (e.key === 'Escape' && ROOM && !$('#panel').classList.contains('open')) leaveRoom(); });
 /* walking off takes you outside */
-function stepRoom() { if (ROOM && myC()?.path?.length) leaveRoom(); }
+function stepRoom() { if (ROOM && myC()?.path?.length) leaveRoom(); stepFlags(); if (ROOM) roomPlaques(); }
+function stepFlags() { const doors = XV?.mail?.doors || {}; for (const id in houses) { const f = houses[id].g.userData.flag; if (!f) continue; const k = id === 'me' ? S.uid : id;
+  const want = (doors[k] || 0) > 0 ? 0 : -Math.PI / 2; f.rotation.x += (want - f.rotation.x) * 0.5; } }
 /* who is drinking at The Last Coal tonight */
 function openBarPeople() { const B = W4W.BAR_CELL, here = Object.values(XV?.others || {}).filter(o => o.q === B[0] && o.r === B[1] && !o.path?.length).map(o => o.nick).filter(Boolean);
   const mine = myC() && myC().q === B[0] && myC().r === B[1];
@@ -7265,7 +7408,7 @@ function stepStoneLamps() { const tw = XV?.twelve || {}; W4W.TWELVE.forEach((T, 
   STONE_LIT[T.id] = [sprite(GLOW, v.x, v.y, v.z, 0.42, 0xffd9a0, 1), glowDecal(v.x, v.z, 0.9, 0xffb868, 0.4, v.y)]; }); }
 /* a home's yard: its mailbox by the door; a line of washing behind some, a snowman in front of others */
 function dressYard(g, q, r, id) { if (!KIT_P.mailbox) return; const h = [...String(id)].reduce((a, ch) => (a * 31 + ch.charCodeAt(0)) >>> 0, 7);
-  onCorner('mailbox', q, r, 30, 'anna', 1, g, 0.25, id);
+  const mb = onCorner('mailbox', q, r, 30, 'anna', 1, g, 0.25, id); g.userData.flag = mb?.userData.flag || null; if (g.userData.flag) g.userData.flag.rotation.x = -Math.PI / 2;
   if (h % 3 === 0) onCorner('clothesline', q, r, 150 + (h % 2) * 60, 'out', 0.9, g, 0.4, id);
   if (h % 4 === 1) onCorner('snowman', q, r, -30, 'anna', 1, g, 0.3, id); }
 function buildDecor() { buildQuarters(); }
