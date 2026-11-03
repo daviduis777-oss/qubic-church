@@ -1950,11 +1950,15 @@ var W4W = (() => {
     (c.standing ?? (c.standing = {}))[who] = Math.max(0, (c.standing[who] ?? 0) + n);
   };
   function creditLamp(c, h, now) {
-    if (h?.state !== "mining" || !h.startedAt) return 0;
+    if (h?.state !== "mining") {
+      delete c.lampSince;
+      return 0;
+    }
+    const since = h.startedAt || (c.lampSince ?? (c.lampSince = now));
     const today = dayOf(now);
     let n = 0;
-    for (let D = Math.max((c.lampTo ?? dayOf(h.startedAt) - 1) + 1, today - 14); D <= today; D++) {
-      const lit = Math.min(now, (D + 1) * DAY_MS) - Math.max(h.startedAt, D * DAY_MS);
+    for (let D = Math.max((c.lampTo ?? dayOf(since) - 1) + 1, today - 14); D <= today; D++) {
+      const lit = Math.min(now, (D + 1) * DAY_MS) - Math.max(since, D * DAY_MS);
       if (lit < 12 * 36e5) continue;
       c.lampDays = (c.lampDays ?? 0) + 1;
       c.lampTo = D;
@@ -2431,6 +2435,7 @@ var W4W = (() => {
         return ok();
       }
       case "stoke": {
+        if (dist(here, [SPECIAL.plaza[0], SPECIAL.plaza[1]]) > 1) return fail("The fire is on the plaza. Bring your wood there.");
         if (now - (c.stoked ?? 0) < 36e5) return ok();
         c.stoked = now;
         addGold(c, 1, now);
@@ -2439,7 +2444,7 @@ var W4W = (() => {
       }
       case "lamp": {
         const day = dayOf(now);
-        if (c.lampDay !== day) {
+        if (c.lampDay !== day && house?.state === "mining") {
           c.lampDay = day;
           addGold(c, 2, now);
         }
@@ -2940,8 +2945,11 @@ function say(text, who = 'Maria') {
   const f = $('#feed'); f.appendChild(el); while (f.children.length > 3) f.firstChild.remove();
   setTimeout(() => { el.style.transition = 'opacity .8s'; el.style.opacity = 0; setTimeout(() => el.remove(), 900); }, 9000);
 }
-let bannerT;
-function banner(b, s) { $('#bannerB').textContent = b; $('#bannerS').textContent = s; $('#banner').classList.add('on'); clearTimeout(bannerT); bannerT = setTimeout(() => $('#banner').classList.remove('on'), 2800); }
+let bannerT, bannerCur = null; const bannerQ = [];
+// one banner at a time: a second one waits its turn instead of covering the first
+function banner(b, s) { const k = b + '\n' + s; if (bannerCur === k || bannerQ.some(x => x[0] + '\n' + x[1] === k)) return; if (bannerCur) { if (bannerQ.length < 4) bannerQ.push([b, s]); return; }
+  bannerCur = k; $('#bannerB').textContent = b; $('#bannerS').textContent = s; $('#banner').classList.add('on'); clearTimeout(bannerT);
+  bannerT = setTimeout(() => { $('#banner').classList.remove('on'); setTimeout(() => { bannerCur = null; const n = bannerQ.shift(); if (n) banner(...n); }, 650); }, 2800); }
 
 /* ================= load kit ================= */
 const kit = {}; let KIT_MAT;
@@ -3573,6 +3581,8 @@ async function welcome(uid, nick) {
 function fireFlare() { if (fireSprite) { fireSprite.scale.setScalar(2.2); fireSprite.userData.flare = 1; } }
 async function addWood() {
   const cur = me(); if (!cur) { say('Settle first: connect a rig at the church, then you can tend the fire.'); return; }
+  // the wood goes on the plaza fire itself: from anywhere else you walk there first, and it opens on arrival
+  if (hasChar()) { const c = myC(); if (!c || c.path.length || W4W.dist([c.q, c.r], SPECIAL.plaza) > 1) { if (!walkTo('fire', 'fire')) say('The fire is on the plaza. Bring your wood there.', 'Plaza'); return; } }
   const wait = 3600e3 - (Date.now() - (cur.lastWood || 0));
   act1Mark('fire'); dailyMark('fire');
   if (wait > 0) { say(`You fed the fire not long ago. It can take your wood again in ${Math.ceil(wait / 60000)} min. Someone else can add theirs now.`); return; }
@@ -4158,7 +4168,7 @@ function runBuild() {
   const tick = async () => {
     const cur = me(); if (!cur) return; const phase = (cur.phase || 0) + 1;
     if (phase <= 3) { await saveMe({ phase }); if (panelKind === 'house') openHouse(cur.id); setTimeout(tick, step); return; }
-    await saveMe({ phase: 4, state: 'mining' });
+    await saveMe({ phase: 4, state: 'mining', startedAt: Date.now() });
     banner('ANNA · LINKED', `${cur.hw.toUpperCase()} → THE CORE`); say("I won't forget."); pulse(1.3); setTimeout(() => pulse(0.8), 900);
     record(`${cur.nick}'s rig is mining: ${cur.hw}, ${cur.sol.toLocaleString('en-US')} sol/h est.`);
     record(`${cur.nick} received: Epoch seal E${EPOCH}, Hardware card ${cur.hw.replace(/^\d+× /, '')}`);
@@ -4560,7 +4570,7 @@ function openPost() {
       <textarea maxlength="1200" rows="5" placeholder="Your letter" required></textarea><label class="anon"><input type="checkbox" data-anon> Leave it unsigned</label><div class="row"><button class="btn main" data-keep="0">Seal it, leave it in the sack</button><button class="btn" data-keep="1">Seal it, carry it myself</button></div></form>` : `<button class="btn main" data-walkpost>Walk to the post office</button>`}
     <h3>THE SACK</h3>${M.sack.length ? `<div class="mails">${M.sack.map(m => `<div class="mail"><div><b>For ${esc(m.toNick)}</b><span>from ${esc(m.fromNick)}${m.sealed ? '' : ' · <em>the seal is broken</em>'}</span></div>${near ? `<button class="btn" data-take="${esc(m.id)}">Take it</button>` : ''}</div>`).join('')}</div>` : '<p class="mute">Empty. Every letter written in Aigrad is in somebody\'s hands.</p>'}
     ${carryingHtml(near)}
-    ${M.sent.length ? `<h3>LETTERS YOU SENT</h3><div class="mails">${M.sent.slice().reverse().map(m => `<div class="mail"><div><b>To ${esc(m.toNick)}</b><span>${m.where === 'delivered' ? 'delivered' : m.where === 'sack' ? 'waiting in the sack' : m.where === 'lost' ? 'it never arrived. The last hands it was in were ' + esc(m.holderNick || 'someone') + '\'s' : m.holderNick === me()?.nick || m.holderNick === 'you' ? 'in your coat' : 'in ' + esc(m.holderNick || 'someone') + '\'s hands'} · written ${when(m.at)}</span></div></div>`).join('')}</div>` : ''}`);
+    ${M.sent.length ? `<h3>LETTERS YOU SENT</h3><div class="mails">${M.sent.slice().reverse().map(m => `<div class="mail"><div><b>To ${esc(m.toNick)}</b><span>${m.where === 'delivered' ? 'delivered' : m.where === 'desk' ? 'delivered, kept in their desk' : m.where === 'library' ? 'delivered, on the Library shelf' : m.where === 'sack' ? 'waiting in the sack' : m.where === 'lost' ? 'it never arrived. The last hands it was in were ' + esc(m.holderNick || 'someone') + '\'s' : m.holderNick === me()?.nick || m.holderNick === 'you' ? 'in your coat' : 'in ' + esc(m.holderNick || 'someone') + '\'s hands'} · written ${when(m.at)}</span></div></div>`).join('')}</div>` : ''}`);
   const pb = $('#pbody');
   wireFolk(pb); pb.querySelector('[data-walkpost]')?.addEventListener('click', () => { closePanel(); walkTo('stage2', 'post'); });
   const f = pb.querySelector('[data-mailw]'); if (f) f.querySelectorAll('[data-keep]').forEach(b => b.onclick = e => { e.preventDefault(); const to = f.querySelector('input').value.trim(), text = f.querySelector('textarea').value.trim(); if (!to || !text) return;
@@ -4896,7 +4906,7 @@ async function demoHistory() {
 // The server walks every character and counts the cold (world.ts rules, inlined as W4W). The game asks, predicts
 // with the same rules between answers, and draws. In the prototype (no server) the same rules run locally.
 let XW = null, SHEL = {};
-let XV = null, XT = 0, pendingOpen = null, lastDeathSeen = Number(store.get('w4w.deathSeen') || 0), xBusy = false;
+let XV = null, XT = 0, pendingOpen = null, xMoving = 0, xMoveAt = 0, lastDeathSeen = Number(store.get('w4w.deathSeen') || 0), xBusy = false;
 const xnow = () => (XV ? XV.now + (performance.now() - XT) : Date.now());
 const myUid = () => (S.uid && S.real[S.uid] ? S.uid : 'me');
 const hasChar = () => !!XV?.me;
@@ -4905,12 +4915,12 @@ function localWorld() {
   let st = null; try { st = JSON.parse(store.get('w4w.xworld') || 'null'); } catch {}
   st ||= { chars: {}, hearths: {}, bags: {}, nodes: {} }; st.library ||= {}; st.shards ||= {}; st.anna ||= { n: 0, heroes: {} }; st.pylons ||= {}; st.letters ||= []; st.lread ||= {};
   const subs = [];
-  const wsNow = () => { const h = me(); const houses = {}; if (h) houses.me = { q: h.q, r: h.r, nick: h.nick, state: h.state, sol: h.sol, lastWood: h.lastWood };
-    return { now: Date.now(), houses, chars: st.chars, hearths: st.hearths, bags: st.bags, nodes: st.nodes, online: 1, doneOrders: 0, rime: st.rime, library: st.library, shards: st.shards, anna: st.anna, delivered: st.delivered, pylons: st.pylons, story: st.story }; };
+  const wsNow = () => { const h = me(); const houses = {}; if (h) houses.me = { q: h.q, r: h.r, nick: h.nick, state: h.state, sol: h.sol, lastWood: h.lastWood, startedAt: h.startedAt };
+    return { now: Date.now(), houses, chars: st.chars, hearths: st.hearths, bags: st.bags, nodes: st.nodes, online: 1, doneOrders: 0, rime: st.rime, library: st.library, shards: st.shards, anna: st.anna, delivered: st.delivered, pylons: st.pylons, story: st.story, twelve: st.twelve }; };
   const keep = () => store.set('w4w.xworld', JSON.stringify(st));
   const emit = v => subs.forEach(f => { try { f(v); } catch (e) { console.warn(e); } });
   // letters in the prototype: the same shapes the server sends
-  const lview = v => { const now = Date.now(); const M = st.mail || []; v.mail = { carriers: { me: M.filter(m => m.where === 'hands' && m.holder === 'me').length }, rep: {}, carrying: M.filter(m => m.where === 'hands' && m.holder === 'me').map(m => ({ ...m, sealed: !m.sealBy, mine: m.from === 'me', text: m.sealBy === 'me' || m.from === 'me' ? m.text : undefined })), sack: M.filter(m => m.where === 'sack').map(m => ({ ...m, text: undefined, sealed: !m.sealBy })), inbox: [], sent: M.filter(m => m.from === 'me').map(m => ({ ...m, holderNick: m.holder ? 'you' : null })) }; v.heard = (st.said || []).filter(x => now - x.t < 15 * 60000).slice(0, 30).reverse(); v.letters = st.letters.filter(l => l.at <= now).map(l => st.lread[l.id] ? { ...l, read: st.lread[l.id] } : now < l.until ? { id: l.id, at: l.at, until: l.until, from: l.from, title: l.title, open: true } : { id: l.id, at: l.at, until: l.until, title: l.title, missed: true }); return v; };
+  const lview = v => { const now = Date.now(); const M = st.mail || []; v.mail = { carriers: { me: M.filter(m => m.where === 'hands' && m.holder === 'me').length }, rep: {}, carrying: M.filter(m => m.where === 'hands' && m.holder === 'me').map(m => ({ ...m, sealed: !m.sealBy, mine: m.from === 'me', text: m.sealBy === 'me' || m.from === 'me' ? m.text : undefined })), sack: M.filter(m => m.where === 'sack').map(m => ({ ...m, text: undefined, sealed: !m.sealBy })), inbox: [], sent: M.filter(m => m.from === 'me').map(m => ({ ...m, where: m.where === 'burned' ? 'lost' : m.where, holderNick: m.where === 'burned' ? (m.trail?.at(-1)?.nick ?? null) : m.holder ? 'you' : null })) }; v.heard = (st.said || []).filter(x => now - x.t < 15 * 60000).slice(0, 30).reverse(); v.letters = st.letters.filter(l => l.at <= now).map(l => st.lread[l.id] ? { ...l, read: st.lread[l.id] } : now < l.until ? { id: l.id, at: l.at, until: l.until, from: l.from, title: l.title, open: true } : { id: l.id, at: l.at, until: l.until, title: l.title, missed: true }); return v; };
   const view = (events = []) => { const ws = wsNow(); const d = W4W.newDirty(); W4W.stepAll(ws, d); st.rime = ws.rime; keep(); return lview(W4W.viewOf(ws, 'me', events)); };
   setInterval(() => { if (me()) emit(view()); }, 4000);
   return {
@@ -4928,6 +4938,14 @@ function localWorld() {
     async act(name, body = {}) {
       if (name === 'revive') { const c = st.chars.me; if (c) Object.assign(c, { frozenUntil: 0, warmth: 100, health: 100, energy: 100, q: c.home[0], r: c.home[1], path: [], act: null, lost: false, t0: Date.now(), simT: Date.now() }); keep(); const v = view(); emit(v); return v; }
       if (name.startsWith('mail')) { const c = st.chars.me, M = (st.mail ||= []), m = M.find(x => x.id === body.id), nick = me()?.nick || 'you';
+        // the same rules as the server where they can be kept here; what cannot happen alone in this browser says so
+        const still = c && !c.path.length, here = c && [c.q, c.r], no = t => { throw new Error(t); };
+        const atFire = still && (W4W.dist(here, SPECIAL.plaza) <= 1 || W4W.dist(here, c.home) <= 1);
+        if (name === 'mailwrite') { const w = String(body.to || '').trim().toLowerCase(); if (!w || w === 'me' || w === 'you' || w === nick.toLowerCase()) no('You would have to carry it to your own door. Write to someone else.'); if (String(body.text || '').trim().length < 2) no('Write something first.'); }
+        if (name !== 'mailwrite' && !m) no('That letter is not here.');
+        if (name === 'mailburn') { if (!(m.where === 'hands' && m.holder === 'me')) no('You are not carrying that letter.'); if (!atFire) no('You need a fire: the plaza, or your own stove at home.'); Object.assign(m, { where: 'burned', holder: null, burnedBy: 'me' }); }
+        else if (name === 'maildeliver') { if (!(m.where === 'hands' && m.holder === 'me')) no('You are not carrying that letter.'); const h = allResidents().find(x => x.id !== me()?.id && (x.nick || '').toLowerCase() === String(m.toNick).toLowerCase() && x.at?.[0] != null); if (!h) no('They have no house yet. Keep the letter until they do.'); if (!still || W4W.dist(here, h.at) > 1) no(`Walk to ${m.toNick}'s door.`); Object.assign(m, { where: 'delivered', holder: null, deliveredAt: Date.now() }); }
+        else if (['mailfile', 'mailreply', 'mailreport', 'mailgive'].includes(name)) no(name === 'mailgive' ? 'Hand it to whom?' : 'That letter is not yours to put away.');
         if (name === 'mailwrite') M.push({ id: 'm' + Date.now().toString(36), at: Date.now(), from: 'me', fromNick: nick, to: String(body.to), toNick: String(body.to), text: String(body.text), where: body.keep ? 'hands' : 'sack', holder: body.keep ? 'me' : null, sealBy: null, trail: [{ uid: 'me', nick }] });
         else if (m && name === 'mailtake') Object.assign(m, { where: 'hands', holder: 'me' }); else if (m && name === 'mailleave') Object.assign(m, { where: 'sack', holder: null }); else if (m && name === 'mailopen') m.sealBy = 'me';
         keep(); const v = view(); emit(v); return v; }
@@ -4935,7 +4953,7 @@ function localWorld() {
       if (name === 'reply') { const c = st.chars.me; if (!c || W4W.dist([c.q, c.r], W4W.GATE_CELL) > 1) throw new Error('Walk to the North Gate. The gap under it is the only way out.'); (st.replies ||= []).unshift({ t: Date.now(), text: String(body.text) }); keep(); const v = view(); emit(v); return v; }
       if (name === 'readletter') { const l = st.letters.find(x => x.id === body.id), c = st.chars.me, now = Date.now(); if (!l || now >= l.until) throw new Error('The snow has taken it. The ink ran before anyone came.'); const here = c && W4W.cellAt(c, now);
         if (!c || c.path.length || W4W.dist(here, W4W.GATE_CELL) > 1) throw new Error('Walk to the North Gate. The letter is lying in the snow under it.'); st.lread[l.id] = now; keep(); const v = view(); emit(v); return v; }
-      const ws = wsNow(); const d = W4W.newDirty(); const r = W4W.action(ws, 'me', name, body, d); st.rime = ws.rime; st.delivered = ws.delivered; st.story = ws.story; keep(); if (!r.ok) { const e = new Error(r.error); e.status = r.status; throw e; } const v = lview(W4W.viewOf(ws, 'me', r.events)); emit(v); return v; },
+      const ws = wsNow(); const d = W4W.newDirty(); const r = W4W.action(ws, 'me', name, body, d); st.rime = ws.rime; st.delivered = ws.delivered; st.story = ws.story; st.twelve = ws.twelve; keep(); if (!r.ok) { const e = new Error(r.error); e.status = r.status; throw e; } const v = lview(W4W.viewOf(ws, 'me', r.events)); emit(v); return v; },
   };
 }
 /** Called once the town is built and the capabilities are up. */
@@ -4952,10 +4970,11 @@ function takeView(v) {
 // actions go to the server one after another, never dropped: two quick clicks are two orders
 let xq = Promise.resolve();
 function xact(name, body) {
+  if (name === 'move') { xMoving++; xMoveAt = performance.now(); } // a door waiting to open waits for this answer
   const run = async () => { xBusy = true;
     try { const v = await XW.act(name, body); takeView(v); return v; }
     catch (e) { say(esc(e.message || 'The cold took your words.'), 'Wastes'); return null; }
-    finally { xBusy = false; } };
+    finally { xBusy = false; if (name === 'move') xMoving = Math.max(0, xMoving - 1); } };
   const p = xq.then(run, run); xq = p.catch(() => {}); return p;
 }
 // when your house appears, your character is born in it
@@ -5212,6 +5231,7 @@ function groundHex(e) { mouse.set((e.clientX / innerWidth) * 2 - 1, -(e.clientY 
   // on the hill the ground is higher: find where the ray meets the slope, not the plain under it
   let y = 0, hit = false; for (let i = 0; i < 6; i++) { groundPlane.constant = -y; if (!ray.ray.intersectPlane(groundPlane, gp)) break; hit = true; const h = groundH(gp.x, gp.z); if (Math.abs(h - y) < 0.01) break; y = i < 2 ? h : (y + h) / 2; }
   groundPlane.constant = 0; return hit ? hexAt(gp.x, gp.z) : null; }
+const STONE_FRONT = [W4W.STAIR_CELL[0], W4W.STAIR_CELL[1] - 1]; // the top of the stairs: the memorial itself cannot be stood on
 const KIND_CELL = { stone: W4W.STONE_CELL, rose: W4W.ROSE_CELL, maria: MARIA_HOUSE, gate: [0, -W4W.TOWN_RING], church: SPECIAL.church, board: SPECIAL.plaza, fire: SPECIAL.plaza, core: SPECIAL.core, observatory: SPECIAL.observatory, library: SPECIAL.library, mine: SPECIAL.mine };
 function cellOfKind(k, id) {
   if (KIND_CELL[k]) return KIND_CELL[k];
@@ -5240,7 +5260,7 @@ function walkTo(k, id) {
   if (pr.c.frozenUntil > xnow()) { say('You are frozen. Your body lies at home until it thaws.', 'Wastes'); return true; }
   const here = W4W.cellAt(pr.c, xnow());
   if (!pr.c.path.length && W4W.dist(here, cell) <= (k === 'core' ? 2 : 1)) { openKind(k, id); return true; }
-  pendingOpen = { kind: k, id, cell }; closePanel(); follow = true; trip = null; drawPrints([0, 0], [], false); xact('move', { to: cell }); return true;
+  pendingOpen = { kind: k, id, cell }; closePanel(); follow = true; trip = null; drawPrints([0, 0], [], false); xact('move', { to: k === 'stone' ? STONE_FRONT : cell }); return true;
 }
 function clickGround(e) {
   if (!hasChar()) return false; const c = groundHex(e); if (!c) return false;
@@ -5332,7 +5352,7 @@ function hud(force) {
   stepPlotStakes(); stepLetters(); stepHeard(); stepMail();
   if (!ACT1) { stepResTags(frozen ? null : c); stepScrolls(frozen ? null : c); stepMilestones(c); } else act1Watch(c); welcomeBack(); renderGoals();
   actions(c, here, t, frozen);
-  if (pendingOpen && !c.path.length && !frozen) { const k = pendingOpen; pendingOpen = null; if (k.room) { if (here[0] === k.cell[0] && here[1] === k.cell[1]) enterRoom(k.room, true); } else if (W4W.dist(here, k.cell) <= (k.kind === 'core' ? 2 : 1)) openKind(k.kind, k.id); }
+  if (pendingOpen && !c.path.length && !frozen && !(xMoving && performance.now() - xMoveAt < 10000)) { const k = pendingOpen; pendingOpen = null; if (k.room) { if (here[0] === k.cell[0] && here[1] === k.cell[1]) enterRoom(k.room, true); } else if (W4W.dist(here, k.cell) <= (k.kind === 'core' ? 2 : 1)) openKind(k.kind, k.id); }
   // the screen thinks you just froze: ask the server, it has the last word
   if (pr.events.some(e => e.kind === 'froze' || e.kind === 'thawed') && performance.now() - freezeAsk > 5000) { freezeAsk = performance.now(); xact('char'); }
 }
@@ -6605,10 +6625,10 @@ function welcomeBack() {
   for (const [k, hh] of Object.entries(XV.hearths || {})) if (hh.at > last) ev.push(`${esc(hh.nick)} lit a hearth out in ${esc(W4W.zoneName(W4W.zoneOf(...k.split(',').map(Number))))}.`);
   for (const b of XV.bags || []) if (b.until - W4W.BAG_MS > last) ev.push(b.mine ? 'You froze out there. Your pack still lies where you fell.' : `${esc(b.nick)} froze in the Wastes. Their pack lies in the snow, and anyone may carry it home.`);
   for (const [id, e] of Object.entries(XV.library || {})) if (e.at > last) ev.push(`${esc(e.nick)} wrote the recipe for ${esc(W4W.nameOf(W4W.RECIPES[id]?.out || id).toLowerCase())} into the Library.`);
-  if (XV.rime) ev.push(`Chthon was last seen in ${esc(W4W.zoneName(W4W.zoneOf(XV.rime.q, XV.rime.r)))}.`);
+  if (XV.rime && !ACT1) ev.push(`Chthon was last seen in ${esc(W4W.zoneName(W4W.zoneOf(XV.rime.q, XV.rime.r)))}.`);
   const wx = W4W.weatherAt(now); ev.push(wx.id === 'calm' ? 'The air is still now. A good hour to go out.' : `${wx.name} over the Wastes right now.`);
   ev.push(XV.town.holds ? 'The town held while you were away.' : 'The frost is winning tonight. The town needs its people.');
-  const ch = CHAPTERS.filter(x => pages.includes(x.id)).at(-1);
+  const ch = ACT1 ? null : CHAPTERS.filter(x => pages.includes(x.id)).at(-1);
   backEl.innerHTML = `<div class="bbook"><h2>While you were away</h2><p class="bsub">${h ? `${h} h ${m} min` : `${m} min`} in the Long Cold</p>
     <ul>${ev.map(e => `<li>${e}</li>`).join('')}</ul>
     ${ch ? `<div class="bch"><b>${esc(ch.title)}</b><p>${esc(ch.text)}</p></div>` : ''}
@@ -7812,7 +7832,7 @@ const ROOMS = {
       [0, 47, 29, 35, 'Your desk', () => openDesk()],
       [6, 4, 19, 42, 'The window', () => roomNote('Your street under the Veil. Somebody\'s lamp is lit across the way.')],
       [25, 24, 21, 40, 'The workbench', () => roomNote('Under the canvas the tools are waiting. Making things begins in Act II.')],
-      [48, 17, 17, 54, 'The stove', () => addWood()],
+      [48, 17, 17, 54, 'The stove', () => roomNote('You hold your hands to your own stove until the feeling comes back into them. The plaza fire is the one the whole town feels.')],
       [68, 36, 30, 36, 'The bed', () => roomNote('You lie down for a while. Indoors the cold cannot reach you; warmth and strength come back while you rest.')],
       [79, 70, 21, 30, 'The chest', () => { const h = me(); if (h) openHouse(h.id); }],
     ] },
@@ -7898,7 +7918,7 @@ function plqState(room, i) {
       () => { const n = (M.inbox || []).length, k = (M.desk || []).length; return { t: 'Letters', b: n ? `${n} new` : k ? `${k} kept` : '', glow: n > 0 }; },
       () => ({ t: 'Look outside' }),
       () => ({ t: 'Workbench', b: 'ACT II', lock: true }),
-      () => { const g = now - (c?.stoked || 0) > 3600_000; return { t: 'Feed the stove', coin: g, glow: g }; },
+      () => ({ t: 'Warm your hands' }),
       () => ({ t: 'Rest' }),
       () => ({ t: 'Your chest' }),
     ],
@@ -7940,7 +7960,7 @@ function stepFlags() { const doors = XV?.mail?.doors || {}; for (const id in hou
 /* who is drinking at The Last Coal tonight */
 function openBarPeople() { const B = W4W.BAR_CELL, here = Object.values(XV?.others || {}).filter(o => o.q === B[0] && o.r === B[1] && !o.path?.length).map(o => o.nick).filter(Boolean);
   const mine = myC() && myC().q === B[0] && myC().r === B[1];
-  panel('bar', 'Who is here tonight', 'The Last Coal', null, here.length ? `<p class="say">${here.length === 1 ? 'One other at the tables tonight' : here.length + ' others at the tables tonight'}: ${here.map(esc).join(', ')}.</p><p class="mute">Everyone inside hears everything said in this room.</p>` : `<p class="say">The tables are empty${mine ? ' but for you' : ''}. Ivo polishes the same cup for the third time.</p><p class="mute">Whoever comes in will hear what you say here.</p>`); }
+  panel('barpeople', 'Who is here tonight', 'The Last Coal', null, here.length ? `<p class="say">${here.length === 1 ? 'One other at the tables tonight' : here.length + ' others at the tables tonight'}: ${here.map(esc).join(', ')}.</p><p class="mute">Everyone inside hears everything said in this room.</p>` : `<p class="say">The tables are empty${mine ? ' but for you' : ''}. Ivo polishes the same cup for the third time.</p><p class="mute">Whoever comes in will hear what you say here.</p>`); }
 /* ---------- the Stone of the Twelve: a lantern for each of the twelve who went north, lit as the town finds what they left ---------- */
 const STONE_LAMPS = [], STONE_LIT = {};
 const TWELVE_TXT = {
@@ -7973,14 +7993,14 @@ function traceHtml(id) {
 let beastOpen = null, pylonOpen = null;
 /* every place where a trace lies shows it in its own panel */
 function traceFor(kind) {
-  if (kind === 'gate') return 'teresa'; if (kind === 'bar') return 'odile'; if (kind === 'library') return 'lida'; if (kind === 'observatory') return 'mirek';
+  if (kind === 'gate') return 'teresa'; if (kind === 'bar' || kind === 'folk:ivo') return 'odile'; if (kind === 'library') return 'lida'; if (kind === 'observatory') return 'mirek';
   if (['orders', 'herald', 'notices'].includes(kind)) return 'agnes'; if (kind === 'pylon' && pylonOpen === 3) return 'brann';
   if (kind === 'beast') { const n = BEAST_AT.filter(k => (OBS[beastOpen] || 0) >= k).length; if (beastOpen === 'wailer' && n >= 2) return 'ilya'; if (beastOpen === 'scratcher' && n >= 1) return 'pavel'; }
   return null; }
 function twelveHook(kind) { const id = traceFor(kind); if (!id) return; const h = traceHtml(id); if (!h) return; const box = document.createElement('div'); box.innerHTML = h; $('#pbody').appendChild(box); bindTrace(box); }
 function bindTrace(root) {
   root.querySelector('[data-trace]')?.addEventListener('click', e => { const id = e.currentTarget.dataset.trace; sfx.click(); xact('trace', { id }).then(v => { if (!v) return; const X = TWELVE_TXT[id]; sfx.open?.(); say(`You take ${esc(X.item)}. It belongs on the Stone of the Twelve.`, 'Aigrad'); const b = root.closest('div') || root; b.innerHTML = traceHtml(id); bindTrace(b); }); });
-  root.querySelector('[data-gostone]')?.addEventListener('click', () => { sfx.click(); closePanel(); walkTo('stone', 'stone') || openStone(); });
+  root.querySelector('[data-gostone]')?.addEventListener('click', () => { sfx.click(); closePanel(); if (!libEl.hidden) closeLibraryRoom(); walkTo('stone', 'stone') || openStone(); });
 }
 function openStone() {
   { const c0 = myC(), t = XV?.me?.tasks?.m_stone; if (t && !t.done && c0 && !c0.path.length && W4W.dist([c0.q, c0.r], W4W.STONE_CELL) <= 1 && !((XV.me.marks?.stone || 0) > t.t)) xact('folk', { who: 'maria', fop: 'stone' }); }
@@ -8144,7 +8164,7 @@ function act1Goals(c) {
       : rolesHtml()}
     ${letterGoalHtml()}<div class="gsec"><small>The wall</small>${wallHtml()}</div>
     <div class="gsec"><small>The Wardens' Hall</small><p>The first suit for the White needs Anna at 50%. She is at <b>${m}%</b>.</p><div class="gbar"><i style="width:${Math.min(100, m * 2)}%"></i></div></div>
-    <div class="gsec"><small>Pages of the Long Cold</small><p>${pages1.length} of ${CHAPTERS_I.length} read · <a href="#" data-story>open</a> · Bestiary: ${BESTIARY.reduce((a, B) => a + BEAST_AT.filter(k => (OBS[B.id] || 0) >= k).length, 0)} of 16 pages · <a href="#" data-beasts>open</a></p></div></div>`;
+    <div class="gsec"><small>Pages of the Long Cold</small><p>${pages1.length} of ${CHAPTERS_I.length} read · <a href="#" data-story>open</a> · Bestiary: ${BESTIARY.reduce((a, B) => a + BEAST_AT.filter(k => (OBS[B.id] || 0) >= k).length, 0)} of ${BESTIARY.length * BEAST_AT.length} pages · <a href="#" data-beasts>open</a></p></div></div>`;
   goalEl.querySelector('.gfold').onclick = () => { goalFold = !goalFold; store.set('w4w.goalFold', goalFold ? '1' : '0'); sfx.click(); goalSig = ''; renderGoals(true); };
   goalEl.querySelector('[data-go]')?.addEventListener('click', () => { sfx.click(); next.go(); });
   goalEl.querySelector('[data-letter]')?.addEventListener('click', () => { sfx.click(); const L = openLetter(), c = myC(); if (L && c && !c.path.length && W4W.dist([c.q, c.r], GATE_CELL) <= 1) readLetter(L.id); else walkTo('gate'); });
@@ -8219,12 +8239,13 @@ function openLibraryRoom() {
         <p>A figure in heavy plates, lined with something that glows. Under it, in the expedition smith's hand, one word. A suit that carries a piece of Anna's light on the body, so the White cannot get in.</p>
         <p class="lr-hope">The smiths have started. When Anna is strong enough to give a piece of her light away, the Gate opens from our side.</p>
         <div class="lr-meter"><span>Anna</span><i><b style="width:${Math.min(100, Math.round((S.town.melt || 0) * 200))}%"></b></i><span>${Math.round((S.town.melt || 0) * 100)}% of 50%</span></div>` : ''}
-        ${found.length ? `<h3>Found notes</h3>${found.map(n => `<details class="lr-note"><summary>${esc(n.title)}</summary><p>${esc(n.text)}</p></details>`).join('')}` : ''}</aside>
+        ${found.length ? `<h3>Found notes</h3>${found.map(n => `<details class="lr-note"><summary>${esc(n.title)}</summary><p>${esc(n.text)}</p></details>`).join('')}` : ''}
+        ${traceHtml('lida') ? `<div class="lr-trace">${traceHtml('lida')}</div>` : ''}</aside>
       <section class="lr-shelves"><nav>${tabs}</nav><h3 style="--sc:${col}">${esc(name)}</h3>${libTab === 'cfb' ? `<p class="lr-legend">The town calls him the one who came from beyond. He walked in from the north by no road anyone knew, taught the smiths to build machines that think together, and left. The first stone of Qubic Church was laid where he sat and wrote. These are his texts, as he wrote them.</p>` : ''}${libTab === 'story' ? `<div class="lr-story">${books}</div>` : `<div class="lr-grid">${books}</div>`}
         <p class="lr-foot">The Fractal Rationalism Institute meets in Discord: the science of decentralized cooperation, after Rapoport and Axelrod.</p></section>
     </div></div>`;
   libEl.hidden = false; requestAnimationFrame(() => libEl.classList.add('on'));
-  libEl.querySelectorAll('[data-lx]').forEach(b => b.onclick = closeLibraryRoom);
+  libEl.querySelectorAll('[data-lx]').forEach(b => b.onclick = closeLibraryRoom); { const t = libEl.querySelector('.lr-trace'); if (t) bindTrace(t); }
   libEl.querySelectorAll('[data-shelf]').forEach(b => b.onclick = () => { libTab = b.dataset.shelf; sfx.click(); openLibraryRoom(); });
   libEl.querySelectorAll('[data-page]').forEach(b => b.onclick = () => { closeLibraryRoom(); openChronicle(true, 'story'); setTimeout(() => { const i = CHAPTERS_I.filter(c => pages1.includes(c.id)).findIndex(c => c.id === b.dataset.page); const d = document.querySelectorAll('#pbody details')[i]; if (d) { d.open = true; d.scrollIntoView({ block: 'start' }); } }, 300); });
   libEl.querySelectorAll('[data-letter]').forEach(b => b.onclick = () => { const l = (XV?.letters || []).find(x => x.id === b.dataset.letter); if (l) { closeLibraryRoom(); showLetter(l); } });
