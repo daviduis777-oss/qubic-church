@@ -8283,6 +8283,11 @@ function buildQuarters() {
   // the Coal Works and the market yard
   onCorner('vent', ...P.mine, -30, 'anna', 1, scene, 0.35); onCorner('pipes', ...P.mine, 30, 'anna', 1, scene, 0.45);
   // the Wardens' Watch and the Gate
+  // the first Warden suit, finished and waiting by its hall: iron plates, a lantern and a hammer, nobody inside it yet
+  { const wc = S2('wardens'); if (wc) loadGlb('q/b/warden.glb').then(g => { if (!g) return; const o = g.scene, b = new THREE.Box3().setFromObject(o), sz = b.getSize(new THREE.Vector3()), cc = b.getCenter(new THREE.Vector3());
+      o.position.set(-cc.x, -b.min.y, -cc.z); const W2 = new THREE.Group(); W2.add(o); W2.scale.setScalar(0.82 / Math.max(0.01, sz.y));
+      o.traverse(m => { if (m.isMesh) { m.castShadow = true; const M = m.material; if (M?.map) { M.emissive = new THREE.Color(0xffffff); M.emissiveMap = M.map; M.emissiveIntensity = 0.14; } } });
+      const at = cornerTurn(...wc, -30), c0 = HX(...wc), v = at.clone().lerp(c0, 0.35); W2.position.set(v.x, groundH(v.x, v.z), v.z); W2.rotation.y = Math.atan2(-v.x, -v.z); scene.add(W2); tag(W2, 'stage2', 'wardens'); }); }
   onCorner('sentry', ...S2('wardens'), 30, 'anna'); onCorner('barricade', ...S2('wardens'), -90, 'out', 0.9, scene, 0.4);
   onCorner('sentry', ...GATE_CELL, 30, 'anna'); onCorner('barricade', ...GATE_CELL, 90, 'out', 0.9, scene, 0.4); onCorner('barricade', ...GATE_CELL, -90, 'out', 0.9, scene, 0.4);
   // the Twelve, the Rise, the Glass Gardens, the Atrium
@@ -8331,7 +8336,7 @@ const ROOMS = {
       [79, 38, 13, 32, 'The harmonium', () => roomNote('Sister Odile\'s hymn sheets are still on the stand, in her small careful hand. Nobody has played it since she went north. The keys are warm.')],
       [91, 52, 9, 42, 'The stove', () => roomNote('You hold your hands to the church stove. Someone brought the wood from home. Small things keep a town.')],
     ] },
-  post: { img: 'q/room/post.webp', title: 'The post office', sub: 'Nothing in Aigrad delivers itself.', door: '', npc: { img: 'q/folk/ada_fig.webp', x: 45, y: 50, h: 14, ih: 1.25, folk: 'ada', ar: 611 / 820, glow: 'warm' },
+  post: { img: 'q/room/post.webp', title: 'The post office', sub: 'Nothing in Aigrad delivers itself.', door: '', npc: { img: 'q/folk/ada_fig.webp', x: 43.8, y: 45.5, h: 18.5, ih: 1.25, folk: 'ada', ar: 611 / 820, glow: 'warm' },
     fx: [[13, 17, 5], [34, 30, 4], [75, 32, 4], [35, 60, 3], [79, 76, 7], [26, 30, 10, 'cold'], [8, 30, 8, 'cold'], [53, 6, 6, 'cold']],
     hot: [
       [11, 30, 10, 45, 'The sack', () => openPost()],
@@ -8342,7 +8347,7 @@ const ROOMS = {
       [86, 18, 14, 34, 'The map of the town', () => roomNote('Every door in Aigrad is on Ada\'s map. A red pin marks each one that has had a letter this epoch. One pigeonhole on the wall beside it is kept empty: Yusuf Karam\'s.')],
       [74, 44, 10, 30, 'The stove', () => roomNote('The kettle on the post office stove is always on. Ada says a carrier with cold hands drops letters.')],
     ] },
-  observatory: { img: 'q/room/observatory.webp', title: 'The Observatory', sub: 'Everything in the Bestiary was seen from this room.', door: 'iron', npc: { img: 'q/folk/selma_fig.webp', x: 71, y: 55, h: 33, folk: 'selma', ar: 389 / 900, glow: 'warm' },
+  observatory: { img: 'q/room/observatory.webp', title: 'The Observatory', sub: 'Everything in the Bestiary was seen from this room.', door: 'iron', npc: { img: 'q/folk/selma_fig.webp', x: 69.5, y: 46, h: 42, folk: 'selma', ar: 389 / 900, glow: 'warm' },
     fx: [[9, 25, 7], [95, 28, 7], [41, 53, 5], [17, 55, 7], [55, 14, 14, 'cold']],
     hot: [
       [46, 13, 23, 68, 'The telescope', () => openObservatory()],
