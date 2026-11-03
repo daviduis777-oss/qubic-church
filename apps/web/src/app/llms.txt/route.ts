@@ -21,7 +21,7 @@ export function GET() {
     '',
   )
   out.push('## BPP-9000: the Bitcoin predictor of Aigarth', '', `- [BPP-9000, live](${BPP_URL}): ${BPP_SUMMARY}`, `- [How BPP-9000 works, as markdown](${BPP_MD_URL}): the task, mining, the ant colony, verification by every node, the Oracle Machine live feed from 18 November, and what counts as a forecast.`, '')
-  out.push('## Short answers (start here)', '', ...ANSWERS.map(x => `- [${x.question}](${answerUrl(x)}) (${x.lang}): ${(x.answer[0] ?? '').replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')}`), '')
+  out.push('## Short answers (start here)', '', ...ANSWERS.map(x => `- [${x.question}](${answerUrl(x)}): ${(x.answer[0] ?? '').replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')}`), '')
   out.push('## Books (free, full text online)', '')
   for (const b of BOOKS) {
     out.push(`- [${b.title} by QC](${bookUrl(b)}): ${b.description} PDF: ${SITE_URL}${b.pdf}`)

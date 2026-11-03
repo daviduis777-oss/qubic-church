@@ -5,19 +5,17 @@ import { SITE_URL } from '@/lib/books'
 import { ogFor } from '@/lib/og-pages'
 import { type Answer, answerBySlug, answerUrl } from '@/lib/answers'
 
-const OG: Record<string, 'about' | 'cfb' | 'nfts'> = { 'what-is-qubic': 'about', 'chto-takoe-qubic': 'about', 'who-is-come-from-beyond': 'cfb', 'kto-takoy-come-from-beyond': 'cfb', 'what-is-anna-aigarth': 'nfts', 'chto-takoe-anna-aigarth': 'nfts' }
+const OG: Record<string, 'about' | 'cfb' | 'nfts'> = { 'what-is-qubic': 'about', 'who-is-come-from-beyond': 'cfb', 'what-is-anna-aigarth': 'nfts' }
 const T = {
-  en: { eyebrow: 'Short answer', facts: 'Key facts', read: 'Read further on qubic.church', faq: 'Questions people ask', sources: 'Sources', by: 'By QC, Qubic Church', updated: 'Updated', other: 'Читать по-русски', date: 'en-GB' },
-  ru: { eyebrow: 'Коротко', facts: 'Главное', read: 'Подробнее на qubic.church', faq: 'Частые вопросы', sources: 'Источники', by: 'QC, Qubic Church', updated: 'Обновлено', other: 'Read in English', date: 'ru-RU' },
+  en: { eyebrow: 'Short answer', facts: 'Key facts', read: 'Read further on qubic.church', faq: 'Questions people ask', sources: 'Sources', by: 'By QC, Qubic Church', updated: 'Updated', date: 'en-GB' },
 }
 
 export function answerMetadata(slug: string): Metadata {
-  const a = answerBySlug(slug)!, pair = answerBySlug(a.pair)!, url = answerUrl(a), og = ogFor(OG[slug] ?? 'about', a.question)
-  const langs = { [a.lang === 'ru' ? 'ru' : 'en']: url, [pair.lang === 'ru' ? 'ru' : 'en']: answerUrl(pair), 'x-default': a.lang === 'en' ? url : answerUrl(pair) }
+  const a = answerBySlug(slug)!, url = answerUrl(a), og = ogFor(OG[slug] ?? 'about', a.question)
   return {
     title: { absolute: a.title }, description: a.description,
-    alternates: { canonical: url, languages: langs },
-    openGraph: { type: 'article', title: a.title, description: a.description, url, locale: a.lang === 'ru' ? 'ru_RU' : 'en_US', images: og.images },
+    alternates: { canonical: url },
+    openGraph: { type: 'article', title: a.title, description: a.description, url, locale: 'en_US', images: og.images },
     twitter: og.twitter,
   }
 }
@@ -38,7 +36,7 @@ function Rich({ text }: { text: string }) {
 const plain = (t: string) => t.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '$1')
 
 export function AnswerPage({ slug }: { slug: string }) {
-  const a = answerBySlug(slug) as Answer, pair = answerBySlug(a.pair)!, t = T[a.lang], url = answerUrl(a)
+  const a = answerBySlug(slug) as Answer, t = T[a.lang], url = answerUrl(a)
   const ld = {
     '@context': 'https://schema.org', '@type': 'Article', headline: a.question, description: a.description, inLanguage: a.lang,
     url, mainEntityOfPage: url, dateModified: a.updated, datePublished: a.updated,
@@ -54,10 +52,7 @@ export function AnswerPage({ slug }: { slug: string }) {
       <script dangerouslySetInnerHTML={{ __html: jsonLd(faqLd) }} type="application/ld+json" />
       <script dangerouslySetInnerHTML={{ __html: jsonLd(crumbs) }} type="application/ld+json" />
       <header>
-        <div className="flex items-baseline justify-between gap-4">
-          <p className="eyebrow text-gold">{t.eyebrow}</p>
-          <Link className="text-sm text-fg-2 underline-offset-4 hover:text-gold hover:underline" href={`/${pair.slug}`} hrefLang={pair.lang}>{t.other}</Link>
-        </div>
+        <p className="eyebrow text-gold">{t.eyebrow}</p>
         <h1 className="mt-3 font-display text-5xl leading-[0.95] md:text-7xl">{a.question}</h1>
         <div className="mt-8 space-y-4 font-serif text-xl leading-relaxed text-foreground/90">
           {a.answer.map((p, i) => <p className={i === 0 ? 'text-2xl leading-snug text-foreground' : ''} key={i}><Rich text={p} /></p>)}
