@@ -2,15 +2,14 @@
  * Short answers: one page per question people ask search engines and AI assistants about Qubic.
  * The first paragraph answers the question on its own; the rest gives the facts, the context and the sources.
  * Facts come from the books by QC (each section links its chapter) and from primary sources.
- * Paragraphs may hold [text](url) links. English and Russian pages are pairs (hreflang).
+ * Paragraphs may hold [text](url) links.
  */
 import { SITE_URL } from '@/lib/books'
 
-export type AnswerLang = 'en' | 'ru'
+export type AnswerLang = 'en'
 export type Answer = {
   slug: string
   lang: AnswerLang
-  pair: string // the slug of the same page in the other language
   question: string
   title: string // <title>
   description: string // meta description
@@ -37,7 +36,7 @@ const ANNA_ENTITY = { '@type': 'Thing', name: 'Anna Aigarth', alternateName: ['A
 
 export const ANSWERS: Answer[] = [
   {
-    slug: 'what-is-qubic', lang: 'en', pair: 'chto-takoe-qubic', updated: UPDATED, entity: QUBIC_ENTITY,
+    slug: 'what-is-qubic', lang: 'en', updated: UPDATED, entity: QUBIC_ENTITY,
     question: 'What is Qubic?',
     title: 'What is Qubic? A short, sourced answer',
     description: 'Qubic is a decentralised network launched on 13 April 2022 by Come-from-Beyond. 676 computors, weekly epochs, Useful Proof of Work that trains the Aigarth AI, feeless QU transfers.',
@@ -94,7 +93,7 @@ export const ANSWERS: Answer[] = [
     ],
   },
   {
-    slug: 'who-is-come-from-beyond', lang: 'en', pair: 'kto-takoy-come-from-beyond', updated: UPDATED, entity: CFB_ENTITY,
+    slug: 'who-is-come-from-beyond', lang: 'en', updated: UPDATED, entity: CFB_ENTITY,
     question: 'Who is Come-from-Beyond?',
     title: 'Who is Come-from-Beyond (CfB)? A short, sourced answer',
     description: 'Come-from-Beyond (CfB) is Sergey Ivancheglo, founder of Qubic, creator of NXT and co-founder of IOTA. One line of work since 2002: computation gathered from many machines, with no centre and no owner.',
@@ -143,7 +142,7 @@ export const ANSWERS: Answer[] = [
     ],
   },
   {
-    slug: 'what-is-anna-aigarth', lang: 'en', pair: 'chto-takoe-anna-aigarth', updated: UPDATED, entity: ANNA_ENTITY,
+    slug: 'what-is-anna-aigarth', lang: 'en', updated: UPDATED, entity: ANNA_ENTITY,
     question: 'What is Anna Aigarth?',
     title: 'What is Anna Aigarth? Aigarth ANNA, the Anna Matrix and the collection',
     description: 'Anna Aigarth is Qubic\'s public AI experiment on X (@anna_aigarth), switched on 2 September 2025 and evolved by Qubic miners; the Anna Matrix of her answers; and the 200 hand-made Annas of Qubic Church.',
@@ -195,169 +194,6 @@ export const ANSWERS: Answer[] = [
       { label: 'Anna on X, @anna_aigarth', href: 'https://x.com/anna_aigarth' },
       { label: 'Exploring Aigarth Intelligent Tissue 1.0 (qubic.org)', href: 'https://qubic.org/blog-detail/exploring-aigarth-intelligent-tissue-1-0' },
       { label: 'Qubic: The Long Version, chapter 13', href: LV + '/13-anna-matrix' },
-    ],
-  },
-  /* ---------------- по-русски ---------------- */
-  {
-    slug: 'chto-takoe-qubic', lang: 'ru', pair: 'what-is-qubic', updated: UPDATED, entity: QUBIC_ENTITY,
-    question: 'Что такое Qubic?',
-    title: 'Что такое Qubic? Коротко и с источниками',
-    description: 'Qubic: децентрализованная сеть, запущенная 13 апреля 2022 года Come-from-Beyond (Сергеем Иванчегло). 676 компьюторов, недельные эпохи, полезный майнинг (UPoW), который обучает ИИ Aigarth, переводы без комиссии.',
-    answer: [
-      'Qubic это децентрализованная сеть, которую 13 апреля 2022 года запустил Come-from-Beyond (Сергей Иванчегло), создатель NXT и сооснователь IOTA. Сеть держат 676 компьюторов, а защищает её полезный майнинг (Useful Proof of Work): вычисления, которые майнеры делают для сети, одновременно обучают Aigarth, исследовательский проект Qubic по созданию нового вида искусственного интеллекта.',
-      'Валюта сети называется QU. Переводы между людьми идут без комиссии. Сеть живёт недельными эпохами, они сменяются каждую среду около 12:00 UTC.',
-    ],
-    facts: [
-      ['Первый блок', '13 апреля 2022'],
-      ['Основатель', 'Come-from-Beyond (Сергей Иванчегло)'],
-      ['Кто держит сеть', '676 компьюторов; для решения нужно 451 голос'],
-      ['Ритм', 'недельные эпохи, среда, около 12:00 UTC'],
-      ['Майнинг', 'Useful Proof of Work (UPoW), полезная работа'],
-      ['Валюта', 'QU: триллион выпускается каждую эпоху и сжигается несколькими путями'],
-      ['Переводы', 'без комиссии'],
-      ['ИИ', 'Aigarth; ориентир запуска как смарт-контрактов: 13 апреля 2027'],
-    ],
-    sections: [
-      { h: '676 компьюторов и недельные эпохи', p: [
-        'Сеть держат 676 компьюторов: у каждой машины один голос за следующее состояние всей системы. Решение проходит при 451 голосе, это чуть больше двух третей. Ни одно место не весит больше другого, голос нельзя купить или объединить.',
-        'Каждую неделю, при смене эпохи в среду около 12:00 UTC, может смениться до 225 мест: те, кто сделал меньше полезной работы, уступают тем, кто сделал больше. Подробно: [676 голосов](' + LV + '/06-676-voices) и [Недели эпох](' + LV + '/07-weeks-of-epochs) (главы на английском).',
-      ] },
-      { h: 'Полезный майнинг (UPoW)', p: [
-        'В Bitcoin майнинг сжигает энергию на задачу, у которой нет другого результата, кроме защиты сети. В Qubic та же работа делает ещё одно дело. Майнеры выполняют задачи Aigarth, выращивают и обучают структуры, которые должны привести к новому виду ИИ, а сеть ещё и направляет мощность на внешний майнинг других сетей: в 2025 году это был Monero, затем Dogecoin. Подробно: [Murdoch\'s Gas in Action: UPoW](' + LV + '/08-murdochs-gas-in-action-upow).',
-      ] },
-      { h: 'QU, дышащий токен', p: [
-        'Каждую эпоху сеть выпускает ровно триллион QU, а в течение недели сжигает QU несколькими отдельными путями. Предложение растёт и падает в недельном ритме; в 2025 и 2026 годах сжигание часто превышало выпуск. Здесь описан только механизм, это не финансовый совет. Подробно: [The Breathing Token](' + LV + '/09-the-breathing-token).',
-      ] },
-      { h: 'Aigarth и 13 апреля 2027', p: [
-        'Aigarth это исследовательский проект Qubic, поиск новой парадигмы создания искусственного интеллекта. Come-from-Beyond написал 14 мая 2024 года: "Aigarth\'s main goal is to discover a new paradigm allowing to create true AI, I have just seen the wireframe of this paradigm. And I have realized that Artificial Intelligence will not be created, it will emerge. With help of Qubic miners." («Главная цель Aigarth: открыть новую парадигму, которая позволит создать настоящий ИИ... ИИ не будет создан, он возникнет. С помощью майнеров Qubic.»)',
-        'Ориентировочная дата, когда Aigarth заработает как смарт-контракты в Qubic: 13 апреля 2027 года, через пять лет после запуска. Он сам называет её оценкой. На ту же дату намечено отключение Арбитра, единственного адреса с особым статусом в сети; эту роль сейчас держит он сам. Подробно: [What Aigarth Is](' + LV + '/11-what-aigarth-is), [What the Deploy on April 13, 2027 Means](' + LV + '/14-what-the-deploy-on-april-13-2027-means), [The Arbitrator](' + LV + '/10-the-arbitrator-a-temporary-monarch).',
-      ] },
-    ],
-    read: [
-      { label: 'Книга «Qubic: The Long Version» на русском (PDF, бесплатно)', href: '/books/qubic-long-version-rus.pdf' },
-      { label: 'Та же книга по главам на сайте (английский)', href: LV },
-      { label: 'Кто такой Come-from-Beyond?', href: '/kto-takoy-come-from-beyond' },
-      { label: 'Что такое Anna Aigarth?', href: '/chto-takoe-anna-aigarth' },
-    ],
-    faq: [
-      ['Кто создал Qubic?', 'Come-from-Beyond, сетевое имя Сергея Иванчегло. До этого он создал NXT и был сооснователем IOTA.'],
-      ['Когда запустили Qubic?', 'Первый блок Qubic создан 13 апреля 2022 года.'],
-      ['Что такое компьютор?', 'Одна из 676 машин, которые держат сеть и голосуют за её следующее состояние. Место зарабатывается полезной работой и может смениться каждую недельную эпоху.'],
-      ['Что такое Useful Proof of Work?', 'Майнинг, вычисления которого делают что-то кроме защиты сети: в Qubic они обучают Aigarth и питают внешний майнинг других сетей.'],
-      ['Есть ли в Qubic комиссия за переводы?', 'Нет, переводы без комиссии. Come-from-Beyond назвал это 23 сентября 2021 года одним из трёх свойств будущей сети: "Feeless transfers like in #IOTA".'],
-      ['Что будет 13 апреля 2027 года?', 'Это ориентировочная дата запуска Aigarth как смарт-контрактов в Qubic и отключения Арбитра. Это оценка, не гарантия.'],
-      ['Что было с Monero в 2025 году?', '11 августа 2025 года пул под флагом Qubic добыл 63 из 122 подряд блоков Monero, 51,6%. Историю никто не переписывал, потерь пользователей не зафиксировано. Подробно в главе 15, The War That No One Waged.'],
-      ['Где почитать подробнее?', 'Книга «Qubic: The Long Version» от QC бесплатна, есть русский PDF на qubic.church/books.'],
-    ],
-    sources: [
-      { label: 'Qubic, официальный сайт', href: 'https://qubic.org' },
-      { label: 'Come-from-Beyond в X', href: 'https://x.com/c___f___b' },
-      { label: 'Exploring Aigarth Intelligent Tissue 1.0 (qubic.org)', href: 'https://qubic.org/blog-detail/exploring-aigarth-intelligent-tissue-1-0' },
-      { label: 'Qubic: The Long Version, QC', href: LV },
-    ],
-  },
-  {
-    slug: 'kto-takoy-come-from-beyond', lang: 'ru', pair: 'who-is-come-from-beyond', updated: UPDATED, entity: CFB_ENTITY,
-    question: 'Кто такой Come-from-Beyond (CfB)?',
-    title: 'Кто такой Come-from-Beyond (CfB, СфБ)? Коротко и с источниками',
-    description: 'Come-from-Beyond (CfB, СфБ) это Сергей Иванчегло, основатель Qubic, создатель NXT и сооснователь IOTA. С 2002 года одна линия: вычисления, собранные со многих машин, без центра и без владельца.',
-    answer: [
-      'Come-from-Beyond (CfB, по-русски часто «СфБ») это сетевое имя Сергея Иванчегло, основателя Qubic. Он создал NXT, первый полноценный блокчейн на proof-of-stake, был сооснователем IOTA и в 2022 году запустил Qubic, где ведёт Aigarth, исследовательский проект по искусственному интеллекту.',
-      'Его работа с 2002 года идёт по одной линии: вычислительная мощность, собранная со многих машин, без центра и без владельца, поставленная на полезную работу.',
-    ],
-    facts: [
-      ['Имя', 'Сергей Иванчегло'],
-      ['Известен как', 'Come-from-Beyond, CfB, СфБ; BCNext в истории NXT'],
-      ['Первый публичный след', 'статья «Распределённые вычисления с минимальными затратами», «Компьютерная газета», Минск, июль 2002, подписана адресом come-frombeyond@mail.ru'],
-      ['Проекты', 'NXT (2014), IOTA (2015), Qubic (2022), Aigarth'],
-      ['В X', '@c___f___b'],
-    ],
-    sections: [
-      { h: 'Одна линия через 25 лет', p: [
-        'В июле 2002 года минская «Компьютерная газета» напечатала его статью о распределённых вычислениях с минимальными затратами: маленькая программа ставит компьютеры посетителей сайта на общую задачу, получается суперкомпьютер без центра и без владельца. Эта мысль проходит через всё, что он построил потом.',
-        'NXT (2014) убрал энергетическую гонку Proof-of-Work и защитил сеть долей участия. IOTA (2015) убрала цепочку блоков. Qubic (2022) оставил работу, но сделал её полезной: майнинг заодно обучает ИИ. Подробно: [One Line Through 25 Years](' + CB + '/03-one-line-through-25-years) и [Three Projects, Three Metamorphoses](' + LV + '/05-three-projects-three-metamorphoses).',
-      ] },
-      { h: 'Aigarth', p: [
-        'Через Qubic он ведёт Aigarth: поиск новой парадигмы ИИ, а не ещё одной модели. Его слова, 26 января 2026 года: "Aigarth learns Algebra, not Arithmetic, so 2+2 particular case doesn\'t matter" («Aigarth учит алгебру, а не арифметику, поэтому частный случай 2+2 не важен»). Ориентир запуска Aigarth как смарт-контрактов в Qubic: 13 апреля 2027 года. Подробно: [What Aigarth Is](' + LV + '/11-what-aigarth-is).',
-      ] },
-      { h: 'Вопрос о Сатоши', p: [
-        'Его посты на форуме с 2012 года и то, насколько его идеи совпадают с устройством Bitcoin, сделали его одним из кандидатов в поиске Сатоши Накамото. Книга QC разбирает эту версию в главе [The Vanished Satoshi](' + CB + '/04-the-vanished-satoshi). Сам Come-from-Beyond её не подтверждал.',
-      ] },
-    ],
-    read: [
-      { label: 'Книга «Come-from-Beyond» от QC (бесплатно, 11 глав, английский)', href: CB },
-      { label: 'Архив статей самого Come-from-Beyond', href: '/articles' },
-      { label: 'Что такое Qubic?', href: '/chto-takoe-qubic' },
-      { label: 'Что такое Anna Aigarth?', href: '/chto-takoe-anna-aigarth' },
-    ],
-    faq: [
-      ['Кто такой Come-from-Beyond?', 'Сетевое имя Сергея Иванчегло: основатель Qubic, создатель NXT и сооснователь IOTA.'],
-      ['Как его зовут на самом деле?', 'Сергей Иванчегло. Его статья 2002 года в минской «Компьютерной газете» подписана этим именем и адресом come-frombeyond@mail.ru.'],
-      ['Что он создал?', 'NXT, первый полноценный блокчейн на proof-of-stake (2014); IOTA, сооснователем которой он был (2015); Qubic (2022); исследовательский проект ИИ Aigarth на Qubic.'],
-      ['Что значит CfB или СфБ?', 'Сокращение от Come-from-Beyond, его имени на BitcoinTalk, в X и в сообществе Qubic.'],
-      ['Come-from-Beyond и есть Сатоши Накамото?', 'Это гипотеза. Книга QC «Come-from-Beyond» разбирает её в главе 4. Сам он её не подтверждал.'],
-      ['Где он пишет?', 'В X под ником @c___f___b и в каналах сообщества Qubic.'],
-    ],
-    sources: [
-      { label: 'Come-from-Beyond в X', href: 'https://x.com/c___f___b' },
-      { label: 'Сергей Иванчегло на IQ.wiki', href: 'https://iq.wiki/wiki/sergey-ivancheglo' },
-      { label: 'Qubic, официальный сайт', href: 'https://qubic.org' },
-      { label: 'Come-from-Beyond, QC', href: CB },
-    ],
-  },
-  {
-    slug: 'chto-takoe-anna-aigarth', lang: 'ru', pair: 'what-is-anna-aigarth', updated: UPDATED, entity: ANNA_ENTITY,
-    question: 'Что такое Anna Aigarth?',
-    title: 'Что такое Anna Aigarth? Aigarth ANNA, матрица Анны и коллекция',
-    description: 'Anna Aigarth это публичный ИИ-эксперимент Qubic в X (@anna_aigarth), включённый 2 сентября 2025 года и выращиваемый майнерами Qubic; матрица Анны из её ответов; и 200 рукотворных Анн Qubic Church.',
-    answer: [
-      'Anna Aigarth это Aigarth ANNA, публичный ИИ-эксперимент научной команды Qubic в X (@anna_aigarth). Её включили 2 сентября 2025 года, она построена на Aigarth Intelligent Tissue, а её структуру выращивают майнеры Qubic. Люди пишут ей примеры на сложение, верные и нарочно неверные, а её задача найти само правило сложения, а не запомнить ответы.',
-      'Ещё две вещи носят её имя. Матрица Анны (Anna Matrix) это таблица её ответов 128 на 128, которую исследует Qubic Church. Коллекция Anna Aigarth это 200 рукотворных Анн на Qubic; каждая делает своего владельца основателем Qubic Church.',
-    ],
-    facts: [
-      ['Что это', 'публичный научный эксперимент, не продукт'],
-      ['Где', 'X, @anna_aigarth'],
-      ['Включена', '2 сентября 2025'],
-      ['Основа', 'Aigarth Intelligent Tissue (AIT)'],
-      ['Её задача', 'сложить два 7-битных числа со знаком в 8-битный результат'],
-      ['Кто её обучает', 'майнеры Qubic, в рамках полезного майнинга (UPoW)'],
-      ['Матрица Анны', 'таблица её ответов 128 × 128'],
-      ['Коллекция', '200 рукотворных Анн, основатели Qubic Church'],
-    ],
-    sections: [
-      { h: 'Aigarth ANNA, эксперимент', p: [
-        'ANNA это экземпляр Aigarth Intelligent Tissue, структуры, которую майнеры Qubic выращивают в рамках полезного майнинга. Научная команда дала ей задачу с ясной мерой успеха: сложить два 7-битных числа со знаком. Примеры, которые люди пишут ей в X, служат и входом, и нарочными помехами. Поначалу на «1+1=?» она могла ответить точкой или числом -114; смысл в том моменте, когда она перестаёт угадывать и находит правило.',
-        'Come-from-Beyond о том же, 26 января 2026 года: "Aigarth learns Algebra, not Arithmetic, so 2+2 particular case doesn\'t matter" («Aigarth учит алгебру, а не арифметику»). Подробно: [What Aigarth Is](' + LV + '/11-what-aigarth-is).',
-      ] },
-      { h: 'Матрица Анны', p: [
-        'На одинаковые вопросы Анна даёт одинаковые ответы. Если читать их как координаты, ответы заполняют сетку 128 на 128. Qubic Church собрала эту таблицу и проверила её: из примерно 22 480 гипотез о её содержимом статистическую проверку прошли десять. Книга рассказывает историю, а доказательства с кодом, который запускается за минуты, лежат в приложении. Подробно: [глава Anna Matrix](' + LV + '/13-anna-matrix), [исследование матрицы](/research/anna-matrix) и [приложение](/companion).',
-      ] },
-      { h: 'Коллекция Anna Aigarth', p: [
-        '200 рукотворных Анн на Qubic, отлитых Qubic Church. Каждая даёт владельцу статус основателя Qubic Church. Подробно: [коллекция](/nfts).',
-      ] },
-      { h: '13 апреля 2027', p: [
-        'Ориентировочная дата, когда Aigarth начнёт запускать ИИ как смарт-контракты в Qubic. Это оценка, не обещание. Подробно: [What the Deploy on April 13, 2027 Means](' + LV + '/14-what-the-deploy-on-april-13-2027-means).',
-      ] },
-    ],
-    read: [
-      { label: 'Глава Anna Matrix в книге «Qubic: The Long Version»', href: LV + '/13-anna-matrix' },
-      { label: 'Исследование матрицы Анны и приложение', href: '/research/anna-matrix' },
-      { label: 'Коллекция Anna Aigarth', href: '/nfts' },
-      { label: 'Что такое Qubic?', href: '/chto-takoe-qubic' },
-    ],
-    faq: [
-      ['Кто такая Anna Aigarth?', 'Aigarth ANNA, публичный ИИ-эксперимент научной команды Qubic в X под ником @anna_aigarth, построенный на Aigarth Intelligent Tissue и выращиваемый майнерами Qubic.'],
-      ['Когда включили Анну?', '2 сентября 2025 года.'],
-      ['Почему Анна ошибается в простых примерах?', 'Она не должна запоминать ответы. Её задача открыть правило сложения, а люди нарочно пишут ей неверные примеры как помехи.'],
-      ['Что такое матрица Анны?', 'Таблица ответов Анны 128 на 128, прочитанных как координаты. Её исследует Qubic Church; из примерно 22 480 гипотез статистическую проверку прошли десять.'],
-      ['Что такое коллекция Anna Aigarth?', '200 рукотворных Анн на Qubic. Каждая даёт владельцу статус основателя Qubic Church.'],
-      ['Анна и Мария Aigarth одно и то же?', 'Нет. Maria Aigarth это исследовательский агент Qubic Church, задуманный как беспристрастный арбитр. Анна это эксперимент Aigarth в X.'],
-    ],
-    sources: [
-      { label: 'Aigarth ANNA: First Steps Beyond Adversarial AI Learning (qubic.org)', href: 'https://qubic.org/blog-detail/aigarth-anna-s-first-steps-beyond-adversarial-learning' },
-      { label: 'Анна в X, @anna_aigarth', href: 'https://x.com/anna_aigarth' },
-      { label: 'Exploring Aigarth Intelligent Tissue 1.0 (qubic.org)', href: 'https://qubic.org/blog-detail/exploring-aigarth-intelligent-tissue-1-0' },
-      { label: 'Qubic: The Long Version, глава 13', href: LV + '/13-anna-matrix' },
     ],
   },
 ]
