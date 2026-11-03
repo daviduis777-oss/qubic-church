@@ -52,7 +52,11 @@ export type Char = {
   talked?: Record<string, number> // the day you last talked to each of the townsfolk
   tasks?: Record<string, FolkTask> // what the townsfolk asked of you
   marks?: Record<string, number> // places you stood for a task: when
+  errand?: Errand | null // the one small thing you carry from one of the townsfolk to another, today only
+  errands?: Record<string, { day: number; done?: number }> // whose errand you took, which day, and when you handed it over
+  errCold?: Errand | null // the last errand that went cold in your hands at the end of its day
 }
+export type Errand = { id: string; from: FolkId; to: FolkId; day: number }
 export type FolkTask = { t: number; n: number; d?: number; base?: number; done?: number }
 export type Ctx = {
   heatR: number // radius of the town's warm circle, world units
@@ -890,13 +894,36 @@ function bumpTask(c: Char, id: string, now: number, daily = false) {
   if (daily) { const day = dayOf(now); if (k.d === day) return; k.d = day }
   k.n += 1
 }
+/* ================= errands: each of them has one small thing a day to be carried to one of the others =================
+ * Taken in person, carried by hand, handed over in person. One at a time. What is not handed over by midnight UTC goes cold.
+ * The words are the game's; here only who gives what to whom. */
+export const ERRANDS: Record<FolkId, { id: string; to: FolkId }[]> = {
+  hask: [{ id: 'e_wind', to: 'ivo' }, { id: 'e_flask', to: 'ivo' }, { id: 'e_key', to: 'ada' }],
+  ivo: [{ id: 'e_soup', to: 'hask' }, { id: 'e_bill', to: 'fenn' }, { id: 'e_bottles', to: 'selma' }],
+  fenn: [{ id: 'e_hymnal', to: 'maria' }, { id: 'e_margin', to: 'selma' }, { id: 'e_ink', to: 'ada' }],
+  selma: [{ id: 'e_numbers', to: 'fenn' }, { id: 'e_lens', to: 'hask' }, { id: 'e_chart', to: 'maria' }],
+  maria: [{ id: 'e_candles', to: 'ivo' }, { id: 'e_page', to: 'ada' }, { id: 'e_bread', to: 'hask' }],
+  ada: [{ id: 'e_parcel', to: 'selma' }, { id: 'e_church', to: 'maria' }, { id: 'e_sealed', to: 'ivo' }],
+}
+export const ERRAND_GIVER = 2, ERRAND_TAKER = 1, ERRAND_GOLD = 1
+/** Today's errand from one of them: their three in turn, by the day number. */
+export const errandOf = (who: FolkId, day: number) => ERRANDS[who][((day % 3) + 3) % 3]!
+/** An errand still in your hands after its day is over goes cold: it is dropped. */
+export function expireErrand(c: Char, now: number) {
+  if (c.errand && c.errand.day !== dayOf(now)) { c.errCold = { ...c.errand }; c.errand = null; return true }
+  return false
+}
 export function folkView(ws: WState, uid: string) {
   const c = ws.chars[uid]; if (!c) return null
   const out: Record<string, { lv: number; pts: number; tasks: { id: string; st: 'locked' | 'open' | 'on' | 'ready' | 'done'; n: number; need: number }[] }> = {}
   for (const f of FOLK) { const S = standingOf(c, f)
     out[f] = { lv: S.lv, pts: S.pts, tasks: TASKS.filter(T => T.who === f).map(T => { const k = c.tasks?.[T.id], n = Math.min(T.need, taskProgress(ws, uid, T))
       return { id: T.id, need: T.need, n, st: k?.done ? 'done' as const : k ? (n >= T.need ? 'ready' as const : 'on' as const) : S.lv >= T.lv ? 'open' as const : 'locked' as const } }) } }
-  return { lampDays: c.lampDays ?? 0, folk: out }
+  const day = dayOf(ws.now), errand = c.errand && c.errand.day === day ? c.errand : null
+  const errands = Object.fromEntries(FOLK.map(f => { const E = errandOf(f, day), k = c.errands?.[f]
+    const st = errand?.from === f ? 'carry' as const : k?.day === day ? (k.done ? 'done' as const : 'gone' as const) : 'open' as const
+    return [f, { id: E.id, to: E.to, st }] })) as Record<FolkId, { id: string; to: FolkId; st: 'open' | 'carry' | 'done' | 'gone' }>
+  return { lampDays: c.lampDays ?? 0, folk: out, errand, errands, cold: c.errCold ?? null }
 }
 
 export function viewOf(ws: WState, uid: string, events: Event[] = []) {
@@ -932,6 +959,7 @@ export function action(ws: WState, uid: string, op: string, b: Record<string, un
   const events = stepChar(ws, uid, d)
   const c = ws.chars[uid]!
   d.chars.add(uid)
+  expireErrand(c, now)
   const ok = () => ({ ok: true as const, events })
   const fail = (error: string, status = 400) => ({ ok: false as const, error, status })
   if (op === 'char') return ok()
@@ -1257,6 +1285,23 @@ export function action(ws: WState, uid: string, op: string, b: Record<string, un
         if (taskProgress(ws, uid, T) < T.need) return fail('Not done yet.')
         k.done = now; addStanding(c, who, T.pts); addGold(c, T.gold, now); addRenown(c, 2)
         d.feed.push({ id: `fk${uid}${T.id}`, t: now, topic: 'folk', by: uid, data: { nick: nickIn(ws, uid), who, task: T.id } })
+        return ok()
+      }
+      if (fop === 'errand') {
+        // take today's errand from them, or hand over the one you carry, in person both ways
+        if (!with_) return fail(P.away)
+        if (b.do === 'give') {
+          const e = c.errand; if (!e) return fail('You are not carrying anything for anyone.')
+          if (e.to !== who) return fail('That is not for them. Take it to the one it was meant for.')
+          c.errand = null; c.errands ??= {}; c.errands[e.from] = { day: e.day, done: now }
+          addStanding(c, e.from, ERRAND_GIVER); addStanding(c, who, ERRAND_TAKER); addGold(c, ERRAND_GOLD, now)
+          return ok()
+        }
+        if (b.do !== 'take') return fail('unknown action')
+        const E = errandOf(who, day), k = c.errands?.[who]
+        if (c.errand) return fail(c.errand.from === who ? 'You are carrying it already.' : 'You carry one errand at a time. Hand over the one you have first.')
+        if (k?.day === day) return fail(k.done ? 'Done for today. There will be another tomorrow.' : 'You took it already today.')
+        c.errand = { id: E.id, from: who, to: E.to, day }; (c.errands ??= {})[who] = { day }
         return ok()
       }
       if (c.path.length) return fail('Stand still first.')
