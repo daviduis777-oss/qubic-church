@@ -745,7 +745,7 @@ export const ACT1_START = Date.UTC(2026, 10, 11, 12), ACT1_FALL = Date.UTC(2027,
 export const PHASE_AT = [ACT1_START, Date.UTC(2026, 11, 16, 12), Date.UTC(2027, 1, 10, 12), Date.UTC(2027, 2, 31, 12)]
 export const notchAt = (n: number) => PHASE_AT[1]! + Math.round((ACT1_FALL - PHASE_AT[1]!) * n / ROSE_TURNS)
 export const phaseNow = (s: Story | null | undefined, now: number) => Math.max(s?.phase ?? 0, PHASE_AT.filter(t => now >= t).length - 1)
-export const thawCap = (now: number) => now < ACT1_START ? 0.2 : Math.max(0.02, 0.48 * Math.min(1, (now - ACT1_START) / (ACT1_FALL - ACT1_START)))
+export const thawCap = (now: number) => Math.max(0.2, 0.48 * Math.min(1, Math.max(0, now - ACT1_START) / (ACT1_FALL - ACT1_START)))
 export const GATE_CELL: Cell = [0, -TOWN_RING]
 export const ROSE_CELL: Cell = [-1, 2] // the Iron Rose: the valve on the copper ring round Anna
 export const ROSE_WAIT = 6 * 3600_000
