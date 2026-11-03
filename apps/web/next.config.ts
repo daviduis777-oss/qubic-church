@@ -64,6 +64,7 @@ const nextConfig: NextConfig = {
     return [
       { source: '/satoshi-nakamoto', destination: '/timeline#satoshi', permanent: true },
       { source: '/chto-takoe-qubic', destination: '/what-is-qubic', permanent: true },
+      { source: '/articles/cfb', destination: '/articles/board/founder', permanent: false },
       { source: '/kto-takoy-come-from-beyond', destination: '/who-is-come-from-beyond', permanent: true },
       { source: '/chto-takoe-anna-aigarth', destination: '/what-is-anna-aigarth', permanent: true },
       {

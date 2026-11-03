@@ -1819,6 +1819,7 @@ var W4W = (() => {
     for (const [q, r] of [...DEMO_CELLS, ...houseCells]) out[key(q, r)] = "house";
     for (const [k, [q, r]] of Object.entries(SPECIAL)) if (k !== "core") out[key(q, r)] = k === "church" ? "church" : k === "plaza" ? "fire" : "house";
     out[key(BAR_CELL[0], BAR_CELL[1])] = "house";
+    out[key(POST_CELL[0], POST_CELL[1])] = "house";
     return out;
   }
   function townWarmth(o) {
@@ -4405,7 +4406,7 @@ function openLibrary() {
     ${ACT1 ? '' : chaptersHtml()}
     <h3>BOOKS BY QUBIC CHURCH</h3><div class="shelf">${LIB.qc.map(([t, d, h]) => link(h, `<b>${t}</b><span>${d}</span>`)).join('')}</div>
     <h3>RESEARCH AND RECORDS</h3><div class="shelf">${LIB.research.map(([t, d, h]) => link(h, `<b>${t}</b><span>${d}</span>`)).join('')}</div>
-    <h3>COME-FROM-BEYOND, IN HIS OWN WORDS</h3><div class="shelf">${link('/articles/cfb', `<b>29 texts, 2017 to 2023</b><span>${LIB.cfb.map(([t, y]) => `${t} (${y})`).join(' · ')}</span>`)}</div>
+    <h3>COME-FROM-BEYOND, IN HIS OWN WORDS</h3><div class="shelf">${link('/articles/board/founder', `<b>29 texts, 2017 to 2023</b><span>${LIB.cfb.map(([t, y]) => `${t} (${y})`).join(' · ')}</span>`)}</div>
     <h3>FROM THE CRYPT</h3><div class="shelf">${LIB.crypt.map(([t, a, sl]) => link('/articles/' + sl, `<b>${esc(t)}</b><span>${esc(a)}</span>`)).join('')}${link('/articles', '<b>All community articles</b><span>The Crypt on qubic.church</span>')}</div>
     <h3>THE SHELF WE LEARN FROM</h3><div class="shelf">${LIB.shelf.map(([t, d, h]) => h ? link(h, `<b>${t}</b><span>${d}</span>`) : `<div class="book"><b>${t}</b><span>${d}</span></div>`).join('')}</div>
     <p class="mute" style="font-size:12.5px;margin-top:12px">The Fractal Rationalism Institute meets in Discord: the science of decentralized cooperation, after Rapoport and Axelrod.</p>`);
@@ -5095,7 +5096,14 @@ function routePts(cells) {
   const top = c => c && W4W.dist(c, W4W.STONE_CELL) === 1, stair = c => c && c[0] === W4W.STAIR_CELL[0] && c[1] === W4W.STAIR_CELL[1];
   cells.forEach((c, i) => { if (stair(c) && (top(cells[i - 1]) || top(cells[i + 1]))) pts[i] = stairFoot(); });
   if (sh && sh !== 'fire' && e.lengthSq() > 0.01) pts[pts.length - 1] = e.clone().add(new THREE.Vector3(-e.x, 0, -e.z).normalize().multiplyScalar(0.95));
-  return pts;
+  // a step between two neighbours of a big building passes 1.73 from its middle, inside the wall: put a point between
+  // every pair of cells (so the pace along the curve stays even) and push it clear of any building it would cut through
+  const out = [pts[0]], BIG = [[SPECIAL.library, 1.95], [W4W.BAR_CELL, 1.85], [SPECIAL.mine, 1.85], [SPECIAL.observatory, 1.6], [SPECIAL.church, 1.55]];
+  for (let i = 1; i < pts.length; i++) { const m = pts[i - 1].clone().add(pts[i]).multiplyScalar(0.5);
+    for (const [bc, rad] of BIG) { if ([cells[i - 1], cells[i]].some(c => c[0] === bc[0] && c[1] === bc[1])) continue;
+      const C = HX(...bc), dx = m.x - C.x, dz = m.z - C.z, d = Math.hypot(dx, dz); if (d < rad && d > 1e-3) { m.x = C.x + dx / d * rad; m.z = C.z + dz / d * rad; } }
+    out.push(m, pts[i]); }
+  return out;
 }
 const doorFx = [];
 function doorGlow(at) {
@@ -5297,6 +5305,9 @@ function walkTo(k, id) {
   const pr = predicted(); if (!pr) return false;
   if (pr.c.frozenUntil > xnow()) { say('You are frozen. Your body lies at home until it thaws.', 'Wastes'); return true; }
   const here = W4W.cellAt(pr.c, xnow());
+  const rk = roomOf(k, id);
+  if (rk) { if (!pr.c.path.length && here[0] === cell[0] && here[1] === cell[1]) { enterRoom(rk, true); return true; }
+    pendingOpen = { room: rk, cell }; closePanel(); follow = true; trip = null; drawPrints([0, 0], [], false); xact('move', { to: cell }); return true; }
   if (!pr.c.path.length && W4W.dist(here, cell) <= (k === 'core' ? 2 : 1)) { openKind(k, id); return true; }
   pendingOpen = { kind: k, id, cell }; closePanel(); follow = true; trip = null; drawPrints([0, 0], [], false); xact('move', { to: k === 'stone' ? STONE_FRONT : cell }); return true;
 }
@@ -8137,17 +8148,76 @@ function stepFolk(dt) {
     F.g.position.set(p.x - t.z * side, 0, p.z + t.x * side); if (F.wait <= 0) { const y = Math.atan2(t.x * F.dir, t.z * F.dir), r0 = F.g.rotation.y; F.g.rotation.y = r0 + Math.atan2(Math.sin(y - r0), Math.cos(y - r0)) * Math.min(1, dt * 6); }
     if (F.g.position.distanceTo(controls.target) < 40) F.mx.update(dt); }
 }
-/* Old Hask at the North Gate: a big man in a rolled-up coat, idle by the post, looking at the town he keeps. Click him to talk. */
+/* Old Hask at the North Gate, built from Bob's reference: a huge old man in a faded green watch coat with brass buttons,
+   a whole bear pelt for a cloak with the bear's head on his shoulder, sleeves rolled up past the elbow, a grey beard in a braid,
+   keys and a soup flask on his belt, and his pike with a little bell. He stands out by the Gate, beside the booth, never in it. */
 let HASK = null;
+function makeHask() {
+  const g = new THREE.Group(), M = (c, r = 0.85, m = 0) => new THREE.MeshStandardMaterial({ color: c, roughness: r, metalness: m, flatShading: true, emissive: new THREE.Color(c).multiplyScalar(0.22) });
+  const coat = M(0x4e6142), coatDk = M(0x3b4c33), fur = M(0x6b4528), furLt = M(0x8a5c34), furDk = M(0x3e2817), skin = M(0xc98466), beard = M(0xd2cabd), cuff = M(0xcdb894),
+    leather = M(0x5a3a22), boot = M(0x3a281b), brass = M(0xc9a24a, 0.4, 0.7), iron = M(0x8b9096, 0.5, 0.6), wood = M(0x6e4a2a), snow = M(0xf2f5f8, 0.6), black = M(0x141010);
+  const add = (geo, mat, x, y, z, sx = 1, sy = 1, sz = 1, rx = 0, ry = 0, rz = 0) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.scale.set(sx, sy, sz); m.rotation.set(rx, ry, rz); m.castShadow = true; g.add(m); return m; };
+  const cyl = (rt, rb, h, n = 8) => new THREE.CylinderGeometry(rt, rb, h, n), sph = (r, w = 8, h = 6) => new THREE.SphereGeometry(r, w, h);
+  // boots with fur tops, wool trousers
+  for (const x of [-0.1, 0.1]) { add(cyl(0.085, 0.095, 0.15), boot, x, 0.075, 0.01); add(new THREE.BoxGeometry(0.15, 0.06, 0.08), boot, x, 0.03, 0.06); add(cyl(0.1, 0.1, 0.05, 9), cuff, x, 0.16, 0.01); add(cyl(0.08, 0.085, 0.16), M(0x4a3426), x, 0.25, 0); }
+  // the coat: barrel body, skirt, belt, buttons, patches
+  add(cyl(0.2, 0.25, 0.34, 10), coat, 0, 0.5, 0); add(cyl(0.25, 0.27, 0.12, 10), coatDk, 0, 0.35, 0);
+  add(cyl(0.255, 0.255, 0.04, 12), leather, 0, 0.44, 0); add(new THREE.BoxGeometry(0.07, 0.05, 0.02), iron, 0, 0.44, 0.255);
+  for (const y of [0.52, 0.6, 0.67]) for (const x of [-0.045, 0.045]) add(sph(0.014, 6, 4), brass, x, y, 0.205 - (y - 0.5) * 0.06);
+  add(new THREE.BoxGeometry(0.07, 0.06, 0.01), coatDk, -0.12, 0.36, 0.24, 1, 1, 1, 0, -0.45, 0);
+  // keys and flask
+  add(new THREE.TorusGeometry(0.03, 0.006, 4, 10), iron, -0.15, 0.4, 0.21, 1, 1, 1, 0, -0.5, 0); for (const k of [-1, 0, 1]) add(new THREE.BoxGeometry(0.01, 0.07, 0.006), iron, -0.15 + k * 0.012, 0.35, 0.215);
+  add(new THREE.BoxGeometry(0.06, 0.08, 0.035), M(0x9a9a98, 0.45, 0.6), 0.16, 0.39, 0.18, 1, 1, 1, 0, 0.5, 0);
+  // the bear: a pelt over the back and shoulders, paws knotted on the chest, the head resting on his left shoulder
+  const back = new THREE.CylinderGeometry(0.3, 0.32, 0.5, 10, 1, true, Math.PI * 0.55, Math.PI * 0.9); const bk = add(back, fur, 0, 0.55, 0); bk.material = fur.clone(); bk.material.side = THREE.DoubleSide;
+  add(sph(0.27, 10, 6), fur, 0, 0.75, -0.02, 1.18, 0.42, 0.95); add(sph(0.09, 7, 5), furLt, -0.05, 0.69, 0.19, 1, 0.55, 0.6, 0, 0, 0.5); add(sph(0.09, 7, 5), furLt, 0.05, 0.69, 0.19, 1, 0.55, 0.6, 0, 0, -0.5);
+  add(new THREE.TorusGeometry(0.025, 0.012, 4, 8), cuff, 0, 0.7, 0.22);
+  const bear = new THREE.Group(); bear.position.set(-0.19, 0.9, -0.1); bear.scale.setScalar(1.35); g.add(bear);
+  const bm = (geo, mat, x, y, z, sx = 1, sy = 1, sz = 1) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.scale.set(sx, sy, sz); m.castShadow = true; bear.add(m); return m; };
+  bm(sph(0.1, 8, 6), fur, 0, 0, 0, 1, 0.85, 1.1); bm(new THREE.BoxGeometry(0.07, 0.06, 0.09), furDk, 0.01, -0.02, 0.1); bm(sph(0.016, 5, 4), black, 0.01, 0.0, 0.15);
+  bm(sph(0.03, 6, 4), fur, -0.06, 0.08, -0.01); bm(sph(0.03, 6, 4), fur, 0.06, 0.08, -0.01); bm(sph(0.011, 5, 4), black, -0.035, 0.03, 0.08); bm(sph(0.011, 5, 4), black, 0.04, 0.03, 0.08);
+  bear.rotation.set(0.15, 0.55, 0.2);
+  // arms in green sleeves, rolled up past the elbow: bare thick forearms, big hands
+  const arm = (sx) => { const a = new THREE.Group(); a.position.set(sx * 0.27, 0.71, 0); g.add(a);
+    const am = (geo, mat, x, y, z) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.castShadow = true; a.add(m); return m; };
+    am(cyl(0.065, 0.06, 0.15), coat, 0, -0.07, 0); am(cyl(0.068, 0.068, 0.05, 9), cuff, 0, -0.16, 0); am(cyl(0.056, 0.05, 0.16), skin, 0, -0.26, 0.01); am(sph(0.05, 7, 5), skin, 0, -0.35, 0.02);
+    a.rotation.z = sx * 0.12; return a; };
+  const armL = arm(-1), armR = arm(1); armR.rotation.x = -0.35;
+  // the head: bald, red cheeks, white brows, a grey fringe at the back, the beard and its braid
+  const head = new THREE.Group(); head.position.set(0, 0.95, 0.04); g.add(head);
+  const hm = (geo, mat, x, y, z, sx = 1, sy = 1, sz = 1) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.scale.set(sx, sy, sz); m.castShadow = true; head.add(m); return m; };
+  hm(cyl(0.05, 0.06, 0.06), skin, 0, -0.06, 0); hm(sph(0.108, 9, 7), skin, 0, 0.03, 0, 1, 1.05, 1);
+  hm(sph(0.022, 5, 4), M(0xd06a58), 0, 0.02, 0.095); hm(sph(0.02, 5, 4), skin, -0.095, 0.03, 0); hm(sph(0.02, 5, 4), skin, 0.095, 0.03, 0);
+  hm(new THREE.BoxGeometry(0.05, 0.016, 0.02), beard, -0.04, 0.07, 0.085); hm(new THREE.BoxGeometry(0.05, 0.016, 0.02), beard, 0.04, 0.07, 0.085);
+  hm(sph(0.012, 5, 4), black, -0.035, 0.045, 0.088); hm(sph(0.012, 5, 4), black, 0.035, 0.045, 0.088);
+  hm(new THREE.TorusGeometry(0.085, 0.025, 5, 10, Math.PI), beard, 0, 0.02, -0.01, 1, 0.8, 1, 0, Math.PI, 0);
+  hm(sph(0.085, 8, 6), beard, 0, -0.04, 0.06, 1.05, 0.8, 0.7); hm(new THREE.ConeGeometry(0.095, 0.24, 8), beard, 0, -0.15, 0.1, 1, 1, 0.65, Math.PI, 0, 0); hm(new THREE.BoxGeometry(0.05, 0.012, 0.01), M(0x7a2c26), 0, -0.035, 0.095);
+  hm(cyl(0.02, 0.013, 0.14, 6), beard, 0, -0.32, 0.13); hm(cyl(0.024, 0.024, 0.025, 6), brass, 0, -0.27, 0.13); hm(sph(0.024, 6, 4), beard, 0, -0.4, 0.13);
+  // snow on his shoulders
+  for (const [x, z] of [[-0.2, 0.06], [0.18, 0.04], [0.08, -0.16]]) add(sph(0.04, 6, 4), snow, x, 0.83, z, 1.2, 0.22, 1);
+  // a ragged fur fringe along the bottom of the pelt
+  for (let k = 0; k < 9; k++) { const a = Math.PI * (0.6 + k * 0.1); add(new THREE.ConeGeometry(0.035, 0.09, 4), fur, Math.sin(a) * 0.31, 0.29, Math.cos(a) * 0.31, 1, 1, 1, Math.PI, 0, 0); }
+  // the pike in his right hand: oak shaft, iron rings, the spike, the hook and the bell
+  const pike = new THREE.Group(); pike.position.set(0.3, 0, 0.1); g.add(pike);
+  const pm = (geo, mat, x, y, z, rx = 0, ry = 0, rz = 0) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.rotation.set(rx, ry, rz); m.castShadow = true; pike.add(m); return m; };
+  pm(cyl(0.017, 0.019, 1.3, 6), wood, 0, 0.65, 0); for (const y of [0.15, 0.5, 0.85, 1.12]) pm(cyl(0.024, 0.024, 0.03, 6), iron, 0, y, 0);
+  for (const y of [0.32, 0.95]) pm(cyl(0.021, 0.021, 0.08, 6), M(0x7a3a22), 0, y, 0);
+  pm(new THREE.ConeGeometry(0.03, 0.22, 4), iron, 0, 1.41, 0); pm(new THREE.TorusGeometry(0.06, 0.012, 4, 8, Math.PI * 1.1), iron, 0.055, 1.27, 0, 0, 0, -0.4); pm(new THREE.ConeGeometry(0.012, 0.08, 4), iron, -0.05, 1.26, 0, 0, 0, Math.PI / 2);
+  const bell = new THREE.Group(); bell.position.set(0.03, 1.2, 0.02); pike.add(bell); const bl = new THREE.Mesh(new THREE.ConeGeometry(0.03, 0.045, 7, 1, true), M(0xb8903a, 0.35, 0.8)); bl.position.y = -0.03; bl.material.side = THREE.DoubleSide; bell.add(bl);
+  g.userData = { head, armR, armL, bell, bear };
+  return g;
+}
 function stepHask(dt) {
-  if (!HERO) return;
-  if (!HASK) { const body = cloneSkinned(HERO.scene), tint = new THREE.Color(0x9a8270); body.scale.setScalar(heroScale * 1.22);
-    body.traverse(m => { if (m.isMesh) { m.material = heroMat(m.material).clone(); m.material.color.multiply(tint); m.castShadow = false; m.frustumCulled = false; } });
-    const g = new THREE.Group(); g.add(body); scene.add(g); const gc = HX(...GATE_CELL), inward = gc.clone().multiplyScalar(-1).normalize(), side = new THREE.Vector3(-inward.z, 0, inward.x);
-    const at = gc.clone().add(inward.clone().multiplyScalar(0.95)).add(side.multiplyScalar(0.62)); g.position.set(at.x, groundH(at.x, at.z), at.z); g.rotation.y = Math.atan2(inward.x, inward.z);
-    const mx = new THREE.AnimationMixer(body), acts = {}; for (const [n, c] of Object.entries(heroClips)) acts[n] = mx.clipAction(c);
-    HASK = { g, mx, acts, cur: '' }; folkPlay(HASK, 'Idle'); tag(g, 'folk', 'hask'); label('OLD HASK', g, 0.72, 'walker'); }
-  if (HASK.g.position.distanceTo(controls.target) < 30) HASK.mx.update(dt);
+  if (!HASK) { const g = makeHask(), H = 0.68; g.scale.setScalar(H); scene.add(g);
+    const gc = HX(...GATE_CELL), inward = gc.clone().multiplyScalar(-1).normalize(), side = new THREE.Vector3(-inward.z, 0, inward.x);
+    // the booth stands on one corner of the Gate's cell: Hask stands on the other side of the road, out in the open
+    const booth = cornerTurn(...GATE_CELL, 30), s = Math.sign(side.dot(new THREE.Vector3(booth.x - gc.x, 0, booth.z - gc.z))) || 1;
+    const at = gc.clone().add(inward.clone().multiplyScalar(0.55)).add(side.clone().multiplyScalar(-s * 0.95)); g.position.set(at.x, groundH(at.x, at.z), at.z); g.rotation.y = Math.atan2(inward.x, inward.z);
+    HASK = { g, t: 0 }; tag(g, 'folk', 'hask'); label('OLD HASK', g, 0.86, 'walker'); }
+  const { head, bell, armL } = HASK.g.userData; HASK.t += dt; const t = HASK.t;
+  if (HASK.g.position.distanceTo(controls.target) > 30) return;
+  HASK.g.scale.y = 0.68 * (1 + Math.sin(t * 1.4) * 0.008); head.rotation.y = Math.sin(t * 0.23) * 0.35 + Math.sin(t * 0.07) * 0.2; head.rotation.x = Math.sin(t * 0.31) * 0.05;
+  bell.rotation.z = Math.sin(t * 2.1) * 0.25 * (0.5 + 0.5 * Math.sin(t * 0.4)); armL.rotation.x = Math.sin(t * 0.5) * 0.06;
 }
 function folkPlay(F, n) { if (F.cur === n || !F.acts[n]) return; const a = F.acts[n], o = F.acts[F.cur]; a.reset().fadeIn(0.3).play(); if (o) o.fadeOut(0.3); F.cur = n; }
 
@@ -8291,7 +8361,7 @@ const SHELVES = {
   story: ['The story so far', '#4a2a5a', () => []],
   qc: ['Books by Qubic Church', '#7a1e16', () => LIB.qc.map(([t, d, h]) => [t, d, h])],
   research: ['Research and records', '#2f4a5c', () => LIB.research.map(([t, d, h]) => [t, d, h])],
-  cfb: ['Come-from-Beyond', '#5a3b14', () => [['29 texts, 2017 to 2023', LIB.cfb.map(([t, y]) => `${t} (${y})`).join(' · '), '/articles/cfb']]],
+  cfb: ['Come-from-Beyond', '#5a3b14', () => [['29 texts, 2017 to 2023', LIB.cfb.map(([t, y]) => `${t} (${y})`).join(' · '), '/articles/board/founder']]],
   crypt: ['From the Crypt', '#3d2a4a', () => [...LIB.crypt.map(([t, a, sl]) => [t, a, '/articles/' + sl]), ['All community articles', 'The Crypt on qubic.church', '/articles']]],
   shelf: ['The shelf we learn from', '#3c4a2a', () => LIB.shelf.map(([t, d, h]) => [t, d, h])],
 };

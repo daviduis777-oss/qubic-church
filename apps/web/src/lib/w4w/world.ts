@@ -677,6 +677,7 @@ export function townShelters(houseCells: Cell[]): Record<string, 'house' | 'chur
   for (const [q, r] of [...DEMO_CELLS, ...houseCells]) out[key(q, r)] = 'house'
   for (const [k, [q, r]] of Object.entries(SPECIAL)) if (k !== 'core') out[key(q, r)] = k === 'church' ? 'church' : k === 'plaza' ? 'fire' : 'house'
   out[key(BAR_CELL[0], BAR_CELL[1])] = 'house'
+  out[key(POST_CELL[0], POST_CELL[1])] = 'house' // the post office: walked into, never through
   return out
 }
 
