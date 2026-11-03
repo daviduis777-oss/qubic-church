@@ -111,7 +111,7 @@ body.hub #dock button.main{background:rgba(255,196,107,.16)}
 .ov-speed{display:flex;align-items:baseline;gap:8px;margin:4px 0} .ov-speed b{font-family:var(--f-display);font-size:46px;line-height:1;color:var(--cream);font-variant-numeric:tabular-nums} .ov-speed span{color:var(--gold);font-family:var(--f-label);letter-spacing:.1em}
 .ov-sub{color:var(--mute);font-size:13.5px} .ov-flow{width:100%;height:120px}
 .ov-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-.folk{display:grid;grid-template-columns:64px 1fr;gap:14px;align-items:start;margin:2px 0 12px}.fglyph{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;font:600 30px Cinzel,serif;color:#1a1410;background:radial-gradient(circle at 35% 30%,#fff8,transparent 55%),var(--t);box-shadow:0 0 0 2px #0008,0 0 24px color-mix(in srgb,var(--t) 45%,transparent)}
+.folk{display:grid;grid-template-columns:64px 1fr;gap:14px;align-items:start;margin:2px 0 12px}.fglyph.pic{width:96px;height:96px;background-size:cover;background-position:center 20%}.fglyph{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;font:600 30px Cinzel,serif;color:#1a1410;background:radial-gradient(circle at 35% 30%,#fff8,transparent 55%),var(--t);box-shadow:0 0 0 2px #0008,0 0 24px color-mix(in srgb,var(--t) 45%,transparent)}
 .fline .say{margin:0 0 10px;min-height:3em}.fline .say.fin{animation:fin .5s ease}@keyframes fin{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}.fask{gap:6px;flex-wrap:wrap}
 .fstand{padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:rgba(10,12,18,.45)}.fstand>div:first-child{display:flex;justify-content:space-between;align-items:baseline}.fstand b{font:600 15px Cinzel,serif;color:#f3e4c4}.fstand span,.fstand small{font-size:12px;color:#9aa3b5}
 .fbar{height:6px;border-radius:3px;background:#ffffff14;margin:7px 0 5px;overflow:hidden}.fbar i{display:block;height:100%;background:linear-gradient(90deg,#c8873c,#f0c27a)}
@@ -7420,7 +7420,7 @@ function openBeast(id, fromBook) {
  * Standing and tasks are counted on the server (world.ts FOLK, TASKS). Here: their words.
  * Lines unlock by standing: 0 Stranger, 1 Known, 2 Trusted, 3 Friend, 4 Confidant. */
 const TFOLK = {
-  hask: { name: 'Old Hask', role: 'Keeps the North Gate', glyph: 'H', tint: '#8fb3d9',
+  hask: { name: 'Old Hask', role: 'Keeps the North Gate', glyph: 'H', tint: '#8fb3d9', pic: 'q/folk/hask.webp',
     hello: ['New face. Don\'t stand so close to the Gate, it bites. I\'m Hask. I keep it shut.', 'You again. Good. People who come back are people I can count.', 'Pull up a crate. The wind\'s from the north tonight. It always is.', 'There\'s my friend. Sleeves up, look. Still warm. Don\'t ask me how.', 'Sit. I\'ve been saving something to tell you, and the Gate\'s quiet tonight.'],
     talk: [[0, 'Thirty winters on this gate. The cold has tried every trick on me. Bit my ear once. Broke a tooth on it, the cold did.'], [0, 'You\'ve got a scarf on. Two scarves. Look at you. I sleep out here most nights. Snow\'s soft, if you don\'t mind it.'], [1, 'Wrestled a bear for its coat, once. Lost. So I took the bear instead. Fair\'s fair.'], [1, 'They pay me in soup. Ivo\'s soup. I\'d guard a lesser gate for better soup, but there isn\'t a lesser gate.'], [2, 'Every grey light I hear the knocking. Three slow, three more. I don\'t answer. Answering isn\'t my job.'], [3, 'Here\'s a funny thing. I used to feel the frost like anyone. Then one night I didn\'t. Haven\'t since.']],
     twelve: [[2, 'Teresa Holm went out first, map in her teeth. Said keep it warm, I\'ll be back by the thaw. There hasn\'t been a thaw.'], [2, 'Ilya Marten was nineteen. Sang the whole way down the lane. His mother still can\'t walk past this gate.'], [3, 'Hedda Sorn, the little woodcutter, left her axe leaning on this post. Came back for it at a run. That\'s what I remember. The running.'], [3, 'The captain shook my hand at the bar. Cold hand. Colder than mine is now. Don\'t ask me his name. I\'m not saying it out here.']],
@@ -7525,7 +7525,7 @@ function openFolk(id) {
   if (id === 'selma' && here && greyNow()) extra.push('<button class="btn" data-fop="reading">Take the reading</button>');
   if (id === 'ivo' && here) extra.push('<button class="btn" data-joke>Ask for a joke</button>');
   panel('folk:' + id, F.name, F.role, null, `
-    <div class="folk"><div class="fglyph" style="--t:${F.tint}">${F.glyph}</div><div class="fline"><p class="say" data-fsay>${esc(here ? folkOpening(id, lv) : W4W.FOLK_AT[id].away)}</p>
+    <div class="folk"><div class="fglyph${F.pic ? ' pic' : ''}" style="--t:${F.tint}${F.pic ? `;background-image:url(${F.pic})` : ''}">${F.pic ? '' : F.glyph}</div><div class="fline"><p class="say" data-fsay>${esc(here ? folkOpening(id, lv) : W4W.FOLK_AT[id].away)}</p>
       ${here ? `<div class="row fask"><button class="btn" data-fask="talk">Talk</button>${twelve.length ? '<button class="btn" data-fask="twelve">Ask about the twelve</button>' : ''}<button class="btn" data-fask="ahead">What comes next?</button>${extra.join('')}</div>` : `<div class="row"><button class="btn main" data-fwalk>Walk there</button></div>`}</div></div>
     ${bar}
     <p class="mute" style="font-size:12.5px;margin:6px 0 12px">Standing grows slowly: talk once a day, do what they ask, and keep your lamp lit. Every day your lamp burns twelve hours warms the whole town to you, whatever the size of your rig.</p>
@@ -7583,7 +7583,7 @@ function openJoke() {
   pb.querySelector('[data-jwhy]')?.addEventListener('click', e => { sfx.click(); const n = pb.querySelector('[data-jend]'); n.textContent = '"He died," says Ivo. "Soup\'s two coins."'; n.hidden = false; e.currentTarget.remove(); });
 }
 /** A button that opens one of them, for the panels of their places. */
-const folkBtn = id => { const F = TFOLK[id], st = folkOf(id); return `<button class="folkb" data-folk="${id}"><i style="--t:${F.tint}">${F.glyph}</i><span><b>${esc(F.name)}</b><small>${FOLK_LV[st.lv]}${st.tasks.some(t => t.st === 'ready') ? ' · something to tell them' : st.tasks.some(t => t.st === 'open') ? ' · has something to ask' : ''}</small></span></button>`; };
+const folkBtn = id => { const F = TFOLK[id], st = folkOf(id); return `<button class="folkb" data-folk="${id}"><i style="--t:${F.tint}${F.pic ? `;background:center/cover url(${F.pic})` : ''}">${F.pic ? '' : F.glyph}</i><span><b>${esc(F.name)}</b><small>${FOLK_LV[st.lv]}${st.tasks.some(t => t.st === 'ready') ? ' · something to tell them' : st.tasks.some(t => t.st === 'open') ? ' · has something to ask' : ''}</small></span></button>`; };
 const wireFolk = root => root.querySelectorAll('[data-folk]').forEach(b => b.onclick = () => { sfx.click(); openFolk(b.dataset.folk); });
 function openGate() {
   act1Mark('gate'); if (pages1.includes('knock') && (XV?.story?.phase || 0) >= 1) unlockPage('captain'); const m = Math.round((S.town.melt || 0) * 100), L = openLetter(), c = myC(), near = c && !c.path.length && W4W.dist([c.q, c.r], GATE_CELL) <= 1;
@@ -7891,6 +7891,28 @@ const ROOMS = {
       [82, 44, 18, 40, 'Letters from the other side', () => openShelf()],
       [29, 61, 43, 39, 'The chronicle', () => openChronicle(true, 'story')],
     ] },
+  church: { img: 'q/room/church.webp', title: 'Qubic Church', sub: 'Maria keeps the Chronicle here. The bell rings on Wednesdays.', door: 'arch',
+    fx: [[11, 50, 8], [94, 16, 5], [44, 39, 3], [60, 44, 3], [51, 47, 6], [95, 78, 7], [55, 18, 12, 'cold'], [11, 24, 7, 'cold']],
+    hot: [
+      [44, 38, 17, 36, 'The Chronicle', () => { unlockPage('beyond'); openChronicle(true, 'story'); }],
+      [0, 44, 21, 20, 'The candles', () => roomNote('A candle burns on the iron stand for each of the twelve who went north. At the end of the row there is one more holder. Nobody has ever put a candle in it, and nobody has taken it away.')],
+      [21, 0, 9, 46, 'The bell rope', () => roomNote('The rope is worn smooth at the height of Maria\'s hands. The bell rings on Wednesdays at noon, when the epoch is sealed and the Chronicle closes a page.')],
+      [48, 2, 15, 32, 'The round window', () => roomNote('The frost on the round window has grown into the shape of a cube, or the glass was cut that way. The light through it comes from the side of town where Anna sleeps.')],
+      [0, 64, 42, 36, 'The pews', () => openMaria()],
+      [79, 38, 13, 32, 'The harmonium', () => roomNote('Sister Odile\'s hymn sheets are still on the stand, in her small careful hand. Nobody has played it since she went north. The keys are warm.')],
+      [91, 52, 9, 42, 'The stove', () => roomNote('You hold your hands to the church stove. Someone brought the wood from home. Small things keep a town.')],
+    ] },
+  post: { img: 'q/room/post.webp', title: 'The post office', sub: 'Nothing in Aigrad delivers itself.', door: '',
+    fx: [[13, 17, 5], [34, 30, 4], [75, 32, 4], [35, 60, 3], [79, 76, 7], [26, 30, 10, 'cold'], [8, 30, 8, 'cold'], [53, 6, 6, 'cold']],
+    hot: [
+      [11, 30, 10, 45, 'The sack', () => openPost()],
+      [20, 12, 11, 46, 'The window', () => roomNote('Frost flowers on the glass, and past them the lit windows of the street. Ada says she can tell whose lamp is lit by the colour of the glow.')],
+      [23, 58, 50, 32, 'The counter', () => openPost()],
+      [35, 18, 37, 38, 'The pigeonholes', () => openFolk('ada')],
+      [49, 9, 9, 9, 'The top shelf', () => roomNote('One letter stands alone on the top shelf, sealed in grey wax, with dust all round it. When you look at it too long, Ada clears her throat.')],
+      [86, 18, 14, 34, 'The map of the town', () => roomNote('Every door in Aigrad is on Ada\'s map. A red pin marks each one that has had a letter this epoch. One pigeonhole on the wall beside it is kept empty: Yusuf Karam\'s.')],
+      [74, 44, 10, 30, 'The stove', () => roomNote('The kettle on the post office stove is always on. Ada says a carrier with cold hands drops letters.')],
+    ] },
   observatory: { img: 'q/room/observatory.webp', title: 'The Observatory', sub: 'Everything in the Bestiary was seen from this room.', door: 'iron',
     fx: [[9, 25, 7], [95, 28, 7], [41, 53, 5], [17, 55, 7], [55, 14, 14, 'cold']],
     hot: [
@@ -7901,14 +7923,14 @@ const ROOMS = {
       [0, 57, 14, 38, 'The lens cabinet', () => openObservatory()],
     ] },
 };
-let ROOM = null; const doorSeen = new Set(); const ROOM_FOLK = { bar: 'ivo', library: 'fenn', observatory: 'selma' };
+let ROOM = null; const doorSeen = new Set(); const ROOM_FOLK = { bar: 'ivo', library: 'fenn', observatory: 'selma', church: 'maria', post: 'ada' };
 const standingIn = cell => { const c = myC(); return !!c && !c.path.length && c.q === cell[0] && c.r === cell[1]; };
-function roomOf(k, id) { if (k === 'house' && me() && (id === me().id || id === 'me')) return 'home'; if (k === 'stage2' && id === 'bar') return 'bar'; if (k === 'library' || k === 'observatory') return k; return null; }
+function roomOf(k, id) { if (k === 'house' && me() && (id === me().id || id === 'me')) return 'home'; if (k === 'stage2' && id === 'bar') return 'bar'; if (k === 'stage2' && id === 'post') return 'post'; if (k === 'church' && me()) return 'church'; if (k === 'library' || k === 'observatory') return k; return null; }
 function roomNote(t) { const n = $('#room .rnote'); if (!n) return; n.textContent = t; n.classList.add('on'); clearTimeout(roomNote.t); roomNote.t = setTimeout(() => n.classList.remove('on'), 5200); }
 function creak() { sfx._t(150, 95, 0.9, 0.03, 'sawtooth', 0.55); sfx._t(210, 120, 0.7, 0.02, 'sawtooth', 0.8); sfx._n(1.1, 'bandpass', 420, 7, 0.05, 0.55); sfx._n(0.09, 'highpass', 2600, 1, 0.09, 0.2); sfx._t(80, 50, 0.14, 0.12, 'sine', 0.22); sfx._n(1.4, 'lowpass', 500, 0.7, 0.03, 1.1); }
 /* the door: a short walk through the dark while the room loads, the whole thing the first time, a breath after that; a click skips it */
 /* where each room's door is in the town: the cell of the building, its door on the side that faces Anna */
-function roomCell(name) { return name === 'home' ? (myC()?.home || null) : name === 'bar' ? W4W.BAR_CELL : name === 'library' ? SPECIAL.library : name === 'observatory' ? SPECIAL.observatory : null; }
+function roomCell(name) { return name === 'home' ? (myC()?.home || null) : name === 'bar' ? W4W.BAR_CELL : name === 'library' ? SPECIAL.library : name === 'observatory' ? SPECIAL.observatory : name === 'church' ? SPECIAL.church : name === 'post' ? W4W.POST_CELL : null; }
 let entering = false;
 /* arriving from the street: the camera comes close to the door, warm light falls out of it as it opens, you step in, the street goes dark, then the door in the dark */
 function enterRoom(name, world = false) {
@@ -7973,6 +7995,24 @@ function plqState(room, i) {
       () => { const S = (M.shelf || []).length, mine = [...(M.inbox || []), ...(M.desk || [])].some(m => m.fromBeyond); return { t: 'Letters from beyond', b: mine ? 'bring yours' : S ? `${S}` : '', glow: mine, gold: mine }; },
       () => ({ t: 'The chronicle', b: `${pages1.length} pages` }),
     ],
+    church: [
+      () => ({ t: 'The Chronicle', b: `${pages1.length} pages` }),
+      () => ({ t: 'The candles' }),
+      () => ({ t: 'The bell', b: 'Wednesdays' }),
+      () => ({ t: 'The round window' }),
+      () => ({ t: 'Ask Maria' }),
+      () => ({ t: 'The harmonium' }),
+      () => ({ t: 'Warm your hands' }),
+    ],
+    post: [
+      () => { const n = (mailOf().sack || []).length; return { t: 'The sack', b: n ? `${n} waiting` : '', glow: n > 0 }; },
+      () => ({ t: 'Look outside' }),
+      () => ({ t: 'Write a letter' }),
+      () => { const st = folkOf('ada'); return { t: 'Ada', b: FOLK_LV[st.lv], glow: st.tasks.some(t => t.st === 'ready' || t.st === 'open') }; },
+      () => ({ t: 'The top shelf' }),
+      () => ({ t: 'The map of the town' }),
+      () => ({ t: 'Warm your hands' }),
+    ],
     observatory: [
       () => traceHere('mirek') ? { t: 'Ask about the lens', b: 'the twelve', gold: true, glow: true } : { t: 'Look into the White' },
       () => { const n = BESTIARY.reduce((a, B) => a + BEAST_AT.filter(k => (OBS[B.id] || 0) >= k).length, 0), all = BESTIARY.length * BEAST_AT.length; return { t: 'Bestiary', b: `${n}/${all}` }; },
@@ -7984,7 +8024,7 @@ function plqState(room, i) {
   const f = P[room]?.[i]; const st = f ? f() : {};
   return { ...st, coinHtml: st.coin ? coin : '' };
 }
-const PLQ_AT = { home: [[56, 28], [50, 55], [50, 45], [50, 64], [45, 35], [45, 35]], bar: [[78, 42], [50, 55], [50, 42], [45, 55], [76, 28]], library: [[55, 42], [50, 88], [35, 30], [50, 22]], observatory: [[50, 50], [45, 45], [40, 30], [50, 30], [70, 40]] };
+const PLQ_AT = { home: [[56, 28], [50, 55], [50, 45], [50, 64], [45, 35], [45, 35]], bar: [[78, 42], [50, 55], [50, 42], [45, 55], [76, 28]], library: [[55, 42], [50, 88], [35, 30], [50, 22]], observatory: [[50, 50], [45, 45], [40, 30], [50, 30], [70, 40]], church: [[50, 18], [50, 45], [50, 75], [50, 85], [55, 40], [50, 25], [0, 30]], post: [[50, 40], [50, 50], [50, 30], [50, 62], [50, 60], [10, 50], [50, 40]] };
 function roomPlaques() { if (!ROOM) return; const R = ROOMS[ROOM]; document.querySelectorAll('#room [data-h]').forEach(b => { const i = +b.dataset.h, st = plqState(ROOM, i), e = b.querySelector('em.plq'); if (!e) return;
   const at = PLQ_AT[ROOM]?.[i]; if (at) { e.style.setProperty('--px', at[0] + '%'); e.style.setProperty('--py', at[1] + '%'); }
   const html = `${esc(st.t || R.hot[i][4])}${st.b ? ` <b>${esc(st.b)}</b>` : ''}${st.coinHtml}`; if (e.innerHTML !== html) e.innerHTML = html;
