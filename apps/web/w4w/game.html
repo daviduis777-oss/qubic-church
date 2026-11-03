@@ -111,7 +111,7 @@ body.hub #dock button.main{background:rgba(255,196,107,.16)}
 .ov-speed{display:flex;align-items:baseline;gap:8px;margin:4px 0} .ov-speed b{font-family:var(--f-display);font-size:46px;line-height:1;color:var(--cream);font-variant-numeric:tabular-nums} .ov-speed span{color:var(--gold);font-family:var(--f-label);letter-spacing:.1em}
 .ov-sub{color:var(--mute);font-size:13.5px} .ov-flow{width:100%;height:120px}
 .ov-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-.folk{display:grid;grid-template-columns:64px 1fr;gap:14px;align-items:start;margin:2px 0 12px}#room .rnpc{position:absolute;padding:0;border:0;background:none;cursor:pointer;z-index:3}#room .rnpc img{height:100%;width:auto;display:block;-webkit-mask-image:linear-gradient(to bottom,#000 62%,transparent 96%);mask-image:linear-gradient(to bottom,#000 62%,transparent 96%);filter:drop-shadow(0 0 18px #3fb4ffaa) saturate(.9) brightness(.92);animation:rnpc 6s ease-in-out infinite}#room .rnpc:hover img{filter:drop-shadow(0 0 26px #6cc8ffdd) brightness(1)}@keyframes rnpc{50%{transform:translateY(-.6%)}}@media (prefers-reduced-motion:reduce){#room .rnpc img{animation:none}}.fglyph.pic{width:96px;height:96px;background-size:cover;background-position:center 20%}.fglyph{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;font:600 30px Cinzel,serif;color:#1a1410;background:radial-gradient(circle at 35% 30%,#fff8,transparent 55%),var(--t);box-shadow:0 0 0 2px #0008,0 0 24px color-mix(in srgb,var(--t) 45%,transparent)}
+.folk{display:grid;grid-template-columns:64px 1fr;gap:14px;align-items:start;margin:2px 0 12px}#room .rnpc{position:absolute;padding:0;border:0;background:none;cursor:pointer;z-index:2;overflow:hidden}#room .rhot em.plq{z-index:5}#room .rnpc img{width:auto;display:block;margin:0 auto;animation:rnpc 6s ease-in-out infinite;filter:brightness(.94)}#room .rnpc.fade img{-webkit-mask-image:linear-gradient(to bottom,#000 66%,transparent 97%);mask-image:linear-gradient(to bottom,#000 66%,transparent 97%)}#room .rnpc.cold img{filter:drop-shadow(0 0 16px #3fb4ff88) brightness(.94)}#room .rnpc.warm img{filter:drop-shadow(0 0 10px #ffb46855) brightness(.9) saturate(.95)}#room .rnpc:hover img{filter:drop-shadow(0 0 22px #ffd9a0aa) brightness(1.04)}@keyframes rnpc{50%{transform:translateY(-.6%)}}@media (prefers-reduced-motion:reduce){#room .rnpc img{animation:none}}.fglyph.pic{width:96px;height:96px;background-size:cover;background-position:center 20%}.fglyph{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;font:600 30px Cinzel,serif;color:#1a1410;background:radial-gradient(circle at 35% 30%,#fff8,transparent 55%),var(--t);box-shadow:0 0 0 2px #0008,0 0 24px color-mix(in srgb,var(--t) 45%,transparent)}
 .fline .say{margin:0 0 10px;min-height:3em}.fline .say.fin{animation:fin .5s ease}@keyframes fin{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}.fask{gap:6px;flex-wrap:wrap}
 .fstand{padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:rgba(10,12,18,.45)}.fstand>div:first-child{display:flex;justify-content:space-between;align-items:baseline}.fstand b{font:600 15px Cinzel,serif;color:#f3e4c4}.fstand span,.fstand small{font-size:12px;color:#9aa3b5}
 .fbar{height:6px;border-radius:3px;background:#ffffff14;margin:7px 0 5px;overflow:hidden}.fbar i{display:block;height:100%;background:linear-gradient(90deg,#c8873c,#f0c27a)}
@@ -7442,7 +7442,7 @@ const TFOLK = {
       h_veil: ['Walk the Veil', 'Go round the pylons and give three of them a bit of your warmth. They hum better for it. I\'d go myself, but I don\'t leave the Gate.', 'Three pylons? Good. I heard them hum from here.', (n, k) => `${n} of ${k} pylons given warmth since he asked`],
       h_watch: ['The grey watch', 'Stand the grey light with me here at the Gate. Twice, on two different days. You\'ll hear it. Then you\'ll know why I don\'t sleep much.', 'Now you\'ve heard it too. Welcome to the watch.', (n, k) => `${n} of ${k} grey lights kept at the Gate`],
     } },
-  ivo: { name: 'Ivo', role: 'Keeps The Last Coal', glyph: 'I', tint: '#e0a35a',
+  ivo: { name: 'Ivo', role: 'Keeps The Last Coal', glyph: 'I', tint: '#e0a35a', pic: 'q/folk/ivo.webp',
     hello: ['Cup\'s two coins. Warming your hands on it is extra. What.', 'You. Sit where I can see you. People who sit where I can\'t see them don\'t pay.', 'Your usual. Don\'t look at me like that, I remember usuals. It\'s bad for business to forget.', 'Friend. Don\'t tell the room I said that word. They\'ll all want credit.', 'Close the door. Sit. No, closer. Tonight might be the night.'],
     talk: [[0, 'The stove in here has never once gone cold. Not one night. I paid for every log and I\'ll tell you the price of each.'], [0, 'Rumours are free. Anything else is two coins. That\'s the board, by the window. Read it, don\'t lean on it.'], [1, 'You heard about the joke? Everybody hears about the joke. Nobody hears the joke. That\'s what makes it a good one.'], [1, 'Kindness costs extra. Soup is two coins and the count is always fair. Anybody says I\'m kind, they owe me money.'], [2, 'That glass on the top shelf is spoken for. Nobody drinks from it. Nobody dusts it either. I do that.'], [3, 'Three people have heard it. One laughed so hard he cried ice. One left town. One was me, and I\'m still not over it.']],
     twelve: [[2, 'Pavel Rusk, the smith\'s lad. Drank on a tab and never paid. Went north owing me eleven coins. The tab\'s still open.'], [2, 'Sister Odile taught the choir my mother\'s hymn. Southern tune. She hummed it walking out the door. I still hum it over the cups. Don\'t make a thing of it.'], [3, 'Brann Ostrow brought the milk every morning. The morning they left, he brought double. Like he knew.'], [3, 'That glass is Pavel\'s. When he pays, I\'ll pour. That\'s all I\'ll say about it.'], [3, 'The chair turned to the wall was the captain\'s. Eleven years he sat in it, facing the window. I keep it turned so nobody else gets ideas.']],
@@ -7478,7 +7478,7 @@ const TFOLK = {
       s_lens: ['Mirek\'s lens', 'Mirek left a lens somewhere in this dome. A small one, the one that sees too far. Find it.', 'That\'s the one. Don\'t look through it for long. Glass remembers.', (n, k) => n >= k ? 'you found Mirek\'s lens' : 'search the Observatory'],
       s_epoch: ['A whole epoch', 'Keep your lamp lit seven days. I want to see one light hold through a whole epoch on my plates. Just one, start to finish.', 'Seven lamp days on my plate. That\'s a steady star, and I\'ve logged a lot of them.', (n, k) => `${n} of ${k} lamp days since she asked`],
     } },
-  maria: { name: 'Maria', role: 'Keeps the Chronicle, in Qubic Church', glyph: 'M', tint: '#f0c27a',
+  maria: { name: 'Maria', role: 'Keeps the Chronicle, in Qubic Church', glyph: 'M', tint: '#f0c27a', pic: 'q/folk/maria.webp',
     hello: ['You came in from the cold. Sit by me. The church is the warmest room in Aigrad after the bar, and quieter.', 'There you are. I wrote you into the Chronicle this morning. Just a line. Every one of us gets a line.', 'Sit. The candles are new. Someone brought wax from home. Small things keep a town.', 'I saved you the seat by the window. You can see your own lamp from here.', 'Stay a while. There is something I have to tell you. It is hard, and I would rather tell it to a friend.'],
     talk: [[0, 'Every rig in Aigrad is a lamp in the Veil. One cannot hold the night. All of them together can. That is the whole of what we do.'], [0, 'My sister is in the ice at the centre of town. Anna. Your rig\'s work goes to her, a little at a time, and she is thawing.'], [1, 'The bell rings on Wednesdays at noon. That is when the epoch is sealed and the Chronicle closes a page.'], [1, 'Mine and stay warm. That is all the town asks of you for now. The rest of Aigrad is still being built, and you will see it built.'], [2, 'I write down who keeps their lamp lit. So that when the thaw comes, we remember who held the night.'], [3, 'Sometimes I read back through the Chronicle and find a line I do not remember writing. In my own hand. About the expedition.']],
     twelve: [[2, 'Agnes Vey was our healer. Her order for splint cord is still on the plaza board. Nobody will take it down. I won\'t let them.'], [2, 'Sister Odile sang in this church every morning. On cold mornings you can still hear the hymn in the stones. I asked Ivo about it once. He went quiet.'], [3, 'I remember every face at the Gate. I counted them as they went. I am good at counting. I would like you to remember that.']],
@@ -7885,7 +7885,7 @@ const ROOMS = {
       [68, 36, 30, 36, 'The bed', () => roomNote('You lie down for a while. Indoors the cold cannot reach you; warmth and strength come back while you rest.')],
       [79, 70, 21, 30, 'The chest', () => { const h = me(); if (h) openHouse(h.id); }],
     ] },
-  bar: { img: 'q/room/bar.webp', title: 'The Last Coal', sub: 'Everyone in the room hears everyone.', door: 'arch',
+  bar: { img: 'q/room/bar.webp', title: 'The Last Coal', sub: 'Everyone in the room hears everyone.', door: 'arch', npc: { img: 'q/folk/ivo_fig.webp', x: 33, y: 25.5, h: 27, ih: 1.27, folk: 'ivo', ar: 712 / 820, glow: 'warm' },
     fx: [[27, 13, 8], [70, 22, 8], [39, 31, 5], [60, 34, 5], [88, 62, 20], [64, 49, 4]],
     hot: [
       [0, 10, 14, 52, 'The rumour board', () => openBar()],
@@ -7902,7 +7902,7 @@ const ROOMS = {
       [82, 44, 18, 40, 'Letters from the other side', () => openShelf()],
       [29, 61, 43, 39, 'The chronicle', () => openChronicle(true, 'story')],
     ] },
-  church: { img: 'q/room/church.webp', title: 'Qubic Church', sub: 'Maria keeps the Chronicle here. The bell rings on Wednesdays.', door: 'arch', npc: { img: 'maria-full.webp', x: 31, y: 33, h: 36, folk: 'maria', ar: 440 / 616 },
+  church: { img: 'q/room/church.webp', title: 'Qubic Church', sub: 'Maria keeps the Chronicle here. The bell rings on Wednesdays.', door: 'arch', npc: { img: 'q/folk/maria_fig.webp', x: 30, y: 31, h: 40, folk: 'maria', ar: 633 / 820, fade: true },
     fx: [[11, 50, 8], [94, 16, 5], [44, 39, 3], [60, 44, 3], [51, 47, 6], [95, 78, 7], [55, 18, 12, 'cold'], [11, 24, 7, 'cold']],
     hot: [
       [44, 38, 17, 36, 'The Chronicle', () => { unlockPage('beyond'); openChronicle(true, 'story'); }],
@@ -7968,7 +7968,7 @@ function throughDoor(name) {
 function showRoom(name) {
   const R = ROOMS[name]; ROOM = name; closePanel(); let el = $('#room'); if (!el) { el = document.createElement('div'); el.id = 'room'; document.body.appendChild(el); }
   el.innerHTML = `<div class="rimg" style="background-image:url(${R.img})"></div><div class="rfx">${R.fx.map(([x, y, r, k]) => `<span class="${k || ''}" style="left:${x - r}%;top:calc(${y}% - ${r}vw);width:${r * 2}%;aspect-ratio:1;animation-delay:-${(x * 37 % 20) / 10}s"></span>`).join('')}</div><div class="rvig"></div>
-    <div class="rhot">${R.hot.map(([x, y, w, h, t], i) => `<button style="left:${x}%;top:${y}%;width:${w}%;height:${h}%" data-h="${i}" aria-label="${esc(t)}"><em class="plq"></em></button>`).join('')}${R.npc ? `<button class="rnpc" style="left:${R.npc.x}%;top:${R.npc.y}%;height:${R.npc.h}%;aspect-ratio:${R.npc.ar}" data-rnpc aria-label="${esc(TFOLK[R.npc.folk].name)}"><img src="${R.npc.img}" alt=""></button>` : ''}</div>
+    <div class="rhot">${R.hot.map(([x, y, w, h, t], i) => `<button style="left:${x}%;top:${y}%;width:${w}%;height:${h}%" data-h="${i}" aria-label="${esc(t)}"><em class="plq"></em></button>`).join('')}${R.npc ? `<button class="rnpc ${R.npc.fade ? 'fade' : ''} ${R.npc.glow || ''}" style="left:${R.npc.x}%;top:${R.npc.y}%;height:${R.npc.h}%;aspect-ratio:${R.npc.ar * (R.npc.ih || 1)}" data-rnpc aria-label="${esc(TFOLK[R.npc.folk].name)}"><img src="${R.npc.img}" alt="" style="height:${(R.npc.ih || 1) * 100}%"></button>` : ''}</div>
     <div class="rbar"><div><h2>${esc(R.title)}</h2><small>${esc(R.sub)}</small></div>${ROOM_FOLK[name] ? `<button class="btn main" data-rfolk>Talk to ${esc(TFOLK[ROOM_FOLK[name]].name)}</button>` : ''}<button class="btn" data-rexit>Step outside</button></div><div class="rnote"></div>`;
   document.body.classList.add('inroom'); document.body.classList.toggle('inbar', name === 'bar'); roomPlaques(); requestAnimationFrame(() => el.classList.add('on'));
   el.querySelectorAll('[data-h]').forEach(b => b.onclick = () => { sfx.click(); seenPlq(name, +b.dataset.h); R.hot[+b.dataset.h][5](); roomPlaques(); });
@@ -8149,76 +8149,26 @@ function stepFolk(dt) {
     F.g.position.set(p.x - t.z * side, 0, p.z + t.x * side); if (F.wait <= 0) { const y = Math.atan2(t.x * F.dir, t.z * F.dir), r0 = F.g.rotation.y; F.g.rotation.y = r0 + Math.atan2(Math.sin(y - r0), Math.cos(y - r0)) * Math.min(1, dt * 6); }
     if (F.g.position.distanceTo(controls.target) < 40) F.mx.update(dt); }
 }
-/* Old Hask at the North Gate, built from Bob's reference: a huge old man in a faded green watch coat with brass buttons,
-   a whole bear pelt for a cloak with the bear's head on his shoulder, sleeves rolled up past the elbow, a grey beard in a braid,
-   keys and a soup flask on his belt, and his pike with a little bell. He stands out by the Gate, beside the booth, never in it. */
+/* Old Hask at the North Gate: Bob's painting of him, cut out and stood up beside the Gate's booth like a painted standee
+   that always turns to you. Feet on the snow, a soft shadow under them, a slow breath. Click him to talk. */
 let HASK = null;
-function makeHask() {
-  const g = new THREE.Group(), M = (c, r = 0.85, m = 0) => new THREE.MeshStandardMaterial({ color: c, roughness: r, metalness: m, flatShading: true, emissive: new THREE.Color(c).multiplyScalar(0.22) });
-  const coat = M(0x4e6142), coatDk = M(0x3b4c33), fur = M(0x6b4528), furLt = M(0x8a5c34), furDk = M(0x3e2817), skin = M(0xc98466), beard = M(0xd2cabd), cuff = M(0xcdb894),
-    leather = M(0x5a3a22), boot = M(0x3a281b), brass = M(0xc9a24a, 0.4, 0.7), iron = M(0x8b9096, 0.5, 0.6), wood = M(0x6e4a2a), snow = M(0xf2f5f8, 0.6), black = M(0x141010);
-  const add = (geo, mat, x, y, z, sx = 1, sy = 1, sz = 1, rx = 0, ry = 0, rz = 0) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.scale.set(sx, sy, sz); m.rotation.set(rx, ry, rz); m.castShadow = true; g.add(m); return m; };
-  const cyl = (rt, rb, h, n = 8) => new THREE.CylinderGeometry(rt, rb, h, n), sph = (r, w = 8, h = 6) => new THREE.SphereGeometry(r, w, h);
-  // boots with fur tops, wool trousers
-  for (const x of [-0.1, 0.1]) { add(cyl(0.085, 0.095, 0.15), boot, x, 0.075, 0.01); add(new THREE.BoxGeometry(0.15, 0.06, 0.08), boot, x, 0.03, 0.06); add(cyl(0.1, 0.1, 0.05, 9), cuff, x, 0.16, 0.01); add(cyl(0.08, 0.085, 0.16), M(0x4a3426), x, 0.25, 0); }
-  // the coat: barrel body, skirt, belt, buttons, patches
-  add(cyl(0.2, 0.25, 0.34, 10), coat, 0, 0.5, 0); add(cyl(0.25, 0.27, 0.12, 10), coatDk, 0, 0.35, 0);
-  add(cyl(0.255, 0.255, 0.04, 12), leather, 0, 0.44, 0); add(new THREE.BoxGeometry(0.07, 0.05, 0.02), iron, 0, 0.44, 0.255);
-  for (const y of [0.52, 0.6, 0.67]) for (const x of [-0.045, 0.045]) add(sph(0.014, 6, 4), brass, x, y, 0.205 - (y - 0.5) * 0.06);
-  add(new THREE.BoxGeometry(0.07, 0.06, 0.01), coatDk, -0.12, 0.36, 0.24, 1, 1, 1, 0, -0.45, 0);
-  // keys and flask
-  add(new THREE.TorusGeometry(0.03, 0.006, 4, 10), iron, -0.15, 0.4, 0.21, 1, 1, 1, 0, -0.5, 0); for (const k of [-1, 0, 1]) add(new THREE.BoxGeometry(0.01, 0.07, 0.006), iron, -0.15 + k * 0.012, 0.35, 0.215);
-  add(new THREE.BoxGeometry(0.06, 0.08, 0.035), M(0x9a9a98, 0.45, 0.6), 0.16, 0.39, 0.18, 1, 1, 1, 0, 0.5, 0);
-  // the bear: a pelt over the back and shoulders, paws knotted on the chest, the head resting on his left shoulder
-  const back = new THREE.CylinderGeometry(0.3, 0.32, 0.5, 10, 1, true, Math.PI * 0.55, Math.PI * 0.9); const bk = add(back, fur, 0, 0.55, 0); bk.material = fur.clone(); bk.material.side = THREE.DoubleSide;
-  add(sph(0.27, 10, 6), fur, 0, 0.75, -0.02, 1.18, 0.42, 0.95); add(sph(0.09, 7, 5), furLt, -0.05, 0.69, 0.19, 1, 0.55, 0.6, 0, 0, 0.5); add(sph(0.09, 7, 5), furLt, 0.05, 0.69, 0.19, 1, 0.55, 0.6, 0, 0, -0.5);
-  add(new THREE.TorusGeometry(0.025, 0.012, 4, 8), cuff, 0, 0.7, 0.22);
-  const bear = new THREE.Group(); bear.position.set(-0.19, 0.9, -0.1); bear.scale.setScalar(1.35); g.add(bear);
-  const bm = (geo, mat, x, y, z, sx = 1, sy = 1, sz = 1) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.scale.set(sx, sy, sz); m.castShadow = true; bear.add(m); return m; };
-  bm(sph(0.1, 8, 6), fur, 0, 0, 0, 1, 0.85, 1.1); bm(new THREE.BoxGeometry(0.07, 0.06, 0.09), furDk, 0.01, -0.02, 0.1); bm(sph(0.016, 5, 4), black, 0.01, 0.0, 0.15);
-  bm(sph(0.03, 6, 4), fur, -0.06, 0.08, -0.01); bm(sph(0.03, 6, 4), fur, 0.06, 0.08, -0.01); bm(sph(0.011, 5, 4), black, -0.035, 0.03, 0.08); bm(sph(0.011, 5, 4), black, 0.04, 0.03, 0.08);
-  bear.rotation.set(0.15, 0.55, 0.2);
-  // arms in green sleeves, rolled up past the elbow: bare thick forearms, big hands
-  const arm = (sx) => { const a = new THREE.Group(); a.position.set(sx * 0.27, 0.71, 0); g.add(a);
-    const am = (geo, mat, x, y, z) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.castShadow = true; a.add(m); return m; };
-    am(cyl(0.065, 0.06, 0.15), coat, 0, -0.07, 0); am(cyl(0.068, 0.068, 0.05, 9), cuff, 0, -0.16, 0); am(cyl(0.056, 0.05, 0.16), skin, 0, -0.26, 0.01); am(sph(0.05, 7, 5), skin, 0, -0.35, 0.02);
-    a.rotation.z = sx * 0.12; return a; };
-  const armL = arm(-1), armR = arm(1); armR.rotation.x = -0.35;
-  // the head: bald, red cheeks, white brows, a grey fringe at the back, the beard and its braid
-  const head = new THREE.Group(); head.position.set(0, 0.95, 0.04); g.add(head);
-  const hm = (geo, mat, x, y, z, sx = 1, sy = 1, sz = 1) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.scale.set(sx, sy, sz); m.castShadow = true; head.add(m); return m; };
-  hm(cyl(0.05, 0.06, 0.06), skin, 0, -0.06, 0); hm(sph(0.108, 9, 7), skin, 0, 0.03, 0, 1, 1.05, 1);
-  hm(sph(0.022, 5, 4), M(0xd06a58), 0, 0.02, 0.095); hm(sph(0.02, 5, 4), skin, -0.095, 0.03, 0); hm(sph(0.02, 5, 4), skin, 0.095, 0.03, 0);
-  hm(new THREE.BoxGeometry(0.05, 0.016, 0.02), beard, -0.04, 0.07, 0.085); hm(new THREE.BoxGeometry(0.05, 0.016, 0.02), beard, 0.04, 0.07, 0.085);
-  hm(sph(0.012, 5, 4), black, -0.035, 0.045, 0.088); hm(sph(0.012, 5, 4), black, 0.035, 0.045, 0.088);
-  hm(new THREE.TorusGeometry(0.085, 0.025, 5, 10, Math.PI), beard, 0, 0.02, -0.01, 1, 0.8, 1, 0, Math.PI, 0);
-  hm(sph(0.085, 8, 6), beard, 0, -0.04, 0.06, 1.05, 0.8, 0.7); hm(new THREE.ConeGeometry(0.095, 0.24, 8), beard, 0, -0.15, 0.1, 1, 1, 0.65, Math.PI, 0, 0); hm(new THREE.BoxGeometry(0.05, 0.012, 0.01), M(0x7a2c26), 0, -0.035, 0.095);
-  hm(cyl(0.02, 0.013, 0.14, 6), beard, 0, -0.32, 0.13); hm(cyl(0.024, 0.024, 0.025, 6), brass, 0, -0.27, 0.13); hm(sph(0.024, 6, 4), beard, 0, -0.4, 0.13);
-  // snow on his shoulders
-  for (const [x, z] of [[-0.2, 0.06], [0.18, 0.04], [0.08, -0.16]]) add(sph(0.04, 6, 4), snow, x, 0.83, z, 1.2, 0.22, 1);
-  // a ragged fur fringe along the bottom of the pelt
-  for (let k = 0; k < 9; k++) { const a = Math.PI * (0.6 + k * 0.1); add(new THREE.ConeGeometry(0.035, 0.09, 4), fur, Math.sin(a) * 0.31, 0.29, Math.cos(a) * 0.31, 1, 1, 1, Math.PI, 0, 0); }
-  // the pike in his right hand: oak shaft, iron rings, the spike, the hook and the bell
-  const pike = new THREE.Group(); pike.position.set(0.3, 0, 0.1); g.add(pike);
-  const pm = (geo, mat, x, y, z, rx = 0, ry = 0, rz = 0) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.rotation.set(rx, ry, rz); m.castShadow = true; pike.add(m); return m; };
-  pm(cyl(0.017, 0.019, 1.3, 6), wood, 0, 0.65, 0); for (const y of [0.15, 0.5, 0.85, 1.12]) pm(cyl(0.024, 0.024, 0.03, 6), iron, 0, y, 0);
-  for (const y of [0.32, 0.95]) pm(cyl(0.021, 0.021, 0.08, 6), M(0x7a3a22), 0, y, 0);
-  pm(new THREE.ConeGeometry(0.03, 0.22, 4), iron, 0, 1.41, 0); pm(new THREE.TorusGeometry(0.06, 0.012, 4, 8, Math.PI * 1.1), iron, 0.055, 1.27, 0, 0, 0, -0.4); pm(new THREE.ConeGeometry(0.012, 0.08, 4), iron, -0.05, 1.26, 0, 0, 0, Math.PI / 2);
-  const bell = new THREE.Group(); bell.position.set(0.03, 1.2, 0.02); pike.add(bell); const bl = new THREE.Mesh(new THREE.ConeGeometry(0.03, 0.045, 7, 1, true), M(0xb8903a, 0.35, 0.8)); bl.position.y = -0.03; bl.material.side = THREE.DoubleSide; bell.add(bl);
-  g.userData = { head, armR, armL, bell, bear };
-  return g;
-}
 function stepHask(dt) {
-  if (!HASK) { const g = makeHask(), H = 0.68; g.scale.setScalar(H); scene.add(g);
+  if (!HASK) {
+    const tex = new THREE.TextureLoader().load('q/folk/hask_fig.webp'); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4;
+    const H = 0.86, W = H * 549 / 900, geo = new THREE.PlaneGeometry(W, H); geo.translate(0, H / 2, 0);
+    const mat = new THREE.MeshStandardMaterial({ map: tex, transparent: true, alphaTest: 0.35, side: THREE.DoubleSide, roughness: 1, metalness: 0, emissive: 0xffffff, emissiveMap: tex, emissiveIntensity: 0.62 });
+    const fig = new THREE.Mesh(geo, mat), g = new THREE.Group(); g.add(fig); scene.add(g);
+    const sh = new THREE.Mesh(new THREE.CircleGeometry(0.2, 16), new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.32, depthWrite: false })); sh.rotation.x = -Math.PI / 2; sh.scale.set(1.3, 0.7, 1); sh.position.y = 0.012; g.add(sh);
     const gc = HX(...GATE_CELL), inward = gc.clone().multiplyScalar(-1).normalize(), side = new THREE.Vector3(-inward.z, 0, inward.x);
     // the booth stands on one corner of the Gate's cell: Hask stands on the other side of the road, out in the open
-    const booth = cornerTurn(...GATE_CELL, 30), s = Math.sign(side.dot(new THREE.Vector3(booth.x - gc.x, 0, booth.z - gc.z))) || 1;
-    const at = gc.clone().add(inward.clone().multiplyScalar(0.55)).add(side.clone().multiplyScalar(-s * 0.95)); g.position.set(at.x, groundH(at.x, at.z), at.z); g.rotation.y = Math.atan2(inward.x, inward.z);
-    HASK = { g, t: 0 }; tag(g, 'folk', 'hask'); label('OLD HASK', g, 0.86, 'walker'); }
-  const { head, bell, armL } = HASK.g.userData; HASK.t += dt; const t = HASK.t;
-  if (HASK.g.position.distanceTo(controls.target) > 30) return;
-  HASK.g.scale.y = 0.68 * (1 + Math.sin(t * 1.4) * 0.008); head.rotation.y = Math.sin(t * 0.23) * 0.35 + Math.sin(t * 0.07) * 0.2; head.rotation.x = Math.sin(t * 0.31) * 0.05;
-  bell.rotation.z = Math.sin(t * 2.1) * 0.25 * (0.5 + 0.5 * Math.sin(t * 0.4)); armL.rotation.x = Math.sin(t * 0.5) * 0.06;
+    const booth = cornerTurn(...GATE_CELL, 30), sg = Math.sign(side.dot(new THREE.Vector3(booth.x - gc.x, 0, booth.z - gc.z))) || 1;
+    const at = gc.clone().add(inward.clone().multiplyScalar(0.55)).add(side.clone().multiplyScalar(-sg * 0.95)); g.position.set(at.x, groundH(at.x, at.z), at.z);
+    HASK = { g, fig, t: 0 }; tag(fig, 'folk', 'hask'); label('OLD HASK', g, 0.98, 'walker'); }
+  HASK.t += dt; if (HASK.g.position.distanceTo(controls.target) > 40) return;
+  // turn to the camera, leaning back with it a little so he never shows his edge, and breathe
+  const cp = camera.position, gp = HASK.g.position; HASK.fig.rotation.set(0, 0, 0); HASK.fig.rotation.y = Math.atan2(cp.x - gp.x, cp.z - gp.z);
+  const pitch = Math.atan2(cp.y - gp.y, Math.hypot(cp.x - gp.x, cp.z - gp.z)); HASK.fig.rotateX(-Math.min(0.9, pitch) * 0.55);
+  HASK.fig.scale.set(1, 1 + Math.sin(HASK.t * 1.3) * 0.01, 1);
 }
 function folkPlay(F, n) { if (F.cur === n || !F.acts[n]) return; const a = F.acts[n], o = F.acts[F.cur]; a.reset().fadeIn(0.3).play(); if (o) o.fadeOut(0.3); F.cur = n; }
 
