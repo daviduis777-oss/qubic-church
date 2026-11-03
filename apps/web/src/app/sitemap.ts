@@ -5,6 +5,7 @@ import { INDEXING } from '@/lib/indexing'
 import { ARTICLES } from '@/lib/articles'
 import { MEMBERS } from '@/lib/forum'
 import { CFB_ARTICLES, archiveId } from '@/lib/archive'
+import { ANSWERS } from '@/lib/answers'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   if (!INDEXING) return []
@@ -17,6 +18,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     page('', 1),
     page('/about', 0.9),
+    ...ANSWERS.map(a => page(`/${a.slug}`, 0.9, a.updated)),
     page('/bpp9000', 0.9),
     page('/books', 0.9),
     ...BOOKS.flatMap(b => [
