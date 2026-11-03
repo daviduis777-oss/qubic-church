@@ -111,7 +111,7 @@ body.hub #dock button.main{background:rgba(255,196,107,.16)}
 .ov-speed{display:flex;align-items:baseline;gap:8px;margin:4px 0} .ov-speed b{font-family:var(--f-display);font-size:46px;line-height:1;color:var(--cream);font-variant-numeric:tabular-nums} .ov-speed span{color:var(--gold);font-family:var(--f-label);letter-spacing:.1em}
 .ov-sub{color:var(--mute);font-size:13.5px} .ov-flow{width:100%;height:120px}
 .ov-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-.folk{display:grid;grid-template-columns:64px 1fr;gap:14px;align-items:start;margin:2px 0 12px}.fglyph.pic{width:96px;height:96px;background-size:cover;background-position:center 20%}.fglyph{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;font:600 30px Cinzel,serif;color:#1a1410;background:radial-gradient(circle at 35% 30%,#fff8,transparent 55%),var(--t);box-shadow:0 0 0 2px #0008,0 0 24px color-mix(in srgb,var(--t) 45%,transparent)}
+.folk{display:grid;grid-template-columns:64px 1fr;gap:14px;align-items:start;margin:2px 0 12px}#room .rnpc{position:absolute;padding:0;border:0;background:none;cursor:pointer;z-index:3}#room .rnpc img{height:100%;width:auto;display:block;-webkit-mask-image:linear-gradient(to bottom,#000 62%,transparent 96%);mask-image:linear-gradient(to bottom,#000 62%,transparent 96%);filter:drop-shadow(0 0 18px #3fb4ffaa) saturate(.9) brightness(.92);animation:rnpc 6s ease-in-out infinite}#room .rnpc:hover img{filter:drop-shadow(0 0 26px #6cc8ffdd) brightness(1)}@keyframes rnpc{50%{transform:translateY(-.6%)}}@media (prefers-reduced-motion:reduce){#room .rnpc img{animation:none}}.fglyph.pic{width:96px;height:96px;background-size:cover;background-position:center 20%}.fglyph{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;font:600 30px Cinzel,serif;color:#1a1410;background:radial-gradient(circle at 35% 30%,#fff8,transparent 55%),var(--t);box-shadow:0 0 0 2px #0008,0 0 24px color-mix(in srgb,var(--t) 45%,transparent)}
 .fline .say{margin:0 0 10px;min-height:3em}.fline .say.fin{animation:fin .5s ease}@keyframes fin{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}.fask{gap:6px;flex-wrap:wrap}
 .fstand{padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:rgba(10,12,18,.45)}.fstand>div:first-child{display:flex;justify-content:space-between;align-items:baseline}.fstand b{font:600 15px Cinzel,serif;color:#f3e4c4}.fstand span,.fstand small{font-size:12px;color:#9aa3b5}
 .fbar{height:6px;border-radius:3px;background:#ffffff14;margin:7px 0 5px;overflow:hidden}.fbar i{display:block;height:100%;background:linear-gradient(90deg,#c8873c,#f0c27a)}
@@ -3066,7 +3066,7 @@ function build() {
   ring(1).forEach(([q, r]) => reserved.add(key(q, r)));
   for (let i = 0; i < W4W.PYLON_N; i++) reserved.add(key(...W4W.pylonCell(i)));
   buildCore();
-  const cp0 = HX(...SPECIAL.church), ch = place('church', ...SPECIAL.church, { rot: Math.atan2(-cp0.x, -cp0.z), scale: 1.9 }); // door to Anna; // the heart of the town: bigger than any house tag(ch, 'church', 'church');
+  const cp0 = HX(...SPECIAL.church), ch = place('church', ...SPECIAL.church, { rot: Math.atan2(-cp0.x, -cp0.z), scale: 1.9 }); tag(ch, 'church', 'church'); // door to Anna; the heart of the town: bigger than any house
   const cp = HX(...SPECIAL.church); glowDecal(cp.x, cp.z + 0.9, 2.2, 0xffd6a0, 0.5); sprite(GLOW, cp.x, 0.75, cp.z + 0.95, 0.9, 0xffc070, 0.9);
   label('QUBIC CHURCH', ch, 3.2, 'key');
   { const f = cp0.clone().setY(0).normalize().negate(), side = new THREE.Vector3(-f.z, 0, f.x); { const at = cp0.clone().add(side.multiplyScalar(0.78)).add(f.clone().multiplyScalar(0.62)); makePipe(at, true, false, 0.12, true); const col = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.27, 0.12, 18), PIPE_IRON); col.position.set(at.x, 0.06, at.z); scene.add(col); }; } // the church's main: the thickest pipe in town, straight into Anna's ring
@@ -3680,7 +3680,7 @@ function pick(e, click) {
   if (k === 'chthon') return openChthon();
   if (k === 'beast') return openBeast(id);
   if (k === 'pylon' && !hasChar()) return;
-  if (k === 'house' && me() && id === me().id) return openHouse(id);
+  if (k === 'house' && me() && id === me().id && !hasChar()) return openHouse(id);
   if (walkTo(k, id)) return;
   if (k === 'gate') return openGate();
   if (k === 'folk') return openFolk(id);
@@ -7902,7 +7902,7 @@ const ROOMS = {
       [82, 44, 18, 40, 'Letters from the other side', () => openShelf()],
       [29, 61, 43, 39, 'The chronicle', () => openChronicle(true, 'story')],
     ] },
-  church: { img: 'q/room/church.webp', title: 'Qubic Church', sub: 'Maria keeps the Chronicle here. The bell rings on Wednesdays.', door: 'arch',
+  church: { img: 'q/room/church.webp', title: 'Qubic Church', sub: 'Maria keeps the Chronicle here. The bell rings on Wednesdays.', door: 'arch', npc: { img: 'maria-full.webp', x: 31, y: 33, h: 36, folk: 'maria', ar: 440 / 616 },
     fx: [[11, 50, 8], [94, 16, 5], [44, 39, 3], [60, 44, 3], [51, 47, 6], [95, 78, 7], [55, 18, 12, 'cold'], [11, 24, 7, 'cold']],
     hot: [
       [44, 38, 17, 36, 'The Chronicle', () => { unlockPage('beyond'); openChronicle(true, 'story'); }],
@@ -7968,12 +7968,13 @@ function throughDoor(name) {
 function showRoom(name) {
   const R = ROOMS[name]; ROOM = name; closePanel(); let el = $('#room'); if (!el) { el = document.createElement('div'); el.id = 'room'; document.body.appendChild(el); }
   el.innerHTML = `<div class="rimg" style="background-image:url(${R.img})"></div><div class="rfx">${R.fx.map(([x, y, r, k]) => `<span class="${k || ''}" style="left:${x - r}%;top:calc(${y}% - ${r}vw);width:${r * 2}%;aspect-ratio:1;animation-delay:-${(x * 37 % 20) / 10}s"></span>`).join('')}</div><div class="rvig"></div>
-    <div class="rhot">${R.hot.map(([x, y, w, h, t], i) => `<button style="left:${x}%;top:${y}%;width:${w}%;height:${h}%" data-h="${i}" aria-label="${esc(t)}"><em class="plq"></em></button>`).join('')}</div>
+    <div class="rhot">${R.hot.map(([x, y, w, h, t], i) => `<button style="left:${x}%;top:${y}%;width:${w}%;height:${h}%" data-h="${i}" aria-label="${esc(t)}"><em class="plq"></em></button>`).join('')}${R.npc ? `<button class="rnpc" style="left:${R.npc.x}%;top:${R.npc.y}%;height:${R.npc.h}%;aspect-ratio:${R.npc.ar}" data-rnpc aria-label="${esc(TFOLK[R.npc.folk].name)}"><img src="${R.npc.img}" alt=""></button>` : ''}</div>
     <div class="rbar"><div><h2>${esc(R.title)}</h2><small>${esc(R.sub)}</small></div>${ROOM_FOLK[name] ? `<button class="btn main" data-rfolk>Talk to ${esc(TFOLK[ROOM_FOLK[name]].name)}</button>` : ''}<button class="btn" data-rexit>Step outside</button></div><div class="rnote"></div>`;
   document.body.classList.add('inroom'); document.body.classList.toggle('inbar', name === 'bar'); roomPlaques(); requestAnimationFrame(() => el.classList.add('on'));
   el.querySelectorAll('[data-h]').forEach(b => b.onclick = () => { sfx.click(); seenPlq(name, +b.dataset.h); R.hot[+b.dataset.h][5](); roomPlaques(); });
   el.querySelector('[data-rexit]').onclick = () => { sfx.close?.(); leaveRoom(); };
   el.querySelector('[data-rfolk]')?.addEventListener('click', () => { sfx.click(); openFolk(ROOM_FOLK[name]); });
+  el.querySelector('[data-rnpc]')?.addEventListener('click', () => { sfx.click(); openFolk(R.npc.folk); });
   // a slow look round the room as the mouse moves
   el.onpointermove = e => { if (MOBILE) return; const dx = e.clientX / innerWidth - 0.5, dy = e.clientY / innerHeight - 0.5, t = `scale(1.04) translate(${-dx * 1.6}%, ${-dy * 1.1}%)`; el.querySelector('.rimg').style.transform = t; el.querySelector('.rhot').style.transform = t; };
 }
@@ -8035,7 +8036,7 @@ function plqState(room, i) {
   const f = P[room]?.[i]; const st = f ? f() : {};
   return { ...st, coinHtml: st.coin ? coin : '' };
 }
-const PLQ_AT = { home: [[56, 28], [50, 55], [50, 45], [50, 64], [45, 35], [45, 35]], bar: [[78, 42], [50, 55], [50, 42], [45, 55], [76, 28]], library: [[55, 42], [50, 88], [35, 30], [50, 22]], observatory: [[50, 50], [45, 45], [40, 30], [50, 30], [70, 40]], church: [[50, 18], [50, 45], [50, 75], [50, 85], [55, 40], [50, 25], [0, 30]], post: [[50, 40], [50, 50], [50, 30], [50, 62], [50, 60], [10, 50], [50, 40]] };
+const PLQ_AT = { home: [[56, 28], [50, 55], [50, 45], [50, 64], [45, 35], [45, 35]], bar: [[78, 42], [50, 55], [50, 42], [45, 55], [76, 28]], library: [[55, 42], [50, 88], [35, 30], [50, 22]], observatory: [[50, 50], [45, 45], [40, 30], [50, 30], [70, 40]], church: [[50, 18], [50, 45], [50, 75], [50, 85], [55, 40], [50, 25], [-60, 30]], post: [[50, 40], [50, 50], [50, 30], [50, 62], [50, 60], [10, 50], [50, 40]] };
 function roomPlaques() { if (!ROOM) return; const R = ROOMS[ROOM]; document.querySelectorAll('#room [data-h]').forEach(b => { const i = +b.dataset.h, st = plqState(ROOM, i), e = b.querySelector('em.plq'); if (!e) return;
   const at = PLQ_AT[ROOM]?.[i]; if (at) { e.style.setProperty('--px', at[0] + '%'); e.style.setProperty('--py', at[1] + '%'); }
   const html = `${esc(st.t || R.hot[i][4])}${st.b ? ` <b>${esc(st.b)}</b>` : ''}${st.coinHtml}`; if (e.innerHTML !== html) e.innerHTML = html;
