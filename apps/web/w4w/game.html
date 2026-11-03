@@ -7686,7 +7686,7 @@ const TFOLK = {
       f_knock: ['Bring me the knock', 'Go to the Gate at grey light and keep the watch with Old Hask. Listen. Then come back and tell me how many. Don\'t say the number on the way. The page listens too.', 'Three and three? Good. Then it\'s still her. If it\'s ever thirteen, run to me.', (n, k) => n >= k ? 'you heard the knock: bring it to him' : 'listen at the North Gate at grey light'],
       f_shelf: ['A letter for the shelf', 'Now and then a letter from beyond the Gate is carried to a door in town. If one ever comes to yours, bring it here and lay it on my shelf. The other side wants its post.', 'On the shelf. Hear that? Somebody over there just said thank you.', (n, k) => n >= k ? 'your letter lies on the shelf' : 'lay a letter from beyond the Gate on the Library shelf'],
     } },
-  selma: { name: 'Dr. Selma Ruud', role: 'Keeps the Observatory', glyph: 'S', tint: '#9fd0e8',
+  selma: { name: 'Dr. Selma Ruud', role: 'Keeps the Observatory', glyph: 'S', tint: '#9fd0e8', pic: 'q/folk/selma.webp',
     hello: ['Mind the plates, they\'re glass. I\'m Selma Ruud. I measure the sky, what\'s left of it.', 'Ah, good. Hold this. No, by the edges. Thank you.', 'You\'re just in time. The Veil is at its clearest before grey light.', 'Come and look. I\'ve something I haven\'t shown anyone. Not even the log.', 'Lock the dome behind you. What I\'m going to show you, I\'d rather nobody else saw yet.'],
     talk: [[0, 'The astronomer gave me the dome when his eyes went. He left me the plates and his worst handwriting. He still climbs up on clear nights to argue with them.'], [0, 'Every rig in town shows on my plates. A small star, low down, steady. That\'s what mining looks like from up here.'], [1, 'The network ticks and the Veil breathes with it. I log both. Some nights they\'re the same line.'], [1, 'Steady is the whole trick. The town remembers a light that never goes out, whatever its size. Twelve hours a day, every day. That\'s all the plates ask.'], [1, 'I\'m frightened of one thing. A clear plate. A clear plate would mean every lamp in town went out at once.'], [2, 'There\'s a star on the northern plates that moves. A little, every epoch. Stars do not move. I\'ve checked my sums nine times.'], [3, 'Through Mirek\'s lens it blinks. Three slow, then three more, then dark. I\'ve been writing the blinks down. I think it\'s a code.']],
     twelve: [[2, 'Mirek Dal ground the only lens that sees the far Rime. He said glass remembers what it\'s shown. I thought it was a glazier\'s joke.'], [2, 'The astronomer\'s glass log is in the cabinet behind you. Read week thirty-one. Then come and tell me you slept.'], [3, 'Old Toma was born in the north. He told me the stars there sit low, close enough to warm your hands on. I laughed. I\'ve stopped laughing.']],
@@ -8295,7 +8295,7 @@ const ROOMS = {
       [68, 36, 30, 36, 'The bed', () => roomNote('You lie down for a while. Indoors the cold cannot reach you; warmth and strength come back while you rest.')],
       [79, 70, 21, 30, 'The chest', () => { const h = me(); if (h) openHouse(h.id); }],
     ] },
-  bar: { img: 'q/room/bar.webp', title: 'The Last Coal', sub: 'Everyone in the room hears everyone.', door: 'arch', npc: { img: 'q/folk/ivo_fig.webp', x: 37, y: 33.5, h: 19, ih: 1.27, folk: 'ivo', ar: 712 / 820, glow: 'warm' },
+  bar: { img: 'q/room/bar.webp', title: 'The Last Coal', sub: 'Everyone in the room hears everyone.', door: 'arch', npc: { img: 'q/folk/ivo_fig.webp', x: 39.6, y: 42.3, h: 10.2, ih: 1.27, folk: 'ivo', ar: 712 / 820, glow: 'warm' },
     fx: [[27, 13, 8], [70, 22, 8], [39, 31, 5], [60, 34, 5], [88, 62, 20], [64, 49, 4]],
     hot: [
       [0, 10, 14, 52, 'The rumour board', () => openBar()],
@@ -8323,7 +8323,7 @@ const ROOMS = {
       [79, 38, 13, 32, 'The harmonium', () => roomNote('Sister Odile\'s hymn sheets are still on the stand, in her small careful hand. Nobody has played it since she went north. The keys are warm.')],
       [91, 52, 9, 42, 'The stove', () => roomNote('You hold your hands to the church stove. Someone brought the wood from home. Small things keep a town.')],
     ] },
-  post: { img: 'q/room/post.webp', title: 'The post office', sub: 'Nothing in Aigrad delivers itself.', door: '', npc: { img: 'q/folk/ada_fig.webp', x: 42, y: 39, h: 25, ih: 1.25, folk: 'ada', ar: 611 / 820, glow: 'warm' },
+  post: { img: 'q/room/post.webp', title: 'The post office', sub: 'Nothing in Aigrad delivers itself.', door: '', npc: { img: 'q/folk/ada_fig.webp', x: 45, y: 50, h: 14, ih: 1.25, folk: 'ada', ar: 611 / 820, glow: 'warm' },
     fx: [[13, 17, 5], [34, 30, 4], [75, 32, 4], [35, 60, 3], [79, 76, 7], [26, 30, 10, 'cold'], [8, 30, 8, 'cold'], [53, 6, 6, 'cold']],
     hot: [
       [11, 30, 10, 45, 'The sack', () => openPost()],
@@ -8334,7 +8334,7 @@ const ROOMS = {
       [86, 18, 14, 34, 'The map of the town', () => roomNote('Every door in Aigrad is on Ada\'s map. A red pin marks each one that has had a letter this epoch. One pigeonhole on the wall beside it is kept empty: Yusuf Karam\'s.')],
       [74, 44, 10, 30, 'The stove', () => roomNote('The kettle on the post office stove is always on. Ada says a carrier with cold hands drops letters.')],
     ] },
-  observatory: { img: 'q/room/observatory.webp', title: 'The Observatory', sub: 'Everything in the Bestiary was seen from this room.', door: 'iron',
+  observatory: { img: 'q/room/observatory.webp', title: 'The Observatory', sub: 'Everything in the Bestiary was seen from this room.', door: 'iron', npc: { img: 'q/folk/selma_fig.webp', x: 71, y: 55, h: 33, folk: 'selma', ar: 389 / 900, glow: 'warm' },
     fx: [[9, 25, 7], [95, 28, 7], [41, 53, 5], [17, 55, 7], [55, 14, 14, 'cold']],
     hot: [
       [46, 13, 23, 68, 'The telescope', () => openObservatory()],
