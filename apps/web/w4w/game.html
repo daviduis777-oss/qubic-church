@@ -2822,6 +2822,91 @@ function sprite(tex, x, y, z, s, col = 0xffffff, op = 1) {
   const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, color: col, transparent: true, opacity: op, blending: THREE.AdditiveBlending, depthWrite: false }));
   sp.position.set(x, y, z); sp.scale.set(s, s, s); sp.userData.base = op; scene.add(sp); return sp;
 }
+/* ---------- fire that lives: tongues of flame that lick and lean, sparks going up, a light that breathes on the snow ----------
+   Each fire is one small mesh of camera-facing tongues and one handful of points; all their motion is in the shaders,
+   so a fire costs two draw calls and, on the processor, only its light. Lite graphics get fewer tongues and sparks. */
+let CAMP_FIRE = null; const FIRES = [], FIRE_PX = { value: 300 }, _fv2 = new THREE.Vector2();
+const FIRE_GLSL = `float fh(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+  float fn(vec2 p){ vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f); return mix(mix(fh(i), fh(i + vec2(1, 0)), f.x), mix(fh(i + vec2(0, 1)), fh(i + vec2(1, 1)), f.x), f.y); }`;
+const FLAME_MAT = new THREE.ShaderMaterial({ uniforms: { uTime: U.uTime }, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
+  vertexShader: `attribute vec4 tng; uniform float uTime; varying vec2 vUv; varying float vSeed;
+    void main(){ vSeed = tng.w; vUv = position.xy;
+      // each tongue stands up from the coals, turned to face you round the vertical, and breathes taller and shorter
+      float h = tng.z * (0.84 + 0.12 * sin(uTime * 7.3 + tng.w * 11.0) + 0.08 * sin(uTime * 12.9 + tng.w * 4.0));
+      vec3 c = (modelMatrix * vec4(tng.x, 0.0, tng.y, 1.0)).xyz, r = vec3(viewMatrix[0][0], viewMatrix[1][0], viewMatrix[2][0]);
+      r = normalize(vec3(r.x, 0.0, r.z) + vec3(1e-4, 0.0, 0.0));
+      float lean = position.y * position.y * sin(uTime * 2.3 + tng.w * 9.0) * 0.12;
+      vec3 p = c + r * (position.x * tng.z * 0.62 + lean * tng.z) + vec3(0.0, position.y * h, 0.0);
+      gl_Position = projectionMatrix * viewMatrix * vec4(p, 1.0); }`,
+  fragmentShader: `uniform float uTime; varying vec2 vUv; varying float vSeed; ${FIRE_GLSL}
+    void main(){ float y = vUv.y, t = uTime + vSeed * 17.0;
+      // two layers of noise rising through the tongue: they tear its edge and its tip
+      float n = fn(vec2(vUv.x * 4.0 + vSeed * 13.0, y * 3.0 - t * 3.1)) * 0.6 + fn(vec2(vUv.x * 9.0 - vSeed * 7.0, y * 6.0 - t * 5.3)) * 0.4;
+      float x = vUv.x + (n - 0.5) * 0.34 * y, w = 0.46 * pow(1.0 - y, 0.8) * smoothstep(0.0, 0.2, y + 0.07);
+      float body = (1.0 - smoothstep(w * 0.3, w, abs(x))) * (1.0 - smoothstep(0.42, 0.95, y + (n - 0.5) * 0.55));
+      float core = (1.0 - smoothstep(0.0, w * 0.6, abs(x))) * (1.0 - smoothstep(0.05, 0.5, y));
+      float a = clamp(body * 0.85 + core * 0.5, 0.0, 1.0); if (a < 0.01) discard;
+      gl_FragColor = vec4(mix(vec3(0.9, 0.2, 0.03), vec3(1.0, 0.6, 0.16), body) + vec3(1.0, 0.82, 0.45) * core, a);
+      #include <tonemapping_fragment>
+      #include <colorspace_fragment>
+    }` });
+const SPARK_MAT = new THREE.ShaderMaterial({ uniforms: { uTime: U.uTime, uPx: FIRE_PX }, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+  vertexShader: `attribute vec4 emb; uniform float uTime; uniform float uPx; varying float vA;
+    void main(){ float sp = 0.45 + emb.y * 0.5, cyc = uTime * sp + emb.x * 7.0, life = fract(cyc), H = emb.z;
+      // not every spark every time round: some rounds a spark is not thrown at all
+      float on = step(0.3, fract(sin(floor(cyc) * 12.9898 + emb.x * 78.233) * 43758.5453));
+      vec3 p = position + vec3((emb.x - 0.5) * 0.16 * H, life * H, (emb.y - 0.5) * 0.16 * H);
+      p.x += (sin(uTime * 2.1 + emb.x * 40.0) * 0.07 + (fract(emb.x * 9.1) - 0.5) * 0.4) * H * life;
+      p.z += (cos(uTime * 1.7 + emb.y * 30.0) * 0.07 + (fract(emb.y * 5.3) - 0.5) * 0.4) * H * life;
+      vec4 mv = modelViewMatrix * vec4(p, 1.0); gl_Position = projectionMatrix * mv;
+      vA = on * (1.0 - life) * smoothstep(0.0, 0.06, life);
+      gl_PointSize = max(1.5, emb.w * uPx * projectionMatrix[1][1] / -mv.z * (1.0 - 0.5 * life)); }`,
+  fragmentShader: `varying float vA;
+    void main(){ vec2 d = gl_PointCoord - 0.5; float r = dot(d, d) * 4.0; if (r > 1.0 || vA < 0.01) discard;
+      gl_FragColor = vec4(mix(vec3(1.0, 0.25, 0.04), vec3(1.0, 0.8, 0.4), vA), vA * (1.0 - r));
+      #include <tonemapping_fragment>
+      #include <colorspace_fragment>
+    }` });
+/** A living fire with its base at x,y,z: h is how tall the tongues stand, w how wide the bed is they stand on.
+ *  The lights passed in (glow decals, glow sprites) breathe with it; one warm glow is added at the flames. */
+function fireFx(x, y, z, { h = 0.4, w = 0.12, n = 3, sparks = 14, rise = 0.8, glow = 0.9, lights = [] } = {}) {
+  const g = new THREE.Group(); g.position.set(x, y, z); g.userData.noSolid = true; scene.add(g);
+  n = LITE ? Math.min(n, 2) : n; sparks = REDUCED ? 0 : LITE ? Math.ceil(sparks / 3) : sparks;
+  // the tongues: a big one in the middle, smaller ones round it, each its own seed
+  const pos = [], tng = [], idx = [];
+  for (let i = 0; i < n; i++) { const a = i * 2.4, r = i ? w : 0, s = i ? 0.62 + 0.12 * (i % 2) : 1, k = i * 4;
+    pos.push(-0.5, 0, 0, 0.5, 0, 0, 0.5, 1, 0, -0.5, 1, 0); for (let j = 0; j < 4; j++) tng.push(Math.cos(a) * r, Math.sin(a) * r, h * s, i * 0.37 + x * 0.13 + z * 0.29);
+    idx.push(k, k + 1, k + 2, k, k + 2, k + 3); }
+  const fg = new THREE.BufferGeometry(); fg.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); fg.setAttribute('tng', new THREE.Float32BufferAttribute(tng, 4)); fg.setIndex(idx);
+  fg.boundingSphere = new THREE.Sphere(new THREE.Vector3(0, h * 0.5, 0), h + w); fg.boundingBox = new THREE.Box3(new THREE.Vector3(-w - h * 0.3, 0, -w - h * 0.3), new THREE.Vector3(w + h * 0.3, h, w + h * 0.3));
+  const flames = new THREE.Mesh(fg, FLAME_MAT); flames.renderOrder = 3; g.add(flames);
+  if (sparks) { const sg = new THREE.BufferGeometry(), emb = []; for (let i = 0; i < sparks; i++) emb.push(Math.random(), Math.random(), rise * (0.6 + Math.random() * 0.6), 0.012 + Math.random() * 0.012);
+    sg.setAttribute('position', new THREE.Float32BufferAttribute(new Array(sparks * 3).fill(0), 3)); sg.setAttribute('emb', new THREE.Float32BufferAttribute(emb, 4));
+    sg.boundingSphere = new THREE.Sphere(new THREE.Vector3(0, rise * 0.6, 0), rise * 1.2); const pts = new THREE.Points(sg, SPARK_MAT); pts.renderOrder = 3; g.add(pts); }
+  const gl = sprite(GLOW, x, y + h * 0.45, z, glow, 0xff9a3c, 0.85); scene.remove(gl); gl.position.set(0, h * 0.45, 0); g.add(gl);
+  const F = { g, ph: x * 1.3 + z * 0.7, lights: [gl, ...lights].map(o => ({ o, op: o.userData.base ?? o.material.opacity, s: o.scale.x })) };
+  FIRES.push(F); return F;
+}
+function stepFires(dt) {
+  if (!FIRES.length) return; renderer.getDrawingBufferSize(_fv2); FIRE_PX.value = _fv2.y * 0.5; const t = U.uTime.value;
+  for (let i = FIRES.length - 1; i >= 0; i--) { const F = FIRES[i]; if (!F.g.parent) { FIRES.splice(i, 1); continue; }
+    // three wavering beats and now and then a gust: never quite the same twice
+    const p = F.ph, k = 0.8 + 0.09 * Math.sin(t * 8.7 + p) + 0.07 * Math.sin(t * 13.3 + p * 1.7) + 0.05 * Math.sin(t * 21.1 + p * 0.3) + 0.08 * Math.max(0, Math.sin(t * 0.9 + p) - 0.6);
+    // wood on the fire: the flames leap and settle back over a couple of seconds
+    if (F.flare) { F.flare = Math.max(0, F.flare - dt * 0.6); F.g.scale.setScalar(1 + F.flare * 0.7); }
+    for (const L of F.lights) { L.o.material.opacity = L.op * k * (1 + (F.flare || 0) * 0.5); if (L.o.isSprite) L.o.scale.setScalar(L.s * (0.9 + 0.14 * k)); } }
+}
+/** The kit's own fire (its 'glow' mesh, still spikes of yellow): crouched into a bed of coals that writhes and pulses under the tongues. */
+function liveCoals(o) { o.traverse(m => { if (!m.isMesh || m.material?.name !== 'glow') return;
+  m.geometry.computeBoundingBox(); const bb = m.geometry.boundingBox, mat = m.material.clone(); mat.userData = { noFow: true };
+  mat.onBeforeCompile = sh => { sh.uniforms.uTime = U.uTime; sh.uniforms.uFy = { value: new THREE.Vector2(bb.min.y, Math.max(bb.max.y, bb.min.y + 1e-3)) };
+    sh.vertexShader = 'uniform float uTime; uniform vec2 uFy; varying float vCk;\n' + sh.vertexShader.replace('#include <begin_vertex>', `#include <begin_vertex>
+      { float k = clamp((position.y - uFy.x) / (uFy.y - uFy.x), 0.0, 1.0), sp = uFy.y - uFy.x; vCk = k; vec3 wo = (modelMatrix * vec4(0.0, 0.0, 0.0, 1.0)).xyz; float ph = wo.x * 1.7 + wo.z * 2.3;
+        transformed.y = uFy.x + (transformed.y - uFy.x) * (0.36 + 0.12 * k * sin(uTime * 9.0 + ph + position.x * 30.0) + 0.06 * sin(uTime * 14.0 + ph));
+        transformed.x += sin(uTime * 6.1 + ph + position.y * 25.0) * 0.1 * sp * k * k; transformed.z += cos(uTime * 5.3 + ph + position.y * 21.0) * 0.1 * sp * k * k; }`);
+    // the tips burn down to orange and red: what stands up out of the bed now is the tongues' job
+    sh.fragmentShader = 'uniform float uTime; varying float vCk;\n' + sh.fragmentShader.replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\n      totalEmissiveRadiance *= mix(vec3(1.0), vec3(1.0, 0.45, 0.18), smoothstep(0.15, 0.7, vCk)) * (0.8 + 0.2 * sin(uTime * 11.0 + vViewPosition.x * 5.0) + 0.1 * sin(uTime * 17.0));'); };
+  mat.customProgramCacheKey = () => 'coals'; m.material = mat; }); }
 
 /* ================= hex grid ================= */
 const HX = (q, r) => new THREE.Vector3(2 * (q + r / 2), 0, 1.7320508 * r);
@@ -3146,14 +3231,15 @@ function build() {
     const bp = cornerAt(...SPECIAL.plaza, 90), board = kitAt('board', bp.x, bp.z, faceTo(bp, pp), 1.15); tag(board, 'board', 'board');
     const wp = cornerAt(...SPECIAL.plaza, 150), well = kitAt('well', wp.x, wp.z, faceTo(wp, pp) + 0.5); tag(well, 'board', 'board'); USED_CORNERS.add(cornerId(bp)); USED_CORNERS.add(cornerId(wp));
     const fc = HX(...FIRE_CELL), fire = kitAt('campfire', fc.x, fc.z, faceTo(fc, pp)); tag(fire, 'fire', 'fire'); FIRE_OBJ = fire;
-    fireSprite = sprite(GLOW, fc.x, 0.28, fc.z, 1.1, 0xff9a3c, 1); fireSprite.userData.flicker = true; tag(fireSprite, 'fire', 'fire'); glowDecal(fc.x, fc.z, 2.8, 0xffb060, 0.75);
+    fireSprite = sprite(GLOW, fc.x, 0.28, fc.z, 1.1, 0xff9a3c, 1); fireSprite.userData.flicker = true; tag(fireSprite, 'fire', 'fire'); const fd = glowDecal(fc.x, fc.z, 2.8, 0xffb060, 0.75);
+    if (fire) { liveCoals(fire); CAMP_FIRE = fireFx(fc.x, groundH(fc.x, fc.z) + 0.1, fc.z, { h: 0.42, w: 0.08, n: 3, sparks: 16, rise: 1.0, glow: 0.7, lights: [fd] }); }
     label('PLAZA · FIRE · ORDERS', board, 1.9, 'key');
   } else {
   const well = place('well', ...SPECIAL.plaza, { scale: 1.2 }); well.position.x -= 0.7; tag(well, 'board', 'board');
   const board = buildBoard(); board.position.set(pp.x + 0.75, 0, pp.z - 0.1); scene.add(board); tag(board, 'board', 'board');
   fireSprite = sprite(GLOW, pp.x + 0.1, 0.35, pp.z + 0.75, 1.1, 0xff9a3c, 1); fireSprite.userData.flicker = true; tag(fireSprite, 'fire', 'fire');
   glowDecal(pp.x + 0.1, pp.z + 0.75, 2.4, 0xffb060, 0.7);
-  { const cf = prop('campfire', 0.62, false); if (cf) { cf.position.set(pp.x + 0.1, 0, pp.z + 0.75); cf.rotation.y = 0.6; scene.add(cf); tag(cf, 'fire', 'fire'); fireSprite.position.y = 0.3; }
+  { const cf = prop('campfire', 0.62, false); if (cf) { cf.position.set(pp.x + 0.1, 0, pp.z + 0.75); cf.rotation.y = 0.6; scene.add(cf); tag(cf, 'fire', 'fire'); fireSprite.position.y = 0.3; CAMP_FIRE = fireFx(pp.x + 0.1, 0.12, pp.z + 0.75, { h: 0.4, w: 0.08 }); }
     else for (let i = 0; i < 3; i++) { const l = place('lumber', ...SPECIAL.plaza, { scale: 0.6, rot: i * 1.1 }); l.position.add(new THREE.Vector3(0.1, 0, 0.75)); tag(l, 'fire', 'fire'); } }
   label('PLAZA · FIRE · ORDERS', board, 1.9, 'key');
   }
@@ -3669,7 +3755,7 @@ async function welcome(uid, nick) {
   await saveMe({ welcomes: list.slice(-50) }); record(`${cur.nick} lit a lamp on ${nick}'s path`);
   room?.emit('welcome', { to: uid, toNick: nick, nick: cur.nick }).catch(() => {}); pulse(0.5); sfx.reward(1); say(`You lit a lamp for ${esc(nick)}. Small things keep a town warm.`);
 }
-function fireFlare() { if (fireSprite) { fireSprite.scale.setScalar(2.2); fireSprite.userData.flare = 1; } }
+function fireFlare() { if (fireSprite) { fireSprite.scale.setScalar(2.2); fireSprite.userData.flare = 1; } if (CAMP_FIRE) CAMP_FIRE.flare = 1; }
 async function addWood() {
   const cur = me(); if (!cur) { say('Settle first: connect a rig at the church, then you can tend the fire.'); return; }
   // the wood goes on the plaza fire itself: from anywhere else you walk there first, and it opens on arrival
@@ -5453,7 +5539,7 @@ function syncHearths() {
     const [q, r] = k.split(',').map(Number), p = HX(q, r), objs = [];
     for (let i = 0; i < 6; i++) { const a = i / 6 * Math.PI * 2; const s = place('rock_C', q, r, { scale: 0.22, rot: a }); s.position.set(p.x + Math.cos(a) * 0.32, 0, p.z + Math.sin(a) * 0.32); objs.push(s); }
     const wood = place('lumber', q, r, { scale: 0.45 }); objs.push(wood);
-    if (lit) { const f = sprite(GLOW, p.x, 0.32, p.z, 1.0, 0xff9a3c, 1); f.userData.flicker = true; objs.push(f, glowDecal(p.x, p.z, 2.2, 0xffb060, 0.6)); }
+    if (lit) { const f = sprite(GLOW, p.x, 0.32, p.z, 1.0, 0xff9a3c, 1); f.userData.flicker = true; const d = glowDecal(p.x, p.z, 2.2, 0xffb060, 0.6); objs.push(f, d, fireFx(p.x, 0.08, p.z, { h: 0.34, w: 0.07, n: 2, sparks: 8, rise: 0.7, glow: 0.5, lights: [d] }).g); }
     objs.L = label(`${h.nick}'s hearth`, wood, 0.9, lit ? 'key' : 'demo'); objs.sig = sig; hearthFx[k] = objs;
   }
 }
@@ -6622,36 +6708,39 @@ const MOTIFS = [[[4, 0.6], [5, 0.6], [7, 1.2], [6, 0.6], [4, 1.8]], [[7, 0.9], [
   [[4, 0.6], [5, 0.6], [7, 1.2], [9, 0.9], [8, 0.45], [7, 1.8]], [[2, 0.9], [4, 0.9], [3, 0.45], [4, 0.45], [0, 2.0]]];
 function cello(f, len) {
   const ctx = SND.ctx, t = ctx.currentTime + 0.5, g = ctx.createGain(), lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 700; lp.Q.value = 0.7;
-  g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.022, t + 3.5); g.gain.setValueAtTime(0.022, t + len - 4); g.gain.linearRampToValueAtTime(0, t + len); g.connect(lp); lp.connect(SND.music);
+  g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.022, t + 3.5); g.gain.setValueAtTime(0.022, t + len - 4); g.gain.linearRampToValueAtTime(0, t + len); g.connect(lp); lp.connect(SND.town);
   const vib = ctx.createOscillator(), vg = ctx.createGain(); vib.frequency.value = 4.6; vg.gain.value = 6; vib.connect(vg); vib.start(t); vib.stop(t + len + 0.2);
   [0, 7].forEach(det => { const o = ctx.createOscillator(); o.type = 'sawtooth'; o.frequency.value = f; o.detune.value = det; vg.connect(o.detune); o.connect(g); o.start(t); o.stop(t + len + 0.2); });
 }
 function musicLoop() {
   const ctx = SND.ctx; if (!ctx) return;
+  // indoors the theme rests (the room has its own); stepping out picks it up again at once
+  if (SND.inRoom) { SND.townRest = true; SND.townT = setTimeout(musicLoop, 15000 + Math.random() * 4000); return; }
+  SND.townRest = false;
   chordI = (chordI + 1) % PADS.length; padChord(PADS[chordI], 16);
   // a low bowed note under the chord, like a cello far off in the cold
   cello(PADS[chordI][0] / 2, 14);
   // a real tune now and then, the same few phrases coming back, so the ear has something to hold
   const M = MOTIFS[motifN++ % MOTIFS.length]; let at = 1.5;
-  if (Math.random() < 0.85) for (const [n, d] of M) { if (n != null) musicBox(LYD[n], at, 0.065); at += d; }
+  if (Math.random() < 0.85) for (const [n, d] of M) { if (n != null) musicBox(LYD[n], at, 0.065, SND.town); at += d; }
   if (Math.random() < 0.35) setTimeout(() => SND.ctx && shimmer(), 6000 + Math.random() * 5000);
-  setTimeout(musicLoop, 15000 + Math.random() * 4000);
+  SND.townT = setTimeout(musicLoop, 15000 + Math.random() * 4000);
 }
 function padChord(freqs, len) {
   const ctx = SND.ctx, t = ctx.currentTime, g = ctx.createGain(), lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 1800;
   g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.035, t + 5); g.gain.setValueAtTime(0.035, t + len - 5); g.gain.linearRampToValueAtTime(0, t + len + 3);
-  g.connect(lp); lp.connect(SND.music);
+  g.connect(lp); lp.connect(SND.town);
   freqs.forEach((f, i) => [-6, 6].forEach(det => { const o = ctx.createOscillator(); o.type = 'sine'; o.frequency.value = f; o.detune.value = det + i * 2;
     const tr = ctx.createOscillator(), tg = ctx.createGain(); tr.frequency.value = 0.2 + i * 0.07; tg.gain.value = 3; tr.connect(tg); tg.connect(o.detune); tr.start(t); tr.stop(t + len + 3.2);
     const og = ctx.createGain(); og.gain.value = 0.3; o.connect(og); og.connect(g); o.start(t); o.stop(t + len + 3.2); }));
 }
 /** A music-box tine: bright attack, a glassy overtone, a long ring in the hall. */
-function musicBox(f, delay, vol) {
+function musicBox(f, delay, vol, dest = SND.music) {
   const ctx = SND.ctx, t = ctx.currentTime + delay, g = ctx.createGain(), pan = ctx.createStereoPanner(); pan.pan.value = (Math.random() - 0.5) * 0.8;
-  g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + 0.008); g.gain.exponentialRampToValueAtTime(0.0001, t + 2.6); g.connect(pan); pan.connect(SND.music);
+  g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + 0.008); g.gain.exponentialRampToValueAtTime(0.0001, t + 2.6); g.connect(pan); pan.connect(dest);
   [[1, 1], [3.01, 0.25], [5.98, 0.08]].forEach(([m, a]) => { const o = ctx.createOscillator(); o.type = 'sine'; o.frequency.value = f * m; const og = ctx.createGain(); og.gain.value = a; o.connect(og); og.connect(g); o.start(t); o.stop(t + 2.7); });
 }
-function shimmer() { for (let i = 0; i < 7; i++) musicBox(LYD[4 + Math.floor(Math.random() * 7)] * 2, i * 0.11, 0.018); }
+function shimmer() { for (let i = 0; i < 7; i++) musicBox(LYD[4 + Math.floor(Math.random() * 7)] * 2, i * 0.11, 0.018, SND.town); }
 
 /* ---------- small sounds for small things ---------- */
 const sfx = {
@@ -6688,7 +6777,7 @@ function stepPlaces(dt) {
   const near = controls.target.length() < 7 || (avatars[myUid()]?.g.position.length() ?? 99) < 3.5;
   if (near && (whisperT -= dt) < 0) { whisperT = 2.5 + Math.random() * 4; whisper(); }
   const mine = avatars[myUid()], indoor = mine?.wasIn;
-  if (indoor && (crackleT -= dt) < 0) { crackleT = 0.06 + Math.random() * 0.35; sfx._n(0.03 + Math.random() * 0.05, 'bandpass', 1200 + Math.random() * 3500, 2, 0.04 + Math.random() * 0.06); if (Math.random() < 0.08) sfx._n(0.6, 'lowpass', 220, 1, 0.05); }
+  if (indoor && !ROOM && (crackleT -= dt) < 0) { crackleT = 0.06 + Math.random() * 0.35; sfx._n(0.03 + Math.random() * 0.05, 'bandpass', 1200 + Math.random() * 3500, 2, 0.04 + Math.random() * 0.06); if (Math.random() < 0.08) sfx._n(0.6, 'lowpass', 220, 1, 0.05); }
 }
 /** Breath shaped like speech, in no language you know. */
 function whisper() {
@@ -6975,6 +7064,8 @@ function sndBoot() {
     y += a * ((Math.random() * 2 - 1) - y); y2 += a * (y - y2); d[i] = y2 * 3 * Math.exp(-u * 5.5) * (i < ctx.sampleRate * 0.012 ? i / (ctx.sampleRate * 0.012) : 1); } }
   SND.verb = ctx.createConvolver(); SND.verb.buffer = ir; const vg = ctx.createGain(); vg.gain.value = 0.32; SND.verb.connect(vg); vg.connect(SND.master);
   SND.music = ctx.createGain(); SND.music.gain.value = 0.9; SND.music.connect(SND.master); SND.music.connect(SND.verb);
+  // the town's own theme runs through one fader, so a room can take its place and give it back
+  SND.town = ctx.createGain(); SND.town.gain.value = 1; SND.town.connect(SND.music);
   SND.sfx = ctx.createGain(); SND.sfx.gain.value = 1; SND.sfx.connect(SND.master); { const sv = ctx.createGain(); sv.gain.value = 0.45; SND.sfx.connect(sv); sv.connect(SND.verb); }
   const noise = ctx.createBuffer(1, ctx.sampleRate * 4, ctx.sampleRate); { const d = noise.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; }
   SND.noise = noise;
@@ -6983,10 +7074,10 @@ function sndBoot() {
   SND.windF = ctx.createBiquadFilter(); SND.windF.type = 'bandpass'; SND.windF.frequency.value = 500; SND.windF.Q.value = 0.8;
   SND.wind = ctx.createGain(); SND.wind.gain.value = 0.035; const wlp = ctx.createBiquadFilter(); wlp.type = 'lowpass'; wlp.frequency.value = 1400; src.connect(SND.windF); SND.windF.connect(wlp); wlp.connect(SND.wind); SND.wind.connect(SND.master); src.start();
   // the drone: two low saws, a little apart, under a dark lowpass
-  const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 320; lp.Q.value = 1; const dg = ctx.createGain(); dg.gain.value = 0.02; lp.connect(dg); dg.connect(SND.music);
+  const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 320; lp.Q.value = 1; const dg = ctx.createGain(); dg.gain.value = 0.02; lp.connect(dg); dg.connect(SND.town);
   const lfo = ctx.createOscillator(); lfo.frequency.value = 0.05; const lg = ctx.createGain(); lg.gain.value = 90; lfo.connect(lg); lg.connect(lp.frequency); lfo.start();
   for (const det of [-7, 6, 1200 - 3]) { const o = ctx.createOscillator(); o.type = 'sine'; o.frequency.value = 73.42; o.detune.value = det; const og = ctx.createGain(); og.gain.value = det > 1000 ? 0.25 : 0.5; o.connect(og); og.connect(lp); o.start(); SND.drone.push(o); }
-  SND.started = true; musicLoop(); rimeVoice();
+  SND.started = true; musicLoop(); rimeVoice(); if (SND.wantRoom) roomMusic(SND.wantRoom);
 }
 /** A bowed sheet of metal: inharmonic partials, slow swell, slower fade. */
 function bowedMetal(f, vol) {
@@ -7011,7 +7102,7 @@ function chain() {
 /** Weather and warmth steer the music every frame or so. */
 function stepSound() {
   if (!SND.ctx) return; const t = SND.ctx.currentTime, wx = W4W.weatherAt(xnow()).id;
-  const w = wx === 'blizzard' ? 0.14 : wx === 'wind' ? 0.07 : 0.03; SND.wind.gain.setTargetAtTime(w, t, 2);
+  const w = (wx === 'blizzard' ? 0.14 : wx === 'wind' ? 0.07 : 0.03) * (SND.inRoom ? 0.3 : 1); SND.wind.gain.setTargetAtTime(w, t, 2);
   SND.windF.frequency.setTargetAtTime(340 + Math.sin(t * 0.13) * 180 + (wx === 'blizzard' ? 260 : 0), t, 1.5);
   // the Rime is heard before it is seen
   if (SND.rime && rimeFx?.g.visible) { const d = rimeFx.g.position.distanceTo(controls.target), k = Math.pow(THREE.MathUtils.clamp(1 - d / 26, 0, 1), 1.6);
@@ -7045,13 +7136,176 @@ function rimeSting() {
 }
 function setSound(on) {
   SND.on = on; store.set('w4w.sound', on ? 'on' : 'off'); $('#sndv').textContent = on ? 'On' : 'Off';
-  if (on) { if (!SND.ctx) sndBoot(); else { SND.ctx.resume(); SND.master.gain.setTargetAtTime(0.75, SND.ctx.currentTime, 0.5); } }
-  else if (SND.ctx) SND.master.gain.setTargetAtTime(0, SND.ctx.currentTime, 0.3);
+  if (on) { if (!SND.ctx) sndBoot(); else { SND.ctx.resume(); SND.master.gain.setTargetAtTime(0.75, SND.ctx.currentTime, 0.5); roomMusic(SND.wantRoom); } }
+  else if (SND.ctx) { SND.master.gain.setTargetAtTime(0, SND.ctx.currentTime, 0.3); if (SND.room) { roomStop(SND.room, 0.3); SND.room = null; } }
 }
 // browsers let sound start only after you touch the page
 ['pointerdown', 'keydown'].forEach(ev => addEventListener(ev, () => { if (SND.on && !SND.ctx) sndBoot(); else if (SND.ctx?.state === 'suspended' && SND.on) SND.ctx.resume(); }, { passive: true }));
 
 $('#sndv').textContent = SND.on ? 'On' : 'Off'; $('#snd').onclick = () => setSound(!SND.on);
+
+/* ================= every room has its own music =================
+   Step inside and the town's theme gives way, over two seconds, to the room's own piece; step out and the theme comes back.
+   A piece is a small band made here: a few voices that hold for as long as you stay, and notes scheduled a bar ahead.
+   Everything a room starts it remembers, and when you leave it stops all of it and lets go of its nodes. */
+const mtof = m => 440 * Math.pow(2, (m - 69) / 12);
+// a voice that ends by itself, remembered until it does so that leaving the room can cut it short
+function rPlay(R, s, t0, t1, off) { if (off != null) s.start(t0, off); else s.start(t0); s.stop(t1); R.live.add(s); s.onended = () => R.live.delete(s); return s; }
+// a voice that holds for the whole visit
+function rHold(R, s) { s.start(); R.src.push(s); return s; }
+function rG(R, v, dest) { const g = R.ctx.createGain(); g.gain.value = v; if (dest) g.connect(dest); return g; }
+function rF(R, type, f, q, dest) { const b = R.ctx.createBiquadFilter(); b.type = type; b.frequency.value = f; b.Q.value = q; if (dest) b.connect(dest); return b; }
+function rO(R, type, f, dest) { const o = R.ctx.createOscillator(); o.type = type; o.frequency.value = f; if (dest) o.connect(dest); return o; }
+function rN(R, dest) { const n = R.ctx.createBufferSource(); n.buffer = R.noise; n.loop = true; if (dest) n.connect(dest); return n; }
+function rEnv(g, t, v, a, d) { g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v, t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + d); }
+/** Noise, shaped and short: a crackle, a page, the click of a clock. */
+function rBurst(R, t, dur, type, f, q, v, dest = R.bus) { const g = rG(R, 0, dest), b = rF(R, type, f, q, g), n = R.ctx.createBufferSource(); n.buffer = R.noise; n.connect(b); rEnv(g, t, v, 0.002, dur); rPlay(R, n, t, t + dur + 0.03, Math.random() * 3); }
+/** A plucked string: a bright edge that darkens as it rings. */
+function rPluck(R, f, t, v, dest = R.bus, dec = 1.3, bright = 2800) { const g = rG(R, 0, dest), lp = rF(R, 'lowpass', bright, 1.6, g), o = rO(R, 'sawtooth', f, lp); o.detune.value = (Math.random() - 0.5) * 8;
+  lp.frequency.setValueAtTime(bright, t); lp.frequency.exponentialRampToValueAtTime(Math.max(f * 1.3, 220), t + dec * 0.55); rEnv(g, t, v, 0.004, dec); rPlay(R, o, t, t + dec + 0.05); }
+/** A harpsichord's quill: thin and bright, quick to die, with the click of the jack. */
+function rHarpsi(R, f, t, v, det = 0, dest = R.bus) { const g = rG(R, 0, dest), hp = rF(R, 'highpass', 260, 0.7, g), lp = rF(R, 'lowpass', 5200, 0.9, hp);
+  lp.frequency.setValueAtTime(5200, t); lp.frequency.exponentialRampToValueAtTime(1300, t + 0.6);
+  [[1, 'sawtooth', 1], [2, 'square', 0.3]].forEach(([m, ty, a]) => { const og = rG(R, a, lp), o = rO(R, ty, f * m, og); o.detune.value = det + (m - 1) * 4; rPlay(R, o, t, t + 1.9); });
+  rEnv(g, t, v, 0.002, 1.8); rBurst(R, t, 0.012, 'highpass', 4500, 0.7, v * 0.5, dest); }
+/** Glass, steel or bronze struck once: a few partials, the high ones dying first. parts: [ratio, level, share of the ring] */
+function rStruck(R, f, t, v, parts, dur, dest = R.bus) { for (const [m, a, k] of parts) { const og = rG(R, 0, dest), o = rO(R, 'sine', f * m, og); o.detune.value = (Math.random() - 0.5) * 6; rEnv(og, t, v * a, 0.003, dur * k); rPlay(R, o, t, t + dur * k + 0.05); } }
+/** A felted hammer on a soft string: the lullaby's voice, and the post office's bass. */
+function rFelt(R, f, t, v, dec = 2.2, dest = R.bus) { const g = rG(R, 0, dest), lp = rF(R, 'lowpass', 1100, 0.5, g), o = rO(R, 'triangle', f, lp); rEnv(g, t, v, 0.014, dec); rPlay(R, o, t, t + dec + 0.05); }
+const GLASS = [[1, 1, 1], [2.004, 0.4, 0.6], [3.01, 0.16, 0.35], [5.43, 0.06, 0.2]], CELESTA = [[1, 1, 1], [4, 0.2, 0.16], [2, 0.1, 0.4]], BRONZE = [[0.5, 0.55, 1], [1, 1, 0.8], [1.19, 0.45, 0.6], [1.5, 0.3, 0.45], [2, 0.35, 0.35], [2.66, 0.12, 0.2]];
+/** A stove: dry crackle, sometimes a pop. */
+function rCrackle(R, t, L, n, v) { for (let i = 0; i < n; i++) rBurst(R, t + Math.random() * L, 0.02 + Math.random() * 0.05, 'bandpass', 1200 + Math.random() * 3500, 2, v * (0.3 + Math.random() * 0.7));
+  if (Math.random() < 0.1) rBurst(R, t + Math.random() * L, 0.5, 'lowpass', 260, 1, v * 0.9); }
+/** Paper: a sheet turned or a letter sorted, a few dry flicks and the soft flop at the end. */
+function rPaper(R, t, n, v) { let at = t; for (let i = 0; i < n; i++) { rBurst(R, at, 0.04 + Math.random() * 0.06, 'bandpass', 2400 + Math.random() * 3500, 1, v * (0.5 + Math.random() * 0.5)); at += 0.05 + Math.random() * 0.08; } rBurst(R, at + 0.04, 0.14, 'lowpass', 900, 0.7, v * 0.8); }
+const BAR_PROG = [[45, [57, 60, 64]], [45, [57, 60, 64]], [43, [55, 59, 62]], [43, [55, 59, 62]], [38, [54, 57, 62]], [38, [54, 57, 62]], [45, [57, 60, 64]], [40, [55, 59, 64]]];
+const BAR_TUNE = [[[76, 1], [74, 0.5], [72, 0.5], [71, 1]], [[69, 2], [64, 1]], [[67, 1], [69, 0.5], [71, 0.5], [74, 1]], [[71, 2], [null, 1]],
+  [[69, 1], [66, 1], [69, 1]], [[74, 1.5], [72, 0.5], [71, 1]], [[72, 1], [71, 0.5], [69, 0.5], [67, 1]], [[69, 3]]];
+const CHURCH_CH = [[50, 57, 64, 67], [46, 53, 60, 67], [43, 50, 57, 60], [45, 52, 59, 62]], CHURCH_VOW = [[700, 1150], [400, 820], [520, 900]];
+const LIB_SCALE = [52, 53, 55, 57, 59, 60, 62, 64, 65, 67, 69, 71, 72, 74, 76];
+const OBS_CH = [[64, 71, 75, 78, 80], [61, 68, 71, 75, 76], [57, 64, 68, 73, 75], [66, 73, 75, 80, 82]];
+const POST_TUNE = [[[72, 1], [77, 1], [76, 0.5], [77, 0.5], [79, 1]], [[81, 2], [77, 1], [null, 1]], [[79, 1], [77, 0.5], [74, 0.5], [77, 1], [74, 1]], [[72, 2], [76, 1], [79, 1]],
+  [[81, 1], [82, 0.5], [81, 0.5], [79, 1], [77, 1]], [[76, 1], [77, 1], [74, 2]], [[70, 1], [74, 1], [72, 1], [76, 1]], [[77, 3], [null, 1]]], POST_BASS = [41, 41, 46, 48, 41, 50, 46, 41, 41, 46, 48, 41];
+const HOME_LULL = [[[71, 1], [69, 0.5], [67, 0.5], [69, 1], [71, 1], [74, 2], [71, 1], [69, 2]], [[74, 1], [76, 0.5], [74, 0.5], [71, 1], [69, 1], [67, 3]], [[67, 1], [69, 1], [71, 1], [74, 2], [71, 1], [69, 1], [67, 2]]];
+const ROOM_MUSIC = {
+  /* The Last Coal: a slow tavern waltz in A dorian, 96 to the minute. Plucked strings play oom-pah-pah under a tune,
+     an accordion breathes the chords, the stove spits, the room talks among itself, now and then a glass. */
+  bar: { vol: 1, wet: 0,
+    init(R) { R.bellows = rG(R, 0, R.bus); const lp = rF(R, 'lowpass', 1500, 0.8, R.bellows);
+      R.reeds = BAR_PROG[0][1].flatMap(m => [-9, 8].map(det => { const o = rO(R, 'sawtooth', mtof(m), lp); o.detune.value = det; return rHold(R, o); }));
+      const n = rHold(R, rN(R)); R.murmur = rG(R, 0, R.bus); R.mf = rF(R, 'bandpass', 480, 1.2, R.murmur); n.connect(R.mf); n.connect(rF(R, 'bandpass', 1300, 2, R.murmur));
+      n.connect(rF(R, 'lowpass', 190, 0.7, rG(R, 0.06, R.bus))); },
+    bar(R, t, n) { const B = 0.625, L = B * 3, [root, ch] = BAR_PROG[n % 8], hum = () => (Math.random() - 0.5) * 0.024;
+      ch.forEach((m, i) => [0, 1].forEach(j => R.reeds[i * 2 + j].frequency.setTargetAtTime(mtof(m), t, 0.02)));
+      const bw = R.bellows.gain; bw.setTargetAtTime(0.02, t, 0.08); bw.setTargetAtTime(0.015, t + B, 0.2); bw.setTargetAtTime(0.008, t + L - 0.12, 0.05);
+      // oom: the bass string; pah, pah: two strings of the chord
+      rPluck(R, mtof(root), t + hum(), 0.11, R.bus, 1.6, 900);
+      for (const k of [1, 2]) { const at = t + k * B + hum(); rPluck(R, mtof(ch[1]), at, 0.045, R.bus, 0.7, 2200); rPluck(R, mtof(ch[2]), at + 0.012, 0.04, R.bus, 0.7, 2200); }
+      // the tune: two times round in its own octave and one an octave down, then the band only vamps for a turn
+      const cyc = Math.floor(n / 8) % 3; if (cyc < 2) { let at = t; for (const [m, d] of BAR_TUNE[n % 8]) { if (m != null) { const f = mtof(cyc ? m - 12 : m), v = cyc ? 0.06 : 0.075;
+        rPluck(R, f, at + hum(), v, R.bus, 1.1, 3400); if (d >= 1.5) for (let k = 1; k < d * 4; k++) rPluck(R, f, at + k * B / 4 + hum() * 0.3, v * 0.45, R.bus, 0.4, 3000); } at += d * B; } }
+      // the room talking, rising and falling; the stove; a glass set down
+      for (let at = t; at < t + L; at += 0.3) { R.murmur.gain.setTargetAtTime(0.05 * (0.35 + Math.random() * 0.65), at, 0.12); R.mf.frequency.setTargetAtTime(380 + Math.random() * 300, at, 0.1); }
+      rCrackle(R, t, L, 3 + Math.floor(Math.random() * 5), 0.05);
+      if (Math.random() < 0.2) rStruck(R, 2600 + Math.random() * 1200, t + Math.random() * L, 0.012, [[1, 1, 1], [2.76, 0.5, 0.5]], 0.5);
+      return L; } },
+  /* Qubic Church: a choir with no singers, slow and suspended, every chord left open (Dsus, Bb sus2, G sus4, A sus4),
+     the vowels turning ah, oo, oh; a long hall; a single bell far off now and then; sometimes one voice chants alone. */
+  church: { vol: 1.6, wet: 2.2,
+    init(R) { R.mix = rG(R, 1); R.cg = rG(R, 0, R.bus); R.f1 = rF(R, 'bandpass', 700, 5, R.cg); R.f2 = rF(R, 'bandpass', 1150, 7, rG(R, 0.6, R.cg));
+      R.mix.connect(R.f1); R.mix.connect(R.f2); R.mix.connect(rF(R, 'lowpass', 480, 0.7, rG(R, 0.35, R.cg)));
+      const vib = rHold(R, rO(R, 'sine', 4.7)), vd = rG(R, 7); vib.connect(vd);
+      R.voices = CHURCH_CH[0].map(m => { const vg = rG(R, 0.16, R.mix); return [-6, 6].map(det => { const o = rO(R, 'sawtooth', mtof(m), vg); o.detune.value = det; vd.connect(o.detune); return rHold(R, o); }); });
+      R.bell = rG(R, 1, R.bus); R.bellLp = rF(R, 'lowpass', 1300, 0.7, R.bell); },
+    bar(R, t, n) { const L = 11, ch = CHURCH_CH[n % 4], [v1, v2] = CHURCH_VOW[n % 3];
+      R.voices.forEach((pair, i) => pair.forEach(o => o.frequency.setTargetAtTime(mtof(ch[i]), t + i * 0.7, 1.4)));
+      R.f1.frequency.setTargetAtTime(v1, t + 1, 2); R.f2.frequency.setTargetAtTime(v2, t + 1, 2);
+      R.cg.gain.setTargetAtTime(0.2, t, 2); R.cg.gain.setTargetAtTime(0.12, t + 7, 2.5);
+      if (n % 4 === 1) { const o = rO(R, 'sawtooth', mtof(62)), g = rG(R, 0, R.mix); o.connect(g); const line = n % 8 === 1 ? [62, 64, 65, 64, 62] : [69, 67, 65, 67]; let at = t + 2;
+        line.forEach(m => { o.frequency.setTargetAtTime(mtof(m), at, 0.08); at += 1.6; }); g.gain.setValueAtTime(0, t + 2); g.gain.linearRampToValueAtTime(0.2, t + 2.7); g.gain.setValueAtTime(0.2, at - 0.6); g.gain.linearRampToValueAtTime(0, at + 0.6); rPlay(R, o, t + 2, at + 0.7); }
+      if (n % 3 === 2 || Math.random() < 0.25) rStruck(R, Math.random() < 0.5 ? 98 : 92.5, t + 3 + Math.random() * 5, 0.05, BRONZE, 9, R.bellLp);
+      return L; } },
+  /* The Library: hushed, a little wrong. A harpsichord drops a note or three of E phrygian into the quiet, sometimes a hair
+     out of tune, sometimes answered an octave down; pages turn; and every so often, very softly, someone whispers on the other side of the page. */
+  library: { vol: 1.25, wet: 0.8,
+    init(R) { const tg = rG(R, 0.016, R.bus), tl = rF(R, 'lowpass', 400, 0.7, tg); rHold(R, rO(R, 'sine', 82.41, tl)); rHold(R, rO(R, 'sine', 123.9, rG(R, 0.6, tl)));
+      const n = rHold(R, rN(R)), hp = rF(R, 'highpass', 900, 0.7); n.connect(hp); R.wpan = R.ctx.createStereoPanner(); R.wpan.connect(R.bus); R.wg = rG(R, 0, R.wpan);
+      R.w1 = rF(R, 'bandpass', 700, 8, R.wg); R.w2 = rF(R, 'bandpass', 2000, 10, R.wg); hp.connect(R.w1); hp.connect(R.w2);
+      R.li = 7; R.whNext = R.ctx.currentTime + 6 + Math.random() * 6; R.pgNext = R.ctx.currentTime + 3 + Math.random() * 5; },
+    bar(R, t, n) { const L = 2.4 + Math.random() * 2.2, r = Math.random(), step = () => { R.li = Math.max(0, Math.min(LIB_SCALE.length - 1, R.li + Math.round((Math.random() - 0.5) * 5))); return mtof(LIB_SCALE[R.li]); };
+      if (r < 0.55) { const f = step(), det = Math.random() < 0.15 ? -35 : 0, at = t + Math.random() * 0.4; rHarpsi(R, f, at, 0.05, det); if (Math.random() < 0.15) rHarpsi(R, f / 2, at + 1.2 + Math.random() * 0.8, 0.02, det); }
+      else if (r < 0.8) { let at = t + Math.random() * 0.3; const k = 2 + Math.floor(Math.random() * 2); for (let i = 0; i < k; i++) { rHarpsi(R, step(), at, 0.042); at += 0.16 + Math.random() * 0.07; } }
+      if (t >= R.pgNext) { rPaper(R, t + Math.random() * L, 4 + Math.floor(Math.random() * 4), 0.035); R.pgNext = t + 8 + Math.random() * 12; }
+      if (t >= R.whNext) { const t0 = t + Math.random(), dur = 3 + Math.random() * 3; let at = t0; R.wpan.pan.setTargetAtTime((Math.random() - 0.5) * 1.4, t0, 0.5); R.wg.gain.setValueAtTime(0, t0);
+        while (at < t0 + dur) { const d = 0.12 + Math.random() * 0.2, swell = Math.sin((at - t0) / dur * Math.PI); R.w1.frequency.setValueAtTime(500 + Math.random() * 600, at); R.w2.frequency.setValueAtTime(1500 + Math.random() * 1400, at);
+          R.wg.gain.linearRampToValueAtTime((0.22 + Math.random() * 0.14) * swell, at + d * 0.4); R.wg.gain.linearRampToValueAtTime(0.01, at + d); at += d + Math.random() * 0.1; }
+        R.wg.gain.linearRampToValueAtTime(0, at + 0.2); R.whNext = at + 12 + Math.random() * 14; }
+      return L; } },
+  /* The Observatory: cold and very big. Glass bells pick out slow arpeggios high up in E lydian, on the beat of the
+     telescope's clockwork, which ticks twice a second and ratchets round every other bar; the wind whistles in the dome slit. */
+  observatory: { vol: 1, wet: 1.2,
+    init(R) { const n = rHold(R, rN(R)); R.wind = rG(R, 0, R.bus); const b1 = rF(R, 'bandpass', 1100, 12, R.wind), b2 = rF(R, 'bandpass', 1700, 16, R.wind); n.connect(b1); n.connect(b2);
+      [[b1, 0.07, 320], [b2, 0.043, 450]].forEach(([b, hz, d]) => { const l = rHold(R, rO(R, 'sine', hz)), lg = rG(R, d, b.frequency); l.connect(lg); });
+      const dg = rG(R, 0.013, R.bus); rHold(R, rO(R, 'sine', 61.74, dg)); rHold(R, rO(R, 'sine', 92.5, dg)); },
+    bar(R, t, n) { const L = 4, ch = OBS_CH[(n >> 1) % 4];
+      for (let i = 0; i < 8; i++) { const at = t + i * 0.5; if (i % 2) { rBurst(R, at, 0.02, 'bandpass', 1500, 3, 0.05); rStruck(R, 2650, at, 0.008, [[1, 1, 1]], 0.09); } else rBurst(R, at, 0.012, 'highpass', 3800, 0.7, 0.055); }
+      if (n % 2 === 1) { for (let i = 0; i < 5; i++) rBurst(R, t + 3.55 + i * 0.025, 0.01, 'highpass', 2600, 1, 0.04); const o = rO(R, 'sawtooth', 52), g = rG(R, 0, R.bus); o.connect(rF(R, 'lowpass', 260, 1, g)); o.frequency.setValueAtTime(52, t + 3.5); o.frequency.linearRampToValueAtTime(45, t + 4.2); rEnv(g, t + 3.5, 0.03, 0.08, 0.75); rPlay(R, o, t + 3.5, t + 4.3); }
+      if (Math.random() < 0.7) { const up = n % 2 === 0, notes = up ? ch : [...ch].reverse(), s = Math.random() < 0.5 ? 0 : 2, oct = Math.random() < 0.4 ? 12 : 0;
+        notes.forEach((m, k) => rStruck(R, mtof(m + oct), t + (s + k) * 0.5, 0.034 - k * 0.003, GLASS, 5)); }
+      R.wind.gain.setTargetAtTime(0.05 + Math.random() * 0.1, t, 1.5);
+      return L; } },
+  /* The post office: neat and warm. A celesta plays a tidy tune in F major at 80 to the minute over a soft felt bass,
+     the wall clock ticks on every beat, and now and then paper is sorted or a stamp comes down. */
+  post: { vol: 1.6, wet: 0,
+    init(R) {},
+    bar(R, t, n) { const B = 0.75, L = B * 4, k = n % 12, root = POST_BASS[k];
+      for (let i = 0; i < 4; i++) rBurst(R, t + i * B, i % 2 ? 0.025 : 0.016, i % 2 ? 'bandpass' : 'highpass', i % 2 ? 1500 : 2900, i % 2 ? 4 : 0.8, 0.04);
+      rFelt(R, mtof(root), t, 0.06, 1.4); rFelt(R, mtof(root + 7), t + 2 * B, 0.04, 1.2);
+      if (k < 8) { let at = t; for (const [m, d] of POST_TUNE[k]) { if (m != null) rStruck(R, mtof(m), at, 0.045, CELESTA, 1.6); at += d * B; } }
+      else [12, 16, 19].forEach((d, i) => rStruck(R, mtof(root + d + 12), t + i * B, 0.022, CELESTA, 1.4));
+      if (Math.random() < 0.25) { const at = t + Math.random() * L; if (Math.random() < 0.6) rPaper(R, at, 3, 0.03); else { rBurst(R, at, 0.09, 'lowpass', 500, 1, 0.06); const o = rO(R, 'sine', 130), g = rG(R, 0, R.bus); o.connect(g); o.frequency.setValueAtTime(130, at); o.frequency.exponentialRampToValueAtTime(60, at + 0.15); rEnv(g, at, 0.05, 0.003, 0.18); rPlay(R, o, at, at + 0.2); } }
+      return L; } },
+  /* Home: quiet, safe. A warm low drone on G that breathes, the stove murmuring and ticking, and at long intervals a
+     lullaby of a few notes, played on something soft, slowly, in three. */
+  home: { vol: 1, wet: 0,
+    init(R) { R.dg = rG(R, 0.02, R.bus); const lp = rF(R, 'lowpass', 520, 0.6, R.dg); rHold(R, rO(R, 'sine', 98, lp)); rHold(R, rO(R, 'sine', 146.83, rG(R, 0.7, lp))); rHold(R, rO(R, 'triangle', 196, rG(R, 0.25, lp)));
+      const l = rHold(R, rO(R, 'sine', 0.05)); l.connect(rG(R, 0.008, R.dg.gain));
+      const n = rHold(R, rN(R)); n.connect(rF(R, 'lowpass', 200, 0.7, rG(R, 0.045, R.bus))); R.lull = R.ctx.currentTime + 5 + Math.random() * 4; R.ln = 0; },
+    bar(R, t, n) { const L = 4; rCrackle(R, t, L, 2 + Math.floor(Math.random() * 4), 0.028);
+      if (Math.random() < 0.05) { const at = t + Math.random() * L; rBurst(R, at, 0.35, 'lowpass', 380, 0.8, 0.05); rFelt(R, 55, at, 0.03, 0.4); }
+      if (t >= R.lull) { const B = 0.8; let at = t + 0.3; rFelt(R, 49, at, 0.035, 3.5); for (const [m, d] of HOME_LULL[R.ln++ % HOME_LULL.length]) { rFelt(R, mtof(m), at, 0.05, 2.4); at += d * B; } R.lull = at + 18 + Math.random() * 16; }
+      return L; } },
+};
+/** One room's piece, built in the given context (the real one, or an offline one to measure it). Nothing sounds until its fader opens. */
+function roomPiece(name, ctx, out, noise, verb) {
+  const def = ROOM_MUSIC[name], bus = ctx.createGain(); bus.gain.value = 0; bus.connect(out);
+  const R = { name, def, ctx, noise, bus, src: [], live: new Set(), t: ctx.currentTime + 0.12, n: 0, timer: 0, dying: false, dead: false };
+  if (verb && def.wet) { R.wet = ctx.createGain(); R.wet.gain.value = def.wet; bus.connect(R.wet); R.wet.connect(verb); }
+  def.init(R); return R;
+}
+/** Schedule its bars up to the given time. */
+function roomFill(R, until) { while (R.t < until && !R.dead && !R.dying) R.t += R.def.bar(R, R.t, R.n++); }
+function roomRun(R) { if (R.dead || R.dying) return; const now = R.ctx.currentTime; if (R.t < now) R.t = now + 0.05; roomFill(R, now + 1.5); R.timer = setTimeout(() => roomRun(R), 500); }
+/** Fade it out, then stop every voice it started and let go of its nodes. */
+function roomStop(R, fade = 2) {
+  if (!R || R.dying) return; R.dying = true; clearTimeout(R.timer); const t = R.ctx.currentTime, g = R.bus.gain;
+  g.cancelScheduledValues(t); g.setValueAtTime(g.value, t); g.linearRampToValueAtTime(0, t + fade);
+  setTimeout(() => { R.dead = true; for (const s of [...R.src, ...R.live]) { s.onended = null; try { s.stop(); } catch {} } R.src.length = 0; R.live.clear();
+    try { R.bus.disconnect(); } catch {} try { R.wet?.disconnect(); } catch {} }, fade * 1000 + 150);
+}
+/** Into a room (its name) or back out into the town (null): two seconds from one to the other. */
+function roomMusic(name) {
+  SND.wantRoom = name || null;
+  if (!SND.ctx || !SND.on || !SND.town) return;
+  const ctx = SND.ctx, t = ctx.currentTime, want = name && ROOM_MUSIC[name] ? name : null;
+  if ((SND.room?.name || null) === want && SND.inRoom === !!want) return;
+  const fade = (p, v) => { p.cancelScheduledValues(t); p.setValueAtTime(p.value, t); p.linearRampToValueAtTime(v, t + 2); };
+  if (SND.room) roomStop(SND.room, 2);
+  SND.room = want ? roomPiece(want, ctx, SND.music, SND.noise, SND.verb) : null;
+  if (SND.room) { fade(SND.room.bus.gain, SND.room.def.vol); roomRun(SND.room); }
+  SND.inRoom = !!SND.room; fade(SND.town.gain, SND.inRoom ? 0 : 1);
+  if (!SND.inRoom && SND.townRest) { clearTimeout(SND.townT); musicLoop(); }
+}
 
 /* ================= labels ================= */
 const v3 = new THREE.Vector3();
@@ -7162,8 +7416,8 @@ function ironize(m, tint = 0xd9d2cc) { m.map = IRON_TEX.map; m.normalMap = IRON_
 const PYL_STONE = new THREE.MeshStandardMaterial({ color: 0xa79d8e, roughness: 0.9, emissive: 0x3a2a1c, emissiveIntensity: 0.6 }), PYL_IRON = new THREE.MeshStandardMaterial({ color: 0x9a8f86, metalness: 0.55, roughness: 0.4, emissive: 0x4a2c18, emissiveIntensity: 0.55 });
 PYL_STONE.userData.noFow = PYL_IRON.userData.noFow = true; PYL_STONE.map = themeTex('tex_rock'); PYL_STONE.color.set(0xf0ece6); ironize(PYL_IRON, 0xffffff);
 const BRZ_STONE = PYL_STONE, BRZ_IRON = new THREE.MeshStandardMaterial({ color: 0x8a7a6a, metalness: 0.6, roughness: 0.45, emissive: 0x5a2a10, emissiveIntensity: 0.7, side: THREE.DoubleSide }),
-  BRZ_COAL = new THREE.MeshBasicMaterial({ color: 0xff6a20 }), BRZ_FLAME = new THREE.MeshBasicMaterial({ color: 0xffb050, transparent: true, opacity: 0.85, blending: THREE.AdditiveBlending, depthWrite: false }), GATE_FLAMES = [];
-BRZ_IRON.userData.noFow = BRZ_COAL.userData.noFow = BRZ_FLAME.userData.noFow = true; ironize(BRZ_IRON);
+  BRZ_COAL = new THREE.MeshBasicMaterial({ color: 0xff6a20 });
+BRZ_IRON.userData.noFow = BRZ_COAL.userData.noFow = true; ironize(BRZ_IRON);
 [PYL_STONE, PYL_IRON].forEach(m => { m.userData.noFow = true; });
 let PYL_CORE_Y = 2.85; // set to the lantern of the forged pylon
 function energyColumn() {
@@ -7189,7 +7443,6 @@ async function buildPylons() {
 const AMBER = new THREE.Color(0xff8a2a), WOUND = new THREE.Color(0xff2a1a);
 let pylWarn = {};
 function stepPylons(dt) {
-  const tf = U.uTime.value; GATE_FLAMES.forEach((f, k) => { f.scale.set(1 + Math.sin(tf * 11 + k) * 0.12, 1 + Math.sin(tf * 7.3 + k * 2) * 0.22, 1); f.rotation.y = tf * 1.3; });
   if (!XV?.pylons || !PYL.length) return; const tt = U.uTime.value;
   for (const P of PYL) { const s = (XV.pylons[P.i]?.s ?? 80) / 100, crack = s < 0.3, pressed = XV.pressed === P.i;
     const flick = crack ? (Math.sin(tt * 23 + P.i) > 0.2 ? 1 : 0.25) : 1;
@@ -7263,8 +7516,7 @@ function buildGate() {
     else { const ped = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.22, 0.46, 6), BRZ_STONE); ped.position.y = 0.23; bz.add(ped);
       const bowl = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.14, 0.16, 10, 1, true), BRZ_IRON); bowl.position.y = 0.54; bz.add(bowl);
       const coals = new THREE.Mesh(new THREE.CircleGeometry(0.24, 10), BRZ_COAL); coals.rotation.x = -Math.PI / 2; coals.position.y = 0.6; bz.add(coals); }
-    const flame = new THREE.Mesh(new THREE.ConeGeometry(0.13, 0.42, 7), BRZ_FLAME); flame.position.y = 0.82; bz.add(flame); flame.userData.lick = true; GATE_FLAMES.push(flame);
-    const f = sprite(GLOW, b.x, 0.85, b.z, 1.0, 0xff9a3c, 1); f.userData.flicker = true; glowDecal(b.x, b.z, 1.6, 0xffb060, 0.5); }
+    fireFx(b.x, 0.6, b.z, { h: 0.42, w: 0.07, n: 3, sparks: 12, rise: 0.9, glow: 1.0, lights: [glowDecal(b.x, b.z, 1.6, 0xffb060, 0.5)] }); }
   // the watch fires light the doors from the town's side
   const lamp = new THREE.PointLight(0xffb070, 9, 7, 1.6); lamp.position.copy(p).sub(dir.clone().multiplyScalar(2.2)).setY(1.6); scene.add(lamp);
   const a = new THREE.Object3D(); a.position.copy(dir.clone().multiplyScalar(DOME_R - 1.6)); scene.add(a); label('THE NORTH GATE · SEALED', a, 2.8, 'red');
@@ -8120,7 +8372,7 @@ const YARD_CORNERS = new Map(); // corner -> the home whose yard it is
 /* the houses as they stand, measured before the lamps go up: a bench or a lamp is never set where a wall or an eave comes down */
 let BLD_OBJ = []; const _bray = new THREE.Raycaster(), _down = new THREE.Vector3(0, -1, 0), _bo = new THREE.Vector3();
 function measureBuildings() { const bx = new THREE.Box3(); BLD_OBJ = []; scene.updateMatrixWorld(true);
-  for (const m of scene.children) { if (m === HILL_OBJ || m.isLight || m.isSprite || STREET_OBJS.includes(m)) continue; bx.setFromObject(m); if (bx.isEmpty()) continue;
+  for (const m of scene.children) { if (m === HILL_OBJ || m.isLight || m.isSprite || m.userData.noSolid || STREET_OBJS.includes(m)) continue; bx.setFromObject(m); if (bx.isEmpty()) continue;
     const w = Math.max(bx.max.x - bx.min.x, bx.max.z - bx.min.z); if (bx.max.y - bx.min.y < 0.8 || w < 0.8 || w > 7) continue; BLD_OBJ.push(m); } }
 function inBuilding(v, r = 0.3) { if (!BLD_OBJ.length) return false;
   for (const [dx, dz] of [[0, 0], [r, 0], [-r, 0], [0, r], [0, -r]]) { _bray.set(_bo.set(v.x + dx, 8, v.z + dz), _down); _bray.far = 9;
@@ -8267,6 +8519,10 @@ function buildQuarters() {
   // the big pieces, one cell each
   for (const { kit: n, at } of W4W.TOWN_PROPS) { if (n === 'campfire') continue; const c = HX(...at), near = [...Object.values(SPECIAL), ...STAGE2.map(x => x.at)].filter(x => W4W.dist(x, at) === 1)[0];
     const look = near ? HX(...near) : new THREE.Vector3(0, 0, 0); const o = kitAt(n, c.x, c.z, n === 'signal' ? faceTo(c, new THREE.Vector3(0, 0, 0)) : faceTo(c, look), n === 'memorial' ? 1.35 : 1);
+    // the watch fires on the signal towers: the brazier's flames come alive, throw sparks, and light the tower and the snow under it
+    if (o && n === 'signal') { liveCoals(o); let top = null; o.traverse(m => { if (m.name === 'light_0') top = m.getWorldPosition(new THREE.Vector3()); });
+      if (top) { const own = o.userData.lights.filter(L => L.isLight0), snow = glowDecal(c.x, c.z, 2.6, 0xff9a48, 0.6, 0.35); own.forEach(L => { L.userData.col = new THREE.Color(0xffa050); L.userData.r = 1.6; });
+        fireFx(top.x, top.y - 0.02, top.z, { h: 0.5, w: 0.08, n: 3, sparks: 18, rise: 1.1, glow: 1.1, lights: [...own, snow] }); } }
     if (o && n === 'memorial') { tag(o, 'stone', 'stone'); label('THE STONE OF THE TWELVE', o, 3.9, 'key'); const v = new THREE.Vector3(); o.updateMatrixWorld(true);
       // on the stone stands the iron woman, cast big enough to be seen from every street
       { const mb = new THREE.Box3().setFromObject(o), top = mb.max.y, yaw = o.rotation.y;
@@ -8393,7 +8649,7 @@ function showRoom(name) {
   el.innerHTML = `<div class="rimg" style="background-image:url(${R.img})"></div><div class="rfx">${R.fx.map(([x, y, r, k]) => `<span class="${k || ''}" style="left:${x - r}%;top:calc(${y}% - ${r}vw);width:${r * 2}%;aspect-ratio:1;animation-delay:-${(x * 37 % 20) / 10}s"></span>`).join('')}</div><div class="rvig"></div>
     <div class="rhot">${R.hot.map(([x, y, w, h, t], i) => `<button style="left:${x}%;top:${y}%;width:${w}%;height:${h}%" data-h="${i}" aria-label="${esc(t)}"><em class="plq"></em></button>`).join('')}${R.npc ? `<button class="rnpc ${R.npc.fade ? 'fade' : ''} ${R.npc.glow || ''}" style="left:${R.npc.x}%;top:${R.npc.y}%;height:${R.npc.h}%;aspect-ratio:${R.npc.ar * (R.npc.ih || 1)}" data-rnpc aria-label="${esc(TFOLK[R.npc.folk].name)}"><img src="${R.npc.img}" alt="" style="height:${(R.npc.ih || 1) * 100}%"></button><button class="rhand" data-rhand hidden style="left:${R.npc.x}%;top:${R.npc.y + R.npc.h * 0.72}%">Hand it over</button>` : ''}</div>
     <div class="rbar"><div><h2>${esc(R.title)}</h2><small>${esc(R.sub)}</small></div>${ROOM_FOLK[name] ? `<button class="btn main" data-rfolk>Talk to ${esc(TFOLK[ROOM_FOLK[name]].name)}</button>` : ''}<button class="btn" data-rexit>Step outside</button></div><div class="rnote"></div>`;
-  document.body.classList.add('inroom'); document.body.classList.toggle('inbar', name === 'bar'); roomPlaques(); requestAnimationFrame(() => el.classList.add('on'));
+  document.body.classList.add('inroom'); document.body.classList.toggle('inbar', name === 'bar'); roomPlaques(); roomMusic(name); requestAnimationFrame(() => el.classList.add('on'));
   el.querySelectorAll('[data-h]').forEach(b => b.onclick = () => { sfx.click(); seenPlq(name, +b.dataset.h); R.hot[+b.dataset.h][5](); roomPlaques(); });
   el.querySelector('[data-rexit]').onclick = () => { sfx.close?.(); leaveRoom(); };
   el.querySelector('[data-rfolk]')?.addEventListener('click', () => { sfx.click(); openFolk(ROOM_FOLK[name]); });
@@ -8467,7 +8723,7 @@ function roomPlaques() { if (!ROOM) return; const R = ROOMS[ROOM];
   const at = PLQ_AT[ROOM]?.[i]; if (at) { e.style.setProperty('--px', at[0] + '%'); e.style.setProperty('--py', at[1] + '%'); }
   const html = `${esc(st.t || R.hot[i][4])}${st.b ? ` <b>${esc(st.b)}</b>` : ''}${st.coinHtml}`; if (e.innerHTML !== html) e.innerHTML = html;
   e.classList.toggle('glow', !!st.glow); e.classList.toggle('gold', !!st.gold); e.classList.toggle('lock', !!st.lock); }); }
-function leaveRoom() { const el = $('#room'); if (!el || !ROOM) return; ROOM = null; closePanel(); el.classList.remove('on'); document.body.classList.remove('inroom', 'inbar'); setTimeout(() => { if (!ROOM) el.remove(); }, 520); }
+function leaveRoom() { const el = $('#room'); if (!el || !ROOM) return; ROOM = null; roomMusic(null); closePanel(); el.classList.remove('on'); document.body.classList.remove('inroom', 'inbar'); setTimeout(() => { if (!ROOM) el.remove(); }, 520); }
 addEventListener('keydown', e => { if (e.key === 'Escape' && ROOM && !$('#panel').classList.contains('open')) leaveRoom(); });
 /* walking off takes you outside */
 function stepRoom() { if (ROOM && myC()?.path?.length) leaveRoom(); stepFlags(); if (ROOM) roomPlaques(); }
@@ -8899,7 +9155,7 @@ function loop(now = performance.now()) {
   if ((spriteClock += dt) > 1) { spriteClock = 0; spriteCache = []; scene.traverse(o => { if (o.isSprite && (o.userData.flicker || o.userData.blink)) spriteCache.push(o); }); } U.uTime.value += dt; const t = U.uTime.value;
   U.uHeat.value += (heatTarget - U.uHeat.value) * Math.min(1, dt * 0.8);
   U.uBoost.value = Math.max(0, U.uBoost.value - dt * 0.3); U.uFlow.value += dt * (0.4 + U.uBoost.value * 0.45);
-  stepLights(); stepPrints(); stepDest(); stepDoorFx(dt); if (ACT1) stepHowl(dt); stepWaves(dt); stepEmbers(dt); stepMotes(dt); if (!ACT1) stepFauna(dt); else { stepStorm(dt); stepHollow(dt); stepFow(); stepPylons(dt); if ((tick & 31) === 0) renderVeil(); }
+  stepLights(); stepPrints(); stepDest(); stepDoorFx(dt); if (ACT1) stepHowl(dt); stepWaves(dt); stepEmbers(dt); stepFires(dt); stepMotes(dt); if (!ACT1) stepFauna(dt); else { stepStorm(dt); stepHollow(dt); stepFow(); stepPylons(dt); if ((tick & 31) === 0) renderVeil(); }
   if (S.town.B > 0 && (waveClock += dt) > Math.max(2.2, 6 - S.town.B * 0.15)) { waveClock = 0; pulse(0.25); }
   snowNow += (snowTarget - snowNow) * Math.min(1, dt * 0.6);
   if (SOFT && snow && snow.visible) { snow.visible = false; startSnow2D(); }
@@ -8946,5 +9202,5 @@ function loop(now = performance.now()) {
 }
 requestAnimationFrame(loop);
 addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); DPR = Math.min(DPR, dprFor()); renderer.setPixelRatio(DPR); composer.setPixelRatio?.(DPR); renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight); fxaaSize(); });
-window.__w4w = { S, settle, X: () => ({ LIGHT_U, LIGHTS, scene, moon, renderer, composer, fxaaSize, camera, THREE, rimeFx, mouthFx, HD, PYL, houses, SPECIAL, HX, XV, avatars, predicted, xact, hexAt, warp: ms => XW.warp?.(ms), planTo, goTrip, NOTES, rimeFx, openLibrary, trip, prints: prints.length, rimeAt: (q, r) => XW._rime?.(q, r), stash: o => XW._stash?.(o), letter: o => XW._letter?.(o), hollowList: () => hollow, openPost, openHouse, flash: (show) => { flashT = 0; if (show) setTimeout(() => { if (flashFig) flashFig.position.y = 0; }, 30); }, flashFig: () => flashFig, flashDbg: () => ({ k: flashK, f: FOW_U.uFowFlash.value, back: flashBack?.material.opacity, vis: flashFig?.visible, on: FOW_U.uFowOn.value }), acts: h => { actEl.hidden = false; actEl.innerHTML = h; actSig = h; dressActs(); }, story: o => XW._story?.(o), openGate, openChronicle, openPylon, walkTo, UI, renderFrames, unfollow: () => { follow = false; fly = null; }, hollow, act1Mark: id => act1Mark(id), openBeast: id => openBeast(id), openLibraryRoom: () => openLibraryRoom(), openStone: () => openStone(), openGate: () => openGate(), openBar: () => openBar(), enterRoom: n => enterRoom(n), leaveRoom: () => leaveRoom(), log: () => LOG.slice(-40).map(l => l.text) }), freePlots, openMaria, ask, addWood, refreshTown, draft: v => (draft = v), camera, controls, updateIce, renderer, scene, __composer: LITE ? null : composer };
+window.__w4w = { S, settle, X: () => ({ LIGHT_U, LIGHTS, scene, moon, renderer, composer, fxaaSize, camera, THREE, rimeFx, mouthFx, HD, PYL, houses, SPECIAL, HX, XV, avatars, predicted, xact, hexAt, warp: ms => XW.warp?.(ms), planTo, goTrip, NOTES, rimeFx, openLibrary, trip, prints: prints.length, rimeAt: (q, r) => XW._rime?.(q, r), stash: o => XW._stash?.(o), letter: o => XW._letter?.(o), hollowList: () => hollow, openPost, openHouse, flash: (show) => { flashT = 0; if (show) setTimeout(() => { if (flashFig) flashFig.position.y = 0; }, 30); }, flashFig: () => flashFig, flashDbg: () => ({ k: flashK, f: FOW_U.uFowFlash.value, back: flashBack?.material.opacity, vis: flashFig?.visible, on: FOW_U.uFowOn.value }), acts: h => { actEl.hidden = false; actEl.innerHTML = h; actSig = h; dressActs(); }, story: o => XW._story?.(o), openGate, openChronicle, openPylon, walkTo, UI, renderFrames, unfollow: () => { follow = false; fly = null; }, hollow, act1Mark: id => act1Mark(id), openBeast: id => openBeast(id), openLibraryRoom: () => openLibraryRoom(), openStone: () => openStone(), openGate: () => openGate(), openBar: () => openBar(), enterRoom: n => enterRoom(n), leaveRoom: () => leaveRoom(), SND, ROOM_MUSIC, roomPiece, roomFill, FIRES, log: () => LOG.slice(-40).map(l => l.text) }), freePlots, openMaria, ask, addWood, refreshTown, draft: v => (draft = v), camera, controls, updateIce, renderer, scene, __composer: LITE ? null : composer };
 </script>
