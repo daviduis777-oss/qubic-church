@@ -171,7 +171,7 @@ async function mailAct(ws: W.WState, d: W.Dirty, uid: string, op: string, b: Rec
     if (to === 'library') {
       if (m.from !== 'story') return { ok: false, error: 'Only letters from beyond the Gate go on the Library shelf. A neighbour\'s letter stays between you.' }
       if (!still || W.dist(here, [W.SPECIAL.library[0], W.SPECIAL.library[1]]) > 1) return { ok: false, error: 'Carry it to the Library.' }
-      Object.assign(m, { where: 'library', sharedBy: nick, sharedAt: ws.now })
+      Object.assign(m, { where: 'library', sharedBy: nick, sharedAt: ws.now }); { const k = c.tasks?.f_shelf; if (k && !k.done) { k.n = 1; d.chars.add(uid) } }
       d.feed.push({ id: `sh${m.id}`, t: ws.now, topic: 'shelf', by: uid, data: { nick } })
       await putMail(m); return done()
     }
@@ -214,7 +214,7 @@ async function mailAct(ws: W.WState, d: W.Dirty, uid: string, op: string, b: Rec
     const h = ws.houses[m.to]; if (h?.q == null || h.r == null) return { ok: false, error: 'They have no house yet. Keep the letter until they do.' }
     if (!still || W.dist(here, [h.q, h.r]) > 1) return { ok: false, error: `Walk to ${m.toNick}'s door.` }
     Object.assign(m, { where: 'delivered', holder: null, deliveredAt: ws.now })
-    if (uid !== m.from) { c.renown = (c.renown ?? 0) + 2; W.addGold(c, 2, ws.now); d.chars.add(uid); await bumpRep(uid, 'd') }
+    if (uid !== m.from) { c.renown = (c.renown ?? 0) + 2; W.addGold(c, 2, ws.now); d.chars.add(uid); await bumpRep(uid, 'd'); for (const id of ['a_carry', 'a_round']) { const k = c.tasks?.[id]; if (k && !k.done) k.n += 1 } }
     d.feed.push({ id: `ml${m.id}`, t: ws.now, topic: 'mail', by: uid, data: { nick, to: m.toNick } })
     await putMail(m); return done()
   }

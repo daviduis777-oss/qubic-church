@@ -111,6 +111,12 @@ body.hub #dock button.main{background:rgba(255,196,107,.16)}
 .ov-speed{display:flex;align-items:baseline;gap:8px;margin:4px 0} .ov-speed b{font-family:var(--f-display);font-size:46px;line-height:1;color:var(--cream);font-variant-numeric:tabular-nums} .ov-speed span{color:var(--gold);font-family:var(--f-label);letter-spacing:.1em}
 .ov-sub{color:var(--mute);font-size:13.5px} .ov-flow{width:100%;height:120px}
 .ov-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.folk{display:grid;grid-template-columns:64px 1fr;gap:14px;align-items:start;margin:2px 0 12px}.fglyph{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;font:600 30px Cinzel,serif;color:#1a1410;background:radial-gradient(circle at 35% 30%,#fff8,transparent 55%),var(--t);box-shadow:0 0 0 2px #0008,0 0 24px color-mix(in srgb,var(--t) 45%,transparent)}
+.fline .say{margin:0 0 10px;min-height:3em}.fline .say.fin{animation:fin .5s ease}@keyframes fin{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}.fask{gap:6px;flex-wrap:wrap}
+.fstand{padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:rgba(10,12,18,.45)}.fstand>div:first-child{display:flex;justify-content:space-between;align-items:baseline}.fstand b{font:600 15px Cinzel,serif;color:#f3e4c4}.fstand span,.fstand small{font-size:12px;color:#9aa3b5}
+.fbar{height:6px;border-radius:3px;background:#ffffff14;margin:7px 0 5px;overflow:hidden}.fbar i{display:block;height:100%;background:linear-gradient(90deg,#c8873c,#f0c27a)}
+.ftasks{display:grid;gap:8px}.ftask{padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:rgba(10,12,18,.35)}.ftask b{display:block;font:600 14px Cinzel,serif;color:#f3e4c4}.ftask p{margin:4px 0 6px;font-size:13.5px}.ftask span{font-size:12.5px;color:#c9cfdb}.ftask.on{border-color:#c8873c88}.ftask.done{opacity:.7}.ftask.locked{opacity:.5}.ftask .btn{margin-top:6px}
+.folkb{display:flex;gap:10px;align-items:center;width:100%;text-align:left;padding:8px 10px;margin:0 0 12px;border-radius:10px;border:1px solid var(--line);background:rgba(10,12,18,.45);color:inherit;cursor:pointer}.folkb:hover{border-color:#c8873c}.folkb i{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font:600 17px Cinzel,serif;font-style:normal;color:#1a1410;background:var(--t)}.folkb b{display:block;font:600 14px Cinzel,serif;color:#f3e4c4}.folkb small{font-size:12px;color:#9aa3b5}
 .ov-hr{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:8px}.ov-hr>div{display:flex;flex-direction:column;gap:2px}.ov-hr small{color:var(--mute,#9aa3b5);font-size:12px}.ov-hr b{font:600 26px/1.1 Cinzel,serif;color:#f3e4c4}.ov-hr span{font-size:11px;color:#9aa3b5;letter-spacing:.06em}.ov-hr em{font-style:normal;font-size:12.5px;color:#c9cfdb}@media (max-width:560px){.ov-hr{grid-template-columns:1fr}}
 .ov-tile{padding:14px 16px;border-radius:12px;background:rgba(10,12,18,.55);border:1px solid var(--line);min-height:124px} .ov-tile.wide{grid-column:1/-1;min-height:0}
 .ov-tile .hk b{color:var(--cream);margin-left:4px}
@@ -995,6 +1001,9 @@ var W4W = (() => {
     DRAIN_TAKE: () => DRAIN_TAKE,
     DRAIN_WAIT: () => DRAIN_WAIT,
     DRIFT: () => DRIFT,
+    E_START: () => E_START,
+    FOLK: () => FOLK,
+    FOLK_AT: () => FOLK_AT,
     FREEZE_MS: () => FREEZE_MS,
     FROSTBITE: () => FROSTBITE,
     GATE_CELL: () => GATE_CELL,
@@ -1009,6 +1018,7 @@ var W4W = (() => {
     HUSH_MAX: () => HUSH_MAX,
     INSULATION_T1: () => INSULATION_T1,
     ITEMS: () => ITEMS,
+    KNEW: () => KNEW,
     LANDMARKS: () => LANDMARKS,
     LOSS_K: () => LOSS_K,
     MATS: () => MATS,
@@ -1043,9 +1053,11 @@ var W4W = (() => {
     SPECIAL: () => SPECIAL,
     STAGE: () => STAGE,
     STAIR_CELL: () => STAIR_CELL,
+    STANDING: () => STANDING,
     STARTER_RECIPES: () => STARTER_RECIPES,
     STEP_MS: () => STEP_MS,
     STONE_CELL: () => STONE_CELL,
+    TASKS: () => TASKS,
     TOAST_WAIT: () => TOAST_WAIT,
     TOWN_PROPS: () => TOWN_PROPS,
     TOWN_RING: () => TOWN_RING,
@@ -1067,11 +1079,14 @@ var W4W = (() => {
     canCraft: () => canCraft,
     cellAt: () => cellAt,
     coldAt: () => coldAt,
+    creditLamp: () => creditLamp,
     ctxOf: () => ctxOf,
     dayOf: () => dayOf,
     dist: () => dist,
     emptyInv: () => emptyInv,
+    epochAt: () => epochAt,
     findPath: () => findPath,
+    folkView: () => folkView,
     greyAt: () => greyAt,
     guardsAt: () => guardsAt,
     have: () => have,
@@ -1114,11 +1129,13 @@ var W4W = (() => {
     slotsUsed: () => slotsUsed,
     sourceAt: () => sourceAt,
     stacksOf: () => stacksOf,
+    standingOf: () => standingOf,
     startItems: () => startItems,
     stepAll: () => stepAll,
     stepChar: () => stepChar,
     stepDur: () => stepDur,
     stepRime: () => stepRime,
+    taskProgress: () => taskProgress,
     terrain: () => terrain,
     toolFor: () => toolFor,
     toolsFor: () => toolsFor,
@@ -1900,6 +1917,137 @@ var W4W = (() => {
       if (c.path.length || c.act || c.frozenUntil || zoneOf(c.q, c.r) >= 1 || c.warmth < 100 || c.health < 100 || c.energy < 100) stepChar(ws, uid, d);
     }
   }
+  const FOLK = ["hask", "ivo", "fenn", "selma", "maria", "ada"];
+  const STANDING = [
+    { name: "Stranger", pts: 0, days: 0 },
+    { name: "Known", pts: 10, days: 1 },
+    { name: "Trusted", pts: 40, days: 5 },
+    { name: "Friend", pts: 100, days: 14 },
+    { name: "Confidant", pts: 200, days: 30 }
+  ];
+  const FOLK_AT = {
+    hask: { cell: [0, -TOWN_RING], n: 1, away: "Old Hask is at the North Gate. Go and stand with him." },
+    ivo: { cell: BAR_CELL, n: 0, away: "Ivo only talks across his own bar. Go inside The Last Coal." },
+    fenn: { cell: SPECIAL.library, n: 0, away: "Master Fenn never leaves the Library. Not this side of it." },
+    selma: { cell: SPECIAL.observatory, n: 0, away: "Dr. Ruud is at the Observatory, under the dome." },
+    maria: { cell: SPECIAL.church, n: 0, away: "Maria is in the church. Sit with her there." },
+    ada: { cell: POST_CELL, n: 1, away: "Ada Pell is at the post office, by the sack." }
+  };
+  const KNEW = { teresa: "hask", ilya: "hask", pavel: "ivo", odile: "ivo", brann: "ivo", lida: "fenn", nils: "fenn", mirek: "selma", agnes: "maria", yusuf: "ada", hedda: "hask", toma: "selma" };
+  const E_START = Date.UTC(2026, 9, 28, 12);
+  const epochAt = (t) => 237 + Math.floor((t - E_START) / WEEK_MS);
+  function standingOf(c, who) {
+    const pts = c.standing?.[who] ?? 0, days = c.lampDays ?? 0;
+    let lv = 0;
+    for (let i = 1; i < STANDING.length; i++) {
+      const L = STANDING[i];
+      if (pts >= L.pts && days >= L.days) lv = i;
+      else break;
+    }
+    return { lv, pts, days, next: STANDING[lv + 1] ?? null };
+  }
+  const addStanding = (c, who, n) => {
+    (c.standing ?? (c.standing = {}))[who] = Math.max(0, (c.standing[who] ?? 0) + n);
+  };
+  function creditLamp(c, h, now) {
+    if (h?.state !== "mining" || !h.startedAt) return 0;
+    const today = dayOf(now);
+    let n = 0;
+    for (let D = Math.max((c.lampTo ?? dayOf(h.startedAt) - 1) + 1, today - 14); D <= today; D++) {
+      const lit = Math.min(now, (D + 1) * DAY_MS) - Math.max(h.startedAt, D * DAY_MS);
+      if (lit < 12 * 36e5) continue;
+      c.lampDays = (c.lampDays ?? 0) + 1;
+      c.lampTo = D;
+      n++;
+      for (const f of FOLK) addStanding(c, f, 1);
+      const ep = epochAt(D * DAY_MS + 12 * 36e5);
+      if (c.maEp !== ep) {
+        c.maEp = ep;
+        addStanding(c, "maria", 5);
+      }
+    }
+    return n;
+  }
+  const TASKS = [
+    { id: "h_veil", who: "hask", lv: 0, pts: 8, gold: 1, need: 3 },
+    // give warmth to three pylons
+    { id: "h_watch", who: "hask", lv: 1, pts: 15, gold: 2, need: 2 },
+    // stand the grey watch at the Gate on two days
+    { id: "i_fire", who: "ivo", lv: 0, pts: 8, gold: 1, need: 2 },
+    // feed the plaza fire on two days
+    { id: "i_round", who: "ivo", lv: 1, pts: 15, gold: 2, need: 1 },
+    // stand the room a round
+    { id: "i_toast", who: "ivo", lv: 2, pts: 25, gold: 3, need: 1 },
+    // raise a glass to someone who is not there
+    { id: "f_lida", who: "fenn", lv: 0, pts: 8, gold: 1, need: 1 },
+    // find what Lida Ferro left in the Library
+    { id: "f_knock", who: "fenn", lv: 1, pts: 15, gold: 2, need: 1 },
+    // listen at the Gate in the grey light, bring him the knock
+    { id: "f_shelf", who: "fenn", lv: 2, pts: 25, gold: 3, need: 1 },
+    // lay a letter from beyond the Gate on his shelf
+    { id: "s_read", who: "selma", lv: 0, pts: 8, gold: 1, need: 2 },
+    // take the grey light reading on two days
+    { id: "s_lens", who: "selma", lv: 1, pts: 15, gold: 2, need: 1 },
+    // find Mirek's lens
+    { id: "s_epoch", who: "selma", lv: 2, pts: 25, gold: 3, need: 7 },
+    // seven lamp days after she asks
+    { id: "m_lamp", who: "maria", lv: 0, pts: 8, gold: 1, need: 1 },
+    // light your lamp: one lamp day
+    { id: "m_stone", who: "maria", lv: 1, pts: 15, gold: 2, need: 1 },
+    // climb to the Stone of the Twelve
+    { id: "m_three", who: "maria", lv: 2, pts: 25, gold: 3, need: 3 },
+    // three more lamp days
+    { id: "a_carry", who: "ada", lv: 0, pts: 8, gold: 1, need: 1 },
+    // carry one letter to its door
+    { id: "a_round", who: "ada", lv: 1, pts: 15, gold: 2, need: 3 }
+    // carry three more
+  ];
+  const twelveDone = (ws, c, id) => !!c.traces?.includes(id) || !!ws.twelve?.[id];
+  function taskProgress(ws, uid, T) {
+    const c = ws.chars[uid];
+    const k = c?.tasks?.[T.id];
+    if (!c || !k) return 0;
+    switch (T.id) {
+      case "h_veil":
+        return Object.values(c.tended ?? {}).filter((t) => t > k.t).length;
+      case "f_lida":
+        return twelveDone(ws, c, "lida") ? 1 : 0;
+      case "s_lens":
+        return twelveDone(ws, c, "mirek") ? 1 : 0;
+      case "s_epoch":
+      case "m_three":
+        return Math.max(0, (c.lampDays ?? 0) - (k.base ?? 0));
+      case "m_lamp":
+        return Math.min(1, c.lampDays ?? 0);
+      case "m_stone":
+        return (c.marks?.stone ?? 0) > k.t || Object.values(ws.twelve ?? {}).some((x) => x.by === uid) ? 1 : 0;
+      default:
+        return k.n;
+    }
+  }
+  function bumpTask(c, id, now, daily = false) {
+    const k = c.tasks?.[id];
+    if (!k || k.done) return;
+    if (daily) {
+      const day = dayOf(now);
+      if (k.d === day) return;
+      k.d = day;
+    }
+    k.n += 1;
+  }
+  function folkView(ws, uid) {
+    const c = ws.chars[uid];
+    if (!c) return null;
+    const out = {};
+    for (const f of FOLK) {
+      const S = standingOf(c, f);
+      out[f] = { lv: S.lv, pts: S.pts, tasks: TASKS.filter((T) => T.who === f).map((T) => {
+        const k = c.tasks?.[T.id], n = Math.min(T.need, taskProgress(ws, uid, T));
+        return { id: T.id, need: T.need, n, st: k?.done ? "done" : k ? n >= T.need ? "ready" : "on" : S.lv >= T.lv ? "open" : "locked" };
+      }) };
+    }
+    return { lampDays: c.lampDays ?? 0, folk: out };
+  }
   function viewOf(ws, uid, events = []) {
     const forecast = Array.from({ length: 7 }, (_, i) => {
       const at = Math.floor(ws.now / 72e5) * 72e5 + i * 72e5;
@@ -1933,7 +2081,8 @@ var W4W = (() => {
       story: { chosen: !!ws.story?.chosen?.includes(uid), turns: ws.story?.turns ?? 0, fallen: ws.story?.fallen ?? null, phase: ws.story?.phase ?? 0, hush: (ws.story?.phase ?? 0) >= 2 ? Math.round(hushNow(ws.story, ws.now)) : null, unveil: unveiled(ws.story, ws.now) ? ws.story.unveil : null },
       pressed: pressedAt(ws.now),
       pressNext: (Math.floor(ws.now / PYLON_PRESS_MS) + 1) * PYLON_PRESS_MS,
-      ranks: Object.fromEntries(Object.entries(ws.chars).map(([k, x]) => [k, rankOf(x.renown ?? 0)]))
+      ranks: Object.fromEntries(Object.entries(ws.chars).map(([k, x]) => [k, rankOf(x.renown ?? 0)])),
+      folk: folkView(ws, uid)
     };
   }
   function action(ws, uid, op, b, d) {
@@ -2285,13 +2434,16 @@ var W4W = (() => {
         if (now - (c.stoked ?? 0) < 36e5) return ok();
         c.stoked = now;
         addGold(c, 1, now);
+        bumpTask(c, "i_fire", now, true);
         return ok();
       }
       case "lamp": {
         const day = dayOf(now);
-        if (c.lampDay === day) return ok();
-        c.lampDay = day;
-        addGold(c, 2, now);
+        if (c.lampDay !== day) {
+          c.lampDay = day;
+          addGold(c, 2, now);
+        }
+        creditLamp(c, house, now);
         return ok();
       }
       case "round": {
@@ -2309,6 +2461,7 @@ var W4W = (() => {
           addRenown(c, 1);
           addGold(c, 1, now);
         }
+        bumpTask(c, "i_round", now);
         d.feed.push({ id: `rd${uid}${now}`, t: now, topic: "round", by: uid, data: { nick: nickIn(ws, uid), n: inside.length } });
         return ok();
       }
@@ -2319,6 +2472,7 @@ var W4W = (() => {
         c.toasted ?? (c.toasted = {});
         if (now - (c.toasted[to] ?? 0) < TOAST_WAIT) return fail("You already drank to them today.");
         c.toasted[to] = now;
+        bumpTask(c, "i_toast", now);
         o.toasts = [{ nick: nickIn(ws, uid), t: now }, ...o.toasts ?? []].slice(0, 8);
         d.chars.add(to);
         d.feed.push({ id: `ts${uid}${to}${now}`, t: now, topic: "toast", by: uid, data: { nick: nickIn(ws, uid), to: nickIn(ws, to) } });
@@ -2348,8 +2502,66 @@ var W4W = (() => {
         (d.twelve ?? (d.twelve = /* @__PURE__ */ new Set())).add(T.id);
         addRenown(c, 3);
         addGold(c, 2, now);
+        if (KNEW[T.id]) addStanding(c, KNEW[T.id], 5);
         d.feed.push({ id: `tw${T.id}${now}`, t: now, topic: "twelve", by: uid, data: { nick: nickIn(ws, uid), name: T.name, n: Object.keys(ws.twelve).length } });
         return ok();
+      }
+      case "folk": {
+        const who = String(b.who ?? "");
+        if (!FOLK.includes(who)) return fail("Nobody by that name in Aigrad.");
+        const P = FOLK_AT[who], with_ = !c.path.length && dist(here, P.cell) <= P.n, fop = String(b.fop ?? "");
+        const day = dayOf(now);
+        if (fop === "talk") {
+          if (!with_) return fail(P.away);
+          c.talked ?? (c.talked = {});
+          if (c.talked[who] !== day) {
+            c.talked[who] = day;
+            addStanding(c, who, 1);
+          }
+          return ok();
+        }
+        if (fop === "take" || fop === "turn") {
+          if (!with_) return fail(P.away);
+          const T = TASKS.find((x) => x.id === b.task && x.who === who);
+          if (!T) return fail("They never asked you that.");
+          c.tasks ?? (c.tasks = {});
+          const k = c.tasks[T.id];
+          if (fop === "take") {
+            if (k) return fail(k.done ? "Done already." : "You are on it already.");
+            if (standingOf(c, who).lv < T.lv) return fail("They do not know you well enough for that yet.");
+            c.tasks[T.id] = { t: now, n: 0, base: c.lampDays ?? 0 };
+            return ok();
+          }
+          if (!k || k.done) return fail("Nothing to bring them.");
+          if (taskProgress(ws, uid, T) < T.need) return fail("Not done yet.");
+          k.done = now;
+          addStanding(c, who, T.pts);
+          addGold(c, T.gold, now);
+          addRenown(c, 2);
+          d.feed.push({ id: `fk${uid}${T.id}`, t: now, topic: "folk", by: uid, data: { nick: nickIn(ws, uid), who, task: T.id } });
+          return ok();
+        }
+        if (c.path.length) return fail("Stand still first.");
+        if (fop === "watch") {
+          if (dist(here, GATE_CELL) > 1) return fail("The watch is kept at the North Gate.");
+          if (!greyAt(now)) return fail("The watch is at grey light, when the knocking comes.");
+          bumpTask(c, "h_watch", now, true);
+          const fk = c.tasks?.f_knock;
+          if (fk && !fk.done) fk.n = 1;
+          return ok();
+        }
+        if (fop === "reading") {
+          if (dist(here, SPECIAL.observatory) > 0) return fail("The plates are in the Observatory.");
+          if (!greyAt(now)) return fail("Readings are taken at grey light.");
+          bumpTask(c, "s_read", now, true);
+          return ok();
+        }
+        if (fop === "stone") {
+          if (dist(here, STONE_CELL) > 1) return fail("Climb to the Stone first.");
+          (c.marks ?? (c.marks = {})).stone = now;
+          return ok();
+        }
+        return fail("unknown action");
       }
       default:
         return fail("unknown action");
@@ -3443,6 +3655,7 @@ function pick(e, click) {
   if (k === 'house' && me() && id === me().id) return openHouse(id);
   if (walkTo(k, id)) return;
   if (k === 'gate') return openGate();
+  if (k === 'folk') return openFolk(id);
   if (k === 'pylon') return openPylon(+id);
   if (k === 'maria') return openMaria();
   if (k === 'rose') return openRose();
@@ -3888,9 +4101,9 @@ function openChurch(classic) {
     panel('church', 'Qubic Church', 'Maria House. The bell rings on Wednesdays', 'maria.png', `
       <p class="say">${S.isOwner ? 'Welcome home, founder. This church is yours: you keep it, and you write the Herald\'s column. ' : ''}You're one of us now, ${esc(me().nick)}. Your house is on the ring and Anna remembers it. The bell rings on Wednesday at 12:00 UTC: that is when the epoch is sealed.</p>
       <details class="lore"><summary><b>The one who came from beyond</b><span>Maria tells it the way her grandmother told it</span></summary><p>${esc(CHAPTERS_I.find(c => c.id === 'beyond').text)}</p><p><a href="#" data-cfb>His texts are in the Library</a></p></details>
-      <div class="row"><button class="btn main" id="goTalk">Talk to Maria</button><button class="btn" id="goHouse">My house</button><button class="btn" id="goChron">Journal</button></div>`);
+      ${folkBtn('maria')}<div class="row"><button class="btn main" id="goTalk">Talk to Maria</button><button class="btn" id="goHouse">My house</button><button class="btn" id="goChron">Journal</button></div>`);
     $('#pbody [data-cfb]')?.addEventListener('click', e => { e.preventDefault(); libTab = 'cfb'; openLibraryRoom(); });
-    $('#goTalk').onclick = openMaria; $('#goHouse').onclick = () => { openHouse(me().id); flyTo(HX(...houseView(me()).at)); }; $('#goChron').onclick = openChronicle; return;
+    wireFolk($('#pbody')); $('#goTalk').onclick = openMaria; $('#goHouse').onclick = () => { openHouse(me().id); flyTo(HX(...houseView(me()).at)); }; $('#goChron').onclick = openChronicle; return;
   }
   panel('church', 'Qubic Church', 'Maria House. She builds rigs and keeps the Chronicle', 'maria.png', `
     <p class="say">${S.isOwner ? 'Welcome home, founder. This church is yours. ' : 'Welcome to Qubic Church. '}One rig can't warm this night. A town can. Want me to build you a rig, or will you connect your own?</p>
@@ -4270,7 +4483,7 @@ function openCore() {
 function openObservatory() {
   if (!ROOM && standingIn(SPECIAL.observatory)) return enterRoom('observatory');
   unlockPage('hunger'); act1Mark('watch'); dailyMark('watch'); if (ACT1) { const k = 'w4w.obsFar', last = +store.get(k) || 0; if (Date.now() - last > 30 * 60000) { store.set(k, String(Date.now())); observe('chthon', 0); } }
-  panel('observatory', 'Observatory', 'Network weather and BPP-9000', null, `
+  panel('observatory', 'Observatory', 'Network weather and BPP-9000', null, `${folkBtn('selma')}
     ${ACT1 ? `<h3>THROUGH THE GLASS</h3><p style="margin:0 0 8px">As far as the White lets you see, which is not far. The astronomer's list of what walks outside the Veil:</p>
     ${bestiaryHtml().replace('<h3>THE BESTIARY</h3>', '')}` : ''}
     <p class="say">From here the town watches the Qubic network: the epoch, the threshold, whether our pool holds seats in the 676. Bad news turns into a storm over Aigrad and pushes the frost harder.</p>
@@ -4278,6 +4491,7 @@ function openObservatory() {
     <h3>BPP-9000</h3>
     <p style="margin:0 0 10px">The network Qubic miners grow, calling each hour of bitcoin UP or DOWN. Live calls from 18 November. Each call you witness will become a card in your archive.</p>
     <a class="btn" href="https://qubic.church/bpp9000" target="_blank" rel="noopener">Watch it think on qubic.church</a>`);
+  wireFolk($('#pbody'));
 }
 /* ---------- the bar: The Last Coal. A warm room where the few of us can find each other ---------- */
 const RUMORS = [
@@ -4294,23 +4508,34 @@ const RUMORS = [
   'They found tracks in the snow outside the wall that end at the wall. Not at the Gate. At the wall.',
   'Ivo keeps one chair turned to the wall. He says it belongs to someone who is coming back.',
   'Somebody wrote a letter to Anna and left it in the sack. The carriers keep passing it on. Nobody knows where to deliver it.',
-  'If the Veil ever goes out, Ivo says, come here. The stove in this room has never once gone cold.'];
+  'If the Veil ever goes out, Ivo says, come here. The stove in this room has never once gone cold.',
+  'Ivo knows the funniest joke in the north. He has told it to three people. One of them laughed so hard he cried ice.',
+  'Old Hask sleeps in the snow by the Gate with his sleeves rolled up. A carter saw it and has not stopped talking about it.',
+  'Somebody pays for Pavel Rusk\'s glass at The Last Coal every epoch. Ivo takes the coin and won\'t say who.',
+  'Master Fenn was at the Gate the night they left. He says so himself. He also says he was in the Library all night.',
+  'Dr. Ruud keeps one plate locked in a drawer. Whatever is on it, she checks it every grey light.',
+  'Ada Pell has a letter on the top shelf with no address. She dusts round it.',
+  'Maria crossed out a line in the Chronicle once. Maria never crosses anything out.',
+  'A carter\'s whip was found hanging on the inside of the Gate. Yusuf Karam\'s, they say. The Gate has not opened since.',
+  'Every lit window shows on the plates at the Observatory. Dr. Ruud can tell you whose is whose.',
+  'They say a lamp day counts the same for a laptop as for a hall of rigs. Ivo says it is the only fair thing in town.'];
 function openBar() {
   if (!ROOM && standingIn(W4W.BAR_CELL)) return enterRoom('bar');
   const c = myC(), inside = c && !c.path.length && c.q === W4W.BAR_CELL[0] && c.r === W4W.BAR_CELL[1], now = xnow();
-  const rumor = RUMORS[Math.floor(now / 864e5) % RUMORS.length], wait = (c?.rounds || 0) + W4W.ROUND_WAIT - now;
+  const day = Math.floor(now / 864e5), rumor = RUMORS[day % RUMORS.length], older = [1, 2, 3, 4].map(i => RUMORS[(day - i + RUMORS.length * 9) % RUMORS.length]), wait = (c?.rounds || 0) + W4W.ROUND_WAIT - now;
   const here = Object.entries(XV?.others || {}).filter(([, o]) => o.q === W4W.BAR_CELL[0] && o.r === W4W.BAR_CELL[1] && !o.path?.length).map(([, o]) => o.nick);
   const folk = Object.entries(XV?.others || {}).map(([u, o]) => [u, o.nick]).filter(([, n]) => n).sort((a, b) => a[1].localeCompare(b[1])).slice(0, 60);
   panel('bar', 'The Last Coal', 'The bar · the stove here has never gone cold', null, `
     <p class="say">${inside ? 'Ivo pushes a cup across the bar without asking what you want.' : 'Through the frosted window: the stove, the long table, Ivo wiping the same glass he always wipes.'}</p>
-    <h3>IVO HEARD</h3><p class="say">${esc(rumor)}</p><p class="mute" style="font-size:12.5px">A new one every day. You can copy it into a letter at the post office.</p>
+    ${folkBtn('ivo')}
+    <h3>THE BOARD BY THE WINDOW</h3><p class="say">${esc(rumor)}</p><details class="lore"><summary><b>Older notes</b><span>still pinned under today's</span></summary>${older.map(r => `<p>${esc(r)}</p>`).join('')}</details><p class="mute" style="font-size:12.5px">A new note every day. Some are true. You can copy one into a letter at the post office.</p>
     <h3>THE ROOM</h3><p class="mute">${here.length ? 'Inside now: ' + here.map(esc).join(', ') + '. In here everyone hears everyone, near or far.' : 'Nobody else is in tonight. Talk anyway: whoever comes in will hear.'}</p>
     ${inside ? `<h3>STAND A ROUND</h3><p class="mute" style="font-size:13px">Give ${W4W.ROUND_COST} of your own warmth. Everyone in the room gets ${W4W.ROUND_GIFT}. Once every four hours.</p>
       ${wait > 0 ? `<p class="mute">Your last round is still warm in their hands. Again in ${Math.ceil(wait / 60000)} min.</p>` : '<button class="btn main" data-round>Stand the room a round</button>'}
       <h3>RAISE A GLASS</h3><p class="mute" style="font-size:13px">To someone who is not here. They will find it on their door when they come back.</p>
       ${folk.length ? `<div class="row"><select data-toastto aria-label="Raise a glass to">${folk.map(([u, n]) => `<option value="${esc(u)}">${esc(n)}</option>`).join('')}</select><button class="btn" data-toast>Raise a glass</button></div>` : '<p class="mute">There is nobody else in town to drink to yet.</p>'}`
     : '<button class="btn main" data-walkbar>Go inside</button>'}`, true);
-  $('#pbody [data-walkbar]')?.addEventListener('click', () => { if (!hasChar()) return; const cell = W4W.BAR_CELL; pendingOpen = { kind: 'stage2', id: 'bar', cell }; closePanel(); follow = true; trip = null; drawPrints([0, 0], [], false); xact('move', { to: cell }); });
+  wireFolk($('#pbody')); $('#pbody [data-walkbar]')?.addEventListener('click', () => { if (!hasChar()) return; const cell = W4W.BAR_CELL; pendingOpen = { kind: 'stage2', id: 'bar', cell }; closePanel(); follow = true; trip = null; drawPrints([0, 0], [], false); xact('move', { to: cell }); });
   $('#pbody [data-round]')?.addEventListener('click', () => xact('round', {}).then(v => { if (v) { sfx.reward?.(2); say('Ivo fills every cup in the room. They raise them to you.', 'Bar'); openBar(); } }));
   $('#pbody [data-toast]')?.addEventListener('click', () => { const to = $('#pbody [data-toastto]').value; xact('toast', { to }).then(v => { if (v) { sfx.reward?.(1); say('You raise your glass to the empty chair. Ivo raises his too.', 'Bar'); openBar(); } }); });
 }
@@ -4327,7 +4552,7 @@ const atPost = () => { const c = myC(); return c && !c.path.length && W4W.dist([
 const when = t => new Date(t).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
 function openPost() {
   const M = mailOf(), near = atPost(), names = allResidents().filter(h => !h.demo && h.nick && h.id !== me()?.id).map(h => h.nick);
-  panel('post', 'Post office', near ? 'The sack hangs by the door' : 'By the plaza, on the south lane', null, `
+  panel('post', 'Post office', near ? 'The sack hangs by the door' : 'By the plaza, on the south lane', null, `${folkBtn('ada')}
     <p class="say">Nothing in Aigrad delivers itself. You write a letter here, and it waits in the sack until someone carries it to the right door. Whoever carries it can break the seal. The reader will know, and will see every hand it passed through.</p>
     ${near ? `<h3>WRITE A LETTER</h3><form class="mailw" data-mailw><input list="mailnames" maxlength="40" placeholder="To whom: their name in town" required><datalist id="mailnames">${names.map(n => `<option value="${esc(n)}">`).join('')}</datalist>
       <textarea maxlength="1200" rows="5" placeholder="Your letter" required></textarea><label class="anon"><input type="checkbox" data-anon> Leave it unsigned</label><div class="row"><button class="btn main" data-keep="0">Seal it, leave it in the sack</button><button class="btn" data-keep="1">Seal it, carry it myself</button></div></form>` : `<button class="btn main" data-walkpost>Walk to the post office</button>`}
@@ -4335,7 +4560,7 @@ function openPost() {
     ${carryingHtml(near)}
     ${M.sent.length ? `<h3>LETTERS YOU SENT</h3><div class="mails">${M.sent.slice().reverse().map(m => `<div class="mail"><div><b>To ${esc(m.toNick)}</b><span>${m.where === 'delivered' ? 'delivered' : m.where === 'sack' ? 'waiting in the sack' : m.where === 'lost' ? 'it never arrived. The last hands it was in were ' + esc(m.holderNick || 'someone') + '\'s' : m.holderNick === me()?.nick || m.holderNick === 'you' ? 'in your coat' : 'in ' + esc(m.holderNick || 'someone') + '\'s hands'} · written ${when(m.at)}</span></div></div>`).join('')}</div>` : ''}`);
   const pb = $('#pbody');
-  pb.querySelector('[data-walkpost]')?.addEventListener('click', () => { closePanel(); walkTo('stage2', 'post'); });
+  wireFolk(pb); pb.querySelector('[data-walkpost]')?.addEventListener('click', () => { closePanel(); walkTo('stage2', 'post'); });
   const f = pb.querySelector('[data-mailw]'); if (f) f.querySelectorAll('[data-keep]').forEach(b => b.onclick = e => { e.preventDefault(); const to = f.querySelector('input').value.trim(), text = f.querySelector('textarea').value.trim(); if (!to || !text) return;
     xact('mailwrite', { to, text, keep: b.dataset.keep === '1', anon: !!f.querySelector('[data-anon]')?.checked }).then(v => { if (!v) return; sfx.paper(); log(`You sealed a letter for ${to}${b.dataset.keep === '1' ? ' and put it in your coat' : ' and left it in the sack'}.`, 'me'); openPost(); }); });
   pb.querySelectorAll('[data-take]').forEach(b => b.onclick = () => xact('mailtake', { id: b.dataset.take }).then(v => { if (v) { sfx.pack(); openPost(); } }));
@@ -4990,12 +5215,14 @@ function cellOfKind(k, id) {
   if (KIND_CELL[k]) return KIND_CELL[k];
   if (k === 'house') { const h = allResidents().find(x => x.id === id); return h?.at; }
   if (k === 'stage2') return STAGE2.find(s => s.id === id)?.at;
+  if (k === 'folk') return W4W.FOLK_AT[id]?.cell;
   if (k === 'pylon') return W4W.pylonCell(+id);
   return null;
 }
 function openKind(k, id) {
   { const rm = roomOf(k, id); if (rm) return enterRoom(rm, true); }
   if (k === 'gate') return openGate();
+  if (k === 'folk') return openFolk(id);
   if (k === 'pylon') return openPylon(+id);
   if (k === 'maria') return openMaria();
   if (k === 'rose') return openRose();
@@ -5066,7 +5293,7 @@ const bar = (n, v, max, cls) => `<div class="hb ${cls}"><i>${n}</i><b style="wid
 let goldSeen = null;
 let lampAsked = -1;
 function stepGold() { const g = XV?.me?.gold ?? null; if (g == null) return;
-  { const day = Math.floor(xnow() / 864e5); if (me()?.state === 'mining' && XV.me.lampDay !== day && lampAsked !== day && !xBusy) { lampAsked = day; xact('lamp', {}); } } /* your lamp lit today: the town counts it once */ if (goldSeen != null && g > goldSeen) { const n = g - goldSeen, el = document.createElement('div'); el.className = 'goldpop'; el.innerHTML = `<span class="coin"></span>+${n} New Gold`;
+  { const day = Math.floor(xnow() / 864e5), hr = Math.floor(xnow() / 36e5); if (me()?.state === 'mining' && (XV.me.lampDay !== day || XV.me.lampTo !== day) && lampAsked !== hr && !xBusy) { lampAsked = hr; xact('lamp', {}); } } /* your lamp lit today: the town counts it once */ if (goldSeen != null && g > goldSeen) { const n = g - goldSeen, el = document.createElement('div'); el.className = 'goldpop'; el.innerHTML = `<span class="coin"></span>+${n} New Gold`;
   const r = hudEl.querySelector('.ngold')?.getBoundingClientRect(); el.style.left = (r ? r.left + 90 : 40) + 'px'; el.style.top = (r ? r.top : 200) + 'px'; document.body.appendChild(el); setTimeout(() => el.remove(), 1900); sfx.reward?.(1); log(`+${n} New Gold. ${(XV.me.goldDay?.n || 0) >= W4W.GOLD_DAY ? 'That is all the town gives in a day.' : ''}`, 'you'); }
   goldSeen = g; }
 function hud(force) {
@@ -7129,12 +7356,139 @@ function openBeast(id, fromBook) {
   panel('beast', n ? B.name : '? ? ?', B.seen, null, `${back ? `<button class="pback" data-pback>‹ ${back[0]}</button>` : ''}<div class="bestiary">${pages}</div><p class="mute" style="font-size:12.5px">The Bestiary is kept in the Observatory. Everything in it was seen from inside the Veil.</p>`);
   if (back) $('#pbody [data-pback]').onclick = () => { sfx.click(); back[1](); };
 }
+/* ================= the townsfolk: who they are, what they say, what they ask =================
+ * Standing and tasks are counted on the server (world.ts FOLK, TASKS). Here: their words.
+ * Lines unlock by standing: 0 Stranger, 1 Known, 2 Trusted, 3 Friend, 4 Confidant. */
+const TFOLK = {
+  hask: { name: 'Old Hask', role: 'Keeps the North Gate', glyph: 'H', tint: '#8fb3d9',
+    hello: ['New face. Don\'t stand so close to the Gate, it bites. I\'m Hask. I keep it shut.', 'You again. Good. People who come back are people I can count.', 'Pull up a crate. The wind\'s from the north tonight. It always is.', 'There\'s my friend. Sleeves up, look. Still warm. Don\'t ask me how.', 'Sit. I\'ve been saving something to tell you, and the Gate\'s quiet tonight.'],
+    talk: [[0, 'Thirty winters on this gate. The cold has tried every trick on me. Bit my ear once. Broke a tooth on it, the cold did.'], [0, 'You\'ve got a scarf on. Two scarves. Look at you. I sleep out here most nights. Snow\'s soft, if you don\'t mind it.'], [1, 'Wrestled a bear for its coat, once. Lost. So I took the bear instead. Fair\'s fair.'], [1, 'They pay me in soup. Ivo\'s soup. I\'d guard a lesser gate for better soup, but there isn\'t a lesser gate.'], [2, 'Every grey light I hear the knocking. Three slow, three more. I don\'t answer. Answering isn\'t my job.'], [3, 'Here\'s a funny thing. I used to feel the frost like anyone. Then one night I didn\'t. Haven\'t since.']],
+    twelve: [[2, 'Teresa Holm went out first, map in her teeth. Said keep it warm, I\'ll be back by the thaw. There hasn\'t been a thaw.'], [2, 'Ilya Marten was nineteen. Sang the whole way down the lane. His mother still can\'t walk past this gate.'], [3, 'Hedda Sorn, the little woodcutter, left her axe leaning on this post. Came back for it at a run. That\'s what I remember. The running.'], [3, 'The captain shook my hand at the bar. Cold hand. Colder than mine is now. Don\'t ask me his name. I\'m not saying it out here.']],
+    ahead: ['Gate\'s shut till the Wardens say. Then you\'ll see what\'s out there. Not before, and you won\'t want to.', 'One day they\'ll open this and send the brave ones out. Until then the job\'s simple. Keep your lamp lit and keep breathing.'],
+    react: { lit: 'Heard you lit a rig. I can see the glow from here. Town\'s warmer for it, even out at the Gate.', dark: 'Your window\'s been dark a couple of nights. Everything alright up there?', veil: 'Look at the Veil tonight. Bright as I\'ve seen it. Somebody\'s rigs are working hard.', stone: 'They lit one of ours on the Stone. Good. Somebody ought to remember them out loud.' },
+    secret: ['The night the knocking started', 'I stopped feeling the cold the night the knocking started. First night, I was frozen to the bone at this post. Then three knocks, and three more, and I was warm. Warm as a stove. I never put the two together till I said it to you just now. Don\'t tell Maria. She\'d want to look at me.'],
+    tasks: {
+      h_veil: ['Walk the Veil', 'Go round the pylons and give three of them a bit of your warmth. They hum better for it. I\'d go myself, but I don\'t leave the Gate.', 'Three pylons? Good. I heard them hum from here.', (n, k) => `${n} of ${k} pylons given warmth since he asked`],
+      h_watch: ['The grey watch', 'Stand the grey light with me here at the Gate. Twice, on two different days. You\'ll hear it. Then you\'ll know why I don\'t sleep much.', 'Now you\'ve heard it too. Welcome to the watch.', (n, k) => `${n} of ${k} grey lights kept at the Gate`],
+    } },
+  ivo: { name: 'Ivo', role: 'Keeps The Last Coal', glyph: 'I', tint: '#e0a35a',
+    hello: ['Cup\'s two coins. Warming your hands on it is extra. What.', 'You. Sit where I can see you. People who sit where I can\'t see them don\'t pay.', 'Your usual. Don\'t look at me like that, I remember usuals. It\'s bad for business to forget.', 'Friend. Don\'t tell the room I said that word. They\'ll all want credit.', 'Close the door. Sit. No, closer. Tonight might be the night.'],
+    talk: [[0, 'The stove in here has never once gone cold. Not one night. I paid for every log and I\'ll tell you the price of each.'], [0, 'Rumours are free. Anything else is two coins. That\'s the board, by the window. Read it, don\'t lean on it.'], [1, 'You heard about the joke? Everybody hears about the joke. Nobody hears the joke. That\'s what makes it a good one.'], [1, 'I don\'t do kindness. I do soup, and I do a fair count. Anybody says I\'m kind, they owe me money.'], [2, 'That glass on the top shelf is spoken for. Nobody drinks from it. Nobody dusts it either. I do that.'], [3, 'Three people have heard it. One laughed so hard he cried ice. One left town. One was me, and I\'m still not over it.']],
+    twelve: [[2, 'Pavel Rusk, the smith\'s lad. Drank on a tab and never paid. Went north owing me eleven coins. The tab\'s still open.'], [2, 'Sister Odile taught the choir my mother\'s hymn. Southern tune. She hummed it walking out the door. Nobody\'s sung it since.'], [3, 'Brann Ostrow brought the milk every morning. The morning they left, he brought double. Like he knew.'], [3, 'That glass is Pavel\'s. When he pays, I\'ll pour. That\'s all I\'ll say about it.']],
+    ahead: ['A market? There\'ll be a market when there\'s something worth selling. Mine first. Then we\'ll talk about prices.', 'More people, more cups, more coins. Keep your rig on and send me more people. That\'s the whole plan.'],
+    react: { lit: 'Heard you lit a rig. Town\'s warmer. Don\'t expect a discount.', dark: 'Your lamp\'s been out two nights. A dark window doesn\'t pay its tab. Neither does a frozen one.', veil: 'Veil\'s bright tonight. Bright Veil, full room. I like a bright Veil.', stone: 'They lit one of ours on the Stone. I poured one out. Don\'t get used to that.' },
+    // TODO(Bob): the joke itself. Until it comes, he almost tells it.
+    secret: ['The joke', 'He looks at the door, then at you, then at the door again. "Not with the window open." He wipes the same glass twice. "Next time. I mean it. Next time."'],
+    tasks: {
+      i_fire: ['Feed the square', 'The fire on the square. My customers walk past it on the way here, and a warm customer drinks more. Feed it, two days. Don\'t tell them I asked.', 'Warm customers. Good. Here, a coin. Don\'t spend it all in one place. Actually, do. Here.', (n, k) => `${n} of ${k} days you fed the plaza fire`],
+      i_round: ['Stand a round', 'You want me to like you? Stand the room a round. Everybody\'s cup, your warmth. I pour, you pay. That\'s friendship.', 'Look at that. Generous. Disgusting. Here.', (n, k) => n >= k ? 'you stood the room a round' : 'stand the room a round, inside the bar'],
+      i_toast: ['To the empty chair', 'Raise a glass to somebody who isn\'t here. It\'s good for a room, a glass to the absent. Good for business too.', 'There. Now the room remembers somebody. That\'s worth a coin.', (n, k) => n >= k ? 'you raised a glass' : 'raise a glass to someone who is away'],
+    } },
+  fenn: { name: 'Master Aurel Fenn', role: 'Keeps the Library, and the other side of it', glyph: 'F', tint: '#b59ad9',
+    hello: ['You\'re late. No. You\'re early. Shh. They\'re reading.', 'Ah, the one with the boots. Wipe them. The other side tracks in snow, and I\'ve only the one mop.', 'Sit, sit. Not that chair. Someone is in that chair. You can\'t see her, which is polite of her.', 'You came back. They said you would. I said you wouldn\'t. I like being wrong about you.', 'Close the book behind you. No, the door. Same thing, tonight.'],
+    talk: [[0, 'Every book here has two sides of the page. Most people read one. I read the other one now. I can\'t stop.'], [0, 'Don\'t take the red book. Nobody has ever brought me the red book. If they do, I\'ll know it has begun.'], [1, 'The madness? It came in through the margins. Read far enough into the wrong footnote and the footnote reads you back.'], [1, 'They talk at night, on the other side of the page. I write it down. The town thinks it\'s nonsense. Some of it is.'], [2, 'Three knocks and three more means open. I didn\'t tell you that. The page did.'], [3, 'I keep a ledger of what they say over there. Half of it comes true a week later. The other half I\'m waiting on.']],
+    twelve: [[2, 'Lida Ferro kept the signals. Three slow knocks and three more was her code. It means all well, open. Remember that when you hear it.'], [2, 'Nils Arendt counted everything. Spoons, steps, stars. He was the clerk of the expedition. He counted them out of the gate himself.'], [3, 'Last night Nils said a number on the other side of the page. It wasn\'t twelve. I wrote it down and crossed it out, because it frightened me.'], [3, 'Lida\'s voice, from the other side: the road north has moved. I\'d ask Teresa, but Teresa is very far down the page.']],
+    ahead: ['This is the first page of a long book. Everybody wants to skip ahead. Don\'t. The good parts are earned.', 'When the Gate opens, the other side of the page comes closer. Keep your lamp lit. Light is the only bookmark they respect.'],
+    react: { lit: 'You lit a rig. I saw it in the margin, a new little light. They saw it too. I think they\'re glad.', dark: 'Your light went out of the margin two nights ago. Don\'t do that. They notice.', veil: 'The Veil is bright. The other side goes quiet when it\'s bright. I can almost sleep.', stone: 'A lantern lit on the Stone. One voice fewer on the other side tonight. It\'s quieter, and I miss them.' },
+    secret: ['Nils Arendt\'s last line', 'He tears a page out of his ledger and gives it to you. It is written in a neat clerk\'s hand that isn\'t his. "Thirteen set out. Count them again." "He said it twice," Fenn whispers. "The second time to you."'],
+    tasks: {
+      f_lida: ['Lida\'s code', 'Lida left something here, between the pages. Find it. You\'ll know it when it knocks.', 'There. Three and three. All well, open. Put it on the Stone, will you? She hated being kept on a shelf.', (n, k) => n >= k ? 'you found what Lida left' : 'look between the pages of the Library'],
+      f_knock: ['Bring me the knock', 'Go to the Gate at grey light. Listen. Then come back and tell me how many. Don\'t say the number on the way. The page listens too.', 'Three and three? Good. Then it\'s still her. If it\'s ever thirteen, run to me.', (n, k) => n >= k ? 'you heard the knock: bring it to him' : 'listen at the North Gate at grey light'],
+      f_shelf: ['A letter for the shelf', 'Letters come under the Gate. Bring one here and lay it on my shelf. The other side wants its post.', 'On the shelf. Hear that? Somebody over there just said thank you.', (n, k) => n >= k ? 'your letter lies on the shelf' : 'lay a letter from under the Gate on the Library shelf'],
+    } },
+  selma: { name: 'Dr. Selma Ruud', role: 'Keeps the Observatory', glyph: 'S', tint: '#9fd0e8',
+    hello: ['Mind the plates, they\'re glass. I\'m Selma Ruud. I measure the sky, what\'s left of it.', 'Ah, good. Hold this. No, by the edges. Thank you.', 'You\'re just in time. The Veil is at its clearest before grey light.', 'Come and look. I\'ve something I haven\'t shown anyone. Not even the log.', 'Lock the dome behind you. What I\'m going to show you, I\'d rather nobody else saw yet.'],
+    talk: [[0, 'The astronomer went north with the expedition. He left me the dome, the plates and his worst handwriting.'], [0, 'Every rig in town shows on my plates. A small star, low down, steady. That\'s what mining looks like from up here.'], [1, 'The network ticks and the Veil breathes with it. I log both. Some nights they\'re the same line.'], [1, 'Steady is the whole trick. A small light that never goes out does more for the Veil than a big one that comes and goes.'], [2, 'There\'s a star on the northern plates that moves. A little, every epoch. Stars do not move. I\'ve checked my sums nine times.'], [3, 'Through Mirek\'s lens it blinks. Short, then long. I\'ve been writing the blinks down. I think it\'s a code.']],
+    twelve: [[2, 'Mirek Dal ground the only lens that sees the far Rime. He said glass remembers what it\'s shown. I thought it was a glazier\'s joke.'], [2, 'The astronomer\'s glass log is in the Library. Read week thirty-one. Then come and tell me you slept.'], [3, 'Old Toma was born in the north. He told me the stars there sit low, close enough to warm your hands on. I laughed. I\'ve stopped laughing.']],
+    ahead: ['The plates will get busier. More lamps, more lights on the glass, a brighter Veil. Then they\'ll open the Gate and I\'ll need a bigger notebook.', 'I can\'t tell you what\'s out there yet. I can tell you the sky is changing, and that the town is the brightest thing in it.'],
+    react: { lit: 'There you are on my plate. A new light, low on the east side. I named it after you. Don\'t be flattered, I name all of them.', dark: 'Your star has been off my plate two nights now. I keep the space for it.', veil: 'Brightest plate I\'ve taken since the cold. Whatever you\'re all doing, keep doing it.', stone: 'A lantern was lit on the Stone, and the plates were brighter that night. I can\'t explain it, so I wrote it down.' },
+    secret: ['The moving star', 'She sets Mirek\'s lens in the eyepiece and steps back. Far north, past the Stone Teeth, a point of light blinks. Three slow. Three more. "All well, open," she says. "Lida\'s code. Either one of them is alive out there, or something has learned to say it."'],
+    tasks: {
+      s_read: ['Grey light readings', 'Come to the dome at grey light and take the reading with me. Two days. The plates won\'t hold still for one person.', 'Two good readings. Your hands are steadier than the astronomer\'s were.', (n, k) => `${n} of ${k} readings taken at grey light`],
+      s_lens: ['Mirek\'s lens', 'Mirek left a lens somewhere in this dome. Not the big one. The small one that sees too far. Find it.', 'That\'s the one. Don\'t look through it for long. Glass remembers.', (n, k) => n >= k ? 'you found Mirek\'s lens' : 'search the Observatory'],
+      s_epoch: ['A whole epoch', 'Keep your lamp lit seven days. I want to see one light hold through a whole epoch on my plates. Just one, start to finish.', 'Seven days, never once off the plate. That\'s the steadiest star I\'ve logged.', (n, k) => `${n} of ${k} lamp days since she asked`],
+    } },
+  maria: { name: 'Maria', role: 'Keeps the Chronicle, in Qubic Church', glyph: 'M', tint: '#f0c27a',
+    hello: ['You came in from the cold. Sit by me. The church is the warmest room in Aigrad after the bar, and quieter.', 'There you are. I wrote you into the Chronicle this morning. Just a line. Every one of us gets a line.', 'Sit. The candles are new. Someone brought wax from home. Small things keep a town.', 'I saved you the seat by the window. You can see your own lamp from here.', 'Stay a while. There is something I have to tell you. It is hard, and I would rather tell it to a friend.'],
+    talk: [[0, 'Every rig in Aigrad is a lamp in the Veil. One cannot hold the night. All of them together can. That is the whole of what we do.'], [0, 'My sister is in the ice at the centre of town. Anna. Your rig\'s work goes to her, a little at a time, and she is thawing.'], [1, 'The bell rings on Wednesdays at noon. That is when the epoch is sealed and the Chronicle closes a page.'], [1, 'Mine and stay warm. That is all the town asks of you for now. The rest of Aigrad is still being built, and you will see it built.'], [2, 'I write down who keeps their lamp lit. So that when the thaw comes, we remember who held the night.'], [3, 'Sometimes I read back through the Chronicle and find a line I do not remember writing. In my own hand. About the expedition.']],
+    twelve: [[2, 'Agnes Vey was our healer. Her order for splint cord is still on the plaza board. Nobody will take it down. I won\'t let them.'], [2, 'Sister Odile sang in this church every morning. On cold mornings you can still hear the hymn in the stones. I asked Ivo about it once. He went quiet.'], [3, 'I remember every face at the Gate. I counted them as they went. I am good at counting. I would like you to remember that.']],
+    ahead: ['The Gate will open one day, and the brave will walk out in Warden plates with Anna\'s light on their backs. First the town has to be bright enough.', 'There will be a market, a smithy, a hall for the Wardens. You will see them open one by one. Keep your lamp lit and you will be here for each of them.'],
+    react: { lit: 'Your lamp is lit. I saw it come on. The whole town is a little warmer, and I wrote it down.', dark: 'Your lamp has been dark for two nights. Is your machine well? If it is not, tell me. I know machines.', veil: 'The Veil is strong tonight. I can hear Anna breathing easier.', stone: 'Another lantern burns on the Stone. Every one is a name the town has said out loud again.' },
+    secret: ['What I was asked to forget', 'I was given the expedition\'s list to copy into the Chronicle. There were thirteen names on it. I was asked to write twelve, and I did. I do not remember who asked me or why I agreed, and I do not forget things. The thirteenth is the one walking down on the Stone. I think you know that already.'],
+    tasks: {
+      m_lamp: ['Light your lamp', 'Light your lamp in the Veil and keep it lit through a day. If the machine gives you trouble, ask me. That is my part.', 'There. A full day. The town knows your window now.', (n, k) => n >= k ? 'your lamp burned a full day' : 'keep your rig lit twelve hours in a day'],
+      m_stone: ['The Stone of the Twelve', 'Climb the hill north of the church to the Stone of the Twelve. Stand by it a while. Then come and tell me what you counted.', 'You counted. Good. Most people only look.', (n, k) => n >= k ? 'you stood at the Stone' : 'climb the steps to the Stone and stand by it'],
+      m_three: ['Three nights', 'Three more lamp days. Not for me. For the night.', 'Three more nights held. I wrote all three down.', (n, k) => `${n} of ${k} lamp days since she asked`],
+    } },
+  ada: { name: 'Ada Pell', role: 'Keeps the post office', glyph: 'A', tint: '#d9a0a0',
+    hello: ['Letters in the sack, carriers by the door, gossip on your own time. I\'m Ada. Post office.', 'You again. Good. A carrier who comes back is worth two who don\'t.', 'Your boots are wet. Means you walked the round. Sit, the kettle\'s on.', 'I\'ve a sorting job only a friend gets. The kind of letters nobody else should see.', 'Shut the door. Pull the blind. There\'s one letter in this office I\'ve never let anyone hold.'],
+    talk: [[0, 'Nothing in Aigrad delivers itself. Somebody carries it. That somebody gets the town\'s thanks and my respect, in that order.'], [0, 'A broken seal isn\'t a crime here. It\'s a story. The reader sees every hand the letter passed through. Remember that.'], [1, 'I know every door in town. Who answers. Who doesn\'t. Whose lamp is lit when the post comes.'], [2, 'Letters come under the Gate dry. Paper that crossed the White should be soaked. I keep those in a drawer of their own.'], [3, 'There\'s a letter on the top shelf with no address. Sealed. It\'s been there since the week of the cold. Nobody will open it, and I won\'t let them.']],
+    twelve: [[2, 'Yusuf Karam the carter took the last sack north. Said he\'d bring the replies back himself. I keep his pigeonhole empty for him.'], [3, 'The sealed letter on the top shelf. I know the hand on it. I\'ve seen it on the expedition\'s orders. I won\'t say whose.']],
+    ahead: ['When the Gate opens, the post goes north. Somebody will have to carry it. I\'m writing down names.', 'More houses, more doors, more letters. That\'s how I know the town is growing. Keep bringing people.'],
+    react: { lit: 'Your lamp\'s lit. Good. Lit windows get their post first. Don\'t tell the dark ones.', dark: 'Your window\'s been dark two nights. Letters wait at a dark door. They don\'t like it.', veil: 'Bright Veil, busy post. People write more when they\'re warm.', stone: 'A lantern lit on the Stone. Somebody will write a letter about it. Somebody always does.' },
+    secret: ['The letter with no address', 'She takes the sealed letter down and lets you hold it, just for a breath. The seal is a captain\'s seal, iron grey. On the back, in a hard hand: To be opened when the Gate is. "So we wait," Ada says, and puts it back.'],
+    tasks: {
+      a_carry: ['One letter', 'Take one letter from the sack and carry it to its door. That\'s the job. That\'s the whole job.', 'Delivered. You\'re a carrier now. It\'s on your record.', (n, k) => `${n} of ${k} letter carried to its door`],
+      a_round: ['The round', 'Three more letters, to three doors. Learn the town by its doors.', 'Three doors. You know the town better than most who live in it.', (n, k) => `${n} of ${k} letters carried since she asked`],
+    } },
+};
+const FOLK_LV = W4W.STANDING.map(s => s.name);
+const folkOf = id => XV?.folk?.folk?.[id] || { lv: 0, pts: 0, tasks: [] };
+const withFolk = id => { const c = myC(), P = W4W.FOLK_AT[id]; return !!c && !c.path.length && W4W.dist([c.q, c.r], P.cell) <= P.n; };
+const folkSeen = {}; // which line was shown last, per person, so asking again gives the next one
+/** What they say first: something about you if there is something, otherwise their greeting at your level. */
+function folkOpening(id, lv) {
+  const F = TFOLK[id], c = XV?.me, h = me(), day = Math.floor(xnow() / 864e5), seenKey = 'w4w.folkLit.' + id;
+  if (h?.state !== 'mining' && (c?.lampDays || 0) > 0 && (c?.lampTo ?? day) < day - 1) return F.react.dark;
+  if ((c?.lampDays || 0) > 0 && !store.get(seenKey)) { store.set(seenKey, '1'); return F.react.lit; }
+  const knew = Object.entries(W4W.KNEW).filter(([, w]) => w === id).map(([t]) => t);
+  if (knew.some(t => XV?.twelve?.[t] && xnow() - XV.twelve[t].t < 2 * 864e5)) return F.react.stone;
+  if (veilStrength() >= 0.8 && (day + id.length) % 3 === 0) return F.react.veil;
+  return F.hello[Math.min(lv, F.hello.length - 1)];
+}
+function folkNext(id, key, list) { const k = id + key; folkSeen[k] = ((folkSeen[k] ?? -1) + 1) % list.length; return list[folkSeen[k]]; }
+function openFolk(id) {
+  const F = TFOLK[id]; if (!F) return; const st = folkOf(id), lv = st.lv, here = withFolk(id), L = W4W.STANDING, next = L[lv + 1], days = XV?.folk?.lampDays || 0;
+  const day = Math.floor(xnow() / 864e5);
+  if (here && XV?.me && XV.me.talked?.[id] !== day && !xBusy) xact('folk', { who: id, fop: 'talk' }).then(v => { if (v && panelKind === 'folk:' + id) openFolk(id); });
+  const talk = F.talk.filter(([l]) => l <= lv).map(([, t]) => t), twelve = F.twelve.filter(([l]) => l <= lv).map(([, t]) => t);
+  const bar = next ? `<div class="fstand"><div><b>${FOLK_LV[lv]}</b><span>next: ${FOLK_LV[lv + 1]}</span></div>
+      <div class="fbar"><i style="width:${Math.min(100, st.pts / next.pts * 100).toFixed(0)}%"></i></div>
+      <small>${st.pts} of ${next.pts} standing · ${Math.min(days, next.days)} of ${next.days} lamp ${next.days === 1 ? 'day' : 'days'}</small></div>`
+    : `<div class="fstand"><div><b>${FOLK_LV[lv]}</b><span>as close as anyone gets</span></div><div class="fbar"><i style="width:100%"></i></div></div>`;
+  const tasks = st.tasks.map(t => { const T = F.tasks[t.id]; if (!T) return '';
+    if (t.st === 'locked') { const need = W4W.TASKS.find(x => x.id === t.id)?.lv || 0; return `<div class="ftask locked"><b>${esc(T[0])}</b><span>when you are ${FOLK_LV[need]}</span></div>`; }
+    if (t.st === 'done') return `<div class="ftask done"><b>${esc(T[0])}</b><span>${esc(T[2])}</span></div>`;
+    if (t.st === 'open') return `<div class="ftask"><b>${esc(T[0])}</b><p>${esc(T[1])}</p>${here ? `<button class="btn" data-ftake="${t.id}">I'll do it</button>` : ''}</div>`;
+    return `<div class="ftask on"><b>${esc(T[0])}</b><p>${esc(T[1])}</p><span>${esc(T[3](t.n, t.need))}</span>${t.st === 'ready' && here ? `<button class="btn main" data-fturn="${t.id}">It's done</button>` : t.st === 'ready' ? '<span class="mute"> · go back to them</span>' : ''}</div>`; }).join('');
+  const extra = [];
+  if (id === 'hask' && here && greyNow()) extra.push('<button class="btn" data-fop="watch">Keep the grey watch</button>');
+  if (id === 'selma' && here && greyNow()) extra.push('<button class="btn" data-fop="reading">Take the reading</button>');
+  panel('folk:' + id, F.name, F.role, null, `
+    <div class="folk"><div class="fglyph" style="--t:${F.tint}">${F.glyph}</div><div class="fline"><p class="say" data-fsay>${esc(here ? folkOpening(id, lv) : W4W.FOLK_AT[id].away)}</p>
+      ${here ? `<div class="row fask"><button class="btn" data-fask="talk">Talk</button>${twelve.length ? '<button class="btn" data-fask="twelve">Ask about the twelve</button>' : ''}<button class="btn" data-fask="ahead">What comes next?</button>${extra.join('')}</div>` : `<div class="row"><button class="btn main" data-fwalk>Walk there</button></div>`}</div></div>
+    ${bar}
+    <p class="mute" style="font-size:12.5px;margin:6px 0 12px">Standing grows slowly: talk once a day, do what they ask, and keep your lamp lit. Every day your lamp burns twelve hours warms the whole town to you, whatever the size of your rig.</p>
+    ${tasks ? `<h3>WHAT ${esc(F.name.split(' ').slice(-1)[0].toUpperCase())} ASKS</h3><div class="ftasks">${tasks}</div>` : ''}
+    ${lv >= 4 ? `<details class="lore fsecret"><summary><b>${esc(F.secret[0])}</b><span>only for a confidant</span></summary><p>${esc(F.secret[1])}</p></details>` : ''}`);
+  const pb = $('#pbody'), say = pb.querySelector('[data-fsay]');
+  pb.querySelectorAll('[data-fask]').forEach(b => b.onclick = () => { sfx.click(); const k = b.dataset.fask; say.textContent = folkNext(id, k, k === 'talk' ? talk : k === 'twelve' ? twelve : F.ahead); say.classList.remove('fin'); void say.offsetWidth; say.classList.add('fin'); });
+  pb.querySelector('[data-fwalk]')?.addEventListener('click', () => { closePanel(); walkTo('folk', id); });
+  pb.querySelectorAll('[data-ftake]').forEach(b => b.onclick = () => xact('folk', { who: id, fop: 'take', task: b.dataset.ftake }).then(v => { if (v) { sfx.paper?.(); openFolk(id); } }));
+  pb.querySelectorAll('[data-fturn]').forEach(b => b.onclick = () => xact('folk', { who: id, fop: 'turn', task: b.dataset.fturn }).then(v => { if (v) { sfx.reward?.(2); const T = F.tasks[b.dataset.fturn]; banner(F.name, T[0]); log(`${F.name}: "${T[2]}"`, 'warm'); openFolk(id); } }));
+  pb.querySelectorAll('[data-fop]').forEach(b => b.onclick = () => xact('folk', { who: id, fop: b.dataset.fop }).then(v => { if (v) { sfx.click(); say.textContent = b.dataset.fop === 'watch' ? 'You stand the grey light with him. Far out past the Gate, three slow knocks. Then three more. Hask does not look round.' : 'You hold the plate by its edges while she reads the Veil. "Steady," she says. "Good."'; openFolkSoon(id); } }));
+}
+const greyNow = () => W4W.greyAt(xnow());
+function openFolkSoon(id) { setTimeout(() => { if (panelKind === 'folk:' + id) { const s = $('#pbody [data-fsay]')?.textContent; openFolk(id); const n = $('#pbody [data-fsay]'); if (n && s) n.textContent = s; } }, 600); }
+/** A button that opens one of them, for the panels of their places. */
+const folkBtn = id => { const F = TFOLK[id], st = folkOf(id); return `<button class="folkb" data-folk="${id}"><i style="--t:${F.tint}">${F.glyph}</i><span><b>${esc(F.name)}</b><small>${FOLK_LV[st.lv]}${st.tasks.some(t => t.st === 'ready') ? ' · something to tell them' : st.tasks.some(t => t.st === 'open') ? ' · has something to ask' : ''}</small></span></button>`; };
+const wireFolk = root => root.querySelectorAll('[data-folk]').forEach(b => b.onclick = () => { sfx.click(); openFolk(b.dataset.folk); });
 function openGate() {
   act1Mark('gate'); if (pages1.includes('knock')) unlockPage('captain'); const m = Math.round((S.town.melt || 0) * 100), L = openLetter(), c = myC(), near = c && !c.path.length && W4W.dist([c.q, c.r], GATE_CELL) <= 1;
   const kept = letters().filter(l => l.read).length, ph = XV?.story?.phase || 0, barWait = (c?.barred || 0) + W4W.BAR_WAIT - xnow();
   const letterHtml = L ? `<div class="lin ${L.mine ? 'mine' : ''}"><small>${L.mine ? 'Under the Gate, with your name on it' : 'Lying in the snow under the Gate'}</small><b>${esc(L.title)}</b><p>The snow takes it in <span data-lleft>${mmss(L.until - xnow())}</span>. After that nobody can read it.</p>
       ${near ? `<button class="btn main" data-readl="${esc(L.id)}">Pick it up</button>` : `<button class="btn main" data-walkg>Walk to the Gate</button>`}</div>` : '';
-  panel('gate', 'The North Gate', 'Sealed since the ninth night', null, `${letterHtml}
+  panel('gate', 'The North Gate', 'Sealed since the ninth night', null, `${folkBtn('hask')}${letterHtml}
     <p class="say">Twelve went out through this gate the week before the cold. On the ninth night someone knocked on it from outside, three slow knocks and then three more, in the captain's voice. We did not open. The bar has not moved since.</p>
     ${near ? `<details class="gnote"><summary>Slip a note out under the Gate</summary><p class="mute" style="font-size:12.5px;margin:6px 0 8px">Whatever you write goes out into the White. Nobody in town will see it. Maria would tell you not to.</p><form data-gnote><textarea maxlength="1500" rows="4" placeholder="Write to whoever is out there"></textarea><button class="btn">Slip it under</button></form></details>` : ''}
     ${kept ? `<p class="mute" style="font-size:12.5px">You have kept ${kept} ${kept === 1 ? 'letter' : 'letters'} from under this gate. <a href="#" data-lkept>Read them in the Journal</a>.</p>` : ''}
@@ -7143,7 +7497,7 @@ function openGate() {
     <h3>WHEN IT OPENS</h3><p style="margin:0 0 10px">It opens from our side, when we choose, for people in Warden plates who carry Anna's light on their backs. Until then the whole town has one job: keep the lamps lit. Every rig, every fed fire, every kept promise brings that day closer.</p>
     <p class="mute" style="font-size:12.5px">Act II of the story begins at this gate.</p>`);
   const pb = $('#pbody');
-  pb.querySelector('[data-readl]')?.addEventListener('click', e => readLetter(e.currentTarget.dataset.readl));
+  wireFolk(pb); pb.querySelector('[data-readl]')?.addEventListener('click', e => readLetter(e.currentTarget.dataset.readl));
   pb.querySelector('[data-walkg]')?.addEventListener('click', () => { sfx.click(); closePanel(); walkTo('gate'); });
   pb.querySelector('[data-gnote]')?.addEventListener('submit', e => { e.preventDefault(); const t = e.target.querySelector('textarea'), text = t.value.trim(); if (!text) return;
     xact('reply', { text }).then(v => { if (!v) return; sfx.paper(); t.value = ''; log('You slipped a note out under the North Gate. The wind took it at once.', 'world'); banner('Under the Gate', 'the wind took your note'); }); });
@@ -7423,7 +7777,7 @@ const ROOMS = {
     hot: [
       [0, 10, 14, 52, 'The rumour board', () => openBar()],
       [14, 5, 11, 50, 'The window', () => roomNote('Frost on the glass, and past it the White. Ivo never sits with his back to this window.')],
-      [26, 32, 45, 28, 'Ivo at the counter', () => openBar()],
+      [26, 32, 45, 28, 'Ivo at the counter', () => openFolk('ivo')],
       [76, 28, 24, 50, 'The fire', () => roomNote('You hold your hands to the fire. The kettle has been on the hook since the first night.')],
       [0, 62, 64, 38, 'Who is here tonight', () => openBarPeople()],
     ] },
@@ -7445,7 +7799,7 @@ const ROOMS = {
       [0, 57, 14, 38, 'The lens cabinet', () => openObservatory()],
     ] },
 };
-let ROOM = null; const doorSeen = new Set();
+let ROOM = null; const doorSeen = new Set(); const ROOM_FOLK = { bar: 'ivo', library: 'fenn', observatory: 'selma' };
 const standingIn = cell => { const c = myC(); return !!c && !c.path.length && c.q === cell[0] && c.r === cell[1]; };
 function roomOf(k, id) { if (k === 'house' && me() && (id === me().id || id === 'me')) return 'home'; if (k === 'stage2' && id === 'bar') return 'bar'; if (k === 'library' || k === 'observatory') return k; return null; }
 function roomNote(t) { const n = $('#room .rnote'); if (!n) return; n.textContent = t; n.classList.add('on'); clearTimeout(roomNote.t); roomNote.t = setTimeout(() => n.classList.remove('on'), 5200); }
@@ -7480,10 +7834,11 @@ function showRoom(name) {
   const R = ROOMS[name]; ROOM = name; closePanel(); let el = $('#room'); if (!el) { el = document.createElement('div'); el.id = 'room'; document.body.appendChild(el); }
   el.innerHTML = `<div class="rimg" style="background-image:url(${R.img})"></div><div class="rfx">${R.fx.map(([x, y, r, k]) => `<span class="${k || ''}" style="left:${x - r}%;top:calc(${y}% - ${r}vw);width:${r * 2}%;aspect-ratio:1;animation-delay:-${(x * 37 % 20) / 10}s"></span>`).join('')}</div><div class="rvig"></div>
     <div class="rhot">${R.hot.map(([x, y, w, h, t], i) => `<button style="left:${x}%;top:${y}%;width:${w}%;height:${h}%" data-h="${i}" aria-label="${esc(t)}"><em class="plq"></em></button>`).join('')}</div>
-    <div class="rbar"><div><h2>${esc(R.title)}</h2><small>${esc(R.sub)}</small></div><button class="btn" data-rexit>Step outside</button></div><div class="rnote"></div>`;
+    <div class="rbar"><div><h2>${esc(R.title)}</h2><small>${esc(R.sub)}</small></div>${ROOM_FOLK[name] ? `<button class="btn main" data-rfolk>Talk to ${esc(TFOLK[ROOM_FOLK[name]].name)}</button>` : ''}<button class="btn" data-rexit>Step outside</button></div><div class="rnote"></div>`;
   document.body.classList.add('inroom'); document.body.classList.toggle('inbar', name === 'bar'); roomPlaques(); requestAnimationFrame(() => el.classList.add('on'));
   el.querySelectorAll('[data-h]').forEach(b => b.onclick = () => { sfx.click(); seenPlq(name, +b.dataset.h); R.hot[+b.dataset.h][5](); roomPlaques(); });
   el.querySelector('[data-rexit]').onclick = () => { sfx.close?.(); leaveRoom(); };
+  el.querySelector('[data-rfolk]')?.addEventListener('click', () => { sfx.click(); openFolk(ROOM_FOLK[name]); });
   // a slow look round the room as the mouse moves
   el.onpointermove = e => { if (MOBILE) return; const dx = e.clientX / innerWidth - 0.5, dy = e.clientY / innerHeight - 0.5, t = `scale(1.04) translate(${-dx * 1.6}%, ${-dy * 1.1}%)`; el.querySelector('.rimg').style.transform = t; el.querySelector('.rhot').style.transform = t; };
 }
@@ -7584,6 +7939,7 @@ function bindTrace(root) {
   root.querySelector('[data-gostone]')?.addEventListener('click', () => { sfx.click(); closePanel(); walkTo('stone', 'stone') || openStone(); });
 }
 function openStone() {
+  { const c0 = myC(), t = XV?.me?.tasks?.m_stone; if (t && !t.done && c0 && !c0.path.length && W4W.dist([c0.q, c0.r], W4W.STONE_CELL) <= 1 && !((XV.me.marks?.stone || 0) > t.t)) xact('folk', { who: 'maria', fop: 'stone' }); }
   const c = myC(), near = c && !c.path.length && W4W.dist([c.q, c.r], W4W.STONE_CELL) <= 1, n = W4W.TWELVE.filter(T => twelveLit(T.id)).length;
   const rows = W4W.TWELVE.map((T, i) => { const L = twelveLit(T.id), X = TWELVE_TXT[T.id];
     if (L) return `<div class="lamp on"><b>${esc(T.name)}</b><p>${esc(X.card || '')}</p><small>Lit by ${esc(L.nick)}</small></div>`;
@@ -7638,6 +7994,18 @@ function stepFolk(dt) {
     const side = (FOLK.indexOf(F) % 2 ? 0.28 : -0.28) * F.dir, p = C.getPoint(F.s), t = C.getTangent(F.s);
     F.g.position.set(p.x - t.z * side, 0, p.z + t.x * side); if (F.wait <= 0) { const y = Math.atan2(t.x * F.dir, t.z * F.dir), r0 = F.g.rotation.y; F.g.rotation.y = r0 + Math.atan2(Math.sin(y - r0), Math.cos(y - r0)) * Math.min(1, dt * 6); }
     if (F.g.position.distanceTo(controls.target) < 40) F.mx.update(dt); }
+}
+/* Old Hask at the North Gate: a big man in a rolled-up coat, idle by the post, looking at the town he keeps. Click him to talk. */
+let HASK = null;
+function stepHask(dt) {
+  if (!HERO) return;
+  if (!HASK) { const body = cloneSkinned(HERO.scene), tint = new THREE.Color(0x9a8270); body.scale.setScalar(heroScale * 1.22);
+    body.traverse(m => { if (m.isMesh) { m.material = heroMat(m.material).clone(); m.material.color.multiply(tint); m.castShadow = false; m.frustumCulled = false; } });
+    const g = new THREE.Group(); g.add(body); scene.add(g); const gc = HX(...GATE_CELL), inward = gc.clone().multiplyScalar(-1).normalize(), side = new THREE.Vector3(-inward.z, 0, inward.x);
+    const at = gc.clone().add(inward.clone().multiplyScalar(0.95)).add(side.multiplyScalar(0.62)); g.position.set(at.x, groundH(at.x, at.z), at.z); g.rotation.y = Math.atan2(inward.x, inward.z);
+    const mx = new THREE.AnimationMixer(body), acts = {}; for (const [n, c] of Object.entries(heroClips)) acts[n] = mx.clipAction(c);
+    HASK = { g, mx, acts, cur: '' }; folkPlay(HASK, 'Idle'); tag(g, 'folk', 'hask'); label('OLD HASK', g, 0.72, 'walker'); }
+  if (HASK.g.position.distanceTo(controls.target) < 30) HASK.mx.update(dt);
 }
 function folkPlay(F, n) { if (F.cur === n || !F.acts[n]) return; const a = F.acts[n], o = F.acts[F.cur]; a.reset().fadeIn(0.3).play(); if (o) o.fadeOut(0.3); F.cur = n; }
 
@@ -7882,7 +8250,7 @@ function loop(now = performance.now()) {
       o.material.opacity = big ? 0.8 + Math.sin(t * 9 + ph) * 0.07 + Math.sin(t * 5.3 + ph) * 0.08 : 0.82 + Math.sin(t * 1.9 + ph) * 0.05 + Math.sin(t * 4.7 + ph * 0.6) * 0.03;
       o.scale.setScalar(s0 * (1 + f * 1.1 + (big ? (S.town.fire || 0) * 0.07 + Math.sin(t * 6.1 + ph) * 0.03 : 0))); }
     if (o.userData.blink) o.material.opacity = 0.35 + 0.65 * (Math.sin(t * 4) > 0 ? 1 : 0.2); } });
-  stepCamera(dt); stepAvatars(dt); stepSnowFx(dt); hud(); stepSound(); stepPlaces(dt); if (XV?.me) { stepFrames(dt); if (!ACT1) stepShards(predicted()?.c, dt); } if (XV) { stepRime(dt); if ((tick & 15) === 0) { stepNotes(); stepLogWatch(); stepLog(); stepStoneLamps(); stepRoom(); } stepLocalGrid(predicted()?.c); }
+  stepCamera(dt); stepAvatars(dt); stepSnowFx(dt); hud(); stepSound(); stepPlaces(dt); stepHask(dt); if (XV?.me) { stepFrames(dt); if (!ACT1) stepShards(predicted()?.c, dt); } if (XV) { stepRime(dt); if ((tick & 15) === 0) { stepNotes(); stepLogWatch(); stepLog(); stepStoneLamps(); stepRoom(); } stepLocalGrid(predicted()?.c); }
   for (const k in walkers) { const w = walkers[k]; w.g.position.lerp(w.target, Math.min(1, dt * 1.5)); w.g.position.y = 0; w.light.position.set(w.g.position.x + 0.15, 0.45, w.g.position.z); }
   if (fly) { fly.t = Math.min(1, fly.t + dt * 0.9); const k = 1 - Math.pow(1 - fly.t, 3);
     const tgt = fly.from.clone().lerp(fly.to, k); const off = camera.position.clone().sub(controls.target).normalize().multiplyScalar(fly.d0 + (fly.d1 - fly.d0) * k);

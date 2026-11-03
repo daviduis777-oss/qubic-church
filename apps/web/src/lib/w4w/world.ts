@@ -44,7 +44,15 @@ export type Char = {
   toasts?: { nick: string; t: number }[] // glasses raised to you at the bar while you were away
   toasted?: Record<string, number> // whom you last raised a glass to, and when
   traces?: string[] // what you have found of the twelve and not yet brought to the Stone
+  standing?: Record<string, number> // what each of the townsfolk thinks of you, in points
+  lampDays?: number // days your lamp burned twelve hours or more: the town remembers every one
+  lampTo?: number // the last day counted into lampDays
+  maEp?: number // the last epoch Maria thanked you for
+  talked?: Record<string, number> // the day you last talked to each of the townsfolk
+  tasks?: Record<string, FolkTask> // what the townsfolk asked of you
+  marks?: Record<string, number> // places you stood for a task: when
 }
+export type FolkTask = { t: number; n: number; d?: number; base?: number; done?: number }
 export type Ctx = {
   heatR: number // radius of the town's warm circle, world units
   holds: boolean // the town holds tonight
@@ -702,7 +710,7 @@ export type WState = {
   rime?: Rime
   rimeTrail?: [number, number, number][] // computed on load, not stored
 }
-export type Feed = { id: string; t: number; topic: 'froze' | 'hearth' | 'took' | 'library' | 'found' | 'shard' | 'anna' | 'order' | 'pylon' | 'letter' | 'drain' | 'bar' | 'unveil' | 'mail' | 'valve' | 'round' | 'toast' | 'twelve' | 'shelf' | 'turn' | 'fallen'; by: string; data: Record<string, unknown> }
+export type Feed = { id: string; t: number; topic: 'froze' | 'hearth' | 'took' | 'library' | 'found' | 'shard' | 'anna' | 'order' | 'pylon' | 'letter' | 'drain' | 'bar' | 'unveil' | 'mail' | 'valve' | 'round' | 'toast' | 'twelve' | 'shelf' | 'turn' | 'fallen' | 'folk'; by: string; data: Record<string, unknown> }
 export type Dirty = { chars: Set<string>; hearths: Set<string>; bags: Set<string>; bagsGone: Set<string>; nodes: Set<string>; feed: Feed[]; rime?: boolean; library?: Set<string>; shards?: Set<string>; anna?: boolean; delivered?: boolean; pylons?: Set<string>; twelve?: Set<string>; story?: boolean }
 export const newDirty = (): Dirty => ({ chars: new Set(), hearths: new Set(), bags: new Set(), bagsGone: new Set(), nodes: new Set(), feed: [] })
 
@@ -783,6 +791,96 @@ export function stepAll(ws: WState, d: Dirty) {
   for (const uid of Object.keys(ws.chars)) { const c = ws.chars[uid]!; if (c.path.length || c.act || c.frozenUntil || zoneOf(c.q, c.r) >= 1 || c.warmth < 100 || c.health < 100 || c.energy < 100) stepChar(ws, uid, d) }
 }
 
+/* ================= the townsfolk: standing and tasks =================
+ * Five levels with each of them, as with a trader: points from their tasks and talk, and days your lamp burned.
+ * A lamp day counts when the rig was lit twelve hours that day. Its size never matters: money does not buy standing. */
+export const FOLK = ['hask', 'ivo', 'fenn', 'selma', 'maria', 'ada'] as const
+export type FolkId = typeof FOLK[number]
+export const STANDING = [
+  { name: 'Stranger', pts: 0, days: 0 }, { name: 'Known', pts: 10, days: 1 }, { name: 'Trusted', pts: 40, days: 5 },
+  { name: 'Friend', pts: 100, days: 14 }, { name: 'Confidant', pts: 200, days: 30 },
+] as const
+/** Where each of them is: you talk to people where they are. */
+export const FOLK_AT: Record<FolkId, { cell: Cell; n: number; away: string }> = {
+  hask: { cell: [0, -TOWN_RING], n: 1, away: 'Old Hask is at the North Gate. Go and stand with him.' },
+  ivo: { cell: BAR_CELL, n: 0, away: 'Ivo only talks across his own bar. Go inside The Last Coal.' },
+  fenn: { cell: SPECIAL.library as unknown as Cell, n: 0, away: 'Master Fenn never leaves the Library. Not this side of it.' },
+  selma: { cell: SPECIAL.observatory as unknown as Cell, n: 0, away: 'Dr. Ruud is at the Observatory, under the dome.' },
+  maria: { cell: SPECIAL.church as unknown as Cell, n: 0, away: 'Maria is in the church. Sit with her there.' },
+  ada: { cell: POST_CELL, n: 1, away: 'Ada Pell is at the post office, by the sack.' },
+}
+/** Who knew whom: a lantern lit on the Stone warms the one who knew that person. */
+export const KNEW: Record<string, FolkId> = { teresa: 'hask', ilya: 'hask', pavel: 'ivo', odile: 'ivo', brann: 'ivo', lida: 'fenn', nils: 'fenn', mirek: 'selma', agnes: 'maria', yusuf: 'ada', hedda: 'hask', toma: 'selma' }
+export const E_START = Date.UTC(2026, 9, 28, 12)
+export const epochAt = (t: number) => 237 + Math.floor((t - E_START) / WEEK_MS)
+export function standingOf(c: Char, who: FolkId) {
+  const pts = c.standing?.[who] ?? 0, days = c.lampDays ?? 0; let lv = 0
+  for (let i = 1; i < STANDING.length; i++) { const L = STANDING[i]!; if (pts >= L.pts && days >= L.days) lv = i; else break }
+  return { lv, pts, days, next: STANDING[lv + 1] ?? null }
+}
+const addStanding = (c: Char, who: FolkId, n: number) => { (c.standing ??= {})[who] = Math.max(0, (c.standing[who] ?? 0) + n) }
+/** Count the days the lamp burned: from the house's own record of when its rig started, backfilled two weeks at most. */
+export function creditLamp(c: Char, h: (HouseLite & { startedAt?: number }) | undefined, now: number) {
+  if (h?.state !== 'mining' || !h.startedAt) return 0
+  const today = dayOf(now); let n = 0
+  for (let D = Math.max((c.lampTo ?? dayOf(h.startedAt) - 1) + 1, today - 14); D <= today; D++) {
+    const lit = Math.min(now, (D + 1) * DAY_MS) - Math.max(h.startedAt, D * DAY_MS)
+    if (lit < 12 * 3600_000) continue
+    c.lampDays = (c.lampDays ?? 0) + 1; c.lampTo = D; n++
+    for (const f of FOLK) addStanding(c, f, 1) // the whole town is warmer for it, and everyone knows whose window it is
+    const ep = epochAt(D * DAY_MS + 12 * 3600_000); if (c.maEp !== ep) { c.maEp = ep; addStanding(c, 'maria', 5) }
+  }
+  return n
+}
+export type TaskDef = { id: string; who: FolkId; lv: number; pts: number; gold: number; need: number }
+/** What they ask. The words are the game's; here only what counts. */
+export const TASKS: TaskDef[] = [
+  { id: 'h_veil', who: 'hask', lv: 0, pts: 8, gold: 1, need: 3 }, // give warmth to three pylons
+  { id: 'h_watch', who: 'hask', lv: 1, pts: 15, gold: 2, need: 2 }, // stand the grey watch at the Gate on two days
+  { id: 'i_fire', who: 'ivo', lv: 0, pts: 8, gold: 1, need: 2 }, // feed the plaza fire on two days
+  { id: 'i_round', who: 'ivo', lv: 1, pts: 15, gold: 2, need: 1 }, // stand the room a round
+  { id: 'i_toast', who: 'ivo', lv: 2, pts: 25, gold: 3, need: 1 }, // raise a glass to someone who is not there
+  { id: 'f_lida', who: 'fenn', lv: 0, pts: 8, gold: 1, need: 1 }, // find what Lida Ferro left in the Library
+  { id: 'f_knock', who: 'fenn', lv: 1, pts: 15, gold: 2, need: 1 }, // listen at the Gate in the grey light, bring him the knock
+  { id: 'f_shelf', who: 'fenn', lv: 2, pts: 25, gold: 3, need: 1 }, // lay a letter from beyond the Gate on his shelf
+  { id: 's_read', who: 'selma', lv: 0, pts: 8, gold: 1, need: 2 }, // take the grey light reading on two days
+  { id: 's_lens', who: 'selma', lv: 1, pts: 15, gold: 2, need: 1 }, // find Mirek's lens
+  { id: 's_epoch', who: 'selma', lv: 2, pts: 25, gold: 3, need: 7 }, // seven lamp days after she asks
+  { id: 'm_lamp', who: 'maria', lv: 0, pts: 8, gold: 1, need: 1 }, // light your lamp: one lamp day
+  { id: 'm_stone', who: 'maria', lv: 1, pts: 15, gold: 2, need: 1 }, // climb to the Stone of the Twelve
+  { id: 'm_three', who: 'maria', lv: 2, pts: 25, gold: 3, need: 3 }, // three more lamp days
+  { id: 'a_carry', who: 'ada', lv: 0, pts: 8, gold: 1, need: 1 }, // carry one letter to its door
+  { id: 'a_round', who: 'ada', lv: 1, pts: 15, gold: 2, need: 3 }, // carry three more
+]
+const twelveDone = (ws: WState, c: Char, id: string) => !!c.traces?.includes(id) || !!ws.twelve?.[id]
+/** How far along a task is, counted from what the town already keeps. */
+export function taskProgress(ws: WState, uid: string, T: TaskDef): number {
+  const c = ws.chars[uid]; const k = c?.tasks?.[T.id]; if (!c || !k) return 0
+  switch (T.id) {
+    case 'h_veil': return Object.values(c.tended ?? {}).filter(t => t > k.t).length
+    case 'f_lida': return twelveDone(ws, c, 'lida') ? 1 : 0
+    case 's_lens': return twelveDone(ws, c, 'mirek') ? 1 : 0
+    case 's_epoch': case 'm_three': return Math.max(0, (c.lampDays ?? 0) - (k.base ?? 0))
+    case 'm_lamp': return Math.min(1, c.lampDays ?? 0)
+    case 'm_stone': return (c.marks?.stone ?? 0) > k.t || Object.values(ws.twelve ?? {}).some(x => x.by === uid) ? 1 : 0
+    default: return k.n
+  }
+}
+/** A step of a task done somewhere else in town: counted once a day where the task says so. */
+function bumpTask(c: Char, id: string, now: number, daily = false) {
+  const k = c.tasks?.[id]; if (!k || k.done) return
+  if (daily) { const day = dayOf(now); if (k.d === day) return; k.d = day }
+  k.n += 1
+}
+export function folkView(ws: WState, uid: string) {
+  const c = ws.chars[uid]; if (!c) return null
+  const out: Record<string, { lv: number; pts: number; tasks: { id: string; st: 'locked' | 'open' | 'on' | 'ready' | 'done'; n: number; need: number }[] }> = {}
+  for (const f of FOLK) { const S = standingOf(c, f)
+    out[f] = { lv: S.lv, pts: S.pts, tasks: TASKS.filter(T => T.who === f).map(T => { const k = c.tasks?.[T.id], n = Math.min(T.need, taskProgress(ws, uid, T))
+      return { id: T.id, need: T.need, n, st: k?.done ? 'done' as const : k ? (n >= T.need ? 'ready' as const : 'on' as const) : S.lv >= T.lv ? 'open' as const : 'locked' as const } }) } }
+  return { lampDays: c.lampDays ?? 0, folk: out }
+}
+
 export function viewOf(ws: WState, uid: string, events: Event[] = []) {
   const forecast = Array.from({ length: 7 }, (_, i) => { const at = Math.floor(ws.now / 7_200_000) * 7_200_000 + i * 7_200_000; const x = weatherAt(at); return { at, id: x.id, name: x.name, mult: x.mult } })
   const others = Object.fromEntries(Object.entries(ws.chars).filter(([k]) => k !== uid).map(([k, c]) => [k, { q: c.q, r: c.r, path: c.path.slice(0, 1), t0: c.t0, stepMs: c.stepMs, frozenUntil: c.frozenUntil, home: c.home, nick: nickIn(ws, k), act: c.act ? { kind: c.act.kind, until: c.act.until } : null }]))
@@ -800,6 +898,7 @@ export function viewOf(ws: WState, uid: string, events: Event[] = []) {
     story: { chosen: !!ws.story?.chosen?.includes(uid), turns: ws.story?.turns ?? 0, fallen: ws.story?.fallen ?? null, phase: ws.story?.phase ?? 0, hush: (ws.story?.phase ?? 0) >= 2 ? Math.round(hushNow(ws.story, ws.now)) : null, unveil: unveiled(ws.story, ws.now) ? ws.story!.unveil! : null },
     pressed: pressedAt(ws.now), pressNext: (Math.floor(ws.now / PYLON_PRESS_MS) + 1) * PYLON_PRESS_MS,
     ranks: Object.fromEntries(Object.entries(ws.chars).map(([k, x]) => [k, rankOf(x.renown ?? 0)])),
+    folk: folkView(ws, uid),
   }
 }
 export type View = ReturnType<typeof viewOf>
@@ -1065,12 +1164,12 @@ export function action(ws: WState, uid: string, op: string, b: Record<string, un
     case 'stoke': {
       // the plaza fire took your wood (the site keeps the fire itself; this is the town's thanks, once an hour)
       if (now - (c.stoked ?? 0) < 3600_000) return ok()
-      c.stoked = now; addGold(c, 1, now); return ok()
+      c.stoked = now; addGold(c, 1, now); bumpTask(c, 'i_fire', now, true); return ok()
     }
     case 'lamp': {
       // your lamp is lit in the Veil today: the town counts it once a day
-      const day = dayOf(now); if (c.lampDay === day) return ok()
-      c.lampDay = day; addGold(c, 2, now); return ok()
+      const day = dayOf(now); if (c.lampDay !== day) { c.lampDay = day; addGold(c, 2, now) }
+      creditLamp(c, house as HouseLite & { startedAt?: number }, now); return ok()
     }
     case 'round': {
       // stand the whole room a drink: your warmth goes into everyone else's cup
@@ -1081,6 +1180,7 @@ export function action(ws: WState, uid: string, op: string, b: Record<string, un
       c.warmth -= ROUND_COST; c.rounds = now
       for (const [k, o] of inside) { o.warmth = Math.min(100, o.warmth + ROUND_GIFT); d.chars.add(k) }
       if (inside.length) { addRenown(c, 1); addGold(c, 1, now) }
+      bumpTask(c, 'i_round', now)
       d.feed.push({ id: `rd${uid}${now}`, t: now, topic: 'round', by: uid, data: { nick: nickIn(ws, uid), n: inside.length } })
       return ok()
     }
@@ -1089,7 +1189,7 @@ export function action(ws: WState, uid: string, op: string, b: Record<string, un
       if (c.path.length || dist(here, BAR_CELL) > 0) return fail('Go inside the bar first.')
       const to = String(b.to ?? ''), o = ws.chars[to]; if (!o || to === uid) return fail('Raise it to someone in town.')
       c.toasted ??= {}; if (now - (c.toasted[to] ?? 0) < TOAST_WAIT) return fail('You already drank to them today.')
-      c.toasted[to] = now; o.toasts = [{ nick: nickIn(ws, uid), t: now }, ...(o.toasts ?? [])].slice(0, 8); d.chars.add(to)
+      c.toasted[to] = now; bumpTask(c, 'i_toast', now); o.toasts = [{ nick: nickIn(ws, uid), t: now }, ...(o.toasts ?? [])].slice(0, 8); d.chars.add(to)
       d.feed.push({ id: `ts${uid}${to}${now}`, t: now, topic: 'toast', by: uid, data: { nick: nickIn(ws, uid), to: nickIn(ws, to) } })
       return ok()
     }
@@ -1115,9 +1215,33 @@ export function action(ws: WState, uid: string, op: string, b: Record<string, un
       c.traces = c.traces.filter(x => x !== T.id)
       if (ws.twelve?.[T.id]) return ok() // somebody got here first: the lantern already burns
       ws.twelve ??= {}; ws.twelve[T.id] = { by: uid, nick: nickIn(ws, uid), t: now }; (d.twelve ??= new Set()).add(T.id)
-      addRenown(c, 3); addGold(c, 2, now)
+      addRenown(c, 3); addGold(c, 2, now); if (KNEW[T.id]) addStanding(c, KNEW[T.id]!, 5)
       d.feed.push({ id: `tw${T.id}${now}`, t: now, topic: 'twelve', by: uid, data: { nick: nickIn(ws, uid), name: T.name, n: Object.keys(ws.twelve).length } })
       return ok()
+    }
+    case 'folk': {
+      // the townsfolk: talk, take what they ask, bring it back, and the few things done for them in person
+      const who = String(b.who ?? '') as FolkId; if (!FOLK.includes(who)) return fail('Nobody by that name in Aigrad.')
+      const P = FOLK_AT[who], with_ = !c.path.length && dist(here, P.cell) <= P.n, fop = String(b.fop ?? '')
+      const day = dayOf(now)
+      if (fop === 'talk') { if (!with_) return fail(P.away); c.talked ??= {}; if (c.talked[who] !== day) { c.talked[who] = day; addStanding(c, who, 1) } return ok() }
+      if (fop === 'take' || fop === 'turn') {
+        if (!with_) return fail(P.away)
+        const T = TASKS.find(x => x.id === b.task && x.who === who); if (!T) return fail('They never asked you that.')
+        c.tasks ??= {}; const k = c.tasks[T.id]
+        if (fop === 'take') { if (k) return fail(k.done ? 'Done already.' : 'You are on it already.'); if (standingOf(c, who).lv < T.lv) return fail('They do not know you well enough for that yet.')
+          c.tasks[T.id] = { t: now, n: 0, base: c.lampDays ?? 0 }; return ok() }
+        if (!k || k.done) return fail('Nothing to bring them.')
+        if (taskProgress(ws, uid, T) < T.need) return fail('Not done yet.')
+        k.done = now; addStanding(c, who, T.pts); addGold(c, T.gold, now); addRenown(c, 2)
+        d.feed.push({ id: `fk${uid}${T.id}`, t: now, topic: 'folk', by: uid, data: { nick: nickIn(ws, uid), who, task: T.id } })
+        return ok()
+      }
+      if (c.path.length) return fail('Stand still first.')
+      if (fop === 'watch') { if (dist(here, GATE_CELL) > 1) return fail('The watch is kept at the North Gate.'); if (!greyAt(now)) return fail('The watch is at grey light, when the knocking comes.'); bumpTask(c, 'h_watch', now, true); const fk = c.tasks?.f_knock; if (fk && !fk.done) fk.n = 1; return ok() }
+      if (fop === 'reading') { if (dist(here, SPECIAL.observatory as unknown as Cell) > 0) return fail('The plates are in the Observatory.'); if (!greyAt(now)) return fail('Readings are taken at grey light.'); bumpTask(c, 's_read', now, true); return ok() }
+      if (fop === 'stone') { if (dist(here, STONE_CELL) > 1) return fail('Climb to the Stone first.'); (c.marks ??= {}).stone = now; return ok() }
+      return fail('unknown action')
     }
     default: return fail('unknown action')
   }
