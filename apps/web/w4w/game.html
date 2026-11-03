@@ -7631,7 +7631,7 @@ const TFOLK = {
       m_stone: ['The Stone of the Twelve', 'Climb the hill north of the church to the Stone of the Twelve. Stand by it a while, and count the figures on it.', 'You counted. Good. Most people only look.', (n, k) => n >= k ? 'you stood at the Stone' : 'climb the steps to the Stone and stand by it'],
       m_three: ['Three nights', 'Three more lamp days. The night is long, and I count every one of them.', 'Three more nights held. I wrote all three down.', (n, k) => `${n} of ${k} lamp days since she asked`],
     } },
-  ada: { name: 'Ada Pell', role: 'Keeps the post office', glyph: 'A', tint: '#d9a0a0',
+  ada: { name: 'Ada Pell', role: 'Keeps the post office', glyph: 'A', tint: '#d9a0a0', pic: 'q/folk/ada.webp',
     hello: ['Letters in the sack, carriers by the door, gossip on your own time. I\'m Ada. Post office.', 'You again. Good. A carrier who comes back is worth two who don\'t.', 'Your boots are wet. Means you walked the round. Sit, the kettle\'s on.', 'I\'ve a sorting job only a friend gets. The kind of letters nobody else should see.', 'Shut the door. Pull the blind. There\'s one letter in this office I\'ve never let anyone hold.'],
     talk: [[0, 'Nothing in Aigrad delivers itself. Somebody carries it. That somebody gets the town\'s thanks and my respect, in that order.'], [0, 'A broken seal is a story in this town. The reader sees every hand the letter passed through. Remember that.'], [1, 'I know every door in town. Who answers. Who doesn\'t. Whose lamp is lit when the post comes.'], [2, 'Letters come under the Gate dry. Paper that crossed the White should be soaked. I keep those in a drawer of their own.'], [3, 'There\'s a letter on the top shelf with no address. Sealed. It\'s been there since the week of the cold. Nobody will open it, and I won\'t let them.']],
     twelve: [[2, 'Yusuf Karam the carter took the last sack north. Said he\'d bring the replies back himself. I keep his pigeonhole empty for him.'], [3, 'Pavel Rusk wrote me one letter in his life. Three lines, two of them spelling mistakes. I still have it. Don\'t tell Ivo.'], [3, 'The sealed letter on the top shelf. I know the hand on it. I\'ve seen it on the expedition\'s orders. I won\'t say whose.']],
@@ -8152,7 +8152,7 @@ const ROOMS = {
       [68, 36, 30, 36, 'The bed', () => roomNote('You lie down for a while. Indoors the cold cannot reach you; warmth and strength come back while you rest.')],
       [79, 70, 21, 30, 'The chest', () => { const h = me(); if (h) openHouse(h.id); }],
     ] },
-  bar: { img: 'q/room/bar.webp', title: 'The Last Coal', sub: 'Everyone in the room hears everyone.', door: 'arch', npc: { img: 'q/folk/ivo_fig.webp', x: 33, y: 25.5, h: 27, ih: 1.27, folk: 'ivo', ar: 712 / 820, glow: 'warm' },
+  bar: { img: 'q/room/bar.webp', title: 'The Last Coal', sub: 'Everyone in the room hears everyone.', door: 'arch', npc: { img: 'q/folk/ivo_fig.webp', x: 37, y: 33.5, h: 19, ih: 1.27, folk: 'ivo', ar: 712 / 820, glow: 'warm' },
     fx: [[27, 13, 8], [70, 22, 8], [39, 31, 5], [60, 34, 5], [88, 62, 20], [64, 49, 4]],
     hot: [
       [0, 10, 14, 52, 'The rumour board', () => openBar()],
@@ -8180,7 +8180,7 @@ const ROOMS = {
       [79, 38, 13, 32, 'The harmonium', () => roomNote('Sister Odile\'s hymn sheets are still on the stand, in her small careful hand. Nobody has played it since she went north. The keys are warm.')],
       [91, 52, 9, 42, 'The stove', () => roomNote('You hold your hands to the church stove. Someone brought the wood from home. Small things keep a town.')],
     ] },
-  post: { img: 'q/room/post.webp', title: 'The post office', sub: 'Nothing in Aigrad delivers itself.', door: '',
+  post: { img: 'q/room/post.webp', title: 'The post office', sub: 'Nothing in Aigrad delivers itself.', door: '', npc: { img: 'q/folk/ada_fig.webp', x: 42, y: 39, h: 25, ih: 1.25, folk: 'ada', ar: 611 / 820, glow: 'warm' },
     fx: [[13, 17, 5], [34, 30, 4], [75, 32, 4], [35, 60, 3], [79, 76, 7], [26, 30, 10, 'cold'], [8, 30, 8, 'cold'], [53, 6, 6, 'cold']],
     hot: [
       [11, 30, 10, 45, 'The sack', () => openPost()],
@@ -8303,7 +8303,7 @@ function plqState(room, i) {
   const f = P[room]?.[i]; const st = f ? f() : {};
   return { ...st, coinHtml: st.coin ? coin : '' };
 }
-const PLQ_AT = { home: [[56, 28], [50, 55], [50, 45], [50, 64], [45, 35], [45, 35]], bar: [[78, 42], [50, 55], [50, 42], [45, 55], [76, 28]], library: [[55, 42], [50, 88], [35, 30], [50, 22]], observatory: [[50, 50], [45, 45], [40, 30], [50, 30], [70, 40]], church: [[50, 18], [50, 45], [50, 75], [50, 85], [55, 40], [50, 25], [-60, 30]], post: [[50, 40], [50, 50], [50, 30], [50, 62], [50, 60], [10, 50], [50, 40]] };
+const PLQ_AT = { home: [[56, 28], [50, 55], [50, 45], [50, 64], [45, 35], [45, 35]], bar: [[78, 42], [50, 55], [76, 72], [45, 55], [76, 28]], library: [[55, 42], [50, 88], [35, 30], [50, 22]], observatory: [[50, 50], [45, 45], [40, 30], [50, 30], [70, 40]], church: [[50, 18], [50, 45], [50, 75], [50, 85], [55, 40], [50, 25], [-60, 30]], post: [[50, 40], [50, 50], [50, 30], [82, 30], [50, 60], [10, 50], [50, 40]] };
 function roomPlaques() { if (!ROOM) return; const R = ROOMS[ROOM]; document.querySelectorAll('#room [data-h]').forEach(b => { const i = +b.dataset.h, st = plqState(ROOM, i), e = b.querySelector('em.plq'); if (!e) return;
   const at = PLQ_AT[ROOM]?.[i]; if (at) { e.style.setProperty('--px', at[0] + '%'); e.style.setProperty('--py', at[1] + '%'); }
   const html = `${esc(st.t || R.hot[i][4])}${st.b ? ` <b>${esc(st.b)}</b>` : ''}${st.coinHtml}`; if (e.innerHTML !== html) e.innerHTML = html;
