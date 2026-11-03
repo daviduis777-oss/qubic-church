@@ -320,6 +320,11 @@ export const TOWN_PROPS: { kit: string; at: Cell }[] = [
   { kit: 'signal', at: [-1, -7] },
 ]
 export const PROP_BLOCK = new Set(TOWN_PROPS.map(p => `${p.at[0]},${p.at[1]}`))
+/** The town's halls that stand on open ground (the market, the Atrium, the Wardens' Hall, the Glasshouse): a walk may end at one,
+ * never pass through it. Same cells as the game's STAGE2 sites. */
+export const SITE_CELLS: Cell[] = [[-5, 2], [2, 3], [-3, -4], [6, 0]]
+/** Cells a walk may only end on, never cross: every shelter and every hall. */
+export const walkBlocked = (shelters: Record<string, unknown>) => new Set([...Object.keys(shelters), ...SITE_CELLS.map(c => `${c[0]},${c[1]}`)])
 
 /** The Stone of the Twelve: twelve went north the week before the cold, and the town lights a lantern on the Stone
  * for each one as somebody finds a trace of them and carries it there. Eight traces lie in Aigrad; four are out in the White. */
@@ -943,7 +948,7 @@ export function action(ws: WState, uid: string, op: string, b: Record<string, un
       if (inCore(...to)) { const sh = ctxOf(ws, uid).shelters; to = ringCells(CORE_RING + 1).filter(x => !sh[key(...x)] && passable(...x)).sort((a, c) => dist(a, here) - dist(c, here))[0] ?? to }
       // already on the way: finish the step you are on, then turn; no jump back to the last cell
       const from: Cell = c.path.length ? c.path[0]! : here
-      const rest = findPath(from, to, 4000, new Set(Object.keys(ctxOf(ws, uid).shelters))); if (!rest) return fail('No way through from here.')
+      const rest = findPath(from, to, 4000, walkBlocked(ctxOf(ws, uid).shelters)); if (!rest) return fail('No way through from here.')
       if (rest.length > 90) return fail('Too far for one walk. Go in stages.')
       if (c.path.length) { c.path = [from, ...rest]; c.act = null; c.lost = false; return ok() }
       Object.assign(c, { q: here[0], r: here[1], path: rest, t0: now, act: null, lost: false }); beginStep(c, now, ctxOf(ws, uid))
