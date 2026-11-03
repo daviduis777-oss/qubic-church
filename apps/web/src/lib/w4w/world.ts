@@ -737,9 +737,9 @@ export const ROSE_TURNS = 7, ROSE_TURN_WAIT = 18 * 3600_000
  *  cannot outrun the calendar: at most 48% on the night the Veil falls. */
 export const ACT1_START = Date.UTC(2026, 10, 11, 12), ACT1_FALL = Date.UTC(2027, 4, 11, 12)
 export const PHASE_AT = [ACT1_START, Date.UTC(2026, 11, 16, 12), Date.UTC(2027, 1, 10, 12), Date.UTC(2027, 2, 31, 12)]
-export const notchAt = (n: number) => ACT1_START + Math.round((ACT1_FALL - ACT1_START) * n / ROSE_TURNS)
+export const notchAt = (n: number) => PHASE_AT[1]! + Math.round((ACT1_FALL - PHASE_AT[1]!) * n / ROSE_TURNS)
 export const phaseNow = (s: Story | null | undefined, now: number) => Math.max(s?.phase ?? 0, PHASE_AT.filter(t => now >= t).length - 1)
-export const thawCap = (now: number) => Math.max(0.02, 0.48 * Math.min(1, (now - ACT1_START) / (ACT1_FALL - ACT1_START)))
+export const thawCap = (now: number) => now < ACT1_START ? 0.2 : Math.max(0.02, 0.48 * Math.min(1, (now - ACT1_START) / (ACT1_FALL - ACT1_START)))
 export const GATE_CELL: Cell = [0, -TOWN_RING]
 export const ROSE_CELL: Cell = [-1, 2] // the Iron Rose: the valve on the copper ring round Anna
 export const ROSE_WAIT = 6 * 3600_000
@@ -1116,7 +1116,7 @@ export function action(ws: WState, uid: string, op: string, b: Record<string, un
     }
     case 'valve': {
       // phase 3: the Iron Rose. Every turn shuts the town's warmth a little further out of the Veil
-      if (phaseNow(ws.story, now) < 3) return fail('The wheel does not move. It has never moved.')
+      if (phaseNow(ws.story, now) < 3) return fail(ws.story?.turns ? 'The wheel will not move for you.' : 'The wheel does not move. It has never moved.')
       if (c.path.length || dist(here, ROSE_CELL) > 1) return fail('Stand at the copper ring, by the rose.')
       if (now - (c.valved ?? 0) < ROSE_WAIT) return fail('Your hands remember the cold of it. Not yet.')
       c.valved = now; addHush(ws, 10, d)
