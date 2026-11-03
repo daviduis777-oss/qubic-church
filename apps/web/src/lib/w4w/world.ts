@@ -47,6 +47,7 @@ export type Char = {
   standing?: Record<string, number> // what each of the townsfolk thinks of you, in points
   lampDays?: number // days your lamp burned twelve hours or more: the town remembers every one
   lampTo?: number // the last day counted into lampDays
+  lampSince?: number // when the server first saw your rig mining, for a house that never said when it started
   maEp?: number // the last epoch Maria thanked you for
   talked?: Record<string, number> // the day you last talked to each of the townsfolk
   tasks?: Record<string, FolkTask> // what the townsfolk asked of you
@@ -821,10 +822,12 @@ export function standingOf(c: Char, who: FolkId) {
 const addStanding = (c: Char, who: FolkId, n: number) => { (c.standing ??= {})[who] = Math.max(0, (c.standing[who] ?? 0) + n) }
 /** Count the days the lamp burned: from the house's own record of when its rig started, backfilled two weeks at most. */
 export function creditLamp(c: Char, h: (HouseLite & { startedAt?: number }) | undefined, now: number) {
-  if (h?.state !== 'mining' || !h.startedAt) return 0
+  if (h?.state !== 'mining') { delete c.lampSince; return 0 }
+  // a house mining without its own start time: count from the first moment the server saw it lit
+  const since = h.startedAt || (c.lampSince ??= now)
   const today = dayOf(now); let n = 0
-  for (let D = Math.max((c.lampTo ?? dayOf(h.startedAt) - 1) + 1, today - 14); D <= today; D++) {
-    const lit = Math.min(now, (D + 1) * DAY_MS) - Math.max(h.startedAt, D * DAY_MS)
+  for (let D = Math.max((c.lampTo ?? dayOf(since) - 1) + 1, today - 14); D <= today; D++) {
+    const lit = Math.min(now, (D + 1) * DAY_MS) - Math.max(since, D * DAY_MS)
     if (lit < 12 * 3600_000) continue
     c.lampDays = (c.lampDays ?? 0) + 1; c.lampTo = D; n++
     for (const f of FOLK) addStanding(c, f, 1) // the whole town is warmer for it, and everyone knows whose window it is
@@ -1163,12 +1166,13 @@ export function action(ws: WState, uid: string, op: string, b: Record<string, un
     }
     case 'stoke': {
       // the plaza fire took your wood (the site keeps the fire itself; this is the town's thanks, once an hour)
+      if (dist(here, [SPECIAL.plaza[0], SPECIAL.plaza[1]]) > 1) return fail('The fire is on the plaza. Bring your wood there.')
       if (now - (c.stoked ?? 0) < 3600_000) return ok()
       c.stoked = now; addGold(c, 1, now); bumpTask(c, 'i_fire', now, true); return ok()
     }
     case 'lamp': {
       // your lamp is lit in the Veil today: the town counts it once a day
-      const day = dayOf(now); if (c.lampDay !== day) { c.lampDay = day; addGold(c, 2, now) }
+      const day = dayOf(now); if (c.lampDay !== day && house?.state === 'mining') { c.lampDay = day; addGold(c, 2, now) }
       creditLamp(c, house as HouseLite & { startedAt?: number }, now); return ok()
     }
     case 'round': {
