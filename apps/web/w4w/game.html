@@ -1053,6 +1053,7 @@ var W4W = (() => {
     ROUND_WAIT: () => ROUND_WAIT,
     SHARD_MELT: () => SHARD_MELT,
     SIP_WARMTH: () => SIP_WARMTH,
+    SITE_CELLS: () => SITE_CELLS,
     SPECIAL: () => SPECIAL,
     STAGE: () => STAGE,
     STAIR_CELL: () => STAIR_CELL,
@@ -1151,6 +1152,7 @@ var W4W = (() => {
     unveiled: () => unveiled,
     veilOf: () => veilOf,
     viewOf: () => viewOf,
+    walkBlocked: () => walkBlocked,
     weatherAt: () => weatherAt,
     weekOf: () => weekOf,
     weightOf: () => weightOf,
@@ -1447,6 +1449,8 @@ var W4W = (() => {
     { kit: "signal", at: [-1, -7] }
   ];
   const PROP_BLOCK = new Set(TOWN_PROPS.map((p) => `${p.at[0]},${p.at[1]}`));
+  const SITE_CELLS = [[-5, 2], [2, 3], [-3, -4], [6, 0]];
+  const walkBlocked = (shelters) => /* @__PURE__ */ new Set([...Object.keys(shelters), ...SITE_CELLS.map((c) => `${c[0]},${c[1]}`)]);
   const STONE_CELL = [3, -6];
   const TWELVE = [
     { id: "ilya", name: "Ilya Marten", act: 1, at: "veil" },
@@ -2132,7 +2136,7 @@ var W4W = (() => {
           to = ringCells(CORE_RING + 1).filter((x) => !sh[key(...x)] && passable(...x)).sort((a, c2) => dist(a, here) - dist(c2, here))[0] ?? to;
         }
         const from = c.path.length ? c.path[0] : here;
-        const rest = findPath(from, to, 4e3, new Set(Object.keys(ctxOf(ws, uid).shelters)));
+        const rest = findPath(from, to, 4e3, walkBlocked(ctxOf(ws, uid).shelters));
         if (!rest) return fail("No way through from here.");
         if (rest.length > 90) return fail("Too far for one walk. Go in stages.");
         if (c.path.length) {
@@ -3442,12 +3446,12 @@ function makeHouse(d, mine) {
   const cls = mine ? 'me' : d.state === 'nosignal' ? 'red' : d.demo ? 'demo' : '';
   const Lb = label(mine ? `${d.nick} (you)` : d.demo ? `${d.nick} · demo` : d.nick, main, 2.0, cls); Lb.hover = !mine && !d.real && d.state !== 'nosignal';
   dressYard(g, q, r, d.id); g.traverse(o => (o.userData.lights || []).forEach(l => fx.lights.push(l)));
-  houses[d.id] = { g, data: d, fx, label: Lb, mine };
+  houses[d.id] = { g, data: d, fx, label: Lb, mine }; solidsDirty();
 }
 function disposeHouse(id) { const h = houses[id]; if (!h) return; for (const [k, o] of YARD_CORNERS) if (o === id) YARD_CORNERS.delete(k); if (hoverOn === id) { hoverMeshes.length = 0; hoverOn = null; } scene.remove(h.g); h.fx.lights.forEach(o => scene.remove(o)); if (h.fx.pipe) { scene.remove(h.fx.pipe); pipes.splice(pipes.indexOf(h.fx.pipe), 1); }
   h.label.el.remove(); labels.splice(labels.indexOf(h.label), 1);
   for (let i = interactive.length - 1; i >= 0; i--) if (interactive[i].userData.id === id) interactive.splice(i, 1);
-  delete houses[id]; }
+  delete houses[id]; solidsDirty(); }
 const IRON_TEX = (() => { const tl = new THREE.TextureLoader(), map = tl.load('q/tex/iron.webp'), normal = tl.load('q/tex/iron_n.webp');
   map.colorSpace = THREE.SRGBColorSpace; map.anisotropy = 8; [map, normal].forEach(t => { t.wrapS = t.wrapT = THREE.RepeatWrapping; }); return { map, normal }; })();
 /* old copper, painted once on a canvas: warm metal under green-blue patina, darker where water ran, a seam every arm's length.
@@ -5010,9 +5014,9 @@ function takeView(v) {
 let xq = Promise.resolve();
 function xact(name, body) {
   if (name === 'move') { xMoving++; xMoveAt = performance.now(); } // a door waiting to open waits for this answer
-  const run = async () => { xBusy = true;
-    try { const v = await XW.act(name, body); takeView(v); return v; }
-    catch (e) { say(esc(e.message || 'The cold took your words.'), 'Wastes'); return null; }
+  const run = async () => { xBusy = true; const mv = name === 'move' && predictMove(body.to);
+    try { const v = await XW.act(name, body); if (mv) settleMove(v); takeView(v); return v; }
+    catch (e) { if (mv && PEND === mv) { PEND = null; PR = null; } say(esc(e.message || 'The cold took your words.'), 'Wastes'); return null; }
     finally { xBusy = false; if (name === 'move') xMoving = Math.max(0, xMoving - 1); } };
   const p = xq.then(run, run); xq = p.catch(() => {}); return p;
 }
@@ -5025,8 +5029,26 @@ function xctx() {
   return { pylons: (XV.pylons || []).map(p => p.s), veil: isUnveiled() ? 0 : W4W.veilOf(S.town.power || t.power || 0), heatR: t.heatR, holds: t.holds, netStorm: false, shelters: W4W.townShelters(cells), home: W4W.key(...XV.me.home), hearths: Object.fromEntries(Object.entries(XV.hearths).map(([k, v]) => [k, v.until])), insulation: W4W.INSULATION_T1,
     rime: XV.rime ? [[XV.rime.t, XV.rime.q, XV.rime.r], ...(XV.rime.next ? [[XV.rime.next.t, XV.rime.next.q, XV.rime.next.r]] : [])] : undefined };
 }
-let PR = null, PRT = 0;
-function predicted() { if (!XV?.me) return null; const n = performance.now(); if (PR && n - PRT < 200) return PR; PR = W4W.advance(XV.me, xnow(), xctx()); PRT = n; return PR; }
+let PR = null, PRT = 0, PEND = null;
+function predicted() { if (!XV?.me) return null; const n = performance.now(); if (PR && n - PRT < 200) return PR; if (PEND && n - PEND.at > 12000) PEND = null;
+  PR = W4W.advance(PEND ? PEND.c : XV.me, xnow(), xctx()); PRT = n; return PR; }
+/** A walk you asked for starts at once: the same path the server will find, by the same rules, until its answer lands. */
+function predictMove(to) {
+  PR = null; const pr = predicted(); if (!pr || !Array.isArray(to)) return null; const c = JSON.parse(JSON.stringify(pr.c)), now = xnow();
+  if (c.frozenUntil > now || W4W.inCore(...to) || (W4W.STAGE === 1 && !W4W.insideDome(...to)) || W4W.ringOf(...to) > W4W.MAX_RING) return null;
+  const ctx = xctx(), from = c.path.length ? c.path[0] : [c.q, c.r], rest = W4W.findPath(from, to, 4000, W4W.walkBlocked(ctx.shelters));
+  if (!rest || rest.length > 90) return null;
+  if (c.path.length) c.path = [from, ...rest]; else { Object.assign(c, { path: rest, t0: now }); W4W.beginStep(c, now, { ...ctx, noDrift: true }); }
+  c.act = null; c.lost = false; PEND = { c, at: performance.now() }; PR = null; return PEND;
+}
+/** The server's answer to a walk: it has the last word. Where it walks the same cells a little later, the body keeps its head start
+ * and lets it melt away (a few percent slower for a moment) instead of jumping back. */
+function settleMove(v) {
+  const a = avatars[myUid()], was = PEND; PEND = null; PR = null; if (!a || !was || !v?.me) return;
+  const pc = W4W.advance(was.c, xnow(), xctx()).c, tv = v.now + 1, sc = W4W.advance(v.me, Math.max(tv, v.me.simT || 0), xctx()).c;
+  const same = pc.q === sc.q && pc.r === sc.r && pc.path.length === sc.path.length && pc.path.every((x, i) => x[0] === sc.path[i][0] && x[1] === sc.path[i][1]);
+  a.toff = same && sc.path.length ? THREE.MathUtils.clamp((sc.t0 - pc.t0) - (tv - xnow()), -1500, 1500) : 0;
+}
 
 /* ---------- avatars ---------- */
 let HERO = null, heroClips = {}, heroScale = 1;
@@ -5037,6 +5059,7 @@ const avatars = {};
   const alias = { Walking_A: 'Walk', Walking_C: 'Walk', Running_A: 'Run', PickUp: 'Interact', Death_A: 'Death', Lie_Idle: 'Death', Sit_Floor_Idle: 'Idle_Neutral', Hit_B: 'HitRecieve', '1H_Melee_Attack_Chop': 'Sword_Slash', '2H_Melee_Attack_Chop': 'Punch_Right' };
   for (const [k, v] of Object.entries(alias)) if (!heroClips[k] && heroClips[v]) { const c = heroClips[v].clone(); c.name = k; heroClips[k] = c; }
   g.scene.updateMatrixWorld(true); const box = new THREE.Box3().setFromObject(g.scene, true); heroScale = 0.5 / Math.max(0.01, box.max.y - box.min.y);
+  try { measureGaits(); } catch (e) { console.warn('gaits', e); }
   syncAvatars();
 }, undefined, e => console.warn('hero', e));
 // (the old hooded wanderer, hero.glb, stays in the folder as a fallback for one release)
@@ -5059,14 +5082,48 @@ function makeAvatar(uid, nick, mine) {
   const blob = new THREE.Mesh(BLOB_GEO, BLOB_MAT); blob.position.y = 0.02; blob.renderOrder = 1; g.add(blob);
   const mixer = new THREE.AnimationMixer(body); const actions = {}; for (const [n, c] of Object.entries(heroClips)) actions[n] = mixer.clipAction(c); 
   const L = label(mine ? 'you' : nick, g, 0.62, mine ? 'me' : 'walker');
-  const a = { g, body, mixer, actions, cur: null, label: L, mine, ice: null, uid };
-  play(a, 'Idle'); return a;
+  const a = { g, body, mixer, actions, cur: null, label: L, mine, ice: null, uid, w: {}, s: 0, sv: 0, toff: 0, off: new THREE.Vector3(), feet: { L: body.getObjectByName('LeftFoot'), R: body.getObjectByName('RightFoot') } };
+  blend(a, { Idle: 1 }, 1); return a;
 }
-function play(a, name, once = false) {
-  if (a.cur === name) return; const next = a.actions[name]; if (!next) return; const prev = a.cur && a.actions[a.cur];
-  if (name === 'Lie_Idle') once = true;
-  next.reset(); next.setLoop(once ? THREE.LoopOnce : THREE.LoopRepeat); next.clampWhenFinished = once; next.fadeIn(0.25).play(); if (prev) prev.fadeOut(0.25); a.cur = name;
+const ONCE = new Set(['Lie_Idle', 'Death_A']);
+/** What the body should be doing, as weights: every clip eases toward its own, so nothing ever switches in one frame. */
+function blend(a, want, dt, fade = 0.22) {
+  const started = []; let sum = 0, top = null, tw = -1; a.w ||= {};
+  for (const n of new Set([...Object.keys(a.w), ...Object.keys(want)])) { const ac = a.actions[n]; if (!ac) continue; const w0 = a.w[n] || 0, w1 = want[n] || 0;
+    const w = w0 + THREE.MathUtils.clamp(w1 - w0, -dt / fade, dt / fade);
+    if (w0 <= 0 && w > 0) { ac.reset(); const once = ONCE.has(n); ac.setLoop(once ? THREE.LoopOnce : THREE.LoopRepeat); ac.clampWhenFinished = once; ac.timeScale = 1; ac.play(); started.push(n); }
+    if (w <= 1e-3 && w1 <= 0) { ac.stop(); delete a.w[n]; continue; } a.w[n] = w; sum += w; if (w1 > tw) { tw = w1; top = n; } }
+  for (const n in a.w) a.actions[n].setEffectiveWeight(a.w[n] / Math.max(1e-3, sum));
+  a.cur = top; return started;
 }
+/* every clip's own pace and footfalls, read off the clip once the hero loads: how fast its planted foot slides back under the
+ * hips (body heights per second), and the moments a foot comes down out of its swing */
+const GAITS = {};
+function measureGaits() {
+  const b = cloneSkinned(HERO.scene); b.updateMatrixWorld(true); const H = new THREE.Box3().setFromObject(b, true).getSize(new THREE.Vector3()).y || 1;
+  const F = { L: b.getObjectByName('LeftFoot'), R: b.getObjectByName('RightFoot') }, mx = new THREE.AnimationMixer(b), w = new THREE.Vector3();
+  for (const n of ['Walking_A', 'Walking_C', 'Running_A', 'Jog']) { const clip = heroClips[n]; if (!clip) continue;
+    if (!F.L || !F.R) { GAITS[n] = { v: GAIT[n] || 1, dur: clip.duration, steps: [{ at: 0, foot: 'L' }, { at: 0.5, foot: 'R' }] }; continue; }
+    const ac = mx.clipAction(clip); ac.play(); mx.setTime(0); const N = 180, ys = { L: [], R: [] }, xz = { L: [], R: [] };
+    for (let i = 0; i < N; i++) { mx.setTime(clip.duration * i / N); b.updateMatrixWorld(true); for (const f of 'LR') { F[f].getWorldPosition(w); ys[f].push(w.y); xz[f].push([w.x, w.z]); } }
+    ac.stop(); mx.uncacheAction(clip);
+    const steps = [], spd = [];
+    for (const f of 'LR') { const y = ys[f], lo = Math.min(...y), hi = Math.max(...y), rg = hi - lo || 1; let armed = false, fall = 0;
+      // a footfall: the foot has been up in its swing, comes down into the low band and stops falling
+      for (let k = 0; k < N * 2; k++) { const i = k % N, d = y[i] - y[(i + 3) % N]; /* how far it still falls over the next 3 samples */ if (y[i] > lo + rg * 0.6) { armed = true; fall = 0; } if (armed) fall = Math.max(fall, d);
+        if (armed && y[i] <= lo + rg * 0.3 && d < fall * 0.3 && y[i] !== y[(i + 1) % N]) { if (k >= N) steps.push({ at: i / N, foot: f }); armed = false; } }
+      // the clip's own pace: how fast this foot slides back while it is down
+      for (let i = 0; i < N; i++) if (y[i] < lo + rg * 0.12) { const j = (i + 1) % N; spd.push(Math.hypot(xz[f][j][0] - xz[f][i][0], xz[f][j][1] - xz[f][i][1]) * N / clip.duration); } }
+    spd.sort((x, y) => x - y); GAITS[n] = { v: spd[spd.length >> 1] / H || GAIT[n] || 1, dur: clip.duration, steps: steps.sort((x, y) => x.at - y.at) }; }
+}
+/** The clip whose own pace is nearest this one (in body heights per second): its feet then neither slide nor scrabble. */
+function pickGait(a, v, bad) { const h = v / HERO_H; let best = 'Walking_A', bs = 1e9;
+  for (const n of ['Walking_A', 'Running_A', 'Jog', 'Walking_C']) { const G = GAITS[n]; if (!G || !a.actions[n] || (n === 'Walking_C' && !bad)) continue; const sc = Math.abs(Math.log(h / G.v)) - (n === 'Walking_C' ? 0.35 : 0); if (sc < bs) { bs = sc; best = n; } }
+  return best; }
+/** Where in its stride a clip is (0 = the left foot coming down), and the clip time for a stride phase: a new gait picks up the old one's step. */
+function stridePh(n, t) { const G = GAITS[n], L = G?.steps.filter(s => s.foot === 'L').map(s => s.at); if (!L?.length) return 0; const u = ((t / G.dur) % 1 + 1) % 1;
+  for (let i = 0; i < L.length; i++) { const a0 = L[i], a1 = i + 1 < L.length ? L[i + 1] : L[0] + 1, uu = u < a0 ? u + 1 : u; if (uu >= a0 && uu < a1) return (uu - a0) / (a1 - a0); } return 0; }
+function strideT(n, ph) { const G = GAITS[n], L = G?.steps.filter(s => s.foot === 'L').map(s => s.at); if (!L?.length) return 0; const a1 = L.length > 1 ? L[1] : L[0] + 1; return ((L[0] + (a1 - L[0]) * ph) % 1) * G.dur; }
 function dropAvatar(uid) { const a = avatars[uid]; if (!a) return; scene.remove(a.g); a.label.el.remove(); labels.splice(labels.indexOf(a.label), 1); delete avatars[uid]; }
 function syncAvatars() {
   if (!HERO || !XV) return;
@@ -5084,26 +5141,79 @@ function routeFor(a, d) {
   if (R) { const base = R.cells.length - 1 - d.path.length;
     // still the same trip: the cell we stand on and the cells ahead line up with what we drew
     if (base >= 0 && same(R.cells[base], cur) && d.path.every((c, i) => same(R.cells[base + 1 + i], c))) return R;
-    // a new order mid-step: keep everything up to the step we are on, swap the rest
+    // a new order mid-step: keep the step we are on and the couple before it, swap the rest
     const at = R.cells.findIndex((c, i) => same(c, cur) && same(R.cells[i + 1], d.path[0]));
-    if (at >= 0) { const cells = [...R.cells.slice(0, at + 2), ...d.path.slice(1)]; return (a.route = { cells, cv: new THREE.CatmullRomCurve3(routePts(cells), false, 'centripetal', 0.5) }); }
+    if (at >= 0) return (a.route = mkRoute([...R.cells.slice(Math.max(0, at - 2), at + 2), ...d.path.slice(1)]));
+    // somebody we only hear about one step at a time took the next one: go on from the cell before, the body is still on it
+    const was = R.cells.findLastIndex(c => same(c, cur));
+    if (was >= 1) return (a.route = mkRoute([R.cells[was - 1], cur, ...d.path]));
   }
-  const cells = [cur, ...d.path];
-  return (a.route = { cells, cv: new THREE.CatmullRomCurve3(routePts(cells), false, 'centripetal', 0.5) });
+  return (a.route = mkRoute([cur, ...d.path]));
 }
+const RM = 6; // points per cell step to start from: close enough that a lamppost cannot hide between two of them
+function mkRoute(cells) {
+  const pts = routePts(cells), cv = new THREE.CatmullRomCurve3(pts, false, 'centripetal', 0.5); cv.arcLengthDivisions = (pts.length - 1) * 8;
+  const lens = cv.getLengths(); return { cells, cv, L: lens[lens.length - 1] };
+}
+/** How far along the curve a walker is when the clock says it has done G of its n steps: the same distance for every step, so a step
+ * that bends round a wall is not rushed and a straight one not dawdled; where the body is never differs from its cell by much. */
+function sAt(R, G) { return R.L * THREE.MathUtils.clamp(G / Math.max(1, R.cells.length - 1), 0, 1); }
 function routePts(cells) {
-  const pts = cells.map(c => HX(...c)), last = cells[cells.length - 1], sh = SHEL[W4W.key(...last)], e = pts[pts.length - 1];
+  solids(); const n = cells.length - 1, pts = cells.map(c => HX(...c));
   const top = c => c && W4W.dist(c, W4W.STONE_CELL) === 1, stair = c => c && c[0] === W4W.STAIR_CELL[0] && c[1] === W4W.STAIR_CELL[1];
   cells.forEach((c, i) => { if (stair(c) && (top(cells[i - 1]) || top(cells[i + 1]))) pts[i] = stairFoot(); });
-  if (sh && sh !== 'fire' && e.lengthSq() > 0.01) pts[pts.length - 1] = e.clone().add(new THREE.Vector3(-e.x, 0, -e.z).normalize().multiplyScalar(0.95));
-  // a step between two neighbours of a big building passes 1.73 from its middle, inside the wall: put a point between
-  // every pair of cells (so the pace along the curve stays even) and push it clear of any building it would cut through
-  const out = [pts[0]], BIG = [[SPECIAL.library, 1.95], [W4W.BAR_CELL, 1.85], [SPECIAL.mine, 1.85], [SPECIAL.observatory, 1.6], [SPECIAL.church, 1.55]];
-  for (let i = 1; i < pts.length; i++) { const m = pts[i - 1].clone().add(pts[i]).multiplyScalar(0.5);
-    for (const [bc, rad] of BIG) { if ([cells[i - 1], cells[i]].some(c => c[0] === bc[0] && c[1] === bc[1])) continue;
-      const C = HX(...bc), dx = m.x - C.x, dz = m.z - C.z, d = Math.hypot(dx, dz); if (d < rad && d > 1e-3) { m.x = C.x + dx / d * rad; m.z = C.z + dz / d * rad; } }
-    out.push(m, pts[i]); }
+  // into a building you walk to its door, and out of one you come from it
+  const shel = c => { const k = SHEL[W4W.key(...c)]; return k && k !== 'fire'; };
+  if (n && shel(cells[n])) pts[n] = doorAt(cells[n]); if (n && shel(cells[0])) pts[0] = doorAt(cells[0]);
+  // the line through the cells, cut into even pieces per step, then pushed round every wall and prop it would go through
+  const base = new THREE.CatmullRomCurve3(pts, false, 'centripetal', 0.5), out = [];
+  // a door is on the side toward Anna: come at it from behind and the step to it goes round the building, not through it
+  const wrapIn = n && shel(cells[n]) && SOL.sd ? aroundTo(cells[n], pts[n - 1], pts[n]) : null, wrapOut = n > 1 && shel(cells[0]) && SOL.sd ? aroundTo(cells[0], pts[1], pts[0])?.reverse() : null;
+  for (let i = 0; i < n; i++) { const w = i === n - 1 && wrapIn ? wrapIn : i === 0 && wrapOut ? wrapOut : null;
+    if (w) { for (const v of alongPoly(w, Math.max(RM, Math.ceil(polyLen(w) / 0.35)))) out.push(v); out.pop(); }
+    else for (let j = 0; j < RM; j++) out.push(base.getPoint((i + j / RM) / Math.max(1, n))); }
+  out.push(pts[n].clone());
+  if (!SOL.sd || !n) return out;
+  const but = [solidsBut(cells[0]), solidsBut(cells[n])]; clearRoute(out, but);
+  // where the walk still grazes something (round a big hall's corner, say), give it more points there and push again: the pace is
+  // read off the length of the curve, not off its points, so a few more of them change nothing but the shape
+  for (let round = 0; round < 3; round++) { let added = 0;
+    for (let k = out.length - 2; k >= 0; k--) { const a = out[k], b = out[k + 1]; let worst = 99; for (const f of [0.25, 0.5, 0.75]) worst = Math.min(worst, clearOf(a.x + (b.x - a.x) * f, a.z + (b.z - a.z) * f, but));
+      if (worst < SOL_R * 0.7 && a.distanceTo(b) > 0.12) { out.splice(k + 1, 0, a.clone().lerp(b, 0.5)); added++; } }
+    if (!added) break; clearRoute(out, but); }
   return out;
+}
+/** From a point to a building's door the short way round it, keeping off its walls; null when the door is already on this side. */
+function aroundTo(cell, from, door) {
+  const c = HX(...cell), a0 = Math.atan2(from.z - c.z, from.x - c.x), a1 = Math.atan2(door.z - c.z, door.x - c.x), da = Math.atan2(Math.sin(a1 - a0), Math.cos(a1 - a0));
+  if (Math.abs(da) < 1.0) return null; const k = Math.ceil(Math.abs(da) / 0.55), poly = [from.clone()];
+  for (let i = 1; i < k; i++) { const a = a0 + da * i / k, dx = Math.cos(a), dz = Math.sin(a); let r = 0.5; while (r < 3.2 && clearOf(c.x + dx * r, c.z + dz * r) < SOL_R + 0.12) r += 0.08; poly.push(new THREE.Vector3(c.x + dx * r, 0, c.z + dz * r)); }
+  poly.push(door.clone()); return poly;
+}
+const polyLen = P => P.reduce((s, v, i) => s + (i ? v.distanceTo(P[i - 1]) : 0), 0);
+/** n + 1 points evenly along a polyline, both ends included. */
+function alongPoly(P, n) { const L = polyLen(P), out = []; let i = 0, acc = 0;
+  for (let k = 0; k <= n; k++) { const want = L * k / n; while (i < P.length - 2 && acc + P[i].distanceTo(P[i + 1]) < want) { acc += P[i].distanceTo(P[i + 1]); i++; }
+    const seg = P[i].distanceTo(P[i + 1]) || 1; out.push(P[i].clone().lerp(P[i + 1], THREE.MathUtils.clamp((want - acc) / seg, 0, 1))); } return out; }
+/** Push a drawn walk clear of everything solid along it. The two ends stay put: where you stand and where you are going. */
+function clearRoute(P, but) {
+  const L = P.length, e = 0.06, tg = new THREE.Vector3(), grad = (x, z) => { const gx = clearOf(x + e, z, but) - clearOf(x - e, z, but), gz = clearOf(x, z + e, but) - clearOf(x, z - e, but), l = Math.hypot(gx, gz) || 1; return [gx / l, gz / l]; };
+  for (let it = 0; it < 12; it++) {
+    // a run of points inside one wall all goes round the same side of it, the side most of them are nearer to
+    let i = 1; while (i < L - 1) { if (clearOf(P[i].x, P[i].z, but) >= SOL_R) { i++; continue; } let j = i; while (j < L - 1 && clearOf(P[j].x, P[j].z, but) < SOL_R) j++;
+      let side = 0; const sides = []; for (let k = i; k < j; k++) { tg.subVectors(P[k + 1], P[k - 1]); const [gx, gz] = grad(P[k].x, P[k].z), sd = Math.sign(tg.x * gz - tg.z * gx) || 1; sides.push(sd); side += sd * (SOL_R - clearOf(P[k].x, P[k].z, but)); }
+      side = Math.sign(side) || 1;
+      for (let k = i; k < j; k++) { const d = clearOf(P[k].x, P[k].z, but), step = Math.min(0.35, (SOL_R - d) * 0.8 + 0.02); let [gx, gz] = grad(P[k].x, P[k].z);
+        if (sides[k - i] !== side && d < 0) { tg.subVectors(P[k + 1], P[k - 1]).normalize(); gx = -tg.z * side; gz = tg.x * side; } // across, to the chosen side
+        P[k].x += gx * step; P[k].z += gz * step; }
+      i = j; }
+    // nor may the curve cut between two clear points through something thin
+    for (let k = 0; k < L - 1; k++) { const mx = (P[k].x + P[k + 1].x) / 2, mz = (P[k].z + P[k + 1].z) / 2, d = clearOf(mx, mz, but); if (d >= SOL_R) continue; const [gx, gz] = grad(mx, mz), step = Math.min(0.3, SOL_R - d);
+      for (const q of [k, k + 1]) if (q > 0 && q < L - 1) { P[q].x += gx * step * 0.6; P[q].z += gz * step * 0.6; } }
+    // and the kinks the pushing leaves are eased out, never back into a wall
+    if (it < 10) for (let k = 1; k < L - 1; k++) { const mx = (P[k - 1].x + P[k + 1].x) / 2, mz = (P[k - 1].z + P[k + 1].z) / 2, x = P[k].x + (mx - P[k].x) * 0.4, z = P[k].z + (mz - P[k].z) * 0.4;
+      if (clearOf(x, z, but) >= Math.min(SOL_R, clearOf(P[k].x, P[k].z, but))) { P[k].x = x; P[k].z = z; } }
+  }
 }
 const doorFx = [];
 function doorGlow(at) {
@@ -5113,33 +5223,56 @@ function stepDoorFx(dt) {
   for (let i = doorFx.length - 1; i >= 0; i--) { const f = doorFx[i]; f.t += dt; const k = f.t < 0.25 ? f.t / 0.25 : Math.max(0, 1 - (f.t - 0.25) / 1.1);
     f.s.material.opacity = 0.95 * k; f.s.scale.setScalar(0.5 + 0.7 * Math.min(1, f.t * 2)); if (f.t > 1.4) { scene.remove(f.s); f.s.material.dispose(); doorFx.splice(i, 1); } }
 }
-function posOf(d, t, a) {
-  if (!d.path?.length) { if (a) a.route = null; return { p: HX(d.q, d.r), walking: false, dir: null }; }
-  const out = W4W.zoneOf(...d.path[0]) >= 1 || W4W.zoneOf(d.q, d.r) >= 1;
-  const R = a ? routeFor(a, d) : { cells: [[d.q, d.r], ...d.path], cv: new THREE.CatmullRomCurve3([HX(d.q, d.r), ...d.path.map(c => HX(...c))]) };
-  const n = R.cells.length - 1, base = n - d.path.length;
-  // past the end of this step, keep the same pace until the next answer says otherwise
-  const u = THREE.MathUtils.clamp((t - d.t0) / Math.max(1, d.stepMs), 0, d.path.length);
-  const k = Math.min(1, (base + u) / n), p = R.cv.getPoint(k), tan = R.cv.getTangent(THREE.MathUtils.clamp(k, 0.001, 0.999));
-  return { p, walking: base + u < n, dir: tan, out };
+/* critically damped easing (the game-programming smooth damp): no overshoot, any frame time */
+function smoothDamp(cur, goal, vel, st, dt) { const w = 2 / st, x = w * dt, k = 1 / (1 + x + 0.48 * x * x + 0.235 * x * x * x), ch = cur - goal, tmp = (vel + w * ch) * dt;
+  return [goal + (ch + tmp) * k, (vel - w * tmp) * k]; }
+const PACE_T = 0.2; // how long the body takes to catch the pace: the start and the stop are eased over about twice this
+/** A new curve under a walker: carry on from the point on it nearest the body, at the same speed; what is left over fades out. */
+function adopt(a, R, prev, goal) {
+  const p = a.g.position, lens = R.cv.getLengths(), div = lens.length - 1, v = new THREE.Vector3(); let bs = 0, bd = 1e9;
+  const lim = prev ? goal + 1.2 : 0.01; // a fresh walk starts at its start; a changed one somewhere near where the body is
+  for (let k = 0; k <= div && lens[k] <= lim; k++) { R.cv.getPoint(k / div, v); const dd = (v.x - p.x) ** 2 + (v.z - p.z) ** 2; if (dd < bd) { bd = dd; bs = lens[k]; } }
+  if (!prev) { a.sv = 0; if (bd > 2.5 * 2.5) bs = goal; } // somebody seen for the first time mid-walk is simply there
+  a.s = bs; R.cv.getPointAt(Math.min(1, bs / Math.max(1e-6, R.L)), v); a.off.set(p.x - v.x, 0, p.z - v.z); if (a.off.lengthSq() > 4) a.off.set(0, 0, 0);
+}
+/** Where a walker's body is on its route: the clock says how far along it should be, the body eases after it. */
+function track(a, d, t, dt) {
+  const moving = !!d.path?.length, cur = [d.q, d.r], prev = a.route, R = moving ? routeFor(a, d) : prev;
+  if (!R) return null;
+  const n = R.cells.length - 1; let G;
+  if (moving) { const base = n - d.path.length; G = Math.min(n, base + THREE.MathUtils.clamp((t + (a.toff || 0) - d.t0) / Math.max(1, d.stepMs), 0, d.path.length));
+    a.vNom = (sAt(R, Math.min(n, base + 1)) - sAt(R, base)) / Math.max(0.3, d.stepMs / 1000); a.out = W4W.zoneOf(...d.path[0]) >= 1 || W4W.zoneOf(...cur) >= 1; }
+  else { const i = R.cells.findLastIndex(c => c[0] === cur[0] && c[1] === cur[1]); if (i < 0) { a.route = null; return null; } G = i; }
+  if (moving) a.stopT = 0; else a.stopT ||= performance.now(); // when the clock said the walk was over: a door waits for the body, but not for ever
+  const goal = sAt(R, G);
+  if (R !== prev) adopt(a, R, prev, goal);
+  if (moving && goal < a.s && a.s - goal < 1) { a.sv *= Math.exp(-dt * 8); a.s = Math.min(R.L, a.s + a.sv * dt); } // a hair ahead of the clock: wait for it, never step back
+  else [a.s, a.sv] = smoothDamp(a.s, goal, a.sv, PACE_T, dt);
+  a.s = THREE.MathUtils.clamp(a.s, 0, R.L); a.off.multiplyScalar(Math.exp(-dt / 0.3));
+  if (!moving && Math.abs(goal - a.s) < 0.004 && Math.abs(a.sv) < 0.03) { a.route = null; a.sv = 0; return null; }
+  const u = a.s / Math.max(1e-6, R.L), p = R.cv.getPointAt(u).add(a.off), dir = R.cv.getTangentAt(THREE.MathUtils.clamp(u, 0, 1));
+  return { p, dir, v: Math.max(0, a.sv), out: !!a.out };
 }
 const ICE_MAT = new THREE.MeshPhysicalMaterial({ color: 0xcfe6ff, transparent: true, opacity: 0.55, roughness: 0.2, metalness: 0, clearcoat: 1, emissive: 0x6aa0ff, emissiveIntensity: 0.15 });
-function stepAvatars(dt) {
-  const t = xnow();
+const turnTo = (a, y, dt, st = 0.14) => { const r0 = a.g.rotation.y, e = Math.atan2(Math.sin(y - r0), Math.cos(y - r0)), [x, v] = smoothDamp(0, e, a.yv || 0, st, dt); a.yv = v; a.g.rotation.y = r0 + x; };
+const _fp = new THREE.Vector3();
+function stepAvatars(dt0) {
+  // real seconds since the last frame: the server's clock walks in real time, so the body and the feet must too, however slow the frame
+  const t = xnow(), now = performance.now(), dt = stepAvatars.t ? THREE.MathUtils.clamp((now - stepAvatars.t) / 1000, 0.001, 1) : dt0; stepAvatars.t = now;
   for (const a of Object.values(avatars)) {
     const d = a.mine ? { ...a.data, ...(predicted()?.c || {}) } : a.data; if (!d) continue;
-    a.mixer.update(dt);
     const frozen = d.frozenUntil && d.frozenUntil > t;
     if (frozen) {
-      const hp = HX(...d.home); a.g.position.set(hp.x + 0.55, 0, hp.z + 0.35); play(a, 'Lie_Idle');
+      const hp = HX(...d.home); a.g.position.set(hp.x + 0.55, 0, hp.z + 0.35); a.route = null; a.sv = 0; blend(a, { Lie_Idle: 1 }, dt); a.mixer.update(dt);
       if (!a.ice) { a.ice = new THREE.Mesh(new RoundedBoxGeometry(0.9, 0.32, 0.45, 2, 0.08), ICE_MAT); a.ice.position.set(0, 0.16, 0); a.g.add(a.ice); }
       a.label.el.textContent = `${a.mine ? 'you' : d.nick} · frozen ${hms(d.frozenUntil - t)}`; continue;
     }
     if (a.ice) { a.g.remove(a.ice); a.ice = null; a.label.el.textContent = a.mine ? 'you' : d.nick; }
     syncSatchel(a, (mailOf().carriers || {})[a.mine ? (S.shared ? S.uid : 'me') : a.uid] || 0);
-    const { p, walking, dir, out } = posOf(d, t, a);
+    if (a.toff) a.toff = Math.sign(a.toff) * Math.max(0, Math.abs(a.toff) - dt * 1000 * 0.12); // a head start on the server melts away, 12% slower for a moment
+    const tr = track(a, d, t, dt), walking = !!tr, out = walking ? tr.out : false;
     // standing still: measure the door from the middle of the cell you stopped at, wherever the route curve ended
-    const stand = !walking && d.path?.length ? d.path[d.path.length - 1] : [d.q, d.r]; if (!walking) p.copy(HX(...stand));
+    const stand = [d.q, d.r], p = walking ? tr.p : HX(...stand);
     // at the fire you sit on the stones round it, facing the flames, each in a place of their own on the town side
     const atFire = !walking && SHEL[W4W.key(...stand)] === 'fire'; let fcP = null;
     let seatY = 0;
@@ -5148,53 +5281,61 @@ function stepAvatars(dt) {
       else { const ang = base + (k % 7 - 3) * 0.42; p.set(fcP.x + Math.cos(ang) * 0.66, 0, fcP.z + Math.sin(ang) * 0.66); } }
     // inside a building you are gone from the map: through the door, the body fades, the walls keep you
     const indoor = !walking && !!SHEL[W4W.key(...stand)] && SHEL[W4W.key(...stand)] !== 'fire';
-    if (indoor !== !!a.wasIn) { a.wasIn = indoor; a.enterT = 0; a.label.el.textContent = (a.mine ? 'you' : d.nick) + (indoor ? ' · inside' : ''); if (indoor) play(a, 'Walking_A'); else if (a.mine) sfx.door(); }
+    if (indoor !== !!a.wasIn) { a.wasIn = indoor; a.enterT = 0; a.label.el.textContent = (a.mine ? 'you' : d.nick) + (indoor ? ' · inside' : ''); if (!indoor && a.mine) sfx.door(); }
     if (indoor) { const was = a.enterT || 0; a.enterT = was + dt; if (was < 0.4 && a.enterT >= 0.4) { if (a.mine) sfx.door(); doorGlow(p.clone().add(new THREE.Vector3(-p.x, 0, -p.z).normalize().multiplyScalar(0.8))); } }
     a.fade = THREE.MathUtils.clamp((a.fade ?? 1) + (indoor ? (a.enterT > 0.5 ? -dt * 1.5 : 0) : dt * 3), 0, 1);
     a.body.scale.setScalar(heroScale * Math.max(0.001, a.fade)); a.g.visible = a.fade > 0.02 || indoor;
-    const door = !walking && !atFire && p.lengthSq() > 0.01 && (indoor || Object.values(SPECIAL).some(([q, r]) => q === stand[0] && r === stand[1])) ? new THREE.Vector3(-p.x, 0, -p.z).normalize().multiplyScalar(0.95) : new THREE.Vector3();
+    const door = !walking && !atFire && p.lengthSq() > 0.01 && (indoor || Object.values(SPECIAL).some(([q, r]) => q === stand[0] && r === stand[1])) ? doorAt(stand).sub(HX(...stand)) : new THREE.Vector3();
     if (walking) a.g.position.copy(p);
     else if (indoor && door.lengthSq() > 0) { const into = THREE.MathUtils.smoothstep(a.enterT || 0, 0.5, 1.4); a.g.position.lerp(p.clone().add(door.clone().multiplyScalar(1 - into * 0.45)), Math.min(1, dt * 6)); }
     else a.g.position.lerp(p.clone().add(door), Math.min(1, dt * 6));
     a.g.position.y = groundH(a.g.position.x, a.g.position.z) + seatY; // up the hill and down again; on a bench, at its seat
-    // at work you face what you are working
+    // where the body faces, turned smoothly: the way it walks, the work in hand, the fire, the door it goes in at
     const busyNow = d.act && d.act.until > t && d.act.q != null && !walking;
-    if (busyNow) { const w = HX(d.act.q, d.act.r); const y = Math.atan2(w.x - a.g.position.x, w.z - a.g.position.z), r0 = a.g.rotation.y; a.g.rotation.y = r0 + Math.atan2(Math.sin(y - r0), Math.cos(y - r0)) * Math.min(1, dt * 6); }
-    else if (dir && dir.lengthSq() > 1e-6) { const y = Math.atan2(dir.x, dir.z), r0 = a.g.rotation.y; a.g.rotation.y = r0 + Math.atan2(Math.sin(y - r0), Math.cos(y - r0)) * Math.min(1, dt * 9); }
-    if (atFire) { const y = Math.atan2(fcP.x - a.g.position.x, fcP.z - a.g.position.z), r0 = a.g.rotation.y; a.g.rotation.y = r0 + Math.atan2(Math.sin(y - r0), Math.cos(y - r0)) * Math.min(1, dt * 6); }
-    if (indoor && door.lengthSq() > 0) { const y = Math.atan2(-door.x, -door.z), r0 = a.g.rotation.y; a.g.rotation.y = r0 + Math.atan2(Math.sin(y - r0), Math.cos(y - r0)) * Math.min(1, dt * 8); }
+    if (busyNow) { const w = HX(d.act.q, d.act.r); turnTo(a, Math.atan2(w.x - a.g.position.x, w.z - a.g.position.z), dt, 0.15); }
+    else if (walking && tr.dir.lengthSq() > 1e-6 && (tr.v > 0.02 || !a.walkYaw)) { a.walkYaw = 1; turnTo(a, Math.atan2(tr.dir.x, tr.dir.z), dt); }
+    if (!walking) a.walkYaw = 0;
+    if (atFire) turnTo(a, Math.atan2(fcP.x - a.g.position.x, fcP.z - a.g.position.z), dt, 0.18);
+    if (indoor && door.lengthSq() > 0) turnTo(a, Math.atan2(-door.x, -door.z), dt, 0.13);
     const busy = d.act && d.act.until > t;
     // out in the cold the walk turns heavy: bent into the wind, staggering when it blows or you are spent
     const wx = W4W.weatherAt(t).id, bad = walking && out && (wx !== 'calm' || (d.warmth ?? 100) < 40 || (d.energy ?? 100) < 25);
-    const lean = walking && out ? (bad ? 0.32 : 0.16) : 0, sway = bad ? Math.sin(U.uTime.value * 2.1 + a.uid.length) * (wx === 'blizzard' ? 0.14 : 0.08) : 0;
+    const lean = walking && out ? (bad ? 0.32 : 0.16) * THREE.MathUtils.clamp(tr.v / Math.max(0.05, a.vNom || 0.5), 0, 1) : 0, sway = bad ? Math.sin(U.uTime.value * 2.1 + a.uid.length) * (wx === 'blizzard' ? 0.14 : 0.08) : 0;
     a.body.rotation.x += (lean - a.body.rotation.x) * Math.min(1, dt * 3); a.body.rotation.z += (sway - a.body.rotation.z) * Math.min(1, dt * 3);
     const chop = d.act?.res === 'fiber' ? 'PickUp' : d.act?.res === 'stone' || d.act?.res === 'flint' ? '2H_Melee_Attack_Chop' : '1H_Melee_Attack_Chop';
     // the tool comes out of the bag for the work, and goes back after
     a.toolId = busy && !walking ? toolInHand(d, a.mine) : null; syncTool(a.tool ||= { id: null, m: null }, a.body, a.toolId);
-    // the feet keep pace with the ground: pick the gait by how fast the body really goes, then match the clip to it
-    const nowMs = performance.now(), rdt = a.spdT ? Math.max(1e-3, (nowMs - a.spdT) / 1000) : 0; a.spdT = nowMs; // real seconds: the pace on the ground is real time, whatever the frame rate
-    const sp = a.spdP && rdt ? a.g.position.distanceTo(a.spdP) / rdt / HERO_H : 0; (a.spdP ||= a.g.position.clone()).copy(a.g.position); a.spd = THREE.MathUtils.lerp(a.spd || 0, Math.min(sp, 4), Math.min(1, rdt * 4));
-    // one gait per stretch of walking: in town the brisk walk, out in the cold the slow one; a real run only when the pace stays fast, and it takes a clear change to switch back
-    // the gait is chosen once for the whole trip, from its average pace, and kept to the end: bends, steps and slopes change the speed, never the gait
-    if (walking && a.route && a.gaitR !== a.route) { a.gaitR = a.route; const L = a.route.cv.getLength(), T = Math.max(0.3, (a.route.cells.length - 1) * Math.max(1, d.stepMs || 1000) / 1000), avg = L / T / HERO_H;
-      a.tripG = out ? (avg > 1.1 ? 'Running_A' : 'Walking_A') : (avg > 1.7 && a.actions.Jog ? 'Jog' : 'Running_A'); }
-    const gait = !walking ? null : bad && a.actions.Walking_C ? 'Walking_C' : (a.tripG || (out ? 'Walking_A' : 'Running_A')); a.gaitG = gait;
-    if (gait && a.actions[gait]) { const want = THREE.MathUtils.clamp(a.spd / (GAIT[gait] || 1), 0.75, 1.45), ac = a.actions[gait]; ac.timeScale += (want - ac.timeScale) * Math.min(1, rdt * 2); }
-    if (indoor) { const w = a.actions.Walking_A; if (w) w.timeScale = 0.8; }
-    else play(a, walking ? gait : busy ? (a.actions[chop] ? chop : 'PickUp') : sittingAt(d) || (!walking && SHEL[W4W.key(d.q, d.r)] === 'fire') ? 'Sit_Floor_Idle' : 'Idle');
-    if (walking) { const lp = a.lastP || (a.lastP = a.g.position.clone()); a.walkD = (a.walkD || 0) + Math.min(0.5, lp.distanceTo(a.g.position)); lp.copy(a.g.position);
-      const stride = out ? 0.2 : 0.16; if (a.walkD > stride) { a.walkD = 0; footPrint(a); if (a.mine) sfx.step(out, wx); if (out && (a.stepN = (a.stepN || 0) + 1) % 3 === 0) snowStep(a.g.position, bad || W4W.zoneOf(d.q, d.r) >= 2); } }
-    else if (a.lastP) a.lastP.copy(a.g.position);
+    // the feet keep pace with the ground: one gait per trip, the clip whose own pace is nearest the trip's, played at exactly the speed
+    // the body moves; from a stand it blends in as the body picks up speed and out as it slows, and it changes only when the pace does
+    let want;
+    if (walking) {
+      const vn = Math.max(0.05, a.vNom || 0.5);
+      if (!a.gait || !a.gaitV || Math.abs(Math.log(vn / a.gaitV)) > 0.28 || (bad && a.gait !== 'Walking_C' && a.actions.Walking_C) || (!bad && a.gait === 'Walking_C')) { const g = pickGait(a, vn, bad); a.gaitV = vn; if (g !== a.gait) { a.gaitPrev = a.gait; a.gait = g; } }
+      const k = THREE.MathUtils.smoothstep(tr.v / vn, 0.06, 0.5); want = { Idle: 1 - k, [a.gait]: k };
+    } else { a.gait = null; a.gaitV = 0;
+      want = { [indoor ? 'Walking_A' : busy ? (a.actions[chop] ? chop : 'PickUp') : sittingAt(d) || (!walking && SHEL[W4W.key(d.q, d.r)] === 'fire') ? 'Sit_Floor_Idle' : 'Idle']: 1 }; }
+    const fresh = blend(a, want, dt);
+    for (const n of fresh) { if (!GAITS[n]) continue; const ac = a.actions[n], from = Object.keys(a.w).find(m => m !== n && GAITS[m] && a.w[m] > 0.05);
+      ac.time = from ? strideT(n, stridePh(from, a.actions[from].time)) : strideT(n, 0.02); } // a new gait takes up the step the old one was on
+    for (const n in a.w) { const G = GAITS[n]; if (!G) continue; a.actions[n].timeScale = indoor ? 0.8 : THREE.MathUtils.clamp(Math.max(walking ? tr.v : 0, 0.4 * (a.vNom || 0.5)) / (G.v * HERO_H), 0.3, 2.6); }
+    a.mixer.update(dt);
+    // a footfall is a foot coming down in the clip: the print goes where that foot is, the sound with it
+    const fg = walking && a.gait, G = fg && GAITS[fg], ac = fg && a.actions[fg];
+    if (G && ac && (a.w[fg] || 0) > 0.45 && tr.v > 0.15 * (a.vNom || 0.5)) { const ph = ((ac.time / G.dur) % 1 + 1) % 1, p0 = a.ph;
+      if (p0 != null && a.phG === fg) for (const st of G.steps) if (ph >= p0 ? st.at > p0 && st.at <= ph : st.at > p0 || st.at <= ph) {
+        const bone = a.feet[st.foot]; if (bone) { bone.updateWorldMatrix(true, false); bone.getWorldPosition(_fp); } else _fp.copy(a.g.position);
+        footPrint(a, _fp, st.foot === 'L' ? -1 : 1); if (a.mine) sfx.step(out, wx); if (out && (a.stepN = (a.stepN || 0) + 1) % 3 === 0) snowStep(a.g.position, bad || W4W.zoneOf(d.q, d.r) >= 2); }
+      a.ph = ph; a.phG = fg; } else { a.ph = null; }
     if (a.mine && busy) { a.workT = (a.workT || 0) + dt; if (a.workT > 1.1) { a.workT = 0; sfx.work(d.act?.res); } }
   }
   // the camera walks with you until you take it
   const mine = avatars[myUid()];
-  if (follow && predicted()?.c?.path?.length && !fly) { const tg = mine.g.position; controls.target.x += (tg.x - controls.target.x) * Math.min(1, dt * 2); controls.target.z += (tg.z - controls.target.z) * Math.min(1, dt * 2); }
+  if (follow && mine && (predicted()?.c?.path?.length || mine.route) && !fly) { const tg = mine.g.position; controls.target.x += (tg.x - controls.target.x) * Math.min(1, dt * 2); controls.target.z += (tg.z - controls.target.z) * Math.min(1, dt * 2); }
 }
 /* footprints in the snow: they stay a little while, then the snow fills them */
 const PRINT_N = 220, PRINT_LIFE = 9;
 let printMesh = null, printK = 0;
-function footPrint(a) {
+function footPrint(a, at = null, foot = 0) {
   if (!printMesh) {
     const cv = document.createElement('canvas'); cv.width = 32; cv.height = 64; const x = cv.getContext('2d');
     x.fillStyle = '#fff'; x.beginPath(); x.ellipse(16, 22, 9, 15, 0, 0, Math.PI * 2); x.fill(); x.beginPath(); x.ellipse(16, 50, 7, 9, 0, 0, Math.PI * 2); x.fill();
@@ -5207,7 +5348,7 @@ function footPrint(a) {
     printMesh = new THREE.InstancedMesh(geo, mat, PRINT_N); printMesh.frustumCulled = false; printMesh.renderOrder = 2;
     const m4 = new THREE.Matrix4().makeScale(0, 0, 0); for (let i = 0; i < PRINT_N; i++) printMesh.setMatrixAt(i, m4); scene.add(printMesh);
   }
-  const g = a.g, side = (a.foot = !a.foot) ? 1 : -1, yaw = g.rotation.y, px = g.position.x + Math.cos(yaw) * 0.028 * side, pz = g.position.z - Math.sin(yaw) * 0.028 * side;
+  const g = a.g, side = foot || ((a.foot = !a.foot) ? 1 : -1), yaw = g.rotation.y, px = at ? at.x : g.position.x + Math.cos(yaw) * 0.028 * side, pz = at ? at.z : g.position.z - Math.sin(yaw) * 0.028 * side;
   const m4 = new THREE.Matrix4().makeRotationY(yaw); m4.setPosition(px, 0.035 + groundH(px, pz), pz); const i = printK++ % PRINT_N;
   printMesh.setMatrixAt(i, m4); printMesh.instanceMatrix.needsUpdate = true;
   const ab = printMesh.geometry.getAttribute('aBorn'); ab.array[i] = U.uTime.value; ab.needsUpdate = true;
@@ -5401,7 +5542,7 @@ function hud(force) {
   stepPlotStakes(); stepLetters(); stepHeard(); stepMail();
   if (!ACT1) { stepResTags(frozen ? null : c); stepScrolls(frozen ? null : c); stepMilestones(c); } else act1Watch(c); welcomeBack(); renderGoals();
   actions(c, here, t, frozen);
-  if (pendingOpen && !c.path.length && !frozen && !(xMoving && performance.now() - xMoveAt < 10000)) { const k = pendingOpen; pendingOpen = null; if (k.room) { if (here[0] === k.cell[0] && here[1] === k.cell[1]) enterRoom(k.room, true); } else if (W4W.dist(here, k.cell) <= (k.kind === 'core' ? 2 : 1)) openKind(k.kind, k.id); }
+  if (pendingOpen && !c.path.length && !frozen && (!avatars[myUid()]?.route || performance.now() - avatars[myUid()].stopT > 1500) && !(xMoving && performance.now() - xMoveAt < 10000)) { const k = pendingOpen; pendingOpen = null; if (k.room) { if (here[0] === k.cell[0] && here[1] === k.cell[1]) enterRoom(k.room, true); } else if (W4W.dist(here, k.cell) <= (k.kind === 'core' ? 2 : 1)) openKind(k.kind, k.id); }
   // the screen thinks you just froze: ask the server, it has the last word
   if (pr.events.some(e => e.kind === 'froze' || e.kind === 'thawed') && performance.now() - freezeAsk > 5000) { freezeAsk = performance.now(); xact('char'); }
 }
@@ -5723,7 +5864,7 @@ const dur = ms => { ms = Math.max(0, ms); const h = Math.floor(ms / 36e5), m = M
 const clockAt = ms => new Date(ms).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 function planTo(to) {
   const pr = predicted(); const c = pr.c, t = xnow();
-  const from = c.path.length ? c.path[0] : [c.q, c.r], rest = W4W.findPath(from, to, 4000, new Set(Object.keys(xctx().shelters))); if (!rest) { say('No way through from here.', 'Wastes'); return; }
+  const from = c.path.length ? c.path[0] : [c.q, c.r], rest = W4W.findPath(from, to, 4000, W4W.walkBlocked(xctx().shelters)); if (!rest) { say('No way through from here.', 'Wastes'); return; }
   const path = c.path.length ? [from, ...rest] : rest;
   if (!path.length) return;
   if (path.length > 90) { say('Too far for one walk. Go in stages.', 'Wastes'); return; }
@@ -7810,7 +7951,7 @@ function buildStreets() {
       const sd = streetDist(v); if (sd.d < 0.82 + rad || sd.d > 1.6 || steep(v, rad + 0.1) || inBuilding(v, rad * 0.6)) continue; const dd = (v.x - L.x) ** 2 + (v.z - L.z) ** 2; if (dd < bd && dd < 1.6) { bd = dd; best = [v, sd.p]; } }
     if (!best) continue; const [v, sp] = best; taken.add(cornerId(v)); USED_CORNERS.add(cornerId(v)); LAMP_CORNERS.add(cornerId(v));
     const K = kitAt(L.bench ? 'benchlamp' : 'lamppost', v.x, v.z, Math.atan2(sp.x - v.x, sp.z - v.z)); if (K) STREET_OBJS.push(K); }
-  buildDecor();
+  buildDecor(); solidsDirty();
 }
 /* ---------- Aigrad by quarters: each public house has its yard dressed for its trade ----------
  * Hearth Square to the south (the board, the well, the fire with the kettle, a mailbox by the post, a snowman by the bar),
@@ -7840,6 +7981,132 @@ function inBuilding(v, r = 0.3) { if (!BLD_OBJ.length) return false;
   for (const [dx, dz] of [[0, 0], [r, 0], [-r, 0], [0, r], [0, -r]]) { _bray.set(_bo.set(v.x + dx, 8, v.z + dz), _down); _bray.far = 9;
     if (_bray.intersectObjects(BLD_OBJ, true).some(h => h.point.y > 0.45 + groundH(v.x, v.z) && h.point.y < 1.6 + groundH(v.x, v.z))) return true; } return false; }
 function steep(v, r = 0.35) { return Math.abs(groundH(v.x + r, v.z) - groundH(v.x - r, v.z)) > 0.06 || Math.abs(groundH(v.x, v.z + r) - groundH(v.x, v.z - r)) > 0.06; }
+/* ---------- what nobody walks through: every wall and solid thing in town, cut between the ankle and the head and laid flat on a
+ * fine grid, with the distance to the nearest of them kept for every point. Measured from the meshes as they stand, so a new house,
+ * a pipe or a bench is in it the moment it is built. A walk is drawn round all of it, except the building at either end of it. */
+const SOL_LO = 0.03, SOL_HI = 0.45, SOL_H = 0.1, SOL_R = 0.18; // the slice a walker fills; grid step; how far a walker's middle keeps off a wall
+const SOL = { ver: 0, dirty: true, t: 0, ext: 0, N: 0, occ: null, sd: null, objs: [], list: [], cache: new WeakMap(), local: new Map() };
+const solidsDirty = () => { SOL.dirty = true; };
+function solidSkip(o) { if (o === HILL_OBJ || o === printMesh || o.isLight || o.isSprite || o.isPoints || o.isLine || !o.visible || o.userData.noSolid) return true;
+  if (SOL.N && (Math.abs(o.position.x) > SOL.ext + 5 || Math.abs(o.position.z) > SOL.ext + 5)) return true; // beyond the map the walks are drawn on
+  for (const a of Object.values(avatars)) if (a.g === o) return true; let sk = false; o.traverse(m => { if (m.isSkinnedMesh) sk = true; }); return sk; }
+/** Cut one object between the ankle and the head: the grid cells it covers, its own interior filled (walls round a room are solid). */
+function solidCells(o) {
+  const N = SOL.N, ext = SOL.ext, h = SOL_H, cells = new Set(), v = new THREE.Vector3(); let top = 0;
+  const bx = new THREE.Box3().setFromObject(o); if (bx.isEmpty() || (Math.max(bx.max.x - bx.min.x, bx.max.z - bx.min.z) > 9 && !pipes.includes(o)) || bx.max.y - bx.min.y < 0.06) return null;
+  if (Math.max(Math.abs(bx.min.x), Math.abs(bx.max.x), Math.abs(bx.min.z), Math.abs(bx.max.z)) < 2.4) return null; // Anna's block: nobody walks there
+  const i0 = Math.max(0, Math.floor((bx.min.x + ext) / h) - 1), j0 = Math.max(0, Math.floor((bx.min.z + ext) / h) - 1), i1 = Math.min(N - 1, Math.ceil((bx.max.x + ext) / h) + 1), j1 = Math.min(N - 1, Math.ceil((bx.max.z + ext) / h) + 1);
+  if (i1 <= i0 || j1 <= j0) return null; const W = i1 - i0 + 1, Hh = j1 - j0 + 1, bm = new Uint8Array(W * Hh);
+  const mark = (x, z) => { const i = Math.floor((x + ext) / h) - i0, j = Math.floor((z + ext) / h) - j0; if (i >= 0 && j >= 0 && i < W && j < Hh) bm[j * W + i] = 1; };
+  const px = new Float64Array(12), pz = new Float64Array(12);
+  o.traverse(m => {
+    if (!m.isMesh || m.isInstancedMesh || m.isSkinnedMesh || !m.geometry?.attributes?.position) return; for (let p = m; p; p = p.parent) if (!p.visible) return;
+    if ([].concat(m.material).every(x => x && x.transparent && x.depthWrite === false)) return; // glows, beams and pools of light
+    const g = m.geometry, pos = g.attributes.position, n = pos.count, P = new Float32Array(n * 3);
+    if (!g.boundingBox) g.computeBoundingBox(); const mb = g.boundingBox.clone().applyMatrix4(m.matrixWorld), gh = groundH((mb.min.x + mb.max.x) / 2, (mb.min.z + mb.max.z) / 2);
+    if (mb.max.y - mb.min.y < 0.04 || mb.min.y > gh + SOL_HI + 2.5 || mb.max.y < SOL_LO - 0.5) return;
+    const flat = Math.hypot((mb.min.x + mb.max.x) / 2 - HILL.x, (mb.min.z + mb.max.z) / 2 - HILL.z) > HILL.R + 9; // off the hill the ground is level
+    for (let i = 0; i < n; i++) { v.fromBufferAttribute(pos, i).applyMatrix4(m.matrixWorld); P[i * 3] = v.x; P[i * 3 + 1] = v.y - (flat ? 0 : groundH(v.x, v.z)); P[i * 3 + 2] = v.z; }
+    const idx = g.index, T = idx ? idx.count / 3 : n / 3, I = k => (idx ? idx.getX(k) : k) * 3;
+    for (let t = 0; t < T; t++) { const a = I(t * 3), b = I(t * 3 + 1), c = I(t * 3 + 2), ya = P[a + 1], yb = P[b + 1], yc = P[c + 1];
+      if ((ya > SOL_HI && yb > SOL_HI && yc > SOL_HI) || (ya < SOL_LO && yb < SOL_LO && yc < SOL_LO)) continue;
+      // the triangle cut to the slice: its corners inside it and the points where its edges cross the top and the bottom
+      let k = 0;
+      for (let e = 0; e < 3; e++) { const u = e === 0 ? a : e === 1 ? b : c, w = e === 0 ? b : e === 1 ? c : a, yu = P[u + 1], yw = P[w + 1];
+        if (yu >= SOL_LO && yu <= SOL_HI) { px[k] = P[u]; pz[k++] = P[u + 2]; if (yu > top) top = yu; }
+        if ((yu - SOL_LO) * (yw - SOL_LO) < 0) { const f = (SOL_LO - yu) / (yw - yu); px[k] = P[u] + (P[w] - P[u]) * f; pz[k++] = P[u + 2] + (P[w + 2] - P[u + 2]) * f; }
+        if ((yu - SOL_HI) * (yw - SOL_HI) < 0) { const f = (SOL_HI - yu) / (yw - yu); px[k] = P[u] + (P[w] - P[u]) * f; pz[k++] = P[u + 2] + (P[w + 2] - P[u + 2]) * f; top = SOL_HI; } }
+      if (k < 1) continue;
+      let ax = 1e9, az = 1e9, Ax = -1e9, Az = -1e9; for (let q = 0; q < k; q++) { ax = Math.min(ax, px[q]); Ax = Math.max(Ax, px[q]); az = Math.min(az, pz[q]); Az = Math.max(Az, pz[q]); }
+      if (Ax - ax < h * 1.5 && Az - az < h * 1.5) { mark(ax, az); mark(Ax, Az); mark(ax, Az); mark(Ax, az); continue; }
+      // a bigger piece: every grid point in the cut shape (convex), or within half a step of its outline
+      const cx = px.slice(0, k).reduce((s, x) => s + x, 0) / k, cz = pz.slice(0, k).reduce((s, x) => s + x, 0) / k, ang = [];
+      for (let q = 0; q < k; q++) ang.push([Math.atan2(pz[q] - cz, px[q] - cx), px[q], pz[q]]); ang.sort((x, y) => x[0] - y[0]);
+      for (let x = Math.floor((ax + ext) / h) * h - ext; x <= Ax + h; x += h) for (let z = Math.floor((az + ext) / h) * h - ext; z <= Az + h; z += h) {
+        const qx = x + h / 2, qz = z + h / 2; let ins = true, near = false;
+        for (let q = 0; q < ang.length; q++) { const [, x0, z0] = ang[q], [, x1, z1] = ang[(q + 1) % ang.length], ex = x1 - x0, ez = z1 - z0, L = Math.hypot(ex, ez);
+          if (L < 1e-6) continue; const s = ((qx - x0) * ez - (qz - z0) * ex) / L; if (s > h * 0.71) { ins = false; break; }
+          const tt = THREE.MathUtils.clamp(((qx - x0) * ex + (qz - z0) * ez) / (L * L), 0, 1); if (Math.hypot(qx - x0 - ex * tt, qz - z0 - ez * tt) < h * 0.71) near = true; }
+        if (ins || near) mark(qx, qz); } }
+  });
+  // the inside of a walled thing is part of it: whatever the outside cannot reach without crossing a wall
+  const seen = new Uint8Array(W * Hh), st = []; for (let i = 0; i < W; i++) st.push(i, (Hh - 1) * W + i); for (let j = 0; j < Hh; j++) st.push(j * W, j * W + W - 1);
+  while (st.length) { const c = st.pop(); if (seen[c] || bm[c]) continue; seen[c] = 1; const i = c % W, j = (c / W) | 0; if (i > 0) st.push(c - 1); if (i < W - 1) st.push(c + 1); if (j > 0) st.push(c - W); if (j < Hh - 1) st.push(c + W); }
+  for (let c = 0; c < W * Hh; c++) if (bm[c] || !seen[c]) cells.add((j0 + ((c / W) | 0)) * N + i0 + (c % W));
+  return cells.size ? { cells: Int32Array.from(cells), top } : null;
+}
+/** Exact distance to the nearest set cell for every grid cell (Felzenszwalb's two-pass squared transform), in metres. */
+function edt(src, N, set) {
+  const INF = 1e20, f = new Float64Array(N * N); for (let k = 0; k < N * N; k++) f[k] = (src[k] !== 0) === set ? 0 : INF;
+  const line = new Float64Array(N), d = new Float64Array(N), v = new Int32Array(N), z = new Float64Array(N + 1);
+  const dt1 = () => { let k = 0; v[0] = 0; z[0] = -INF; z[1] = INF;
+    for (let q = 1; q < N; q++) { let s = ((line[q] + q * q) - (line[v[k]] + v[k] * v[k])) / (2 * q - 2 * v[k]);
+      while (s <= z[k]) { k--; s = ((line[q] + q * q) - (line[v[k]] + v[k] * v[k])) / (2 * q - 2 * v[k]); }
+      k++; v[k] = q; z[k] = s; z[k + 1] = INF; }
+    k = 0; for (let q = 0; q < N; q++) { while (z[k + 1] < q) k++; d[q] = (q - v[k]) * (q - v[k]) + line[v[k]]; } };
+  for (let j = 0; j < N; j++) { const o = j * N; for (let i = 0; i < N; i++) line[i] = f[o + i]; dt1(); for (let i = 0; i < N; i++) f[o + i] = d[i]; }
+  for (let i = 0; i < N; i++) { for (let j = 0; j < N; j++) line[j] = f[j * N + i]; dt1(); for (let j = 0; j < N; j++) f[j * N + i] = d[j]; }
+  const out = new Float32Array(N * N); for (let k = 0; k < N * N; k++) out[k] = Math.sqrt(f[k]) * SOL_H; return out;
+}
+// what an object is made of, cheaply: where it stands and how many visible meshes and vertices it has (a model that loads late counts)
+const solidSig = o => { const e = o.matrixWorld.elements; let n = 0, v = 0; o.traverseVisible(m => { if (m.isMesh) { n++; v += m.geometry?.attributes?.position?.count || 0; } });
+  return [e[0], e[2], e[5], e[12], e[13], e[14]].map(x => x.toFixed(3)).join() + ':' + n + ':' + v; };
+/** The solid map, measured once the town stands and again whenever it changes (a house built or rebuilt, a prop put up). */
+function solids() { if (!SOL.occ || SOL.dirty) buildSolids(); return SOL; }
+/** Every frame, a few milliseconds of measuring at most: new and moved things are cut ahead of the walk that needs them. */
+function solidsWarm() {
+  const now = performance.now(); solidGrid();
+  if (SOL.occ && !SOL.dirty) { if (now - SOL.t < 2000) return; SOL.t = now; // look again: has anything solid come, gone or moved?
+    const list = scene.children.filter(o => !solidSkip(o)); if (list.length === SOL.list.length && list.every((o, i) => o === SOL.list[i] && SOL.cache.get(o)?.sig === solidSig(o))) return; SOL.dirty = true; }
+  for (const o of scene.children) { if (solidSkip(o)) continue; const sig = solidSig(o), c = SOL.cache.get(o); if (c && c.sig === sig) continue; SOL.cache.set(o, { sig, r: solidCells(o) }); if (performance.now() - now > 8) return; }
+  buildSolids();
+}
+function solidGrid() { if (!SOL.N) { SOL.ext = W4W.STAGE === 1 ? W4W.DOME_RADIUS + 2 : 44; SOL.N = Math.ceil(SOL.ext * 2 / SOL_H); } }
+function buildSolids() {
+  solidGrid();
+  scene.updateMatrixWorld(true);
+  const N = SOL.N, occ = new Int32Array(N * N), objs = [null], list = [];
+  for (const o of scene.children) { if (solidSkip(o)) continue; list.push(o);
+    const sig = solidSig(o); let c = SOL.cache.get(o); if (!c || c.sig !== sig) { c = { sig, r: solidCells(o) }; SOL.cache.set(o, c); } if (!c.r) continue;
+    const id = objs.length; objs.push({ o, top: c.r.top, n: c.r.cells.length }); for (const k of c.r.cells) occ[k] = id; }
+  const out = edt(occ, N, true), ins = edt(occ, N, false); for (let k = 0; k < N * N; k++) out[k] = out[k] > 0 ? out[k] - SOL_H / 2 : -(ins[k] - SOL_H / 2);
+  Object.assign(SOL, { occ, objs, list, sd: out, dirty: false, t: performance.now() }); SOL.local.clear(); SOL.ver++; doorAt.cache.clear();
+}
+/** The solid map with the building that stands on a cell taken out, near that cell: for the walk into it or out of it. */
+function solidsBut(cell) {
+  const S = solids(), k = W4W.key(...cell); if (SOL.local.has(k)) return SOL.local.get(k);
+  const c = HX(...cell), N = S.N, h = SOL_H, ids = new Set(), sh = SHEL[k] && SHEL[k] !== 'fire';
+  for (let dx = -0.35; dx <= 0.36; dx += 0.35) for (let dz = -0.35; dz <= 0.36; dz += 0.35) { const id = S.occ[gridAt(c.x + dx, c.z + dz)]; if (id) ids.add(id); }
+  // only the last stretch to the door may go into the building: the rest of the walk goes round it, to the side the door is on
+  const pt = sh && c.lengthSq() > 0.01 ? c.clone().add(new THREE.Vector3(-c.x, 0, -c.z).normalize().multiplyScalar(0.95)) : c, rad = sh ? 1.0 : 1.5, R = rad + 1.3;
+  let L = null;
+  if (ids.size) { const M = Math.min(N, Math.ceil(R * 2 / h)), i0 = THREE.MathUtils.clamp(Math.floor((pt.x - R + S.ext) / h), 0, N - M), j0 = THREE.MathUtils.clamp(Math.floor((pt.z - R + S.ext) / h), 0, N - M);
+    const sub = new Int32Array(M * M); for (let j = 0; j < M; j++) for (let i = 0; i < M; i++) { const id = S.occ[(j0 + j) * N + i0 + i]; sub[j * M + i] = ids.has(id) ? 0 : id; }
+    const out = edt(sub, M, true), ins = edt(sub, M, false); for (let q = 0; q < M * M; q++) out[q] = out[q] > 0 ? out[q] - h / 2 : -(ins[q] - h / 2);
+    L = { i0, j0, M, sd: out, pt, rad, ids }; }
+  SOL.local.set(k, L); return L;
+}
+const gridAt = (x, z) => { const N = SOL.N, i = Math.min(N - 1, Math.max(0, Math.floor((x + SOL.ext) / SOL_H))), j = Math.min(N - 1, Math.max(0, Math.floor((z + SOL.ext) / SOL_H))); return j * N + i; };
+/** How far a point is from the nearest wall (negative inside one), leaving out the buildings in `but` (from solidsBut) near them. */
+function clearOf(x, z, but) {
+  const S = SOL; if (!S.sd) return 99;
+  for (const L of but || []) if (L && (x - L.pt.x) ** 2 + (z - L.pt.z) ** 2 < L.rad * L.rad) return bil(L.sd, L.M, (x + S.ext) / SOL_H - L.i0, (z + S.ext) / SOL_H - L.j0);
+  if (Math.abs(x) > S.ext - 0.2 || Math.abs(z) > S.ext - 0.2) return 99; return bil(S.sd, S.N, (x + S.ext) / SOL_H, (z + S.ext) / SOL_H);
+}
+function bil(F, N, fx, fz) { fx -= 0.5; fz -= 0.5; const i = Math.min(N - 2, Math.max(0, Math.floor(fx))), j = Math.min(N - 2, Math.max(0, Math.floor(fz))), u = THREE.MathUtils.clamp(fx - i, 0, 1), w = THREE.MathUtils.clamp(fz - j, 0, 1);
+  return (F[j * N + i] * (1 - u) + F[j * N + i + 1] * u) * (1 - w) + (F[(j + 1) * N + i] * (1 - u) + F[(j + 1) * N + i + 1] * u) * w; }
+/** Move a point out of the walls round it until it keeps `r` from all of them (or as far as the gap allows). */
+function pushClear(p, but, r = SOL_R, maxMove = 9) {
+  const o = p.clone();
+  for (let it = 0; it < 6; it++) { const d = clearOf(p.x, p.z, but); if (d >= r) break; const e = 0.06, gx = clearOf(p.x + e, p.z, but) - clearOf(p.x - e, p.z, but), gz = clearOf(p.x, p.z + e, but) - clearOf(p.x, p.z - e, but), gl = Math.hypot(gx, gz);
+    if (gl < 1e-5) break; p.x += gx / gl * (r - d) * 0.9; p.z += gz / gl * (r - d) * 0.9; }
+  if (p.distanceTo(o) > maxMove) p.copy(o).add(p.clone().sub(o).setLength(maxMove)); return p;
+}
+/** Where you stand at a building's door: a step in front of it toward Anna, and off anything else standing there (your own pipe). */
+function doorAt(cell) { const k = W4W.key(...cell); if (doorAt.cache.has(k)) return doorAt.cache.get(k).clone();
+  const e = HX(...cell), d = e.lengthSq() > 0.01 ? e.clone().add(new THREE.Vector3(-e.x, 0, -e.z).normalize().multiplyScalar(0.95)) : e.clone();
+  if (SOL.sd) pushClear(d, [solidsBut(cell)], SOL_R, 0.4); doorAt.cache.set(k, d.clone()); return d; }
+doorAt.cache = new Map();
 function onCorner(n, q, r, turn, face = 'in', s = 1, parent = scene, rad = 0.3, owner = null) {
   if (!KIT_P[n]) return null;
   // a corner on the cobbles is no place for it: try the corners either side, and give up rather than stand in a lane
@@ -8414,7 +8681,7 @@ function loop(now = performance.now()) {
       o.material.opacity = big ? 0.8 + Math.sin(t * 9 + ph) * 0.07 + Math.sin(t * 5.3 + ph) * 0.08 : 0.82 + Math.sin(t * 1.9 + ph) * 0.05 + Math.sin(t * 4.7 + ph * 0.6) * 0.03;
       o.scale.setScalar(s0 * (1 + f * 1.1 + (big ? (S.town.fire || 0) * 0.07 + Math.sin(t * 6.1 + ph) * 0.03 : 0))); }
     if (o.userData.blink) o.material.opacity = 0.35 + 0.65 * (Math.sin(t * 4) > 0 ? 1 : 0.2); } });
-  stepCamera(dt); stepAvatars(dt); stepSnowFx(dt); hud(); stepSound(); stepPlaces(dt); stepHask(dt); if (XV?.me) { stepFrames(dt); if (!ACT1) stepShards(predicted()?.c, dt); } if (XV) { stepRime(dt); if ((tick & 15) === 0) { stepNotes(); stepLogWatch(); stepLog(); stepStoneLamps(); stepRoom(); } stepLocalGrid(predicted()?.c); }
+  stepCamera(dt); if (XW) solidsWarm(); stepAvatars(dt); stepSnowFx(dt); hud(); stepSound(); stepPlaces(dt); stepHask(dt); if (XV?.me) { stepFrames(dt); if (!ACT1) stepShards(predicted()?.c, dt); } if (XV) { stepRime(dt); if ((tick & 15) === 0) { stepNotes(); stepLogWatch(); stepLog(); stepStoneLamps(); stepRoom(); } stepLocalGrid(predicted()?.c); }
   for (const k in walkers) { const w = walkers[k]; w.g.position.lerp(w.target, Math.min(1, dt * 1.5)); w.g.position.y = 0; w.light.position.set(w.g.position.x + 0.15, 0.45, w.g.position.z); }
   if (fly) { fly.t = Math.min(1, fly.t + dt * 0.9); const k = 1 - Math.pow(1 - fly.t, 3);
     const tgt = fly.from.clone().lerp(fly.to, k); const off = camera.position.clone().sub(controls.target).normalize().multiplyScalar(fly.d0 + (fly.d1 - fly.d0) * k);
