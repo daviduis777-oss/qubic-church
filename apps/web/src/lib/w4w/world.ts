@@ -728,9 +728,18 @@ export function townOfState(ws: WState) {
  * Phase 0: he is unseen. Phase 1: his letters ask, and people can drain a pylon for warmth.
  * Phase 2: the bar of the North Gate can be lifted, a notch at a time. Phase 3: when the Hush is full, the Veil falls.
  * Phases are set by the admin. The Hush is set by players. */
-export type Story = { phase: number; hush: number; ht: number; unveil?: { at: number; until: number } | null; chosen?: string[]; turns?: number; turnedAt?: number; fallen?: number }
+export type Story = { phase: number; hush: number; ht: number; unveil?: { at: number; until: number } | null; chosen?: string[]; turns?: number; turnedAt?: number; fallen?: number; act2?: boolean }
 /** The end of Act I: the one who listens turns the Iron Rose this many nights, alone, and the Veil goes down for good. */
 export const ROSE_TURNS = 7, ROSE_TURN_WAIT = 18 * 3600_000
+/** The long cold keeps a clock. Act I runs about six months from launch and the Veil falls around 11 May 2027.
+ *  The story phases come on their own dates (the desk can bring one sooner, never hold one back), the Iron Rose
+ *  gives each notch no sooner than its date, the seventh only once Act II is marked ready, and Anna's thaw
+ *  cannot outrun the calendar: at most 48% on the night the Veil falls. */
+export const ACT1_START = Date.UTC(2026, 10, 11, 12), ACT1_FALL = Date.UTC(2027, 4, 11, 12)
+export const PHASE_AT = [ACT1_START, Date.UTC(2026, 11, 16, 12), Date.UTC(2027, 1, 10, 12), Date.UTC(2027, 2, 31, 12)]
+export const notchAt = (n: number) => ACT1_START + Math.round((ACT1_FALL - ACT1_START) * n / ROSE_TURNS)
+export const phaseNow = (s: Story | null | undefined, now: number) => Math.max(s?.phase ?? 0, PHASE_AT.filter(t => now >= t).length - 1)
+export const thawCap = (now: number) => Math.max(0.02, 0.48 * Math.min(1, (now - ACT1_START) / (ACT1_FALL - ACT1_START)))
 export const GATE_CELL: Cell = [0, -TOWN_RING]
 export const ROSE_CELL: Cell = [-1, 2] // the Iron Rose: the valve on the copper ring round Anna
 export const ROSE_WAIT = 6 * 3600_000
@@ -746,7 +755,7 @@ export const unveiled = (s: Story | undefined, now: number) => !!s?.unveil && no
 function addHush(ws: WState, n: number, d: Dirty) {
   const s = (ws.story ??= { phase: 0, hush: 0, ht: ws.now })
   s.hush = Math.max(0, Math.min(HUSH_MAX, hushNow(s, ws.now) + n)); s.ht = ws.now; d.story = true
-  if (s.phase >= 3 && s.hush >= HUSH_MAX && !unveiled(s, ws.now)) {
+  if (phaseNow(s, ws.now) >= 3 && s.hush >= HUSH_MAX && !unveiled(s, ws.now)) {
     s.unveil = { at: ws.now, until: ws.now + UNVEIL_MS }; s.hush = 0
     d.feed.push({ id: `uv${ws.now}`, t: ws.now, topic: 'unveil', by: '', data: { until: s.unveil.until } })
   }
@@ -898,7 +907,7 @@ export function viewOf(ws: WState, uid: string, events: Event[] = []) {
     twelve: ws.twelve ?? {},
     orders: ordersFor(dayOf(ws.now)), delivered: ws.delivered?.day === dayOf(ws.now) ? ws.delivered.n : 0,
     pylons: Array.from({ length: PYLON_N }, (_, i) => { const p = ws.pylons?.[i]; return { i, at: pylonCell(i), s: pylonNow(p, i, ws.now, veilOf(townOfState(ws).power)), nick: p?.nick ?? null, at_t: p?.at ?? 0 } }),
-    story: { chosen: !!ws.story?.chosen?.includes(uid), turns: ws.story?.turns ?? 0, fallen: ws.story?.fallen ?? null, phase: ws.story?.phase ?? 0, hush: (ws.story?.phase ?? 0) >= 2 ? Math.round(hushNow(ws.story, ws.now)) : null, unveil: unveiled(ws.story, ws.now) ? ws.story!.unveil! : null },
+    story: { chosen: !!ws.story?.chosen?.includes(uid), turns: ws.story?.turns ?? 0, fallen: ws.story?.fallen ?? null, phase: phaseNow(ws.story, ws.now), hush: phaseNow(ws.story, ws.now) >= 2 ? Math.round(hushNow(ws.story, ws.now)) : null, unveil: unveiled(ws.story, ws.now) ? ws.story!.unveil! : null },
     pressed: pressedAt(ws.now), pressNext: (Math.floor(ws.now / PYLON_PRESS_MS) + 1) * PYLON_PRESS_MS,
     ranks: Object.fromEntries(Object.entries(ws.chars).map(([k, x]) => [k, rankOf(x.renown ?? 0)])),
     folk: folkView(ws, uid),
@@ -1083,7 +1092,7 @@ export function action(ws: WState, uid: string, op: string, b: Record<string, un
     }
     case 'drain': {
       // the first thing the letters ask: take a little warmth back from the wall. It feels like nothing. It is not nothing.
-      if ((ws.story?.phase ?? 0) < 1) return fail('unknown action')
+      if (phaseNow(ws.story, now) < 1) return fail('unknown action')
       const i = Number(b.i); if (!(i >= 0 && i < PYLON_N)) return fail('Which pylon?')
       if (c.path.length) return fail('Stop walking first.')
       if (dist(here, pylonCell(i)) > 1) return fail('Stand next to the pylon.')
@@ -1097,7 +1106,7 @@ export function action(ws: WState, uid: string, op: string, b: Record<string, un
     }
     case 'bar': {
       // phase 2: the bar of the North Gate, lifted a notch by a cold hand
-      if ((ws.story?.phase ?? 0) < 2) return fail('The bar has not moved since the ninth night. It will not move for you.')
+      if (phaseNow(ws.story, now) < 2) return fail('The bar has not moved since the ninth night. It will not move for you.')
       if (c.path.length || dist(here, GATE_CELL) > 1) return fail('Stand at the North Gate.')
       if (now - (c.barred ?? 0) < BAR_WAIT) return fail(`The iron still holds the shape of your hand. Again in ${Math.ceil((BAR_WAIT - (now - (c.barred ?? 0))) / 60_000)} min.`)
       if (c.warmth < BAR_COST + 8) return fail('Your hands are too cold to grip the iron.')
@@ -1107,7 +1116,7 @@ export function action(ws: WState, uid: string, op: string, b: Record<string, un
     }
     case 'valve': {
       // phase 3: the Iron Rose. Every turn shuts the town's warmth a little further out of the Veil
-      if ((ws.story?.phase ?? 0) < 3) return fail('The wheel does not move. It has never moved.')
+      if (phaseNow(ws.story, now) < 3) return fail('The wheel does not move. It has never moved.')
       if (c.path.length || dist(here, ROSE_CELL) > 1) return fail('Stand at the copper ring, by the rose.')
       if (now - (c.valved ?? 0) < ROSE_WAIT) return fail('Your hands remember the cold of it. Not yet.')
       c.valved = now; addHush(ws, 10, d)
@@ -1124,6 +1133,9 @@ export function action(ws: WState, uid: string, op: string, b: Record<string, un
       const watched = Object.entries(ws.chars).some(([k, o]) => k !== uid && dist([o.q, o.r], ROSE_CELL) <= 2)
       if (watched) return fail('Someone is standing by the ring. Your hands stay in your pockets.')
       if (now - (s.turnedAt ?? 0) < ROSE_TURN_WAIT) return fail('Your hands remember the cold of it. Not tonight.')
+      const next = (s.turns ?? 0) + 1
+      if (next >= ROSE_TURNS && !s.act2) return fail('The wheel stops one notch short, as if something on the other side were holding it.')
+      if (now < notchAt(next)) return fail('The wheel will not give tonight. It is waiting for something.')
       s.turns = (s.turns ?? 0) + 1; s.turnedAt = now; d.story = true
       d.feed.push({ id: `rt${now}`, t: now, topic: 'turn', by: '', data: { n: s.turns } })
       if (s.turns >= ROSE_TURNS) {

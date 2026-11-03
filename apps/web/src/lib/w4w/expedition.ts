@@ -120,9 +120,9 @@ async function mailView(uid: string) {
   return { carriers, rep,
     carrying: all.filter(m => m.where === 'hands' && m.holder === uid).map(m => ({ id: m.id, at: m.at, toNick: m.toNick, to: m.to, gate: m.to === 'story', fromNick: fromShown(m), sealed: !m.sealBy, text: m.sealBy === uid || m.from === uid ? m.text : undefined, mine: m.from === uid })),
     sack: all.filter(m => m.where === 'sack').map(m => ({ id: m.id, at: m.at, toNick: m.toNick, fromNick: fromShown(m), sealed: !m.sealBy, gate: m.to === 'story' })),
-    inbox: all.filter(m => m.where === 'delivered' && m.to === uid).slice(-30).map(m => ({ id: m.id, at: m.at, deliveredAt: m.deliveredAt, fromNick: fromShown(m), fromValk: m.from === 'story', text: m.text, sealBy: m.sealBy ? (m.trail.find(x => x.uid === m.sealBy)?.nick ?? 'someone') : null, hands: hand(m).slice(m.from === uid || m.anon ? 0 : 0), reported: !!m.reported, answered: all.some(x => x.replyTo === m.id) })),
+    inbox: all.filter(m => m.where === 'delivered' && m.to === uid).slice(-30).map(m => ({ id: m.id, at: m.at, deliveredAt: m.deliveredAt, fromNick: fromShown(m), fromBeyond: m.from === 'story', text: m.text, sealBy: m.sealBy ? (m.trail.find(x => x.uid === m.sealBy)?.nick ?? 'someone') : null, hands: hand(m).slice(m.from === uid || m.anon ? 0 : 0), reported: !!m.reported, answered: all.some(x => x.replyTo === m.id) })),
     // put away in your own desk: only you ever see these again
-    desk: all.filter(m => m.where === 'desk' && m.to === uid).slice(-40).map(m => ({ id: m.id, at: m.at, deliveredAt: m.deliveredAt, fromNick: fromShown(m), fromValk: m.from === 'story', text: m.text })),
+    desk: all.filter(m => m.where === 'desk' && m.to === uid).slice(-40).map(m => ({ id: m.id, at: m.at, deliveredAt: m.deliveredAt, fromNick: fromShown(m), fromBeyond: m.from === 'story', text: m.text })),
     // the Library shelf: letters from beyond the Gate that somebody chose to show the town
     shelf: all.filter(m => m.where === 'library').slice(-40).map(m => ({ id: m.id, at: m.at, fromNick: fromShown(m), text: m.text, sharedBy: m.sharedBy ?? 'someone', sharedAt: m.sharedAt ?? m.at })),
     // which doors have letters waiting: the flag on that house's mailbox stands up
@@ -295,6 +295,7 @@ export async function storyDesk(b: Record<string, unknown>) {
     const set = new Set(story.chosen ?? []); if (b.on === false) set.delete(hit[0]); else set.add(hit[0]); story.chosen = [...set]
     await pipe([['SET', KX.story, JSON.stringify(story)]])
   } else if (cmd === 'turns') { story.turns = Math.max(0, Math.min(W.ROSE_TURNS, Number(b.turns) || 0)); await pipe([['SET', KX.story, JSON.stringify(story)]]) }
+  else if (cmd === 'act2') { story.act2 = b.on !== false; await pipe([['SET', KX.story, JSON.stringify(story)]]) }
   else if (cmd === 'phase') { story.phase = Math.max(0, Math.min(3, Number(b.phase) || 0)); await pipe([['SET', KX.story, JSON.stringify(story)]]) }
   else if (cmd === 'hush') { story.hush = Math.max(0, Math.min(W.HUSH_MAX, Number(b.hush) || 0)); story.ht = now; await pipe([['SET', KX.story, JSON.stringify(story)]]) }
   else if (cmd === 'unveil') { story.unveil = { at: now, until: now + (Number(b.hours) || 3) * 3600_000 }; await pipe([['SET', KX.story, JSON.stringify(story)], ['LPUSH', K.events, JSON.stringify({ id: `uv${now}`, t: now, topic: 'unveil', by: '', tab: 'server', data: { until: story.unveil.until } })]]) }
@@ -303,5 +304,5 @@ export async function storyDesk(b: Record<string, unknown>) {
   const [rl] = await pipe([['LRANGE', KX.replies, 0, 99]])
   const replies = ((rl as string[]) ?? []).map(x => safe(x)).filter(Boolean)
   const mail = (await mailAll()).slice(-60).reverse().map(m => ({ id: m.id, at: m.at, fromNick: m.anon ? `${m.fromNick} (unsigned)` : m.fromNick, toNick: m.toNick, where: m.where, holder: m.holder, sealBy: m.sealBy, hands: m.trail.map(x => x.nick), text: m.text, reported: !!m.reported, burnedBy: m.burnedBy }))
-  return { ok: true as const, data: { story: { ...story, hush: Math.round(W.hushNow(story, now)) }, letters: (await lettersAll()).map(l => ({ ...l, reads: Number(n[l.id] ?? 0) })), replies, mail } }
+  return { ok: true as const, data: { story: { ...story, hush: Math.round(W.hushNow(story, now)), phaseNow: W.phaseNow(story, now), nextNotchAt: W.notchAt((story.turns ?? 0) + 1) }, letters: (await lettersAll()).map(l => ({ ...l, reads: Number(n[l.id] ?? 0) })), replies, mail } }
 }
