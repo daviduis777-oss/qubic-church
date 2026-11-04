@@ -5338,7 +5338,12 @@ function settleMove(v) {
 /* ---------- avatars ---------- */
 let HERO = null, heroClips = {}, heroScale = 1;
 const avatars = {};
-(() => { const l = new GLTFLoader(); l.setMeshoptDecoder(MeshoptDecoder); return l; })().load('q/hero_w.glb', g => {
+/* the hero: the Clockwork Gentleman (Meshy, hand-rigged in Blender onto the old 24 bone names), his moves retargeted from
+ * Quaternius' Universal Animation Library 1 (CC0, quaternius.com): Idle_Loop, Walk_Loop, Sprint_Loop, Jog_Fwd_Loop,
+ * PickUp_Table, Interact, Sword_Attack, Punch_Cross, Death01, Hit_Chest, Sitting_Idle_Loop. hero_w.glb is the fallback. */
+function loadHero(url, fb) { const l = new GLTFLoader(); l.setMeshoptDecoder(MeshoptDecoder); l.load(url, heroLoaded, undefined, e => { console.warn('hero', url, e); if (fb) loadHero(fb); }); }
+loadHero('q/hero_cg.glb', 'q/hero_w.glb');
+function heroLoaded(g) {
   HERO = g; heroClips = Object.fromEntries(g.animations.map(a => [a.name.replace(/^.*\|/, ''), a]));
   // the hooded wanderer speaks a different animation language: give the old names to the closest moves
   const alias = { Walking_A: 'Walk', Walking_C: 'Walk', Running_A: 'Run', PickUp: 'Interact', Death_A: 'Death', Lie_Idle: 'Death', Sit_Floor_Idle: 'Idle_Neutral', Hit_B: 'HitRecieve', '1H_Melee_Attack_Chop': 'Sword_Slash', '2H_Melee_Attack_Chop': 'Punch_Right' };
@@ -5346,7 +5351,7 @@ const avatars = {};
   g.scene.updateMatrixWorld(true); const box = new THREE.Box3().setFromObject(g.scene, true); heroScale = 0.5 / Math.max(0.01, box.max.y - box.min.y);
   try { measureGaits(); } catch (e) { console.warn('gaits', e); }
   syncAvatars();
-}, undefined, e => console.warn('hero', e));
+}
 // (the old hooded wanderer, hero.glb, stays in the folder as a fallback for one release)
 /* how fast each clip's feet go, in body heights per second, measured from the clips: the game pace sets the playback */
 const HERO_H = 0.5, GAIT = { Walking_A: 0.40, Walking_C: 0.25, Running_A: 0.80, Jog: 2.04 };
@@ -5598,7 +5603,7 @@ function stepAvatars(dt0) {
       if (!a.gait || !a.gaitV || Math.abs(Math.log(vn / a.gaitV)) > 0.28 || (bad && a.gait !== 'Walking_C' && a.actions.Walking_C) || (!bad && a.gait === 'Walking_C')) { const g = pickGait(a, vn, bad); a.gaitV = vn; if (g !== a.gait) { a.gaitPrev = a.gait; a.gait = g; } }
       const k = THREE.MathUtils.smoothstep(tr.v / vn, 0.06, 0.5); want = { Idle: 1 - k, [a.gait]: k };
     } else { a.gait = null; a.gaitV = 0;
-      want = { [indoor ? 'Walking_A' : busy ? (a.actions[chop] ? chop : 'PickUp') : sittingAt(d) || (!walking && SHEL[W4W.key(d.q, d.r)] === 'fire') ? 'Sit_Floor_Idle' : 'Idle']: 1 }; }
+      want = { [indoor ? 'Walking_A' : busy ? (a.actions[chop] ? chop : 'PickUp') : atFire && seatY > 0 && a.actions.Sit_Seat_Idle ? 'Sit_Seat_Idle' : sittingAt(d) || atFire ? 'Sit_Floor_Idle' : 'Idle']: 1 }; } // on a log at the fire, on the floor at a hearth
     const fresh = blend(a, want, dt);
     for (const n of fresh) { if (!GAITS[n]) continue; const ac = a.actions[n], from = Object.keys(a.w).find(m => m !== n && GAITS[m] && a.w[m] > 0.05);
       ac.time = from ? strideT(n, stridePh(from, a.actions[from].time)) : strideT(n, 0.02); } // a new gait takes up the step the old one was on
@@ -8914,10 +8919,12 @@ function buildQuarters() {
   onCorner('vent', ...P.mine, -30, 'anna', 1, scene, 0.35); onCorner('pipes', ...P.mine, 30, 'anna', 1, scene, 0.45);
   // the Wardens' Watch and the Gate
   // the first Warden suit, finished and waiting by its hall: iron plates, a lantern and a hammer, nobody inside it yet
-  { const wc = S2('wardens'); if (wc) loadGlb('q/b/warden.glb').then(g => { if (!g) return; const o = g.scene, b = new THREE.Box3().setFromObject(o), sz = b.getSize(new THREE.Vector3()), cc = b.getCenter(new THREE.Vector3());
+  // rigged in Blender; its slow idle is Quaternius' UAL1 Idle_Loop (CC0) with the arms and feet held still. warden.glb is the fallback
+  { const wc = S2('wardens'); if (wc) loadGlb('q/b/warden_anim.glb').then(g => g || loadGlb('q/b/warden.glb')).then(g => { if (!g) return; const o = g.scene; o.updateMatrixWorld(true); const b = new THREE.Box3().setFromObject(o, true), sz = b.getSize(new THREE.Vector3()), cc = b.getCenter(new THREE.Vector3());
       o.position.set(-cc.x, -b.min.y, -cc.z); const W2 = new THREE.Group(); W2.add(o); W2.scale.setScalar(0.82 / Math.max(0.01, sz.y));
       o.traverse(m => { if (m.isMesh) { m.castShadow = true; const M = m.material; if (M?.map) { M.emissive = new THREE.Color(0xffffff); M.emissiveMap = M.map; M.emissiveIntensity = 0.14; } } });
-      const at = cornerTurn(...wc, -30), c0 = HX(...wc), v = at.clone().lerp(c0, 0.35); W2.position.set(v.x, groundH(v.x, v.z), v.z); W2.rotation.y = Math.atan2(-v.x, -v.z); scene.add(W2); tag(W2, 'stage2', 'wardens'); }); }
+      const at = cornerTurn(...wc, -30), c0 = HX(...wc), v = at.clone().lerp(c0, 0.35); W2.position.set(v.x, groundH(v.x, v.z), v.z); W2.rotation.y = Math.atan2(-v.x, -v.z); scene.add(W2); tag(W2, 'stage2', 'wardens');
+      const ic = g.animations.find(a => a.name === 'Idle'); if (ic) { const mx = new THREE.AnimationMixer(o); mx.clipAction(ic).play(); WARDEN = { g: W2, mx, t: Math.random() * ic.duration }; } }); }
   onCorner('sentry', ...S2('wardens'), 30, 'anna'); onCorner('barricade', ...S2('wardens'), -90, 'out', 0.9, scene, 0.4);
   onCorner('sentry', ...GATE_CELL, 30, 'anna'); onCorner('barricade', ...GATE_CELL, 90, 'out', 0.9, scene, 0.4); onCorner('barricade', ...GATE_CELL, -90, 'out', 0.9, scene, 0.4);
   // the Twelve, the Rise, the Glass Gardens, the Atrium
@@ -9207,7 +9214,7 @@ function stepFolk(dt) {
       F.g.visible = !(F.s >= 0.999 && F.wait > 0.6); if (F.wait <= 0) { if (F.s >= 0.999) F.dir = -1; else { F.path = Math.floor(Math.random() * STREET_PATHS.length); F.dir = 1; F.s = 0.02; } } }
     else { F.g.visible = true; F.s = THREE.MathUtils.clamp(F.s + F.dir * F.speed * dt / L, 0, 1);
       if ((F.dir > 0 && F.s >= 1) || (F.dir < 0 && F.s <= 0.02)) { F.s = F.dir > 0 ? 1 : 0.02; F.wait = F.dir > 0 ? 6 + Math.random() * 14 : 2 + Math.random() * 5; }
-      folkPlay(F, 'Running_A'); if (F.acts.Running_A) F.acts.Running_A.timeScale = F.speed / HERO_H / GAIT.Running_A; }
+      folkPlay(F, 'Walking_A'); if (F.acts.Walking_A) F.acts.Walking_A.timeScale = F.speed / HERO_H / (GAITS.Walking_A?.v || GAIT.Walking_A); } // a walk at the walk's own pace: no sliding
     const side = (FOLK.indexOf(F) % 2 ? 0.28 : -0.28) * F.dir, p = C.getPoint(F.s), t = C.getTangent(F.s);
     F.g.position.set(p.x - t.z * side, 0, p.z + t.x * side); if (F.wait <= 0) { const y = Math.atan2(t.x * F.dir, t.z * F.dir), r0 = F.g.rotation.y; F.g.rotation.y = r0 + Math.atan2(Math.sin(y - r0), Math.cos(y - r0)) * Math.min(1, dt * 6); }
     if (F.g.position.distanceTo(controls.target) < 40) F.mx.update(dt); }
@@ -9217,7 +9224,9 @@ function stepFolk(dt) {
 let HASK = null, haskLoading = false;
 function stepHask(dt) {
   if (!HASK && !haskLoading) { haskLoading = true;
-    loadGlb('q/folk/hask.glb').then(g => { if (!g) return; const o = g.scene, b = new THREE.Box3().setFromObject(o), sz = b.getSize(new THREE.Vector3()), c = b.getCenter(new THREE.Vector3());
+    // rigged in Blender, his idle and look-around retargeted from Quaternius' Universal Animation Library 1 (CC0, Idle_Loop);
+    // the static hask.glb stays as the fallback
+    loadGlb('q/folk/hask_anim.glb').then(g => g || loadGlb('q/folk/hask.glb')).then(g => { if (!g) return; const o = g.scene; o.updateMatrixWorld(true); const b = new THREE.Box3().setFromObject(o, true), sz = b.getSize(new THREE.Vector3()), c = b.getCenter(new THREE.Vector3());
       o.position.set(-c.x, -b.min.y, -c.z); const body = new THREE.Group(); body.add(o); body.scale.setScalar(0.66 / Math.max(0.01, sz.y));
       o.traverse(m => { if (m.isMesh) { m.castShadow = true; const M = m.material; if (M?.map) { M.emissive = new THREE.Color(0xffffff); M.emissiveMap = M.map; M.emissiveIntensity = 0.18; } } });
       const g2 = new THREE.Group(); g2.add(body); scene.add(g2);
@@ -9226,11 +9235,22 @@ function stepHask(dt) {
       const booth = cornerTurn(...GATE_CELL, 30), sg = Math.sign(side.dot(new THREE.Vector3(booth.x - gc.x, 0, booth.z - gc.z))) || 1;
       const at = gc.clone().add(inward.clone().multiplyScalar(0.55)).add(side.clone().multiplyScalar(-sg * 0.95)); g2.position.set(at.x, groundH(at.x, at.z), at.z); g2.rotation.y = Math.atan2(inward.x, inward.z) - sg * 0.35;
       const lamp = sprite(GLOW, at.x + side.x * -sg * 0.25, groundH(at.x, at.z) + 0.55, at.z + side.z * -sg * 0.25, 0.5, 0xffb060, 0.55);
-      HASK = { g: g2, body, t: 0, lamp }; tag(body, 'folk', 'hask'); label('OLD HASK', g2, 0.82, 'walker'); }); }
+      HASK = { g: g2, body, t: 0, lamp }; tag(body, 'folk', 'hask'); label('OLD HASK', g2, 0.82, 'walker');
+      const A = Object.fromEntries(g.animations.map(a => [a.name, a]));
+      if (A.Idle) { const mx = new THREE.AnimationMixer(o); HASK.mx = mx; HASK.acts = { Idle: mx.clipAction(A.Idle).play() }; if (A.Look) HASK.acts.Look = mx.clipAction(A.Look).play().setEffectiveWeight(0); HASK.dur = A.Idle.duration; HASK.k = -1; } }); }
   if (!HASK) return; HASK.t += dt; if (HASK.g.position.distanceTo(controls.target) > 40) return;
-  // a big man breathing slowly in the cold, shifting his weight now and then
-  const t = HASK.t; HASK.body.scale.y = HASK.body.scale.x * (1 + Math.sin(t * 1.2) * 0.006); HASK.body.rotation.y = Math.sin(t * 0.17) * 0.06; HASK.body.rotation.z = Math.sin(t * 0.11) * 0.012;
+  const t = HASK.t;
+  // a heavy man planted on both feet: breathing, his weight going slowly from one leg to the other, and every so often a long
+  // look round the road (both clips are the same idle and agree at the loop's ends, so the switch there is never seen)
+  if (HASK.mx) { const k = Math.floor(t / HASK.dur);
+    if (k !== HASK.k) { HASK.k = k; const look = !!HASK.acts.Look && !HASK.looked && k > 0 && Math.random() < 0.45; HASK.looked = look; HASK.acts.Idle.setEffectiveWeight(look ? 0 : 1); HASK.acts.Look?.setEffectiveWeight(look ? 1 : 0); }
+    HASK.mx.setTime(t); return; }
+  // (the static fallback) a big man breathing slowly in the cold, shifting his weight now and then
+  HASK.body.scale.y = HASK.body.scale.x * (1 + Math.sin(t * 1.2) * 0.006); HASK.body.rotation.y = Math.sin(t * 0.17) * 0.06; HASK.body.rotation.z = Math.sin(t * 0.11) * 0.012;
 }
+/* the empty Warden suit by its hall: it settles slowly on its feet, as iron does in the cold */
+var WARDEN = null; // var: the suit can finish loading before this line has run
+function stepWarden(dt) { if (!WARDEN) return; WARDEN.t += dt; if (WARDEN.g.position.distanceTo(controls.target) < 40) WARDEN.mx.setTime(WARDEN.t); }
 function folkPlay(F, n) { if (F.cur === n || !F.acts[n]) return; const a = F.acts[n], o = F.acts[F.cur]; a.reset().fadeIn(0.3).play(); if (o) o.fadeOut(0.3); F.cur = n; }
 
 /* ---------- Act I: what to do under the Veil, and the pages it opens ---------- */
@@ -9575,7 +9595,7 @@ function loop(now = performance.now()) {
       o.material.opacity = big ? 0.8 + Math.sin(t * 9 + ph) * 0.07 + Math.sin(t * 5.3 + ph) * 0.08 : 0.82 + Math.sin(t * 1.9 + ph) * 0.05 + Math.sin(t * 4.7 + ph * 0.6) * 0.03;
       o.scale.setScalar(s0 * (1 + f * 1.1 + (big ? (S.town.fire || 0) * 0.07 + Math.sin(t * 6.1 + ph) * 0.03 : 0))); }
     if (o.userData.blink) o.material.opacity = 0.35 + 0.65 * (Math.sin(t * 4) > 0 ? 1 : 0.2); } });
-  stepCamera(dt); if (XW) solidsWarm(); stepAvatars(dt); stepSnowFx(dt); hud(); stepSound(); stepPlaces(dt); stepHask(dt); if (XV?.me) { stepFrames(dt); if (!ACT1) stepShards(predicted()?.c, dt); } if (XV) { stepRime(dt); if ((tick & 15) === 0) { stepNotes(); stepLogWatch(); stepLog(); stepStoneLamps(); stepRoom(); } stepLocalGrid(predicted()?.c); }
+  stepCamera(dt); if (XW) solidsWarm(); stepAvatars(dt); stepSnowFx(dt); hud(); stepSound(); stepPlaces(dt); stepHask(dt); stepWarden(dt); if (XV?.me) { stepFrames(dt); if (!ACT1) stepShards(predicted()?.c, dt); } if (XV) { stepRime(dt); if ((tick & 15) === 0) { stepNotes(); stepLogWatch(); stepLog(); stepStoneLamps(); stepRoom(); } stepLocalGrid(predicted()?.c); }
   for (const k in walkers) { const w = walkers[k]; w.g.position.lerp(w.target, Math.min(1, dt * 1.5)); w.g.position.y = 0; w.light.position.set(w.g.position.x + 0.15, 0.45, w.g.position.z); }
   if (fly) { fly.t = Math.min(1, fly.t + dt * 0.9); const k = 1 - Math.pow(1 - fly.t, 3);
     const tgt = fly.from.clone().lerp(fly.to, k); const off = camera.position.clone().sub(controls.target).normalize().multiplyScalar(fly.d0 + (fly.d1 - fly.d0) * k);
