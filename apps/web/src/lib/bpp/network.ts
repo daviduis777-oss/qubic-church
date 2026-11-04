@@ -66,7 +66,5 @@ export async function networkState(): Promise<NetworkState> {
 
 /** Qubic epochs start on Wednesday at 12:00 UTC; the live BTC feed is set for epoch 240 (CfB, pinned 20.10.2026). */
 export const LIVE_FEED_EPOCH = 240
-export function epochStart(epoch: number): Date {
-  // Epoch 236 started Wednesday 21 October 2026, 12:00 UTC.
-  return new Date(Date.UTC(2026, 9, 21, 12) + (epoch - 236) * 7 * 86400_000)
-}
+// Epoch 236 started Wednesday 21 October 2026, 12:00 UTC; the anchor lives in lib/pool/epoch.ts.
+export { epochStart } from '@/lib/pool/epoch'

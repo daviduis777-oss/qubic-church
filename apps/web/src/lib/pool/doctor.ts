@@ -2,10 +2,12 @@
  * Log doctor: a rule set over a pasted miner log, or a described symptom.
  * Each finding cites the line that matched. Runs in the browser; logs are never sent anywhere.
  */
+import type { AnySource } from './practice.ts'
 import { containsSeed } from './redact.ts'
 
 export type Severity = 'fault' | 'check' | 'fine'
-export type Rule = { id: string; severity: Severity; title: string; means: string; fix: string[]; test: RegExp }
+/** sources: where the fix comes from (practice.ts / knowledge.ts ids). Rules without it come from our mining guide. */
+export type Rule = { id: string; severity: Severity; title: string; means: string; fix: string[]; test: RegExp; sources?: AnySource[] }
 export type Finding = { id: string; severity: Severity; title: string; means: string; fix: string[]; line?: { n: number; text: string } }
 export type Diagnosis = { status: Severity | 'empty' | 'unknown'; findings: Finding[]; seedWarning: boolean }
 
@@ -40,7 +42,7 @@ export const RULES: Rule[] = [
     title: 'The CPU lacks the instructions this backend needs',
     means: 'The miner asked for AVX-512 or AVX2 and the CPU does not have it.',
     fix: ['Set the backend to AVX2, or Auto, on the pool setup page.', 'If AVX2 also fails, this CPU cannot mine: use a GPU or another machine.', 'Check on Linux: grep -o -m1 avx512f /proc/cpuinfo'],
-    test: /illegal instruction|sigill|avx-?(2|512)[^\n]*(not (supported|available|found|detected)|unsupported|missing)|(cpu|processor) does not support avx|requires avx/i,
+    test: /illegal instruction|sigill|avx-?(2|512)[^\n]*(not (supported|available|found|detected)|unsupported|missing)|(cpu|processor) does not support avx|requires avx|status=4\/ill\b/i,
   },
   {
     id: 'invalid-wallet',
@@ -83,6 +85,70 @@ export const RULES: Rule[] = [
     test: /\b(401|403)\b[^\n]*(unauthori[sz]ed|forbidden)|unauthori[sz]ed|forbidden|invalid (token|access token|api key)/i,
   },
   {
+    id: 'defender',
+    severity: 'fault',
+    title: 'Windows Defender quarantined or blocked the miner',
+    means: 'Microsoft lists cryptomining software as a potentially unwanted app category, so miner files get flagged and removed.',
+    fix: [
+      'Only if you downloaded it from the pool setup page: add the miner folder, and only that folder, as a Folder exclusion (Windows Security, Virus & threat protection, Manage settings, Exclusions, Add or remove exclusions).',
+      'Then Protection history, open the item, Actions, Restore or Allow on device. A Blocked item was already removed: download it again from the setup page.',
+      'Never exclude a whole drive or Downloads, and never for a miner from a chat link, a video or a "faster" fork.',
+    ],
+    test: /(windows|microsoft) defender|windows security[^\n]{0,40}(threat|quarantin|block)|threat (quarantined|blocked|found)|contains a virus or potentially unwanted software|(trojan|pua|program|hacktool):win(32|64)\/coinminer|\bcoinminer\b|potentially unwanted (app|application|software)/i,
+    sources: ['defenderPua', 'defenderExclusion', 'defenderHistory'],
+  },
+  {
+    id: 'smartscreen',
+    severity: 'fault',
+    title: 'SmartScreen stopped the miner from starting',
+    means: '"Windows protected your PC" appears for files without reputation yet.',
+    fix: ['Only for the miner from the pool setup page: choose More info, then Run anyway.', 'If it was not from the setup page, delete it and download the official one.'],
+    test: /windows protected your pc|smartscreen|unrecognized app/i,
+    sources: ['smartscreen'],
+  },
+  {
+    id: 'gatekeeper',
+    severity: 'fault',
+    title: 'macOS will not open the miner',
+    means: 'Gatekeeper blocks apps it cannot verify: "cannot be opened because the developer cannot be verified".',
+    fix: [
+      'Only for the miner from the pool setup page: try to open it once, then System Settings, Privacy & Security, scroll to Security, Open Anyway, and enter your password.',
+      'The Open Anyway button stays for about an hour after the attempt.',
+      'Control-click, Open only works before macOS 15 Sequoia.',
+    ],
+    test: /cannot be opened because (the developer cannot be verified|it is from an unidentified developer|apple cannot check it)|developer cannot be verified|apple could not verify|unidentified developer|is damaged and can.t be opened|not opened[^\n]{0,40}(apple|malware)/i,
+    sources: ['gatekeeper', 'sequoia'],
+  },
+  {
+    id: 'hive-install',
+    severity: 'fault',
+    title: 'HiveOS could not install the custom miner',
+    means: 'The package behind the Installation URL did not download or unpack.',
+    fix: [
+      'Copy the Installation URL again from the pool setup page: it must be the direct link to the .tar.gz package.',
+      'Leave Miner name as HiveOS fills it from the URL: the package name without version and extension.',
+      'Check the rig is online (ping 1.1.1.1 in the Hive shell), then miner stop and miner start.',
+      'Read the details with miner log.',
+    ],
+    test: /(custom miner|custom_(install_)?url|\/hive\/miners\/custom|h-(manifest\.conf|run\.sh|config\.sh|stats\.sh))[^\n]{0,80}(not found|fail|error|no such file|missing|cannot)|gzip: stdin: not in gzip format|tar: [^\n]*(cannot open|not in gzip format|error is not recoverable|unexpected eof)|no appsettings\.json/i,
+    sources: ['hiveCustom', 'hiveShell', 'qubicliHive'],
+  },
+  {
+    id: 'systemd',
+    severity: 'fault',
+    title: 'The miner service fails or keeps restarting',
+    means: 'systemd started the miner, it exited, and Restart=always started it again.',
+    fix: [
+      'See why: journalctl -u qubic-miner -n 50 --no-pager. The real error is in the lines just above "Main process exited".',
+      'status=203/EXEC: ExecStart is not an executable file. Use the full path and chmod +x /opt/qubic-miner/run.sh.',
+      'status=200/CHDIR or 217/USER: the folder or the user named in the unit does not exist.',
+      'Test it by hand as that user: sudo -u qubic /opt/qubic-miner/run.sh',
+      'After a fix: sudo systemctl daemon-reload && sudo systemctl restart qubic-miner. After "Start request repeated too quickly", run sudo systemctl reset-failed qubic-miner first.',
+    ],
+    test: /\.service: (main process exited|failed with result|start request repeated too quickly|scheduled restart job|failed at step|control process exited)|start-limit-hit|activating \(auto-restart\)|status=2\d\d\/[a-z]+|failed to start [^\n]*\.service/i,
+    sources: ['systemdService', 'journalctl', 'localCheck'],
+  },
+  {
     id: 'permission',
     severity: 'fault',
     title: 'The miner is not allowed to run',
@@ -96,7 +162,7 @@ export const RULES: Rule[] = [
     title: 'The miner crashed',
     means: 'It exited with a segmentation fault or a core dump.',
     fix: ['Download the current miner again from the setup page.', 'Try the backend Auto.', 'If it repeats, paste the 20 lines before the crash.'],
-    test: /segmentation fault|core dumped|sigsegv|panicked at|fatal error/i,
+    test: /segmentation fault|core dumped|sigsegv|status=11\/segv\b|panicked at|fatal error/i,
   },
   {
     id: 'duplicate-worker',
@@ -115,12 +181,38 @@ export const RULES: Rule[] = [
     test: /(rejected|expired|stale)[^\n]{0,20}(ant )?(candidates?|shares?|solutions?)|(candidates?|shares?|solutions?)[^\n]{0,10}(rejected|expired|stale)/i,
   },
   {
+    id: 'sleep',
+    severity: 'check',
+    title: 'The machine went to sleep',
+    means: 'Sleep stops mining until the machine wakes up.',
+    fix: [
+      'Windows: powercfg /change standby-timeout-ac 0 and powercfg /change hibernate-timeout-ac 0, or set sleep to Never when plugged in.',
+      'macOS: run the miner as caffeinate -dimsu ~/qubic-miner/run.sh and keep the power adapter in, or turn on Prevent automatic sleeping in Energy (Battery, Options on a MacBook).',
+      'Linux: sudo systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target',
+    ],
+    test: /pm: suspend (entry|exit)|systemd-sleep|reached target (sleep|suspend|hibernate)|(entering|going to) (sleep|suspend|hibernat)|suspending system|idle sleep|kernel-power[^\n]*(\b42\b|\b107\b|sleep)|(resumed|resume|wake|woke)( up)? from (sleep|suspend|standby|hibernat)|darkwake/i,
+    sources: ['powercfg', 'winPower', 'caffeinate', 'macSleep', 'localCheck'],
+  },
+  {
+    id: 'gpu-power',
+    severity: 'check',
+    title: 'The card is held by its power limit',
+    means: 'nvidia-smi shows the clocks held down by power: expected at a limit you set, a problem if you did not set one.',
+    fix: [
+      'If you set the limit for efficiency, this is expected. Compare solutions per hour, not it/s.',
+      'If you did not: check the limit with nvidia-smi -q -d POWER and raise it toward the default with sudo nvidia-smi -pl <WATTS>.',
+      'HW Slowdown or HW Power Brake: check the power supply and its cables, and the cooling.',
+    ],
+    test: /(sw power cap|hw slowdown|hw power brake slowdown)\s*:\s*active\b|power[- ]limit(ed)?[^\n]{0,20}(reached|exceeded|hit)|(gpu|card|cuda)[^\n]{0,30}(power[- ]limited|power cap\b)/i,
+    sources: ['nvidiaSmi', 'pugetPower'],
+  },
+  {
     id: 'thermal',
     severity: 'check',
     title: 'The hardware is throttling',
     means: 'It is too hot and slows itself down.',
     fix: ['Improve airflow and clean the fans.', 'Lower the thread count on a laptop.'],
-    test: /thermal|throttl|temperature (too high|limit|critical)|overheat/i,
+    test: /^(?!.*\bnot active\b)(?!\s*clocks? (event|throttle) reasons\s*:?\s*$).*(thermal|throttl|temperature (too high|limit|critical)|overheat)/i,
   },
   {
     id: 'epoch-idle',
@@ -173,5 +265,7 @@ export const SYMPTOMS: { id: string; label: string; finding: Omit<Finding, 'line
   { id: 'behind', label: 'Dashboard is behind', finding: { id: 'behind', severity: 'fine', title: 'Dashboard shows "behind"', means: 'Display lag. The work is counted.', fix: ['Ignore it, or restart the miner once.'] } },
   { id: 'missing', label: 'Worker not on dashboard', finding: { id: 'missing', severity: 'check', title: 'A worker shows nothing', means: 'Usually two machines share one worker name.', fix: ['Give each machine its own name starting with QC.', 'Check the address on the setup page is yours, all 60 letters.'] } },
   { id: 'rejected', label: 'Many rejected', finding: { id: 'rejected', severity: 'check', title: 'Many rejected or expired candidates', means: 'The CPU cannot keep up with the cards, or the host lags.', fix: ['Keep at least 8 CPU cores per GPU.', 'Use a stronger CPU or a more reliable host.'] } },
+  { id: 'sleeps', label: 'Stops when I walk away', finding: { id: 'sleeps', severity: 'check', title: 'Mining stops when nobody uses the machine', means: 'Almost always sleep or hibernation.', fix: ['Windows: powercfg /change standby-timeout-ac 0 and powercfg /change hibernate-timeout-ac 0.', 'macOS: run it as caffeinate -dimsu ~/qubic-miner/run.sh, on the power adapter.', 'Linux: sudo systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target'] } },
+  { id: 'blocked', label: 'Antivirus or macOS blocks it', finding: { id: 'blocked', severity: 'check', title: 'The system blocks the miner', means: 'Windows Defender, SmartScreen or macOS Gatekeeper stopped a file it does not know.', fix: ['Only for the miner from the pool setup page.', 'Windows: exclude only the miner folder in Windows Security, then Restore it from Protection history.', 'macOS: System Settings, Privacy & Security, Open Anyway.'] } },
   { id: 'wont-start', label: "Miner won't start", finding: { id: 'wont-start', severity: 'check', title: 'The miner does not start', means: 'I need the log to tell which of the usual causes it is.', fix: ['Run it once in the foreground and paste the last 30 lines here.', 'Common causes: missing NVIDIA driver, wrong backend for the CPU, file not executable.'] } },
 ]
