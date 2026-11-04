@@ -758,7 +758,7 @@ body.act1 #dock button[data-act=bag],body.act1 #dock button[data-act=craft],body
 @keyframes dolly{0%{transform:scale(.5)}100%{transform:scale(1)}}
 @keyframes swing{0%,38%{transform:rotateY(0)}100%{transform:rotateY(96deg)}}
 #room{position:fixed;inset:0;z-index:4;background:#000;overflow:hidden;opacity:0;transition:opacity .5s ease}
-#room.on{opacity:1} body.inroom #panel{z-index:6} body.inroom #labels,body.inroom #goals{visibility:hidden} body.inroom:not(.inbar) #logf{visibility:hidden}
+#room.on{opacity:1} body.inroom #hub{z-index:7} body.inroom #panel{z-index:6} body.inroom #labels,body.inroom #goals{visibility:hidden} body.inroom:not(.inbar) #logf{visibility:hidden}
 #room .rimg{position:absolute;inset:-3%;background:center/cover no-repeat;transform:scale(1.04);transition:transform .25s ease-out;will-change:transform}
 #room .rfx span{position:absolute;border-radius:50%;pointer-events:none;mix-blend-mode:screen;background:radial-gradient(circle,rgba(255,176,88,.55),rgba(255,140,60,.18) 40%,transparent 70%);animation:flick 2.1s ease-in-out infinite alternate}
 #room .rfx span.cold{background:radial-gradient(circle,rgba(150,180,255,.22),transparent 70%);animation-duration:5s}
@@ -7049,7 +7049,7 @@ function stepCamera(dt) {
 }
 
 /* ================= sound: cold, metal, survival. All of it synthesised here, nothing borrowed ================= */
-const SND = { on: store.get('w4w.sound') !== 'off', ctx: null, master: null, music: null, sfx: null, verb: null, wind: null, windF: null, drone: [], rime: null, started: false };
+const SND = { pieces: new Set(), on: store.get('w4w.sound') !== 'off', ctx: null, master: null, music: null, sfx: null, verb: null, wind: null, windF: null, drone: [], rime: null, started: false };
 function sndBoot() {
   if (SND.ctx || !SND.on) return;
   const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
@@ -7102,6 +7102,9 @@ function chain() {
 /** Weather and warmth steer the music every frame or so. */
 function stepSound() {
   if (!SND.ctx) return; const t = SND.ctx.currentTime, wx = W4W.weatherAt(xnow()).id;
+  // the room's music always follows the room you are in, and no other piece is left playing anywhere
+  { const want = ROOM && ROOM_MUSIC[ROOM] ? ROOM : null; if (SND.on && SND.town && ((SND.room?.name || null) !== want || SND.inRoom !== !!want)) roomMusic(want);
+    for (const P of SND.pieces) if (P !== SND.room && !P.dying) roomStop(P, 0.6); }
   const w = (wx === 'blizzard' ? 0.14 : wx === 'wind' ? 0.07 : 0.03) * (SND.inRoom ? 0.3 : 1); SND.wind.gain.setTargetAtTime(w, t, 2);
   SND.windF.frequency.setTargetAtTime(340 + Math.sin(t * 0.13) * 180 + (wx === 'blizzard' ? 260 : 0), t, 1.5);
   // the Rime is heard before it is seen
@@ -7143,6 +7146,8 @@ function setSound(on) {
 ['pointerdown', 'keydown'].forEach(ev => addEventListener(ev, () => { if (SND.on && !SND.ctx) sndBoot(); else if (SND.ctx?.state === 'suspended' && SND.on) SND.ctx.resume(); }, { passive: true }));
 
 $('#sndv').textContent = SND.on ? 'On' : 'Off'; $('#snd').onclick = () => setSound(!SND.on);
+// a tab in the background keeps quiet, so two open tabs never play over each other
+document.addEventListener('visibilitychange', () => { if (!SND.ctx) return; if (document.hidden) SND.ctx.suspend(); else if (SND.on) SND.ctx.resume(); });
 
 /* ================= every room has its own music =================
    Step inside and the town's theme gives way, over two seconds, to the room's own piece; step out and the theme comes back.
@@ -7178,9 +7183,10 @@ function rCrackle(R, t, L, n, v) { for (let i = 0; i < n; i++) rBurst(R, t + Mat
   if (Math.random() < 0.1) rBurst(R, t + Math.random() * L, 0.5, 'lowpass', 260, 1, v * 0.9); }
 /** Paper: a sheet turned or a letter sorted, a few dry flicks and the soft flop at the end. */
 function rPaper(R, t, n, v) { let at = t; for (let i = 0; i < n; i++) { rBurst(R, at, 0.04 + Math.random() * 0.06, 'bandpass', 2400 + Math.random() * 3500, 1, v * (0.5 + Math.random() * 0.5)); at += 0.05 + Math.random() * 0.08; } rBurst(R, at + 0.04, 0.14, 'lowpass', 900, 0.7, v * 0.8); }
-const BAR_PROG = [[45, [57, 60, 64]], [45, [57, 60, 64]], [43, [55, 59, 62]], [43, [55, 59, 62]], [38, [54, 57, 62]], [38, [54, 57, 62]], [45, [57, 60, 64]], [40, [55, 59, 64]]];
-const BAR_TUNE = [[[76, 1], [74, 0.5], [72, 0.5], [71, 1]], [[69, 2], [64, 1]], [[67, 1], [69, 0.5], [71, 0.5], [74, 1]], [[71, 2], [null, 1]],
-  [[69, 1], [66, 1], [69, 1]], [[74, 1.5], [72, 0.5], [71, 1]], [[72, 1], [71, 0.5], [69, 0.5], [67, 1]], [[69, 3]]];
+const BAR_CH = { D: [38, [50, 57, 62, 66]], G: [43, [55, 59, 62, 67]], A: [45, [57, 61, 64, 69]] }, BAR_PROG = ['D', 'G', 'D', 'A', 'D', 'G', 'A', 'D'];
+// an old-style jig, in eighths: [note, eighths]
+const BAR_JIG = [[[69, 1], [66, 1], [69, 1], [74, 1], [69, 1], [66, 1]], [[67, 1], [71, 1], [74, 1], [71, 1], [67, 1], [71, 1]], [[69, 1], [66, 1], [62, 1], [66, 1], [69, 1], [74, 1]], [[76, 1], [73, 1], [69, 1], [73, 2], [69, 1]],
+  [[78, 1], [76, 1], [74, 1], [69, 1], [66, 1], [69, 1]], [[71, 1], [67, 1], [71, 1], [74, 2], [71, 1]], [[69, 1], [71, 1], [73, 1], [76, 1], [73, 1], [69, 1]], [[74, 2], [69, 1], [62, 3]]];
 const CHURCH_CH = [[50, 57, 64, 67], [46, 53, 60, 67], [43, 50, 57, 60], [45, 52, 59, 62]], CHURCH_VOW = [[700, 1150], [400, 820], [520, 900]];
 const LIB_SCALE = [52, 53, 55, 57, 59, 60, 62, 64, 65, 67, 69, 71, 72, 74, 76];
 const OBS_CH = [[64, 71, 75, 78, 80], [61, 68, 71, 75, 76], [57, 64, 68, 73, 75], [66, 73, 75, 80, 82]];
@@ -7188,26 +7194,38 @@ const POST_TUNE = [[[72, 1], [77, 1], [76, 0.5], [77, 0.5], [79, 1]], [[81, 2], 
   [[81, 1], [82, 0.5], [81, 0.5], [79, 1], [77, 1]], [[76, 1], [77, 1], [74, 2]], [[70, 1], [74, 1], [72, 1], [76, 1]], [[77, 3], [null, 1]]], POST_BASS = [41, 41, 46, 48, 41, 50, 46, 41, 41, 46, 48, 41];
 const HOME_LULL = [[[71, 1], [69, 0.5], [67, 0.5], [69, 1], [71, 1], [74, 2], [71, 1], [69, 2]], [[74, 1], [76, 0.5], [74, 0.5], [71, 1], [69, 1], [67, 3]], [[67, 1], [69, 1], [71, 1], [74, 2], [71, 1], [69, 1], [67, 2]]];
 const ROOM_MUSIC = {
-  /* The Last Coal: a slow tavern waltz in A dorian, 96 to the minute. Plucked strings play oom-pah-pah under a tune,
-     an accordion breathes the chords, the stove spits, the room talks among itself, now and then a glass. */
-  bar: { vol: 1, wet: 0,
-    init(R) { R.bellows = rG(R, 0, R.bus); const lp = rF(R, 'lowpass', 1500, 0.8, R.bellows);
-      R.reeds = BAR_PROG[0][1].flatMap(m => [-9, 8].map(det => { const o = rO(R, 'sawtooth', mtof(m), lp); o.detune.value = det; return rHold(R, o); }));
-      const n = rHold(R, rN(R)); R.murmur = rG(R, 0, R.bus); R.mf = rF(R, 'bandpass', 480, 1.2, R.murmur); n.connect(R.mf); n.connect(rF(R, 'bandpass', 1300, 2, R.murmur));
-      n.connect(rF(R, 'lowpass', 190, 0.7, rG(R, 0.06, R.bus))); },
-    bar(R, t, n) { const B = 0.625, L = B * 3, [root, ch] = BAR_PROG[n % 8], hum = () => (Math.random() - 0.5) * 0.024;
-      ch.forEach((m, i) => [0, 1].forEach(j => R.reeds[i * 2 + j].frequency.setTargetAtTime(mtof(m), t, 0.02)));
-      const bw = R.bellows.gain; bw.setTargetAtTime(0.02, t, 0.08); bw.setTargetAtTime(0.015, t + B, 0.2); bw.setTargetAtTime(0.008, t + L - 0.12, 0.05);
-      // oom: the bass string; pah, pah: two strings of the chord
-      rPluck(R, mtof(root), t + hum(), 0.11, R.bus, 1.6, 900);
-      for (const k of [1, 2]) { const at = t + k * B + hum(); rPluck(R, mtof(ch[1]), at, 0.045, R.bus, 0.7, 2200); rPluck(R, mtof(ch[2]), at + 0.012, 0.04, R.bus, 0.7, 2200); }
-      // the tune: two times round in its own octave and one an octave down, then the band only vamps for a turn
-      const cyc = Math.floor(n / 8) % 3; if (cyc < 2) { let at = t; for (const [m, d] of BAR_TUNE[n % 8]) { if (m != null) { const f = mtof(cyc ? m - 12 : m), v = cyc ? 0.06 : 0.075;
-        rPluck(R, f, at + hum(), v, R.bus, 1.1, 3400); if (d >= 1.5) for (let k = 1; k < d * 4; k++) rPluck(R, f, at + k * B / 4 + hum() * 0.3, v * 0.45, R.bus, 0.4, 3000); } at += d * B; } }
-      // the room talking, rising and falling; the stove; a glass set down
-      for (let at = t; at < t + L; at += 0.3) { R.murmur.gain.setTargetAtTime(0.05 * (0.35 + Math.random() * 0.65), at, 0.12); R.mf.frequency.setTargetAtTime(380 + Math.random() * 300, at, 0.1); }
-      rCrackle(R, t, L, 3 + Math.floor(Math.random() * 5), 0.05);
-      if (Math.random() < 0.2) rStruck(R, 2600 + Math.random() * 1200, t + Math.random() * L, 0.012, [[1, 1, 1], [2.76, 0.5, 0.5]], 0.5);
+  /* The Last Coal: a tavern jig in D, six to the bar. A fiddle carries the tune, a lute strums under it, someone keeps
+     time on a frame drum, and the third time round a tin whistle takes the tune an octave up while the fiddle rests.
+     Under it all the room: talk rising and falling, the stove, a tankard set down, now and then a glass. */
+  bar: { vol: 0.9, wet: 0.35,
+    init(R) { const body = rG(R, 1, R.bus), b1 = rF(R, 'peaking', 560, 1.4, body), b2 = rF(R, 'peaking', 2900, 2, b1), lp = rF(R, 'lowpass', 3600, 0.7, b2);
+      b1.gain.value = 5; b2.gain.value = 4; R.fg = rG(R, 0, lp); const vib = rHold(R, rO(R, 'sine', 5.6)); R.vd = rG(R, 0); vib.connect(R.vd);
+      R.fid = [-6, 5].map(det => { const o = rO(R, 'sawtooth', 440, R.fg); o.detune.value = det; R.vd.connect(o.detune); return rHold(R, o); });
+      // the bow's hiss rides on the fiddle
+      const bn = rHold(R, rN(R)); bn.connect(rF(R, 'bandpass', 3800, 1.2, rG(R, 0.05, R.fg)));
+      R.wg = rG(R, 0, R.bus); R.wh = rHold(R, rO(R, 'sine', 880, rF(R, 'lowpass', 5000, 0.7, R.wg))); const wn = rHold(R, rN(R)); wn.connect(rF(R, 'bandpass', 2400, 3, rG(R, 0.06, R.wg)));
+      const n = rHold(R, rN(R)); R.murmur = rG(R, 0, R.bus); R.mf = rF(R, 'bandpass', 480, 1.1, R.murmur); n.connect(R.mf); n.connect(rF(R, 'bandpass', 1100, 1.6, R.murmur)); },
+    bar(R, t, n) { const E = 0.19, L = E * 6, k = n % 8, cyc = Math.floor(n / 8) % 4, [bass, ch] = BAR_CH[BAR_PROG[k]], hum = () => (Math.random() - 0.5) * 0.018;
+      // the lute: a bass string on one, a strum on four, a lighter brush on six
+      rPluck(R, mtof(bass), t + hum(), 0.06, R.bus, 1.1, 1400);
+      const strum = (at, v, up) => (up ? [...ch].reverse() : ch).forEach((m, i) => rPluck(R, mtof(m), at + i * 0.014, v, R.bus, 0.75, 2600));
+      if (cyc < 3 || k % 2) strum(t + E * 3 + hum(), 0.032); strum(t + E * 5 + hum(), 0.018, true); if (cyc === 3) strum(t + hum(), 0.03);
+      // the frame drum: a soft deep thump on one, a lighter one on four
+      for (const [at, v] of [[t, 0.09], [t + E * 3, 0.05]]) { if (Math.random() < 0.12) continue; const o = rO(R, 'sine', 92), g = rG(R, 0, R.bus); o.connect(g); o.frequency.setValueAtTime(92, at); o.frequency.exponentialRampToValueAtTime(58, at + 0.18); rEnv(g, at, v, 0.004, 0.24); rPlay(R, o, at, at + 0.26); rBurst(R, at, 0.05, 'lowpass', 700, 0.8, v * 0.35); }
+      // the tune: fiddle twice, whistle an octave up, then the fiddle once more while the lute vamps louder
+      const line = BAR_JIG[k], who = cyc === 2 ? 'wh' : 'fid'; let at = t;
+      R.fg.gain.setTargetAtTime(who === 'fid' ? 0.001 : 0, t, 0.05); R.wg.gain.setTargetAtTime(0, t, 0.05);
+      for (const [m, d] of line) { const f = mtof(who === 'wh' ? m + 12 : m), a = at + hum() * 0.4, len = d * E;
+        if (who === 'fid') { R.fid.forEach(o => o.frequency.setTargetAtTime(f, a, 0.008)); const g = R.fg.gain; g.setTargetAtTime(0.005, a, 0.006); g.setTargetAtTime(0.032, a + 0.012, 0.02); g.setTargetAtTime(0.024, a + len * 0.5, len * 0.4);
+          R.vd.gain.setTargetAtTime(0, a, 0.01); R.vd.gain.setTargetAtTime(d > 1 ? 14 : 5, a + Math.min(0.12, len * 0.6), 0.08); }
+        else { R.wh.frequency.setTargetAtTime(f, a, 0.006); const g = R.wg.gain; g.setTargetAtTime(0.002, a, 0.004); g.setTargetAtTime(0.03, a + 0.01, 0.015); g.setTargetAtTime(0.02, a + len * 0.6, len * 0.3); }
+        at += len; }
+      if (k === 7) { R.fg.gain.setTargetAtTime(0.0001, t + L - 0.08, 0.04); R.wg.gain.setTargetAtTime(0, t + L - 0.08, 0.03); }
+      // the room
+      for (let a = t; a < t + L; a += 0.28) { R.murmur.gain.setTargetAtTime(0.045 * (0.35 + Math.random() * 0.65), a, 0.12); R.mf.frequency.setTargetAtTime(380 + Math.random() * 320, a, 0.1); }
+      rCrackle(R, t, L, 1 + Math.floor(Math.random() * 3), 0.04);
+      if (Math.random() < 0.16) { const a = t + Math.random() * L; rBurst(R, a, 0.12, 'lowpass', 420, 1.2, 0.07); rBurst(R, a + 0.01, 0.05, 'bandpass', 900, 2, 0.03); }
+      if (Math.random() < 0.12) rStruck(R, 2500 + Math.random() * 1200, t + Math.random() * L, 0.01, [[1, 1, 1], [2.76, 0.5, 0.5]], 0.5);
       return L; } },
   /* Qubic Church: a choir with no singers, slow and suspended, every chord left open (Dsus, Bb sus2, G sus4, A sus4),
      the vowels turning ah, oo, oh; a long hall; a single bell far off now and then; sometimes one voice chants alone. */
@@ -7281,7 +7299,7 @@ function roomPiece(name, ctx, out, noise, verb) {
   const def = ROOM_MUSIC[name], bus = ctx.createGain(); bus.gain.value = 0; bus.connect(out);
   const R = { name, def, ctx, noise, bus, src: [], live: new Set(), t: ctx.currentTime + 0.12, n: 0, timer: 0, dying: false, dead: false };
   if (verb && def.wet) { R.wet = ctx.createGain(); R.wet.gain.value = def.wet; bus.connect(R.wet); R.wet.connect(verb); }
-  def.init(R); return R;
+  def.init(R); if (out === SND.music) SND.pieces.add(R); return R;
 }
 /** Schedule its bars up to the given time. */
 function roomFill(R, until) { while (R.t < until && !R.dead && !R.dying) R.t += R.def.bar(R, R.t, R.n++); }
@@ -7291,7 +7309,7 @@ function roomStop(R, fade = 2) {
   if (!R || R.dying) return; R.dying = true; clearTimeout(R.timer); const t = R.ctx.currentTime, g = R.bus.gain;
   g.cancelScheduledValues(t); g.setValueAtTime(g.value, t); g.linearRampToValueAtTime(0, t + fade);
   setTimeout(() => { R.dead = true; for (const s of [...R.src, ...R.live]) { s.onended = null; try { s.stop(); } catch {} } R.src.length = 0; R.live.clear();
-    try { R.bus.disconnect(); } catch {} try { R.wet?.disconnect(); } catch {} }, fade * 1000 + 150);
+    try { R.bus.disconnect(); } catch {} try { R.wet?.disconnect(); } catch {} SND.pieces.delete(R); }, fade * 1000 + 150);
 }
 /** Into a room (its name) or back out into the town (null): two seconds from one to the other. */
 function roomMusic(name) {
@@ -7928,7 +7946,7 @@ const TFOLK = {
       i_round: ['Stand a round', 'You want me to like you? Stand the room a round. Everybody\'s cup, your warmth. I pour, you pay. That\'s friendship.', 'Look at that. Generous. Disgusting. Here.', (n, k) => n >= k ? 'you stood the room a round' : 'stand the room a round, inside the bar'],
       i_toast: ['To the empty chair', 'Raise a glass to somebody who isn\'t here. It\'s good for a room, a glass to the absent. Good for business too.', 'There. Now the room remembers somebody. That\'s worth a coin.', (n, k) => n >= k ? 'you raised a glass' : 'raise a glass to someone who is away'],
     } },
-  fenn: { name: 'Master Aurel Fenn', role: 'Keeps the Library, and the other side of it', glyph: 'F', tint: '#b59ad9',
+  fenn: { name: 'Master Aurel Fenn', role: 'Keeps the Library, and the other side of it', glyph: 'F', tint: '#b59ad9', pic: 'q/folk/fenn.webp',
     hello: ['You\'re late. No. You\'re early. Shh. They\'re reading.', 'Ah, the one with the boots. Wipe them. The other side tracks in snow, and I\'ve only the one mop.', 'Sit, sit. Not that chair. Someone is in that chair. You can\'t see her, which is polite of her.', 'You came back. They said you would. I said you wouldn\'t. I like being wrong about you.', 'Close the book behind you. No, the door. Same thing, tonight.'],
     talk: [[0, 'Every book here has two sides of the page. Most people read one. I read the other one now. I can\'t stop.'], [0, 'Don\'t take the red book. Nobody has ever brought me the red book. If they do, I\'ll know it has begun.'], [1, 'The madness? It came in through the margins. Read far enough into the wrong footnote and the footnote reads you back.'], [1, 'They talk at night, on the other side of the page. I write it down. The town thinks it\'s nonsense. Some of it is.'], [2, 'The footnotes have been quiet all week. When footnotes go quiet, somebody on the other side is listening.'], [3, 'I keep a ledger of what they say over there. Half of it comes true a week later. The other half I\'m waiting on.']],
     twelve: [[2, 'Lida Ferro kept the signals. Three slow knocks and three more was her code. It means all well, open. Remember that when you hear it.'], [2, 'Nils Arendt counted everything. Spoons, steps, stars. He was the clerk of the expedition. He counted them out of the gate himself.'], [3, 'Last night Nils said a number on the other side of the page. It wasn\'t twelve. I wrote it down and crossed it out, because it frightened me.'], [3, 'Lida\'s voice, from the other side: the road north has moved. I\'d ask Teresa, but Teresa is very far down the page.']],
@@ -8523,14 +8541,26 @@ function buildQuarters() {
     if (o && n === 'signal') { liveCoals(o); let top = null; o.traverse(m => { if (m.name === 'light_0') top = m.getWorldPosition(new THREE.Vector3()); });
       if (top) { const own = o.userData.lights.filter(L => L.isLight0), snow = glowDecal(c.x, c.z, 2.6, 0xff9a48, 0.6, 0.35); own.forEach(L => { L.userData.col = new THREE.Color(0xffa050); L.userData.r = 1.6; });
         fireFx(top.x, top.y - 0.02, top.z, { h: 0.5, w: 0.08, n: 3, sparks: 18, rise: 1.1, glow: 1.1, lights: [...own, snow] }); } }
-    if (o && n === 'memorial') { tag(o, 'stone', 'stone'); label('THE STONE OF THE TWELVE', o, 3.9, 'key'); const v = new THREE.Vector3(); o.updateMatrixWorld(true);
-      // on the stone stands the iron woman, cast big enough to be seen from every street
-      { const mb = new THREE.Box3().setFromObject(o), top = mb.max.y, yaw = o.rotation.y;
+    if (o && n === 'memorial') { tag(o, 'stone', 'stone'); label('THE STONE OF THE TWELVE', o, 3.1, 'key'); const v = new THREE.Vector3(); o.updateMatrixWorld(true);
+      // Kovar's plinth keeps its lanterns and its procession; the column above it is gone, and the iron woman stands on the plinth itself
+      { const mb = new THREE.Box3().setFromObject(o), top = mb.min.y + (mb.max.y - mb.min.y) * 0.295, yaw = o.rotation.y;
+        o.traverse(m => { if (!m.isMesh || m.name !== 'model') return; m.updateMatrixWorld(true); const g0 = m.geometry.clone(), pos = g0.attributes.position, ix = g0.index?.array, v = new THREE.Vector3(), keep = [];
+          const yOf = i => v.fromBufferAttribute(pos, i).applyMatrix4(m.matrixWorld).y, n = ix ? ix.length : pos.count; let rad = 0;
+          for (let i = 0; i < n; i += 3) { const t = ix ? [ix[i], ix[i + 1], ix[i + 2]] : [i, i + 1, i + 2]; if (t.every(k => yOf(k) <= top + 0.005)) keep.push(...t); }
+          for (let i = 0; i < pos.count; i++) { const y = yOf(i); if (y > top - 0.04 && y <= top + 0.005) rad = Math.max(rad, Math.hypot(v.x - c.x, v.z - c.z)); }
+          g0.setIndex(keep); m.geometry = g0;
+          const cap = new THREE.Mesh(new THREE.CylinderGeometry(rad * 0.96, rad * 0.96, 0.04, 28), m.material); cap.position.set(c.x, top - 0.015, c.z); cap.receiveShadow = true; scene.add(cap); tag(cap, 'stone', 'stone'); });
         loadGlb('q/b/ironwoman.glb').then(g => { if (!g) return; const w = g.scene, b = new THREE.Box3().setFromObject(w), sz = b.getSize(new THREE.Vector3()), cc = b.getCenter(new THREE.Vector3());
-          w.position.set(-cc.x, -b.min.y, -cc.z); const S = new THREE.Group(); S.add(w); S.scale.setScalar(2.1 / Math.max(0.01, sz.y)); S.position.set(c.x, top - 0.04, c.z); S.rotation.y = yaw;
+          w.position.set(-cc.x, -b.min.y, -cc.z); const S = new THREE.Group(); S.add(w); S.scale.setScalar(2.1 / Math.max(0.01, sz.y)); S.position.set(c.x, top - 0.01, c.z); S.rotation.y = yaw;
           w.traverse(m => { if (m.isMesh) { m.castShadow = true; m.receiveShadow = true; const M = m.material; if (M) { M.metalness = Math.max(M.metalness ?? 0, 0.55); M.roughness = Math.min(M.roughness ?? 1, 0.55); if (M.map) { M.emissive = new THREE.Color(0xffffff); M.emissiveMap = M.map; M.emissiveIntensity = 0.1; } } } });
           scene.add(S); tag(S, 'stone', 'stone'); }); }
-      o.traverse(m => { const k = /^lamp_(\d+)$/.exec(m.name); if (k) { m.getWorldPosition(v); STONE_LAMPS[+k[1]] = v.clone(); } }); } }
+      // her robe covers the plinth, so the twelve lanterns stand round her in the snow, one iron post each
+      { const iron = new THREE.MeshStandardMaterial({ color: 0x2a2622, metalness: 0.7, roughness: 0.5 }), yaw = o.rotation.y;
+        for (let i = 0; i < 12; i++) { const a = yaw + Math.PI + (i + 0.5) / 12 * Math.PI * 2, x = c.x + Math.sin(a) * 1.12, z = c.z + Math.cos(a) * 1.12, y = groundH(x, z);
+          const post = new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.024, 0.44, 6), iron); post.position.set(x, y + 0.22, z); post.castShadow = true;
+          const glass = new THREE.MeshStandardMaterial({ color: 0x3a2e22, emissive: 0xffb060, emissiveIntensity: 0.05, roughness: 0.3, metalness: 0.2 }), head = new THREE.Mesh(new THREE.BoxGeometry(0.075, 0.095, 0.075), glass); head.position.set(x, y + 0.49, z); head.rotation.y = a;
+          const cap = new THREE.Mesh(new THREE.ConeGeometry(0.065, 0.055, 4), iron); cap.position.set(x, y + 0.565, z); cap.rotation.y = a + Math.PI / 4;
+          for (const m of [post, head, cap]) { scene.add(m); tag(m, 'stone', 'stone'); } STONE_LAMPS[i] = head.position.clone(); STONE_GLASS[i] = glass; } } } }
   const P = W4W.SPECIAL, S2 = id => STAGE2.find(x => x.id === id)?.at;
   // Hearth Square
   onCorner('mailbox', ...S2('post'), 30, 'anna'); onCorner('benchlamp', ...S2('post'), -30, 'anna');
@@ -8573,7 +8603,7 @@ const ROOMS = {
       [76, 28, 24, 50, 'The fire', () => roomNote('You hold your hands to the fire. The kettle has been on the hook since the first night.')],
       [0, 62, 64, 38, 'Who is here tonight', () => openBarPeople()],
     ] },
-  library: { img: 'q/room/library.webp', title: 'The Library', sub: 'Everything the town knows, and some things it would rather not.', door: 'arch',
+  library: { img: 'q/room/library.webp', title: 'The Library', sub: 'Everything the town knows, and some things it would rather not.', door: 'arch', npc: { img: 'q/folk/fenn_fig.webp', x: 18.5, y: 52, h: 40, folk: 'fenn', ar: 377 / 900, glow: 'warm' },
     fx: [[10, 27, 7], [49, 30, 6], [74, 30, 6], [40, 68, 5], [61, 56, 12], [36, 25, 9, 'cold']],
     hot: [
       [0, 5, 30, 85, 'The shelves', () => openLibrary()],
@@ -8734,7 +8764,7 @@ function openBarPeople() { const B = W4W.BAR_CELL, here = Object.values(XV?.othe
   const mine = myC() && myC().q === B[0] && myC().r === B[1];
   panel('barpeople', 'Who is here tonight', 'The Last Coal', null, here.length ? `<p class="say">${here.length === 1 ? 'One other at the tables tonight' : here.length + ' others at the tables tonight'}: ${here.map(esc).join(', ')}.</p><p class="mute">Everyone inside hears everything said in this room.</p>` : `<p class="say">The tables are empty${mine ? ' but for you' : ''}. Ivo polishes the same cup for the third time.</p><p class="mute">Whoever comes in will hear what you say here.</p>`); }
 /* ---------- the Stone of the Twelve: a lantern for each of the twelve who went north, lit as the town finds what they left ---------- */
-const STONE_LAMPS = [], STONE_LIT = {};
+const STONE_LAMPS = [], STONE_GLASS = [], STONE_LIT = {};
 const TWELVE_TXT = {
   ilya: { hint: 'Listen to what the Wailer sings, at the edge of the Veil.', item: 'Ilya Marten\'s whistle', find: 'Under the place where the Wailer sang, half buried in the snow: a drover\'s whistle cut from a goat\'s horn, with I.M. scratched into it. Marta will know it the moment she sees it.', card: 'Ilya Marten, nineteen, the youngest drover on the north farms. He went because his mother was afraid he would, and he wanted to show her there was nothing to be afraid of. The Wailer sings in his voice.' },
   teresa: { hint: 'Look at the North Gate, close to the iron.', item: 'Teresa Holm\'s map', find: 'Wedged in the hinge of the Gate, folded small: a map in Teresa Holm\'s hand. The road north is drawn twice. The second line runs where no road has ever been.', card: 'Teresa Holm, pathfinder. She walked the north roads for thirty winters and never once got lost. Her last map says the road moved under her feet.' },
@@ -8749,8 +8779,9 @@ const TWELVE_TXT = {
   toma: { hint: 'A pipe that still smells of his tobacco, out by the Mouth.' },
   nils: { hint: 'The expedition\'s ledger, bound in red. Whoever finds it will know how many set out.' },
 };
-const STONE_TXT = 'Twelve went out through the North Gate the week before the cold, to bring the farms in. The town raised this stone for them on the first night of the Veil and hung a lantern for each, and nobody has had the heart to light them. A lantern is lit when someone finds a trace of the one it stands for and carries it here.';
-const STONE_COUNT = 'A procession climbs the spiral cut into the stone, small hooded figures one behind the other, up toward the light at the top. You count them twice. Twelve climb. One more, low on the stone, walks the other way, down, and where its face should be, the stone is smooth.';
+const STONE_TXT = 'Twelve went out through the North Gate the week before the cold, to bring the farms in. Old Kovar cut this stone for them on the first nights of the Veil, the smiths stood the iron woman on it, and a lantern hangs at her feet for each of them. Nobody has had the heart to light them. A lantern is lit when someone finds a trace of the one it stands for and carries it here.';
+const STONE_COUNT = 'A procession is cut round the plinth under her feet, small hooded figures one behind the other, climbing toward the lanterns. You count them twice. Twelve climb. One more, low on the stone, walks the other way, down, and where its face should be, the stone is smooth.';
+const STONE_WOMAN = 'Nobody agrees whose face she has. The smiths cast her in the first weeks of the Veil from whatever each house carried to the forge: stove doors, kettles, a sewing machine, the wheels of every clock that stopped on the ninth night. Ivo swears she is Sister Odile. Ada says the hands are Teresa Holm\'s. Ask Maria and she says she is all twelve of them, so that nobody has to stand in front of their own.\n\nShe holds one hand out toward the North Gate, open, the way you hold a hand out to someone coming in from the cold. The sparks in her robe have never gone out. On the coldest nights the iron is warm to the touch.';
 const twelveLit = id => XV?.twelve?.[id] || null, carrying = id => !!myC()?.traces?.includes(id);
 /* is the player standing where this trace lies (the server checks the same) */
 function atTrace(T) { const c = myC(); if (!c || c.path.length) return false; const h = [c.q, c.r], at = (cell, n = 1) => W4W.dist(h, cell) <= n;
@@ -8782,15 +8813,16 @@ function openStone() {
     if (carrying(T.id)) return `<div class="lamp hold"><b>${esc(T.name)}</b><p>You carry ${esc(X.item)}.</p>${near ? `<button class="btn main" data-light="${T.id}">Light the lantern</button>` : '<small>Bring it here to light the lantern.</small>'}</div>`;
     return `<div class="lamp"><b>${esc(T.name)}</b><small>${esc(X.hint)}</small></div>`; }).join('');
   panel('stone', 'The Stone of the Twelve', `${n} of 12 lanterns lit`, null, `<p class="say">${esc(STONE_TXT)}</p><div class="lamps">${rows}</div>
-    <details class="gnote"><summary>Count the figures on the stone</summary><p style="margin:8px 0 0">${esc(STONE_COUNT)}</p></details>
+    <details class="gnote"><summary>The iron woman</summary>${STONE_WOMAN.split('\n\n').map(t => `<p style="margin:8px 0 0">${esc(t)}</p>`).join('')}</details>
+    <details class="gnote gcount"><summary>Count the figures on the stone</summary><p style="margin:8px 0 0">${esc(STONE_COUNT)}</p></details>
     <p class="mute" style="font-size:12.5px">Eight of them left something in Aigrad. The other four are out in the White.</p>`);
   if (near) act1Mark('stone');
-  $('#pbody details.gnote')?.addEventListener('toggle', e => { if (e.target.open && n >= 4 && atPlace(W4W.STONE_CELL)) unlockPage('thirteen'); });
+  $('#pbody details.gcount')?.addEventListener('toggle', e => { if (e.target.open && n >= 4 && atPlace(W4W.STONE_CELL)) unlockPage('thirteen'); });
   $('#pbody').querySelectorAll('[data-light]').forEach(b => b.addEventListener('click', () => { const id = b.dataset.light; sfx.click(); xact('light', { id }).then(v => { if (!v) return; sfx.reward?.(2); const T = W4W.TWELVE.find(x => x.id === id); banner('A LANTERN ON THE STONE', T.name); log(`You lit ${T.name}'s lantern on the Stone of the Twelve.`, 'warm'); openStone(); }); }));
 }
 /* the lanterns themselves: lit on the stone in the town for everyone to see */
-function stepStoneLamps() { const tw = XV?.twelve || {}; W4W.TWELVE.forEach((T, i) => { if (!tw[T.id] || STONE_LIT[T.id] || !STONE_LAMPS[i]) return; const v = STONE_LAMPS[i];
-  STONE_LIT[T.id] = [sprite(GLOW, v.x, v.y, v.z, 0.42, 0xffd9a0, 1), glowDecal(v.x, v.z, 0.9, 0xffb868, 0.4, v.y)]; }); }
+function stepStoneLamps() { const tw = XV?.twelve || {}; W4W.TWELVE.forEach((T, i) => { if (!tw[T.id] || STONE_LIT[T.id] || !STONE_LAMPS[i]) return; const v = STONE_LAMPS[i]; if (STONE_GLASS[i]) STONE_GLASS[i].emissiveIntensity = 2.2;
+  STONE_LIT[T.id] = [sprite(GLOW, v.x, v.y, v.z, 0.42, 0xffd9a0, 1), glowDecal(v.x, v.z, 0.6, 0xffb868, 0.4, v.y - 0.47)]; }); }
 /* a home's yard: its mailbox by the door; a line of washing behind some, a snowman in front of others */
 function dressYard(g, q, r, id) { if (!KIT_P.mailbox) return; const h = [...String(id)].reduce((a, ch) => (a * 31 + ch.charCodeAt(0)) >>> 0, 7);
   const mb = onCorner('mailbox', q, r, 30, 'anna', 1, g, 0.25, id); g.userData.flag = mb?.userData.flag || null; if (g.userData.flag) g.userData.flag.rotation.x = -Math.PI / 2;
