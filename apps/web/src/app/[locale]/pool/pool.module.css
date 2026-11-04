@@ -420,6 +420,145 @@
   box-shadow: inset 0 0 0 1px rgba(254, 206, 52, 0.28);
 }
 
+/* who mines with what: two tabs over one section */
+.tabs {
+  display: inline-grid;
+  grid-auto-flow: column;
+  gap: 2px;
+  margin-top: 24px;
+  padding: 4px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+.tab {
+  appearance: none;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--fog);
+  padding: 9px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.tab:hover {
+  color: var(--bone);
+}
+
+.tabOn,
+.tabOn:hover {
+  color: #000;
+  background: linear-gradient(180deg, var(--gold-hi), var(--gold));
+}
+
+.tabPanel {
+  margin-top: 4px;
+}
+
+.tabLede {
+  margin: 18px 0 0;
+  max-width: 44rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--fog);
+}
+
+.uGrid {
+  margin-top: 22px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.uCard {
+  border-radius: 22px;
+  padding: 20px 24px 22px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 231, 124, 0.1),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.07);
+}
+
+.uTitle {
+  margin: 0 0 14px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.uBars {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 14px;
+}
+
+.uHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.uLabel {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--bone);
+}
+
+.uShare {
+  font-family: var(--mono);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+}
+
+.uN {
+  font-weight: 400;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.uTrack {
+  display: block;
+  margin-top: 7px;
+  height: 6px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.uFill {
+  display: block;
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, #b18406, var(--gold));
+}
+
+.uRate {
+  display: block;
+  margin-top: 5px;
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: var(--fog);
+}
+
+.uTop {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--bone);
+}
+
 /* terms */
 .terms {
   margin: 26px 0 0;
@@ -564,6 +703,19 @@
   }
   .terms {
     grid-template-columns: 1fr;
+  }
+  .uGrid {
+    grid-template-columns: 1fr;
+  }
+  .uCard {
+    padding: 16px 16px 18px;
+  }
+  .tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .tab {
+    padding: 9px 8px;
   }
   .partners {
     margin-top: 64px;

@@ -205,6 +205,14 @@ export type Extracted = {
   backend?: Backend
   /** read from the log only so the browser can offer it for dedupe; it is hashed on the server */
   worker?: string
+  /** timed solution-counter readouts, in log minutes (absolute UTC minutes when the log has full dates) */
+  counter?: { t: number; n: number }[]
+  /** true when the log's timestamps carry a date, so counter times and lastAt are real UTC */
+  dated?: boolean
+  /** ms UTC of the newest dated line */
+  lastAt?: number
+  /** counter resets seen in the log: each one is a miner restart */
+  restarts?: number
   /** true when any number Maria can use was found */
   found: boolean
 }
@@ -275,12 +283,14 @@ export function extractMetrics(log: string): Extracted {
   let lastEventT: number | undefined
   let rejMax = 0
   let rejSeen = false
+  let dated = false
 
   for (const line of lines) {
     // a timestamp for this line, in minutes; bare clock times roll over at midnight
     let t: number | undefined
     const full = line.match(TS_FULL)
     if (full) {
+      dated = true
       t =
         Date.UTC(
           +full[1]!,
@@ -377,12 +387,20 @@ export function extractMetrics(log: string): Extracted {
     t: number
     n: number
   }[]
+  if (timed.length) out.counter = timed.map(x => ({ t: x.t, n: x.n }))
+  if (dated && lastT !== undefined) {
+    out.dated = true
+    out.lastAt = lastT * 60_000
+  }
   if (timed.length >= 2) {
     let sol = 0
+    let restarts = 0
     for (let i = 1; i < timed.length; i++) {
       const d = timed[i]!.n - timed[i - 1]!.n
+      if (d < 0) restarts++
       sol += d >= 0 ? d : timed[i]!.n // a counter reset (restart) starts again from zero
     }
+    if (restarts) out.restarts = restarts
     const from =
       startT !== undefined && startT <= timed[0]!.t && timed[0]!.n > 0
         ? startT

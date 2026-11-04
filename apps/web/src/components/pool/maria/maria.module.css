@@ -155,8 +155,13 @@
   margin: 2px 0 -4px;
 }
 
-.wordmark {
+.wordmarkH {
   margin: 2px 0 0;
+  line-height: 1;
+}
+
+.wordmark {
+  display: inline-block;
   font-family: var(--serif);
   font-style: italic;
   font-weight: 400;
@@ -176,7 +181,7 @@
 .tiles {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-auto-rows: 1fr;
+  grid-auto-rows: auto;
   gap: 10px;
   padding-bottom: 12px;
 }
@@ -201,6 +206,20 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+.tileWide {
+  grid-column: 1 / -1;
+  min-height: 0;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  padding-right: 10px;
+}
+
+.tileChev {
+  flex: none;
+  color: var(--muted);
 }
 
 .tile:hover {
@@ -341,6 +360,15 @@
   font-weight: 600;
   letter-spacing: -0.032em;
   line-height: 1.1;
+}
+
+.largeSerif {
+  display: inline-block;
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 38px;
+  letter-spacing: -0.01em;
 }
 
 .largeSub {

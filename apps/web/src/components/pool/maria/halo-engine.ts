@@ -9,24 +9,24 @@
 export type HaloMode = 'idle' | 'thinking' | 'settled'
 export type HaloOptions = { size: number; face: number; dpr?: number }
 
-const N = 676
+export const N = 676
 const TAU = Math.PI * 2
-const GOLD: RGB = [254, 206, 52] // site --accent-gold, oklch(0.87 0.165 90)
-const GOLD_HI: RGB = [255, 231, 124] // --accent-gold-strong
-const GOLD_DIM: RGB = [177, 132, 6] // --accent-gold-dim
-const HOT: RGB = [255, 244, 205]
+export const GOLD: RGB = [254, 206, 52] // site --accent-gold, oklch(0.87 0.165 90)
+export const GOLD_HI: RGB = [255, 231, 124] // --accent-gold-strong
+export const GOLD_DIM: RGB = [177, 132, 6] // --accent-gold-dim
+export const HOT: RGB = [255, 244, 205]
 
-type RGB = [number, number, number]
+export type RGB = [number, number, number]
 
 const hex = (h: string): RGB => {
   const n = Number.parseInt(h.replace('#', ''), 16)
   return [(n >> 16) & 255, (n >> 8) & 255, n & 255]
 }
-const mix = (a: RGB, b: RGB, k: number): RGB => [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, a[2] + (b[2] - a[2]) * k]
-const rgba = (c: RGB, a: number) => `rgba(${c[0] | 0},${c[1] | 0},${c[2] | 0},${Math.max(0, Math.min(1, a)).toFixed(3)})`
+export const mix = (a: RGB, b: RGB, k: number): RGB => [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, a[2] + (b[2] - a[2]) * k]
+export const rgba = (c: RGB, a: number) => `rgba(${c[0] | 0},${c[1] | 0},${c[2] | 0},${Math.max(0, Math.min(1, a)).toFixed(3)})`
 
 /** Deterministic noise so every render of the halo is the same sky. */
-function rng(seed: number) {
+export function rng(seed: number) {
   let s = seed >>> 0
   return () => {
     s = (s + 0x6d2b79f5) >>> 0
@@ -46,7 +46,33 @@ const step = (s: Spring, target: number, dt: number) => {
   s.x += s.v * dt
 }
 
-const ARCS = [
+/**
+ * The 676 grains: base radius (fraction of R), angle, angular-speed factor, phase, twinkle frequency, size.
+ * Seeded, so the live halo and the share card's still (halo-svg.ts) draw the same sky.
+ */
+export function seedDust(dustIn: number, dustOut: number) {
+  const r0 = new Float32Array(N)
+  const phi = new Float32Array(N)
+  const om = new Float32Array(N)
+  const ph = new Float32Array(N)
+  const tw = new Float32Array(N)
+  const sz = new Float32Array(N)
+  const rand = rng(676)
+  for (let i = 0; i < N; i++) {
+    // mostly a broad band, with two denser lanes like the rings of a planet
+    const lane = rand()
+    const u = lane < 0.5 ? rand() ** 1.35 : lane < 0.78 ? 0.3 + (rand() - 0.5) * 0.14 : lane < 0.93 ? 0.62 + (rand() - 0.5) * 0.1 : 0.85 + rand() * 0.2
+    r0[i] = dustIn + (dustOut - dustIn) * Math.min(1, Math.max(0, u))
+    phi[i] = rand() * TAU
+    om[i] = (0.42 / (r0[i] as number)) ** 1.5 * (0.85 + rand() * 0.3) // Keplerian: inner orbits are faster
+    ph[i] = rand() * TAU
+    tw[i] = 0.5 + rand() * 1.8
+    sz[i] = 0.5 + rand() ** 2.5 * 1.1
+  }
+  return { r0, phi, om, ph, tw, sz }
+}
+
+export const ARCS = [
   { at: 0.15, len: 1.3, dash: false },
   { at: 1.95, len: 0.55, dash: true },
   { at: 3.05, len: 1.65, dash: false },
@@ -70,25 +96,7 @@ export function createHalo(back: HTMLCanvasElement, front: HTMLCanvasElement, op
   const dustIn = Math.max(faceR + 6, R * 0.33) / R
   const dustOut = 0.74
 
-  // particles: base radius, angle, angular-speed factor, phase, twinkle frequency, size
-  const r0 = new Float32Array(N)
-  const phi = new Float32Array(N)
-  const om = new Float32Array(N)
-  const ph = new Float32Array(N)
-  const tw = new Float32Array(N)
-  const sz = new Float32Array(N)
-  const rand = rng(676)
-  for (let i = 0; i < N; i++) {
-    // mostly a broad band, with two denser lanes like the rings of a planet
-    const lane = rand()
-    const u = lane < 0.5 ? rand() ** 1.35 : lane < 0.78 ? 0.3 + (rand() - 0.5) * 0.14 : lane < 0.93 ? 0.62 + (rand() - 0.5) * 0.1 : 0.85 + rand() * 0.2
-    r0[i] = dustIn + (dustOut - dustIn) * Math.min(1, Math.max(0, u))
-    phi[i] = rand() * TAU
-    om[i] = (0.42 / (r0[i] as number)) ** 1.5 * (0.85 + rand() * 0.3) // Keplerian: inner orbits are faster
-    ph[i] = rand() * TAU
-    tw[i] = 0.5 + rand() * 1.8
-    sz[i] = 0.5 + rand() ** 2.5 * 1.1
-  }
+  const { r0, phi, om, ph, tw, sz } = seedDust(dustIn, dustOut)
 
   // pre-rendered glow sprite for the jewels
   const sprite = document.createElement('canvas')

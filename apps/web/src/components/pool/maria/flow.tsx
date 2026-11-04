@@ -64,15 +64,39 @@ function NavPresence() {
 }
 
 /** An app screen: translucent nav bar, an iOS large title that collapses on scroll, the content, and a dock. */
-export function Screen({ title, sub, onBack, onRestart, scrollRef, children, dock }: { title: string; sub?: string; onBack: () => void; onRestart?: () => void; scrollRef: RefObject<HTMLDivElement | null>; children: ReactNode; dock: ReactNode }) {
+export function Screen({
+  title,
+  sub,
+  onBack,
+  onRestart,
+  scrollRef,
+  children,
+  dock,
+  backLabel = 'Home',
+  action,
+  serif,
+}: {
+  title: string
+  sub?: string
+  onBack: () => void
+  onRestart?: () => void
+  scrollRef: RefObject<HTMLDivElement | null>
+  children: ReactNode
+  dock: ReactNode
+  backLabel?: string
+  /** a nav-bar button in place of Start over */
+  action?: ReactNode
+  /** the large title as a name, in Instrument Serif */
+  serif?: boolean
+}) {
   const [collapsed, setCollapsed] = useState(false)
   return (
     <>
       <header className={cx(s.nav, collapsed && s.navCollapsed)}>
         <div className={s.navRow}>
-          <motion.button aria-label="Back to home" className={s.back} onClick={onBack} type="button" whileTap={PRESS}>
+          <motion.button aria-label={backLabel === 'Home' ? 'Back to home' : `Back to ${backLabel}`} className={s.back} onClick={onBack} type="button" whileTap={PRESS}>
             <ChevronLeft aria-hidden size={26} strokeWidth={2.2} style={{ marginLeft: -4 }} />
-            Home
+            {backLabel}
           </motion.button>
           <div className={s.navCenter}>
             <NavPresence />
@@ -83,7 +107,9 @@ export function Screen({ title, sub, onBack, onRestart, scrollRef, children, doc
               </motion.span>
             </span>
           </div>
-          {onRestart ? (
+          {action ? (
+            action
+          ) : onRestart ? (
             <motion.button aria-label="Start over" className={s.navAction} onClick={onRestart} type="button" whileTap={PRESS}>
               <RotateCcw aria-hidden size={19} strokeWidth={2.2} />
             </motion.button>
@@ -93,7 +119,8 @@ export function Screen({ title, sub, onBack, onRestart, scrollRef, children, doc
         </div>
       </header>
       <div className={s.scroll} onScroll={e => setCollapsed(e.currentTarget.scrollTop > 34)} ref={scrollRef}>
-        <h2 className={s.largeTitle}>{title}</h2>
+        {/* the serif rides on a span: the site's global heading rule forces its own face on every h2 */}
+        <h2 className={s.largeTitle}>{serif ? <span className={s.largeSerif}>{title}</span> : title}</h2>
         {sub && <p className={s.largeSub}>{sub}</p>}
         <div aria-live="polite" className={s.thread}>
           {children}

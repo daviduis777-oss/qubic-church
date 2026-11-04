@@ -6,6 +6,7 @@
  */
 import { MEASURE } from './config.ts'
 import type { Verdict } from './hardware.ts'
+import type { Usage } from './usage.ts'
 import {
   fmtRate,
   fmtWindow,
@@ -58,7 +59,8 @@ export type HardwareRow = {
   tags: string[]
 }
 
-export type Summary = { epoch: number; at: number; rows: HardwareRow[] }
+/** usage: who mines with what (usage.ts), added by the store on live reads */
+export type Summary = { epoch: number; at: number; rows: HardwareRow[]; usage?: Usage }
 
 /** Which data sets the headline number for a hardware key, best first. */
 export const SOURCE_PRIORITY: SampleSource[] = ['pool', 'field', 'log']

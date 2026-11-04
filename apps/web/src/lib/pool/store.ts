@@ -17,6 +17,7 @@ import {
   type Sample,
 } from './measure.ts'
 import { parsePoolStats } from './stats-adapter.ts'
+import { usage } from './usage.ts'
 
 export interface MeasureBackend {
   kind: 'rest' | 'memory'
@@ -217,7 +218,8 @@ export function createStore(opts: StoreOpts = {}) {
       const t = now().getTime()
       if (live && t - live.at < MEASURE.cacheMs) return live.sum
       const { list } = await samples()
-      const sum = aggregate(list, epochAt(now()).epoch, t)
+      const cur = epochAt(now()).epoch
+      const sum: Summary = { ...aggregate(list, cur, t), usage: usage(list, cur) }
       live = { at: t, sum }
       return sum
     },
