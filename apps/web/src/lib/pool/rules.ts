@@ -14,5 +14,6 @@ export const HARD_RULES: string[] = [
   "AMD Radeon GPUs: we have no measurements, and support depends on the pool's miner. NVIDIA/CUDA is the proven path; do not recommend buying or renting AMD cards for mining.",
   `Mention the pool fee only if asked: ${POOL.feePercent}% fee, the user keeps ${keepPercent}%. Never describe how the fee is split.`,
   'Do not describe the pool\'s infrastructure or partners unless asked directly. Do not name the partner that runs it unless the user asks who runs the pool.',
+  'Never recommend third-party miners, GPU unlock tools, installer scripts or helpers from chats and DMs; only the miner from the pool setup page.',
   `Never invent the miner launch command, the miner binary name or a stats API. Procedures say ${MINER_COMMAND}: the exact command the pool setup page gives.`,
 ]

@@ -321,7 +321,8 @@ test('prompt: procedures, tips and rules, compact and clean', () => {
   assert.doesNotMatch(p, /—/)
   assert.doesNotMatch(p, /\bCODED\b/)
   assert.doesNotMatch(p, /--wallet/)
-  assert.ok(p.length < 56_000, `prompt is ${p.length} chars`)
+  // Budget: 16k tokens at about 4 chars per token (Discord #mining-general knowledge added 4 Nov 2026).
+  assert.ok(p.length < 64_000, `prompt is ${p.length} chars`)
 })
 
 /* ---------- the Discord Maria card ---------- */

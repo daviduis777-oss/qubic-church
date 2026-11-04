@@ -319,6 +319,8 @@ export const TIPS: Tip[] = [
   { title: 'Cool before you push', text: 'Clean fans and free airflow first. HW Slowdown or Thermal Slowdown in nvidia-smi -q -d PERFORMANCE means heat or power trouble.', general: true, sources: ['nvidiaSmi', 'macTemp'] },
   { title: 'No sleep, no surprise reboots', text: 'Turn sleep off (powercfg, caffeinate, Energy settings) and use an autostart (systemd, Task Scheduler) so a reboot does not end mining.', sources: ['winPower', 'caffeinate', 'systemdService'] },
   { title: 'Judge by cost per solution', text: 'it/s is speed, not pay. After one full epoch: cost per solution = daily cost ÷ solutions per day.', sources: ['guide'] },
+  { title: 'Check the version after every algorithm change', text: 'Read the version the miner prints after each change; AutoUpdate failed for some workers on 2 to 4 Nov 2026. An old miner keeps showing it/s for work that no longer counts.', sources: ['qli-team'] },
+  { title: 'Keep your own record', text: 'Before each epoch ends, save the miner log and a screenshot of the pool dashboard. Payout disputes on 2 Nov 2026 had no data behind them.', sources: ['community'] },
 ]
 
 /* ---------- selection ---------- */

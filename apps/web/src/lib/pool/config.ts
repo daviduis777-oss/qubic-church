@@ -59,6 +59,8 @@ export const POOL = {
     currency: 'QUBIC',
     epoch: 'Wednesday 12:00 UTC to the next Wednesday 12:00 UTC',
     timing: 'calculated after each weekly epoch ends',
+    /** When the payout usually arrives. Qubic Discord #mining-general, Sep to Nov 2026. */
+    lands: 'Payout usually lands about a week after the epoch closes, sometimes up to about 10 days; the pool shows a pending payout with its date',
   },
 } as const
 
