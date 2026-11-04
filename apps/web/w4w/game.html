@@ -123,6 +123,8 @@ body.hub #dock button.main{background:rgba(255,196,107,.16)}
 .tk.done{opacity:.62}.tk.done .tkn{color:#1a1410;background:#7fe06a;box-shadow:none}.tk.done b{color:#a9d89c}.tk.locked{opacity:.5}.tk.ready{box-shadow:inset 0 0 0 1px #c8873c}.tks.grow .tk{grid-template-columns:1fr}
 .tbar{display:block;height:4px;margin-top:5px;border-radius:2px;background:#ffffff14;overflow:hidden}.tbar i{display:block;height:100%;background:linear-gradient(90deg,#c8873c,#f0c27a)}
 .tbanner{margin:0 0 10px;padding:12px 14px;border-radius:6px;background:linear-gradient(180deg,rgba(240,194,122,.16),rgba(240,194,122,.04));box-shadow:inset 0 0 0 1px rgba(240,194,122,.45)}.tbanner small{display:block;font:600 11px var(--f-label);letter-spacing:.12em;text-transform:uppercase;color:#f0c27a}.tbanner p{margin:4px 0 0;font-family:var(--f-print);font-size:16px;line-height:1.5;color:#f3e4c4}
+.tk .tsealb{padding:5px 10px;font-size:12px;white-space:nowrap}.tseal summary{cursor:pointer;font-size:12px;color:#c9a04a;margin-top:4px}.tseal p{margin:4px 0 0;font-family:var(--f-print);font-size:14.5px;line-height:1.45;color:#e6d8bc}
+.lore.tie{display:block;margin:6px 0;padding:10px 12px;border-radius:4px;background:rgba(10,12,18,.35);box-shadow:inset 0 0 0 1px rgba(201,160,74,.22)}.lore.tie b{display:block;font-family:var(--f-print);font-weight:400;font-size:16px;color:#f3e4c4}.lore.tie p{margin:4px 0 0;font-size:13.5px;line-height:1.45}
 .lore.locked{display:block;margin:6px 0;padding:10px 12px;border-radius:4px;background:rgba(0,0,0,.28);box-shadow:inset 0 0 0 1px rgba(201,160,74,.14)}.lore.locked b{display:block;font-family:var(--f-print);font-weight:400;font-size:16px;color:#8a8070}.lore.locked span{font-size:12.5px;color:#b9a689}
 .bpages{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:2px}.bpages li{font-size:12px;color:#c9b48c}.bpages li.locked{color:#7d7466}
 #room .rhot button.rhand{z-index:6;transform:translate(-50%,0);padding:8px 14px;border-radius:5px;white-space:nowrap;font:600 13px var(--f-label);letter-spacing:.06em;color:#ffe3a6;background:linear-gradient(180deg,#a8401c,#5a1a08);box-shadow:0 0 0 1px #000,inset 0 0 0 1px rgba(255,170,110,.5),0 0 22px rgba(255,170,80,.45)}#room .rhot button.rhand[hidden]{display:none}
@@ -1001,6 +1003,9 @@ var W4W = (() => {
     BAR_COST: () => BAR_COST,
     BAR_WAIT: () => BAR_WAIT,
     CAVE: () => CAVE,
+    CHAINS: () => CHAINS,
+    CHAIN_AT: () => CHAIN_AT,
+    CHAIN_GOLD: () => CHAIN_GOLD,
     CORE: () => CORE,
     CORE_RING: () => CORE_RING,
     DAY_MS: () => DAY_MS,
@@ -1066,6 +1071,7 @@ var W4W = (() => {
     ROUND_COST: () => ROUND_COST,
     ROUND_GIFT: () => ROUND_GIFT,
     ROUND_WAIT: () => ROUND_WAIT,
+    SEAL_COST: () => SEAL_COST,
     SHARD_MELT: () => SHARD_MELT,
     SIP_WARMTH: () => SIP_WARMTH,
     SITE_CELLS: () => SITE_CELLS,
@@ -1077,10 +1083,12 @@ var W4W = (() => {
     STEP_MS: () => STEP_MS,
     STONE_CELL: () => STONE_CELL,
     TASKS: () => TASKS,
+    TIES: () => TIES,
     TOAST_WAIT: () => TOAST_WAIT,
     TOWN_PROPS: () => TOWN_PROPS,
     TOWN_RING: () => TOWN_RING,
     TWELVE: () => TWELVE,
+    TWELVE_WEEK: () => TWELVE_WEEK,
     UNVEIL_MS: () => UNVEIL_MS,
     VEIL_COLD: () => VEIL_COLD,
     VEIL_FULL: () => VEIL_FULL,
@@ -1097,6 +1105,9 @@ var W4W = (() => {
     bestTool: () => bestTool,
     canCraft: () => canCraft,
     cellAt: () => cellAt,
+    chainOpen: () => chainOpen,
+    chainOpensAt: () => chainOpensAt,
+    chainView: () => chainView,
     coldAt: () => coldAt,
     creditLamp: () => creditLamp,
     ctxOf: () => ctxOf,
@@ -1166,6 +1177,8 @@ var W4W = (() => {
     townOfState: () => townOfState,
     townShelters: () => townShelters,
     townWarmth: () => townWarmth,
+    traceOpen: () => traceOpen,
+    traceOpensAt: () => traceOpensAt,
     unveiled: () => unveiled,
     veilOf: () => veilOf,
     viewOf: () => viewOf,
@@ -1863,6 +1876,10 @@ var W4W = (() => {
   const ACT1_START = Date.UTC(2026, 10, 11, 12);
   const ACT1_FALL = Date.UTC(2027, 4, 11, 12);
   const PHASE_AT = [ACT1_START, Date.UTC(2026, 11, 16, 12), Date.UTC(2027, 1, 10, 12), Date.UTC(2027, 2, 31, 12)];
+  const CHAIN_AT = { four_coins: Date.UTC(2026, 10, 25, 12), warm_hands: Date.UTC(2026, 11, 9, 12), missing_line: Date.UTC(2026, 11, 30, 12), top_shelf: Date.UTC(2027, 0, 20, 12), chair: Date.UTC(2027, 1, 10, 12) };
+  const TWELVE_WEEK = { lida: 0, mirek: 1, teresa: 2, agnes: 3, brann: 4, odile: 5, ilya: 6, pavel: 7 };
+  const traceOpensAt = (id) => TWELVE_WEEK[id] == null ? Infinity : ACT1_START + TWELVE_WEEK[id] * WEEK_MS;
+  const traceOpen = (id, now) => now >= traceOpensAt(id);
   const notchAt = (n) => PHASE_AT[1] + Math.round((ACT1_FALL - PHASE_AT[1]) * n / ROSE_TURNS);
   const phaseNow = (s, now) => Math.max(s?.phase ?? 0, PHASE_AT.filter((t) => now >= t).length - 1);
   const thawCap = (now) => Math.max(0.2, 0.48 * Math.min(1, Math.max(0, now - ACT1_START) / (ACT1_FALL - ACT1_START)));
@@ -2093,6 +2110,110 @@ var W4W = (() => {
     }
     return false;
   }
+  const SEAL_COST = 5;
+  const CHAIN_GOLD = 2;
+  const TIES = ["hask_ivo", "ivo_fenn", "hask_maria", "ada_ivo", "ada_maria", "selma_fenn", "selma_hask", "fenn_maria"];
+  const CHAINS = [
+    { id: "four_coins", giver: "ivo", phase: 0, gold: CHAIN_GOLD, done: { ivo: 3, fenn: 2 }, steps: [
+      { at: "ivo", lv: 1, give: { ivo: 1 }, ties: ["ivo_fenn"] },
+      { at: "fenn", lv: 1, give: { fenn: 1 }, letter: "ivo" },
+      { at: "ivo", lv: 2, give: { ivo: 1 }, picks: { cross: { fenn: 2 }, table: { ivo: 1, fenn: 1 } } },
+      { at: "fenn", lv: 2, give: { fenn: 1 } }
+    ] },
+    { id: "warm_hands", giver: "maria", phase: 0, gold: CHAIN_GOLD, done: { maria: 2 }, steps: [
+      { at: "maria", lv: 1, give: { maria: 1 } },
+      { at: "selma", lv: 1, give: { selma: 1 }, letter: "hask", ties: ["selma_hask", "selma_fenn"] },
+      { at: "hask", lv: 2, give: { hask: 1 }, ties: ["hask_maria"] },
+      { at: "maria", lv: 2, picks: { tell: { maria: 3, hask: -3 }, keep: { hask: 3 } } }
+    ] },
+    { id: "missing_line", giver: "maria", phase: 1, gold: CHAIN_GOLD, done: { maria: 2 }, steps: [
+      { at: "maria", lv: 1, give: { maria: 1 } },
+      { at: "fenn", lv: 1, give: { fenn: 1 }, letter: "maria", ties: ["fenn_maria"] },
+      { at: "ada", lv: 2, give: { ada: 1 }, ties: ["ada_maria"] },
+      { at: "maria", lv: 2, give: { maria: 1 }, picks: { all: { maria: 2, fenn: 1 }, spare: { ada: 3 } } }
+    ] },
+    { id: "top_shelf", giver: "ada", phase: 0, gold: CHAIN_GOLD, done: { ada: 2 }, steps: [
+      { at: "ada", lv: 1, give: { ada: 1 }, letter: "ivo" },
+      { at: "ivo", lv: 1, give: { ivo: 1 }, ties: ["ada_ivo"] },
+      { at: "ada", lv: 2, picks: { keep: { ada: 3 }, known: { ada: 1, ivo: 2 } } }
+    ] },
+    { id: "chair", giver: "ivo", phase: 2, gold: CHAIN_GOLD, done: { ivo: 2 }, steps: [
+      { at: "ivo", lv: 2, give: { ivo: 1 } },
+      { at: "maria", lv: 2, give: { maria: 1 }, letter: "ivo" },
+      { at: "ivo", lv: 2, give: { ivo: 1 } },
+      { at: "ivo", lv: 2, picks: { window: { ivo: 2, maria: 2 }, church: { maria: 4 }, wall: { ivo: 4 } } }
+    ] }
+  ];
+  const chainOpensAt = (C) => CHAIN_AT[C.id];
+  const chainOpen = (C, s, now) => now >= chainOpensAt(C) && phaseNow(s, now) >= C.phase;
+  function chainView(ws, c) {
+    const day = dayOf(ws.now);
+    return CHAINS.filter((C) => chainOpen(C, ws.story, ws.now) || c.chains?.[C.id]).map((C) => {
+      const k = c.chains?.[C.id], n = k?.n ?? 0, S = C.steps[n], lv = standingOf(c, C.giver).lv;
+      return {
+        id: C.id,
+        giver: C.giver,
+        n,
+        of: C.steps.length,
+        done: k?.done ?? 0,
+        picks: k?.picks ?? {},
+        letter: k?.letter ?? null,
+        broke: k?.broke ?? [],
+        next: S && !k?.done ? { at: S.at, lv: S.lv, lvOk: lv >= S.lv, wait: !!k && n > 0 && k.day >= day, picks: S.picks ? Object.keys(S.picks) : null } : null
+      };
+    });
+  }
+  function chainAct(ws, c, b) {
+    const now = ws.now, C = CHAINS.find((x) => x.id === b.id);
+    if (!C) return "Nobody has asked you that.";
+    if (!chainOpen(C, ws.story, now) && !c.chains?.[C.id]) return "Nobody has asked you that yet.";
+    const k = c.chains?.[C.id];
+    if (b.do === "open") {
+      if (!k?.letter) return "You carry no sealed letter.";
+      if (k.letter.open) return "The seal is already broken.";
+      k.letter.open = now;
+      return null;
+    }
+    if (b.do !== "step") return "unknown action";
+    const n = k?.n ?? 0, S = C.steps[n];
+    if (!S || k?.done) return "That story is told.";
+    if (c.path.length) return "Stand still first.";
+    const P = FOLK_AT[S.at];
+    if (dist(cellAt(c, now), P.cell) > P.n) return P.away;
+    if (k && n > 0 && k.day >= dayOf(now)) return "Give it a night. Come back tomorrow.";
+    if (standingOf(c, C.giver).lv < S.lv) return "They do not know you well enough for that yet.";
+    const pick = S.picks ? String(b.pick ?? "") : "";
+    if (S.picks && !S.picks[pick]) return "Choose first.";
+    const st = k ?? { n: 0, t: now, day: dayOf(now) };
+    let broken = false;
+    if (st.letter && st.letter.to === S.at) {
+      broken = !!st.letter.open;
+      if (broken) {
+        addStanding(c, st.letter.from, -SEAL_COST);
+        (st.broke ?? (st.broke = [])).push(st.letter.from);
+      }
+      st.letter = null;
+    }
+    for (const [f, v] of Object.entries(S.give ?? {})) if (!(broken && f === S.at)) addStanding(c, f, v);
+    if (S.picks) {
+      for (const [f, v] of Object.entries(S.picks[pick])) addStanding(c, f, v);
+      (st.picks ?? (st.picks = {}))[n] = pick;
+    }
+    if (S.letter) st.letter = { from: S.at, to: S.letter };
+    for (const t of S.ties ?? []) if (!(c.ties ?? (c.ties = [])).includes(t)) c.ties.push(t);
+    st.n = n + 1;
+    st.t = now;
+    st.day = dayOf(now);
+    if (st.n >= C.steps.length) {
+      st.done = now;
+      for (const [f, v] of Object.entries(C.done)) addStanding(c, f, v);
+      addGold(c, C.gold, now);
+      addRenown(c, 2);
+    }
+    ;
+    (c.chains ?? (c.chains = {}))[C.id] = st;
+    return null;
+  }
   function folkView(ws, uid) {
     const c = ws.chars[uid];
     if (!c) return null;
@@ -2110,7 +2231,7 @@ var W4W = (() => {
       const st = errand?.from === f ? "carry" : k?.day === day ? k.done ? "done" : "gone" : "open";
       return [f, { id: E.id, to: E.to, st }];
     }));
-    return { lampDays: c.lampDays ?? 0, folk: out, errand, errands, cold: c.errCold ?? null };
+    return { lampDays: c.lampDays ?? 0, folk: out, errand, errands, cold: c.errCold ?? null, chains: chainView(ws, c), ties: c.ties ?? [] };
   }
   function viewOf(ws, uid, events = []) {
     const forecast = Array.from({ length: 7 }, (_, i) => {
@@ -2553,6 +2674,7 @@ var W4W = (() => {
         if (c.path.length) return fail("Stand still and look.");
         if (ws.twelve?.[T.id]) return fail("Their lantern already burns on the Stone.");
         if (c.traces?.includes(T.id)) return fail("You already carry it.");
+        if (T.act === 1 && !traceOpen(T.id, now)) return fail("The snow hasn't given it up yet.");
         const at = (cell, n = 1) => dist(here, cell) <= n;
         const there = T.at === "veil" ? insideDome(here[0], here[1]) && DIRS.some(([dq, dr]) => !insideDome(here[0] + dq, here[1] + dr)) : T.at === "gate" ? at(GATE_CELL) : T.at === "bar" ? at(BAR_CELL, 0) : T.at === "library" ? at(SPECIAL.library) : T.at === "oldbell" ? at(pylonCell(3)) : T.at === "observatory" ? at(SPECIAL.observatory) : T.at === "plaza" ? at(SPECIAL.plaza) : false;
         if (!there) return fail(T.act === 2 ? "Whatever is left of them is out in the White." : "Nothing of theirs here.");
@@ -2631,6 +2753,10 @@ var W4W = (() => {
           c.errand = { id: E.id, from: who, to: E.to, day };
           (c.errands ?? (c.errands = {}))[who] = { day };
           return ok();
+        }
+        if (fop === "chain") {
+          const e = chainAct(ws, c, b);
+          return e ? fail(e) : ok();
         }
         if (c.path.length) return fail("Stand still first.");
         if (fop === "watch") {
@@ -4618,11 +4744,12 @@ async function openChronicle(force = true, tab = journalTab) {
   const t = S.town, cur = me(), myId = S.uid && S.real[S.uid] ? S.uid : 'me';
   const mineRows = rows.filter(r => !r.demo && (r.house === S.uid || (cur && r.author === cur.nick)));
   const list = rs => rs.length ? `<ul class="chron">${rs.slice(0, 200).map(r => `<li><span class="n">#${r.n}</span><span><b style="color:var(--cream)">${esc(r.author)}</b> · E${r.epoch} · ${esc(r.text)}${r.demo ? ' <span class="tag">demo history</span>' : ''}</span><span class="h">${esc(String(r.hash).slice(0, 32))}…  ← ${esc(String(r.prev).slice(0, 8))}</span></li>`).join('')}</ul>` : '<p class="mute">Nothing here yet.</p>';
-  const tabs = `<div class="jtabs"><button data-jt="world" class="${tab === 'world' ? 'on' : ''}">World</button><button data-jt="mine" class="${tab === 'mine' ? 'on' : ''}">Mine</button>${ACT1 ? `<button data-jt="tasks" class="${tab === 'tasks' ? 'on' : ''}">Tasks</button><button data-jt="story" class="${tab === 'story' ? 'on' : ''}">The Long Cold</button><button data-jt="beasts" class="${tab === 'beasts' ? 'on' : ''}">Bestiary</button><button data-jt="letters" class="${tab === 'letters' ? 'on' : ''}">Letters${openLetter() ? ' ●' : ''}</button>` : ''}</div>`;
+  const tabs = `<div class="jtabs"><button data-jt="world" class="${tab === 'world' ? 'on' : ''}">World</button><button data-jt="mine" class="${tab === 'mine' ? 'on' : ''}">Mine</button>${ACT1 ? `<button data-jt="tasks" class="${tab === 'tasks' ? 'on' : ''}">Tasks</button><button data-jt="story" class="${tab === 'story' ? 'on' : ''}">The Long Cold</button><button data-jt="beasts" class="${tab === 'beasts' ? 'on' : ''}">Bestiary</button><button data-jt="town" class="${tab === 'town' ? 'on' : ''}">The town</button><button data-jt="letters" class="${tab === 'letters' ? 'on' : ''}">Letters${openLetter() ? ' ●' : ''}</button>` : ''}</div>`;
   let body;
   if (tab === 'story') body = chaptersHtmlI();
   else if (tab === 'tasks') body = tasksHtml();
   else if (tab === 'beasts') body = bestiaryHtml();
+  else if (tab === 'town') body = townHtml();
   else if (tab === 'letters') body = lettersHtml();
   else if (tab === 'world') {
     body = `<div class="jgrid">
@@ -7907,18 +8034,18 @@ function openBeast(id, fromBook) {
 const TFOLK = {
   hask: { name: 'Old Hask', role: 'Keeps the North Gate', glyph: 'H', tint: '#8fb3d9', pic: 'q/folk/hask.webp',
     hello: ['New face. Don\'t stand so close to the Gate, it bites. I\'m Hask. I keep it shut.', 'You again. Good. People who come back are people I can count.', 'Pull up a crate. The wind\'s from the north tonight. It always is.', 'There\'s my friend. Sleeves up, look. Still warm. Don\'t ask me how.', 'Sit. I\'ve been saving something to tell you, and the Gate\'s quiet tonight.'],
-    talk: [[0, 'Thirty winters on this gate. The cold has tried every trick on me. Bit my ear once. Broke a tooth on it, the cold did.'], [0, 'You\'ve got a scarf on. Two scarves. Look at you. I sleep out here most nights. Snow\'s soft, if you don\'t mind it.'], [1, 'Wrestled a bear for its coat, once. Lost. So I took the bear instead. Fair\'s fair.'], [1, 'They pay me in soup. Ivo\'s soup. I\'d guard a lesser gate for better soup, but there isn\'t a lesser gate.'], [2, 'Every grey light I hear the knocking. Three slow, three more. I don\'t answer. Answering isn\'t my job.'], [3, 'Here\'s a funny thing. I used to feel the frost like anyone. Then one night I didn\'t. Haven\'t since.']],
+    talk: [[0, 'Thirty winters on this gate. The cold has tried every trick on me. Bit my ear once. Broke a tooth on it, the cold did.'], [0, 'You\'ve got a scarf on. Two scarves. Look at you. I sleep out here most nights. Snow\'s soft, if you don\'t mind it.'], [1, 'Wrestled a bear for its coat, once. Lost. So I took the bear instead. Fair\'s fair.'], [1, 'They pay me in soup. Ivo\'s soup. I\'d guard a lesser gate for better soup, but there isn\'t a lesser gate.'], [1, 'Ivo writes my soup on his board at double. Then he forgets to take it. Thirty winters he\'s been forgetting. Don\'t remind him.', 'hask_ivo'], [2, 'Maria keeps asking after my hands. I keep them in my pockets when she comes by.', 'hask_maria'], [2, 'Every grey light I hear the knocking. Three slow, three more. I don\'t answer. Answering isn\'t my job.'], [3, 'Here\'s a funny thing. I used to feel the frost like anyone. Then one night I didn\'t. Haven\'t since.']],
     twelve: [[2, 'Teresa Holm went out first, map in her teeth. Said keep it warm, I\'ll be back by the thaw. There hasn\'t been a thaw.'], [2, 'Ilya Marten was nineteen. Sang the whole way down the lane. His mother still can\'t walk past this gate.'], [3, 'Hedda Sorn, the little woodcutter, left her axe leaning on this post. Came back for it at a run. That\'s what I remember. The running.'], [3, 'The captain shook my hand at the bar. Cold hand. Colder than mine is now. Don\'t ask me his name. I\'m not saying it out here.']],
     ahead: ['Gate\'s shut till the Wardens say. Then you\'ll see what\'s out there. Not before, and you won\'t want to.', 'One day they\'ll open this and send the brave ones out. Until then the job\'s simple. Keep your lamp lit and keep breathing.'],
     react: { lit: 'Heard you lit a rig. I can see the glow from here. Town\'s warmer for it, even out at the Gate.', dark: 'Your window\'s been dark a couple of nights. Everything alright up there?', veil: 'Look at the Veil tonight. Bright as I\'ve seen it. Somebody\'s rigs are working hard.', stone: 'They lit one of ours on the Stone. Good. Somebody ought to remember them out loud.' },
-    secret: ['The night the knocking started', 'I stopped feeling the cold the night the knocking started. First night, I was frozen to the bone at this post. Then three knocks, and three more, and I was warm. Warm as a stove. I never put the two together till I said it to you just now. Don\'t tell Maria. She\'d want to look at me.'],
+    secret: ['The night the knocking started', 'I stopped feeling the cold the night the knocking started. First night, I was frozen to the bone at this post. Then three knocks, and three more, and I was warm. Warm as a stove. I never put the two together till I said it to you just now. Don\'t tell Maria. She\'d want to look at me.'], secretTie: 'hask_maria',
     tasks: {
       h_veil: ['Walk the Veil', 'Go round the pylons and give three of them a bit of your warmth. They hum better for it. I\'d go myself, but I don\'t leave the Gate.', 'Three pylons? Good. I heard them hum from here.', (n, k) => `${n} of ${k} pylons given warmth since he asked`],
       h_watch: ['The grey watch', 'Stand the grey light with me here at the Gate. Twice, on two different days. You\'ll hear it. Then you\'ll know why I don\'t sleep much.', 'Now you\'ve heard it too. Welcome to the watch.', (n, k) => `${n} of ${k} grey lights kept at the Gate`],
     } },
   ivo: { name: 'Ivo', role: 'Keeps The Last Coal', glyph: 'I', tint: '#e0a35a', pic: 'q/folk/ivo.webp',
     hello: ['Cup\'s two coins. Warming your hands on it is extra. What.', 'You. Sit where I can see you. People who sit where I can\'t see them don\'t pay.', 'Your usual. Don\'t look at me like that, I remember usuals. It\'s bad for business to forget.', 'Friend. Don\'t tell the room I said that word. They\'ll all want credit.', 'Close the door. Sit. No, closer. Tonight might be the night.'],
-    talk: [[0, 'The stove in here has never once gone cold. Not one night. I paid for every log and I\'ll tell you the price of each.'], [0, 'Rumours are free. Anything else is two coins. That\'s the board, by the window. Read it, don\'t lean on it.'], [1, 'You heard about the joke? Everybody hears about the joke. Nobody hears the joke. That\'s what makes it a good one.'], [1, 'Kindness costs extra. Soup is two coins and the count is always fair. Anybody says I\'m kind, they owe me money.'], [2, 'That glass on the top shelf is spoken for. Nobody drinks from it. Nobody dusts it either. I do that.'], [3, 'Three people have heard it. One laughed so hard he cried ice. One left town. One was me, and I\'m still not over it.']],
+    talk: [[0, 'The stove in here has never once gone cold. Not one night. I paid for every log and I\'ll tell you the price of each.'], [0, 'Rumours are free. Anything else is two coins. That\'s the board, by the window. Read it, don\'t lean on it.'], [0, 'Master Fenn owes me four coins since spring. Fenn pays in footnotes. Footnotes don\'t heat a stove.', 'ivo_fenn'], [1, 'Hask\'s soup goes on the board at double. The board goes in the stove at closing. Don\'t make a thing of it.', 'hask_ivo'], [1, 'You heard about the joke? Everybody hears about the joke. Nobody hears the joke. That\'s what makes it a good one.'], [1, 'Kindness costs extra. Soup is two coins and the count is always fair. Anybody says I\'m kind, they owe me money.'], [2, 'That glass on the top shelf is spoken for. Nobody drinks from it. Nobody dusts it either. I do that.'], [3, 'Three people have heard it. One laughed so hard he cried ice. One left town. One was me, and I\'m still not over it.']],
     twelve: [[2, 'Pavel Rusk, the smith\'s lad. Drank on a tab and never paid. Went north owing me eleven coins. The tab\'s still open.'], [2, 'Sister Odile taught the choir my mother\'s hymn. Southern tune. She hummed it walking out the door. I still hum it over the cups. Don\'t make a thing of it.'], [3, 'Brann Ostrow brought the milk every morning. The morning they left, he brought double. Like he knew.'], [3, 'That glass is Pavel\'s. When he pays, I\'ll pour. That\'s all I\'ll say about it.'], [3, 'The chair turned to the wall was the captain\'s. Eleven years he sat in it, facing the window. I keep it turned so nobody else gets ideas.']],
     ahead: ['A market? There\'ll be a market when there\'s something worth selling. Mine first. Then we\'ll talk about prices.', 'More people, more cups, more coins. Keep your rig on and send me more people. That\'s the whole plan.'],
     react: { lit: 'Heard you lit a rig. Town\'s warmer. Don\'t expect a discount.', dark: 'Your lamp\'s been out two nights. A dark window doesn\'t pay its tab. Neither does a frozen one.', veil: 'Veil\'s bright tonight. Bright Veil, full room. I like a bright Veil.', stone: 'They lit one of ours on the Stone. I poured one out. Don\'t get used to that.' },
@@ -7930,7 +8057,7 @@ const TFOLK = {
     } },
   fenn: { name: 'Master Aurel Fenn', role: 'Keeps the Library, and the other side of it', glyph: 'F', tint: '#b59ad9',
     hello: ['You\'re late. No. You\'re early. Shh. They\'re reading.', 'Ah, the one with the boots. Wipe them. The other side tracks in snow, and I\'ve only the one mop.', 'Sit, sit. Not that chair. Someone is in that chair. You can\'t see her, which is polite of her.', 'You came back. They said you would. I said you wouldn\'t. I like being wrong about you.', 'Close the book behind you. No, the door. Same thing, tonight.'],
-    talk: [[0, 'Every book here has two sides of the page. Most people read one. I read the other one now. I can\'t stop.'], [0, 'Don\'t take the red book. Nobody has ever brought me the red book. If they do, I\'ll know it has begun.'], [1, 'The madness? It came in through the margins. Read far enough into the wrong footnote and the footnote reads you back.'], [1, 'They talk at night, on the other side of the page. I write it down. The town thinks it\'s nonsense. Some of it is.'], [2, 'The footnotes have been quiet all week. When footnotes go quiet, somebody on the other side is listening.'], [3, 'I keep a ledger of what they say over there. Half of it comes true a week later. The other half I\'m waiting on.']],
+    talk: [[0, 'Every book here has two sides of the page. Most people read one. I read the other one now. I can\'t stop.'], [0, 'Don\'t take the red book. Nobody has ever brought me the red book. If they do, I\'ll know it has begun.'], [1, 'The madness? It came in through the margins. Read far enough into the wrong footnote and the footnote reads you back.'], [1, 'They talk at night, on the other side of the page. I write it down. The town thinks it\'s nonsense. Some of it is.'], [1, 'Ivo says I owe him four coins. I paid him in footnotes, which are worth more. He has never read one to the end.', 'ivo_fenn'], [2, 'The footnotes have been quiet all week. When footnotes go quiet, somebody on the other side is listening.'], [3, 'I keep a ledger of what they say over there. Half of it comes true a week later. The other half I\'m waiting on.']],
     twelve: [[2, 'Lida Ferro kept the signals. Three slow knocks and three more was her code. It means all well, open. Remember that when you hear it.'], [2, 'Nils Arendt counted everything. Spoons, steps, stars. He was the clerk of the expedition. He counted them out of the gate himself.'], [3, 'Last night Nils said a number on the other side of the page. It wasn\'t twelve. I wrote it down and crossed it out, because it frightened me.'], [3, 'Lida\'s voice, from the other side: the road north has moved. I\'d ask Teresa, but Teresa is very far down the page.']],
     ahead: ['This is the first page of a long book. Everybody wants to skip ahead. Don\'t. The good parts are earned.', 'When the Gate opens, the other side of the page comes closer. Keep your lamp lit. Light is the only bookmark they respect.'],
     react: { lit: 'You lit a rig. I saw it in the margin, a new little light. They saw it too. I think they\'re glad.', dark: 'Your light went out of the margin two nights ago. Don\'t do that. They notice.', veil: 'The Veil is bright. The other side goes quiet when it\'s bright. I can almost sleep.', stone: 'A lantern lit on the Stone. One voice fewer on the other side tonight. It\'s quieter, and I miss them.' },
@@ -7942,7 +8069,7 @@ const TFOLK = {
     } },
   selma: { name: 'Dr. Selma Ruud', role: 'Keeps the Observatory', glyph: 'S', tint: '#9fd0e8', pic: 'q/folk/selma.webp',
     hello: ['Mind the plates, they\'re glass. I\'m Selma Ruud. I measure the sky, what\'s left of it.', 'Ah, good. Hold this. No, by the edges. Thank you.', 'You\'re just in time. The Veil is at its clearest before grey light.', 'Come and look. I\'ve something I haven\'t shown anyone. Not even the log.', 'Lock the dome behind you. What I\'m going to show you, I\'d rather nobody else saw yet.'],
-    talk: [[0, 'The astronomer gave me the dome when his eyes went. He left me the plates and his worst handwriting. He still climbs up on clear nights to argue with them.'], [0, 'Every rig in town shows on my plates. A small star, low down, steady. That\'s what mining looks like from up here.'], [1, 'The network ticks and the Veil breathes with it. I log both. Some nights they\'re the same line.'], [1, 'Steady is the whole trick. The town remembers a light that never goes out, whatever its size. Twelve hours a day, every day. That\'s all the plates ask.'], [1, 'I\'m frightened of one thing. A clear plate. A clear plate would mean every lamp in town went out at once.'], [2, 'There\'s a star on the northern plates that moves. A little, every epoch. Stars do not move. I\'ve checked my sums nine times.'], [3, 'Through Mirek\'s lens it blinks. Three slow, then three more, then dark. I\'ve been writing the blinks down. I think it\'s a code.']],
+    talk: [[0, 'The astronomer gave me the dome when his eyes went. He left me the plates and his worst handwriting. He still climbs up on clear nights to argue with them.'], [0, 'Every rig in town shows on my plates. A small star, low down, steady. That\'s what mining looks like from up here.'], [1, 'The network ticks and the Veil breathes with it. I log both. Some nights they\'re the same line.'], [1, 'Steady is the whole trick. The town remembers a light that never goes out, whatever its size. Twelve hours a day, every day. That\'s all the plates ask.'], [1, 'I\'m frightened of one thing. A clear plate. A clear plate would mean every lamp in town went out at once.'], [1, 'Master Fenn sends me what his margins say about the sky. It matches my plates, night after night. I don\'t believe a word of it. I write it all down.', 'selma_fenn'], [2, 'There\'s a light on my night plates beyond the wall, by the Gate, at grey light. It keeps Old Hask\'s hours.', 'selma_hask'], [2, 'There\'s a star on the northern plates that moves. A little, every epoch. Stars do not move. I\'ve checked my sums nine times.'], [3, 'Through Mirek\'s lens it blinks. Three slow, then three more, then dark. I\'ve been writing the blinks down. I think it\'s a code.']],
     twelve: [[2, 'Mirek Dal ground the only lens that sees the far Rime. He said glass remembers what it\'s shown. I thought it was a glazier\'s joke.'], [2, 'The astronomer\'s glass log is in the cabinet behind you. Read week thirty-one. Then come and tell me you slept.'], [3, 'Old Toma was born in the north. He told me the stars there sit low, close enough to warm your hands on. I laughed. I\'ve stopped laughing.']],
     ahead: ['The plates will get busier. More lamps, more lights on the glass, a brighter Veil. Then they\'ll open the Gate and I\'ll need a bigger notebook.', 'I can\'t tell you what\'s out there yet. I can tell you the sky is changing, and that the town is the brightest thing in it.'],
     react: { lit: 'There you are on my plate. A new light, low on the east side. I named it after you. Don\'t be flattered, I name all of them.', dark: 'Your star has been off my plate two nights now. I keep the space for it.', veil: 'Brightest plate I\'ve taken since the cold. Whatever you\'re all doing, keep doing it.', stone: 'A lantern was lit on the Stone, and the plates were brighter that night. I can\'t explain it, so I wrote it down.' },
@@ -7954,7 +8081,7 @@ const TFOLK = {
     } },
   maria: { name: 'Maria', role: 'Keeps the Chronicle, in Qubic Church', glyph: 'M', tint: '#f0c27a', pic: 'q/folk/maria.webp',
     hello: ['You came in from the cold. Sit by me. The church is the warmest room in Aigrad after the bar, and quieter.', 'There you are. I wrote you into the Chronicle this morning. Just a line. Every one of us gets a line.', 'Sit. The candles are new. Someone brought wax from home. Small things keep a town.', 'I saved you the seat by the window. You can see your own lamp from here.', 'Stay a while. There is something I have to tell you. It is hard, and I would rather tell it to a friend.'],
-    talk: [[0, 'Every rig in Aigrad is a lamp in the Veil. One cannot hold the night. All of them together can. That is the whole of what we do.'], [0, 'My sister is in the ice at the centre of town. Anna. Your rig\'s work goes to her, a little at a time, and she is thawing.'], [1, 'The bell rings on Wednesdays at noon. That is when the epoch is sealed and the Chronicle closes a page.'], [1, 'Mine and stay warm. That is all the town asks of you for now. The rest of Aigrad is still being built, and you will see it built.'], [2, 'I write down who keeps their lamp lit. So that when the thaw comes, we remember who held the night.'], [3, 'Sometimes I read back through the Chronicle and find a line I do not remember writing. In my own hand. About the expedition.']],
+    talk: [[0, 'Every rig in Aigrad is a lamp in the Veil. One cannot hold the night. All of them together can. That is the whole of what we do.'], [0, 'My sister is in the ice at the centre of town. Anna. Your rig\'s work goes to her, a little at a time, and she is thawing.'], [1, 'The bell rings on Wednesdays at noon. That is when the epoch is sealed and the Chronicle closes a page.'], [1, 'Mine and stay warm. That is all the town asks of you for now. The rest of Aigrad is still being built, and you will see it built.'], [2, 'I write down who keeps their lamp lit. So that when the thaw comes, we remember who held the night.'], [2, 'Master Fenn brings me books from the other side of the page. I thank him for each one. I never ask what else he read there.', 'fenn_maria'], [3, 'Sometimes I read back through the Chronicle and find a line I do not remember writing. In my own hand. About the expedition.']],
     twelve: [[2, 'Agnes Vey was our healer. Her order for splint cord is still on the plaza board. Nobody will take it down. I won\'t let them.'], [2, 'Sister Odile sang in this church every morning. On cold mornings you can still hear the hymn in the stones. I asked Ivo about it once. He went quiet.'], [3, 'I remember every face at the Gate. I counted them as they went. I am good at counting. I would like you to remember that.']],
     ahead: ['The Gate will open one day, and the brave will walk out in Warden plates with Anna\'s light on their backs. First the town has to be bright enough.', 'There will be a market, a smithy, a hall for the Wardens. You will see them open one by one. Keep your lamp lit and you will be here for each of them.'],
     react: { lit: 'Your lamp is lit. I saw it come on. The whole town is a little warmer, and I wrote it down.', dark: 'Your lamp has been dark for two nights. Is your machine well? If it is not, tell me. I know machines.', veil: 'The Veil is strong tonight. I can hear Anna breathing easier.', stone: 'Another lantern burns on the Stone. Every one is a name the town has said out loud again.' },
@@ -7966,7 +8093,7 @@ const TFOLK = {
     } },
   ada: { name: 'Ada Pell', role: 'Keeps the post office', glyph: 'A', tint: '#d9a0a0', pic: 'q/folk/ada.webp',
     hello: ['Letters in the sack, carriers by the door, gossip on your own time. I\'m Ada. Post office.', 'You again. Good. A carrier who comes back is worth two who don\'t.', 'Your boots are wet. Means you walked the round. Sit, the kettle\'s on.', 'I\'ve a sorting job only a friend gets. The kind of letters nobody else should see.', 'Shut the door. Pull the blind. There\'s one letter in this office I\'ve never let anyone hold.'],
-    talk: [[0, 'Nothing in Aigrad delivers itself. Somebody carries it. That somebody gets the town\'s thanks and my respect, in that order.'], [0, 'A broken seal is a story in this town. The reader sees every hand the letter passed through. Remember that.'], [1, 'I know every door in town. Who answers. Who doesn\'t. Whose lamp is lit when the post comes.'], [2, 'Letters come under the Gate dry. Paper that crossed the White should be soaked. I keep those in a drawer of their own.'], [3, 'There\'s a letter on the top shelf with no address. Sealed. It\'s been there since the week of the cold. Nobody will open it, and I won\'t let them.']],
+    talk: [[0, 'Nothing in Aigrad delivers itself. Somebody carries it. That somebody gets the town\'s thanks and my respect, in that order.'], [0, 'A broken seal is a story in this town. The reader sees every hand the letter passed through. Remember that.'], [1, 'I know every door in town. Who answers. Who doesn\'t. Whose lamp is lit when the post comes.'], [2, 'Letters come under the Gate dry. Paper that crossed the White should be soaked. I keep those in a drawer of their own.'], [3, 'There\'s a letter on the top shelf with no address. Sealed. It\'s been there since the week of the cold. Nobody will open it, and I won\'t let them.'], [3, 'There\'s a hand I know on a letter on my top shelf. If I told Maria whose it was, she\'d stop sleeping. So I sort the post.', 'ada_maria']],
     twelve: [[2, 'Yusuf Karam the carter took the last sack north. Said he\'d bring the replies back himself. I keep his pigeonhole empty for him.'], [3, 'Pavel Rusk wrote me one letter in his life. Three lines, two of them spelling mistakes. I still have it. Don\'t tell Ivo.'], [3, 'The sealed letter on the top shelf. I know the hand on it. I\'ve seen it on the expedition\'s orders. I won\'t say whose.']],
     ahead: ['When the Gate opens, the post goes north. Somebody will have to carry it. I\'m writing down names.', 'More houses, more doors, more letters. That\'s how I know the town is growing. Keep bringing people.'],
     react: { lit: 'Your lamp\'s lit. Good. Lit windows get their post first. Don\'t tell the dark ones.', dark: 'Your window\'s been dark two nights. Letters wait at a dark door. They don\'t like it.', veil: 'Bright Veil, busy post. People write more when they\'re warm.', stone: 'A lantern lit on the Stone. Somebody will write a letter about it. Somebody always does.' },
@@ -7994,7 +8121,9 @@ function folkNext(id, key, list) { const k = id + key; folkSeen[k] = ((folkSeen[
 function openFolk(id) {
   const F = TFOLK[id]; if (!F) return; const st = folkOf(id), lv = st.lv, here = withFolk(id), L = W4W.STANDING, next = L[lv + 1], days = XV?.folk?.lampDays || 0;
   if (here) folkTalk(id);
-  const talk = F.talk.filter(([l]) => l <= lv).map(([, t]) => t), twelve = F.twelve.filter(([l]) => l <= lv).map(([, t]) => t);
+  const after = Object.entries(CHAIN_TALK[id] || {}).map(([cid, by]) => chainEnd(cid) && by[chainEnd(cid)]).filter(Boolean);
+  const talk = [...after, ...F.talk.filter(([l]) => l <= lv).map(([, t]) => t)], twelve = F.twelve.filter(([l]) => l <= lv).map(([, t]) => t);
+  const tieOf = new Map(F.talk.filter(x => x[2]).map(x => [x[1], x[2]]));
   const bar = next ? `<div class="fstand"><div><b>${FOLK_LV[lv]}</b><span>next: ${FOLK_LV[lv + 1]}</span></div>
       <div class="fbar"><i style="width:${Math.min(100, st.pts / next.pts * 100).toFixed(0)}%"></i></div>
       <small>${st.pts} of ${next.pts} standing · ${Math.min(days, next.days)} of ${next.days} lamp ${next.days === 1 ? 'day' : 'days'}</small></div>`
@@ -8014,10 +8143,13 @@ function openFolk(id) {
     ${bar}
     <p class="mute fgrow" style="font-size:12.5px;margin:6px 0 12px">${esc(growLine(id))} A lamp day is twelve hours lit, whatever the size of your rig.</p>
     ${errandHtml(id, here)}
+    ${chainHtml(id, here)}
     ${tasks ? `<h3>WHAT ${esc(F.name.split(' ').slice(-1)[0].toUpperCase())} ASKS</h3><div class="ftasks">${tasks}</div>` : ''}
     ${lv >= 4 ? `<details class="lore fsecret"><summary><b>${esc(F.secret[0])}</b><span>only for a confidant</span></summary><p>${esc(F.secret[1])}</p></details>` : ''}`);
   const pb = $('#pbody'), say = pb.querySelector('[data-fsay]');
-  pb.querySelectorAll('[data-fask]').forEach(b => b.onclick = () => { sfx.click(); const k = b.dataset.fask; say.textContent = folkNext(id, k, k === 'talk' ? talk : k === 'twelve' ? twelve : F.ahead); say.classList.remove('fin'); void say.offsetWidth; say.classList.add('fin'); });
+  pb.querySelectorAll('[data-fask]').forEach(b => b.onclick = () => { sfx.click(); const k = b.dataset.fask; say.textContent = folkNext(id, k, k === 'talk' ? talk : k === 'twelve' ? twelve : F.ahead); say.classList.remove('fin'); void say.offsetWidth; say.classList.add('fin'); if (tieOf.has(say.textContent)) learnTie(tieOf.get(say.textContent)); });
+  pb.querySelectorAll('[data-cstep]').forEach(b => b.onclick = () => stepChain(b.dataset.cstep, b.dataset.pick));
+  pb.querySelector('details.fsecret')?.addEventListener('toggle', e => { if (e.target.open && F.secretTie) learnTie(F.secretTie); });
   pb.querySelector('[data-fwalk]')?.addEventListener('click', () => { closePanel(); walkTo('folk', id); });
   pb.querySelector('[data-joke]')?.addEventListener('click', () => askJoke(say));
   pb.querySelectorAll('[data-ftake]').forEach(b => b.onclick = () => xact('folk', { who: id, fop: 'take', task: b.dataset.ftake }).then(v => { if (v) { sfx.paper?.(); openFolk(id); } }));
@@ -8070,7 +8202,7 @@ function openJoke() {
   pb.querySelector('[data-jwhy]')?.addEventListener('click', e => { sfx.click(); const n = pb.querySelector('[data-jend]'); n.textContent = '"He died," says Ivo. "Soup\'s two coins."'; n.hidden = false; e.currentTarget.remove(); });
 }
 /** A button that opens one of them, for the panels of their places. */
-const folkBtn = id => { const F = TFOLK[id], st = folkOf(id); return `<button class="folkb" data-folk="${id}"><i style="--t:${F.tint}${F.pic ? `;background:center/cover url(${F.pic})` : ''}">${F.pic ? '' : F.glyph}</i><span><b>${esc(F.name)}</b><small>${FOLK_LV[st.lv]}${st.tasks.some(t => t.st === 'ready') ? ' · something to tell them' : st.tasks.some(t => t.st === 'open') ? ' · has something to ask' : ''}</small></span></button>`; };
+const folkBtn = id => { const F = TFOLK[id], st = folkOf(id); return `<button class="folkb" data-folk="${id}"><i style="--t:${F.tint}${F.pic ? `;background:center/cover url(${F.pic})` : ''}">${F.pic ? '' : F.glyph}</i><span><b>${esc(F.name)}</b><small>${FOLK_LV[st.lv]}${st.tasks.some(t => t.st === 'ready') ? ' · something to tell them' : st.tasks.some(t => t.st === 'open') || chainsNow().some(C => C.next?.at === id && chainReady(C)) ? ' · has something to ask' : ''}</small></span></button>`; };
 const wireFolk = root => root.querySelectorAll('[data-folk]').forEach(b => b.onclick = () => { sfx.click(); openFolk(b.dataset.folk); });
 /* ---------- errands: one small thing a day from each of them, carried by hand to one of the others (world.ts ERRANDS) ----------
  * [title, what the giver says, what the receiver says when it is handed over] */
@@ -8124,7 +8256,7 @@ function takeErrand(id) {
 function handErrand(id) {
   const E = errandNow(); if (!E) return; const X = ERRAND_TXT[E.id] || ['An errand', '', ''];
   sfx.click(); xact('folk', { who: id, fop: 'errand', do: 'give' }).then(v => { if (!v) return; sfx.reward?.(2);
-    banner(TFOLK[id].name, X[0]); log(`${TFOLK[id].name}: "${X[2]}"`, 'warm'); log(`${folkShort(E.from)}'s errand handed over: +2 with ${folkShort(E.from)}, +1 with ${folkShort(id)}.`, 'good');
+    banner(TFOLK[id].name, X[0]); log(`${TFOLK[id].name}: "${X[2]}"`, 'warm'); if (ERRAND_TIE[E.id]) learnTie(ERRAND_TIE[E.id]); log(`${folkShort(E.from)}'s errand handed over: +2 with ${folkShort(E.from)}, +1 with ${folkShort(id)}.`, 'good');
     goalSig = ''; renderGoals(true); if (panelKind === 'folk:' + id) openFolk(id); if (ROOM) roomPlaques(); });
 }
 /** An errand still in your hands at midnight UTC goes cold: say so once. */
@@ -8132,6 +8264,221 @@ function errandWatch() {
   const C = XV?.folk?.cold; if (!C || !ERRAND_TXT[C.id]) return; const k = 'w4w.errCold', sig = C.id + ':' + C.day;
   if (store.get(k) === sig) return; store.set(k, sig);
   log(`${ERRAND_TXT[C.id][0]}: it went cold before it reached ${folkShort(C.to)}. ${folkShort(C.from)} will have another errand today.`, 'world'); goalSig = '';
+}
+/* ---------- between them: the townsfolk's own stories, a step a day, in person (world.ts CHAINS) ----------
+ * steps[n]: where (the Tasks line: who and where, never a pointer), ask (what they say), btn, done (what follows; by the
+ * last pick when it depends on one). A step that is a choice has no btn: picks[p] = [label, what follows].
+ * letter: its name, what it says inside, how the receiver takes it sealed (kept) or broken. over: the end, by the pick. */
+const CHAIN_TXT = {
+  four_coins: { title: 'Four coins', who: 'Ivo and Master Fenn',
+    steps: [
+      { where: 'Ivo has a grievance, and he keeps it behind his bar in The Last Coal.',
+        ask: '"Four coins. Master Fenn has owed me four coins since spring. I send him the bill, he sends me back a footnote. Fenn pays in footnotes. Go up to his Library and tell him this bar is no library."',
+        btn: 'I\'ll tell him', done: '"Tell him in those words. He likes words. Maybe he\'ll keep these."' },
+      { where: 'Master Fenn has his side of the four coins, among his books in the Library.',
+        ask: '"Four coins." He marks his place with a finger. "I paid them. On this side of the page I paid them once, and on the other side twice. He doesn\'t remember, and I won\'t say it out loud in here. The page listens." He writes, folds, and seals it with green wax. "For Ivo. In his hands, nobody else\'s."',
+        btn: 'Take the letter', done: '"Mind the seal. A broken seal is a story, Ada says. She is right about most things."' },
+      { where: 'Fenn\'s letter is for Ivo, in his own hands, at The Last Coal.',
+        ask: '"Well. What do I do with a footnote?"' },
+      { where: 'Ivo has sent word back to Master Fenn in the Library.',
+        ask: '"Well? What did he say?" Fenn has not turned a page since you left.', btn: 'Tell him',
+        done: { cross: '"Off the board?" Fenn closes his book. "Then I owe him a visit, which is worse than four coins." That evening he walks down to The Last Coal in his slippers.',
+          table: '"An argument, at a table. At last somebody asks properly." That evening he walks down to The Last Coal with a book under his arm.' } },
+    ],
+    letter: { name: 'Fenn\'s sealed letter',
+      inside: 'Ivo. The four coins went on candles, the first winter, the night we sang for Sister Odile. You lit them yourself and you were crying, so you won\'t remember who paid. I have it in a footnote. Come and read it if you like. Bring a cup. A.F.',
+      kept: 'He breaks the green wax with his thumb and reads it twice. Then he puts it in the till, under the coins, and stands there a while. "Candles," he says. "I did light them. I don\'t remember who paid."',
+      broken: 'He turns the letter over and looks at the broken seal for a long time. "So you\'ve read it. Then by Wednesday the whole room has read it." He reads it anyway, twice, and puts it in the till under the coins. "Candles. I did light them."' },
+    picks: {
+      cross: ['Cross it off the board', '"Off the board." He finds the line with Fenn\'s name and draws through it, slowly, so the chalk squeaks. "Tell him it\'s gone. Tell him to come and see it\'s gone, or I\'ll write it back."'],
+      table: ['Ask him to come and argue it at a table', '"At my bar? He\'ll read the board for an hour and order water." He sets a second cup on the corner table anyway. "Tell him the corner. He knows the one."'] },
+    over: { cross: 'Ivo crossed the four coins off his board, and Master Fenn came down to The Last Coal to see it gone. They sat at one table.', table: 'Ivo and Master Fenn sat at one table in The Last Coal and argued it out. Neither of them paid.' } },
+  warm_hands: { title: 'Warm hands', who: 'Maria, Dr. Ruud and Old Hask',
+    steps: [
+      { where: 'Maria has something on her mind, in Qubic Church.',
+        ask: '"Hask sleeps in the snow at the Gate with his sleeves rolled up. Once, at the fire, I took his wrist. It was warm as bread, and he pulled it away. Find out why for me. Ask the ones who watch the wall before you ask him. He lies to me kindly, and I am tired of being lied to kindly."',
+        btn: 'I\'ll find out', done: '"Thank you. Take your time. He has been warm for a long while already."' },
+      { where: 'Dr. Ruud watches the wall from under the Observatory dome. Ask her what her plates see.',
+        ask: 'She takes three night plates from the locked drawer and lays them on the table. Beyond the wall, by the Gate, a small steady light, at every grey light, where Hask keeps the watch. "Lamps don\'t keep the watch. This one does." She writes a note and seals it. "Give this to him. If he wants me to stop photographing him, he can tell me so to my face."',
+        btn: 'Take the note', done: '"Master Fenn says his margins show the same light. I don\'t believe him. I wrote it down."' },
+      { where: 'Dr. Ruud\'s note is for Old Hask, at the North Gate.',
+        ask: '"Maria sent you. Don\'t look like that, I know her walk in other people." He looks out at the White for a long time. "Don\'t tell Maria. She\'d want to look at me."',
+        btn: 'Leave him to the Gate', done: '"Go on. The wind\'s from the north. It always is."' },
+      { where: 'Maria is waiting in Qubic Church to hear what you found.',
+        ask: '"Well? Did you find out why he is warm?"' },
+    ],
+    letter: { name: 'Dr. Ruud\'s sealed note',
+      inside: 'Hask. Plates 212, 219 and 240. A light beyond the wall at grey light, at the place where you stand. It is warm on the glass. So are you. I have shown nobody. S. Ruud.',
+      kept: 'He opens it with a thumb, reads it, and folds it very small. "She\'s got good glass, that one."',
+      broken: 'He sees the seal, and his face shuts like the Gate. "Read it, did you. Then you know as much as I do, and that\'s nothing."' },
+    picks: {
+      tell: ['Tell her about the plates', '"Warm on the glass. Out there, at grey light." She is quiet a long time. "Then I will go to him with a lamp and a blanket, and I will look at him, whether he wants me to or not."'],
+      keep: ['Tell her he is well, and leave it there', '"Well." She says the word as if she were weighing it. "Everybody in this town is well. Thank you. I will stop asking him. I will not stop looking."'] },
+    over: { tell: 'You told Maria about the light on the plates. She went to the Gate with a lamp.', keep: 'You kept Old Hask\'s secret. Maria still asks after his hands.' } },
+  missing_line: { title: 'The missing line', who: 'Maria, Master Fenn and Ada Pell',
+    steps: [
+      { where: 'Maria has found something in the Chronicle. She is in Qubic Church.',
+        ask: 'She opens the Chronicle at the week of the cold. Twelve names in her hand, and under them a gap the width of one line. "I do not leave lines empty. I would like three accounts of this page. Mine is the first: I remember writing it, and I remember nothing missing. Ask Master Fenn what his margins say about that week. Ask Ada what came through her office."',
+        btn: 'I\'ll ask them', done: '"Bring me what they say. Bring it exactly."' },
+      { where: 'Master Fenn keeps the second account in his margins, in the Library.',
+        ask: 'He goes pale, which is hard for a man that colour already. "Not out loud. The page listens." He writes for a long time, blots it, seals it. "For Maria. I bring her books from the other side, you know. She thanks me for every one and never asks where I found it. She is afraid I will tell her."',
+        btn: 'Take the letter', done: '"Carry it carefully. It is heavier than it looks."' },
+      { where: 'Ada Pell has the third account, at the post office, if she will give it.',
+        ask: '"The list came through this office first, to be copied for the doors. I copied twelve names. The paper had room for one more line. I noticed it the way you notice a step that isn\'t there." She straightens the sack. "And there\'s a hand I know on a letter on my top shelf. If I told Maria whose, she\'d stop sleeping. So I sort the post and say nothing. You say nothing too."',
+        btn: 'Say nothing', done: '"Good. Go on to her. She\'ll be counting the minutes. She counts everything."' },
+      { where: 'Maria is waiting for the three accounts in Qubic Church.',
+        ask: '"And Ada? What did Ada say?"' },
+    ],
+    letter: { name: 'Fenn\'s account, sealed',
+      inside: 'Maria. The margins of that week are full on our side and full on theirs, and on both sides one line is missing in the same place. Something over there is counting. It stops before the last number. Then it says: count them going out, and count them coming back. I have not written down what I think. A.F.',
+      kept: 'She breaks Fenn\'s seal and reads it standing. Then she sits down.',
+      broken: 'She looks at the broken seal, then at you. "Then you have read it, and the page has read you. Sit down. We can be frightened together for a minute."' },
+    picks: {
+      all: ['Tell her everything Ada said', '"A hand she knows, on a letter on her top shelf." Maria closes the Chronicle. "I am not frightened of a gap. I am frightened of what Fenn knows and does not write down, and now of what Ada knows and does not say. Thank you. I wanted it exactly."'],
+      spare: ['Tell her about the list, and keep the letter to yourself', '"Room for one more line." Maria runs a finger along the gap. "Three accounts, and they agree. That is worse than if they did not." She does not ask what else Ada said. Perhaps she can see you are carrying it.'] },
+    over: { all: 'Three accounts of the page with the missing line, and you gave Maria every word of them.', spare: 'Three accounts of the page with the missing line. You kept Ada\'s letter out of it.' } },
+  top_shelf: { title: 'The glass on the top shelf', who: 'Ada Pell and Ivo',
+    steps: [
+      { where: 'Ada Pell has a small sealed packet that needs carrying, at the post office.',
+        ask: '"This one\'s for Ivo. In his hands, at the bar. It\'s sealed, it\'s heavy for its size, and you won\'t ask."',
+        btn: 'I won\'t ask', done: '"Good. A broken seal is a story, and I have enough of those."' },
+      { where: 'Ada\'s packet is for Ivo, across his bar.',
+        ask: '"Tell her I said nothing." He polishes Pavel\'s glass and puts it back. "Tell her I said it twice."',
+        btn: 'Say nothing', done: '"That glass is spoken for. It stays spoken for. That\'s all."' },
+      { where: 'Ada Pell will want to know how it went, at the post office.',
+        ask: '"Did he take it?" She doesn\'t wait for an answer. "Pavel wrote me one letter in his life. Three lines, two spelling mistakes. The third line asked if someone would see to his glass, if he was slow coming back. So someone does."' },
+    ],
+    letter: { name: 'Ada\'s sealed packet',
+      inside: 'A fold of paper round something small and heavy that clinks. On the paper, in Ada\'s round hand: For P.R.\'s glass. Same as always. Don\'t pour it yet.',
+      kept: 'He weighs it in his palm without opening it, then reaches up past the glass on the top shelf and drops it into a jar behind it. It clinks against other packets.',
+      broken: 'He looks at the broken seal, then at you. "Now three of us know, and one of us talks too much." He drops it into a jar behind the glass on the top shelf. It clinks against other packets.' },
+    picks: {
+      keep: ['Promise to keep it to yourself', '"Thank you. It\'s a small thing. Small things are the ones people talk about."'],
+      known: ['Tell her Ivo knows', '"Of course he knows. He\'s known since the first coin. He\'ll never say, and neither will I, and now neither will you." For a moment she nearly smiles.'] },
+    over: { keep: 'Ada Pell pays for Pavel\'s glass. You promised to keep it.', known: 'Ada Pell pays for Pavel\'s glass, and Ivo knows. Now so do you, and Ada knows you know.' } },
+  chair: { title: 'The captain\'s chair', who: 'Ivo and Maria',
+    steps: [
+      { where: 'Ivo has something to say about the chair turned to the wall, at The Last Coal.',
+        ask: '"Maria wants the chair. That one, to the wall. For the church, she says. I said no. I said it in the voice." He doesn\'t look at it. "Go and ask her why. Ask. Don\'t carry anything."',
+        btn: 'I\'ll ask her', done: '"And don\'t sit in it on your way out."' },
+      { where: 'Maria can tell you why she wants the chair, in Qubic Church.',
+        ask: '"He sat in it eleven years, facing the window, counting the lamps on the ring. Nobody counts them from there now. I count them from here, and I miss some." She writes a few lines and seals them. "Give this to Ivo. He will pretend it says something else."',
+        btn: 'Take the letter', done: '"He will be rude to you. It means he has read it."' },
+      { where: 'Maria\'s letter is for Ivo, behind his bar.',
+        ask: '"A grave with a cushion," he says to the stove. "She always could write." He is quiet a long time. "Come back tomorrow. I\'ll have thought, or I\'ll have had a drink, or both."',
+        btn: 'Leave him be', done: '"Tomorrow."' },
+      { where: 'Ivo has thought about the chair, at The Last Coal. He wants you to decide.',
+        ask: '"You\'ve carried both sides of it. You decide. I won\'t argue with you, and I\'ll argue with her for years."' },
+    ],
+    letter: { name: 'Maria\'s sealed letter',
+      inside: 'Ivo. Turn it to the window, or give it to me. A chair facing the wall is a grave with a cushion. M.',
+      kept: 'He reads it with his back to you, by the stove.',
+      broken: '"You opened her letter." Ivo doesn\'t shout. Ivo never shouts. "Then you read the line about the cushion. Don\'t say it in here."' },
+    picks: {
+      window: ['Turn it back to the window', 'You turn the chair round to face the window. Ivo watches you do it and says nothing. Then he wipes the sill in front of it.'],
+      church: ['Give it to Maria, for the church', 'You carry the chair up to Qubic Church. Maria sets it by the window there, where the lamps of the ring can be counted. Ivo does not come to look.'],
+      wall: ['Leave it to the wall', '"To the wall." He nods once. "It stays where I can see it." He dusts its back with his sleeve.'] },
+    over: { window: 'The chair faces the window again, in The Last Coal.', church: 'The chair stands by the window in Qubic Church now.', wall: 'The chair stays turned to the wall.' } },
+};
+/* what they say once a story is over, by how it ended: shown first when you ask them to talk */
+const CHAIN_TALK = {
+  hask: { warm_hands: { tell: '"You told her. She came out with a lamp and a blanket and looked at me for an hour. I\'m not angry. I\'m not saying I\'m not angry."', keep: '"You kept it. Good. Some things keep best at the Gate."' } },
+  maria: { warm_hands: { tell: '"I went to the Gate with a lamp. His hands were warm. He let me hold them, and neither of us said anything."', keep: '"Hask keeps his hands in his pockets when I come by. You found something and kept it. I can see it on you, and I will not ask."' },
+    missing_line: { all: '"I read Fenn\'s letter every night, and then I put it away. Thank you for bringing it exactly."', spare: '"Three accounts and one gap. I read the page every Wednesday. The gap is still there."' },
+    chair: { church: '"The chair is by the window here. On Wednesdays I sit in it and count the lamps on the ring. I miss fewer now."', window: '"Ivo turned the chair to the window. He sent me a cup of soup to say so. He has never sent me soup."', wall: '"The chair stays to the wall. You chose, and I asked you to. I will live with it."' } },
+  ivo: { four_coins: { cross: '"The line\'s off the board. He comes down on Wednesdays to check it\'s still off. Orders water. Every time."', table: '"Corner table, Wednesdays. He brings a book, I bring the bill, we argue till the stove needs feeding. Best evening of my week. Don\'t tell him."' },
+    chair: { window: '"The chair faces the window again. People look at it on their way in. That\'s all right. Looking is free."', church: '"Maria\'s got the chair. Fine. The wall looks bigger without it. I don\'t look at the wall."', wall: '"The chair stays to the wall. You decided, and I\'m glad it was you."' } },
+  fenn: { four_coins: { cross: '"I go down to The Last Coal on Wednesdays now. On this side of the page. Ivo pretends to hate it, which is how I know he doesn\'t."', table: '"I go down to The Last Coal on Wednesdays now. On this side of the page. Ivo pretends to hate it, which is how I know he doesn\'t."' } },
+  ada: { top_shelf: { keep: '"You\'ve kept it. I can tell. People who keep things walk differently."', known: '"Ivo poured me a cup yesterday and wouldn\'t take the coin. That\'s your doing. Don\'t do it again."' },
+    missing_line: { all: '"You told her about the letter on my shelf. She came in and looked at it a long time. She didn\'t ask. I didn\'t say."', spare: '"You kept my part out of it. Good. She has enough to carry."' } },
+};
+/* what the bar room shows once a story has ended there */
+const BAR_TXT = { coins: 'At the corner table, Ivo and Master Fenn share one ledger and two cups. They are still arguing about the four coins. Neither of them is paying.',
+  chair: { window: 'The chair by the window faces out again. Nobody sits in it. Ivo wipes the sill in front of it every night.', church: 'There is a pale square on the floor by the wall, where a chair stood for years.', wall: 'The chair is still turned to the wall. Ivo dusts its back.' } };
+/* ---------- the town: how the six of them stand with each other, learned one at a time (Journal, The town) ---------- */
+const TIE_TXT = {
+  hask_ivo: ['Old Hask and Ivo', 'Old friends, thirty winters of them. Ivo writes Hask\'s soup on the board at double and never takes a coin of it. Hask pretends not to know, and Ivo pretends Hask doesn\'t.'],
+  ivo_fenn: ['Ivo and Master Fenn', 'A feud over four coins, owed since spring. Ivo sends bills. Fenn pays in footnotes.'],
+  hask_maria: ['Old Hask and Maria', 'Hask doesn\'t feel the cold, and he hides it from Maria most of all. "She\'d want to look at me."'],
+  ada_ivo: ['Ada Pell and Ivo', 'Somebody pays for Pavel Rusk\'s glass, the one on the top shelf, a little at a time. It is Ada. Ivo knows, and says nothing.'],
+  ada_maria: ['Ada Pell and Maria', 'Ada knows the hand on a sealed letter in her office. She keeps quiet about it, to spare Maria.'],
+  selma_fenn: ['Dr. Ruud and Master Fenn', 'The sky on her plates and the margins of his books show the same thing, night after night. She doesn\'t believe it. She records it anyway.'],
+  selma_hask: ['Dr. Ruud and Old Hask', 'Her night plates show a light beyond the wall, by the Gate, at grey light. It keeps Hask\'s hours.'],
+  fenn_maria: ['Master Fenn and Maria', 'He brings her books from the other side of the page. She thanks him for every one. She is afraid of what he knows about the thirteenth.'],
+};
+const TIE_AFTER = { ivo_fenn: ['four_coins', { cross: 'Since you carried the letter, they argue about it at one table in The Last Coal.', table: 'Since you carried the letter, they argue about it at one table in The Last Coal.' }],
+  hask_maria: ['warm_hands', { tell: 'You told Maria about the light on the plates. She went to the Gate with a lamp.', keep: 'You kept his secret. She still asks after his hands.' }],
+  ada_ivo: ['top_shelf', { keep: 'You promised Ada to keep it.', known: 'You told Ada that Ivo knows. She nearly smiled.' }],
+  ada_maria: ['missing_line', { all: 'You told Maria what Ada said about the letter on her shelf.', spare: 'You kept Ada\'s part out of what you told Maria.' }] };
+const TOWN_INTRO = 'Six people keep this town. What lies between them you learn the slow way: by listening, and by carrying things from one to another.';
+const TIE_HIDDEN = 'Something between two of them you have not heard yet.';
+/* a handed errand that shows how two of them stand */
+const ERRAND_TIE = { e_flask: 'hask_ivo', e_bill: 'ivo_fenn', e_margin: 'selma_fenn', e_numbers: 'selma_fenn', e_hymnal: 'fenn_maria' };
+const FOLK_WHERE = { hask: 'at the North Gate', ivo: 'behind his bar in The Last Coal', fenn: 'in the Library', selma: 'under the Observatory dome', maria: 'in Qubic Church', ada: 'at the post office' };
+const folkWhere = id => `${folkShort(id)} is ${FOLK_WHERE[id] || 'in Aigrad'}.`;
+const TIES_SEEN = (() => { try { return new Set(JSON.parse(store.get('w4w.ties') || '[]')); } catch { return new Set(); } })();
+const tiesKnown = () => new Set([...(XV?.folk?.ties || []), ...TIES_SEEN]);
+function learnTie(id) { if (!TIE_TXT[id] || tiesKnown().has(id)) return; TIES_SEEN.add(id); store.set('w4w.ties', JSON.stringify([...TIES_SEEN])); log(`The town: ${TIE_TXT[id][0]}. Written in your Journal.`, 'warm'); }
+const chainsNow = () => XV?.folk?.chains || [];
+const chainOf = id => chainsNow().find(x => x.id === id) || null;
+/** The choice a finished story ended on (each story has one). */
+const chainEnd = id => { const C = chainOf(id); if (!C?.done) return null; const p = Object.values(C.picks || {}); return p[p.length - 1] || null; };
+const chainSaid = (v, pick) => typeof v === 'string' ? v : (v && (v[pick] || Object.values(v)[0])) || '';
+/** A step you can do now with this one: open, not waiting on a night, known well enough. */
+const chainReady = C => !!C.next && C.next.lvOk && !C.next.wait;
+function chainHtml(id, here) {
+  const out = [];
+  for (const C of chainsNow()) { const X = CHAIN_TXT[C.id]; if (!X || C.done || !C.next || C.next.at !== id) continue;
+    const S = X.steps[C.n] || {}, L = C.letter && C.letter.to === id ? X.letter : null, last = Object.values(C.picks || {}).pop();
+    let foot;
+    if (!C.next.lvOk) foot = `<span>when you are ${FOLK_LV[C.next.lv]} with ${esc(folkShort(C.giver))}</span>`;
+    else if (C.next.wait) foot = '<span>Give it a night. Come back tomorrow.</span>';
+    else if (!here) foot = `<span class="mute">${esc(W4W.FOLK_AT[id].away)}</span>`;
+    else if (C.next.picks) foot = `<div class="row">${C.next.picks.map(p => `<button class="btn" data-cstep="${C.id}" data-pick="${p}">${esc(X.picks[p]?.[0] || p)}</button>`).join(' ')}</div>`;
+    else foot = `<div><button class="btn main" data-cstep="${C.id}">${esc(S.btn || 'Go on')}</button></div>`;
+    const body = chainReady(C) ? `${L ? `<p>${esc(C.letter.open ? L.broken : L.kept)}</p>` : ''}<p>${esc(chainSaid(S.ask, last))}</p>` : `<p>${esc(S.where)}</p>`;
+    out.push(`<div class="ftask on" data-chain="${C.id}"><b>${esc(X.title)}</b>${body}${L ? `<span>You carry ${esc(L.name)}${C.letter.open ? '. Its seal is broken.' : '.'}</span>` : ''}${foot}</div>`); }
+  return out.length ? `<h3>BETWEEN THEM</h3><div class="ftasks" style="margin-bottom:12px">${out.join('')}</div>` : '';
+}
+/** Do the next step of a story with the one you stand with. */
+function stepChain(cid, pick) {
+  const C = chainOf(cid), X = CHAIN_TXT[cid]; if (!C?.next || !X) return; const n = C.n, at = C.next.at, L = C.letter && C.letter.to === at ? { ...C.letter } : null, last = Object.values(C.picks || {}).pop();
+  const known = tiesKnown(); sfx.click(); xact('folk', { who: at, fop: 'chain', id: cid, do: 'step', ...(pick ? { pick } : {}) }).then(v => { if (!v) return;
+    const S = X.steps[n] || {}, said = pick ? X.picks[pick]?.[1] || '' : chainSaid(S.done, last), C2 = chainOf(cid);
+    sfx.paper?.(); log(said, 'warm');
+    if (L) log(L.open ? `${folkShort(at)} saw the broken seal. ${folkShort(L.from)} will hear of it: a broken seal is a story.` : `You handed over ${X.letter.name} with its seal whole.`, L.open ? 'world' : 'good');
+    if (C2?.letter && !L) log(`You carry ${X.letter.name} for ${folkShort(C2.letter.to)}. It is sealed.`, 'warm');
+    for (const t of v.folk?.ties || []) if (!known.has(t) && TIE_TXT[t]) log(`The town: ${TIE_TXT[t][0]}. Written in your Journal.`, 'warm');
+    if (C2?.done) { sfx.reward?.(3); banner(X.title, 'the end of it'); } else banner(X.title, `${C2?.n ?? n + 1} of ${C2?.of ?? X.steps.length}`);
+    goalSig = ''; renderGoals(true);
+    if (panelKind === 'folk:' + at) { openFolk(at); const s = $('#pbody [data-fsay]'); if (s) s.textContent = said; } });
+}
+/** Break the seal of the letter you carry: you read it, and whoever gets it will see. */
+function breakSeal(cid) {
+  const C = chainOf(cid), X = CHAIN_TXT[cid]; if (!C?.letter || C.letter.open || !X) return;
+  sfx.paper?.(); xact('folk', { who: C.letter.from, fop: 'chain', id: cid, do: 'open' }).then(v => { if (!v) return;
+    log(`You broke the seal on ${X.letter.name}. ${folkShort(C.letter.to)} will see it. A broken seal is a story.`, 'world');
+    if (panelKind === 'chronicle') openChronicle(true, journalTab); });
+}
+/** The stories in the Tasks tab: who, where and what holds it back, in words only. */
+function chainRows() {
+  const L0 = chainsNow(); if (!L0.length) return '<li class="tk done"><div><span>Nothing between them has reached you yet. Stories come as the winter goes on.</span></div></li>';
+  return L0.map(C => { const X = CHAIN_TXT[C.id]; if (!X) return ''; const S = X.steps[C.n] || {}, L = C.letter ? X.letter : null; let line, side = '', under = '';
+    if (C.done) line = chainSaid(X.over, chainEnd(C.id));
+    else { const hold = !C.next.lvOk ? `When you are ${FOLK_LV[C.next.lv]} with ${folkShort(C.giver)}. ` : C.next.wait ? 'Give it a night. ' : '';
+      line = L ? `You carry ${L.name} for ${folkShort(C.letter.to)}.${C.letter.open ? ' Its seal is broken.' : ''} ${hold}${S.where}` : hold + S.where;
+      if (L && !C.letter.open) side = `<button class="btn tsealb" data-seal="${C.id}" title="A broken seal is a story">Break the seal</button>`;
+      if (L && C.letter.open) under = `<details class="tseal"><summary>What it says</summary><p>${esc(L.inside)}</p></details>`; }
+    return `<li class="tk ${C.done ? 'done' : chainReady(C) ? 'ready' : ''}">${tkTick(!!C.done)}<div><b>${esc(X.title)}</b><span>${esc(X.who)} · ${esc(line)}</span>${under}</div>${side}</li>`; }).join('')
+    + (L0.length < W4W.CHAINS.length ? '<li class="tk done"><div><span>More of the town\'s own business will come as the winter goes on.</span></div></li>' : '');
+}
+/** The Journal's The town tab: what you know of how they stand with each other, the rest hidden. */
+function townHtml() {
+  const K = tiesKnown(), n = W4W.TIES.filter(t => K.has(t)).length;
+  return `<h3>THE TOWN <small>${n} of ${W4W.TIES.length} known</small></h3><p class="mute" style="font-size:13px;margin:0 0 10px">${esc(TOWN_INTRO)}</p>`
+    + W4W.TIES.map(t => { if (!K.has(t) || !TIE_TXT[t]) return `<div class="lore locked"><b>Not yet heard</b><span>${esc(TIE_HIDDEN)}</span></div>`;
+      const A = TIE_AFTER[t], after = A && chainEnd(A[0]) ? chainSaid(A[1], chainEnd(A[0])) : '';
+      return `<div class="lore tie"><b>${esc(TIE_TXT[t][0])}</b><p>${esc(TIE_TXT[t][1])}</p>${after ? `<p class="mute">${esc(after)}</p>` : ''}</div>`; }).join('');
 }
 function openGate() {
   const m = Math.round((S.town.melt || 0) * 100), L = openLetter(), c = myC(), near = c && !c.path.length && W4W.dist([c.q, c.r], GATE_CELL) <= 1;
@@ -8731,19 +9078,20 @@ function stepFlags() { const doors = XV?.mail?.doors || {}; for (const id in hou
   const want = (doors[k] || 0) > 0 ? 0 : -Math.PI / 2; f.rotation.x += (want - f.rotation.x) * 0.5; } }
 /* who is drinking at The Last Coal tonight */
 function openBarPeople() { const B = W4W.BAR_CELL, here = Object.values(XV?.others || {}).filter(o => o.q === B[0] && o.r === B[1] && !o.path?.length).map(o => o.nick).filter(Boolean);
-  const mine = myC() && myC().q === B[0] && myC().r === B[1];
-  panel('barpeople', 'Who is here tonight', 'The Last Coal', null, here.length ? `<p class="say">${here.length === 1 ? 'One other at the tables tonight' : here.length + ' others at the tables tonight'}: ${here.map(esc).join(', ')}.</p><p class="mute">Everyone inside hears everything said in this room.</p>` : `<p class="say">The tables are empty${mine ? ' but for you' : ''}. Ivo polishes the same cup for the third time.</p><p class="mute">Whoever comes in will hear what you say here.</p>`); }
+  const mine = myC() && myC().q === B[0] && myC().r === B[1], notes = [chainOf('four_coins')?.done ? BAR_TXT.coins : '', BAR_TXT.chair[chainEnd('chair')] || ''].filter(Boolean);
+  panel('barpeople', 'Who is here tonight', 'The Last Coal', null, here.length ? `<p class="say">${here.length === 1 ? 'One other at the tables tonight' : here.length + ' others at the tables tonight'}: ${here.map(esc).join(', ')}.</p><p class="mute">Everyone inside hears everything said in this room.</p>` : `<p class="say">The tables are empty${mine ? ' but for you' : ''}. Ivo polishes the same cup for the third time.</p><p class="mute">Whoever comes in will hear what you say here.</p>`);
+  if (notes.length) $('#pbody').insertAdjacentHTML('beforeend', notes.map(t => `<p class="say" data-barnote>${esc(t)}</p>`).join('')); }
 /* ---------- the Stone of the Twelve: a lantern for each of the twelve who went north, lit as the town finds what they left ---------- */
 const STONE_LAMPS = [], STONE_LIT = {};
 const TWELVE_TXT = {
-  ilya: { hint: 'Listen to what the Wailer sings, at the edge of the Veil.', item: 'Ilya Marten\'s whistle', find: 'Under the place where the Wailer sang, half buried in the snow: a drover\'s whistle cut from a goat\'s horn, with I.M. scratched into it. Marta will know it the moment she sees it.', card: 'Ilya Marten, nineteen, the youngest drover on the north farms. He went because his mother was afraid he would, and he wanted to show her there was nothing to be afraid of. The Wailer sings in his voice.' },
-  teresa: { hint: 'Look at the North Gate, close to the iron.', item: 'Teresa Holm\'s map', find: 'Wedged in the hinge of the Gate, folded small: a map in Teresa Holm\'s hand. The road north is drawn twice. The second line runs where no road has ever been.', card: 'Teresa Holm, pathfinder. She walked the north roads for thirty winters and never once got lost. Her last map says the road moved under her feet.' },
-  pavel: { hint: 'Watch the Scratcher at the edge of the Veil.', item: 'a link of Rusk\'s chain', find: 'Where the Scratcher drags its claws, a link of forge chain lies at the foot of the Veil, warm through the glove. Stamped into it: R, the smithy\'s mark for Rusk.', card: 'Pavel Rusk, the smith\'s apprentice. He carried the tools north on his back so the others could carry food. The Scratcher\'s arms are bound in chain from his forge.' },
-  odile: { hint: 'Ask at the bar about the southern hymn.', item: 'Sister Odile\'s hymn book', find: 'Ivo hums the southern hymn while he wipes the cups, the one the Wailer sings. Ask him and he tells you who taught it to the choir: Sister Odile, the winter before she went north. He hands you her hymn book from under the bar.', card: 'Sister Odile of Qubic Church. She sang for the sick and for the dead and saw no difference in the work. Her hymn is still sung in the bar on bad nights, and out in the White on all of them.' },
-  lida: { hint: 'The Library keeps the old signal codes.', item: 'Lida Ferro\'s code book', find: 'On the signals shelf, Lida Ferro\'s code book. Page one, in her neat hand: three slow knocks, then three more. All well. Open.', card: 'Lida Ferro kept the signal lamps and the codes. Every knock and flash in town meant what she said it meant. On the ninth night somebody outside the Gate knew her code.' },
-  brann: { hint: 'Stand by the Old Bell pylon and listen.', item: 'Brann Ostrow\'s cattle bell', find: 'In the snow under the Old Bell, a brass cattle bell with a cracked clapper. Brann Ostrow\'s farm mark is burned into the strap. People near the pylon say they hear it at night.', card: 'Brann Ostrow farmed the north pastures and knew every cow by her bell. He went to bring his herd in before the cold. The Old Bell rings at night with a bell much smaller than its own.' },
-  mirek: { hint: 'Search the Observatory for the astronomer\'s best lens.', item: 'the lens with Mirek Dal\'s name', find: 'In a drawer the astronomer kept locked you find the only lens that sees as far as the Rime. Scratched on its brass rim: M. Dal, ground the summer before. Dr. Ruud lets you take it to the Stone, as long as you bring it back.', card: 'Mirek Dal, glazier. He made the town\'s windows and the astronomer\'s best lens. He went north to see the glacier for himself, and the glass he left behind is how we see what is out there now.' },
-  agnes: { hint: 'Read the oldest order on the plaza board.', item: 'Agnes Vey\'s order', find: 'On the plaza board, under newer notices, an old order nobody took down: cord for the healer\'s splints. It is signed Agnes Vey, and dated the morning the twelve left.', card: 'Agnes Vey, the town healer. She went north because twelve people on a long road would need one. Her order is still on the board. Nobody has the heart to take it down.' },
+  ilya: { hint: 'The youngest drover is still singing. Listen long to the one at the wall that sings in borrowed voices.', item: 'Ilya Marten\'s whistle', find: 'Under the place where the Wailer sang, half buried in the snow: a drover\'s whistle cut from a goat\'s horn, with I.M. scratched into it. Marta will know it the moment she sees it.', card: 'Ilya Marten, nineteen, the youngest drover on the north farms. He went because his mother was afraid he would, and he wanted to show her there was nothing to be afraid of. The Wailer sings in his voice.' },
+  teresa: { hint: 'Her last road is folded small, in the hinge of the door nobody opens.', item: 'Teresa Holm\'s map', find: 'Wedged in the hinge of the Gate, folded small: a map in Teresa Holm\'s hand. The road north is drawn twice. The second line runs where no road has ever been.', card: 'Teresa Holm, pathfinder. She walked the north roads for thirty winters and never once got lost. Her last map says the road moved under her feet.' },
+  pavel: { hint: 'A chain stamped R, on the thing that drags its claws down the Veil.', item: 'a link of Rusk\'s chain', find: 'Where the Scratcher drags its claws, a link of forge chain lies at the foot of the Veil, warm through the glove. Stamped into it: R, the smithy\'s mark for Rusk.', card: 'Pavel Rusk, the smith\'s apprentice. He carried the tools north on his back so the others could carry food. The Scratcher\'s arms are bound in chain from his forge.' },
+  odile: { hint: 'Her hymn is sung where nobody is kind and the stove has never gone out.', item: 'Sister Odile\'s hymn book', find: 'Ivo hums the southern hymn while he wipes the cups, the one the Wailer sings. Ask him and he tells you who taught it to the choir: Sister Odile, the winter before she went north. He hands you her hymn book from under the bar.', card: 'Sister Odile of Qubic Church. She sang for the sick and for the dead and saw no difference in the work. Her hymn is still sung in the bar on bad nights, and out in the White on all of them.' },
+  lida: { hint: 'Three and three, pressed flat between pages, where the town keeps what it knows.', item: 'Lida Ferro\'s code book', find: 'On the signals shelf, Lida Ferro\'s code book. Page one, in her neat hand: three slow knocks, then three more. All well. Open.', card: 'Lida Ferro kept the signal lamps and the codes. Every knock and flash in town meant what she said it meant. On the ninth night somebody outside the Gate knew her code.' },
+  brann: { hint: 'His cattle bell still answers the one pylon that used to be a bell.', item: 'Brann Ostrow\'s cattle bell', find: 'In the snow under the Old Bell, a brass cattle bell with a cracked clapper. Brann Ostrow\'s farm mark is burned into the strap. People near the pylon say they hear it at night.', card: 'Brann Ostrow farmed the north pastures and knew every cow by her bell. He went to bring his herd in before the cold. The Old Bell rings at night with a bell much smaller than its own.' },
+  mirek: { hint: 'Glass remembers what it was shown. His best piece sleeps in a locked drawer, under the dome.', item: 'the lens with Mirek Dal\'s name', find: 'In a drawer the astronomer kept locked you find the only lens that sees as far as the Rime. Scratched on its brass rim: M. Dal, ground the summer before. Dr. Ruud lets you take it to the Stone, as long as you bring it back.', card: 'Mirek Dal, glazier. He made the town\'s windows and the astronomer\'s best lens. He went north to see the glacier for himself, and the glass he left behind is how we see what is out there now.' },
+  agnes: { hint: 'The healer\'s last order still hangs where the town asks for things, under everything pinned since.', item: 'Agnes Vey\'s order', find: 'On the plaza board, under newer notices, an old order nobody took down: cord for the healer\'s splints. It is signed Agnes Vey, and dated the morning the twelve left.', card: 'Agnes Vey, the town healer. She went north because twelve people on a long road would need one. Her order is still on the board. Nobody has the heart to take it down.' },
   yusuf: { hint: 'A wagon track runs into the White and never comes back.' },
   hedda: { hint: 'Somewhere in the Black Pines, an axe left in a stump.' },
   toma: { hint: 'A pipe that still smells of his tobacco, out by the Mouth.' },
@@ -8752,6 +9100,9 @@ const TWELVE_TXT = {
 const STONE_TXT = 'Twelve went out through the North Gate the week before the cold, to bring the farms in. The town raised this stone for them on the first night of the Veil and hung a lantern for each, and nobody has had the heart to light them. A lantern is lit when someone finds a trace of the one it stands for and carries it here.';
 const STONE_COUNT = 'A procession climbs the spiral cut into the stone, small hooded figures one behind the other, up toward the light at the top. You count them twice. Twelve climb. One more, low on the stone, walks the other way, down, and where its face should be, the stone is smooth.';
 const twelveLit = id => XV?.twelve?.[id] || null, carrying = id => !!myC()?.traces?.includes(id);
+/* one trace a week gives itself up from the start of Act I (world.ts TWELVE_WEEK); until then only this */
+const TRACE_LOCKED = 'The snow hasn\'t given it up yet.';
+const traceHint = T => T.act === 1 && !W4W.traceOpen(T.id, xnow()) ? TRACE_LOCKED : (TWELVE_TXT[T.id]?.hint || '');
 /* is the player standing where this trace lies (the server checks the same) */
 function atTrace(T) { const c = myC(); if (!c || c.path.length) return false; const h = [c.q, c.r], at = (cell, n = 1) => W4W.dist(h, cell) <= n;
   return T.at === 'veil' ? atVeil(c.q, c.r) : T.at === 'gate' ? at(GATE_CELL) : T.at === 'bar' ? at(W4W.BAR_CELL, 0) : T.at === 'library' ? at(SPECIAL.library) : T.at === 'oldbell' ? at(W4W.pylonCell(3)) : T.at === 'observatory' ? at(SPECIAL.observatory) : T.at === 'plaza' ? at(SPECIAL.plaza) : false; }
@@ -8759,6 +9110,7 @@ function traceHtml(id) {
   const T = W4W.TWELVE.find(x => x.id === id), X = TWELVE_TXT[id]; if (!T || !X?.find || !hasChar()) return '';
   const L = twelveLit(id); if (L) return `<div class="trace lit"><small>The Stone of the Twelve</small><p>${esc(T.name)}'s lantern already burns on the Stone. ${esc(L.nick)} lit it.</p></div>`;
   if (carrying(id)) return `<div class="trace"><small>You carry ${esc(X.item)}</small><p>Bring it to the Stone of the Twelve, on the hill above the church, and their lantern will be lit.</p><button class="btn" data-gostone>Walk to the Stone</button></div>`;
+  if (T.act === 1 && !W4W.traceOpen(id, xnow())) return '';
   if (!atTrace(T)) return '';
   return `<div class="trace"><small>Something of the twelve</small><p>${esc(X.find)}</p><button class="btn main" data-trace="${id}">Take ${esc(X.item)}</button></div>`;
 }
@@ -8780,7 +9132,7 @@ function openStone() {
   const rows = W4W.TWELVE.map((T, i) => { const L = twelveLit(T.id), X = TWELVE_TXT[T.id];
     if (L) return `<div class="lamp on"><b>${esc(T.name)}</b><p>${esc(X.card || '')}</p><small>Lit by ${esc(L.nick)}</small></div>`;
     if (carrying(T.id)) return `<div class="lamp hold"><b>${esc(T.name)}</b><p>You carry ${esc(X.item)}.</p>${near ? `<button class="btn main" data-light="${T.id}">Light the lantern</button>` : '<small>Bring it here to light the lantern.</small>'}</div>`;
-    return `<div class="lamp"><b>${esc(T.name)}</b><small>${esc(X.hint)}</small></div>`; }).join('');
+    return `<div class="lamp"><b>${esc(T.name)}</b><small>${esc(traceHint(T))}</small></div>`; }).join('');
   panel('stone', 'The Stone of the Twelve', `${n} of 12 lanterns lit`, null, `<p class="say">${esc(STONE_TXT)}</p><div class="lamps">${rows}</div>
     <details class="gnote"><summary>Count the figures on the stone</summary><p style="margin:8px 0 0">${esc(STONE_COUNT)}</p></details>
     <p class="mute" style="font-size:12.5px">Eight of them left something in Aigrad. The other four are out in the White.</p>`);
@@ -8968,18 +9320,18 @@ function askedList() {
   const out = [], rank = { ready: 0, on: 1, open: 2, locked: 3 };
   for (const who of W4W.FOLK) for (const t of folkOf(who).tasks) { const T = taskTxt(who, t.id); if (!T || t.st === 'done') continue;
     const lv = W4W.TASKS.find(x => x.id === t.id)?.lv || 0;
-    const line = t.st === 'locked' ? `when you are ${FOLK_LV[lv]} with ${folkShort(who)}` : t.st === 'open' ? `${folkShort(who)} asks. Take it in person.` : t.st === 'ready' ? `Done. Go back to ${folkShort(who)}.` : T[3](t.n, t.need);
+    const line = t.st === 'locked' ? `when you are ${FOLK_LV[lv]} with ${folkShort(who)}` : t.st === 'open' ? `${folkShort(who)} asks, ${FOLK_WHERE[who]}. Take it in person.` : t.st === 'ready' ? `Done. Go back to ${folkShort(who)}, ${FOLK_WHERE[who]}.` : T[3](t.n, t.need);
     out.push({ who, id: t.id, st: t.st, title: T[0], line, n: t.n, need: t.need }); }
   return out.sort((a, b) => rank[a.st] - rank[b.st]);
 }
 /** Today's round: talk to each of them, each one's errand, the plaza fire, your lamp day. */
 function todayList() {
   const c = XV?.me, day = utcDay(), out = []; if (!c) return out;
-  for (const who of W4W.FOLK) out.push({ k: 'talk', who, done: c.talked?.[who] === day, title: `Talk to ${TFOLK[who].name}`, line: '+1 standing, once a day, in person' });
+  for (const who of W4W.FOLK) out.push({ k: 'talk', who, done: c.talked?.[who] === day, title: `Talk to ${TFOLK[who].name}`, line: `${folkWhere(who)} +1 standing, once a day, in person` });
   const E = errandNow();
   for (const who of W4W.FOLK) { const O = errandOffer(who), X = O && ERRAND_TXT[O.id]; if (!X) continue;
     out.push({ k: 'errand', who, to: O.to, st: O.st, done: O.st === 'done' || O.st === 'gone', title: `${folkShort(who)}'s errand: ${X[0]}`,
-      line: O.st === 'carry' ? `You carry it. Hand it to ${folkShort(O.to)} before midnight UTC.` : O.st === 'done' ? `Handed to ${folkShort(O.to)}` : O.st === 'gone' ? 'Taken today' : E ? `For ${folkShort(O.to)} · after the one you carry` : `For ${folkShort(O.to)} · +2 with ${folkShort(who)}, +1 with ${folkShort(O.to)}` }); }
+      line: O.st === 'carry' ? `You carry it. ${folkWhere(O.to)} Hand it over before midnight UTC.` : O.st === 'done' ? `Handed to ${folkShort(O.to)}` : O.st === 'gone' ? 'Taken today' : E ? `For ${folkShort(O.to)} · after the one you carry` : `For ${folkShort(O.to)} · +2 with ${folkShort(who)}, +1 with ${folkShort(O.to)}` }); }
   const fed = Math.floor((c.stoked || 0) / 864e5) === day || Math.floor((me()?.lastWood || 0) / 864e5) === day;
   out.push({ k: 'fire', done: fed, title: 'Feed the plaza fire', line: fed ? 'The fire had your wood today' : 'Wood on the fire warms the whole town for an hour' });
   const lit = c.lampTo === day, mining = me()?.state === 'mining';
@@ -8990,12 +9342,13 @@ function todayList() {
 function nextTask() {
   const fn = firstLeft()[0]; if (fn) return { sec: 'First nights in Aigrad', title: fn.title, why: fn.why, go: fn.go };
   const E = errandNow(), X = E && ERRAND_TXT[E.id];
-  if (X) return { sec: 'Errand', title: `Take ${X[0].charAt(0).toLowerCase() + X[0].slice(1)} to ${folkShort(E.to)}`, why: `From ${folkShort(E.from)}. Hand it over in person before midnight UTC.`, go: () => walkFolk(E.to) };
-  const A = askedList(), ready = A.find(t => t.st === 'ready'); if (ready) return { sec: 'Asked of you', title: ready.title, why: ready.line, go: () => walkFolk(ready.who) };
-  const T = todayList(), talk = T.find(t => t.k === 'talk' && !t.done); if (talk) return { sec: 'Today', title: talk.title, why: '+1 standing with them, once a day.', go: () => walkFolk(talk.who) };
-  const er = T.find(t => t.k === 'errand' && t.st === 'open'); if (er) return { sec: 'Today', title: er.title, why: ERRAND_TXT[errandOffer(er.who).id][1], go: () => walkFolk(er.who) };
-  const fire = T.find(t => t.k === 'fire' && !t.done); if (fire) return { sec: 'Today', title: fire.title, why: fire.line, go: () => walkTo('fire', 'fire') || addWood() };
-  const on = A.find(t => t.st === 'on' || t.st === 'open'); if (on) return { sec: 'Asked of you', title: on.title, why: on.line, go: () => walkFolk(on.who) };
+  if (X) return { sec: 'Errand', title: `Take ${X[0].charAt(0).toLowerCase() + X[0].slice(1)} to ${folkShort(E.to)}`, why: `From ${folkShort(E.from)}. ${folkWhere(E.to)} Hand it over in person before midnight UTC.` };
+  const A = askedList(), ready = A.find(t => t.st === 'ready'); if (ready) return { sec: 'Asked of you', title: ready.title, why: ready.line };
+  const ch = chainsNow().find(C => !C.done && chainReady(C) && CHAIN_TXT[C.id]); if (ch) return { sec: 'Between them', title: CHAIN_TXT[ch.id].title, why: CHAIN_TXT[ch.id].steps[ch.n]?.where || '' };
+  const T = todayList(), talk = T.find(t => t.k === 'talk' && !t.done); if (talk) return { sec: 'Today', title: talk.title, why: `${folkWhere(talk.who)} +1 standing with them, once a day.` };
+  const er = T.find(t => t.k === 'errand' && t.st === 'open'); if (er) return { sec: 'Today', title: er.title, why: `${ERRAND_TXT[errandOffer(er.who).id][1]} ${folkWhere(er.who)}` };
+  const fire = T.find(t => t.k === 'fire' && !t.done); if (fire) return { sec: 'Today', title: fire.title, why: fire.line };
+  const on = A.find(t => t.st === 'on' || t.st === 'open'); if (on) return { sec: 'Asked of you', title: on.title, why: on.line };
   return null;
 }
 let TGO = [];
@@ -9008,37 +9361,38 @@ function tasksHtml() {
   const left = firstLeft(), nd = FIRST_NIGHTS.length - left.length;
   const fn = FIRST_NIGHTS.map((T, i) => { const d = T.done(); return `<li class="tk ${d ? 'done' : ''}" data-fn="${T.id}">${tkTick(d, i + 1)}<div><b>${esc(T.title)}</b><span>${esc(T.why)}</span></div>${d ? '' : walkBtn(T.go)}</li>`; }).join('');
   const welcome = left.length ? '' : `<div class="tbanner"><small>Maria</small><p>${esc(MARIA_WELCOME)}</p></div>`;
-  const A = askedList(), asked = A.length ? A.map(t => `<li class="tk ${t.st === 'locked' ? 'locked' : t.st === 'ready' ? 'ready' : ''}">${tkTick(false)}<div><b>${esc(t.title)}</b><span>${esc(folkShort(t.who))} · ${esc(t.line)}</span>${t.st === 'on' || t.st === 'ready' ? `<em class="tbar"><i style="width:${Math.round(Math.min(1, t.n / Math.max(1, t.need)) * 100)}%"></i></em>` : ''}</div>${t.st === 'locked' ? '' : walkBtn(() => walkFolk(t.who))}</li>`).join('')
+  const A = askedList(), asked = A.length ? A.map(t => `<li class="tk ${t.st === 'locked' ? 'locked' : t.st === 'ready' ? 'ready' : ''}">${tkTick(false)}<div><b>${esc(t.title)}</b><span>${esc(folkShort(t.who))} · ${esc(t.line)}</span>${t.st === 'on' || t.st === 'ready' ? `<em class="tbar"><i style="width:${Math.round(Math.min(1, t.n / Math.max(1, t.need)) * 100)}%"></i></em>` : ''}</div></li>`).join('')
     : '<li class="tk done"><div><span>Nothing open. Talk to them: they ask more as they get to know you.</span></div></li>';
   const T = todayList(), D = myFaction() ? dailyState() : null, R = myFaction() ? ROLES[myFaction()] : [];
-  const todayGo = t => t.k === 'talk' ? () => walkFolk(t.who) : t.k === 'errand' ? () => walkFolk(t.st === 'carry' ? t.to : t.who) : t.k === 'fire' ? () => walkTo('fire', 'fire') || addWood() : () => walkTo('mine', 'mine') || openHub();
-  const today = T.map(t => `<li class="tk ${t.done ? 'done' : ''}" data-today="${t.k}">${tkTick(t.done)}<div><b>${esc(t.title)}</b><span>${esc(t.line)}</span></div>${t.done ? '' : walkBtn(todayGo(t))}</li>`).join('')
+  const today = T.map(t => `<li class="tk ${t.done ? 'done' : ''}" data-today="${t.k}">${tkTick(t.done)}<div><b>${esc(t.title)}</b><span>${esc(t.line)}</span></div></li>`).join('')
     + (D ? R.map(([id, txt]) => { const d = D.done.includes(id); return `<li class="tk ${d ? 'done' : ''}">${tkTick(d)}<div><b>${esc(FACTIONS[myFaction()].short)}: ${esc(txt)}</b><span>${d ? 'done today' : id === 'round' ? `${(D.round || []).length} of 3 pylons today` : 'for your side, today'}</span></div></li>`; }).join('') : '');
   const lit = W4W.TWELVE.filter(x => twelveLit(x.id)).length;
   const twelve = W4W.TWELVE.map(x => { const L = twelveLit(x.id), X = TWELVE_TXT[x.id] || {};
-    return `<li class="tk ${L ? 'done' : ''}">${tkTick(!!L)}<div><b>${esc(x.name)}</b><span>${L ? `Lit by ${esc(L.nick)}` : carrying(x.id) ? `You carry ${esc(X.item || 'something of theirs')}. Bring it to the Stone.` : esc(X.hint || '')}</span></div>${!L && carrying(x.id) ? walkBtn(() => walkTo('stone', 'stone') || openStone()) : ''}</li>`; }).join('');
+    return `<li class="tk ${L ? 'done' : ''}">${tkTick(!!L)}<div><b>${esc(x.name)}</b><span>${L ? `Lit by ${esc(L.nick)}` : carrying(x.id) ? `You carry ${esc(X.item || 'something of theirs')}. Bring it to the Stone, on the hill above the church.` : esc(traceHint(x))}</span></div></li>`; }).join('');
   const grow = W4W.FOLK.map(who => `<li class="tk"><div><b>${esc(TFOLK[who].name)} · ${esc(FOLK_LV[folkOf(who).lv])}</b><span>${esc(growLine(who))}</span></div></li>`).join('');
   return `<div class="tasks">
     <h3>FIRST NIGHTS IN AIGRAD <small>${nd} of ${FIRST_NIGHTS.length}</small></h3>${welcome}<ol class="tks">${fn}</ol>
     <h3>ASKED OF YOU</h3><ul class="tks">${asked}</ul>
+    <h3>BETWEEN THEM <small>the town's own business</small></h3><ul class="tks" data-chains>${chainRows()}</ul>
     <h3>TODAY <small>new at midnight UTC</small></h3><ul class="tks">${today}</ul>
     <h3>THE TWELVE <small>${lit} of 12 lanterns lit</small></h3><ul class="tks">${twelve}</ul>
     <h3>HOW STANDING GROWS</h3><ul class="tks grow">${grow}</ul></div>`;
 }
-function bindTasks(root) { root.querySelectorAll('[data-tgo]').forEach(b => b.onclick = () => { sfx.click(); const f = TGO[+b.dataset.tgo]; closePanel(); f?.(); }); }
+function bindTasks(root) { root.querySelectorAll('[data-tgo]').forEach(b => b.onclick = () => { sfx.click(); const f = TGO[+b.dataset.tgo]; closePanel(); f?.(); });
+  root.querySelectorAll('[data-seal]').forEach(b => b.onclick = () => breakSeal(b.dataset.seal)); }
 function act1Goals(c) {
   firstNightsSync(); errandWatch();
   const next = nextTask(), m = Math.round((S.town.melt || 0) * 100), done = FIRST_NIGHTS.length - firstLeft().length, all = done >= FIRST_NIGHTS.length;
   const sig = JSON.stringify([next?.title, next?.why, done, m, goalFold, (XV?.pylons || []).map(p => Math.round(p.s)), XV?.pressed, myFaction(), openLetter()?.id, Math.ceil((openLetter()?.until - xnow()) / 60000) || 0, XV?.story?.phase, XV?.story?.hush, JSON.stringify(DAILY), factionCount('keepers'), factionCount('walkers'), pages1.length]); if (sig === goalSig && !goalEl.hidden) return; goalSig = sig;
   goalEl.hidden = false; goalEl.classList.toggle('fold', goalFold); requestAnimationFrame(() => placeWin(goalEl));
   goalEl.innerHTML = `<div class="rank"><b>Act I · Under the Veil</b><span>${all ? 'First nights done' : `${done} of ${FIRST_NIGHTS.length}`}</span><button class="gfold" title="${goalFold ? 'Show' : 'Fold'}">${goalFold ? '+' : '–'}</button><i style="width:${Math.round(done / FIRST_NIGHTS.length * 100)}%"></i></div>
-    <div class="gbody">${next ? `<div class="goal" data-gnext><small>${esc(next.sec)}</small><b>${esc(next.title)}</b><p>${esc(next.why)}</p><button class="gbtn" data-go>Walk there</button> <a href="#" data-tasks class="gall">All tasks</a></div>` : `<div class="goal"><small>Tasks</small><p>Nothing waiting on you right now. <a href="#" data-tasks>All tasks</a></p></div>`}
+    <div class="gbody">${next ? `<div class="goal" data-gnext><small>${esc(next.sec)}</small><b>${esc(next.title)}</b><p>${esc(next.why)}</p>${next.go ? '<button class="gbtn" data-go>Walk there</button> ' : ''}<a href="#" data-tasks class="gall">All tasks</a></div>` : `<div class="goal"><small>Tasks</small><p>Nothing waiting on you right now. <a href="#" data-tasks>All tasks</a></p></div>`}
     ${all ? rolesHtml() : ''}
     ${letterGoalHtml()}<div class="gsec"><small>The wall</small>${wallHtml()}</div>
     <div class="gsec"><small>The Wardens' Hall</small><p>The first suit for the White needs Anna at 50%. She is at <b>${m}%</b>.</p><div class="gbar"><i style="width:${Math.min(100, m * 2)}%"></i></div></div>
     <div class="gsec"><small>Pages of the Long Cold</small><p>${pages1.length} of ${CHAPTERS_I.length} found · <a href="#" data-story>open</a> · Bestiary: ${BESTIARY.reduce((a, B) => a + BEAST_AT.filter(k => (OBS[B.id] || 0) >= k).length, 0)} of ${BESTIARY.length * BEAST_AT.length} pages · <a href="#" data-beasts>open</a></p></div></div>`;
   goalEl.querySelector('.gfold').onclick = () => { goalFold = !goalFold; store.set('w4w.goalFold', goalFold ? '1' : '0'); sfx.click(); goalSig = ''; renderGoals(true); };
-  goalEl.querySelector('[data-go]')?.addEventListener('click', () => { sfx.click(); next?.go(); });
+  goalEl.querySelector('[data-go]')?.addEventListener('click', () => { sfx.click(); next?.go?.(); });
   goalEl.querySelector('[data-tasks]')?.addEventListener('click', e => { e.preventDefault(); sfx.click(); openChronicle(true, 'tasks'); });
   goalEl.querySelector('[data-letter]')?.addEventListener('click', () => { sfx.click(); const L = openLetter(), c = myC(); if (L && c && !c.path.length && W4W.dist([c.q, c.r], GATE_CELL) <= 1) readLetter(L.id); else walkTo('gate'); });
   goalEl.querySelectorAll('[data-faction]').forEach(b => b.onclick = () => chooseFaction(b.dataset.faction));

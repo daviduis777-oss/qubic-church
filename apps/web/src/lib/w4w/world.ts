@@ -55,7 +55,10 @@ export type Char = {
   errand?: Errand | null // the one small thing you carry from one of the townsfolk to another, today only
   errands?: Record<string, { day: number; done?: number }> // whose errand you took, which day, and when you handed it over
   errCold?: Errand | null // the last errand that went cold in your hands at the end of its day
+  chains?: Record<string, ChainState> // how far you are in each story between the townsfolk
+  ties?: string[] // what you have learned of how the townsfolk stand with each other
 }
+export type ChainState = { n: number; t: number; day: number; picks?: Record<string, string>; letter?: { from: FolkId; to: FolkId; open?: number } | null; broke?: FolkId[]; done?: number }
 export type Errand = { id: string; from: FolkId; to: FolkId; day: number }
 export type FolkTask = { t: number; n: number; d?: number; base?: number; done?: number }
 export type Ctx = {
@@ -747,6 +750,13 @@ export const ROSE_TURNS = 7, ROSE_TURN_WAIT = 18 * 3600_000
  *  cannot outrun the calendar: at most 48% on the night the Veil falls. */
 export const ACT1_START = Date.UTC(2026, 10, 11, 12), ACT1_FALL = Date.UTC(2027, 4, 11, 12)
 export const PHASE_AT = [ACT1_START, Date.UTC(2026, 11, 16, 12), Date.UTC(2027, 1, 10, 12), Date.UTC(2027, 2, 31, 12)]
+/** What goes on between the townsfolk opens a story at a time, every two or three weeks of Act I (CHAINS below).
+ *  A story opens on its date and never before its phase: the desk bringing a phase sooner does not bring these sooner. */
+export const CHAIN_AT = { four_coins: Date.UTC(2026, 10, 25, 12), warm_hands: Date.UTC(2026, 11, 9, 12), missing_line: Date.UTC(2026, 11, 30, 12), top_shelf: Date.UTC(2027, 0, 20, 12), chair: Date.UTC(2027, 1, 10, 12) } as const
+/** The snow gives up one trace of the twelve a week from the start of Act I, in this order (weeks after ACT1_START). */
+export const TWELVE_WEEK: Record<string, number> = { lida: 0, mirek: 1, teresa: 2, agnes: 3, brann: 4, odile: 5, ilya: 6, pavel: 7 }
+export const traceOpensAt = (id: string) => TWELVE_WEEK[id] == null ? Infinity : ACT1_START + TWELVE_WEEK[id]! * WEEK_MS
+export const traceOpen = (id: string, now: number) => now >= traceOpensAt(id)
 export const notchAt = (n: number) => PHASE_AT[1]! + Math.round((ACT1_FALL - PHASE_AT[1]!) * n / ROSE_TURNS)
 export const phaseNow = (s: Story | null | undefined, now: number) => Math.max(s?.phase ?? 0, PHASE_AT.filter(t => now >= t).length - 1)
 export const thawCap = (now: number) => Math.max(0.2, 0.48 * Math.min(1, Math.max(0, now - ACT1_START) / (ACT1_FALL - ACT1_START)))
@@ -913,6 +923,84 @@ export function expireErrand(c: Char, now: number) {
   if (c.errand && c.errand.day !== dayOf(now)) { c.errCold = { ...c.errand }; c.errand = null; return true }
   return false
 }
+/* ================= between them: short stories of the townsfolk, one after another across Act I =================
+ * Each opens on its date (CHAIN_AT) and story phase. A step is done in person with the one it is at, one step a UTC day
+ * at most, and later steps need the giver to know you (STANDING levels). A step may hand you a sealed letter for one of
+ * the others; it is handed over at the next step done with them. You may break the seal on the way: the receiver sees,
+ * gives you nothing for it, and the sender's standing drops by SEAL_COST. A step with picks is a choice, kept for good.
+ * The words are the game's; here only who, where, when and what it is worth. */
+export type ChainStep = { at: FolkId; lv: number; give?: Partial<Record<FolkId, number>>; letter?: FolkId; picks?: Record<string, Partial<Record<FolkId, number>>>; ties?: string[] }
+export type ChainDef = { id: keyof typeof CHAIN_AT; giver: FolkId; phase: number; steps: ChainStep[]; done: Partial<Record<FolkId, number>>; gold: number }
+export const SEAL_COST = 5, CHAIN_GOLD = 2
+export const TIES = ['hask_ivo', 'ivo_fenn', 'hask_maria', 'ada_ivo', 'ada_maria', 'selma_fenn', 'selma_hask', 'fenn_maria'] as const
+export const CHAINS: ChainDef[] = [
+  { id: 'four_coins', giver: 'ivo', phase: 0, gold: CHAIN_GOLD, done: { ivo: 3, fenn: 2 }, steps: [
+    { at: 'ivo', lv: 1, give: { ivo: 1 }, ties: ['ivo_fenn'] },
+    { at: 'fenn', lv: 1, give: { fenn: 1 }, letter: 'ivo' },
+    { at: 'ivo', lv: 2, give: { ivo: 1 }, picks: { cross: { fenn: 2 }, table: { ivo: 1, fenn: 1 } } },
+    { at: 'fenn', lv: 2, give: { fenn: 1 } }] },
+  { id: 'warm_hands', giver: 'maria', phase: 0, gold: CHAIN_GOLD, done: { maria: 2 }, steps: [
+    { at: 'maria', lv: 1, give: { maria: 1 } },
+    { at: 'selma', lv: 1, give: { selma: 1 }, letter: 'hask', ties: ['selma_hask', 'selma_fenn'] },
+    { at: 'hask', lv: 2, give: { hask: 1 }, ties: ['hask_maria'] },
+    { at: 'maria', lv: 2, picks: { tell: { maria: 3, hask: -3 }, keep: { hask: 3 } } }] },
+  { id: 'missing_line', giver: 'maria', phase: 1, gold: CHAIN_GOLD, done: { maria: 2 }, steps: [
+    { at: 'maria', lv: 1, give: { maria: 1 } },
+    { at: 'fenn', lv: 1, give: { fenn: 1 }, letter: 'maria', ties: ['fenn_maria'] },
+    { at: 'ada', lv: 2, give: { ada: 1 }, ties: ['ada_maria'] },
+    { at: 'maria', lv: 2, give: { maria: 1 }, picks: { all: { maria: 2, fenn: 1 }, spare: { ada: 3 } } }] },
+  { id: 'top_shelf', giver: 'ada', phase: 0, gold: CHAIN_GOLD, done: { ada: 2 }, steps: [
+    { at: 'ada', lv: 1, give: { ada: 1 }, letter: 'ivo' },
+    { at: 'ivo', lv: 1, give: { ivo: 1 }, ties: ['ada_ivo'] },
+    { at: 'ada', lv: 2, picks: { keep: { ada: 3 }, known: { ada: 1, ivo: 2 } } }] },
+  { id: 'chair', giver: 'ivo', phase: 2, gold: CHAIN_GOLD, done: { ivo: 2 }, steps: [
+    { at: 'ivo', lv: 2, give: { ivo: 1 } },
+    { at: 'maria', lv: 2, give: { maria: 1 }, letter: 'ivo' },
+    { at: 'ivo', lv: 2, give: { ivo: 1 } },
+    { at: 'ivo', lv: 2, picks: { window: { ivo: 2, maria: 2 }, church: { maria: 4 }, wall: { ivo: 4 } } }] },
+]
+export const chainOpensAt = (C: ChainDef) => CHAIN_AT[C.id]
+export const chainOpen = (C: ChainDef, s: Story | null | undefined, now: number) => now >= chainOpensAt(C) && phaseNow(s, now) >= C.phase
+/** Where a story stands for one player: open or not, the next step and what holds it back. */
+export function chainView(ws: WState, c: Char) {
+  const day = dayOf(ws.now)
+  return CHAINS.filter(C => chainOpen(C, ws.story, ws.now) || c.chains?.[C.id]).map(C => {
+    const k = c.chains?.[C.id], n = k?.n ?? 0, S = C.steps[n], lv = standingOf(c, C.giver).lv
+    return { id: C.id, giver: C.giver, n, of: C.steps.length, done: k?.done ?? 0, picks: k?.picks ?? {}, letter: k?.letter ?? null, broke: k?.broke ?? [],
+      next: S && !k?.done ? { at: S.at, lv: S.lv, lvOk: lv >= S.lv, wait: !!k && n > 0 && k.day >= day, picks: S.picks ? Object.keys(S.picks) : null } : null }
+  })
+}
+function chainAct(ws: WState, c: Char, b: Record<string, unknown>): string | null {
+  const now = ws.now, C = CHAINS.find(x => x.id === b.id); if (!C) return 'Nobody has asked you that.'
+  if (!chainOpen(C, ws.story, now) && !c.chains?.[C.id]) return 'Nobody has asked you that yet.'
+  const k = c.chains?.[C.id]
+  if (b.do === 'open') {
+    // break the seal on the way: what you read is yours, and so is what it costs
+    if (!k?.letter) return 'You carry no sealed letter.'
+    if (k.letter.open) return 'The seal is already broken.'
+    k.letter.open = now; return null
+  }
+  if (b.do !== 'step') return 'unknown action'
+  const n = k?.n ?? 0, S = C.steps[n]; if (!S || k?.done) return 'That story is told.'
+  if (c.path.length) return 'Stand still first.'
+  const P = FOLK_AT[S.at]; if (dist(cellAt(c, now), P.cell) > P.n) return P.away
+  if (k && n > 0 && k.day >= dayOf(now)) return 'Give it a night. Come back tomorrow.'
+  if (standingOf(c, C.giver).lv < S.lv) return 'They do not know you well enough for that yet.'
+  const pick = S.picks ? String(b.pick ?? '') : ''; if (S.picks && !S.picks[pick]) return 'Choose first.'
+  const st: ChainState = k ?? { n: 0, t: now, day: dayOf(now) }
+  // a letter you carry for this one is handed over now: a broken seal is seen, and word of it gets back to the sender
+  let broken = false
+  if (st.letter && st.letter.to === S.at) { broken = !!st.letter.open; if (broken) { addStanding(c, st.letter.from, -SEAL_COST); (st.broke ??= []).push(st.letter.from) } st.letter = null }
+  for (const [f, v] of Object.entries(S.give ?? {}) as [FolkId, number][]) if (!(broken && f === S.at)) addStanding(c, f, v)
+  if (S.picks) { for (const [f, v] of Object.entries(S.picks[pick]!) as [FolkId, number][]) addStanding(c, f, v); (st.picks ??= {})[n] = pick }
+  if (S.letter) st.letter = { from: S.at, to: S.letter }
+  for (const t of S.ties ?? []) if (!(c.ties ??= []).includes(t)) c.ties.push(t)
+  st.n = n + 1; st.t = now; st.day = dayOf(now)
+  // the end of it is kept between you and them: nothing goes on the town feed
+  if (st.n >= C.steps.length) { st.done = now; for (const [f, v] of Object.entries(C.done) as [FolkId, number][]) addStanding(c, f, v); addGold(c, C.gold, now); addRenown(c, 2) }
+  ;(c.chains ??= {})[C.id] = st
+  return null
+}
 export function folkView(ws: WState, uid: string) {
   const c = ws.chars[uid]; if (!c) return null
   const out: Record<string, { lv: number; pts: number; tasks: { id: string; st: 'locked' | 'open' | 'on' | 'ready' | 'done'; n: number; need: number }[] }> = {}
@@ -923,7 +1011,7 @@ export function folkView(ws: WState, uid: string) {
   const errands = Object.fromEntries(FOLK.map(f => { const E = errandOf(f, day), k = c.errands?.[f]
     const st = errand?.from === f ? 'carry' as const : k?.day === day ? (k.done ? 'done' as const : 'gone' as const) : 'open' as const
     return [f, { id: E.id, to: E.to, st }] })) as Record<FolkId, { id: string; to: FolkId; st: 'open' | 'carry' | 'done' | 'gone' }>
-  return { lampDays: c.lampDays ?? 0, folk: out, errand, errands, cold: c.errCold ?? null }
+  return { lampDays: c.lampDays ?? 0, folk: out, errand, errands, cold: c.errCold ?? null, chains: chainView(ws, c), ties: c.ties ?? [] }
 }
 
 export function viewOf(ws: WState, uid: string, events: Event[] = []) {
@@ -1249,6 +1337,7 @@ export function action(ws: WState, uid: string, op: string, b: Record<string, un
       if (c.path.length) return fail('Stand still and look.')
       if (ws.twelve?.[T.id]) return fail('Their lantern already burns on the Stone.')
       if (c.traces?.includes(T.id)) return fail('You already carry it.')
+      if (T.act === 1 && !traceOpen(T.id, now)) return fail('The snow hasn\'t given it up yet.')
       const at = (cell: Cell, n = 1) => dist(here, cell) <= n
       const there = T.at === 'veil' ? insideDome(here[0], here[1]) && DIRS.some(([dq, dr]) => !insideDome(here[0] + dq, here[1] + dr))
         : T.at === 'gate' ? at(GATE_CELL) : T.at === 'bar' ? at(BAR_CELL, 0) : T.at === 'library' ? at(SPECIAL.library as unknown as Cell)
@@ -1304,6 +1393,8 @@ export function action(ws: WState, uid: string, op: string, b: Record<string, un
         c.errand = { id: E.id, from: who, to: E.to, day }; (c.errands ??= {})[who] = { day }
         return ok()
       }
+      // a story between them: a step with the one it is at, or the seal of a letter you carry (anywhere, even walking)
+      if (fop === 'chain') { const e = chainAct(ws, c, b); return e ? fail(e) : ok() }
       if (c.path.length) return fail('Stand still first.')
       if (fop === 'watch') { if (dist(here, GATE_CELL) > 1) return fail('The watch is kept at the North Gate.'); if (!greyAt(now)) return fail('The watch is at grey light, when the knocking comes.'); bumpTask(c, 'h_watch', now, true); const fk = c.tasks?.f_knock; if (fk && !fk.done) fk.n = 1; return ok() }
       if (fop === 'reading') { if (dist(here, SPECIAL.observatory as unknown as Cell) > 0) return fail('The plates are in the Observatory.'); if (!greyAt(now)) return fail('Readings are taken at grey light.'); bumpTask(c, 's_read', now, true); return ok() }
