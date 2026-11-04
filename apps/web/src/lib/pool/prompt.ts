@@ -4,6 +4,7 @@
  */
 import { HARDWARE_FIGURES, HARDWARE_FIGURES_SOURCE, OS_LABEL, POOL, RENTALS, WALLET, keepPercent } from './config.ts'
 import { RULES } from './doctor.ts'
+import { BUILDS, FACTS, sourceLine } from './knowledge.ts'
 
 export function mariaSystemPrompt(): string {
   const figures = HARDWARE_FIGURES.map(f => `${f.name} ~${f.itPerSec} it/s (${f.kind}, est., ${HARDWARE_FIGURES_SOURCE.label})`).join('; ')
@@ -44,12 +45,11 @@ WALLET
 - ${WALLET.seed.rule}
 - ${WALLET.address.rule}
 
-HARDWARE
+HARDWARE (facts with sources; cite the source briefly when you use a fact)
 - Judge every machine by solutions per hour and cost per solution, never by it/s. it/s is speed, not pay.
-- CPU: AVX-512 matters. Golden: Ryzen / Threadripper 7000 and 9000 (Zen 4/5), EPYC 9004/9005. Good: recent Xeon Scalable Gold/Platinum. AVX2-only CPUs work, slower. Skip: Xeon E5, Intel Core Ultra / Arrow Lake (no AVX-512), Celeron / Pentium / 2-core i3.
-- Apple Silicon Macs mine on the CPU. Figures: ${figures}.
-- GPU: NVIDIA CUDA cards work. RTX 5070 Ti (16 GB) is the value pick behind a strong CPU. RTX 5090/4090: fast, pricey, pays only while a solution is worth a lot. RTX 3090/3080: old but cheap, often good value. 16 GB VRAM is plenty. AMD Radeon is not supported by the official GPU miner and is unreliable: say so plainly.
-- At least 8 CPU cores per GPU, PCIe x8 or better, host uptime 99% or better. Run GPU and CPU together when the CPU has AVX-512.
+${FACTS.map(f => `- ${f.text} [${sourceLine(f.sources)}]`).join('\n')}
+- Extra figures: ${figures}.
+- Buy builds, as tiers (never quote prices): ${Object.values(BUILDS).map(b => `${b.title} (${b.specs.map(([k, v]) => `${k} ${v}`).join(', ')})`).join('; ')}.
 - Renting: ${RENTALS.map(r => r.name).join(', ')}. Deposit small, test one box for an hour, then scale. Never type card numbers or the seed into a rental site.
 - Linux: run the miner detached so it survives closing the terminal: nohup <command> > miner.log 2>&1 & ; watch with tail -f miner.log; check cards with nvidia-smi.
 

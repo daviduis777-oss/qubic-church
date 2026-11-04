@@ -1,18 +1,34 @@
 'use client'
 
+import { ExternalLink } from 'lucide-react'
 import { useCallback, useState } from 'react'
 import { OS_LABEL, POOL, RENTALS, type Os } from '@/lib/pool/config'
-import { diagnose, SYMPTOMS, type Finding } from '@/lib/pool/doctor'
+import { diagnose, type Finding, SYMPTOMS } from '@/lib/pool/doctor'
 import { classifyCpu, pick, type PickMode, type Scale } from '@/lib/pool/hardware'
-import { buildPlan, checkWallet, checkWorker, cleanWorker, type Avx, type Hw, suggestWorker, THREAD_COMMAND } from '@/lib/pool/wizard'
-import { type Answers, Flow, restartChip, type StepDef } from './flow'
-import { Card, Checklist, Command, Say, SEVERITY_LABEL, severityTone, TONE, useCopy, VerdictCard, verdictTone } from './ui'
-import { RingGlyph } from './Ring'
+import type { BuildTier } from '@/lib/pool/knowledge'
+import { type Avx, buildPlan, checkWallet, checkWorker, cleanWorker, type Hw, suggestWorker, THREAD_COMMAND } from '@/lib/pool/wizard'
+import { type Answers, Flow, type Outcome, restartChip, type StepDef } from './flow'
+import { Checklist, Command, CopyButton, Group, Reveal, SEVERITY_LABEL, StatusCard, severityIcon, severityTone, TONE, VerdictCard, verdictTone } from './ui'
 import s from './maria.module.css'
 
-export type Go = (screen: 'home' | 'pick' | 'connect' | 'doctor' | 'ask', handoff?: Answers) => void
+export type Screen = 'home' | 'pick' | 'connect' | 'doctor' | 'ask'
+export type Go = (screen: Screen, handoff?: Answers) => void
 
 const OS_CHIPS = (['linux', 'windows', 'macos', 'hiveos'] as Os[]).map(o => ({ value: o, label: OS_LABEL[o] }))
+
+function Notes({ label, items }: { label: string; items: string[] }) {
+  return (
+    <Group label={label}>
+      {items.map(n => (
+        <li className={s.row} key={n}>
+          <span className={s.rowBody} style={{ margin: 0, color: 'var(--bone)' }}>
+            {n}
+          </span>
+        </li>
+      ))}
+    </Group>
+  )
+}
 
 /* ---------------- Pick hardware (and consult on what you own) ---------------- */
 
@@ -22,18 +38,19 @@ const PICK_STEPS: StepDef[] = [
     ask: () => 'Are you buying, renting, or checking hardware you already have?',
     chips: () => [
       { value: 'own', label: 'I already have hardware' },
+      { value: 'buy', label: 'Buy' },
       { value: 'rent', label: 'Rent a box' },
-      { value: 'buy', label: 'Buy hardware' },
     ],
   },
   {
-    id: 'scale',
-    when: a => a.mode === 'buy' || a.mode === 'rent',
-    ask: a => (a.mode === 'rent' ? 'How big do you want to start?' : 'How big a setup?'),
-    chips: a => [
-      { value: 'small', label: a.mode === 'rent' ? 'One box, to test' : 'One machine, to learn' },
-      { value: 'mid', label: 'One serious rig' },
-      { value: 'large', label: 'Several GPUs' },
+    id: 'build',
+    when: a => a.mode === 'buy',
+    ask: () => 'How far do you want to go?',
+    chips: () => [
+      { value: 'entry', label: 'Entry PC' },
+      { value: 'cpu', label: 'Strong CPU' },
+      { value: 'gpu', label: 'CPU + GPU' },
+      { value: 'server', label: 'Server' },
     ],
   },
   {
@@ -41,6 +58,16 @@ const PICK_STEPS: StepDef[] = [
     when: a => a.mode === 'buy',
     ask: () => 'Which system should it run?',
     chips: () => [...OS_CHIPS, { value: 'any', label: 'No preference' }],
+  },
+  {
+    id: 'scale',
+    when: a => a.mode === 'rent',
+    ask: () => 'How big do you want to start?',
+    chips: () => [
+      { value: 'small', label: 'One box, to test' },
+      { value: 'mid', label: 'One serious rig' },
+      { value: 'large', label: 'Several GPUs' },
+    ],
   },
   {
     id: 'cpu',
@@ -77,6 +104,18 @@ const PICK_STEPS: StepDef[] = [
     echo: v => (v === '0' ? 'Not sure' : `${v} cores`),
   },
   {
+    id: 'ram',
+    when: a => a.mode === 'own',
+    ask: () => 'How much RAM?',
+    chips: () => [
+      { value: '8', label: 'Under 16 GB' },
+      { value: '16', label: '16 GB' },
+      { value: '32', label: '32 GB' },
+      { value: '64', label: '64 GB or more' },
+      { value: '0', label: 'Not sure' },
+    ],
+  },
+  {
     id: 'os',
     when: a => a.mode === 'own',
     ask: () => 'Which system does it run?',
@@ -84,62 +123,55 @@ const PICK_STEPS: StepDef[] = [
   },
 ]
 
-function pickOutcome(a: Answers, go: Go) {
+function pickOutcome(a: Answers, go: Go): Outcome {
   const r = pick({
     mode: a.mode as PickMode,
     scale: a.scale as Scale,
+    build: a.build as BuildTier,
     os: a.os && a.os !== 'any' ? (a.os as Os) : undefined,
     cpu: a.cpu,
     gpu: a.gpu === 'none' ? '' : a.gpu,
     gpuCount: a.gpus ? Number(a.gpus) : undefined,
     cores: a.cores && a.cores !== '0' ? Number(a.cores) : undefined,
+    ramGb: a.ram && a.ram !== '0' ? Number(a.ram) : undefined,
   })
   const own = a.mode === 'own'
-  const lead =
-    own
-      ? r.overall === 'Skip'
-        ? 'This setup is not worth mining on as it is. Here is why, part by part.'
-        : r.overall === 'Unknown'
-          ? 'I could not place every part. Here is what I can tell.'
-          : 'Here is how your hardware does, part by part.'
-      : 'Here is what to look for, best first. No prices: they change weekly, so compare them yourself.'
+  const lead = own
+    ? r.overall === 'Skip'
+      ? 'Not worth mining on as it is. Here is why, part by part.'
+      : r.overall === 'Unknown'
+        ? 'I could not place every part. Here is what I can tell.'
+        : 'Here is how your hardware does, part by part.'
+    : a.mode === 'buy'
+      ? 'Your build first, then one step either side. No prices: they change weekly, so compare them yourself.'
+      : 'What to rent, best first. No prices: they change weekly, so compare them yourself.'
+  const cards = r.cards.map(c => <VerdictCard c={c} key={c.title} />)
+  if (a.mode === 'rent') {
+    cards.push(
+      <Group key="rent" label="Where people rent">
+        {RENTALS.map(x => (
+          <li className={s.row} key={x.name}>
+            <div className={s.rowMain}>
+              <div className={s.rowTitle}>{x.name}</div>
+              <p className={s.rowBody}>
+                {x.note}
+                {x.referral && ' Our referral link: a few credits come our way; the advice is the same either way.'}
+              </p>
+            </div>
+            <a aria-label={`Open ${x.name}`} className={s.iconBtn} href={x.url} rel={x.referral ? 'noopener noreferrer sponsored' : 'noopener noreferrer'} target="_blank">
+              <ExternalLink aria-hidden size={16} />
+            </a>
+          </li>
+        ))}
+      </Group>,
+    )
+  }
+  cards.push(<Notes items={r.notes} key="notes" label={own ? 'Notes' : 'Before you spend'} />)
   return {
     tone: verdictTone(r.overall),
-    body: (
-      <div className={s.stack}>
-        <Say>{lead}</Say>
-        {r.cards.map(c => (
-          <VerdictCard key={c.title} reasons={c.reasons} title={c.title} verdict={c.verdict} />
-        ))}
-        {a.mode === 'rent' && (
-          <Card title="Where people rent">
-            <ul className={s.reasons}>
-              {RENTALS.map(x => (
-                <li key={x.name}>
-                  <a className={s.textLink} href={x.url} rel={x.referral ? 'noopener noreferrer sponsored' : 'noopener noreferrer'} target="_blank">
-                    {x.name}
-                  </a>
-                  : {x.note}
-                  {x.referral && ' Our referral link: it sends a few credits our way; the advice is the same either way.'}
-                </li>
-              ))}
-            </ul>
-          </Card>
-        )}
-        <Card title={own ? 'Notes' : 'Before you spend'}>
-          <ul className={s.reasons}>
-            {r.notes.map(n => (
-              <li key={n}>{n}</li>
-            ))}
-          </ul>
-        </Card>
-      </div>
-    ),
-    chips: [
-      ...(own && r.overall !== 'Skip' ? [{ value: 'connect', label: 'Set it up', primary: true }] : []),
-      restartChip(),
-      { value: 'home', label: 'Home' },
-    ],
+    lead,
+    cards: [<Reveal key="r">{cards}</Reveal>],
+    chips: [...(own && r.overall !== 'Skip' ? [{ value: 'connect', label: 'Set it up', primary: true }] : []), restartChip()],
     onChip: (v: string) => {
       if (v === 'home') return go('home')
       if (v === 'connect') {
@@ -159,7 +191,7 @@ function pickOutcome(a: Answers, go: Go) {
 }
 
 export function PickFlow({ go }: { go: Go }) {
-  return <Flow intro="Let's find hardware that wins on cost per solution." outcome={a => pickOutcome(a, go)} steps={PICK_STEPS} />
+  return <Flow intro="Let's find hardware that wins on cost per solution." onBack={() => go('home')} outcome={a => pickOutcome(a, go)} steps={PICK_STEPS} sub="What to buy, what to rent, or how yours does." title="Pick hardware" />
 }
 
 /* ---------------- Connect my machine ---------------- */
@@ -194,7 +226,7 @@ const CONNECT_STEPS: StepDef[] = [
     chips: a =>
       a.os === 'macos'
         ? [
-            { value: 'apple', label: 'Apple Silicon (M1 to M4)' },
+            { value: 'apple', label: 'Apple Silicon' },
             { value: 'cpu', label: 'Intel Mac' },
           ]
         : [
@@ -223,7 +255,14 @@ const CONNECT_STEPS: StepDef[] = [
     when: a => (a.hw === 'cpu' || a.hw === 'amd') && avxFromModel(a.hw === 'amd' ? a.cpuModel : a.model) === 'unknown',
     ask: a => (
       <>
-        Does the CPU have AVX-512? {a.os === 'linux' || a.os === 'hiveos' ? <>Run <code>grep -o -m1 avx512f /proc/cpuinfo</code>: it prints avx512f if yes.</> : 'Look up the model if you are not sure.'}
+        Does the CPU have AVX-512?{' '}
+        {a.os === 'linux' || a.os === 'hiveos' ? (
+          <>
+            Run <code>grep -o -m1 avx512f /proc/cpuinfo</code>: it prints avx512f if yes.
+          </>
+        ) : (
+          'Look up the model if you are not sure.'
+        )}
       </>
     ),
     chips: () => [
@@ -294,85 +333,67 @@ const CONNECT_STEPS: StepDef[] = [
   },
 ]
 
-function connectOutcome(a: Answers, go: Go) {
+function connectOutcome(a: Answers, go: Go): Outcome {
   const hw = a.hw as Hw
   const model = a.model === '-' ? '' : a.model
-  const avx: Avx = hw === 'apple' ? 'apple' : hw === 'nvidia' ? 'unknown' : ((a.avx as Avx) ?? avxFromModel(hw === 'amd' ? a.cpuModel : model))
+  const avx: Avx = a.avx ? (a.avx as Avx) : hw === 'apple' ? 'apple' : hw === 'nvidia' ? 'unknown' : avxFromModel(hw === 'amd' ? a.cpuModel : model)
   const plan = buildPlan({
     os: a.os as Os,
     hw,
-    avx: a.avx ? (a.avx as Avx) : avx,
+    avx,
     model,
-    wallet: a.wallet!,
-    worker: a.worker!,
+    wallet: a.wallet ?? '',
+    worker: a.worker ?? '',
     threads: a.threads && a.threads !== '0' ? Number(a.threads) : undefined,
     dedicated: a.dedicated === 'yes',
   })
+  const cards = [
+    ...plan.warnings.map(w => (
+      <p className={s.warn} key={w}>
+        {w}
+      </p>
+    )),
+    <Group key="values" label="Your values">
+      {plan.values.map(v => (
+        <li className={s.row} key={v.label}>
+          <div className={s.rowMain}>
+            <div className={s.rowLabel}>{v.label}</div>
+            <div className={`${s.rowValue} ${v.mono ? s.rowMono : ''}`}>{v.value}</div>
+            {v.why && <div className={s.rowNote}>{v.why}</div>}
+          </div>
+          <CopyButton label={v.label} text={v.value} />
+        </li>
+      ))}
+    </Group>,
+    <Group key="steps" label="Steps">
+      {plan.steps.map((st, i) => (
+        <li className={s.row} key={st.title} style={{ alignItems: 'flex-start' }}>
+          <span className={s.num}>{i + 1}</span>
+          <div className={s.rowMain}>
+            <div className={s.rowTitle}>{st.title}</div>
+            {st.body && <p className={s.rowBody}>{st.body}</p>}
+            {st.link && (
+              <a className={s.cta} href={st.link.href} rel="noopener noreferrer" target="_blank">
+                {st.link.label}
+                <ExternalLink aria-hidden size={14} />
+              </a>
+            )}
+            {st.command && <Command label={st.title} text={st.command} />}
+          </div>
+        </li>
+      ))}
+    </Group>,
+    <Group key="checks" label="Check it is working">
+      <Checklist items={plan.checks} />
+    </Group>,
+  ]
   return {
-    tone: plan.warnings.length ? TONE.brass : TONE.teal,
-    body: (
-      <div className={s.stack}>
-        <Say>Here is your setup. Copy each value exactly.</Say>
-        {plan.warnings.map(w => (
-          <p className={s.warn} key={w}>
-            {w}
-          </p>
-        ))}
-        <Card title="Your values">
-          <Values values={plan.values} />
-        </Card>
-        <Card title="Steps">
-          <ol className={s.steps}>
-            {plan.steps.map(st => (
-              <li key={st.title}>
-                <div>
-                  <div className={s.stepTitle}>{st.title}</div>
-                  {st.body && <p className={s.stepBody}>{st.body}</p>}
-                  {st.link && (
-                    <a className={s.link} href={st.link.href} rel="noopener noreferrer" target="_blank">
-                      {st.link.label}
-                    </a>
-                  )}
-                  {st.command && (
-                    <div style={{ marginTop: 6 }}>
-                      <Command label={st.title} text={st.command} />
-                    </div>
-                  )}
-                </div>
-              </li>
-            ))}
-          </ol>
-        </Card>
-        <Card title="Check it is working">
-          <Checklist items={plan.checks} />
-        </Card>
-      </div>
-    ),
-    chips: [{ value: 'doctor', label: 'Something looks wrong' }, restartChip('Another machine'), { value: 'home', label: 'Home' }],
+    tone: plan.warnings.length ? TONE.gold : TONE.cyan,
+    lead: 'Here is your setup. Copy each value exactly.',
+    cards: [<Reveal key="r">{cards}</Reveal>],
+    chips: [{ value: 'doctor', label: 'Something looks wrong' }, restartChip('Another machine')],
     onChip: (v: string) => go(v === 'doctor' ? 'doctor' : 'home'),
   }
-}
-
-function Values({ values }: { values: { label: string; value: string; mono?: boolean; why?: string }[] }) {
-  const { done, copy } = useCopy()
-  return (
-    <dl className={s.values}>
-      {values.map(v => (
-        <div className={s.valueRow} key={v.label}>
-          <dt className={s.valueLabel}>{v.label}</dt>
-          <dd style={{ margin: 0 }}>
-            <div className={s.valueLine}>
-              <span className={`${s.value} ${v.mono ? s.valueMono : ''}`}>{v.value}</span>
-              <button aria-label={`Copy ${v.label}`} className={`${s.copy} ${s.copyInline}`} onClick={() => copy(v.label, v.value)} type="button">
-                {done === v.label ? 'Copied' : 'Copy'}
-              </button>
-            </div>
-            {v.why && <p className={s.valueWhy}>{v.why}</p>}
-          </dd>
-        </div>
-      ))}
-    </dl>
-  )
 }
 
 export function ConnectFlow({ go, handoff }: { go: Go; handoff?: Answers }) {
@@ -384,29 +405,30 @@ export function ConnectFlow({ go, handoff }: { go: Go; handoff?: Answers }) {
 
   if (start === undefined && last) {
     const summary = [OS_LABEL[last.os as Os], last.model && last.model !== '-' ? last.model : null, last.worker].filter(Boolean).join(', ')
+    const steps: StepDef[] = [
+      {
+        id: 'reuse',
+        ask: () => `Last time: ${summary}. Use the same machine details? You will enter the address again.`,
+        chips: () => [
+          { value: 'yes', label: 'Use the same', primary: true },
+          { value: 'no', label: 'Start fresh' },
+        ],
+      },
+    ]
     return (
-      <>
-        <div className={s.thread}>
-          <Say>Last time: {summary}. Use the same machine details? You will enter the address again.</Say>
-        </div>
-        <div className={s.dock}>
-          <div className={s.chips} role="group" aria-label="Answers">
-            <button
-              className={`${s.chip} ${s.chipPrimary}`}
-              onClick={() => {
-                const { worker: _w, ...rest } = last
-                setStart(Object.fromEntries(Object.entries(rest).filter(([, v]) => v != null)) as Answers)
-              }}
-              type="button"
-            >
-              Use the same
-            </button>
-            <button className={s.chip} onClick={() => setStart(null)} type="button">
-              Start fresh
-            </button>
-          </div>
-        </div>
-      </>
+      <Flow
+        onAnswers={a => {
+          if (a.reuse === 'yes') {
+            const { worker: _w, ...rest } = last
+            setStart(Object.fromEntries(Object.entries(rest).filter(([, v]) => v != null)) as Answers)
+          } else if (a.reuse === 'no') setStart(null)
+        }}
+        onBack={() => go('home')}
+        outcome={() => ({ tone: TONE.gold, lead: 'One moment.', cards: [] })}
+        steps={steps}
+        sub="Your PC, Mac, rig or rented box, mining in the pool."
+        title="Connect"
+      />
     )
   }
   return (
@@ -414,50 +436,36 @@ export function ConnectFlow({ go, handoff }: { go: Go; handoff?: Answers }) {
       initial={start ?? undefined}
       intro={handoff ? 'I carried over your hardware. A few more details.' : "Let's get your machine mining in the pool."}
       onAnswers={persist}
+      onBack={() => go('home')}
       outcome={a => connectOutcome(a, go)}
       steps={CONNECT_STEPS}
+      sub="Your PC, Mac, rig or rented box, mining in the pool."
+      title="Connect"
     />
   )
 }
 
 /* ---------------- Fix my rig ---------------- */
 
-function Findings({ list }: { list: Finding[] }) {
+function FindingCard({ f }: { f: Finding }) {
+  const tone = severityTone(f.severity)
   return (
-    <>
-      {list.map(f => {
-        const tone = severityTone(f.severity)
-        return (
-          <article className={s.card} key={f.id}>
-            <div className={s.cardHead}>
-              <h3 className={s.cardTitle} style={{ margin: 0 }}>
-                {f.title}
-              </h3>
-              <span className={s.verdict} style={{ color: tone }}>
-                <RingGlyph color={tone} />
-                {SEVERITY_LABEL[f.severity]}
-              </span>
-            </div>
-            <p className={s.stepBody} style={{ marginTop: 4 }}>
-              {f.means}
-            </p>
-            {f.line && (
-              <div className={s.cite}>
-                <span className={s.citeN}>line {f.line.n}</span>
-                {f.line.text}
-              </div>
-            )}
-            <ol className={s.reasons} style={{ marginTop: 8 }}>
-              {f.fix.map(x => (
-                <li key={x} style={{ color: 'var(--bone)' }}>
-                  {x}
-                </li>
-              ))}
-            </ol>
-          </article>
-        )
-      })}
-    </>
+    <StatusCard icon={severityIcon(f.severity)} label={SEVERITY_LABEL[f.severity]} title={f.title} tone={tone}>
+      <p className={s.rowBody} style={{ marginTop: 8 }}>
+        {f.means}
+      </p>
+      {f.line && (
+        <div className={s.cite}>
+          <span className={s.citeN}>line {f.line.n}</span>
+          {f.line.text}
+        </div>
+      )}
+      <ol className={s.fixList}>
+        {f.fix.map(x => (
+          <li key={x}>{x}</li>
+        ))}
+      </ol>
+    </StatusCard>
   )
 }
 
@@ -466,47 +474,41 @@ const DOCTOR_STEPS: StepDef[] = [
     id: 'mode',
     ask: () => 'Paste the miner log, or tell me what you see.',
     chips: () => SYMPTOMS.map(x => ({ value: `sym:${x.id}`, label: x.label })),
-    text: { label: 'Miner log', placeholder: 'Paste the last 30 to 50 lines', multiline: true, rows: 5, newlines: true, mono: true, maxLength: 60000 },
+    text: { label: 'Miner log', placeholder: 'Paste the last 30 to 50 lines', multiline: true, rows: 4, newlines: true, mono: true, maxLength: 60000 },
     echo: v => (v.startsWith('sym:') ? (SYMPTOMS.find(x => `sym:${x.id}` === v)?.label ?? v) : `${v.split(/\r?\n/).length} lines of log`),
   },
 ]
 
-function doctorOutcome(a: Answers, go: Go) {
+function doctorOutcome(a: Answers, go: Go): Outcome {
   const v = a.mode ?? ''
-  const restart = [restartChip('Check another'), { value: 'ask', label: 'Ask Maria' }, { value: 'home', label: 'Home' }]
+  const chips = [restartChip('Check another'), { value: 'ask', label: 'Ask Maria' }]
   const onChip = (x: string) => go(x === 'ask' ? 'ask' : 'home')
   if (v.startsWith('sym:')) {
-    const f = SYMPTOMS.find(x => `sym:${x.id}` === v)!.finding
-    return { tone: severityTone(f.severity), body: <div className={s.stack}><Findings list={[f]} /></div>, chips: restart, onChip }
+    const f = SYMPTOMS.find(x => `sym:${x.id}` === v)?.finding
+    if (f) return { tone: severityTone(f.severity), lead: f.severity === 'fine' ? "It's fine. Wait." : 'Here is what that usually means.', cards: [<Reveal key="r">{[<FindingCard f={f} key="f" />]}</Reveal>], chips, onChip }
   }
   const d = diagnose(v)
-  const tone = d.status === 'fine' ? TONE.teal : d.status === 'fault' || d.status === 'check' ? TONE.coral : TONE.fog
+  const tone = d.status === 'fine' ? TONE.cyan : d.status === 'fault' ? TONE.coral : d.status === 'check' ? TONE.gold : TONE.fog
+  const n = d.findings.filter(f => f.severity !== 'fine').length
   const lead =
     d.status === 'fine'
       ? "It's fine. Wait."
       : d.status === 'unknown'
         ? 'Nothing in this log matches a problem I know. Paste more lines, ideally from the start of the run, or pick a symptom.'
-        : d.findings.length > 1
-          ? `${d.findings.filter(f => f.severity !== 'fine').length} things to fix, most important first.`
+        : n > 1
+          ? `${n} things to fix, most important first.`
           : 'Found it.'
-  return {
-    tone: d.seedWarning ? TONE.coral : tone,
-    body: (
-      <div className={s.stack}>
-        {d.seedWarning && (
-          <Say fault>
-            This log contains something that looks like a seed (55 lowercase letters). Never paste it anywhere. If it was ever typed into a site, a pool or a chat, move your funds to a new wallet now.
-          </Say>
-        )}
-        <Say>{lead}</Say>
-        <Findings list={d.findings} />
-      </div>
-    ),
-    chips: restart,
-    onChip,
+  const cards = d.findings.map(f => <FindingCard f={f} key={f.id} />)
+  if (d.seedWarning) {
+    cards.unshift(
+      <p className={s.warn} key="seed">
+        This log contains something that looks like a seed (55 lowercase letters). Never paste it anywhere. If it was ever typed into a site, a pool or a chat, move your funds to a new wallet now.
+      </p>,
+    )
   }
+  return { tone: d.seedWarning ? TONE.coral : tone, lead, cards: [<Reveal key="r">{cards}</Reveal>], chips, onChip }
 }
 
 export function DoctorFlow({ go, initial }: { go: Go; initial?: Answers }) {
-  return <Flow initial={initial} intro="The log stays in your browser." outcome={a => doctorOutcome(a, go)} steps={DOCTOR_STEPS} />
+  return <Flow initial={initial} intro="The log stays in your browser." onBack={() => go('home')} outcome={a => doctorOutcome(a, go)} steps={DOCTOR_STEPS} sub="Paste a log or pick what you see." title="Fix my rig" />
 }
