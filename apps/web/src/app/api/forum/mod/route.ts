@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { getSession, modKeyOk } from '@/lib/forum/auth'
+import { getSession, modCookie, modKeyOk } from '@/lib/forum/auth'
 import { LABEL_APPROVED, LABEL_REJECTED, closePending, getPending, listPending } from '@/lib/forum/github'
 import { link, loadAll, moderationQueue, publish, remove } from '@/lib/forum/publish'
 
@@ -12,7 +12,7 @@ export async function GET(req: Request) {
   try {
     const { articles, replies, links } = await loadAll()
     const me = await getSession()
-    return NextResponse.json({
+    const res = NextResponse.json({
       queue: moderationQueue(),
       pending: moderationQueue() ? await listPending() : [],
       topics: articles.data.filter(a => a.guest).slice(0, 30).map(a => ({ slug: a.slug, title: a.title, author: a.author, handle: a.handle, auth: a.auth, date: a.date })),
@@ -20,8 +20,13 @@ export async function GET(req: Request) {
       links: links.data,
       me,
     })
+    // Remember the moderator for server-rendered previews (the pool page); the cookie never holds the key.
+    res.cookies.set(modCookie())
+    return res
   } catch (e) {
-    return NextResponse.json({ error: (e as Error).message }, { status: 500 })
+    const res = NextResponse.json({ error: (e as Error).message }, { status: 500 })
+    res.cookies.set(modCookie())
+    return res
   }
 }
 
