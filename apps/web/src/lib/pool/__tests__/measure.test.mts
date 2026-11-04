@@ -755,10 +755,13 @@ test('store: field rows are merged on read, saved twice counts once, live and pr
   await store.add({ ...INPUT, solutions: 1500 }, { ip: '1.1.1.1' })
   const sum = await store.summary()
   const row = sum.rows.find(r => r.key === 'gpu|RTX 5080')!
-  assert.equal(row.latest.epoch, CUR)
-  assert.equal(row.latest.n, 1)
-  assert.equal(row.latest.median, 250) // 1500 / 180 min * 60 = 500 per rig, 2 cards
-  assert.equal(row.previous, undefined) // the field run is from epoch 234, not the one before
+  // the field run keeps the headline; the saved log rides along as self-reported
+  assert.equal(row.source, 'field')
+  assert.equal(row.latest.epoch, 234)
+  assert.equal(row.selfReported!.epoch, CUR)
+  assert.equal(row.selfReported!.n, 1)
+  assert.equal(row.selfReported!.median, 250) // 1500 / 180 min * 60 = 500 per rig, 2 cards
+  assert.equal(row.previous, undefined)
   assert.ok(sum.rows.some(r => r.key === 'gpu|RTX 4090'))
   // the prompt snapshot holds finished epochs only, so it is the same all week
   const snap = await store.promptSnapshot()
@@ -942,4 +945,65 @@ test('doctor: says "the one rig we measured" with n 1, and flags an older row', 
   assert.equal(c.title, 'Slower than the one rig we measured')
   assert.match(c.detail, /^107 sol\/h per card against a median of 610 \(1 rig, epoch 233\)\. That measurement is from epoch 233, more than 2 epochs ago/)
   assert.doesNotMatch(c.text, /most rigs/)
+})
+
+/* ---------------- source priority: pool, then field, then self-reported ---------------- */
+
+const { SOURCE_PRIORITY, selfReportedLine } = await import('../aggregate.ts')
+
+test('priority: a newer self-reported epoch never replaces a field headline; it becomes a second line', () => {
+  const logs = [100, 110, 120].map(v => mk({ gpu: 'RTX 4090', sph: v, src: 'log' }))
+  const sum = aggregate([...FIELD_SAMPLES, ...logs], CUR)
+  const r = sum.rows.find(x => x.key === 'gpu|RTX 4090')!
+  assert.deepEqual(SOURCE_PRIORITY, ['pool', 'field', 'log'])
+  assert.equal(r.source, 'field')
+  assert.deepEqual([r.latest.epoch, r.latest.median, r.latest.n], [233, 610, 1])
+  assert.deepEqual(r.tags, ['our own run', 'few data', 'older'])
+  assert.deepEqual([r.selfReported!.epoch, r.selfReported!.median, r.selfReported!.n], [CUR, 110, 3])
+  assert.equal(selfReportedLine(r), `Self-reported, epoch ${CUR}: median 110 sol/h per card (3 rigs)`)
+})
+
+test('priority: pool beats field and log, even when they are newer; the newest pool epoch wins', () => {
+  const list = [
+    mk({ gpu: 'RTX 5080', sph: 300, src: 'pool', epoch: CUR - 3 }),
+    mk({ gpu: 'RTX 5080', sph: 320, src: 'pool', epoch: CUR - 2 }),
+    mk({ gpu: 'RTX 5080', sph: 900, src: 'log', epoch: CUR }),
+    ...FIELD_SAMPLES,
+  ]
+  const r = aggregate(list, CUR).rows.find(x => x.key === 'gpu|RTX 5080')!
+  assert.equal(r.source, 'pool')
+  assert.deepEqual([r.latest.epoch, r.latest.median, r.latest.nPool, r.latest.nLog], [CUR - 2, 320, 1, 0])
+  assert.equal(r.previous!.epoch, CUR - 3) // drift compares like with like
+  assert.equal(r.selfReported!.median, 900)
+  assert.ok(!r.tags.includes('self-reported') && !r.tags.includes('our own run'))
+})
+
+test('priority: only self-reported data keeps today\'s behaviour, the headline with its labels and no second line', () => {
+  const r = aggregate([mk({ gpu: 'RTX 3080', sph: 250, src: 'log' })], CUR).rows[0]!
+  assert.equal(r.source, 'log')
+  assert.deepEqual(r.tags, ['few data', 'self-reported'])
+  assert.equal(r.selfReported, undefined)
+  assert.equal(selfReportedLine(r), undefined)
+})
+
+test('priority: drift is not triggered by a self-reported epoch next to pool data', () => {
+  const list = [...[600, 610, 620].map(v => mk({ gpu: 'RTX 4090', sph: v, epoch: CUR - 1 })), ...[200, 210].map(v => mk({ gpu: 'RTX 4090', sph: v, src: 'log', epoch: CUR }))]
+  assert.equal(aggregate(list, CUR).rows[0]!.drift, undefined)
+})
+
+test('priority applies to the disagreement logic: log rigs cannot push a guided card into the top quarter', () => {
+  const list = [...PEERS(), mk({ gpu: 'RTX 4060', sph: 100 }), ...[2000, 2100].map(v => mk({ gpu: 'RTX 4060', sph: v, src: 'log' }))]
+  const card = pick({ mode: 'own', cpu: 'Ryzen 9 7950X', gpu: 'RTX 4060' }, aggregate(list, CUR)).cards.find(c => /4060/.test(c.title))!
+  assert.match(card.measured!.line, /median 100 sol\/h per card \(1 rig/)
+  assert.equal(card.measured!.disagree, undefined)
+  assert.match(card.measured!.secondary!, /^Self-reported, epoch 238: median 2,050 sol\/h per card \(2 rigs\)$/)
+})
+
+test('priority applies to the doctor comparison and the MEASURED table', () => {
+  const sum = aggregate([...FIELD_SAMPLES, ...[100, 120].map(v => mk({ gpu: 'RTX 4090', sph: v, src: 'log' }))], CUR)
+  const c = compareRun({ key: 'gpu|RTX 4090', unit: 'card', gpuCount: 1, solPerHour: 115, uptimeMin: 300 }, sum)
+  assert.ok(c.kind === 'compared' && c.below && /median of 610 \(1 rig, epoch 233\)/.test(c.detail))
+  const block = measuredBlock(sum)
+  assert.match(block, /- RTX 4090: 610 sol\/h per card, 2,440 per rig; n 1, epoch 233 \[our own run, few data, older\]\. Self-reported, epoch 238: median 110 sol\/h per card \(2 rigs\)/)
+  assert.match(block, /pool data first, then our own runs, then self-reported logs/)
 })

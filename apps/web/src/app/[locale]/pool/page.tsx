@@ -5,7 +5,7 @@ import { setRequestLocale } from 'next-intl/server'
 import { Device } from '@/components/pool/Device'
 import { poolFontVars } from '@/components/pool/fonts'
 import { MariaApp } from '@/components/pool/maria/MariaApp'
-import { type HardwareRow, topRows } from '@/lib/pool/aggregate'
+import { type HardwareRow, selfReportedLine, topRows } from '@/lib/pool/aggregate'
 import { keepPercent, MEASURE, POOL, WALLET } from '@/lib/pool/config'
 import { poolAllowed, poolPublic } from '@/lib/pool/gate'
 import { GLANCE, SOURCES } from '@/lib/pool/knowledge'
@@ -89,6 +89,7 @@ function Measured({ rows, drift }: { rows: HardwareRow[]; drift: HardwareRow[] }
                 <th scope="row">
                   <span className={p.glancePick}>{r.label}</span>
                   <span className={p.mUnit}>{unitLabel(r)}</span>
+                  {selfReportedLine(r) && <span className={p.mUnit}>{selfReportedLine(r)}</span>}
                   {r.tags.length > 0 && (
                     <span className={p.mTags}>
                       {r.tags.map(t => (
