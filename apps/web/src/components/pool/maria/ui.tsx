@@ -232,6 +232,7 @@ export function MeasuredLine({ m }: { m: Measured }) {
           <span>{m.line}</span>
         </div>
         {m.spread && <div className={s.measuredSub}>Spread {m.spread} (p25 to p75)</div>}
+        {m.secondary && <div className={s.measuredSub}>{m.secondary}</div>}
         <Tags tags={m.tags} />
       </div>
       {m.disagree && <p className={s.note}>{m.disagree}</p>}

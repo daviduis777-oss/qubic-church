@@ -41,8 +41,14 @@ export type HardwareRow = {
   key: string
   label: string
   unit: Unit
+  /** the headline: the best source available (pool, then field, then log), its newest epoch */
   latest: EpochStat
+  /** which source the headline comes from; undefined when no sample has a sol/h */
+  source?: SampleSource
+  /** the epoch before the headline, same source: decides the drift flag */
   previous?: EpochStat
+  /** the newest self-reported epoch, when the headline is pool or field data */
+  selfReported?: EpochStat
   /** pool-sourced rigs and the epochs they span, within the recent window */
   poolRigs: number
   poolEpochs: number
@@ -53,6 +59,16 @@ export type HardwareRow = {
 }
 
 export type Summary = { epoch: number; at: number; rows: HardwareRow[] }
+
+/** Which data sets the headline number for a hardware key, best first. */
+export const SOURCE_PRIORITY: SampleSource[] = ['pool', 'field', 'log']
+
+/** "Self-reported, epoch 238: median 540 sol/h per card (3 rigs)" */
+export function selfReportedLine(r: HardwareRow): string | undefined {
+  const x = r.selfReported
+  if (!x || x.median === undefined) return undefined
+  return `Self-reported, epoch ${x.epoch}: median ${fmtRate(x.median)} sol/h ${unitWord(r.unit)} (${x.n} rig${x.n === 1 ? '' : 's'})`
+}
 
 /** Type-7 quantile on a sorted copy. */
 export function quantile(values: number[], q: number): number | undefined {
@@ -147,9 +163,28 @@ export function aggregate(
   const rows: HardwareRow[] = []
   for (const [key, g] of groups) {
     const epochs = [...g.byEpoch.keys()].sort((a, b) => b - a)
-    const stats = epochs.map(e => epochStat(e, g.byEpoch.get(e)!))
-    const latest = stats.find(x => x.n > 0) ?? stats[0]!
-    const previous = stats.find(x => x.epoch === latest.epoch - 1 && x.n > 0)
+    const list = (e: number, src?: SampleSource) =>
+      (g.byEpoch.get(e) ?? []).filter(s => !src || s.source === src)
+    const ratedEpochs = (src: SampleSource) =>
+      epochs.filter(e => list(e, src).some(s => perUnit(s) !== undefined))
+    // The headline: pool data first, then our field runs, then self-reported logs;
+    // within the best source available, the newest epoch wins.
+    const source = SOURCE_PRIORITY.find(src => ratedEpochs(src).length > 0)
+    let latest: EpochStat
+    let previous: EpochStat | undefined
+    let selfReported: EpochStat | undefined
+    if (source) {
+      const e0 = ratedEpochs(source)[0]!
+      latest = epochStat(e0, list(e0, source))
+      const prev = epochStat(e0 - 1, list(e0 - 1, source))
+      previous = prev.n > 0 ? prev : undefined
+      // self-reported data never replaces a pool or field headline: it rides along as a second line
+      const le = source === 'log' ? undefined : ratedEpochs('log')[0]
+      if (le !== undefined) selfReported = epochStat(le, list(le, 'log'))
+    } else {
+      // it/s only, no sol/h anywhere: the newest epoch, all sources
+      latest = epochStat(epochs[0]!, list(epochs[0]!))
+    }
     const older = currentEpoch - latest.epoch > MEASURE.olderAfterEpochs
 
     const recent = epochs.filter(
@@ -170,10 +205,9 @@ export function aggregate(
     }
 
     const tags: string[] = []
-    if (latest.nField === latest.n && latest.n > 0) tags.push('our own run')
+    if (source === 'field') tags.push('our own run')
     if (latest.n < MEASURE.fewData) tags.push('few data')
-    if (latest.n > 0 && latest.nPool + latest.nField === 0)
-      tags.push('self-reported')
+    if (source === 'log') tags.push('self-reported')
     if (older) tags.push('older')
 
     rows.push({
@@ -181,7 +215,9 @@ export function aggregate(
       label: g.label,
       unit: g.unit,
       latest,
+      source,
       previous,
+      selfReported,
       poolRigs: pool.length,
       poolEpochs,
       poolMedian: median(pool.map(s => perUnit(s)!)),
@@ -235,6 +271,8 @@ export type Measured = {
   /** "Measured: median 610 sol/h per card (1 rig, epoch 233)" */
   line: string
   spread?: string
+  /** self-reported data next to a pool or field headline, never in its place */
+  secondary?: string
   tags: string[]
   /** said plainly when the measurements and the static verdict disagree */
   disagree?: string
@@ -260,7 +298,13 @@ export function judge(
     L.p75 !== undefined
       ? `${fmtRate(L.p25)} to ${fmtRate(L.p75)} sol/h`
       : undefined
-  const measured: Measured = { key: row.key, line, spread, tags: row.tags }
+  const measured: Measured = {
+    key: row.key,
+    line,
+    spread,
+    secondary: selfReportedLine(row),
+    tags: row.tags,
+  }
 
   const t = tierOf(L.median, row.unit, rows)
   if (!t || !disagrees(verdict, t.tier)) return { measured, verdict }
@@ -292,6 +336,7 @@ export function measuredBlock(sum: Summary | null | undefined): string {
   const head = `MEASURED (our miners' results, computed by code from saved runs; snapshot for epoch ${sum?.epoch ?? '?'})
 - Prefer these numbers over guide figures when n is ${MEASURE.fewData} or more. With fewer, give both and say the data is thin.
 - Always state n and the epoch when you use a row. Rows marked older are more than ${MEASURE.olderAfterEpochs} epochs old: the algorithm changes every few weeks.
+- Each headline comes from pool data first, then our own runs, then self-reported logs. A self-reported line next to it is extra context, never the headline.
 - self-reported = from pasted logs only. These are rates, never income: do not turn them into money, except the user's own cost per solution from their own daily cost.`
   if (!sum?.rows.length) return `${head}\n- No measured rows yet.`
   const rows = sum.rows
@@ -319,7 +364,8 @@ export function measuredBlock(sum: Summary | null | undefined): string {
     ]
       .filter(Boolean)
       .join(', ')
-    return `- ${r.label}: ${rate}${spread}${rig}${its ? `; ${its}` : ''}; n ${L.n || L.nIts}, epoch ${L.epoch}${r.tags.length ? ` [${r.tags.join(', ')}]` : ''}`
+    const self = selfReportedLine(r)
+    return `- ${r.label}: ${rate}${spread}${rig}${its ? `; ${its}` : ''}; n ${L.n || L.nIts}, epoch ${L.epoch}${r.tags.length ? ` [${r.tags.join(', ')}]` : ''}${self ? `. ${self}` : ''}`
   })
   const drift = driftLines(sum)
   return [
