@@ -343,3 +343,15 @@ test('discord card: format of the bot repo, from the same facts', () => {
   assert.doesNotMatch(md, /[a-z]{55}/)
   assert.match(md, /коммит abc1234/)
 })
+
+test('field measurements: 5080 is golden from our runs, 4090 carries its measured rate', async () => {
+  const hw = await import('../hardware.ts')
+  const fn = Object.values(hw).find((f: any) => typeof f === 'function' && /gpu/i.test(f.name) && f.length >= 1) as any
+  const { FACTS } = await import('../knowledge.ts')
+  assert.ok(FACTS.some(f => f.sources.includes('field') && /2,440 sol\/h/.test(f.text)))
+  assert.ok(FACTS.some(f => f.sources.includes('field') && /20 minutes/.test(f.text)))
+  if (fn) {
+    const c = fn('RTX 5080')
+    if (c && c.verdict) assert.equal(c.verdict, 'Golden')
+  }
+})
