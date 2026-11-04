@@ -152,6 +152,10 @@ export function classifyGpu(raw: string): Card | null {
   if (/4090/.test(s)) return card(title, 'Good', ['Fast and pricey. Pays off only while a solution is worth a lot.', 'Measured: about 610 sol/h per card in a 4-card GPU-only rig on a Xeon E5-2696 v3, PCIe 3.0 x8 (epoch 233).', 'Same sol/h as our 7x RTX 5080 rig at about twice the rent.'], 'none', [['VRAM', '24 GB'], cuda, ['Measured', '~610 sol/h, E233']], ['guide', 'field-e233'])
   if (/3090/.test(s)) return card(title, 'Good', ['Old but cheap. Often the quiet winner on cost per solution.'], 'none', [['VRAM', '24 GB'], cuda], ['guide'])
   if (/3080/.test(s)) return card(title, 'Good', ['Old but cheap. Often the quiet winner on cost per solution.'], 'none', [['VRAM', '10 to 12 GB'], cuda], ['guide'])
+  // Pre-Turing (GTX 7/9/10 series, Tesla and Quadro K/M/P): dropped by the epoch 237 CUDA worker (Qubic Discord, 20 to 28 Oct 2026).
+  if (/\bgtx ?(7|9|10)\d{2}\b|\btesla ?[kmp]\d{2,3}\b|\bquadro ?[kmp]\d{3,4}\b/.test(s)) {
+    return card(title, 'Skip', ['Treat GTX 10 series and older as unsupported: from epoch 237 (28 Oct 2026) a GTX 1050 Ti CUDA worker kept exiting, and a Tesla K80 does not run on current CUDA (reported on the Qubic Discord). The CPU still mines.'], 'none', [cuda], ['community', 'qli-team'])
+  }
   if (/rtx|gtx|nvidia|geforce|quadro|tesla|\b[ahl]\d{2,3}\b|\bh100\b|\ba100\b/.test(s)) {
     return card(title, 'Works', ['NVIDIA card: it mines. VRAM matters most; a card with little memory gets smaller tasks.'], 'none', [cuda], ['cointribune'])
   }

@@ -103,7 +103,7 @@ export function entries(): Entry[] {
   out.push({
     title: 'Выплаты по эпохам и комиссия',
     tags: ['payout', 'rewards', 'when paid', 'fee', 'epoch payout'],
-    claim: `Rewards go straight to the user's own wallet, ${POOL.payout.timing}, paid in ${POOL.payout.currency}. An epoch runs ${POOL.payout.epoch}. Payout usually lands about a week after the epoch closes (Wednesday or Thursday, sometimes Friday). Fee, only if asked: ${POOL.feePercent}%, the user keeps ${keepPercent}%. No income projections: the self-check is cost per solution = daily cost ÷ solutions per day, measured over one real epoch.`,
+    claim: `Rewards go straight to the user's own wallet, ${POOL.payout.timing}, paid in ${POOL.payout.currency}. An epoch runs ${POOL.payout.epoch}. ${POOL.payout.lands}. Fee, only if asked: ${POOL.feePercent}%, the user keeps ${keepPercent}%. No income projections: the self-check is cost per solution = daily cost ÷ solutions per day, measured over one real epoch.`,
     sources: `${SITE_SRC('config.ts')} ; ${SITE_SRC('prompt.ts')}`,
     doNot: 'не называть сумму выплаты, доходность и окупаемость; не описывать деление комиссии',
   })
@@ -118,7 +118,7 @@ export function entries(): Entry[] {
   })
 
   const topics = [...new Set(FACTS.map(f => f.topic))]
-  const TOPIC_RU: Record<string, string> = { CPU: 'процессор', GPU: 'видеокарта', RAM: 'память', Storage: 'диск', Network: 'сеть', Host: 'хост', Mac: 'Mac', ASIC: 'ASIC', Measured: 'наши замеры', Rental: 'аренда', Mode: 'режим GPU и CPU', Judging: 'как судить о риге', Operations: 'эксплуатация', Payouts: 'выплаты', Staleness: 'свежесть замеров' }
+  const TOPIC_RU: Record<string, string> = { CPU: 'процессор', GPU: 'видеокарта', RAM: 'память', Storage: 'диск', Network: 'сеть', Host: 'хост', Mac: 'Mac', ASIC: 'ASIC', Measured: 'наши замеры', Rental: 'аренда', Mode: 'режим GPU и CPU', Judging: 'как судить о риге', Operations: 'эксплуатация', Payouts: 'выплаты', Algo: 'алгоритм и версии майнера', Staleness: 'свежесть замеров' }
   for (const t of topics) {
     const fs = FACTS.filter(f => f.topic === t)
     out.push({
@@ -212,7 +212,7 @@ export function entries(): Entry[] {
     out.push({
       title: `Вопросы майнеров: ${label}`,
       tags: ['faq', theme, label.toLowerCase(), ...es.map(e => e.id.replace(/-/g, ' '))].slice(0, 10),
-      claim: es.map(e => `"${e.q}" ${e.a} (as of ${e.asOf})`).join(' | '),
+      claim: es.map(e => `"${e.q}" ${e.a} (as of ${e.asOf}${e.cite ? `; ${e.cite}` : ''})`).join(' | '),
       sources: src(es.flatMap(e => e.sources)),
       doNot: theme === 'profitability' || theme === 'rentals' ? 'не называть доход, прибыль и окупаемость в цифрах; об убытках только «майнеры сообщали об убытках в некоторых эпохах»' : undefined,
     })
