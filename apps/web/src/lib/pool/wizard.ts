@@ -106,7 +106,7 @@ export function buildPlan(i: WizardInput): Plan {
   const warnings: string[] = []
   const { backend, why } = backendFor(i.hw, i.avx)
   const t = threadsFor(i.hw, i.threads, i.dedicated)
-  if (i.hw === 'amd') warnings.push('AMD Radeon cards are not supported by the official GPU miner. This plan mines on your CPU.')
+  if (i.hw === 'amd') warnings.push("We have no AMD Radeon measurements, and GPU support depends on the pool's miner. NVIDIA/CUDA is the proven path. This plan mines on your CPU.")
   if (i.os === 'macos' && i.hw === 'nvidia') warnings.push('On macOS the pool mines on the CPU. An NVIDIA card needs Linux, Windows or HiveOS.')
 
   const values: Value[] = [

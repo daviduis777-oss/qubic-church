@@ -237,15 +237,21 @@ export const rowFor = (sum: Summary | null | undefined, key: string) =>
 
 export type Tier = 'top' | 'mid' | 'bottom'
 
-/** Where a median falls among the other rows of the same unit. Needs MEASURE.minRowsForRank rows, or nothing is claimed. */
+/**
+ * Where a median falls among the other rows of the same unit. Needs MEASURE.minRowsForRank rows, or nothing
+ * is claimed. With `epoch`, only rows within MEASURE.olderAfterEpochs of it are peers: solution counts are
+ * not comparable across algorithm eras (tens per hour in epoch 229, thousands in epoch 233).
+ */
 export function tierOf(
   value: number | undefined,
   unit: Unit,
-  rows: HardwareRow[]
+  rows: HardwareRow[],
+  epoch?: number
 ): { tier: Tier; of: number } | undefined {
   if (value === undefined) return undefined
   const peers = rows
     .filter(r => r.unit === unit && r.latest.median !== undefined)
+    .filter(r => epoch === undefined || Math.abs(r.latest.epoch - epoch) <= MEASURE.olderAfterEpochs)
     .map(r => r.latest.median!)
   if (peers.length < MEASURE.minRowsForRank) return undefined
   const below = peers.filter(v => v < value).length
@@ -306,11 +312,11 @@ export function judge(
     tags: row.tags,
   }
 
-  const t = tierOf(L.median, row.unit, rows)
+  const t = tierOf(L.median, row.unit, rows, L.epoch)
   if (!t || !disagrees(verdict, t.tier)) return { measured, verdict }
 
   const where = t.tier === 'top' ? 'top quarter' : 'bottom quarter'
-  const poolTier = tierOf(row.poolMedian, row.unit, rows)
+  const poolTier = tierOf(row.poolMedian, row.unit, rows, L.epoch)
   const strong =
     row.poolRigs >= MEASURE.flipMinPoolRigs &&
     row.poolEpochs >= MEASURE.flipMinEpochs &&
