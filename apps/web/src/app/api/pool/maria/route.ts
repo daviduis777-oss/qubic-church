@@ -4,6 +4,7 @@ import { poolAllowed } from '@/lib/pool/gate'
 import { mariaNowBlock, mariaSystemStatic } from '@/lib/pool/prompt'
 import { clientIp, takeMessage } from '@/lib/pool/ratelimit'
 import { redactWallets } from '@/lib/pool/redact'
+import { measureStore } from '@/lib/pool/store'
 
 export const dynamic = 'force-dynamic'
 
@@ -37,6 +38,9 @@ export async function POST(req: Request) {
   const quota = await takeMessage(clientIp(req), MARIA_LIMITS.perDay)
   if (!quota.ok) return fail(429, 'limit', `That is today's ${MARIA_LIMITS.perDay} questions from this connection. The limit resets at 00:00 UTC. ${TOOLS_HINT}`)
 
+  // MEASURED table: a per-epoch snapshot, so the cached block only changes when the epoch does
+  const measured = await measureStore().promptSnapshot().catch(() => null)
+
   let upstream: Response
   try {
     upstream = await fetch('https://api.anthropic.com/v1/messages', {
@@ -47,7 +51,7 @@ export async function POST(req: Request) {
         max_tokens: 700,
         // the long static prompt is cached; only the live epoch line changes per request
         system: [
-          { type: 'text', text: mariaSystemStatic(), cache_control: { type: 'ephemeral' } },
+          { type: 'text', text: mariaSystemStatic(measured), cache_control: { type: 'ephemeral' } },
           { type: 'text', text: mariaNowBlock() },
         ],
         messages,

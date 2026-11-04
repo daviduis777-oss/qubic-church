@@ -2,12 +2,17 @@
  * Maria's system prompt, built from the same config and rule tables the deterministic tools use.
  * Change a fact in config.ts / doctor.ts and both layers change together.
  */
+import { aggregate, measuredBlock, type Summary } from './aggregate.ts'
 import { HARDWARE_FIGURES, HARDWARE_FIGURES_SOURCE, OS_LABEL, POOL, RENTALS, WALLET } from './config.ts'
 import { RULES } from './doctor.ts'
-import { EPOCH_SOURCE, nowLine } from './epoch.ts'
+import { EPOCH_SOURCE, epochAt, nowLine } from './epoch.ts'
 import { BUILDS, FACTS, sourceLine } from './knowledge.ts'
+import { FIELD_SAMPLES } from './measure.ts'
 import { MINER_COMMAND, PROCEDURES, practiceSourceLine, procedureSources, procedureText, TIPS } from './practice.ts'
 import { HARD_RULES } from './rules.ts'
+
+/** The field runs alone, for callers without a store (tests, the Discord card). */
+const fieldSummary = () => aggregate(FIELD_SAMPLES, epochAt().epoch, 0)
 
 /** The live part: the epoch now and the time to its end. Sent as its own block after the cached one. */
 export function mariaNowBlock(now: Date = new Date()): string {
@@ -16,12 +21,16 @@ export function mariaNowBlock(now: Date = new Date()): string {
 }
 
 /** Full prompt as one string (tests, the Discord card). The API sends static + now as two blocks. */
-export function mariaSystemPrompt(now: Date = new Date()): string {
-  return `${mariaSystemStatic()}\n\n${mariaNowBlock(now)}`
+export function mariaSystemPrompt(now: Date = new Date(), measured?: Summary | null): string {
+  return `${mariaSystemStatic(measured)}\n\n${mariaNowBlock(now)}`
 }
 
-/** Everything that does not change per request, so the API can cache it. */
-export function mariaSystemStatic(): string {
+/**
+ * Everything that does not change per request, so the API can cache it. `measured` is the per-epoch
+ * snapshot from store.ts (finished epochs only), so this block changes once a week at most.
+ * Without it the MEASURED section still lists our own field runs.
+ */
+export function mariaSystemStatic(measured?: Summary | null): string {
   const figures = HARDWARE_FIGURES.map(f => `${f.name} ~${f.itPerSec} it/s (${f.kind}, est., ${HARDWARE_FIGURES_SOURCE.label})`).join('; ')
   const triage = RULES.map(r => `- ${r.title}: ${r.means} Fix: ${r.fix.join(' ')}`).join('\n')
   const launch = POOL.launchLine
@@ -72,6 +81,8 @@ ${procedures}
 
 EFFICIENCY TIPS
 ${tips}
+
+${measuredBlock(measured ?? fieldSummary())}
 
 TRIAGE
 ${triage}

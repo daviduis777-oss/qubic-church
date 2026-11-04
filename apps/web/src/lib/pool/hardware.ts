@@ -3,12 +3,15 @@
  * Cointribune guide, our mining guide). Pure functions, no React, no network: see __tests__/pool.test.mts.
  */
 import type { Os } from './config.ts'
+import { judge, type Measured, rowFor, type Summary } from './aggregate.ts'
 import { HARDWARE_FIGURES, HARDWARE_FIGURES_SOURCE } from './config.ts'
 import { BUILDS, type BuildTier, type SourceId } from './knowledge.ts'
+import { normalizeCpu, normalizeGpu } from './measure.ts'
 
 export type Verdict = 'Golden' | 'Good' | 'Works' | 'Skip' | 'Unknown'
 export type Avx = 'avx512' | 'avx2' | 'none' | 'apple' | 'unknown'
-export type Card = { title: string; verdict: Verdict; reasons: string[]; specs?: [string, string][]; sources?: SourceId[]; avx?: Avx }
+/** measured: what our miners measure for this part (aggregate.ts), shown under the guide's verdict. */
+export type Card = { title: string; verdict: Verdict; reasons: string[]; specs?: [string, string][]; sources?: SourceId[]; avx?: Avx; measured?: Measured }
 
 export const VERDICT_RANK: Record<Verdict, number> = { Golden: 4, Good: 3, Works: 2, Unknown: 1, Skip: 0 }
 
@@ -198,7 +201,19 @@ function shopping(mode: 'buy' | 'rent', p: PickInput): Card[] {
   return [...cards, ...SKIPS]
 }
 
-export function pick(input: PickInput): PickResult {
+/**
+ * Put the measured line on a part's card. The verdict changes only under the flip rule in aggregate.ts
+ * (enough pool-reported rigs over enough epochs); otherwise a disagreement is shown next to the verdict.
+ * The guide's own hand-written "Measured" line steps aside when live measurements exist.
+ */
+export function withMeasured(c: Card, key: string, sum: Summary | null | undefined): Card {
+  const row = rowFor(sum, key)
+  if (!row || !sum) return c
+  const j = judge(row, sum.rows, c.verdict)
+  return { ...c, verdict: j.verdict, measured: j.measured, specs: c.specs?.filter(([k]) => k !== 'Measured'), reasons: c.reasons.filter(r => !r.startsWith('Measured:')) }
+}
+
+export function pick(input: PickInput, measured?: Summary | null): PickResult {
   const notes: string[] = []
   if (input.mode !== 'own') {
     const cards = shopping(input.mode, input)
@@ -212,9 +227,13 @@ export function pick(input: PickInput): PickResult {
   if (isAsic(`${input.cpu ?? ''} ${input.gpu ?? ''}`)) return { overall: 'Skip', cards: [ASIC_CARD], notes: ['For this pool you need a CPU (ideally AVX-512) or an NVIDIA card.'] }
 
   const cards: Card[] = []
-  const cpu = classifyCpu(input.cpu ?? '')
+  const cpu = withMeasured(classifyCpu(input.cpu ?? ''), `cpu|${normalizeCpu(input.cpu ?? '')}`, measured)
   cards.push(cpu)
-  const gpu = classifyGpu(input.gpu ?? '')
+  const gpuName = normalizeGpu(input.gpu ?? '')
+  const gpuRaw = classifyGpu(input.gpu ?? '')
+  // a GPU-only row is per card; without one, a GPU-and-CPU row for the same card
+  const gpuKey = rowFor(measured, `gpu|${gpuName}`) ? `gpu|${gpuName}` : `mix|${gpuName}`
+  const gpu = gpuRaw && gpuName ? withMeasured(gpuRaw, gpuKey, measured) : gpuRaw
   if (gpu) cards.push(gpu)
   if (input.ramGb) cards.push(classifyRam(input.ramGb))
 

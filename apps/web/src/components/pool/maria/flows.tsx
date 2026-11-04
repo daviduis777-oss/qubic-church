@@ -3,11 +3,14 @@
 import { ExternalLink } from 'lucide-react'
 import { useCallback, useState } from 'react'
 import { OS_LABEL, POOL, RENTALS, type Os } from '@/lib/pool/config'
+import type { Summary } from '@/lib/pool/aggregate'
 import { diagnose, type Finding, SYMPTOMS } from '@/lib/pool/doctor'
 import { classifyCpu, pick, type PickMode, type Scale } from '@/lib/pool/hardware'
 import type { BuildTier } from '@/lib/pool/knowledge'
+import { extractMetrics } from '@/lib/pool/measure'
 import { type Avx, buildPlan, checkWallet, checkWorker, cleanWorker, type Hw, suggestWorker, THREAD_COMMAND } from '@/lib/pool/wizard'
 import { type Answers, Flow, type Outcome, restartChip, type StepDef } from './flow'
+import { LogMeasure, useMeasured } from './measured'
 import { Checklist, Command, CopyButton, Group, Reveal, SEVERITY_LABEL, StatusCard, severityIcon, severityTone, TONE, VerdictCard, verdictTone } from './ui'
 import s from './maria.module.css'
 
@@ -123,7 +126,7 @@ const PICK_STEPS: StepDef[] = [
   },
 ]
 
-function pickOutcome(a: Answers, go: Go): Outcome {
+function pickOutcome(a: Answers, go: Go, measured: Summary | null): Outcome {
   const r = pick({
     mode: a.mode as PickMode,
     scale: a.scale as Scale,
@@ -134,7 +137,7 @@ function pickOutcome(a: Answers, go: Go): Outcome {
     gpuCount: a.gpus ? Number(a.gpus) : undefined,
     cores: a.cores && a.cores !== '0' ? Number(a.cores) : undefined,
     ramGb: a.ram && a.ram !== '0' ? Number(a.ram) : undefined,
-  })
+  }, measured)
   const own = a.mode === 'own'
   const lead = own
     ? r.overall === 'Skip'
@@ -191,7 +194,8 @@ function pickOutcome(a: Answers, go: Go): Outcome {
 }
 
 export function PickFlow({ go }: { go: Go }) {
-  return <Flow intro="Let's find hardware that wins on cost per solution." onBack={() => go('home')} outcome={a => pickOutcome(a, go)} steps={PICK_STEPS} sub="What to buy, what to rent, or how yours does." title="Pick hardware" />
+  const { summary } = useMeasured()
+  return <Flow intro="Let's find hardware that wins on cost per solution." onBack={() => go('home')} outcome={a => pickOutcome(a, go, summary)} steps={PICK_STEPS} sub="What to buy, what to rent, or how yours does." title="Pick hardware" />
 }
 
 /* ---------------- Connect my machine ---------------- */
@@ -499,6 +503,8 @@ function doctorOutcome(a: Answers, go: Go): Outcome {
           ? `${n} things to fix, most important first.`
           : 'Found it.'
   const cards = d.findings.map(f => <FindingCard f={f} key={f.id} />)
+  // Numbers in the log: show them, compare the rig with its peers, and offer to save the result.
+  if (!d.seedWarning && extractMetrics(v).found) cards.push(<LogMeasure findings={d.findings.map(f => f.id)} key="measure" log={v} />)
   if (d.seedWarning) {
     cards.unshift(
       <p className={s.warn} key="seed">

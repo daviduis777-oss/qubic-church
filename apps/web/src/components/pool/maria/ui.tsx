@@ -1,8 +1,9 @@
 'use client'
 
 import { motion, useReducedMotion } from 'framer-motion'
-import { ArrowUp, Check, CircleHelp, Copy, Crown, Minus, Terminal, X } from 'lucide-react'
+import { ArrowUp, Check, CircleHelp, Copy, Crown, Gauge, Minus, Terminal, X } from 'lucide-react'
 import { type ReactNode, useEffect, useId, useRef, useState } from 'react'
+import type { Measured } from '@/lib/pool/aggregate'
 import type { Severity } from '@/lib/pool/doctor'
 import type { Card as HwCard, Verdict } from '@/lib/pool/hardware'
 import { SOURCES, type SourceId } from '@/lib/pool/knowledge'
@@ -207,11 +208,44 @@ export function StatusCard({ title, tone, label, icon, children }: { title: stri
   )
 }
 
+/** "few data", "self-reported", "older", "our own run": how much weight a measurement carries. */
+export function Tags({ tags }: { tags: string[] }) {
+  if (!tags.length) return null
+  return (
+    <div className={s.tags}>
+      {tags.map(t => (
+        <span className={cx(s.tag, t === 'older' && s.tagOld)} key={t}>
+          {t}
+        </span>
+      ))}
+    </div>
+  )
+}
+
+/** What our miners measure for this part, under the guide's verdict; a disagreement is said in words. */
+export function MeasuredLine({ m }: { m: Measured }) {
+  return (
+    <>
+      <div className={s.measured}>
+        <div className={s.measuredLine}>
+          <Gauge aria-hidden size={13} strokeWidth={2.2} />
+          <span>{m.line}</span>
+        </div>
+        {m.spread && <div className={s.measuredSub}>Spread {m.spread} (p25 to p75)</div>}
+        <Tags tags={m.tags} />
+      </div>
+      {m.disagree && <p className={s.note}>{m.disagree}</p>}
+    </>
+  )
+}
+
 export function VerdictCard({ c }: { c: HwCard }) {
   const tone = verdictTone(c.verdict)
+  const label = c.measured?.flippedFrom ? `${VERDICT_LABEL[c.verdict]}, measured (guide: ${VERDICT_LABEL[c.measured.flippedFrom]})` : VERDICT_LABEL[c.verdict]
   return (
-    <StatusCard icon={verdictIcon(c.verdict)} label={VERDICT_LABEL[c.verdict]} title={c.title} tone={tone}>
+    <StatusCard icon={verdictIcon(c.verdict)} label={label} title={c.title} tone={tone}>
       <Specs rows={c.specs} />
+      {c.measured && <MeasuredLine m={c.measured} />}
       <ul className={s.why}>
         {c.reasons.map(r => (
           <li key={r}>{r}</li>

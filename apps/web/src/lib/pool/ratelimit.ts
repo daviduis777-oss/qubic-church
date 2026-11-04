@@ -17,11 +17,11 @@ export function clientIp(req: Request): string {
 }
 
 const day = () => new Date().toISOString().slice(0, 10)
-const keyFor = (ip: string) => `pool:maria:${day()}:${createHash('sha256').update(`qc-pool:${ip}`).digest('hex').slice(0, 24)}`
+const keyFor = (ip: string, bucket: string) => `pool:${bucket}:${day()}:${createHash('sha256').update(`qc-pool:${ip}`).digest('hex').slice(0, 24)}`
 
-/** Count one message. Returns whether it is allowed and how many remain today. */
-export async function takeMessage(ip: string, perDay: number): Promise<{ ok: boolean; remaining: number }> {
-  const key = keyFor(ip)
+/** Count one message (or one saved result: bucket 'measure'). Returns whether it is allowed and how many remain today. */
+export async function takeMessage(ip: string, perDay: number, bucket: 'maria' | 'measure' = 'maria'): Promise<{ ok: boolean; remaining: number }> {
+  const key = keyFor(ip, bucket)
   let n: number
   if (URL_ && TOKEN) {
     try {

@@ -84,3 +84,36 @@ export const WALLET = {
 } as const
 
 export const MARIA_LIMITS = { perDay: 20, maxInput: 1200, maxTurns: 8 } as const
+
+/**
+ * Measured results: how Maria learns from real runs (measure.ts, aggregate.ts, store.ts).
+ * Every threshold that changes what Maria says lives here.
+ */
+export const MEASURE = {
+  /** Under this many rigs a measurement is labelled "few data". */
+  fewData: 5,
+  /** A verdict flips only when this many pool-sourced rigs, over at least flipMinEpochs epochs, disagree with it. */
+  flipMinPoolRigs: 5,
+  flipMinEpochs: 2,
+  /** Quantiles for "top" and "bottom" when a hardware's median is ranked against the others of its unit. */
+  topQuantile: 0.75,
+  bottomQuantile: 0.25,
+  /** Ranking needs this many hardware rows of the same unit, or no disagreement is claimed. */
+  minRowsForRank: 4,
+  /** Measurements whose newest epoch is more than this many epochs back are shown as "older". */
+  olderAfterEpochs: 2,
+  /** An epoch median that moves more than this against the previous epoch flags a possible algorithm change. */
+  driftPct: 30,
+  /** Field rule: do not judge a rig in its first 20 minutes. */
+  minWindowMin: 20,
+  /** Field rule: the first 1 to 2 hours overstate the rate by about 1.3 to 1.5x; samples are saved only after this. */
+  warmupMin: 120,
+  warmupFactor: '1.3 to 1.5x',
+  /** Epochs read back for aggregation, and the newest rows kept per epoch list. */
+  readEpochs: 8,
+  capPerEpoch: 2000,
+  /** Aggregates are recomputed on read, at most this often per server instance. */
+  cacheMs: 60_000,
+  /** Saved results per connection per day. */
+  postsPerDay: 6,
+} as const
