@@ -5,16 +5,23 @@ import { setRequestLocale } from 'next-intl/server'
 import { locales } from '@/config/i18n'
 import { SITE_URL } from '@/lib/books'
 import { jsonLd } from '@/lib/json-ld'
-import { BOARDS, MEMBERS, bioOf, homeOf, memberByHandle, postsOf, profileHref, cryptOg } from '@/lib/forum'
+import { BOARDS, homeOf, profileHref, cryptOg } from '@/lib/forum'
+import { getForum } from '@/lib/forum/live'
 import { ForumShell, Stars } from '@/components/church/forum/ForumUI'
 import { Avatar } from '@/components/church/forum/Avatar'
 
-export function generateStaticParams() {
-  return locales.flatMap(locale => MEMBERS.map(m => ({ locale, handle: m.handle.toLowerCase() })))
+/** ISR on live data (src/lib/forum/live.ts): a new member's profile renders on its first view. */
+export const revalidate = 300
+export const dynamicParams = true
+
+export async function generateStaticParams() {
+  const { members } = await getForum()
+  return locales.flatMap(locale => members.map(m => ({ locale, handle: m.handle.toLowerCase() })))
 }
 
 export async function generateMetadata(props: { params: Promise<{ handle: string }> }): Promise<Metadata> {
   const { handle } = await props.params
+  const { memberByHandle, bioOf } = await getForum()
   const m = memberByHandle(handle)
   if (!m) return {}
   return {
@@ -29,6 +36,7 @@ export async function generateMetadata(props: { params: Promise<{ handle: string
 export default async function ProfilePage(props: { params: Promise<{ locale: string; handle: string }> }) {
   const { locale, handle } = await props.params
   setRequestLocale(locale)
+  const { memberByHandle, postsOf, bioOf } = await getForum()
   const m = memberByHandle(handle)
   if (!m) notFound()
   const posts = postsOf(m)

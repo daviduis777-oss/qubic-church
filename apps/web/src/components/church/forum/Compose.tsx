@@ -1,10 +1,11 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { LoginBox, type Me } from './LoginBox'
 
 /**
- * New topic, or a reply. Posts publish on their own (the site rebuilds in about two minutes);
+ * New topic, or a reply. Posts publish on their own and show at once (the forum pages read the archive live);
  * with FORUM_MODERATION=queue they wait for a moderator instead.
  */
 export function Compose({ kind, topic, topicTitle }: { kind: 'topic' | 'reply'; topic?: string; topicTitle?: string }) {
@@ -16,6 +17,7 @@ export function Compose({ kind, topic, topicTitle }: { kind: 'topic' | 'reply'; 
   const [busy, setBusy] = useState('')
   const [err, setErr] = useState('')
   const [done, setDone] = useState<{ queue?: number; slug?: string; topic?: string; author?: string } | null>(null)
+  const router = useRouter()
 
   useEffect(() => {
     fetch('/api/forum/me', { cache: 'no-store' })
@@ -51,6 +53,8 @@ export function Compose({ kind, topic, topicTitle }: { kind: 'topic' | 'reply'; 
       const j = await r.json()
       if (!r.ok) throw new Error(j.error)
       setDone(j.published ? { slug: j.slug, topic: j.topic, author: j.author } : { queue: j.queue })
+      // A reply belongs on the page it was written on: re-render it, the new reply is already there.
+      if (j.published && kind === 'reply') router.refresh()
     } catch (e) {
       setErr((e as Error).message)
     } finally {
@@ -79,7 +83,7 @@ export function Compose({ kind, topic, topicTitle }: { kind: 'topic' | 'reply'; 
             </p>
           ) : (
             <p>
-              Your {kind} is in the archive under the name <b>{done.author ?? me.name}</b>. The site rebuilds now; in about two minutes it is live at{' '}
+              Your {kind} is in the archive under the name <b>{done.author ?? me.name}</b>, and live at{' '}
               <a href={`/articles/${done.slug ?? done.topic}`}>qubic.church/articles/{done.slug ?? done.topic}</a>.
             </p>
           )}
@@ -124,7 +128,7 @@ export function Compose({ kind, topic, topicTitle }: { kind: 'topic' | 'reply'; 
           <button className="qcf-btn qcf-btn-main" disabled={Boolean(busy)} onClick={submit} style={{ cursor: 'pointer' }} type="button">
             {kind === 'topic' ? 'Post topic' : 'Post reply'}
           </button>{' '}
-          <span className="qcf-small qcf-muted">Publishes right away under your name. No topic, no category, no censorship. The site rebuilds in about two minutes.</span>
+          <span className="qcf-small qcf-muted">Publishes right away under your name. No topic, no category, no censorship.</span>
         </p>
         {busy && <p className="qcf-small">{busy}</p>}
         {err && (

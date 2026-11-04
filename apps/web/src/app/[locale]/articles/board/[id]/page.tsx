@@ -4,8 +4,12 @@ import { notFound } from 'next/navigation'
 import { setRequestLocale } from 'next-intl/server'
 import { locales } from '@/config/i18n'
 import { SITE_URL } from '@/lib/books'
-import { BOARDS, getBoard, memberOf, profileHref, topicsIn, cryptOg } from '@/lib/forum'
+import { BOARDS, getBoard, profileHref, cryptOg } from '@/lib/forum'
+import { getForum } from '@/lib/forum/live'
 import { ForumShell } from '@/components/church/forum/ForumUI'
+
+/** ISR on live data (src/lib/forum/live.ts): a new topic drops the cached page at once. */
+export const revalidate = 300
 
 export function generateStaticParams() {
   return locales.flatMap(locale => BOARDS.map(b => ({ locale, id: b.id })))
@@ -29,6 +33,7 @@ export default async function BoardPage(props: { params: Promise<{ locale: strin
   setRequestLocale(locale)
   const b = getBoard(id)
   if (!b) notFound()
+  const { topicsIn, memberOf } = await getForum()
   const topics = topicsIn(b.id)
 
   return (

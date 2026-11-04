@@ -90,7 +90,7 @@ export function Cabinet() {
       setP(j.profile)
       setAvatar(undefined)
       setRemoveAvatar(false)
-      setMsg('Saved. The site rebuilds now; your profile shows the changes in about two minutes.')
+      setMsg('Saved. Your profile shows the changes now.')
     } catch (e) {
       setErr((e as Error).message)
     } finally {
