@@ -1,0 +1,289 @@
+/* Qubic Church Pool page. Tokens scoped to the page; the site is dark only. */
+
+.page {
+  --ns: #1c2331;
+  --panel: #263042;
+  --bone: #eee7d8;
+  --fog: #9aa3b2;
+  --brass: #c8a45a;
+  --line: rgba(238, 231, 216, 0.12);
+  --sans: var(--font-heading), 'Inter', system-ui, -apple-system, sans-serif;
+
+  position: relative;
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 60px 40px 72px;
+  color: var(--bone);
+  font-family: var(--sans);
+}
+
+/* A still, solid ground: the instrument is the only thing that moves. */
+.backdrop {
+  position: relative;
+  width: 100%;
+  background: #000;
+}
+
+.page :focus-visible {
+  outline: 2px solid var(--brass);
+  outline-offset: 3px;
+}
+
+.preview {
+  margin: 0 0 28px;
+  font-size: 13px;
+  color: var(--fog);
+}
+
+.top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 64px;
+  align-items: center;
+}
+
+.intro {
+  max-width: 34rem;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: clamp(2.6rem, 4.6vw, 4.25rem);
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+  color: var(--bone);
+}
+
+.lede {
+  margin: 22px 0 0;
+  font-size: 1.2rem;
+  line-height: 1.5;
+  color: var(--bone);
+  opacity: 0.86;
+  max-width: 30rem;
+}
+
+.facts {
+  list-style: none;
+  margin: 36px 0 0;
+  padding: 0;
+  border-top: 1px solid var(--line);
+  max-width: 30rem;
+}
+
+.facts li {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 1rem;
+  line-height: 1.45;
+  color: var(--fog);
+}
+
+/* ---------- the device ---------- */
+
+.deviceWrap {
+  display: flex;
+  justify-content: center;
+}
+
+.device {
+  --h: min(844px, calc(100svh - 148px));
+  position: relative;
+  height: var(--h);
+  min-height: 600px;
+  aspect-ratio: 390 / 844;
+  padding: 11px;
+  border-radius: 58px;
+  background: linear-gradient(160deg, #2a3245 0%, #151a24 38%, #0f131b 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(238, 231, 216, 0.1),
+    inset 0 0 0 3px #0b0e14,
+    0 40px 80px -30px rgba(0, 0, 0, 0.8);
+}
+
+.screen {
+  position: relative;
+  height: 100%;
+  border-radius: 47px;
+  overflow: hidden;
+  background: var(--ns);
+  padding-top: 52px;
+  isolation: isolate;
+}
+
+.island {
+  position: absolute;
+  z-index: 2;
+  top: 23px;
+  left: 50%;
+  width: 31%;
+  height: 32px;
+  transform: translateX(-50%);
+  border-radius: 20px;
+  background: #000;
+}
+
+/* ---------- below the fold ---------- */
+
+.section {
+  margin-top: 120px;
+  max-width: 64rem;
+}
+
+.h2 {
+  margin: 0;
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 1.75rem;
+  letter-spacing: -0.015em;
+  color: var(--bone);
+}
+
+.how {
+  list-style: none;
+  margin: 28px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 40px;
+}
+
+.how li {
+  border-top: 1px solid var(--line);
+  padding-top: 18px;
+}
+
+.how p {
+  margin: 8px 0 0;
+  font-size: 0.98rem;
+  line-height: 1.55;
+  color: var(--fog);
+}
+
+.n {
+  display: block;
+  font-size: 2.25rem;
+  font-weight: 300;
+  line-height: 1;
+  color: var(--brass);
+  font-variant-numeric: tabular-nums;
+}
+
+.h3 {
+  margin: 14px 0 0;
+  font-family: var(--sans);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--bone);
+}
+
+.terms {
+  margin: 24px 0 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0 40px;
+}
+
+.terms > div {
+  border-top: 1px solid var(--line);
+  padding: 16px 0 20px;
+}
+
+.terms dt {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--bone);
+}
+
+.terms dd {
+  margin: 6px 0 0;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--fog);
+  max-width: 30rem;
+}
+
+.partners {
+  margin: 96px 0 0;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+  font-size: 0.9rem;
+  color: var(--fog);
+}
+
+.partners a {
+  color: var(--bone);
+  text-underline-offset: 3px;
+}
+
+.partners a:hover {
+  color: var(--brass);
+}
+
+/* ---------- tablet ---------- */
+
+@media (max-width: 1023px) {
+  .page {
+    padding: 80px 28px 64px;
+  }
+  .top {
+    gap: 36px;
+  }
+  .how {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}
+
+/* ---------- phone: no device chrome, the app fills the width ---------- */
+
+@media (max-width: 767px) {
+  .page {
+    padding: 76px 16px 56px;
+  }
+  .top {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  .title {
+    font-size: 2.3rem;
+  }
+  .lede {
+    font-size: 1.08rem;
+  }
+  .facts {
+    margin-top: 24px;
+  }
+  .deviceWrap {
+    display: block;
+  }
+  .device {
+    height: min(760px, calc(100svh - 96px));
+    min-height: 600px;
+    aspect-ratio: auto;
+    width: 100%;
+    padding: 0;
+    border-radius: 22px;
+    background: none;
+    box-shadow: inset 0 0 0 1px rgba(238, 231, 216, 0.1);
+  }
+  .screen {
+    border-radius: 22px;
+    padding-top: 8px;
+  }
+  .island {
+    display: none;
+  }
+  .section {
+    margin-top: 72px;
+  }
+  .terms {
+    grid-template-columns: 1fr;
+  }
+  .partners {
+    margin-top: 64px;
+  }
+}

@@ -30,7 +30,7 @@ function secret(): Buffer {
 const b64u = (b: Buffer) => b.toString('base64url')
 const hmac = (data: string) => b64u(createHmac('sha256', secret()).update(data).digest())
 
-export type TokenKind = 'session' | 'nonce'
+export type TokenKind = 'session' | 'nonce' | 'mod'
 
 /** token = base64url(json).signature. Every token names its kind, so a nonce can never pass as a session. */
 export function signToken(kind: TokenKind, payload: Record<string, unknown>, ttlSeconds: number): string {
@@ -104,4 +104,38 @@ export function modKeyOk(key: string | null | undefined): boolean {
   const k = process.env.FORUM_MOD_KEY
   if (!k || !key || k.length !== key.length) return false
   return timingSafeEqual(Buffer.from(k), Buffer.from(key))
+}
+
+/**
+ * Moderator session: set when /articles/mod loads with a valid key, so server pages can check it.
+ * The cookie holds a signed fingerprint of the key, never the key; rotating FORUM_MOD_KEY revokes it.
+ */
+const MOD_COOKIE = 'qcf_mod'
+const MOD_DAYS = 14
+const modFingerprint = () => (process.env.FORUM_MOD_KEY ? hmac(`modfp:${process.env.FORUM_MOD_KEY}`).slice(0, 16) : '')
+
+export function modCookie() {
+  return {
+    name: MOD_COOKIE,
+    value: signToken('mod', { fp: modFingerprint() }, MOD_DAYS * 86400),
+    httpOnly: true,
+    sameSite: 'lax' as const,
+    secure: process.env.NODE_ENV === 'production',
+    path: '/',
+    maxAge: MOD_DAYS * 86400,
+  }
+}
+
+/** True for a request that carries the mod key header or a valid moderator cookie. */
+export async function isModerator(req?: Request): Promise<boolean> {
+  if (req && modKeyOk(req.headers.get('x-mod-key'))) return true
+  try {
+    const fp = modFingerprint()
+    if (!fp) return false
+    const jar = await cookies()
+    const t = verifyToken<{ fp?: string }>('mod', jar.get(MOD_COOKIE)?.value)
+    return Boolean(t && typeof t.fp === 'string' && t.fp.length === fp.length && timingSafeEqual(Buffer.from(t.fp), Buffer.from(fp)))
+  } catch {
+    return false
+  }
 }
