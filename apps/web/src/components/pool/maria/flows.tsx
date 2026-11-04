@@ -388,7 +388,7 @@ function connectOutcome(a: Answers, go: Go): Outcome {
     </Group>,
   ]
   return {
-    tone: plan.warnings.length ? TONE.gold : TONE.cyan,
+    tone: plan.warnings.length ? TONE.gold : TONE.sage,
     lead: 'Here is your setup. Copy each value exactly.',
     cards: [<Reveal key="r">{cards}</Reveal>],
     chips: [{ value: 'doctor', label: 'Something looks wrong' }, restartChip('Another machine')],
@@ -488,7 +488,7 @@ function doctorOutcome(a: Answers, go: Go): Outcome {
     if (f) return { tone: severityTone(f.severity), lead: f.severity === 'fine' ? "It's fine. Wait." : 'Here is what that usually means.', cards: [<Reveal key="r">{[<FindingCard f={f} key="f" />]}</Reveal>], chips, onChip }
   }
   const d = diagnose(v)
-  const tone = d.status === 'fine' ? TONE.cyan : d.status === 'fault' ? TONE.coral : d.status === 'check' ? TONE.gold : TONE.fog
+  const tone = d.status === 'fine' ? TONE.sage : d.status === 'fault' ? TONE.coral : d.status === 'check' ? TONE.gold : TONE.fog
   const n = d.findings.filter(f => f.severity !== 'fine').length
   const lead =
     d.status === 'fine'

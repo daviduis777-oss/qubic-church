@@ -1,10 +1,11 @@
 'use client'
 
-import { motion, useReducedMotion } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { ChevronLeft, RotateCcw } from 'lucide-react'
-import { createContext, type ReactNode, type RefObject, useContext, useEffect, useMemo, useRef, useState } from 'react'
-import type { RingMode } from './Ring'
-import { type ChipOpt, Chips, cx, Field, PRESS, Say, TONE, Typing } from './ui'
+import { createContext, type CSSProperties, type ReactNode, type RefObject, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import type { HaloMode as RingMode } from './halo-engine'
+import { Halo } from './Halo'
+import { type ChipOpt, Chips, cx, Field, PRESS, Say, TONE } from './ui'
 import s from './maria.module.css'
 
 export type Answers = Record<string, string>
@@ -50,20 +51,15 @@ export function useStickToBottom(dep: unknown) {
   return ref
 }
 
-/** Her avatar in the nav bar carries the ring's state: a glow while she works, the verdict colour after. */
+/** Her avatar in the nav bar: a hairline gold ring that shimmers while she works and takes the verdict colour after. */
 function NavPresence() {
   const { state } = useRing()
-  const reduce = useReducedMotion()
-  const tone = state.mode === 'thinking' ? TONE.cyan : state.mode === 'settled' ? state.tone : TONE.gold
+  const tone = state.mode === 'settled' ? state.tone : TONE.gold
   return (
-    <motion.span
-      animate={state.mode === 'thinking' && !reduce ? { boxShadow: [`0 0 0 1px ${tone}`, `0 0 0 1px ${tone}, 0 0 14px 2px ${tone}88`, `0 0 0 1px ${tone}`] } : { boxShadow: `0 0 0 1px ${tone}` }}
-      style={{ borderRadius: '50%', display: 'block', lineHeight: 0 }}
-      transition={state.mode === 'thinking' && !reduce ? { duration: 1.4, repeat: Number.POSITIVE_INFINITY } : { duration: 0.3 }}
-    >
+    <span className={cx(s.navHalo, state.mode === 'thinking' && s.navHaloLive)} style={{ '--tone': tone } as CSSProperties}>
       {/* biome-ignore lint/performance/noImgElement: tiny local asset */}
       <img alt="" height={30} src="/pool/maria-128.webp" srcSet="/pool/maria-128.webp 1x, /pool/maria-256.webp 2x" style={{ borderRadius: '50%', display: 'block', objectFit: 'cover' }} width={30} />
-    </motion.span>
+    </span>
   )
 }
 
@@ -151,7 +147,7 @@ export function Flow({
     const t = setTimeout(() => {
       setPending(false)
       ring.settle(outcome(answers).tone)
-    }, 450)
+    }, 900)
     return () => clearTimeout(t)
     // biome-ignore lint/correctness/useExhaustiveDependencies: run once per completed answer set
   }, [done, answers])
@@ -206,9 +202,14 @@ export function Flow({
         ))}
       {current && <Say>{current.ask(answers)}</Say>}
       {error && <Say fault>{error}</Say>}
-      {pending && <Typing />}
+      {(pending || result) && (
+        // One halo for the whole moment: it works while she thinks, then sends the verdict out as a shockwave.
+        <div className={s.haloSlot} ref={resultRef}>
+          <Halo face={40} label={pending ? 'Maria is working' : 'Result'} mode={ring.state.mode} size={152} tone={ring.state.tone} />
+        </div>
+      )}
       {result && (
-        <div className={s.thread} ref={resultRef}>
+        <div className={s.thread}>
           <Say>{result.lead}</Say>
           {result.cards}
         </div>

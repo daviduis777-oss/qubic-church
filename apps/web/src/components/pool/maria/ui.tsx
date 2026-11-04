@@ -8,10 +8,11 @@ import type { Card as HwCard, Verdict } from '@/lib/pool/hardware'
 import { SOURCES, type SourceId } from '@/lib/pool/knowledge'
 import s from './maria.module.css'
 
-export const TONE = { gold: '#D9A441', cyan: '#6FE3FF', mist: '#8FD3C8', coral: '#FF7A6B', fog: '#9BA3C7' } as const
+/** The site's gold (--accent-gold), a muted sage for OK, the site's --danger for faults. No blue: her face is the only colour. */
+export const TONE = { gold: '#FECE34', sage: '#9FC39A', coral: '#F66D67', fog: '#8C8C8C' } as const
 
-export const verdictTone = (v: Verdict) => (v === 'Golden' ? TONE.gold : v === 'Good' ? TONE.cyan : v === 'Works' ? TONE.mist : v === 'Skip' ? TONE.coral : TONE.fog)
-export const severityTone = (v: Severity) => (v === 'fine' ? TONE.cyan : v === 'check' ? TONE.gold : TONE.coral)
+export const verdictTone = (v: Verdict) => (v === 'Golden' ? TONE.gold : v === 'Good' || v === 'Works' ? TONE.sage : v === 'Skip' ? TONE.coral : TONE.fog)
+export const severityTone = (v: Severity) => (v === 'fine' ? TONE.sage : v === 'check' ? TONE.gold : TONE.coral)
 export const SEVERITY_LABEL: Record<Severity, string> = { fault: 'Fix this', check: 'Check this', fine: 'Fine' }
 const VERDICT_LABEL: Record<Verdict, string> = { Golden: 'Golden', Good: 'Good', Works: 'Works', Skip: 'Skip', Unknown: 'Not sure' }
 

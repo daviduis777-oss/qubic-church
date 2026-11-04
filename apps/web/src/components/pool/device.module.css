@@ -1,4 +1,4 @@
-/* iPhone 16 Pro (402 x 874 pt), Black Titanium. Scales with the viewport height on desktop. */
+/* iPhone 16 Pro (402 x 874 pt), Black Titanium, warm neutral. Scales with the viewport height on desktop. */
 
 .device {
   --h: min(874px, calc(100svh - 160px));
@@ -11,25 +11,25 @@
   /* the titanium band: brushed, with two catch lights */
   background: linear-gradient(
     145deg,
-    #6f727b 0%,
-    #34363c 12%,
-    #24262b 30%,
-    #5d6068 47%,
-    #2a2c31 63%,
-    #1d1f23 82%,
-    #555860 100%
+    #75726d 0%,
+    #363431 12%,
+    #252422 30%,
+    #64615b 47%,
+    #2b2a27 63%,
+    #1e1d1b 82%,
+    #5b5853 100%
   );
   box-shadow:
     0 0 0 1px rgba(0, 0, 0, 0.6),
-    0 50px 90px -30px rgba(3, 4, 20, 0.9),
-    0 30px 120px -20px rgba(29, 44, 143, 0.45);
+    0 50px 90px -30px rgba(0, 0, 0, 0.95),
+    0 30px 140px -30px rgba(254, 206, 52, 0.16);
 }
 
 .bezel {
   height: 100%;
   border-radius: calc(var(--h) * 0.0756 - 3px);
   padding: calc(var(--h) * 0.0118);
-  background: #050507;
+  background: #050505;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
 }
 
@@ -38,7 +38,7 @@
   height: 100%;
   overflow: hidden;
   border-radius: calc(var(--h) * 0.064);
-  background: #0b0d2a;
+  background: #000;
   isolation: isolate;
 }
 
@@ -70,7 +70,7 @@
   height: 10px;
   margin-top: -5px;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, #26304f 0%, #0b0d1a 60%);
+  background: radial-gradient(circle at 35% 35%, #2c2a27 0%, #0a0a0a 60%);
 }
 
 .status {
@@ -82,7 +82,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 4px 30px 0 40px;
-  color: #f1ece2;
+  color: #fafafa;
   pointer-events: none;
 }
 
@@ -114,7 +114,7 @@
   position: absolute;
   width: 4px;
   border-radius: 2px;
-  background: linear-gradient(90deg, #2a2c31, #6a6d75 50%, #2a2c31);
+  background: linear-gradient(90deg, #2b2a27, #6e6b65 50%, #2b2a27);
 }
 
 .action {
@@ -146,7 +146,7 @@
   top: 58%;
   height: 7.5%;
   width: 3px;
-  background: linear-gradient(90deg, #1b1c20, #3f4148);
+  background: linear-gradient(90deg, #1c1b19, #42403c);
 }
 
 /* Phones: the frame drops away and the app fills the width. */
@@ -160,8 +160,8 @@
     border-radius: 28px;
     background: none;
     box-shadow:
-      0 0 0 1px rgba(155, 163, 199, 0.16),
-      0 30px 80px -30px rgba(29, 44, 143, 0.6);
+      0 0 0 1px rgba(254, 206, 52, 0.14),
+      0 30px 80px -30px rgba(254, 206, 52, 0.14);
   }
   .bezel {
     padding: 0;

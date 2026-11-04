@@ -1,22 +1,28 @@
 'use client'
 
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import { Cpu, MessageCircle, PlugZap, Stethoscope } from 'lucide-react'
-import { type ReactNode, useCallback, useMemo, useRef, useState } from 'react'
+import { type CSSProperties, type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { diagnose } from '@/lib/pool/doctor'
 import { poolFontVars } from '../fonts'
 import { AskFlow } from './AskFlow'
 import { type Answers, RingContext } from './flow'
 import { ConnectFlow, DoctorFlow, type Go, PickFlow, type Screen } from './flows'
-import { Ring, type RingMode } from './Ring'
+import { Halo } from './Halo'
+import type { HaloMode as RingMode } from './halo-engine'
 import { Field, PRESS, SPRING, TONE } from './ui'
 import s from './maria.module.css'
 
-const TILES: { id: Exclude<Screen, 'home'>; title: string; sub: string; icon: ReactNode; bg: string }[] = [
-  { id: 'pick', title: 'Pick hardware', sub: 'Buy, rent, or check yours', icon: <Cpu size={20} strokeWidth={2} />, bg: 'linear-gradient(160deg, #f0c062 0%, #d9a441 45%, #a8741e 100%)' },
-  { id: 'connect', title: 'Connect my machine', sub: 'PC, Mac, rig or rented box', icon: <PlugZap size={20} strokeWidth={2} />, bg: 'linear-gradient(160deg, #8eeaff 0%, #3a8fe0 48%, #1d2c8f 100%)' },
-  { id: 'doctor', title: 'Fix my rig', sub: 'Paste a log or a symptom', icon: <Stethoscope size={20} strokeWidth={2} />, bg: 'linear-gradient(160deg, #ff9d8a 0%, #ff7a6b 45%, #c2405f 100%)' },
-  { id: 'ask', title: 'Ask Maria', sub: 'Anything technical', icon: <MessageCircle size={20} strokeWidth={2} />, bg: 'linear-gradient(160deg, #b6efe6 0%, #8fd3c8 40%, #2f7f8f 100%)' },
+const GOLD_TILE = { background: 'linear-gradient(160deg, #fff0a8 0%, #fece34 42%, #b18406 100%)', color: '#000' }
+const CHAR_TILE = { background: 'linear-gradient(160deg, #3a3834 0%, #1c1b19 100%)', color: '#fece34' }
+
+type Entry = { id: number; screen: Screen; dir: 1 | -1; handoff?: Answers; first?: string; leaving?: 1 | -1; still?: boolean }
+
+const TILES: { id: Exclude<Screen, 'home'>; title: string; sub: string; icon: ReactNode; look: CSSProperties }[] = [
+  { id: 'pick', title: 'Pick hardware', sub: 'Buy, rent, or check yours', icon: <Cpu size={20} strokeWidth={2} />, look: GOLD_TILE },
+  { id: 'connect', title: 'Connect my machine', sub: 'PC, Mac, rig or rented box', icon: <PlugZap size={20} strokeWidth={2} />, look: CHAR_TILE },
+  { id: 'doctor', title: 'Fix my rig', sub: 'Paste a log or a symptom', icon: <Stethoscope size={20} strokeWidth={2} />, look: CHAR_TILE },
+  { id: 'ask', title: 'Ask Maria', sub: 'Anything technical', icon: <MessageCircle size={20} strokeWidth={2} />, look: CHAR_TILE },
 ]
 
 /**
@@ -24,19 +30,17 @@ const TILES: { id: Exclude<Screen, 'home'>; title: string; sub: string; icon: Re
  * except a box to fill (and an optional --safe-top for a status bar), so it can move into a native shell.
  */
 export function MariaApp() {
-  const [screen, setScreen] = useState<Screen>('home')
-  const [dir, setDir] = useState<1 | -1>(1)
-  const [handoff, setHandoff] = useState<Answers | undefined>()
-  const [first, setFirst] = useState<string | undefined>()
+  // The navigation stack: the current screen, plus at most one screen on its way out.
+  const [entries, setEntries] = useState<Entry[]>([{ id: 0, screen: 'home', dir: 1, still: true }])
+  const nextId = useRef(1)
   const [ring, setRing] = useState<{ mode: RingMode; tone: string }>({ mode: 'idle', tone: TONE.gold })
   const [status, setStatus] = useState('')
-  const key = useRef(0)
   const reduce = useReducedMotion()
 
   const api = useMemo(
     () => ({
       think: () => {
-        setRing({ mode: 'thinking', tone: TONE.cyan })
+        setRing({ mode: 'thinking', tone: TONE.gold })
         setStatus('Maria is working')
       },
       settle: (tone: string) => {
@@ -53,30 +57,43 @@ export function MariaApp() {
   const ctx = useMemo(() => ({ ...api, state: ring }), [api, ring])
 
   const go: Go = useCallback(
-    (to, h) => {
-      key.current++
-      setDir(to === 'home' ? -1 : 1)
-      setHandoff(h)
-      if (to !== 'ask') setFirst(undefined)
-      setScreen(to)
+    (to, h, first?: string) => {
+      const dir: 1 | -1 = to === 'home' ? -1 : 1
+      setEntries(prev => {
+        const cur = prev.find(e => !e.leaving)
+        // A tap during a transition cancels the older exit: never more than two nodes, never a stale one.
+        const out = cur && !reduceRef.current ? [{ ...cur, leaving: dir }] : []
+        return [...out, { id: nextId.current++, screen: to, dir, handoff: h, first: to === 'ask' ? first : undefined }]
+      })
       api.idle()
     },
     [api],
   )
 
+  const remove = useCallback((id: number) => setEntries(prev => prev.filter(e => e.id !== id || !e.leaving)), [])
+  // Safety net: an exit that never reports completion is removed anyway.
+  useEffect(() => {
+    if (!entries.some(e => e.leaving)) return
+    const t = setTimeout(() => setEntries(prev => prev.filter(e => !e.leaving)), 900)
+    return () => clearTimeout(t)
+  }, [entries])
+
   const fromComposer = (text: string) => {
     // A pasted log goes to the log doctor, which runs here; a question goes to the AI.
     if (text.includes('\n') && diagnose(text).findings.length) return go('doctor', { mode: text })
-    setFirst(text)
-    go('ask')
+    ;(go as (to: Screen, h?: Answers, first?: string) => void)('ask', undefined, text)
   }
 
-  // Push and pop, like a navigation controller: the new screen slides in, the old one drifts back and dims.
-  const variants = {
-    enter: (d: number) => (reduce ? { opacity: 0 } : { x: d > 0 ? '100%' : '-28%', opacity: d > 0 ? 1 : 0.6 }),
-    center: { x: 0, opacity: 1 },
-    exit: (d: number) => (reduce ? { opacity: 0 } : { x: d > 0 ? '-28%' : '100%', opacity: d > 0 ? 0.6 : 1 }),
-  }
+  // Push and pop, like UINavigationController. Every screen is opaque. On a push the new screen slides in on top
+  // and the old one drifts back 30% and dims; a pop mirrors it. The leaving node is removed when its exit ends.
+  const enter = (d: number) => (reduce ? { opacity: 0, x: 0 } : { x: d > 0 ? '100%' : '-30%', opacity: d > 0 ? 1 : 0.55 })
+  const center = { x: '0%', opacity: 1, transition: reduce ? { duration: 0.12 } : { x: SPRING, opacity: { duration: 0.3 } } }
+  const exit = (d: number) => ({ x: d > 0 ? '-30%' : '100%', opacity: d > 0 ? 0.55 : 1, transition: { x: { type: 'tween' as const, ease: [0.32, 0.72, 0, 1] as const, duration: 0.42 }, opacity: { duration: 0.42 } } })
+  const reduceRef = useRef(reduce)
+  reduceRef.current = reduce
+
+  // Home keeps its scroll position between visits; a pushed flow always starts at the top (it is a new node).
+  const homeScroll = useRef(0)
 
   return (
     <RingContext.Provider value={ctx}>
@@ -85,34 +102,40 @@ export function MariaApp() {
           {status}
         </p>
         <div className={s.stack}>
-          <AnimatePresence custom={dir} initial={false}>
+          {entries.map(e => (
             <motion.div
-              animate="center"
+              animate={e.leaving ? exit(e.leaving) : center}
+              aria-hidden={e.leaving ? true : undefined}
               className={s.screen}
-              custom={dir}
-              exit="exit"
-              initial="enter"
-              key={`${screen}-${key.current}`}
-              style={{ zIndex: dir > 0 ? 2 : 1, boxShadow: dir > 0 && !reduce ? '-12px 0 30px -10px rgba(3,4,20,0.6)' : undefined }}
-              transition={reduce ? { duration: 0.15 } : SPRING}
-              variants={variants}
+              data-screen={e.screen}
+              initial={e.still ? false : enter(e.dir)}
+              inert={e.leaving ? true : undefined}
+              key={e.id}
+              onAnimationComplete={() => {
+                if (e.leaving) remove(e.id)
+              }}
+              style={{ zIndex: e.leaving ? (e.leaving > 0 ? 1 : 2) : e.dir > 0 ? 2 : 1, boxShadow: reduce ? undefined : '-14px 0 32px -12px rgba(0,0,0,0.85)' }}
             >
-              {screen === 'home' && (
+              {e.screen === 'home' && (
                 <>
-                  <div className={s.home}>
+                  <div
+                    className={s.home}
+                    onScroll={e => {
+                      homeScroll.current = e.currentTarget.scrollTop
+                    }}
+                    ref={el => {
+                      if (el && homeScroll.current) el.scrollTop = homeScroll.current
+                    }}
+                  >
                     <div className={s.presence}>
-                      <div className={s.ringWrap}>
-                        <Ring label="Maria" mode={ring.mode} size={212} tone={ring.tone} />
-                        {/* biome-ignore lint/performance/noImgElement: tiny local asset */}
-                        <img alt="" className={s.ringFace} height={64} src="/pool/maria-128.webp" width={64} />
-                      </div>
+                      <Halo face={62} label="Maria" mode={ring.mode} size={216} tone={ring.tone} />
                       <h2 className={s.wordmark}>Maria</h2>
                       <p className={s.homeLine}>What are we working on?</p>
                     </div>
                     <nav aria-label="Maria tools" className={s.tiles}>
                       {TILES.map(t => (
                         <motion.button className={s.tile} key={t.id} onClick={() => go(t.id)} transition={SPRING} type="button" whileTap={PRESS}>
-                          <span aria-hidden className={s.glyph} style={{ background: t.bg }}>
+                          <span aria-hidden className={s.glyph} style={t.look}>
                             {t.icon}
                           </span>
                           <span>
@@ -128,12 +151,12 @@ export function MariaApp() {
                   </div>
                 </>
               )}
-              {screen === 'pick' && <PickFlow go={go} />}
-              {screen === 'connect' && <ConnectFlow go={go} handoff={handoff} />}
-              {screen === 'doctor' && <DoctorFlow go={go} initial={handoff} />}
-              {screen === 'ask' && <AskFlow first={first} go={go} />}
+              {e.screen === 'pick' && <PickFlow go={go} />}
+              {e.screen === 'connect' && <ConnectFlow go={go} handoff={e.handoff} />}
+              {e.screen === 'doctor' && <DoctorFlow go={go} initial={e.handoff} />}
+              {e.screen === 'ask' && <AskFlow first={e.first} go={go} />}
             </motion.div>
-          </AnimatePresence>
+          ))}
         </div>
       </div>
     </RingContext.Provider>

@@ -1,15 +1,13 @@
 /* Qubic Church Pool page. Palette from the Maria NFT; the site is dark only. */
 
 .backdrop {
-  --abyss: #0b0d2a;
-  --indigo: #141a4a;
-  --ultra: #1d2c8f;
-  --cyan: #6fe3ff;
-  --mist: #8fd3c8;
-  --gold: #d9a441;
-  --bone: #f1ece2;
-  --fog: #9ba3c7;
-  --hair: rgba(155, 163, 199, 0.16);
+  /* the site's tokens: --accent-gold #fece34, foreground #fafafa, fg-2 #b7b7b7, muted #8c8c8c on #000 */
+  --gold: #fece34;
+  --gold-hi: #ffe77c;
+  --bone: #fafafa;
+  --fog: #b7b7b7;
+  --muted: #8c8c8c;
+  --hair: rgba(255, 255, 255, 0.1);
   --sans: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
   --mono: var(--font-geist-mono), ui-monospace, monospace;
 
@@ -18,7 +16,7 @@
   overflow: hidden;
   color: var(--bone);
   font-family: var(--sans);
-  background: linear-gradient(180deg, #05061a 0%, #070822 40%, #04040f 100%);
+  background: #000;
 }
 
 /* the ambient light behind the phone: the NFT background, far away and out of focus */
@@ -30,11 +28,11 @@
   width: min(1100px, 90vw);
   height: 1300px;
   pointer-events: none;
+  /* a soft gold bloom behind the device, like light caught on a watch dial */
   background:
-    radial-gradient(38% 34% at 58% 30%, rgba(143, 211, 200, 0.16) 0%, rgba(143, 211, 200, 0) 70%),
-    radial-gradient(46% 42% at 52% 48%, rgba(29, 44, 143, 0.42) 0%, rgba(29, 44, 143, 0) 72%),
-    radial-gradient(50% 46% at 46% 64%, rgba(58, 26, 120, 0.28) 0%, rgba(58, 26, 120, 0) 74%);
-  filter: blur(10px);
+    radial-gradient(30% 26% at 52% 36%, rgba(254, 206, 52, 0.1) 0%, rgba(254, 206, 52, 0) 72%),
+    radial-gradient(44% 40% at 50% 46%, rgba(177, 132, 6, 0.12) 0%, rgba(177, 132, 6, 0) 74%);
+  filter: blur(8px);
 }
 
 .page {
@@ -47,7 +45,7 @@
 }
 
 .page :focus-visible {
-  outline: 2px solid var(--cyan);
+  outline: 2px solid var(--gold);
   outline-offset: 3px;
 }
 
@@ -72,16 +70,16 @@
   font-size: 13px;
   font-weight: 500;
   color: var(--bone);
-  background: rgba(155, 163, 199, 0.1);
-  box-shadow: inset 0 0 0 1px rgba(155, 163, 199, 0.2);
+  background: rgba(254, 206, 52, 0.06);
+  box-shadow: inset 0 0 0 1px rgba(254, 206, 52, 0.28);
 }
 
 .pillDot {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--cyan);
-  box-shadow: 0 0 10px rgba(111, 227, 255, 0.8);
+  background: var(--gold);
+  box-shadow: 0 0 10px rgba(254, 206, 52, 0.8);
 }
 
 .title {
@@ -99,7 +97,7 @@
   font-size: 1.22rem;
   line-height: 1.5;
   letter-spacing: -0.01em;
-  color: rgba(241, 236, 226, 0.82);
+  color: rgba(250, 250, 250, 0.8);
   max-width: 31rem;
 }
 
@@ -162,12 +160,12 @@
   color: var(--bone);
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.025));
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.07),
-    inset 0 0 0 1px rgba(155, 163, 199, 0.14);
+    inset 0 1px 0 rgba(255, 231, 124, 0.1),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.07);
 }
 
 .jobs li svg {
-  color: var(--cyan);
+  color: var(--gold);
 }
 
 /* ---------- the device ---------- */
@@ -187,7 +185,7 @@
   width: 980px;
   height: 980px;
   transform: translate(-50%, -50%);
-  opacity: 0.42;
+  opacity: 0.5;
   pointer-events: none;
 }
 
@@ -229,8 +227,8 @@
   padding: 22px 22px 24px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.02));
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.07),
-    inset 0 0 0 1px rgba(155, 163, 199, 0.12);
+    inset 0 1px 0 rgba(255, 231, 124, 0.1),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.07);
 }
 
 .how p {
@@ -248,7 +246,7 @@
   border-radius: 50%;
   font-size: 0.95rem;
   font-weight: 600;
-  color: #0b0d2a;
+  color: #000;
   background: var(--gold);
   font-variant-numeric: tabular-nums;
 }
@@ -269,8 +267,8 @@
   overflow: hidden;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.07),
-    inset 0 0 0 1px rgba(155, 163, 199, 0.12);
+    inset 0 1px 0 rgba(255, 231, 124, 0.1),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.07);
 }
 
 .glanceRow {
@@ -314,7 +312,7 @@
 .glanceSrc {
   font-size: 0.78rem;
   line-height: 1.45;
-  color: rgba(155, 163, 199, 0.8);
+  color: var(--muted);
   text-align: right;
 }
 
@@ -324,7 +322,7 @@
 }
 
 .glanceSrc a:hover {
-  color: var(--cyan);
+  color: var(--gold);
 }
 
 /* terms */
@@ -368,7 +366,7 @@
 }
 
 .partners a:hover {
-  color: var(--cyan);
+  color: var(--gold);
 }
 
 /* ---------- tablet ---------- */
@@ -438,4 +436,10 @@
   .partners {
     margin-top: 64px;
   }
+}
+
+/* The site's animated starfield (CosmicWrapper: "fixed inset-0 z-0") sits fully behind this opaque page.
+   Hide it while the pool page is mounted, so the phone's halo is the only thing drawing frames. */
+:global(body):has(.backdrop) :global(.fixed.inset-0.z-0) {
+  display: none;
 }
