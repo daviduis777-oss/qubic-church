@@ -15,3 +15,6 @@ Models and textures in this folder are public domain (CC0 1.0).
   "Medieval Cottage", "Tattered Wagon", "wooden barrel", supplied by Qubic Church; decimated and repacked for W4W.
 - b/church.glb, b/home_a.glb, b/home_b.glb, b/mine.glb, b/library.glb, b/post.glb: built with Meshy image-to-3D from
   concept art Qubic Church made for W4W (replacing the earlier community models for these).
+- hero_cg.glb (the Clockwork Gentleman), folk/hask_anim.glb (Old Hask), b/warden_anim.glb: Meshy models supplied by
+  Qubic Church, hand-rigged in Blender 5.2 for W4W; their moves are retargeted from Quaternius' Universal Animation
+  Library 1 Standard (CC0, quaternius.com). The static hero_w.glb, folk/hask.glb and b/warden.glb stay as fallbacks.
