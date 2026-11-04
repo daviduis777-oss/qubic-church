@@ -9,8 +9,19 @@ import { BUILDS, FACTS, sourceLine } from './knowledge.ts'
 import { MINER_COMMAND, PROCEDURES, practiceSourceLine, procedureSources, procedureText, TIPS } from './practice.ts'
 import { HARD_RULES } from './rules.ts'
 
-/** Built per request: `now` puts the live epoch and the time to its end into the prompt. */
+/** The live part: the epoch now and the time to its end. Sent as its own block after the cached one. */
+export function mariaNowBlock(now: Date = new Date()): string {
+  return `NOW (computed by code at request time; use it for "when does the epoch end" questions)
+- ${nowLine(now)} [epoch rule: ${EPOCH_SOURCE.label}, ${EPOCH_SOURCE.date}]`
+}
+
+/** Full prompt as one string (tests, the Discord card). The API sends static + now as two blocks. */
 export function mariaSystemPrompt(now: Date = new Date()): string {
+  return `${mariaSystemStatic()}\n\n${mariaNowBlock(now)}`
+}
+
+/** Everything that does not change per request, so the API can cache it. */
+export function mariaSystemStatic(): string {
   const figures = HARDWARE_FIGURES.map(f => `${f.name} ~${f.itPerSec} it/s (${f.kind}, est., ${HARDWARE_FIGURES_SOURCE.label})`).join('; ')
   const triage = RULES.map(r => `- ${r.title}: ${r.means} Fix: ${r.fix.join(' ')}`).join('\n')
   const launch = POOL.launchLine
@@ -33,9 +44,6 @@ STYLE
 
 HARD RULES
 ${HARD_RULES.map(r => `- ${r}`).join('\n')}
-
-NOW (computed by code at request time; use it for "when does the epoch end" questions)
-- ${nowLine(now)} [epoch rule: ${EPOCH_SOURCE.label}, ${EPOCH_SOURCE.date}]
 
 THE POOL
 - Name: ${POOL.name}. Setup page: ${POOL.onboardingUrl}

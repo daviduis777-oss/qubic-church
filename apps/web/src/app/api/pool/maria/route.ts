@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { MARIA_LIMITS } from '@/lib/pool/config'
 import { poolAllowed } from '@/lib/pool/gate'
-import { mariaSystemPrompt } from '@/lib/pool/prompt'
+import { mariaNowBlock, mariaSystemStatic } from '@/lib/pool/prompt'
 import { clientIp, takeMessage } from '@/lib/pool/ratelimit'
 import { redactWallets } from '@/lib/pool/redact'
 
@@ -45,7 +45,11 @@ export async function POST(req: Request) {
       body: JSON.stringify({
         model: process.env.MARIA_MODEL || 'claude-haiku-5-5',
         max_tokens: 700,
-        system: mariaSystemPrompt(),
+        // the long static prompt is cached; only the live epoch line changes per request
+        system: [
+          { type: 'text', text: mariaSystemStatic(), cache_control: { type: 'ephemeral' } },
+          { type: 'text', text: mariaNowBlock() },
+        ],
         messages,
         stream: true,
       }),
