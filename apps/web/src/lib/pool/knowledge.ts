@@ -3,7 +3,7 @@
  * and Maria's AI prompt all read from here. Add a fact here, not in a component.
  */
 
-export type SourceId = 'academy' | 'cointribune' | 'guide' | 'partner' | 'doge'
+export type SourceId = 'academy' | 'cointribune' | 'guide' | 'partner' | 'doge' | 'field'
 
 export const SOURCES: Record<SourceId, { label: string; url: string; date: string }> = {
   academy: { label: 'Qubic Academy, Mining 1.2', url: 'https://qubic.org/academy/mining/module-1/lesson-2', date: 'checked 4 Nov 2026' },
@@ -11,6 +11,7 @@ export const SOURCES: Record<SourceId, { label: string; url: string; date: strin
   guide: { label: 'Qubic Church mining guide', url: '/mine-qubic', date: 'v0.3, epoch 230' },
   partner: { label: "Pool partner's hardware table", url: '', date: 'est.' },
   doge: { label: 'Qubic DOGE launch release', url: 'https://doge-stats.qubic.org/', date: '1 Apr 2026' },
+  field: { label: 'Qubic Church field runs on Clore', url: '', date: 'epochs 233 to 234, Oct 2026' },
 }
 
 export const sourceLine = (ids: SourceId[]) => ids.map(id => `${SOURCES[id].label} (${SOURCES[id].date})`).join('; ')
@@ -32,6 +33,13 @@ export const FACTS: Fact[] = [
   { topic: 'Network', text: 'Stable broadband, at least 10 Mbps up and down. Low latency shortens job turnaround.', sources: ['academy'] },
   { topic: 'Host', text: 'PCIe x8 or better per card, and a host with 99% or better uptime.', sources: ['guide'] },
   { topic: 'Mac', text: 'Apple Silicon Macs mine on the CPU through the pool macOS miner. The M3 Pro runs at about 40 it/s (est.).', sources: ['partner'] },
+  { topic: 'Measured', text: 'Measured, epoch 233: 4x RTX 4090 (PCIe 3.0 x8, Xeon E5-2696 v3 36/72 threads, GPU only) averaged about 2,440 sol/h over about 8 hours, so about 610 sol/h per 4090.', sources: ['field'] },
+  { topic: 'Measured', text: 'Measured, 10 Oct 2026: 7x RTX 5080 on an EPYC server made about 2,460 sol/h and beat the 4x 4090 Haswell rig on both sol/h and solutions per dollar. The platform behind the cards matters more than the card tier.', sources: ['field'] },
+  { topic: 'Measured', text: 'The RTX 5080 (16 GB) rents cheaply because 16 GB is too small for AI rental, yet it is enough for Qubic. On rentals judge price per card: aim for about 8 USD/day or less per 16 GB card (Oct 2026 market, changes weekly).', sources: ['field'] },
+  { topic: 'Rental', text: 'Rental filters that worked: host reliability 98% or more, VRAM 16 GB or more, PCIe 4.0 x8 or 3.0 x16 (never x1/x4 risers), a recent server CPU (EPYC Zen 2 or newer, Threadripper Zen 4 or newer), 12 or more CPU threads per GPU, a max rental period of 12 h or more, and no hosts in Russia or Belarus (pool servers unreachable).', sources: ['field'] },
+  { topic: 'Mode', text: 'Multi-GPU servers: run GPU only. One GPU next to a Ryzen 9 7000/9000 with AVX-512: run GPU and CPU together.', sources: ['field'] },
+  { topic: 'Judging', text: 'Judging a rig, from our runs: do not judge it in the first 20 minutes (ant sessions start cold, solutions come in bursts); the first 1 to 2 hours overstate the rate by about 1.3 to 1.5x; judge by the wallet total on the pool, not the per-worker counter, which resets on restart; close a rig that shows 0 solutions after 20 minutes plus one restart.', sources: ['field'] },
+  { topic: 'Measured', text: 'These measurements are from epochs 233 to 234. The mining algorithm changes every few weeks, so treat them as a calibration point, not a constant, until the pool reports fresh numbers.', sources: ['field'] },
   { topic: 'ASIC', text: 'Since 1 April 2026 Qubic also mines Dogecoin on ASICs, on separate hardware. ASICs are not for this pool: it mines with CPUs and NVIDIA GPUs.', sources: ['doge'] },
 ]
 

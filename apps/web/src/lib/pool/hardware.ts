@@ -132,8 +132,9 @@ export function classifyGpu(raw: string): Card | null {
   if (/apple|\bm[1-5]\b/.test(s)) return card(title, 'Unknown', ['On a Mac the CPU does the mining; the built-in GPU is not used.'], 'none')
   const cuda: [string, string] = ['Needs', 'CUDA 12, recent driver']
   if (/5070 ?ti/.test(s)) return card(title, 'Golden', ['The value pick: best cost per solution behind a strong CPU.'], 'none', [['VRAM', '16 GB'], cuda], ['guide', 'cointribune'])
+  if (/5080/.test(s)) return card(title, 'Golden', ['Our best measured rental value: 7 of them on an EPYC beat 4x 4090 on sol/h and on solutions per dollar (10 Oct 2026).', 'Rents cheap: 16 GB is too small for AI jobs, enough for Qubic.'], 'none', [['VRAM', '16 GB'], cuda, ['Measured', '7x ~2,460 sol/h']], ['field'])
   if (/5090/.test(s)) return card(title, 'Good', ['Fast and pricey. Pays off only while a solution is worth a lot.'], 'none', [['VRAM', '32 GB'], cuda], ['guide'])
-  if (/4090/.test(s)) return card(title, 'Good', ['Fast and pricey. Pays off only while a solution is worth a lot.'], 'none', [['VRAM', '24 GB'], cuda], ['guide'])
+  if (/4090/.test(s)) return card(title, 'Good', ['Fast and pricey. Pays off only while a solution is worth a lot.', 'Measured: about 610 sol/h per card in a 4-card GPU-only rig (epoch 233).'], 'none', [['VRAM', '24 GB'], cuda, ['Measured', '~610 sol/h, E233']], ['guide', 'field'])
   if (/3090/.test(s)) return card(title, 'Good', ['Old but cheap. Often the quiet winner on cost per solution.'], 'none', [['VRAM', '24 GB'], cuda], ['guide'])
   if (/3080/.test(s)) return card(title, 'Good', ['Old but cheap. Often the quiet winner on cost per solution.'], 'none', [['VRAM', '10 to 12 GB'], cuda], ['guide'])
   if (/rtx|gtx|nvidia|geforce|quadro|tesla|\b[ahl]\d{2,3}\b|\bh100\b|\ba100\b/.test(s)) {
