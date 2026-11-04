@@ -46,7 +46,7 @@ test('facts: AMD is unmeasured, not a flat no; staleness carries the later chang
   assert.doesNotMatch(amd.text, /not supported/)
   assert.ok(!GLANCE.some(g => /AMD/.test(g.pick) && /Not for this pool/.test(g.part)))
   const st = FACTS.find(f => f.topic === 'Staleness')!
-  for (const re of [/epochs 229 and 233/, /jetski pool and its miner, both gone/, /epoch 235 changed the threshold and task file/, /epoch 236 moved to 32-neuron/, /epoch 241/]) assert.match(st.text, re)
+  for (const re of [/epochs 229 and 233/, /jetski pool and its miner \(not recommended/, /epoch 235 changed the threshold and task file/, /epoch 236 moved to 32-neuron/, /epoch 241/]) assert.match(st.text, re)
   assert.ok(FACTS.some(f => /POPULATION was set to 64, about 3 GB per colony/.test(f.text)))
   assert.ok(FACTS.some(f => /computor seats/.test(f.text) && /Miners reported losses in some epochs/.test(f.text)))
 })
@@ -139,7 +139,7 @@ test('doctor: an old miner after an algorithm change', () => {
   assert.equal(first('unsupported task template v1.308.1'), 'old-miner')
   const r = RULES.find(x => x.id === 'old-miner')!
   assert.match(r.means, /epoch 235 changed the threshold and task file, epoch 236 moved to 32-neuron/i)
-  assert.match(r.fix.join(' '), /jetski pool are gone/)
+  assert.match(r.fix.join(' '), /jetski included, not recommended/)
   // existing rules keep their place
   assert.equal(first('CUDA driver version is insufficient for CUDA runtime version'), 'driver-old')
   assert.equal(first('pool: invalid wallet address'), 'invalid-wallet')
@@ -184,7 +184,7 @@ test('faq: every theme has entries, ids are unique, each entry is complete', () 
   }
 })
 
-test('faq: no income figures, quotes under 15 words, jetski only as gone, no partner name', () => {
+test('faq: no income figures, quotes under 15 words, jetski only as not recommended, no partner name', () => {
   const all = JSON.stringify(FAQ)
   assert.doesNotMatch(all, MONEY)
   assert.doesNotMatch(all, /—/)
@@ -192,7 +192,7 @@ test('faq: no income figures, quotes under 15 words, jetski only as gone, no par
   for (const e of FAQ) {
     // quoted text inside an answer (miner or CfB quotes, log lines) stays short
     for (const m of e.a.matchAll(/"([^"]+)"/g)) assert.ok(m[1]!.split(/\s+/).length < 15, `${e.id}: ${m[1]}`)
-    for (const m of e.a.matchAll(/jetski/gi)) assert.match(e.a.slice(m.index!, m.index! + 40), /gone|left|endpoints/, e.id)
+    for (const m of e.a.matchAll(/jetski/gi)) assert.match(e.a.slice(m.index!, m.index! + 40), /not recommended|endpoints/, e.id)
     assert.doesNotMatch(e.a, /\brecommend(ed)? jetski\b/i)
   }
   // losses only as a plain statement

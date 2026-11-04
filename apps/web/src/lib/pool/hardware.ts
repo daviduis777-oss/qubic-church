@@ -22,7 +22,7 @@ const fig = (name: string) => HARDWARE_FIGURES.find(f => f.name === name)?.itPer
 
 const CHECK_AVX = 'Check on Linux: grep -o -m1 avx512f /proc/cpuinfo prints avx512f if the CPU has AVX-512.'
 /** AMD Radeon: we have no measurement, and support depends on the pool's miner (not a flat no). */
-export const AMD_REASONS = ["No measurements from us. Support depends on the pool's miner.", 'A QLI moderator said in July 2026 that QLI and jetski (now gone) supported AMD.', 'NVIDIA/CUDA is the proven path.']
+export const AMD_REASONS = ["No measurements from us. Support depends on the pool's miner.", 'A QLI moderator said in July 2026 that QLI and jetski (not recommended) supported AMD; an AMD GPU miner was announced for later (30 Jul and 1 Aug 2026).', 'NVIDIA/CUDA is the proven path.']
 
 /** Xeon E5 v3/v4 behind GPUs: what our runs measured. */
 const E5_HOST = 'As a GPU host it works if threads per card and PCIe are fine: 4x RTX 4090 on an E5-2696 v3 made about 2,440 sol/h (epoch 233). EPYC hosts did better per dollar.'
