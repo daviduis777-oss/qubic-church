@@ -117,3 +117,26 @@ export const MEASURE = {
   /** Saved results per connection per day. */
   postsPerDay: 6,
 } as const
+
+/**
+ * My rig: the miner's own dashboard (rig.ts) and its share card (card-sign.ts, /api/pool/card).
+ * Warm-up and early windows come from MEASURE (minWindowMin, warmupMin) so the two never disagree.
+ */
+export const RIG = {
+  /** A reading older than this many minutes is "no signal". Pool stats refresh often; a pasted log is a snapshot. */
+  noSignalMin: { pool: 20, log: 60, demo: 60 },
+  /**
+   * After the weekly epoch change, miners sit idle until the new epoch's work arrives.
+   * TODO(Bob): confirm the real idle window with the partner; 60 minutes is our field estimate.
+   */
+  epochIdleMin: 60,
+  /** Rejected share of submitted solutions: the coach mentions it from here, the status turns "needs a look" from lookPct. */
+  rejectedCheckPct: 5,
+  rejectedLookPct: 12,
+  /** Field rule: at least 12 CPU threads (8 cores) per GPU, or the CPU starves the cards. */
+  threadsPerGpu: 12,
+  /** Rigs kept in this browser's list. */
+  maxRigs: 12,
+  /** Share card links expire after this many seconds; the PNG itself is the thing people post. */
+  cardTtlS: 30 * 60,
+} as const

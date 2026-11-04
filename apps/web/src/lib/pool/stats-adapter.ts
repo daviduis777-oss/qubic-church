@@ -16,6 +16,7 @@ import {
   type SampleHardware,
   strip,
 } from './measure.ts'
+import type { RigReading } from './rig.ts'
 
 /** One worker as we expect the pool to report it. Every field but `worker` is optional. */
 export type PoolWorkerStat = {
@@ -177,4 +178,54 @@ export function parsePoolStats(
     })
   }
   return out
+}
+
+/* ---------------- one worker, for My rig ---------------- */
+
+/**
+ * The pool's numbers for one worker, as a My rig reading. Tested with a fake payload, like parsePoolStats.
+ * Wallet fields in the payload are never read.
+ */
+export function workerReading(payload: unknown, worker: string, now: Date = new Date()): RigReading | null {
+  const p = payload as { workers?: unknown; data?: unknown; epoch?: unknown }
+  const list = (Array.isArray(payload) ? payload : Array.isArray(p?.workers) ? p.workers : Array.isArray(p?.data) ? p.data : [payload]) as Record<string, unknown>[]
+  const raw = list.find(x => x && typeof x === 'object' && str(x.worker ?? x.workerName ?? x.name) === worker)
+  if (!raw) return null
+  const fromTag = hardwareFromWorker(worker)
+  const gpu = normalizeGpu(str(raw.gpu) ?? '') ?? fromTag?.gpu ?? null
+  const cpu = str(raw.cpu) ? normalizeCpu(str(raw.cpu)!) : fromTag?.cpu !== 'Unknown' ? fromTag?.cpu : undefined
+  const solutions = n(raw.solutions ?? raw.sols ?? raw.shares)
+  const online = n(raw.onlineMinutes ?? raw.uptimeMinutes)
+  const seen = raw.lastSeen
+  const at = typeof seen === 'number' ? (seen < 1e12 ? seen * 1000 : seen) : typeof seen === 'string' && Number.isFinite(Date.parse(seen)) ? Date.parse(seen) : now.getTime()
+  const its = n(raw.its)
+  const series = Array.isArray(raw.series)
+    ? (raw.series as { t?: unknown; solPerHour?: unknown }[])
+        .map(x => ({ t: n(x?.t), solPerHour: n(x?.solPerHour) }))
+        .filter((x): x is { t: number; solPerHour: number } => x.t !== undefined && x.solPerHour !== undefined)
+    : []
+  return {
+    source: 'pool',
+    worker,
+    at,
+    epoch: n(raw.epoch) ?? n(p?.epoch) ?? epochAt(now).epoch,
+    hw: { gpu, gpuCount: gpu ? (n(raw.gpuCount) ?? fromTag?.gpuCount ?? 1) : 0, cpu, mode: gpu ? 'gpu' : 'cpu' },
+    solutions,
+    solPerHour: solutions !== undefined && online ? Math.round((solutions / online) * 600) / 10 : undefined,
+    uptimeMin: online,
+    its: its === undefined ? {} : { [gpu ? 'CUDA' : 'CPU']: its },
+    rejected: n(raw.rejected),
+    series,
+    faults: [],
+    epochIdle: raw.state === 'idle' || raw.status === 'idle' ? true : undefined,
+  }
+}
+
+/**
+ * Per-worker stats for My rig. null until the pool publishes them.
+ * TODO(Bob): when POOL.statsUrl exists, fetch it through a gated /api/pool/worker route (no CORS, no wallet in
+ * the browser), pass the payload to workerReading(), and My rig shows source "pool" with no other change.
+ */
+export function poolWorkerAdapter(): { fetch(worker: string): Promise<RigReading | null> } | null {
+  return null
 }

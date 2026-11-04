@@ -5,12 +5,14 @@ import { setRequestLocale } from 'next-intl/server'
 import { Device } from '@/components/pool/Device'
 import { poolFontVars } from '@/components/pool/fonts'
 import { MariaApp } from '@/components/pool/maria/MariaApp'
-import { type HardwareRow, selfReportedLine, topRows } from '@/lib/pool/aggregate'
+import { PoolTabs } from '@/components/pool/PoolTabs'
+import { type HardwareRow, type Summary, selfReportedLine, topRows } from '@/lib/pool/aggregate'
 import { keepPercent, MEASURE, POOL, WALLET } from '@/lib/pool/config'
 import { poolAllowed, poolPublic } from '@/lib/pool/gate'
 import { GLANCE, SOURCES } from '@/lib/pool/knowledge'
 import { fmtRate } from '@/lib/pool/measure'
 import { measureStore } from '@/lib/pool/store'
+import type { Bar, Usage } from '@/lib/pool/usage'
 import p from './pool.module.css'
 
 /*
@@ -61,14 +63,11 @@ const STEPS = [
 
 const unitLabel = (r: HardwareRow) => (r.unit === 'card' ? 'per card, GPU only' : r.key.startsWith('mix|') ? 'per rig, GPU and CPU' : 'per rig, CPU only')
 
-/** "What our miners measure": medians per card (GPU-only rigs) or per rig, with n and the epoch. Rates only. */
-function Measured({ rows, drift }: { rows: HardwareRow[]; drift: HardwareRow[] }) {
+/** "What it delivers": medians per card (GPU-only rigs) or per rig, with n and the epoch. Rates only. */
+function Delivers({ rows, drift }: { rows: HardwareRow[]; drift: HardwareRow[] }) {
   return (
-    <section aria-labelledby="measured" className={p.section}>
-      <h2 className={p.h2} id="measured">
-        What our miners measure
-      </h2>
-      <p className={p.sectionLede}>
+    <>
+      <p className={p.tabLede}>
         Median solutions per hour from saved runs and our own field runs. Rates only, never income. Under {MEASURE.fewData} rigs is few data; older than{' '}
         {MEASURE.olderAfterEpochs} epochs is marked older, because the algorithm changes every few weeks.
       </p>
@@ -90,15 +89,7 @@ function Measured({ rows, drift }: { rows: HardwareRow[]; drift: HardwareRow[] }
                   <span className={p.glancePick}>{r.label}</span>
                   <span className={p.mUnit}>{unitLabel(r)}</span>
                   {selfReportedLine(r) && <span className={p.mUnit}>{selfReportedLine(r)}</span>}
-                  {r.tags.length > 0 && (
-                    <span className={p.mTags}>
-                      {r.tags.map(t => (
-                        <span className={`${p.mTag} ${t === 'older' ? p.mTagOld : ''}`} key={t}>
-                          {t}
-                        </span>
-                      ))}
-                    </span>
-                  )}
+                  <TagList tags={r.tags} />
                 </th>
                 <td className={p.mNum} data-label="Median">
                   {fmtRate(r.latest.median ?? 0)}
@@ -124,6 +115,99 @@ function Measured({ rows, drift }: { rows: HardwareRow[]; drift: HardwareRow[] }
           </p>
         ) : null,
       )}
+    </>
+  )
+}
+
+function TagList({ tags }: { tags: string[] }) {
+  if (!tags.length) return null
+  return (
+    <span className={p.mTags}>
+      {tags.map(t => (
+        <span className={`${p.mTag} ${t === 'older' ? p.mTagOld : ''}`} key={t}>
+          {t}
+        </span>
+      ))}
+    </span>
+  )
+}
+
+function Bars({ title, bars, rate }: { title: string; bars: Bar[]; rate?: boolean }) {
+  if (!bars.length) return null
+  const max = Math.max(...bars.map(b => b.share)) || 1
+  return (
+    <div className={p.uCard}>
+      <h3 className={p.uTitle}>{title}</h3>
+      <ul className={p.uBars}>
+        {bars.map(b => (
+          <li key={b.key}>
+            <div className={p.uHead}>
+              <span className={p.uLabel}>{b.label}</span>
+              <span className={p.uShare}>
+                {Math.round(b.share * 100)}%<span className={p.uN}> n {b.n}</span>
+              </span>
+            </div>
+            <span aria-hidden className={p.uTrack}>
+              <span className={p.uFill} style={{ width: `${Math.max(3, (b.share / max) * 100)}%` }} />
+            </span>
+            {rate && (
+              <span className={p.uRate}>
+                {b.median !== undefined ? `median ${fmtRate(b.median)} sol/h ${b.unit === 'card' ? 'per card' : 'per rig'}` : 'no current rate'}
+                {b.tags.length > 0 && ` · ${b.tags.join(', ')}`}
+              </span>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+/** "What people use": share of rigs by GPU and CPU family, the median for each, the common setups. */
+function Uses({ u }: { u?: Usage }) {
+  if (!u?.n) return <p className={p.sectionLede}>No measured rigs yet.</p>
+  return (
+    <>
+      <p className={p.tabLede}>
+        {u.n} rig{u.n === 1 ? '' : 's'} from saved runs and our own field runs, epoch{u.from === u.to ? ` ${u.to}` : `s ${u.from} to ${u.to}`}. Each rig counts once.
+        GPU medians are per card, from GPU-only rigs; CPU medians are per rig, from CPU-only rigs.
+      </p>
+      <TagList tags={[...(u.few ? ['few data'] : []), ...(u.older ? ['older'] : [])]} />
+      <div className={p.uGrid}>
+        <Bars bars={u.gpu} rate title="GPU" />
+        <Bars bars={u.cpu} rate title="CPU family" />
+        <Bars bars={u.mode} title="Mode" />
+        <Bars bars={u.os} title="System" />
+        <Bars bars={u.owner} title="Own or rented" />
+        {u.top && (
+          <div className={p.uCard}>
+            <h3 className={p.uTitle}>Most common setup</h3>
+            <p className={p.uTop}>{u.top.label}</p>
+            <p className={p.uRate}>
+              {u.top.n} of {u.n} rigs
+            </p>
+          </div>
+        )}
+      </div>
+    </>
+  )
+}
+
+/** One section, two tabs: what people mine with, and what it delivers. */
+function WhoMines({ sum }: { sum: Summary | null }) {
+  return (
+    <section aria-labelledby="measured" className={p.section}>
+      <h2 className={p.h2} id="measured">
+        Who mines with what
+      </h2>
+      <p className={p.sectionLede}>What our miners run and what it measures, with n and the epoch on every number.</p>
+      <PoolTabs
+        classes={{ list: p.tabs, tab: p.tab, on: p.tabOn, panel: p.tabPanel }}
+        tabs={[
+          { label: 'What people use', panel: <Uses u={sum?.usage} /> },
+          { label: 'What it delivers', panel: <Delivers drift={(sum?.rows ?? []).filter(r => r.drift)} rows={topRows(sum, 8)} /> },
+        ]}
+      />
     </section>
   )
 }
@@ -258,7 +342,7 @@ export default async function PoolPage(props: { params: Promise<{ locale: string
           </dl>
         </section>
 
-        <Measured drift={(measured?.rows ?? []).filter(r => r.drift)} rows={topRows(measured, 8)} />
+        <WhoMines sum={measured} />
 
         <section aria-labelledby="terms" className={p.section}>
           <h2 className={p.h2} id="terms">

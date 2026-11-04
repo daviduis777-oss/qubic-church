@@ -14,7 +14,7 @@ import { LogMeasure, useMeasured } from './measured'
 import { Checklist, Command, CopyButton, Group, Reveal, SEVERITY_LABEL, StatusCard, severityIcon, severityTone, TONE, VerdictCard, verdictTone } from './ui'
 import s from './maria.module.css'
 
-export type Screen = 'home' | 'pick' | 'connect' | 'doctor' | 'ask'
+export type Screen = 'home' | 'pick' | 'connect' | 'doctor' | 'ask' | 'rig'
 export type Go = (screen: Screen, handoff?: Answers) => void
 
 const OS_CHIPS = (['linux', 'windows', 'macos', 'hiveos'] as Os[]).map(o => ({ value: o, label: OS_LABEL[o] }))
@@ -249,7 +249,7 @@ const CONNECT_STEPS: StepDef[] = [
   {
     id: 'cpuModel',
     when: a => a.hw === 'amd',
-    ask: () => 'AMD cards are not supported by the official GPU miner, so we mine on your CPU. Which CPU is it?',
+    ask: () => "AMD cards: no measurements from us. Support depends on the pool's miner; NVIDIA/CUDA is the proven path. This plan mines on your CPU. Which CPU is it?",
     chips: () => [{ value: '-', label: 'Skip' }],
     text: { label: 'CPU model', placeholder: 'CPU model', maxLength: 80 },
     echo: v => (v === '-' ? 'Skipped' : v),
@@ -395,8 +395,16 @@ function connectOutcome(a: Answers, go: Go): Outcome {
     tone: plan.warnings.length ? TONE.gold : TONE.sage,
     lead: 'Here is your setup. Copy each value exactly.',
     cards: [<Reveal key="r">{cards}</Reveal>],
-    chips: [{ value: 'doctor', label: 'Something looks wrong' }, restartChip('Another machine')],
-    onChip: (v: string) => go(v === 'doctor' ? 'doctor' : 'home'),
+    chips: [{ value: 'rig', label: 'Watch it in My rig', primary: true }, { value: 'doctor', label: 'Something looks wrong' }, restartChip('Another machine')],
+    onChip: (v: string) => {
+      if (v === 'rig') {
+        // the worker and the machine go to My rig; never the wallet
+        const gpu = hw === 'nvidia' ? (model ?? '') : ''
+        const cpu = hw === 'amd' ? (a.cpuModel === '-' ? '' : (a.cpuModel ?? '')) : hw === 'cpu' || hw === 'apple' ? (model ?? '') : ''
+        return go('rig', { worker: a.worker ?? '', gpu, gpuCount: gpu ? '1' : '', cpu, threads: a.threads && a.threads !== '0' ? a.threads : '' })
+      }
+      go(v === 'doctor' ? 'doctor' : 'home')
+    },
   }
 }
 

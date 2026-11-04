@@ -1,7 +1,7 @@
 'use client'
 
 import { motion, useReducedMotion } from 'framer-motion'
-import { Cpu, MessageCircle, PlugZap, Stethoscope } from 'lucide-react'
+import { Activity, ChevronRight, Cpu, MessageCircle, PlugZap, Stethoscope } from 'lucide-react'
 import { type CSSProperties, type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { diagnose } from '@/lib/pool/doctor'
 import { poolFontVars } from '../fonts'
@@ -10,6 +10,8 @@ import { type Answers, RingContext } from './flow'
 import { ConnectFlow, DoctorFlow, type Go, PickFlow, type Screen } from './flows'
 import { Halo } from './Halo'
 import { MeasuredProvider } from './measured'
+import { RigFlow } from './rig'
+import { loadRigs } from '@/lib/pool/rig'
 import type { HaloMode as RingMode } from './halo-engine'
 import { Field, PRESS, SPRING, TONE } from './ui'
 import s from './maria.module.css'
@@ -19,7 +21,7 @@ const CHAR_TILE = { background: 'linear-gradient(160deg, #3a3834 0%, #1c1b19 100
 
 type Entry = { id: number; screen: Screen; dir: 1 | -1; handoff?: Answers; first?: string; leaving?: 1 | -1; still?: boolean }
 
-const TILES: { id: Exclude<Screen, 'home'>; title: string; sub: string; icon: ReactNode; look: CSSProperties }[] = [
+const TILES: { id: Exclude<Screen, 'home' | 'rig'>; title: string; sub: string; icon: ReactNode; look: CSSProperties }[] = [
   { id: 'pick', title: 'Pick hardware', sub: 'Buy, rent, or check yours', icon: <Cpu size={20} strokeWidth={2} />, look: GOLD_TILE },
   { id: 'connect', title: 'Connect my machine', sub: 'PC, Mac, rig or rented box', icon: <PlugZap size={20} strokeWidth={2} />, look: CHAR_TILE },
   { id: 'doctor', title: 'Fix my rig', sub: 'Paste a log or a symptom', icon: <Stethoscope size={20} strokeWidth={2} />, look: CHAR_TILE },
@@ -37,6 +39,11 @@ export function MariaApp() {
   const [ring, setRing] = useState<{ mode: RingMode; tone: string }>({ mode: 'idle', tone: TONE.gold })
   const [status, setStatus] = useState('')
   const reduce = useReducedMotion()
+  // rigs saved in this browser, read after mount so the server render and the first client render agree
+  const [rigCount, setRigCount] = useState(0)
+  useEffect(() => {
+    if (entries.some(e => e.screen === 'home' && !e.leaving)) setRigCount(loadRigs().length)
+  }, [entries])
 
   const api = useMemo(
     () => ({
@@ -93,6 +100,19 @@ export function MariaApp() {
   const reduceRef = useRef(reduce)
   reduceRef.current = reduce
 
+  const rigTile = (
+    <motion.button className={`${s.tile} ${s.tileWide}`} onClick={() => go('rig')} transition={SPRING} type="button" whileTap={PRESS}>
+      <span aria-hidden className={s.glyph} style={GOLD_TILE}>
+        <Activity size={20} strokeWidth={2.2} />
+      </span>
+      <span style={{ flex: 1, minWidth: 0 }}>
+        <span className={s.tileTitle}>My rig</span>
+        <span className={s.tileSub}>{rigCount ? `${rigCount} rig${rigCount === 1 ? '' : 's'} in this browser` : 'Watch it mine. Share it.'}</span>
+      </span>
+      <ChevronRight aria-hidden className={s.tileChev} size={18} />
+    </motion.button>
+  )
+
   // Home keeps its scroll position between visits; a pushed flow always starts at the top (it is a new node).
   const homeScroll = useRef(0)
 
@@ -131,10 +151,15 @@ export function MariaApp() {
                     >
                       <div className={s.presence}>
                         <Halo face={62} label="Maria" mode={ring.mode} size={216} tone={ring.tone} />
-                        <h2 className={s.wordmark}>Maria</h2>
+                        {/* a span carries the serif: the site's global heading rule forces its own face on every h2 */}
+                        <h2 className={s.wordmarkH}>
+                          <span className={s.wordmark}>Maria</span>
+                        </h2>
                         <p className={s.homeLine}>What are we working on?</p>
                       </div>
                       <nav aria-label="Maria tools" className={s.tiles}>
+                        {/* a returning miner sees My rig first; a newcomer starts with Pick hardware */}
+                        {rigCount > 0 && rigTile}
                         {TILES.map(t => (
                           <motion.button className={s.tile} key={t.id} onClick={() => go(t.id)} transition={SPRING} type="button" whileTap={PRESS}>
                             <span aria-hidden className={s.glyph} style={t.look}>
@@ -146,6 +171,7 @@ export function MariaApp() {
                             </span>
                           </motion.button>
                         ))}
+                        {rigCount === 0 && rigTile}
                       </nav>
                     </div>
                     <div className={s.dock}>
@@ -157,6 +183,7 @@ export function MariaApp() {
                 {e.screen === 'connect' && <ConnectFlow go={go} handoff={e.handoff} />}
                 {e.screen === 'doctor' && <DoctorFlow go={go} initial={e.handoff} />}
                 {e.screen === 'ask' && <AskFlow first={e.first} go={go} />}
+                {e.screen === 'rig' && <RigFlow go={go} handoff={e.handoff} />}
               </motion.div>
             ))}
           </div>
