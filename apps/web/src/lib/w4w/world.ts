@@ -834,7 +834,7 @@ export const STANDING = [
 export const FOLK_AT: Record<FolkId, { cell: Cell; n: number; away: string }> = {
   hask: { cell: [0, -TOWN_RING], n: 1, away: 'Old Hask is at the North Gate. Go and stand with him.' },
   ivo: { cell: BAR_CELL, n: 0, away: 'Ivo only talks across his own bar. Go inside The Last Coal.' },
-  fenn: { cell: SPECIAL.library as unknown as Cell, n: 0, away: 'Master Fenn never leaves the Library. Not this side of it.' },
+  fenn: { cell: SPECIAL.library as unknown as Cell, n: 0, away: 'Master Fenn hardly ever leaves the Library. Go to him there.' },
   selma: { cell: SPECIAL.observatory as unknown as Cell, n: 0, away: 'Dr. Ruud is at the Observatory, under the dome.' },
   maria: { cell: SPECIAL.church as unknown as Cell, n: 0, away: 'Maria is in the church. Sit with her there.' },
   ada: { cell: POST_CELL, n: 1, away: 'Ada Pell is at the post office, by the sack.' },
@@ -986,18 +986,18 @@ function chainAct(ws: WState, c: Char, b: Record<string, unknown>): string | nul
   const P = FOLK_AT[S.at]; if (dist(cellAt(c, now), P.cell) > P.n) return P.away
   if (k && n > 0 && k.day >= dayOf(now)) return 'Give it a night. Come back tomorrow.'
   if (standingOf(c, C.giver).lv < S.lv) return 'They do not know you well enough for that yet.'
-  const pick = S.picks ? String(b.pick ?? '') : ''; if (S.picks && !S.picks[pick]) return 'Choose first.'
+  const pick = S.picks ? String(b.pick ?? '') : ''; if (S.picks && !Object.hasOwn(S.picks, pick)) return 'Choose first.'
   const st: ChainState = k ?? { n: 0, t: now, day: dayOf(now) }
   // a letter you carry for this one is handed over now: a broken seal is seen, and word of it gets back to the sender
   let broken = false
   if (st.letter && st.letter.to === S.at) { broken = !!st.letter.open; if (broken) { addStanding(c, st.letter.from, -SEAL_COST); (st.broke ??= []).push(st.letter.from) } st.letter = null }
   for (const [f, v] of Object.entries(S.give ?? {}) as [FolkId, number][]) if (!(broken && f === S.at)) addStanding(c, f, v)
-  if (S.picks) { for (const [f, v] of Object.entries(S.picks[pick]!) as [FolkId, number][]) addStanding(c, f, v); (st.picks ??= {})[n] = pick }
+  if (S.picks) { for (const [f, v] of Object.entries(S.picks[pick]!) as [FolkId, number][]) if (!(broken && f === S.at)) addStanding(c, f, v); (st.picks ??= {})[n] = pick }
   if (S.letter) st.letter = { from: S.at, to: S.letter }
   for (const t of S.ties ?? []) if (!(c.ties ??= []).includes(t)) c.ties.push(t)
   st.n = n + 1; st.t = now; st.day = dayOf(now)
   // the end of it is kept between you and them: nothing goes on the town feed
-  if (st.n >= C.steps.length) { st.done = now; for (const [f, v] of Object.entries(C.done) as [FolkId, number][]) addStanding(c, f, v); addGold(c, C.gold, now); addRenown(c, 2) }
+  if (st.n >= C.steps.length) { st.done = now; for (const [f, v] of Object.entries(C.done) as [FolkId, number][]) if (!(broken && f === S.at)) addStanding(c, f, v); addGold(c, C.gold, now); addRenown(c, 2) }
   ;(c.chains ??= {})[C.id] = st
   return null
 }
@@ -1337,7 +1337,7 @@ export function action(ws: WState, uid: string, op: string, b: Record<string, un
       if (c.path.length) return fail('Stand still and look.')
       if (ws.twelve?.[T.id]) return fail('Their lantern already burns on the Stone.')
       if (c.traces?.includes(T.id)) return fail('You already carry it.')
-      if (T.act === 1 && !traceOpen(T.id, now)) return fail('The snow hasn\'t given it up yet.')
+      if (T.act === 1 && !traceOpen(T.id, now)) return fail('Not yet. It turns up in its own week.')
       const at = (cell: Cell, n = 1) => dist(here, cell) <= n
       const there = T.at === 'veil' ? insideDome(here[0], here[1]) && DIRS.some(([dq, dr]) => !insideDome(here[0] + dq, here[1] + dr))
         : T.at === 'gate' ? at(GATE_CELL) : T.at === 'bar' ? at(BAR_CELL, 0) : T.at === 'library' ? at(SPECIAL.library as unknown as Cell)
