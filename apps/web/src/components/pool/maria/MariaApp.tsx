@@ -9,6 +9,7 @@ import { AskFlow } from './AskFlow'
 import { type Answers, RingContext } from './flow'
 import { ConnectFlow, DoctorFlow, type Go, PickFlow, type Screen } from './flows'
 import { Halo } from './Halo'
+import { MeasuredProvider } from './measured'
 import type { HaloMode as RingMode } from './halo-engine'
 import { Field, PRESS, SPRING, TONE } from './ui'
 import s from './maria.module.css'
@@ -97,68 +98,70 @@ export function MariaApp() {
 
   return (
     <RingContext.Provider value={ctx}>
-      <div className={`${s.app} ${poolFontVars}`}>
-        <p aria-live="polite" className={s.srOnly}>
-          {status}
-        </p>
-        <div className={s.stack}>
-          {entries.map(e => (
-            <motion.div
-              animate={e.leaving ? exit(e.leaving) : center}
-              aria-hidden={e.leaving ? true : undefined}
-              className={s.screen}
-              data-screen={e.screen}
-              initial={e.still ? false : enter(e.dir)}
-              inert={e.leaving ? true : undefined}
-              key={e.id}
-              onAnimationComplete={() => {
-                if (e.leaving) remove(e.id)
-              }}
-              style={{ zIndex: e.leaving ? (e.leaving > 0 ? 1 : 2) : e.dir > 0 ? 2 : 1, boxShadow: reduce ? undefined : '-14px 0 32px -12px rgba(0,0,0,0.85)' }}
-            >
-              {e.screen === 'home' && (
-                <>
-                  <div
-                    className={s.home}
-                    onScroll={e => {
-                      homeScroll.current = e.currentTarget.scrollTop
-                    }}
-                    ref={el => {
-                      if (el && homeScroll.current) el.scrollTop = homeScroll.current
-                    }}
-                  >
-                    <div className={s.presence}>
-                      <Halo face={62} label="Maria" mode={ring.mode} size={216} tone={ring.tone} />
-                      <h2 className={s.wordmark}>Maria</h2>
-                      <p className={s.homeLine}>What are we working on?</p>
+      <MeasuredProvider>
+        <div className={`${s.app} ${poolFontVars}`}>
+          <p aria-live="polite" className={s.srOnly}>
+            {status}
+          </p>
+          <div className={s.stack}>
+            {entries.map(e => (
+              <motion.div
+                animate={e.leaving ? exit(e.leaving) : center}
+                aria-hidden={e.leaving ? true : undefined}
+                className={s.screen}
+                data-screen={e.screen}
+                initial={e.still ? false : enter(e.dir)}
+                inert={e.leaving ? true : undefined}
+                key={e.id}
+                onAnimationComplete={() => {
+                  if (e.leaving) remove(e.id)
+                }}
+                style={{ zIndex: e.leaving ? (e.leaving > 0 ? 1 : 2) : e.dir > 0 ? 2 : 1, boxShadow: reduce ? undefined : '-14px 0 32px -12px rgba(0,0,0,0.85)' }}
+              >
+                {e.screen === 'home' && (
+                  <>
+                    <div
+                      className={s.home}
+                      onScroll={e => {
+                        homeScroll.current = e.currentTarget.scrollTop
+                      }}
+                      ref={el => {
+                        if (el && homeScroll.current) el.scrollTop = homeScroll.current
+                      }}
+                    >
+                      <div className={s.presence}>
+                        <Halo face={62} label="Maria" mode={ring.mode} size={216} tone={ring.tone} />
+                        <h2 className={s.wordmark}>Maria</h2>
+                        <p className={s.homeLine}>What are we working on?</p>
+                      </div>
+                      <nav aria-label="Maria tools" className={s.tiles}>
+                        {TILES.map(t => (
+                          <motion.button className={s.tile} key={t.id} onClick={() => go(t.id)} transition={SPRING} type="button" whileTap={PRESS}>
+                            <span aria-hidden className={s.glyph} style={t.look}>
+                              {t.icon}
+                            </span>
+                            <span>
+                              <span className={s.tileTitle}>{t.title}</span>
+                              <span className={s.tileSub}>{t.sub}</span>
+                            </span>
+                          </motion.button>
+                        ))}
+                      </nav>
                     </div>
-                    <nav aria-label="Maria tools" className={s.tiles}>
-                      {TILES.map(t => (
-                        <motion.button className={s.tile} key={t.id} onClick={() => go(t.id)} transition={SPRING} type="button" whileTap={PRESS}>
-                          <span aria-hidden className={s.glyph} style={t.look}>
-                            {t.icon}
-                          </span>
-                          <span>
-                            <span className={s.tileTitle}>{t.title}</span>
-                            <span className={s.tileSub}>{t.sub}</span>
-                          </span>
-                        </motion.button>
-                      ))}
-                    </nav>
-                  </div>
-                  <div className={s.dock}>
-                    <Field autoFocus={false} label="Ask Maria" multiline onSubmit={fromComposer} placeholder="Ask Maria" />
-                  </div>
-                </>
-              )}
-              {e.screen === 'pick' && <PickFlow go={go} />}
-              {e.screen === 'connect' && <ConnectFlow go={go} handoff={e.handoff} />}
-              {e.screen === 'doctor' && <DoctorFlow go={go} initial={e.handoff} />}
-              {e.screen === 'ask' && <AskFlow first={e.first} go={go} />}
-            </motion.div>
-          ))}
+                    <div className={s.dock}>
+                      <Field autoFocus={false} label="Ask Maria" multiline onSubmit={fromComposer} placeholder="Ask Maria" />
+                    </div>
+                  </>
+                )}
+                {e.screen === 'pick' && <PickFlow go={go} />}
+                {e.screen === 'connect' && <ConnectFlow go={go} handoff={e.handoff} />}
+                {e.screen === 'doctor' && <DoctorFlow go={go} initial={e.handoff} />}
+                {e.screen === 'ask' && <AskFlow first={e.first} go={go} />}
+              </motion.div>
+            ))}
+          </div>
         </div>
-      </div>
+      </MeasuredProvider>
     </RingContext.Provider>
   )
 }

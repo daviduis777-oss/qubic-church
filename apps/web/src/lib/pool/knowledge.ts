@@ -43,6 +43,29 @@ export const FACTS: Fact[] = [
   { topic: 'ASIC', text: 'Since 1 April 2026 Qubic also mines Dogecoin on ASICs, on separate hardware. ASICs are not for this pool: it mines with CPUs and NVIDIA GPUs.', sources: ['doge'] },
 ]
 
+/**
+ * Our own runs as structured rows, so measure.ts can seed them as `field` samples. They must agree with
+ * the "Measured" facts above (a test checks the numbers). Times are UTC.
+ */
+export type FieldRun = {
+  label: string
+  cpu: string
+  gpu: string
+  gpuCount: number
+  mode: 'gpu' | 'cpu' | 'gpu+cpu'
+  solPerHour: number
+  /** minutes the rate was measured over, when we logged it */
+  windowMin?: number
+  epoch: number
+  at: string
+  host: string
+}
+
+export const FIELD_RUNS: FieldRun[] = [
+  { label: '4x RTX 4090, Xeon E5-2696 v3, GPU only', cpu: 'Xeon E5-2696 v3', gpu: 'RTX 4090', gpuCount: 4, mode: 'gpu', solPerHour: 2440, windowMin: 480, epoch: 233, at: '2026-10-03T12:00:00Z', host: 'Clore.ai' },
+  { label: '7x RTX 5080, EPYC, GPU only', cpu: 'EPYC', gpu: 'RTX 5080', gpuCount: 7, mode: 'gpu', solPerHour: 2460, epoch: 234, at: '2026-10-10T12:00:00Z', host: 'Clore.ai' },
+]
+
 /** "Hardware at a glance" on the page: one row per part. */
 export const GLANCE: { part: string; pick: string; note: string; sources: SourceId[] }[] = [
   { part: 'CPU', pick: 'Ryzen 9 7950X / 9950X, Threadripper 7000+, EPYC 9004/9005', note: 'AVX-512 is the backbone. Ryzen 7 7700 and above is good.', sources: ['academy', 'cointribune'] },

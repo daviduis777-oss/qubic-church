@@ -5,9 +5,12 @@ import { setRequestLocale } from 'next-intl/server'
 import { Device } from '@/components/pool/Device'
 import { poolFontVars } from '@/components/pool/fonts'
 import { MariaApp } from '@/components/pool/maria/MariaApp'
-import { keepPercent, POOL, WALLET } from '@/lib/pool/config'
+import { type HardwareRow, topRows } from '@/lib/pool/aggregate'
+import { keepPercent, MEASURE, POOL, WALLET } from '@/lib/pool/config'
 import { poolAllowed, poolPublic } from '@/lib/pool/gate'
 import { GLANCE, SOURCES } from '@/lib/pool/knowledge'
+import { fmtRate } from '@/lib/pool/measure'
+import { measureStore } from '@/lib/pool/store'
 import p from './pool.module.css'
 
 /*
@@ -56,6 +59,74 @@ const STEPS = [
   },
 ]
 
+const unitLabel = (r: HardwareRow) => (r.unit === 'card' ? 'per card, GPU only' : r.key.startsWith('mix|') ? 'per rig, GPU and CPU' : 'per rig, CPU only')
+
+/** "What our miners measure": medians per card (GPU-only rigs) or per rig, with n and the epoch. Rates only. */
+function Measured({ rows, drift }: { rows: HardwareRow[]; drift: HardwareRow[] }) {
+  return (
+    <section aria-labelledby="measured" className={p.section}>
+      <h2 className={p.h2} id="measured">
+        What our miners measure
+      </h2>
+      <p className={p.sectionLede}>
+        Median solutions per hour from saved runs and our own field runs. Rates only, never income. Under {MEASURE.fewData} rigs is few data; older than{' '}
+        {MEASURE.olderAfterEpochs} epochs is marked older, because the algorithm changes every few weeks.
+      </p>
+      {rows.length ? (
+        <table className={p.mTable}>
+          <thead>
+            <tr>
+              <th scope="col">Hardware</th>
+              <th scope="col">Median sol/h</th>
+              <th scope="col">Spread</th>
+              <th scope="col">Rigs</th>
+              <th scope="col">Epoch</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map(r => (
+              <tr key={r.key}>
+                <th scope="row">
+                  <span className={p.glancePick}>{r.label}</span>
+                  <span className={p.mUnit}>{unitLabel(r)}</span>
+                  {r.tags.length > 0 && (
+                    <span className={p.mTags}>
+                      {r.tags.map(t => (
+                        <span className={`${p.mTag} ${t === 'older' ? p.mTagOld : ''}`} key={t}>
+                          {t}
+                        </span>
+                      ))}
+                    </span>
+                  )}
+                </th>
+                <td className={p.mNum} data-label="Median">
+                  {fmtRate(r.latest.median ?? 0)}
+                  <span className={p.mPer}> sol/h</span>
+                </td>
+                <td className={p.mSpread} data-label="Spread">
+                  {r.latest.n > 1 && r.latest.p25 !== undefined && r.latest.p75 !== undefined ? `${fmtRate(r.latest.p25)} to ${fmtRate(r.latest.p75)}` : 'one rig'}
+                </td>
+                <td data-label="Rigs">{r.latest.n}</td>
+                <td data-label="Epoch">{r.latest.epoch}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <p className={p.sectionLede}>No measured rigs yet.</p>
+      )}
+      {drift.map(r =>
+        r.drift ? (
+          <p className={p.mDrift} key={r.key}>
+            {r.label}: the median moved {r.drift.pct > 0 ? '+' : ''}
+            {r.drift.pct}% from epoch {r.drift.from} to {r.drift.to}. The algorithm may have changed.
+          </p>
+        ) : null,
+      )}
+    </section>
+  )
+}
+
 /** 676 dots, one per computor, as a faint field behind the phone. Static and decorative. */
 function DotField() {
   const N = 676
@@ -90,6 +161,9 @@ export default async function PoolPage(props: { params: Promise<{ locale: string
   if (!(await poolAllowed())) notFound()
   const { locale } = await props.params
   setRequestLocale(locale)
+  const measured = await measureStore()
+    .summary()
+    .catch(() => null)
 
   return (
     <div className={`${p.backdrop} ${poolFontVars}`}>
@@ -182,6 +256,8 @@ export default async function PoolPage(props: { params: Promise<{ locale: string
             ))}
           </dl>
         </section>
+
+        <Measured drift={(measured?.rows ?? []).filter(r => r.drift)} rows={topRows(measured, 8)} />
 
         <section aria-labelledby="terms" className={p.section}>
           <h2 className={p.h2} id="terms">
