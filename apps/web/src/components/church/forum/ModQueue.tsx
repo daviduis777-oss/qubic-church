@@ -57,7 +57,7 @@ export function ModQueue({ modKey: initial }: { modKey?: string }) {
     const j = await r.json()
     setBusy('')
     if (!r.ok) return setErr(j.error ?? 'error')
-    setMsg(after ?? 'Done. The site rebuilds in about two minutes.')
+    setMsg(after ?? 'Done. The forum shows it now.')
     await load()
   }
 

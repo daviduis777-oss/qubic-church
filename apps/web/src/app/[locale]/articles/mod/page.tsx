@@ -15,7 +15,7 @@ export default async function ModPage(props: { params: Promise<{ locale: string 
       <h1 className="sr-only">Moderation queue</h1>
       <ModQueue modKey={key} />
       <p className="qcf-small qcf-muted" style={{ margin: '10px 2px' }}>
-        Every change here is a commit; the site redeploys in about two minutes.
+        Every change here is a commit; the forum pages show it at once.
       </p>
     </ForumShell>
   )

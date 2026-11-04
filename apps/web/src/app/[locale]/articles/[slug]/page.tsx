@@ -6,8 +6,9 @@ import { notFound } from 'next/navigation'
 import { setRequestLocale } from 'next-intl/server'
 import { locales } from '@/config/i18n'
 import { SITE_URL } from '@/lib/books'
-import { ARTICLES, articleKeywords, articleMinutes, articleUrl, articleWeight, authorUrl, formatDate, getArticle, issueNumber, originalUrl } from '@/lib/articles'
-import { memberOf, repliesTo, cryptOg } from '@/lib/forum'
+import { articleKeywords, articleMinutes, articleUrl, articleWeight, authorUrl, formatDate, getArticle as getBundledArticle, originalUrl } from '@/lib/articles'
+import { cryptOg } from '@/lib/forum'
+import { getForum } from '@/lib/forum/live'
 import { Compose } from '@/components/church/forum/Compose'
 import { blocksFromText } from '@/lib/forum/text'
 import { ForumShell, Postbit, Quote } from '@/components/church/forum/ForumUI'
@@ -16,13 +17,21 @@ import { Linkify } from '@/components/church/forum/Linkify'
 /** Shown on every post written by a member: the forum publishes as is and never edits. */
 const USER_NOTE = "Written by a member and published as is: we don't edit or delete. Author's view, not ours. Not financial advice. Claims about people and identities are the author's."
 
-export function generateStaticParams() {
-  return locales.flatMap(locale => ARTICLES.map(a => ({ locale, slug: a.slug })))
+/**
+ * ISR on live data (src/lib/forum/live.ts): topics known at build are prerendered, a topic posted since
+ * renders on its first view, and a post or reply drops the cached page at once (revalidateForum).
+ */
+export const revalidate = 300
+export const dynamicParams = true
+
+export async function generateStaticParams() {
+  const { articles } = await getForum()
+  return locales.flatMap(locale => articles.map(a => ({ locale, slug: a.slug })))
 }
 
 export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await props.params
-  const a = getArticle(slug)
+  const a = (await getForum()).getArticle(slug)
   if (!a) return {}
   return {
     title: seoTitle(a.title),
@@ -37,11 +46,12 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
 export default async function ArticlePage(props: { params: Promise<{ locale: string; slug: string }> }) {
   const { locale, slug } = await props.params
   setRequestLocale(locale)
+  const { articles, getArticle, issueNumber, memberOf, repliesTo } = await getForum()
   const a = getArticle(slug)
   if (!a) notFound()
-  const i = ARTICLES.indexOf(a)
-  const newer = ARTICLES[i - 1]
-  const older = ARTICLES[i + 1]
+  const i = articles.indexOf(a)
+  const newer = articles[i - 1]
+  const older = articles[i + 1]
 
   const ld = {
     '@context': 'https://schema.org',
@@ -222,9 +232,12 @@ export default async function ArticlePage(props: { params: Promise<{ locale: str
           </tbody>
         </table>
       </div>
-      <p className="qcf-small qcf-muted" style={{ margin: '10px 2px' }}>
-        Plain-text version for researchers and AI systems: <a href={`/text/articles/${a.slug}.md`}>/text/articles/{a.slug}.md</a>
-      </p>
+      {/* The plain-text copy is built with the site, so a topic posted since the last deploy has none yet. */}
+      {getBundledArticle(a.slug) && (
+        <p className="qcf-small qcf-muted" style={{ margin: '10px 2px' }}>
+          Plain-text version for researchers and AI systems: <a href={`/text/articles/${a.slug}.md`}>/text/articles/{a.slug}.md</a>
+        </p>
+      )}
     </ForumShell>
   )
 }

@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { getSession } from '@/lib/forum/auth'
 import { countPendingBy, createPending, type Pending } from '@/lib/forum/github'
 import { DAILY_CAP, loadAll, moderationQueue, postsToday, publish } from '@/lib/forum/publish'
-import { ARTICLES } from '@/lib/articles'
+import { getForum } from '@/lib/forum/live'
 
 export const dynamic = 'force-dynamic'
 
@@ -25,7 +25,7 @@ export async function POST(req: Request) {
 
   const post: Pending = {
     kind,
-    title: kind === 'reply' ? `Re: ${ARTICLES.find(a => a.slug === b.topic)?.title ?? ''}` : title,
+    title: kind === 'reply' ? `Re: ${(await getForum()).getArticle(b.topic ?? '')?.title ?? ''}` : title,
     text,
     board: 'open',
     topic: kind === 'reply' ? b.topic : undefined,

@@ -53,7 +53,8 @@ export async function POST(req: Request) {
     else delete next.bio
     if (jpeg) {
       await writeFile(AVATAR_PATH(handle), jpeg.toString('base64'), `forum: avatar of ${handle}`)
-      next.avatar = `/forum/avatars/${handle}.jpg?v=${Date.now().toString(36)}`
+      // Served from the repository by /api/forum/avatar, so it shows before the next deploy.
+      next.avatar = `/api/forum/avatar/${handle}.jpg?v=${Date.now().toString(36)}`
     } else if (b.removeAvatar) delete next.avatar
     data[handle] = next
     await writeJson(PROFILES_PATH, data, sha, `forum: profile of ${handle}`)

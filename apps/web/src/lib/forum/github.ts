@@ -1,12 +1,15 @@
 import 'server-only'
+import { revalidateForum } from './revalidate'
 
 /**
  * The forum's storage is the site's own GitHub repository:
  * pending posts are Issues labelled forum-pending; approved posts are committed
- * into src/data/articles/*.json, which redeploys the site. No database.
+ * into src/data/articles/*.json. No database. The forum pages read those files live
+ * (./live.ts), and every write below drops their cache, so a post shows without a redeploy.
  */
 const REPO = process.env.GITHUB_REPO || 'daviduis777-oss/qubic-church'
-const API = `https://api.github.com/repos/${REPO}`
+/** The repository's REST base. GITHUB_API_URL points it elsewhere (GitHub Enterprise, or a local stand-in for tests). */
+export const githubApi = () => `${(process.env.GITHUB_API_URL || 'https://api.github.com').replace(/\/$/, '')}/repos/${REPO}`
 
 function headers() {
   const token = process.env.GITHUB_TOKEN
@@ -15,7 +18,7 @@ function headers() {
 }
 
 async function gh<T>(path: string, init?: RequestInit): Promise<T> {
-  const r = await fetch(`${API}${path}`, { ...init, headers: { ...headers(), ...(init?.headers ?? {}) }, cache: 'no-store' })
+  const r = await fetch(`${githubApi()}${path}`, { ...init, headers: { ...headers(), ...(init?.headers ?? {}) }, cache: 'no-store' })
   if (!r.ok) throw new Error(`GitHub ${r.status} ${path}: ${(await r.text()).slice(0, 200)}`)
   return (await r.json()) as T
 }
@@ -78,10 +81,11 @@ export async function readJson<T>(path: string): Promise<{ data: T; sha: string 
   return { data: JSON.parse(Buffer.from(f.content, 'base64').toString('utf8')) as T, sha: f.sha }
 }
 
-/** Commit a JSON file to the default branch (one commit = one deploy). */
+/** Commit a JSON file to the default branch, then drop the forum's cached pages so the change shows at once. */
 export async function writeJson(path: string, data: unknown, sha: string, message: string) {
   const content = Buffer.from(JSON.stringify(data, null, 1) + '\n', 'utf8').toString('base64')
   await gh(`/contents/${path}`, { method: 'PUT', body: JSON.stringify({ message, content, ...(sha ? { sha } : {}), committer: { name: 'Qubic Church Forum', email: 'forum@qubic.church' } }) })
+  revalidateForum()
 }
 
 /** The blob sha of a file on the default branch, or null when it does not exist. */
@@ -98,4 +102,5 @@ export async function fileSha(path: string): Promise<string | null> {
 export async function writeFile(path: string, base64: string, message: string) {
   const sha = await fileSha(path)
   await gh(`/contents/${path}`, { method: 'PUT', body: JSON.stringify({ message, content: base64, ...(sha ? { sha } : {}), committer: { name: 'Qubic Church Forum', email: 'forum@qubic.church' } }) })
+  revalidateForum()
 }

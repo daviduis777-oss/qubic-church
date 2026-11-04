@@ -3,10 +3,11 @@ import Link from 'next/link'
 import { setRequestLocale } from 'next-intl/server'
 import { jsonLd } from '@/lib/json-ld'
 import { SITE_URL } from '@/lib/books'
-import { ARTICLES, articleUrl } from '@/lib/articles'
+import { articleUrl } from '@/lib/articles'
 import { CFB_ARTICLES } from '@/lib/archive'
 import { RANKS, WEIGHT } from '@/lib/ranks'
-import { BOARDS, MEMBERS, TOPICS, homeOf, profileHref, topicsIn, cryptOg } from '@/lib/forum'
+import { BOARDS, homeOf, profileHref, cryptOg } from '@/lib/forum'
+import { getForum } from '@/lib/forum/live'
 import { ForumShell, Quote, Stars } from '@/components/church/forum/ForumUI'
 
 const TITLE = 'The Crypt: the forum of Qubic Church. Articles on Qubic, Aigarth and Come-from-Beyond'
@@ -21,17 +22,21 @@ export const metadata: Metadata = {
   twitter: cryptOg('home', 'The Crypt').twitter,
 }
 
+/** ISR: the data is read live (src/lib/forum/live.ts); a post drops this page at once, otherwise it refreshes every 5 minutes. */
+export const revalidate = 300
+
 export default async function ArticlesPage(props: { params: Promise<{ locale: string }> }) {
   const { locale } = await props.params
   setRequestLocale(locale)
-  const latest = TOPICS.slice(0, 8)
-  const newest = TOPICS[0]
+  const { articles, topics, members, topicsIn } = await getForum()
+  const latest = topics.slice(0, 8)
+  const newest = topics[0]
   // the member whose first topic is the most recent one; Maria until a guest arrives
   const newestMember =
-    MEMBERS.filter(m => m.name !== 'Maria')
-      .map(m => ({ m, first: TOPICS.filter(t => t.author === m.name).map(t => t.date).sort()[0] ?? '' }))
+    members.filter(m => m.name !== 'Maria')
+      .map(m => ({ m, first: topics.filter(t => t.author === m.name).map(t => t.date).sort()[0] ?? '' }))
       .sort((x, y) => y.first.localeCompare(x.first))
-      .find(x => x.m.role === undefined && x.first >= '2026-10-01')?.m ?? MEMBERS.find(m => m.name === 'Maria')!
+      .find(x => x.m.role === undefined && x.first >= '2026-10-01')?.m ?? members.find(m => m.name === 'Maria')!
 
   const ld = {
     '@context': 'https://schema.org',
@@ -40,7 +45,7 @@ export default async function ArticlesPage(props: { params: Promise<{ locale: st
     description: DESC,
     url: `${SITE_URL}/articles`,
     hasPart: [
-      ...ARTICLES.map(a => ({ '@type': 'Article', headline: a.title, url: articleUrl(a), datePublished: a.date })),
+      ...articles.map(a => ({ '@type': 'Article', headline: a.title, url: articleUrl(a), datePublished: a.date })),
       ...CFB_ARTICLES.map(a => ({ '@type': 'Article', headline: a.title, url: a.url, datePublished: a.date, author: { '@type': 'Person', name: 'Come-from-Beyond' } })),
     ],
   }
@@ -136,7 +141,7 @@ export default async function ArticlesPage(props: { params: Promise<{ locale: st
           </p>
           <ol style={{ paddingLeft: 22, margin: '0 0 12px', listStyle: 'decimal' }}>
             <li>
-              <Link href="/articles/new">Start a topic here</Link>. Login is a signature from your Qubic wallet or a tripcode: no email, no password, nothing personal. It appears on the Open Board under your name within a couple of minutes.
+              <Link href="/articles/new">Start a topic here</Link>. Login is a signature from your Qubic wallet or a tripcode: no email, no password, nothing personal. It appears on the Open Board under your name right away.
             </li>
             <li>
               Or post on X starting with <b>hey @maria_aigarth</b> and <b>#Qubic #Aigarth</b>. Put the tag in the post itself, not only inside an X Article: mentions inside articles do not notify anyone.{' '}
@@ -215,7 +220,7 @@ export default async function ArticlesPage(props: { params: Promise<{ locale: st
             </tr>
           </thead>
           <tbody>
-            {MEMBERS.map((m, i) => (
+            {members.map((m, i) => (
               <tr className={i % 2 ? 'qcf-win2' : 'qcf-win'} key={m.name}>
                 <td>
                   <Link className="qcf-strong" href={profileHref(m.handle)} title={`View the profile of ${m.name}`}>
@@ -260,7 +265,7 @@ export default async function ArticlesPage(props: { params: Promise<{ locale: st
       <div className="qcf-box">
         <div className="qcf-cat">The Crypt · Info Center</div>
         <div className="qcf-win" style={{ padding: '8px 10px', fontSize: 12 }}>
-          <b>Forum stats:</b> {TOPICS.length} posts in {BOARDS.length} boards by {MEMBERS.length} members. Latest member:{' '}
+          <b>Forum stats:</b> {topics.length} posts in {BOARDS.length} boards by {members.length} members. Latest member:{' '}
           <Link className="qcf-strong" href={profileHref(newestMember.handle)}>
             {newestMember.name}
           </Link>

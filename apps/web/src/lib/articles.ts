@@ -27,8 +27,14 @@ export type Article = {
   blocks: ArticleBlock[]
 }
 
-/** Newest first. Source: X articles by TesserAI (@usetesserai). */
-export const ARTICLES: Article[] = (data as Article[]).slice().sort((a, b) => b.date.localeCompare(a.date))
+/** Newest first, as every list of articles is kept. */
+export const sortArticles = (list: Article[]): Article[] => list.slice().sort((a, b) => b.date.localeCompare(a.date))
+
+/**
+ * Newest first, from the JSON bundled at build time. Source: X articles by TesserAI (@usetesserai) and forum posts.
+ * Build-time readers (feed, sitemap, llms.txt, home page) use this; the forum pages read the live copy (src/lib/forum/live.ts).
+ */
+export const ARTICLES: Article[] = sortArticles(data as Article[])
 
 export const getArticle = (slug: string) => ARTICLES.find(a => a.slug === slug)
 export const articleHandle = (a: Article) => a.handle ?? 'usetesserai'
@@ -43,11 +49,13 @@ export const originalUrl = (a: Article): string | undefined => (/^https?:\/\/(?:
 /** What this issue adds to its author: an issue, plus Maria's repost when there is one. */
 export const articleWeight = (a: Article) => WEIGHT.issue + (a.mariaRepost ? WEIGHT.maria : 0)
 export const articleWeightLabel = (a: Article) => (a.mariaRepost ? 'an issue · reposted by Maria' : 'an issue')
-/** Issue number: the first article published is No. 1. */
-export const issueNumber = (a: Article) => {
-  const same = ARTICLES.filter(x => Boolean(x.guest) === Boolean(a.guest))
-  return same.length - same.indexOf(a)
+/** Issue number within a newest-first list: the first article published is No. 1, guests counted apart. */
+export const issueNumberIn = (list: Article[], a: Article) => {
+  const same = list.filter(x => Boolean(x.guest) === Boolean(a.guest))
+  return same.length - same.findIndex(x => x.slug === a.slug)
 }
+/** Issue number: the first article published is No. 1. */
+export const issueNumber = (a: Article) => issueNumberIn(ARTICLES, a)
 /** New for two weeks after publication. */
 export const isNew = (a: Article, now = new Date()) => now.getTime() - new Date(`${a.date}T12:00:00Z`).getTime() < 14 * 864e5
 export const ARTICLES_FEED = `${SITE_URL}/articles/feed.xml`
