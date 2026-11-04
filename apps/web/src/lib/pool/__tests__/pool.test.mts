@@ -2,7 +2,8 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
 
-const { classifyCpu, classifyGpu, pick } = await import('../hardware.ts')
+const { classifyCpu, classifyGpu, classifyRam, pick, isAsic } = await import('../hardware.ts')
+const { FACTS, GLANCE, BUILDS, SOURCES } = await import('../knowledge.ts')
 const { checkWallet, checkWorker, cleanWorker, suggestWorker, backendFor, buildPlan, threadsFor } = await import('../wizard.ts')
 const { diagnose, RULES } = await import('../doctor.ts')
 const { redactWallets } = await import('../redact.ts')
@@ -17,8 +18,13 @@ const SEED = 'abcdefghijklmnopqrstuvwxyz'.repeat(3).slice(0, 55)
 test('cpu verdicts follow the guide table', () => {
   const v = (s: string) => classifyCpu(s).verdict
   assert.equal(v('AMD Ryzen 9 7950X'), 'Golden')
-  assert.equal(v('Ryzen 7 9700X'), 'Golden')
-  assert.equal(v('Ryzen 7 7800X3D'), 'Golden')
+  assert.equal(v('Ryzen 9 9950X3D'), 'Golden')
+  assert.equal(v('Ryzen 9 7900X'), 'Golden')
+  assert.equal(v('Ryzen 9 9900X'), 'Good')
+  assert.equal(v('Ryzen 7 9700X'), 'Good')
+  assert.equal(v('Ryzen 7 7700'), 'Good')
+  assert.equal(v('Ryzen 7 7800X3D'), 'Good')
+  assert.equal(v('Ryzen 5 7600X'), 'Works')
   assert.equal(v('Threadripper 7980X'), 'Golden')
   assert.equal(v('AMD EPYC 9654'), 'Golden')
   assert.equal(v('EPYC 9755'), 'Golden')
@@ -31,7 +37,7 @@ test('cpu verdicts follow the guide table', () => {
   assert.equal(v('EPYC 7763'), 'Works')
   assert.equal(v('Intel Core i7-13700K'), 'Works')
   assert.equal(v('Apple M3 Pro'), 'Works')
-  assert.equal(v('Ryzen 7 7840HS'), 'Good')
+  assert.equal(v('Ryzen 7 7840HS'), 'Works')
   assert.equal(v('Ryzen 5 7520U'), 'Works')
   assert.equal(v('Some Mystery Chip'), 'Unknown')
 })
@@ -71,13 +77,49 @@ test('pick: under 8 cores per GPU is flagged', () => {
 
 test('pick: shopping lists never carry prices or income', () => {
   for (const mode of ['buy', 'rent'] as const)
-    for (const scale of ['small', 'mid', 'large'] as const) {
-      const r = pick({ mode, scale, os: 'macos' })
+    for (const [scale, build] of [['small', 'entry'], ['mid', 'cpu'], ['large', 'gpu'], ['large', 'server']] as const) {
+      const r = pick({ mode, scale, build, os: 'macos' })
       const text = JSON.stringify(r)
       assert.doesNotMatch(text, /\$\d|earn(ing)?s? per|profit|income|ROI/i)
       assert.ok(r.cards.some(c => c.verdict === 'Skip' && /AMD Radeon/.test(c.title)))
       assert.ok(r.notes.some(n => /daily cost ÷ solutions per day/.test(n)))
     }
+})
+
+test('pick: buy builds follow the tiers, best first', () => {
+  assert.equal(pick({ mode: 'buy', build: 'entry' }).cards[0]!.title, BUILDS.entry.title)
+  assert.match(JSON.stringify(pick({ mode: 'buy', build: 'entry' }).cards[0]!.specs), /Ryzen 7 7700.*32 GB/)
+  assert.match(JSON.stringify(pick({ mode: 'buy', build: 'cpu' }).cards[0]!.specs), /9950X.*32 to 64 GB DDR5/)
+  assert.match(JSON.stringify(pick({ mode: 'buy', build: 'gpu' }).cards[0]!.specs), /9950X.*5070 Ti/)
+  assert.match(pick({ mode: 'buy', build: 'server' }).cards[0]!.title, /EPYC 9004 \/ 9005/)
+  assert.equal(pick({ mode: 'buy', build: 'cpu', os: 'macos' }).cards[0]!.title, 'A Mac with Apple Silicon')
+})
+
+test('ASICs are not for this pool', () => {
+  assert.ok(isAsic('Antminer L9'))
+  assert.equal(classifyGpu('Antminer L7')?.verdict, 'Skip')
+  const r = pick({ mode: 'own', cpu: 'Bitmain Antminer L9' })
+  assert.equal(r.overall, 'Skip')
+  assert.match(r.cards[0]!.reasons.join(' '), /Dogecoin/)
+  assert.ok(!isAsic('Ryzen 9 7950X'))
+  assert.ok(!isAsic('RTX 5070 Ti'))
+})
+
+test('RAM follows the Academy minimum', () => {
+  assert.equal(classifyRam(8).verdict, 'Skip')
+  assert.equal(classifyRam(16).verdict, 'Works')
+  assert.equal(classifyRam(64).verdict, 'Good')
+  assert.equal(pick({ mode: 'own', cpu: 'Ryzen 9 7950X', ramGb: 8 }).overall, 'Works')
+})
+
+test('every fact and glance row has a dated source', () => {
+  for (const f of [...FACTS, ...GLANCE]) {
+    assert.ok(f.sources.length > 0)
+    for (const id of f.sources) assert.ok(SOURCES[id].date.length > 0, id)
+  }
+  assert.ok(FACTS.some(f => /CUDA 12/.test(f.text)))
+  assert.ok(FACTS.some(f => /16 GB.*32 GB/.test(f.text)))
+  assert.ok(FACTS.some(f => /ASIC/.test(f.text)))
 })
 
 /* ---------- wizard ---------- */
@@ -206,6 +248,9 @@ test('system prompt carries the hard rules and no internal split', () => {
   assert.match(p, /Never promise, project or estimate income/)
   assert.match(p, /JetSki/) // only as "do not recommend"
   assert.match(p, /Never use em dashes/)
+  assert.match(p, /CUDA 12/)
+  assert.match(p, /ASICs are not for this pool/)
+  assert.match(p, /Qubic Academy/)
   assert.match(p, new RegExp(`${POOL.feePercent}% fee`))
   assert.doesNotMatch(p, /\b3%|\b4%|\bfund\b/i)
   assert.doesNotMatch(p, /—/)

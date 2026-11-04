@@ -3,16 +3,15 @@
 import { useEffect, useRef, useState } from 'react'
 import { MARIA_LIMITS } from '@/lib/pool/config'
 import { redactWallets } from '@/lib/pool/redact'
-import { useRing, useStickToBottom } from './flow'
+import { Screen, useRing, useStickToBottom } from './flow'
 import type { Go } from './flows'
-import { Chips, Field, Rich, Say, TONE, You } from './ui'
-import s from './maria.module.css'
+import { Chips, Field, Rich, Say, TONE, Typing, You } from './ui'
 
 type Msg = { role: 'user' | 'assistant'; content: string; offline?: boolean }
 
 const TOOL_CHIPS = [
   { value: 'pick', label: 'Pick hardware' },
-  { value: 'connect', label: 'Connect my machine' },
+  { value: 'connect', label: 'Connect' },
   { value: 'doctor', label: 'Fix my rig' },
 ]
 
@@ -52,8 +51,8 @@ export function AskFlow({ go, first }: { go: Go; first?: string }) {
         const chunk = dec.decode(value, { stream: true })
         setMsgs(m => {
           const c = [...m]
-          const last = c[c.length - 1]!
-          c[c.length - 1] = { ...last, content: last.content + chunk }
+          const last = c[c.length - 1]
+          if (last) c[c.length - 1] = { ...last, content: last.content + chunk }
           return c
         })
       }
@@ -71,39 +70,40 @@ export function AskFlow({ go, first }: { go: Go; first?: string }) {
       sent.current = true
       ask(first)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // biome-ignore lint/correctness/useExhaustiveDependencies: send the handed-over question once
   }, [first])
 
   const lastOffline = msgs.at(-1)?.offline
-  return (
+  const dock = (
     <>
-      <div aria-live="polite" className={s.thread} ref={scroller}>
-        {!msgs.length && <Say>Ask anything technical about mining in the pool. Hardware, setup, errors. I answer in your language.</Say>}
-        {msgs.map((m, i) =>
-          m.role === 'user' ? (
-            <You key={i}>{m.content}</You>
-          ) : (
-            <Say fault={m.offline} key={i}>
-              {m.content ? <Rich text={m.content} /> : null}
-            </Say>
-          ),
-        )}
-        {busy && msgs.at(-1)?.role === 'user' && (
-          <div aria-label="Maria is thinking" className={s.typing} role="status">
-            <span />
-            <span />
-            <span />
-          </div>
-        )}
-      </div>
-      <div className={s.dock}>
-        {lastOffline && (
-          <div style={{ marginBottom: 8 }}>
-            <Chips label="Tools" onPick={v => go(v as 'pick' | 'connect' | 'doctor')} options={TOOL_CHIPS} />
-          </div>
-        )}
-        <Field label="Ask Maria" maxLength={MARIA_LIMITS.maxInput} multiline onSubmit={ask} placeholder="Ask Maria" />
-      </div>
+      {lastOffline && (
+        <div style={{ marginBottom: 8 }}>
+          <Chips label="Tools" onPick={v => go(v as 'pick' | 'connect' | 'doctor')} options={TOOL_CHIPS} />
+        </div>
+      )}
+      <Field label="Ask Maria" maxLength={MARIA_LIMITS.maxInput} multiline onSubmit={ask} placeholder="Ask Maria" />
     </>
+  )
+  return (
+    <Screen dock={dock} onBack={() => go('home')} scrollRef={scroller} sub="Hardware, setup, errors. In your language." title="Ask Maria">
+      {!msgs.length && <Say>Ask anything technical about mining in the pool.</Say>}
+      {msgs.map((m, i) =>
+        m.role === 'user' ? (
+          // biome-ignore lint/suspicious/noArrayIndexKey: an append-only list
+          <You key={i}>{m.content}</You>
+        ) : (
+          m.content ? (
+            // biome-ignore lint/suspicious/noArrayIndexKey: an append-only list
+            <Say fault={m.offline} key={i}>
+              <Rich text={m.content} />
+            </Say>
+          ) : (
+            // biome-ignore lint/suspicious/noArrayIndexKey: an append-only list
+            <Typing key={i} label="Maria is thinking" />
+          )
+        ),
+      )}
+      {busy && msgs.at(-1)?.role === 'user' && <Typing label="Maria is thinking" />}
+    </Screen>
   )
 }

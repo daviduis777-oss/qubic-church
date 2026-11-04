@@ -1,27 +1,80 @@
 'use client'
 
+import { motion, useReducedMotion } from 'framer-motion'
+import { ArrowUp, Check, CircleHelp, Copy, Crown, Minus, Terminal, X } from 'lucide-react'
 import { type ReactNode, useEffect, useId, useRef, useState } from 'react'
-import { ArrowUp } from 'lucide-react'
-import type { Verdict } from '@/lib/pool/hardware'
 import type { Severity } from '@/lib/pool/doctor'
-import { RingGlyph } from './Ring'
+import type { Card as HwCard, Verdict } from '@/lib/pool/hardware'
+import { SOURCES, type SourceId } from '@/lib/pool/knowledge'
 import s from './maria.module.css'
 
-export const TONE = { brass: '#C8A45A', teal: '#5BC0A6', coral: '#E2786A', fog: '#9AA3B2' } as const
+export const TONE = { gold: '#D9A441', cyan: '#6FE3FF', mist: '#8FD3C8', coral: '#FF7A6B', fog: '#9BA3C7' } as const
 
-export const verdictTone = (v: Verdict) => (v === 'Golden' ? TONE.brass : v === 'Good' || v === 'Works' ? TONE.teal : v === 'Skip' ? TONE.coral : TONE.fog)
-export const severityTone = (v: Severity) => (v === 'fine' ? TONE.teal : TONE.coral)
-export const SEVERITY_LABEL: Record<Severity, string> = { fault: 'Fix', check: 'Check', fine: 'Fine' }
+export const verdictTone = (v: Verdict) => (v === 'Golden' ? TONE.gold : v === 'Good' ? TONE.cyan : v === 'Works' ? TONE.mist : v === 'Skip' ? TONE.coral : TONE.fog)
+export const severityTone = (v: Severity) => (v === 'fine' ? TONE.cyan : v === 'check' ? TONE.gold : TONE.coral)
+export const SEVERITY_LABEL: Record<Severity, string> = { fault: 'Fix this', check: 'Check this', fine: 'Fine' }
+const VERDICT_LABEL: Record<Verdict, string> = { Golden: 'Golden', Good: 'Good', Works: 'Works', Skip: 'Skip', Unknown: 'Not sure' }
 
 export const cx = (...c: (string | false | null | undefined)[]) => c.filter(Boolean).join(' ')
 
+export const SPRING = { type: 'spring' as const, stiffness: 420, damping: 40, mass: 0.9 }
+export const PRESS = { scale: 0.97 }
+
+/* ---------- people ---------- */
+
+export function Avatar({ size = 30, label }: { size?: number; label?: string }) {
+  return (
+    // biome-ignore lint/performance/noImgElement: tiny local asset; a plain img keeps the app portable
+    <img
+      alt={label ?? ''}
+      aria-hidden={label ? undefined : true}
+      className={s.avatar}
+      decoding="async"
+      height={size}
+      src="/pool/maria-128.webp"
+      srcSet="/pool/maria-128.webp 1x, /pool/maria-256.webp 2x"
+      width={size}
+    />
+  )
+}
+
+/** One of Maria's messages: her avatar and a dark glass bubble. */
 export function Say({ children, fault }: { children: ReactNode; fault?: boolean }) {
-  return <div className={cx(s.say, fault && s.sayFault)}>{children}</div>
+  return (
+    <div className={s.mRow}>
+      <Avatar size={26} />
+      <div className={cx(s.bubbleM, fault && s.bubbleFault)} role={fault ? 'alert' : undefined}>
+        {children}
+      </div>
+    </div>
+  )
 }
 
 export function You({ children, mono }: { children: ReactNode; mono?: boolean }) {
   return <div className={cx(s.you, mono && s.youMono)}>{children}</div>
 }
+
+export function Typing({ label = 'Maria is working' }: { label?: string }) {
+  const reduce = useReducedMotion()
+  return (
+    <div aria-label={label} className={s.mRow} role="status">
+      <Avatar size={26} />
+      <div className={s.bubbleM}>
+        <span className={s.typing}>
+          {[0, 1, 2].map(i => (
+            <motion.span
+              animate={reduce ? { opacity: 0.8 } : { opacity: [0.35, 1, 0.35], y: [0, -3, 0] }}
+              key={i}
+              transition={reduce ? undefined : { duration: 1, repeat: Number.POSITIVE_INFINITY, delay: i * 0.16, ease: 'easeInOut' }}
+            />
+          ))}
+        </span>
+      </div>
+    </div>
+  )
+}
+
+/* ---------- controls ---------- */
 
 export type ChipOpt = { value: string; label: string; primary?: boolean; mono?: boolean }
 
@@ -29,9 +82,9 @@ export function Chips({ options, onPick, label }: { options: ChipOpt[]; onPick: 
   return (
     <div aria-label={label} className={s.chips} role="group">
       {options.map(o => (
-        <button className={cx(s.chip, o.primary && s.chipPrimary, o.mono && s.chipMono)} key={o.value} onClick={() => onPick(o.value)} type="button">
+        <motion.button className={cx(s.chip, o.primary && s.chipPrimary, o.mono && s.chipMono)} key={o.value} onClick={() => onPick(o.value)} transition={SPRING} type="button" whileTap={PRESS}>
           {o.label}
-        </button>
+        </motion.button>
       ))}
     </div>
   )
@@ -49,50 +102,131 @@ export function useCopy() {
   return { done, copy }
 }
 
-export function Command({ text, label = 'command' }: { text: string; label?: string }) {
+/** A terminal block with a copy button that confirms. */
+export function Command({ text, label = 'command', shell = 'Terminal' }: { text: string; label?: string; shell?: string }) {
   const { done, copy } = useCopy()
   return (
-    <pre className={s.cmd}>
-      {text}
-      <button aria-label={`Copy ${label}`} className={s.copy} onClick={() => copy('c', text)} type="button">
-        {done ? 'Copied' : 'Copy'}
-      </button>
-    </pre>
+    <div className={s.term}>
+      <div className={s.termBar}>
+        <span className={s.termLabel}>
+          <Terminal aria-hidden size={13} />
+          {shell}
+        </span>
+        <motion.button aria-label={done ? 'Copied' : `Copy ${label}`} className={cx(s.copy, done && s.copied)} onClick={() => copy('c', text)} type="button" whileTap={PRESS}>
+          {done ? <Check aria-hidden size={13} strokeWidth={2.5} /> : <Copy aria-hidden size={13} />}
+          {done ? 'Copied' : 'Copy'}
+        </motion.button>
+      </div>
+      <pre className={s.termBody}>
+        <span aria-hidden className={s.prompt}>
+          ${' '}
+        </span>
+        {text}
+      </pre>
+    </div>
   )
 }
 
-export function VerdictCard({ title, verdict, reasons, children }: { title: string; verdict: Verdict; reasons: string[]; children?: ReactNode }) {
-  const tone = verdictTone(verdict)
+export function CopyButton({ text, label }: { text: string; label: string }) {
+  const { done, copy } = useCopy()
+  return (
+    <motion.button aria-label={done ? `${label} copied` : `Copy ${label}`} className={s.iconBtn} onClick={() => copy('v', text)} type="button" whileTap={PRESS}>
+      {done ? <Check aria-hidden size={16} strokeWidth={2.5} /> : <Copy aria-hidden size={16} />}
+    </motion.button>
+  )
+}
+
+/* ---------- result cards ---------- */
+
+function StatusGlyph({ tone, icon }: { tone: string; icon: ReactNode }) {
+  return (
+    <span aria-hidden className={s.status} style={{ background: `${tone}24`, color: tone, boxShadow: `inset 0 0 0 1px ${tone}55` }}>
+      {icon}
+    </span>
+  )
+}
+
+const verdictIcon = (v: Verdict) =>
+  v === 'Golden' ? <Crown size={16} strokeWidth={2.2} /> : v === 'Good' || v === 'Works' ? <Check size={16} strokeWidth={2.6} /> : v === 'Skip' ? <X size={16} strokeWidth={2.6} /> : <CircleHelp size={16} strokeWidth={2.2} />
+export const severityIcon = (v: Severity) => (v === 'fine' ? <Check size={16} strokeWidth={2.6} /> : v === 'check' ? <Minus size={16} strokeWidth={2.8} /> : <X size={16} strokeWidth={2.6} />)
+
+export function Sources({ ids }: { ids?: SourceId[] }) {
+  if (!ids?.length) return null
+  return (
+    <p className={s.src}>
+      Source:{' '}
+      {ids.map((id, i) => {
+        const x = SOURCES[id]
+        return (
+          <span key={id}>
+            {i > 0 && '; '}
+            {x.url ? (
+              <a href={x.url} rel="noopener noreferrer" target={x.url.startsWith('http') ? '_blank' : undefined}>
+                {x.label}
+              </a>
+            ) : (
+              x.label
+            )}
+            , {x.date}
+          </span>
+        )
+      })}
+    </p>
+  )
+}
+
+export function Specs({ rows }: { rows?: [string, string][] }) {
+  if (!rows?.length) return null
+  return (
+    <dl className={s.specs}>
+      {rows.map(([k, v]) => (
+        <div key={k} style={{ display: 'contents' }}>
+          <dt>{k}</dt>
+          <dd>{v}</dd>
+        </div>
+      ))}
+    </dl>
+  )
+}
+
+export function StatusCard({ title, tone, label, icon, children }: { title: string; tone: string; label: string; icon: ReactNode; children?: ReactNode }) {
   return (
     <article className={s.card}>
-      <div className={s.cardHead}>
-        <h3 className={s.cardTitle} style={{ margin: 0 }}>
-          {title}
-        </h3>
-        <span className={s.verdict} style={{ color: tone }}>
-          <RingGlyph color={tone} />
-          {verdict === 'Unknown' ? 'Not sure' : verdict}
-        </span>
+      <div className={s.vHead}>
+        <StatusGlyph icon={icon} tone={tone} />
+        <div>
+          <h3 className={s.vTitle}>{title}</h3>
+          <span className={s.vLabel} style={{ color: tone }}>
+            {label}
+          </span>
+        </div>
       </div>
-      <ul className={s.reasons}>
-        {reasons.map(r => (
-          <li key={r}>{r}</li>
-        ))}
-      </ul>
       {children}
     </article>
   )
 }
 
-export function Card({ title, children }: { title?: string; children: ReactNode }) {
+export function VerdictCard({ c }: { c: HwCard }) {
+  const tone = verdictTone(c.verdict)
   return (
-    <section className={s.card}>
-      {title && (
-        <h3 className={s.cardTitle} style={{ margin: '0 0 8px' }}>
-          {title}
-        </h3>
-      )}
-      {children}
+    <StatusCard icon={verdictIcon(c.verdict)} label={VERDICT_LABEL[c.verdict]} title={c.title} tone={tone}>
+      <Specs rows={c.specs} />
+      <ul className={s.why}>
+        {c.reasons.map(r => (
+          <li key={r}>{r}</li>
+        ))}
+      </ul>
+      <Sources ids={c.sources} />
+    </StatusCard>
+  )
+}
+
+/** Inset grouped list, like Settings. */
+export function Group({ label, children }: { label?: string; children: ReactNode }) {
+  return (
+    <section>
+      {label && <h3 className={s.groupLabel}>{label}</h3>}
+      <ul className={s.group}>{children}</ul>
     </section>
   )
 }
@@ -101,28 +235,46 @@ export function Checklist({ items }: { items: { title: string; body?: string; co
   const [on, setOn] = useState<Record<number, boolean>>({})
   const base = useId()
   return (
-    <ul className={s.checks}>
+    <>
       {items.map((c, i) => (
-        <li className={s.check} key={c.title}>
-          <input checked={!!on[i]} id={`${base}-${i}`} onChange={e => setOn(o => ({ ...o, [i]: e.target.checked }))} type="checkbox" />
-          <div>
-            <label className={cx(s.stepTitle, on[i] && s.checkDone)} htmlFor={`${base}-${i}`}>
+        <li className={cx(s.row, s.rowIndent)} key={c.title} style={{ alignItems: 'flex-start' }}>
+          <input checked={!!on[i]} className={s.tick} id={`${base}-${i}`} onChange={e => setOn(o => ({ ...o, [i]: e.target.checked }))} type="checkbox" />
+          <div className={s.rowMain}>
+            <label className={cx(s.rowTitle, on[i] && s.rowDone)} htmlFor={`${base}-${i}`} style={{ cursor: 'pointer' }}>
               {c.title}
             </label>
-            {c.body && <p className={s.stepBody}>{c.body}</p>}
-            {c.command && (
-              <div style={{ marginTop: 6 }}>
-                <Command label={c.title} text={c.command} />
-              </div>
-            )}
+            {c.body && <p className={s.rowBody}>{c.body}</p>}
+            {c.command && <Command label={c.title} text={c.command} />}
           </div>
         </li>
       ))}
-    </ul>
+    </>
   )
 }
 
-/** A text answer: single line or a log textarea. Enter sends (Shift+Enter for a new line in a textarea). */
+/** Result cards arrive one after another. */
+export function Reveal({ children }: { children: ReactNode[] }) {
+  const reduce = useReducedMotion()
+  return (
+    <div className={s.cards}>
+      {children.map((child, i) => (
+        <motion.div
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          initial={reduce ? { opacity: 1 } : { opacity: 0, y: 14, scale: 0.985 }}
+          // biome-ignore lint/suspicious/noArrayIndexKey: the list is fixed once shown
+          key={i}
+          transition={reduce ? { duration: 0 } : { ...SPRING, delay: 0.06 * i }}
+        >
+          {child}
+        </motion.div>
+      ))}
+    </div>
+  )
+}
+
+/* ---------- input ---------- */
+
+/** The floating glass capsule. Enter sends; logs (newlines) keep Enter for a new line. */
 export function Field({
   placeholder,
   onSubmit,
@@ -130,7 +282,6 @@ export function Field({
   mono,
   initial = '',
   label,
-  error,
   inputMode,
   autoFocus = true,
   maxLength,
@@ -143,13 +294,10 @@ export function Field({
   mono?: boolean
   initial?: string
   label: string
-  error?: string
   inputMode?: 'numeric' | 'text'
   autoFocus?: boolean
   maxLength?: number
-  /** textarea height in lines */
   rows?: number
-  /** Enter adds a line (logs); otherwise Enter sends and Shift+Enter adds a line */
   newlines?: boolean
 }) {
   const [v, setV] = useState(initial)
@@ -166,7 +314,6 @@ export function Field({
   }
   const common = {
     'aria-label': label,
-    'aria-invalid': error ? true : undefined,
     className: cx(s.input, mono && s.inputMono),
     placeholder,
     value: v,
@@ -176,39 +323,32 @@ export function Field({
     onChange: (e: { target: { value: string } }) => setV(e.target.value),
   }
   return (
-    <>
-      <form
-        className={s.field}
-        onSubmit={e => {
-          e.preventDefault()
-          send()
-        }}
-      >
-        {multiline ? (
-          <textarea
-            {...common}
-            onKeyDown={e => {
-              if (e.key === 'Enter' && !e.shiftKey && !newlines) {
-                e.preventDefault()
-                send()
-              }
-            }}
-            ref={ref}
-            rows={rows ?? 1}
-          />
-        ) : (
-          <input {...common} inputMode={inputMode} ref={ref} type="text" />
-        )}
-        <button aria-label="Send" className={s.send} disabled={!v.trim()} type="submit">
-          <ArrowUp aria-hidden size={18} strokeWidth={2.25} />
-        </button>
-      </form>
-      {error && (
-        <p className={s.fieldError} role="alert">
-          {error}
-        </p>
+    <form
+      className={s.capsule}
+      onSubmit={e => {
+        e.preventDefault()
+        send()
+      }}
+    >
+      {multiline ? (
+        <textarea
+          {...common}
+          onKeyDown={e => {
+            if (e.key === 'Enter' && !e.shiftKey && !newlines) {
+              e.preventDefault()
+              send()
+            }
+          }}
+          ref={ref}
+          rows={rows ?? 1}
+        />
+      ) : (
+        <input {...common} inputMode={inputMode} ref={ref} type="text" />
       )}
-    </>
+      <motion.button aria-label="Send" className={s.send} disabled={!v.trim()} type="submit" whileTap={PRESS}>
+        <ArrowUp aria-hidden size={18} strokeWidth={2.5} />
+      </motion.button>
+    </form>
   )
 }
 
@@ -219,11 +359,13 @@ export function Rich({ text }: { text: string }) {
     <>
       {parts.map((p, i) =>
         i % 2 === 1 ? (
+          // biome-ignore lint/suspicious/noArrayIndexKey: parts of one immutable string
           <Command key={i} text={p.replace(/\n$/, '')} />
         ) : (
           p
             .split(/\n{2,}/)
             .filter(x => x.trim())
+            // biome-ignore lint/suspicious/noArrayIndexKey: parts of one immutable string
             .map((para, j) => <p key={`${i}-${j}`}>{inline(para.replace(/^\n+|\n+$/g, ''))}</p>)
         ),
       )}
@@ -233,7 +375,9 @@ export function Rich({ text }: { text: string }) {
 
 function inline(t: string): ReactNode[] {
   return t.split(/(`[^`]+`|\*\*[^*]+\*\*)/g).map((x, i) => {
+    // biome-ignore lint/suspicious/noArrayIndexKey: parts of one immutable string
     if (x.startsWith('`') && x.endsWith('`') && x.length > 2) return <code key={i}>{x.slice(1, -1)}</code>
+    // biome-ignore lint/suspicious/noArrayIndexKey: parts of one immutable string
     if (x.startsWith('**') && x.endsWith('**') && x.length > 4) return <strong key={i}>{x.slice(2, -2)}</strong>
     return x
   })
