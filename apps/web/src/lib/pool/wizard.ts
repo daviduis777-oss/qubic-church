@@ -4,6 +4,8 @@
  */
 import type { Backend, Os } from './config.ts'
 import { OS_LABEL, POOL } from './config.ts'
+import { formatUtc, epochAt } from './epoch.ts'
+import { MINER_COMMAND, practiceSourceLine, procedureSources, proceduresFor, TIPS, type Where, withCommand } from './practice.ts'
 import { containsSeed } from './redact.ts'
 
 export type Hw = 'cpu' | 'nvidia' | 'amd' | 'apple'
@@ -85,11 +87,18 @@ export function threadsFor(hw: Hw, threads: number | undefined, dedicated: boole
   return { value: String(Math.max(1, threads - 2)), why: 'Two threads stay free so you can keep using the computer.' }
 }
 
-export type WizardInput = { os: Os; hw: Hw; avx: Avx; model?: string; wallet: string; worker: string; threads?: number; dedicated: boolean }
+/** where: 'rental' for a rented box (always a Linux container). now: only used to name the next epoch change. */
+export type WizardInput = { os: Os; hw: Hw; avx: Avx; model?: string; wallet: string; worker: string; threads?: number; dedicated: boolean; where?: Where; now?: Date }
 export type Value = { label: string; value: string; mono?: boolean; why?: string }
-export type Step = { title: string; body?: string; command?: string; link?: { href: string; label: string } }
+/** group: the procedure a step belongs to (practice.ts), so a UI can show them as sections. */
+export type Step = { title: string; body?: string; command?: string; link?: { href: string; label: string }; group?: string }
 export type Check = { title: string; command?: string; body?: string }
-export type Plan = { values: Value[]; steps: Step[]; checks: Check[]; warnings: string[] }
+export type PlanProcedure = { id: string; title: string; summary: string; sources: string }
+export type Plan = { values: Value[]; steps: Step[]; checks: Check[]; warnings: string[]; procedures: PlanProcedure[]; tips: string[] }
+
+/** Once the real command is known, drop the sentences that tell the user to paste it. */
+const bodyFor = (body: string | undefined, command: string | null) =>
+  body && command ? body.split(/(?<=\.) /).filter(x => !x.includes(MINER_COMMAND)).join(' ') || undefined : body
 
 const fill = (tpl: string, v: Record<string, string>) => tpl.replace(/\{(WALLET|WORKER|BACKEND|THREADS)\}/g, (_, k: string) => v[k] ?? '')
 
@@ -111,37 +120,46 @@ export function buildPlan(i: WizardInput): Plan {
   const steps: Step[] = [{ title: 'Open the pool setup page', link: { href: POOL.onboardingUrl, label: 'Open pool setup' } }]
   steps.push({ title: 'Enter these exact values', body: 'Copy each one from the list above. Nothing else is needed: never a seed, never a card number.' })
 
+  if (i.where === 'rental' && i.os !== 'linux') warnings.push('A rented box is a Linux container: choose Linux on the pool setup page.')
+
   const tpl = POOL.launchLine?.[i.os]
-  if (tpl) {
-    const cmd = fill(tpl, { WALLET: i.wallet, WORKER: i.worker, BACKEND: backend, THREADS: t.value === 'all' ? '' : t.value })
-    const detached = i.os === 'linux' ? `nohup ${cmd} > miner.log 2>&1 &` : cmd
-    steps.push({ title: 'Run this on the machine', command: detached, body: i.os === 'linux' ? 'nohup and the trailing & keep it running after you close the terminal.' : undefined })
-  } else if (i.os === 'hiveos') {
-    steps.push({ title: 'Follow the HiveOS steps on the setup page', body: 'Use the same values. Apply it to this rig only, so the worker name stays unique.' })
-  } else {
-    steps.push({ title: 'Run what the setup page gives you', body: `The setup page shows the download and the command for ${OS_LABEL[i.os]}. Run it on this machine.` })
-    if (i.os === 'linux') {
-      steps.push({ title: 'Keep it alive on a rented box', body: 'Detach it so it survives closing the web terminal: put nohup in front and this at the end.', command: 'nohup <command from the setup page> > miner.log 2>&1 &' })
-    }
-    if (i.os === 'macos') steps.push({ title: 'If macOS blocks it', body: 'Open System Settings, Privacy & Security, and choose Open Anyway for the miner.' })
-  }
+  const command = tpl ? fill(tpl, { WALLET: i.wallet, WORKER: i.worker, BACKEND: backend, THREADS: t.value === 'all' ? '' : t.value }) : null
+  if (command) steps.push({ title: 'The pool command for this machine', command, body: 'The steps below save it in a start script.' })
+  else
+    steps.push({
+      title: 'Take the command from the setup page',
+      body: `The setup page shows the download and the command for ${OS_LABEL[i.where === 'rental' ? 'linux' : i.os]}. Below it is written ${MINER_COMMAND}: paste the real command there, exactly as given.`,
+    })
+
+  const procs = proceduresFor({ os: i.os, hw: i.hw, where: i.where, dedicated: i.dedicated })
+  for (const p of procs)
+    for (const st of p.steps) steps.push({ title: st.title, body: bodyFor(st.body, command), command: st.command && withCommand(st.command, command), group: p.title })
 
   const checks: Check[] = []
-  if (i.os === 'linux' || i.os === 'hiveos') checks.push({ title: 'The log shows an it/s readout', command: 'tail -f miner.log', body: 'Ctrl+C stops tail, not the miner.' })
-  else checks.push({ title: 'The miner window shows an it/s readout' })
-  if (i.hw === 'nvidia') checks.push({ title: 'The card is busy', command: 'nvidia-smi' })
-  checks.push(
+  const seen = new Set<string>()
+  const addCheck = (c: Check) => {
+    const key = c.command ?? c.title
+    if (seen.has(key)) return
+    seen.add(key)
+    checks.push(c)
+  }
+  for (const p of procs) for (const c of p.checks) addCheck({ ...c, command: c.command && withCommand(c.command, command) })
+  if (i.hw === 'nvidia') addCheck({ title: 'The card is busy', command: 'nvidia-smi' })
+  addCheck(
     POOL.minerProcess && i.os !== 'windows'
       ? { title: 'Exactly one miner is running', command: `pgrep -fa ${POOL.minerProcess}`, body: 'Two lines means you launched twice. Stop both and start one.' }
       : { title: 'Exactly one miner is running', body: 'Launching twice makes two workers fight over one machine.' },
   )
-  checks.push(
+  addCheck(
     POOL.statsUrl
       ? { title: `${i.worker} appears on the pool stats`, body: fill(POOL.statsUrl, { WALLET: i.wallet, WORKER: i.worker }) }
       : { title: `${i.worker} appears on the pool dashboard`, body: 'It can take a few minutes to show up (est.).' },
   )
-  checks.push({ title: 'No solutions in the first hour is normal', body: 'Solutions arrive in 5 to 30 minutes, sometimes longer. Do not hop machines.' })
-  checks.push({ title: 'At an epoch change it idles by itself', body: 'Wednesday 12:00 UTC. Do nothing; it continues when the update lands.' })
+  addCheck({ title: 'No solutions in the first hour is normal', body: 'Solutions arrive in 5 to 30 minutes, sometimes longer. Do not hop machines.' })
+  const next = i.now ? ` Next one: ${formatUtc(epochAt(i.now).end)}.` : ''
+  addCheck({ title: 'At an epoch change it idles by itself', body: `Wednesday 12:00 UTC.${next} Do nothing; it continues when the update lands.` })
 
-  return { values, steps, checks, warnings }
+  const procedures = procs.map(p => ({ id: p.id, title: p.title, summary: p.summary, sources: practiceSourceLine(procedureSources(p)) }))
+  const tips = TIPS.filter(x => i.hw === 'nvidia' || !/power limit/i.test(x.title)).map(x => `${x.title}: ${x.text}`)
+  return { values, steps, checks, warnings, procedures, tips }
 }
