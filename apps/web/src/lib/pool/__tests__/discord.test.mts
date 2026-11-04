@@ -88,7 +88,7 @@ test('picker: pre-Turing cards are a skip, Turing and newer still work', () => {
 
 test('facts: score threshold, weighting, payout timing, algorithm versions, old cards, AMD date', () => {
   const all = FACTS.map(f => f.text).join('\n')
-  for (const re of [/scores above 3125 counted for nothing; lower is better/, /weighted by score, not counted equally/, /up to about 10 days/, /at least 3 days to settle/, /binary change in epoch 233/, /GTX 1050 Ti/, /none was confirmed by 4 Nov 2026/, /EPYC 9534/])
+  for (const re of [/scores above 3125 counted for nothing; lower is better/, /weighted by score, not counted equally/, /up to about 10 days/, /at least 3 days to settle/, /binary change in epoch 233/, /GTX 1050 Ti/, /no operator confirmation/, /EPYC 9534/])
     assert.match(all, re)
   assert.ok(SOURCES['qli-team'].date.length > 0)
   // the facts that came from the channel carry no money words (older field facts may name rental prices)
@@ -98,7 +98,7 @@ test('facts: score threshold, weighting, payout timing, algorithm versions, old 
 
 test('faq: new themes and entries, each with its Discord date where it came from the channel', () => {
   assert.ok('start' in FAQ_THEMES && 'mobile' in FAQ_THEMES)
-  for (const id of ['how-start', 'client-closes', 'mine-or-buy', 'old-gpu', 'small-pc', 'motherboard', 'kern-error', 'auto-update', 'zero-new-algo', 'paid-less', 'not-in-wallet', 'solo-pool', 'epoch-change', 'score', 'android', 'rental-zero', 'which-pool', 'scam-dm', 'gpu-unlock'])
+  for (const id of ['how-start', 'client-closes', 'mine-or-buy', 'old-gpu', 'small-pc', 'motherboard', 'kern-error', 'auto-update', 'zero-new-algo', 'paid-less', 'not-in-wallet', 'solo-pool', 'epoch-change', 'score', 'android', 'jetski-status', 'which-pool', 'scam-dm', 'gpu-unlock'])
     assert.ok(FAQ.some(e => e.id === id), id)
   for (const e of FAQ.filter(x => x.cite)) assert.match(e.cite!, /^Qubic Discord #mining-general, .*20\d\d/, e.id)
   assert.match(FAQ.find(e => e.id === 'pool-power')!.a, /MinerLab was no longer active/)
@@ -117,6 +117,36 @@ test('privacy: no community handles, no wallet strings; Tier 1 handles only in c
   assert.doesNotMatch(everything, /[A-Z]{60}|(?<![a-z])[a-z]{55}(?![a-z])/)
   // Tier 1 names stay out of answers; they appear only in cite / source labels
   for (const e of FAQ) assert.doesNotMatch(e.a, /Pomm3sgab3l|Zoxx/, e.id)
+})
+
+test('doctor: Ant Colony work files locked by another process (Windows, 2 Oct 2026)', () => {
+  for (const l of [
+    "System.IO.IOException: The process cannot access the file 'C:\\qli-client\\tmp.ant_9600_0.part' because it is being used by another process.",
+    'qli-client\\tmp.ant_9600_2.part is being used by another process',
+  ]) assert.equal(first(l), 'ant-temp-locked', l)
+  assert.notEqual(first('The file report.docx is being used by another process'), 'ant-temp-locked')
+  assert.match(RULES.find(x => x.id === 'ant-temp-locked')!.fix[0]!, /start one copy only/)
+})
+
+test('recovered operator answers: idle at the epoch change, phone blacklist, mining power risk, pools counted', () => {
+  const a = (id: string) => FAQ.find(e => e.id === id)!.a
+  assert.match(a('epoch-change'), /Just wait until the backend has received the update/)
+  assert.doesNotMatch(a('epoch-change'), /suggested stopping/)
+  assert.match(a('android'), /blacklist for too many shares too fast/)
+  assert.match(a('rent-worth'), /fewer coins than you expect/)
+  assert.match(a('pool-power'), /2 public and one independent/)
+  assert.match(a('zero-new-algo'), /find a good branch/)
+  assert.match(RULES.find(x => x.id === 'auth')!.fix.join(' '), /blacklisted for sending too many shares/)
+})
+
+test('jetski: status with dates, never "gone since 10 Oct", never recommended', () => {
+  const all = JSON.stringify([FAQ, FACTS, RULES, SYMPTOMS, TIPS, HARD_RULES, SOURCES])
+  assert.doesNotMatch(all, /gone since|left Qubic about|10 Oct 2026\)/i)
+  assert.doesNotMatch(all, /jetski[^"]{0,20}\b(now )?gone\b/i)
+  assert.ok(HARD_RULES.some(r => /Recommend only Qubic Church Pool/.test(r) && /18 Sep 2026/.test(r) && /still operating and paying on 3 Nov 2026/.test(r)))
+  const st = FAQ.find(e => e.id === 'jetski-status')!
+  assert.match(st.a, /^Not recommended here; Maria recommends only Qubic Church Pool/)
+  for (const re of [/18 Sep 2026/, /might be paused/, /no ARM support/, /epoch 236 payout set for 4 Nov/, /until 2 Nov/]) assert.match(st.a, re)
 })
 
 test('no jetski recommendation and no partner name in the new material', () => {

@@ -73,8 +73,8 @@ test('practice text keeps the hard rules', () => {
   assert.doesNotMatch(all, /—/)
   assert.doesNotMatch(JSON.stringify([PROCEDURES, TIPS, RULES, SYMPTOMS]), /\$\d{2,}|\$\d+\.\d|earn(ing)?s? per|profit|\bROI\b|income|price/i)
   assert.doesNotMatch(all, /[a-z]{55}/)
-  // jetski only ever as gone: each mention has "gone" within a few words
-  for (const m of all.matchAll(/jetski/gi)) assert.match(all.slice(m.index!, m.index! + 70), /gone|no longer exists/i, all.slice(m.index!, m.index! + 70))
+  // jetski only ever with "not recommended" (or as the endpoints of our old runs) within a few words
+  for (const m of all.matchAll(/jetski/gi)) assert.match(all.slice(m.index!, m.index! + 70), /not recommend|endpoints/i, all.slice(m.index!, m.index! + 70))
   assert.doesNotMatch(all, /\bCODED\b/)
   assert.doesNotMatch(JSON.stringify([PROCEDURES, TIPS]), /radeon/i)
   assert.ok(HARD_RULES.some(r => /AMD Radeon GPUs: we have no measurements/.test(r)))
