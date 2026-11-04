@@ -65,8 +65,9 @@ export const RULES: Rule[] = [
     severity: 'fault',
     title: 'Worker package download failed',
     means: 'This region cannot reach the pool servers.',
-    fix: ['Rent the box in another country.', 'On your own PC, check a firewall or VPN is not blocking it.'],
+    fix: ['Rent the box in another country. In our epoch 229 runs hosts in Russia, Belarus and China could not reach the pool or hung (tested against jetski, now gone).', 'On your own PC, check a firewall or VPN is not blocking it.'],
     test: /worker package download failed|package download failed/i,
+    sources: ['guide', 'field-e229'],
   },
   {
     id: 'connection',
@@ -74,7 +75,8 @@ export const RULES: Rule[] = [
     title: 'Cannot connect to the pool',
     means: 'The server refused or dropped the connection, or it timed out.',
     fix: ['Check the machine is online: ping 1.1.1.1', 'Check a firewall, VPN or the host is not blocking outgoing connections.', 'Restart the miner once. If it persists, the pool may be in maintenance: wait a few minutes.'],
-    test: /econnrefused|connection refused|econnreset|connection reset|etimedout|connection timed out|could not connect|failed to connect|unable to connect|cannot connect|socket (error|closed|hang up)|websocket[^\n]*(error|closed)|network is unreachable/i,
+    // A line with HTTP 502 or websocket code 1006 is the pool side (rule pool-side), not this machine.
+    test: /^(?![^\n]*\b(1006|502)\b)[^\n]*(econnrefused|connection refused|econnreset|connection reset|etimedout|connection timed out|could not connect|failed to connect|unable to connect|cannot connect|socket (error|closed|hang up)|websocket[^\n]*(error|closed)|network is unreachable)/i,
   },
   {
     id: 'auth',
@@ -157,6 +159,19 @@ export const RULES: Rule[] = [
     test: /permission denied|eacces|operation not permitted|cannot execute binary/i,
   },
   {
+    id: 'duplicate-process',
+    severity: 'fault',
+    title: 'A second miner process on this machine',
+    means: '"Ant stream closed" every few seconds, or "address already in use", means two miner processes fight over the same cards and port. A multi-card rig that also mines on the CPU can loop the same line.',
+    fix: [
+      'List the miner processes: ps aux | grep -i miner (Windows: Task Manager, Details).',
+      'Stop all of them, then start one instance only. One process per box: splitting the cards across several processes crashed them in our runs.',
+      'If only one runs and this is a rig with 3 or more cards, turn CPU mining off (GPU only): 6 cards plus CPU looped "Ant stream closed" every 2 seconds in epoch 229.',
+    ],
+    test: /ant stream closed|address already in use|eaddrinuse/i,
+    sources: ['field-e229'],
+  },
+  {
     id: 'crash',
     severity: 'fault',
     title: 'The miner crashed',
@@ -177,8 +192,34 @@ export const RULES: Rule[] = [
     severity: 'check',
     title: 'Many rejected or expired candidates',
     means: 'The CPU cannot keep up with the cards, or the host lags.',
-    fix: ['Keep at least 8 CPU cores per GPU.', 'Use a stronger CPU, or move to a more reliable host (99%+ uptime).'],
+    fix: ['Keep at least 8 CPU cores, 12 threads, per GPU.', 'Use a stronger CPU, or move to a more reliable host (98%+ reliability).'],
     test: /(rejected|expired|stale)[^\n]{0,20}(ant )?(candidates?|shares?|solutions?)|(candidates?|shares?|solutions?)[^\n]{0,10}(rejected|expired|stale)/i,
+  },
+  {
+    id: 'old-miner',
+    severity: 'check',
+    title: 'The miner may be too old for the current algorithm',
+    means: 'After an algorithm change an old miner keeps showing it/s while its work no longer counts: in epoch 224 stale clients showed hashrate but only invalid shares. Epoch 235 changed the threshold and task file, epoch 236 moved to 32-neuron networks.',
+    fix: [
+      'Download the current miner from the pool setup page and restart it once.',
+      'Miners built for the jetski pool are gone and do not work on this pool.',
+      'A new algorithm can take 1 to 2 epochs to settle. Judge by solutions on the pool, not it/s.',
+    ],
+    test: /(client|miner|trainer|version)[^\n]{0,40}(outdated|too old|deprecated|no longer supported|mismatch|update required|please update)|invalid (share|solution)s?\b|(share|solution) format|unsupported (task|template|algorithm)|unknown (task|template) (file|format|version)/i,
+    sources: ['field', 'qli-mod'],
+  },
+  {
+    id: 'pcie-narrow',
+    severity: 'check',
+    title: 'The card sits on a narrow PCIe link',
+    means: 'x1, x2 or x4 starves the card: on 8 Sep 2026 PCIe 4.0 x4 halved the throughput of 2x RTX 4090 against x8, and x1 risers held RTX 5070 Tis far below a good host.',
+    fix: [
+      'Use PCIe 4.0 x8 or 3.0 x16 per card. Check: nvidia-smi -q | grep -A2 "Link Width"',
+      'A card in a lower power state can show a narrow link at idle: read it while mining.',
+      'On a rental, pick another host: cheap multi-card boxes are often old mining frames on x1 risers.',
+    ],
+    test: /^\s*current\s*:\s*[124]x\s*$|lnksta:[^\n]*width x[124]\b/i,
+    sources: ['field-e229'],
   },
   {
     id: 'sleep',
@@ -215,6 +256,24 @@ export const RULES: Rule[] = [
     test: /^(?!.*\bnot active\b)(?!\s*clocks? (event|throttle) reasons\s*:?\s*$).*(thermal|throttl|temperature (too high|limit|critical)|overheat)/i,
   },
   {
+    id: 'cold-start',
+    severity: 'fine',
+    title: 'Cold start',
+    means: '"No trainer available", "wait for propagation", "bind failed" and status "starting" are normal for the first minutes.',
+    fix: ['Do not restart in a loop: each restart resets the wait and the progress.', 'A fresh rig at 0 for 2 to 30 minutes is normal. Judge it after 20 minutes at the earliest.'],
+    test: /no trainer available|wait(ing)? for propagation|bind failed(?![^\n]*in use)|status"?\s*[:=]\s*"?starting/i,
+    sources: ['field-e233'],
+  },
+  {
+    id: 'pool-side',
+    severity: 'fine',
+    title: 'A pool-side error, not your rig',
+    means: 'HTTP 502, websocket close 1006, "retired-lease progress rejected", "ant lease expired" and "active search cancelled" come from the pool changing work or having an outage.',
+    fix: ['Leave the rig alone. Do not restart: a restart resets the warm-up.', 'Wait 5 to 15 minutes. If nothing moves after 20 to 30 minutes, check the pool status channel.', 'Solutions can be lost during a pool outage; that is not your rig.'],
+    test: /\b(http|status|code)\D{0,6}50[234]\b|bad gateway|websocket[^\n]{0,40}\b1006\b|\bclose[ds]?\D{0,8}1006\b|retired-lease progress rejected|(ant )?lease expired|ant progress rejected|ant work unavailable|active search cancelled|submission backlog|\borphaned\b/i,
+    sources: ['field-e233'],
+  },
+  {
     id: 'epoch-idle',
     severity: 'fine',
     title: 'Idle at an epoch change',
@@ -227,7 +286,7 @@ export const RULES: Rule[] = [
     severity: 'fine',
     title: 'It is mining',
     means: 'The log shows an it/s readout, so the miner is working.',
-    fix: ['No solutions in the first hour is normal. They arrive in 5 to 30 minutes, sometimes longer.', 'Leave it running. Hopping machines every few minutes only burns money.'],
+    fix: ['A fresh rig at 0 for 2 to 30 minutes is normal. Judge it after 20 minutes at the earliest, and read the rate after 2 hours: the first 1 to 2 hours run about 1.3 to 1.5x high.', 'Judge by solutions per hour on the pool and the wallet total, not it/s: it/s falls through an epoch with no change in solutions.', 'Leave it running. Hopping machines every few minutes only burns money.'],
     test: /\d+(\.\d+)?\s*it\/s/i,
   },
 ]
@@ -260,11 +319,15 @@ export function diagnose(log: string): Diagnosis {
 
 /** Symptoms without a log: the triage table from the mining guide. */
 export const SYMPTOMS: { id: string; label: string; finding: Omit<Finding, 'line'> }[] = [
-  { id: 'no-sol', label: 'No solutions yet', finding: { id: 'no-sol', severity: 'fine', title: 'No solutions in the first hour', means: 'Normal. Solutions arrive in 5 to 30 minutes, sometimes longer.', fix: ['Leave it running.', 'Hopping machines every few minutes only burns money.', 'Judge it after a full epoch by your cost per solution.'] } },
+  { id: 'no-sol', label: 'No solutions yet', finding: { id: 'no-sol', severity: 'fine', title: 'No solutions yet', means: 'A fresh rig at 0 for 2 to 30 minutes is normal, and even top rigs find solutions in bursts.', fix: ['Wait at least 20 minutes before judging.', 'Still 0 after 20 minutes with a normal it/s readout: restart once and wait 10 more minutes. Still 0: close it.', 'Read the rate after 2 hours, and judge by the wallet total on the pool.'] } },
+  { id: 'its-drop', label: 'it/s keeps falling', finding: { id: 'its-drop', severity: 'fine', title: 'it/s falls during the epoch', means: 'Normal: each iteration gets heavier as the work matures. In our runs one rig fell from 508 to 280 it/s in 30 minutes with no change in solutions.', fix: ['Judge by solutions per hour on the pool, not it/s.', 'nvidia-smi: 100% use at normal clocks is fine; clocks dropping at 85 C or more is heat; use under 50% means the CPU or the pool starves the cards.'] } },
+  { id: 'slow-host', label: 'Slower than the same card elsewhere', finding: { id: 'slow-host', severity: 'check', title: 'The host may hold the cards back', means: 'Some hosts throttle every card: on host 24255 every server held its RTX 5070 Tis back in our epoch 229 runs. A narrow PCIe link, too few CPU threads or a host power limit do the same.', fix: ['Check the link: nvidia-smi -q | grep -A2 "Link Width". PCIe 4.0 x8 or 3.0 x16 per card.', 'Check the power limit: nvidia-smi -q -d POWER. Hosts cut RTX 5080s to 250 W and 5090s to 400 W.', 'Keep 12+ CPU threads per card. On a rental, move to another host and note this host ID to avoid.'] } },
+  { id: 'pool-errors', label: 'Pool errors (502, 1006)', finding: { id: 'pool-errors', severity: 'fine', title: 'Pool-side errors', means: 'HTTP 502, websocket close 1006 and "retired-lease progress rejected" come from the pool, not your rig.', fix: ['Leave the rig alone and do not restart.', 'Wait 5 to 15 minutes. After 20 to 30 minutes, check the pool status channel.'] } },
+  { id: 'dies-terminal', label: 'Stops when I close the terminal', finding: { id: 'dies-terminal', severity: 'check', title: 'The miner dies with the terminal', means: 'A miner started in a browser terminal stops when that terminal closes. On 6 Sep 2026 three of our four rigs stopped overnight this way.', fix: ['Start it detached with nohup and a log file, or as a systemd service (see the Linux procedures).', 'On a rental, watch the maximum rental time and extend well before it ends.'] } },
   { id: 'frozen', label: 'Shares frozen', finding: { id: 'frozen', severity: 'fine', title: 'Shares frozen, reseeding, miners locked', means: 'Almost always pool or backend lag around an epoch change.', fix: ['Wait.', 'Restart the miner once if you want to be sure.'] } },
   { id: 'behind', label: 'Dashboard is behind', finding: { id: 'behind', severity: 'fine', title: 'Dashboard shows "behind"', means: 'Display lag. The work is counted.', fix: ['Ignore it, or restart the miner once.'] } },
   { id: 'missing', label: 'Worker not on dashboard', finding: { id: 'missing', severity: 'check', title: 'A worker shows nothing', means: 'Usually two machines share one worker name.', fix: ['Give each machine its own name starting with QC.', 'Check the address on the setup page is yours, all 60 letters.'] } },
-  { id: 'rejected', label: 'Many rejected', finding: { id: 'rejected', severity: 'check', title: 'Many rejected or expired candidates', means: 'The CPU cannot keep up with the cards, or the host lags.', fix: ['Keep at least 8 CPU cores per GPU.', 'Use a stronger CPU or a more reliable host.'] } },
+  { id: 'rejected', label: 'Many rejected', finding: { id: 'rejected', severity: 'check', title: 'Many rejected or expired candidates', means: 'The CPU cannot keep up with the cards, or the host lags.', fix: ['Keep at least 8 CPU cores, 12 threads, per GPU.', 'Use a stronger CPU or a more reliable host.'] } },
   { id: 'sleeps', label: 'Stops when I walk away', finding: { id: 'sleeps', severity: 'check', title: 'Mining stops when nobody uses the machine', means: 'Almost always sleep or hibernation.', fix: ['Windows: powercfg /change standby-timeout-ac 0 and powercfg /change hibernate-timeout-ac 0.', 'macOS: run it as caffeinate -dimsu ~/qubic-miner/run.sh, on the power adapter.', 'Linux: sudo systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target'] } },
   { id: 'blocked', label: 'Antivirus or macOS blocks it', finding: { id: 'blocked', severity: 'check', title: 'The system blocks the miner', means: 'Windows Defender, SmartScreen or macOS Gatekeeper stopped a file it does not know.', fix: ['Only for the miner from the pool setup page.', 'Windows: exclude only the miner folder in Windows Security, then Restore it from Protection history.', 'macOS: System Settings, Privacy & Security, Open Anyway.'] } },
   { id: 'wont-start', label: "Miner won't start", finding: { id: 'wont-start', severity: 'check', title: 'The miner does not start', means: 'I need the log to tell which of the usual causes it is.', fix: ['Run it once in the foreground and paste the last 30 lines here.', 'Common causes: missing NVIDIA driver, wrong backend for the CPU, file not executable.'] } },

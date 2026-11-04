@@ -222,35 +222,20 @@ test('keys: per card for GPU-only, per rig for CPU-only and GPU+CPU', () => {
 
 test('field seeds match the measured facts in knowledge.ts', () => {
   assert.equal(FIELD_SAMPLES.length, FIELD_RUNS.length)
-  const r4090 = FIELD_SAMPLES.find(s => s.hw.gpu === 'RTX 4090')!
-  const r5080 = FIELD_SAMPLES.find(s => s.hw.gpu === 'RTX 5080')!
-  assert.deepEqual(
-    [
-      r4090.hw.gpuCount,
-      r4090.result.solPerHour,
-      r4090.result.epoch,
-      r4090.hw.cpu,
-      r4090.hw.mode,
-    ],
-    [4, 2440, 233, 'Xeon E5-2696 v3', 'gpu']
-  )
-  assert.deepEqual(
-    [
-      r5080.hw.gpuCount,
-      r5080.result.solPerHour,
-      r5080.result.epoch,
-      r5080.hw.cpu,
-    ],
-    [7, 2460, 234, 'EPYC']
-  )
-  assert.ok(
-    FACTS.some(f => /2,440 sol\/h/.test(f.text) && /epoch 233/.test(f.text))
-  )
-  assert.ok(
-    FACTS.some(f => /2,460 sol\/h/.test(f.text) && /10 Oct 2026/.test(f.text))
-  )
-  assert.equal(epochAt(new Date(r5080.at)).epoch, 234) // 10 Oct 2026 falls in epoch 234
+  const row = (gpu: string) => {
+    const s = FIELD_SAMPLES.find(x => x.hw.gpu === gpu)!
+    return [s.hw.gpuCount, s.result.solPerHour, s.result.epoch, s.hw.cpu, s.hw.mode, epochAt(new Date(s.at)).epoch]
+  }
+  assert.deepEqual(row('RTX 4090'), [4, 2440, 233, 'Xeon E5-2696 v3', 'gpu', 233])
+  // QC-C69: the steady rate after hour 2, epoch 233 (2 to 3 Oct 2026), not epoch 234
+  assert.deepEqual(row('RTX 5080'), [7, 2460, 233, 'EPYC 7B13', 'gpu', 233])
+  // QC-C04, epoch 229: the only E229 run with a measured sol/h over a long window
+  assert.deepEqual(row('RTX 5070 Ti'), [2, 8.9, 229, 'EPYC 7B12', 'gpu', 229])
+  assert.ok(FACTS.some(f => /2,440 sol\/h/.test(f.text) && /epoch 233/.test(f.text) && /about 4 hours/.test(f.text)))
+  assert.ok(FACTS.some(f => /2,460 sol\/h steady/.test(f.text) && /2,570 averaged over 14 hours/.test(f.text) && /epoch 233/.test(f.text)))
+  assert.ok(FACTS.some(f => /8\.9 sol\/h over 13\.6 hours/.test(f.text) && /epoch 229/.test(f.text)))
   assert.ok(FIELD_SAMPLES.every(s => s.source === 'field'))
+  assert.ok(FIELD_RUNS.every(r => r.windowMin && r.windowMin >= MEASURE.warmupMin))
 })
 
 /* ---------------- aggregation ---------------- */
@@ -757,7 +742,7 @@ test('store: field rows are merged on read, saved twice counts once, live and pr
   const row = sum.rows.find(r => r.key === 'gpu|RTX 5080')!
   // the field run keeps the headline; the saved log rides along as self-reported
   assert.equal(row.source, 'field')
-  assert.equal(row.latest.epoch, 234)
+  assert.equal(row.latest.epoch, 233)
   assert.equal(row.selfReported!.epoch, CUR)
   assert.equal(row.selfReported!.n, 1)
   assert.equal(row.selfReported!.median, 250) // 1500 / 180 min * 60 = 500 per rig, 2 cards
@@ -903,7 +888,11 @@ test('prompt: MEASURED table with n and epoch, the instruction, and the field ro
   )
   assert.match(
     p,
-    /- RTX 5080: 351 sol\/h per card, 2,460 per rig; n 1, epoch 234/
+    /- RTX 5080: 351 sol\/h per card, 2,460 per rig; n 1, epoch 233 \[our own run, few data, older\]/
+  )
+  assert.match(
+    p,
+    /- RTX 5070 Ti: 4\.5 sol\/h per card, 8\.9 per rig; n 1, epoch 229 \[our own run, few data, older\]/
   )
   assert.doesNotMatch(p, /—/)
   // the static block only depends on the snapshot, so it is stable for the cache
@@ -1006,4 +995,20 @@ test('priority applies to the doctor comparison and the MEASURED table', () => {
   const block = measuredBlock(sum)
   assert.match(block, /- RTX 4090: 610 sol\/h per card, 2,440 per rig; n 1, epoch 233 \[our own run, few data, older\]\. Self-reported, epoch 238: median 110 sol\/h per card \(2 rigs\)/)
   assert.match(block, /pool data first, then our own runs, then self-reported logs/)
+})
+
+test('era window: an epoch 229 row is no peer for ranking a current row', () => {
+  const sum = aggregate([...PEERS(), ...FIELD_SAMPLES], CUR)
+  const old = sum.rows.find(r => r.key === 'gpu|RTX 5070 Ti' && r.source === 'pool')
+  assert.equal(old, undefined) // PEERS has its own 5070 Ti row; the field row only shows without pool data
+  const onlyField = aggregate([...FIELD_SAMPLES, ...PEERS().filter(s => s.hw.gpu !== 'RTX 5070 Ti')], CUR)
+  const r5070 = onlyField.rows.find(r => r.key === 'gpu|RTX 5070 Ti')!
+  assert.equal(r5070.latest.epoch, 229)
+  // ranked against epoch 229 peers only: none, so no disagreement is claimed for the Golden 5070 Ti
+  assert.equal(tierOf(r5070.latest.median, 'card', onlyField.rows, 229), undefined)
+  const card = pick({ mode: 'own', cpu: 'EPYC 7B12', gpu: 'RTX 5070 Ti', gpuCount: 2 }, onlyField).cards.find(c => /5070/.test(c.title))!
+  assert.equal(card.verdict, 'Golden')
+  assert.equal(card.measured!.disagree, undefined)
+  // without an epoch the old behaviour stays: every row is a peer
+  assert.ok(tierOf(r5070.latest.median, 'card', onlyField.rows))
 })

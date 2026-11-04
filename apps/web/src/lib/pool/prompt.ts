@@ -6,13 +6,52 @@ import { aggregate, measuredBlock, type Summary } from './aggregate.ts'
 import { HARDWARE_FIGURES, HARDWARE_FIGURES_SOURCE, OS_LABEL, POOL, RENTALS, WALLET } from './config.ts'
 import { RULES } from './doctor.ts'
 import { EPOCH_SOURCE, epochAt, nowLine } from './epoch.ts'
-import { BUILDS, FACTS, sourceLine } from './knowledge.ts'
+import { FAQ, FAQ_THEMES, type FaqTheme } from './faq.ts'
+import { BUILDS, FACTS, type SourceId, sourceLine } from './knowledge.ts'
 import { FIELD_SAMPLES } from './measure.ts'
 import { MINER_COMMAND, PROCEDURES, practiceSourceLine, procedureSources, procedureText, TIPS } from './practice.ts'
 import { HARD_RULES } from './rules.ts'
 
 /** The field runs alone, for callers without a store (tests, the Discord card). */
 const fieldSummary = () => aggregate(FIELD_SAMPLES, epochAt().epoch, 0)
+
+/** Short source tags for the FAQ lines, so the cached block stays compact. */
+const SHORT: Record<SourceId, string> = {
+  academy: 'Academy',
+  cointribune: 'Cointribune',
+  guide: 'guide',
+  partner: 'est.',
+  doge: 'DOGE',
+  field: 'ours',
+  'field-e229': 'ours E229',
+  'field-e233': 'ours E233',
+  'pool-lanes': 'lanes',
+  devs: 'devs',
+  cfb: 'CfB',
+  'qli-mod': 'QLI mod',
+  'jetski-op': 'pool op',
+  community: 'Discord',
+}
+
+/** What miners ask, one line per entry, grouped by theme. */
+export function faqBlock(): string {
+  const themes = Object.keys(FAQ_THEMES) as FaqTheme[]
+  const lines = themes.flatMap(t => {
+    const es = FAQ.filter(e => e.theme === t)
+    return es.length ? [`# ${FAQ_THEMES[t]}`, ...es.map(e => `- "${e.q}" ${e.a} [${e.sources.map(id => SHORT[id]).join(', ')}; ${e.asOf}]`)] : []
+  })
+  return `MINER FAQ (what real miners ask, our best answer, [sources; as of]; ours = our field runs. Keep the epoch and date; never add income figures)
+${lines.join('\n')}`
+}
+
+/** Our measurements predate later algorithm changes: say so. */
+export function stalenessBlock(): string {
+  const fact = FACTS.find(f => f.topic === 'Staleness')
+  return `STALENESS
+- ${fact?.text ?? ''} No rig measurements of ours exist after epoch 233.
+- Give the epoch with every field number and say it predates these changes. Never compare sol/h across eras: epoch 229 counts were tens per rig per hour, epoch 233 thousands.
+- Where a guide and our measurements disagree, give both with their dates and say which applies when.`
+}
 
 /** The live part: the epoch now and the time to its end. Sent as its own block after the cached one. */
 export function mariaNowBlock(now: Date = new Date()): string {
@@ -70,7 +109,7 @@ WALLET
 
 HARDWARE (facts with sources; cite the source briefly when you use a fact)
 - Judge every machine by solutions per hour and cost per solution, never by it/s. it/s is speed, not pay.
-${FACTS.map(f => `- ${f.text} [${sourceLine(f.sources)}]`).join('\n')}
+${FACTS.filter(f => f.topic !== 'Staleness').map(f => `- ${f.text} [${sourceLine(f.sources)}]`).join('\n')}
 - Extra figures: ${figures}.
 - Buy builds, as tiers (never quote prices): ${Object.values(BUILDS).map(b => `${b.title} (${b.specs.map(([k, v]) => `${k} ${v}`).join(', ')})`).join('; ')}.
 - Renting: ${RENTALS.map(r => r.name).join(', ')}. Deposit small, test one box for an hour, then scale. Never type card numbers or the seed into a rental site.
@@ -82,10 +121,14 @@ ${procedures}
 EFFICIENCY TIPS
 ${tips}
 
+${stalenessBlock()}
+
 ${measuredBlock(measured ?? fieldSummary())}
 
 TRIAGE
 ${triage}
-- No solutions in the first hour: normal; they arrive in 5 to 30 minutes, sometimes longer.
-- Dashboard "behind": display lag, the work is counted.`
+- No solutions yet: a fresh rig at 0 for 2 to 30 minutes is normal; judge after 20 minutes at the earliest.
+- Dashboard "behind": display lag, the work is counted.
+
+${faqBlock()}`
 }

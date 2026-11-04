@@ -53,13 +53,15 @@ test('figures from the partner table are marked est.', () => {
   assert.ok(classifyCpu('Apple M3 Pro').reasons.some(r => /40 it\/s \(est\./.test(r)))
 })
 
-test('gpu verdicts: NVIDIA works, AMD Radeon is a skip', () => {
+test('gpu verdicts: NVIDIA works, AMD Radeon is unmeasured, not a flat no', () => {
   assert.equal(classifyGpu('RTX 5070 Ti')?.verdict, 'Golden')
   assert.equal(classifyGpu('RTX 4090')?.verdict, 'Good')
   assert.equal(classifyGpu('RTX 3080')?.verdict, 'Good')
   assert.equal(classifyGpu('RTX 4060')?.verdict, 'Works')
-  assert.equal(classifyGpu('AMD Radeon RX 7900 XTX')?.verdict, 'Skip')
-  assert.match(classifyGpu('RX 6800')!.reasons[0]!, /not supported by the official GPU miner/)
+  assert.equal(classifyGpu('AMD Radeon RX 7900 XTX')?.verdict, 'Unknown')
+  assert.match(classifyGpu('RX 6800')!.reasons[0]!, /^No measurements from us\. Support depends on the pool's miner\./)
+  assert.match(classifyGpu('RX 9070 XT')!.reasons.join(' '), /NVIDIA\/CUDA is the proven path/)
+  assert.doesNotMatch(classifyGpu('RX 9070 XT')!.reasons.join(' '), /not supported/)
   assert.equal(classifyGpu('none'), null)
   assert.equal(classifyGpu(''), null)
 })
@@ -81,7 +83,7 @@ test('pick: shopping lists never carry prices or income', () => {
       const r = pick({ mode, scale, build, os: 'macos' })
       const text = JSON.stringify(r)
       assert.doesNotMatch(text, /\$\d|earn(ing)?s? per|profit|income|ROI/i)
-      assert.ok(r.cards.some(c => c.verdict === 'Skip' && /AMD Radeon/.test(c.title)))
+      assert.ok(r.cards.some(c => c.verdict === 'Unknown' && /AMD Radeon/.test(c.title)))
       assert.ok(r.notes.some(n => /daily cost ÷ solutions per day/.test(n)))
     }
 })

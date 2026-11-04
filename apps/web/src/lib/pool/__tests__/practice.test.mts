@@ -73,10 +73,11 @@ test('practice text keeps the hard rules', () => {
   assert.doesNotMatch(all, /—/)
   assert.doesNotMatch(JSON.stringify([PROCEDURES, TIPS, RULES, SYMPTOMS]), /\$\d{2,}|\$\d+\.\d|earn(ing)?s? per|profit|\bROI\b|income|price/i)
   assert.doesNotMatch(all, /[a-z]{55}/)
-  assert.doesNotMatch(all, /jetski(?! pool; it no longer exists)/i)
+  // jetski only ever as gone: each mention has "gone" within a few words
+  for (const m of all.matchAll(/jetski/gi)) assert.match(all.slice(m.index!, m.index! + 70), /gone|no longer exists/i, all.slice(m.index!, m.index! + 70))
   assert.doesNotMatch(all, /\bCODED\b/)
   assert.doesNotMatch(JSON.stringify([PROCEDURES, TIPS]), /radeon/i)
-  assert.ok(HARD_RULES.some(r => /AMD Radeon GPUs are not supported/.test(r)))
+  assert.ok(HARD_RULES.some(r => /AMD Radeon GPUs: we have no measurements/.test(r)))
   assert.ok(HARD_RULES.some(r => r.includes(MINER_COMMAND)))
   assert.ok(TIPS.some(t => /daily cost ÷ solutions per day/.test(t.text)))
   // General GPU-efficiency advice is labelled as general.
@@ -313,14 +314,14 @@ test('doctor: new symptoms exist and every rule has a fix', () => {
 
 test('prompt: procedures, tips and rules, compact and clean', () => {
   const p = mariaSystemPrompt(NOW)
-  for (const re of [/systemctl enable --now qubic-miner/, /caffeinate -dimsu/, /schtasks \/create/, /Installation URL/, /On-start/, /nvidia-smi -pl <WATTS>/, /general, not Qubic-measured/, /AMD Radeon GPUs are not supported/])
+  for (const re of [/systemctl enable --now qubic-miner/, /caffeinate -dimsu/, /schtasks \/create/, /Installation URL/, /On-start/, /nvidia-smi -pl <WATTS>/, /general, not Qubic-measured/, /AMD Radeon GPUs: we have no measurements/])
     assert.match(p, re)
   assert.ok(p.includes(MINER_COMMAND))
   assert.match(p, /never invent it/)
   assert.doesNotMatch(p, /—/)
   assert.doesNotMatch(p, /\bCODED\b/)
   assert.doesNotMatch(p, /--wallet/)
-  assert.ok(p.length < 40_000, `prompt is ${p.length} chars`)
+  assert.ok(p.length < 56_000, `prompt is ${p.length} chars`)
 })
 
 /* ---------- the Discord Maria card ---------- */
@@ -347,9 +348,9 @@ test('discord card: format of the bot repo, from the same facts', () => {
 test('field measurements: 5080 is golden from our runs, 4090 carries its measured rate', async () => {
   const hw = await import('../hardware.ts')
   const fn = Object.values(hw).find((f: any) => typeof f === 'function' && /gpu/i.test(f.name) && f.length >= 1) as any
-  const { FACTS } = await import('../knowledge.ts')
-  assert.ok(FACTS.some(f => f.sources.includes('field') && /2,440 sol\/h/.test(f.text)))
-  assert.ok(FACTS.some(f => f.sources.includes('field') && /20 minutes/.test(f.text)))
+  const { FACTS, isField } = await import('../knowledge.ts')
+  assert.ok(FACTS.some(f => f.sources.some(isField) && /2,440 sol\/h/.test(f.text)))
+  assert.ok(FACTS.some(f => f.sources.some(isField) && /20 minutes/.test(f.text)))
   if (fn) {
     const c = fn('RTX 5080')
     if (c && c.verdict) assert.equal(c.verdict, 'Golden')

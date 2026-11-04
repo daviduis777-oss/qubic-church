@@ -11,6 +11,8 @@ const { HARDWARE_FIGURES, HARDWARE_FIGURES_SOURCE, OS_LABEL, POOL, RENTALS, WALL
 const { RULES, SYMPTOMS } = await import('../src/lib/pool/doctor.ts')
 const { EPOCH_ANCHOR, EPOCH_SOURCE, formatUtc, epochStart } = await import('../src/lib/pool/epoch.ts')
 const { BUILDS, FACTS, GLANCE } = await import('../src/lib/pool/knowledge.ts')
+const { FAQ, FAQ_THEMES } = await import('../src/lib/pool/faq.ts')
+const { stalenessBlock } = await import('../src/lib/pool/prompt.ts')
 const P = await import('../src/lib/pool/practice.ts')
 const { HARD_RULES } = await import('../src/lib/pool/rules.ts')
 const { SEED_WARNING } = await import('../src/lib/pool/wizard.ts')
@@ -116,7 +118,7 @@ export function entries(): Entry[] {
   })
 
   const topics = [...new Set(FACTS.map(f => f.topic))]
-  const TOPIC_RU: Record<string, string> = { CPU: 'процессор', GPU: 'видеокарта', RAM: 'память', Storage: 'диск', Network: 'сеть', Host: 'хост', Mac: 'Mac', ASIC: 'ASIC' }
+  const TOPIC_RU: Record<string, string> = { CPU: 'процессор', GPU: 'видеокарта', RAM: 'память', Storage: 'диск', Network: 'сеть', Host: 'хост', Mac: 'Mac', ASIC: 'ASIC', Measured: 'наши замеры', Rental: 'аренда', Mode: 'режим GPU и CPU', Judging: 'как судить о риге', Operations: 'эксплуатация', Payouts: 'выплаты', Staleness: 'свежесть замеров' }
   for (const t of topics) {
     const fs = FACTS.filter(f => f.topic === t)
     out.push({
@@ -197,10 +199,30 @@ export function entries(): Entry[] {
     })
   }
   out.push({
+    title: 'Свежесть наших замеров',
+    tags: ['stale', 'old data', 'epoch 229', 'epoch 233', 'jetski', '32 neurons', 'prediction accuracy'],
+    claim: stalenessBlock().replace(/^STALENESS\n/, '').replace(/^- /gm, '').replace(/\n/g, ' '),
+    sources: src(['field', 'field-e229', 'field-e233', 'cfb']),
+    doNot: 'не выдавать цифры эпох 229 и 233 за текущие; не сравнивать sol/h между эпохами 229 и 233',
+  })
+
+  for (const [theme, label] of Object.entries(FAQ_THEMES) as [keyof typeof FAQ_THEMES, string][]) {
+    const es = FAQ.filter(e => e.theme === theme)
+    if (!es.length) continue
+    out.push({
+      title: `Вопросы майнеров: ${label}`,
+      tags: ['faq', theme, label.toLowerCase(), ...es.map(e => e.id.replace(/-/g, ' '))].slice(0, 10),
+      claim: es.map(e => `"${e.q}" ${e.a} (as of ${e.asOf})`).join(' | '),
+      sources: src(es.flatMap(e => e.sources)),
+      doNot: theme === 'profitability' || theme === 'rentals' ? 'не называть доход, прибыль и окупаемость в цифрах; об убытках только «майнеры сообщали об убытках в некоторых эпохах»' : undefined,
+    })
+  }
+
+  out.push({
     title: 'Разбор по симптомам (без лога)',
     tags: ['no solutions', 'dashboard behind', 'worker missing', 'stops when away', 'blocked'],
     claim: SYMPTOMS.map(s => `${s.label}: ${s.finding.means} ${s.finding.fix.join(' ')}`).join(' | '),
-    sources: src(['guide', 'winPower', 'caffeinate', 'defenderExclusion', 'gatekeeper']),
+    sources: src(['guide', 'field-e229', 'field-e233', 'winPower', 'caffeinate', 'defenderExclusion', 'gatekeeper']),
   })
 
   return out
