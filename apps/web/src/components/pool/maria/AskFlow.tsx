@@ -5,7 +5,9 @@ import { MARIA_LIMITS } from '@/lib/pool/config'
 import { redactWallets } from '@/lib/pool/redact'
 import { Screen, useRing, useStickToBottom } from './flow'
 import type { Go } from './flows'
-import { Chips, Field, Rich, Say, TONE, Typing, You } from './ui'
+import { Halo } from './Halo'
+import { Chips, Field, Rich, Say, TONE, You } from './ui'
+import s from './maria.module.css'
 
 type Msg = { role: 'user' | 'assistant'; content: string; offline?: boolean }
 
@@ -97,13 +99,14 @@ export function AskFlow({ go, first }: { go: Go; first?: string }) {
             <Say fault={m.offline} key={i}>
               <Rich text={m.content} />
             </Say>
-          ) : (
-            // biome-ignore lint/suspicious/noArrayIndexKey: an append-only list
-            <Typing key={i} label="Maria is thinking" />
-          )
+          ) : null
         ),
       )}
-      {busy && msgs.at(-1)?.role === 'user' && <Typing label="Maria is thinking" />}
+      {busy && (msgs.at(-1)?.role === 'user' || !msgs.at(-1)?.content) && (
+        <div className={s.haloSlot}>
+          <Halo face={40} label="Maria is thinking" mode={ring.state.mode} size={152} tone={ring.state.tone} />
+        </div>
+      )}
     </Screen>
   )
 }

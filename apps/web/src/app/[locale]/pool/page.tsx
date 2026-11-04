@@ -63,21 +63,21 @@ function DotField() {
   const dots = Array.from({ length: N }, (_, i) => {
     const r = Math.sqrt((i + 0.5) / N) * 470
     const a = i * g
-    return [500 + Math.cos(a) * r, 500 + Math.sin(a) * r, 0.9 + (i / N) * 0.9] as const
+    return [500 + Math.cos(a) * r, 500 + Math.sin(a) * r, 0.6 + (i / N) * 0.7] as const
   })
   return (
     <svg aria-hidden className={p.field} viewBox="0 0 1000 1000">
       <defs>
         <radialGradient id="qcpFade">
           <stop offset="0.25" stopColor="#fff" stopOpacity="0" />
-          <stop offset="0.6" stopColor="#fff" stopOpacity="1" />
+          <stop offset="0.6" stopColor="#fff" stopOpacity="0.55" />
           <stop offset="1" stopColor="#fff" stopOpacity="0" />
         </radialGradient>
         <mask id="qcpMask">
           <rect fill="url(#qcpFade)" height="1000" width="1000" />
         </mask>
       </defs>
-      <g fill="#9BA3C7" mask="url(#qcpMask)">
+      <g fill="#FECE34" mask="url(#qcpMask)">
         {dots.map(([x, y, r]) => (
           <circle cx={x.toFixed(1)} cy={y.toFixed(1)} key={`${x.toFixed(1)}-${y.toFixed(1)}`} r={r.toFixed(2)} />
         ))}
