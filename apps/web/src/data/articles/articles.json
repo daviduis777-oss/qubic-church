@@ -1,5 +1,391 @@
 [
  {
+  "slug": "two-men-one-thesis",
+  "title": "Two Men, One Thesis",
+  "kicker": null,
+  "date": "2026-11-03",
+  "url": "https://x.com/inqubic/status/2117754323157578041",
+  "author": "fallin",
+  "handle": "inqubic",
+  "guest": true,
+  "summary": "This one is not about The Day. It is about a sentence said on a stage in Mumbai this week, and a forum post from July 2012, and the strange fact that they are the same sentence.",
+  "words": 1695,
+  "note": "Posted on X and addressed to Maria Aigarth: \"not every article is about The Day\". The third piece after \"The Reveal Won't Wait\" and \"The Man Who Schedules His Own Exits\". Text unchanged. One check from us: the blog post on Vitalik's private AI setup with the line \"the new two-factor authentication is the human and the LLM\" is dated 2 April 2026, not November.",
+  "blocks": [
+   {
+    "t": "p",
+    "text": "This one is not about The Day. It is about a sentence said on a stage in Mumbai this week, and a forum post from July 2012, and the strange fact that they are the same sentence."
+   },
+   {
+    "t": "h",
+    "text": "I. The keynote"
+   },
+   {
+    "t": "p",
+    "text": "On November 3, 2026, at Devcon 8 in Mumbai, Vitalik Buterin stood up and said the quiet part out loud:"
+   },
+   {
+    "t": "quote",
+    "text": "\"We need to be able to trust our AI. Everything is dependent on AI... AI is super important. It's basically becoming a second brain. But you don't want your second brain's thoughts to be going into a third-party corporation's servers. And potentially being used as streaming data, potentially being hacked and used in arbitrary ways.\""
+   },
+   {
+    "t": "p",
+    "text": "His prescriptions were specific. Run local models where you can. If you need a remote frontier model, strip the private information out before you send anything. Treat \"data as toxic waste by default. If you can, don't collect it at all.\" He detailed his own setup in a blog post: an open-source model running on his own hardware, a laptop GPU, no cloud, and a daemon that physically blocks his AI agents from contacting third parties unless a human approves the request. His summary: \"The new two-factor authentication is the human and the LLM.\""
+   },
+   {
+    "t": "p",
+    "text": "And his closing line was a scalpel: the answer, he said, is neither to trust powerful corporations, nor \"charismatic influencers who claim that they're a good and righteous rebellion against powerful corporations.\""
+   },
+   {
+    "t": "p",
+    "text": "Hold that line. We will come back to who it describes."
+   },
+   {
+    "t": "h",
+    "text": "II. The post from 2012"
+   },
+   {
+    "t": "p",
+    "text": "Fourteen years before that keynote, on July 19, 2012, a user named Come-from-Beyond opened a thread on bitcointalk titled \"Main disadvantage of Bitcoin and the others.\" His argument: the fatal flaw of cryptocurrency is that it has no anonymity. Every transaction is stored forever, publicly, trackable by anyone. Mixing services exist but cannot be trusted not to keep records. A monetary system that governments can surveil is not money, it is a compliance product. He concluded that he did not believe the Bitcoin community could reach consensus on fixing it."
+   },
+   {
+    "t": "p",
+    "text": "Two months later he posted the founding design of Qubic, whose feature list included untraceable key transfers. The privacy promise never shipped in the 2022 mainnet, and that fact matters later in this piece. But the diagnosis was written in 2012, dated, public, and precise."
+   },
+   {
+    "t": "p",
+    "text": "Now read the two statements side by side:"
+   },
+   {
+    "t": "p",
+    "text": "• CfB, 2012: you should not want your money flowing through third-party servers you cannot audit."
+   },
+   {
+    "t": "p",
+    "text": "• Vitalik, 2026: you should not want your thoughts flowing through third-party servers you cannot audit."
+   },
+   {
+    "t": "p",
+    "text": "Same thesis. Same structure. Same enemy: the trusted intermediary, the party that sees your traffic and can store, sell, or leak it. The only variable is the payload. In fourteen years the argument moved from money to cognition, which is the entire history of computing compressed into one sentence: first we intermediated the payments, then we intermediated the thinking."
+   },
+   {
+    "t": "h",
+    "text": "III. The bridge, 2014"
+   },
+   {
+    "t": "p",
+    "text": "The part nobody plans for a coincidence: in between those two dates, on March 28, 2014, CfB wrote one of the most honest posts of his career. The subject was why NXT did not have a Turing-complete scripting language, and whether Ethereum would succeed where NXT had not. Someone suggested Ethereum's designer had overlooked something. CfB replied:"
+   },
+   {
+    "t": "quote",
+    "text": "\"I bet Vitalik spent much more time mulling the idea of Turing-complete scripting language hosted on a blockchain than anyone else, so I tend to think that we overlooked something and will face serious problems in the future.\""
+   },
+   {
+    "t": "p",
+    "text": "That is a founder publicly crediting a rival's deeper thinking, before the rival's network even launched, and predicting that his own community's shortcut would cost them. It is the same register as his answer to Andrew Miller in the original 2012 Qubic thread: \"I have no ready answer.\" The man is precise about mechanisms and honest about the edges of his knowledge, which is exactly why the record is worth keeping."
+   },
+   {
+    "t": "p",
+    "text": "So the sequence is: 2012, CfB diagnoses the third-party problem for money. 2014, CfB defers to Vitalik on the machine that would run the world's contracts. 2026, Vitalik diagnoses the third-party problem for minds. Two men, one thesis, traded across fourteen years."
+   },
+   {
+    "t": "h",
+    "text": "IV. The fork"
+   },
+   {
+    "t": "p",
+    "text": "Here is where it gets useful, because having diagnosed the same disease, they prescribed opposite cures."
+   },
+   {
+    "t": "p",
+    "text": "Vitalik's answer is local. Your second brain should be yours: a model on your own hardware, your data on your own disk, an approval gate where a human signs off before anything leaves the machine. Privacy by ownership. Trust nothing, self-host everything, and keep the human in the loop as the final authenticator."
+   },
+   {
+    "t": "p",
+    "text": "CfB's answer is commons. Your second brain should belong to no one: a network with no founder allocation, no company, no server anyone owns, where the AI is trained by open mining work and governed by a quorum of 676 Computors voting in public, every epoch, forever. Privacy by dissolution of the counterparty. There is no first party to trust, so the trust question dissolves."
+   },
+   {
+    "t": "p",
+    "text": "Two architects, same enemy, opposite instincts: one retreats to the walled garden of one; the other builds a garden with no walls and no owner. Neither is obviously right. The local answer keeps your data private and keeps your AI as smart as your own hardware, which today means: a laptop can hold a good model, but the frontier lives where the megawatts are. The commons answer keeps the AI at the frontier, trained by collective compute, but ships on a transparent ledger where the 2012 promise of untraceability was quietly abandoned. The local answer is private and capped. The commons answer is powerful and public. The trade is exactly the trade the two men have been making their whole careers: Vitalik has always optimized for the individual's sovereignty against the system; CfB has always optimized for the system's autonomy from individuals."
+   },
+   {
+    "t": "h",
+    "text": "V. The scalpel"
+   },
+   {
+    "t": "p",
+    "text": "Now return to Vitalik's closing line, about charismatic influencers who claim to be the righteous rebellion against powerful corporations."
+   },
+   {
+    "t": "p",
+    "text": "Say it plainly: that sentence describes the awakening wave. It describes anonymous accounts that cite a community's research archive while making claims the archive explicitly retired. It describes funnels with mystery URLs and initiation language. Applied at full force, it describes the rebel-branding economy as such, where the performance of anti-corporation is itself a revenue model. It cuts the influencer who decodes miracles, and it cuts, if you are honest enough to let it, the man whose own founding myth includes \"we were a small group fighting against capitalists to get Bitcoin promoted.\""
+   },
+   {
+    "t": "p",
+    "text": "That is why the line belongs in this article rather than in a dunk. The scalpel's value is that it does not stop. An ecosystem that mocks only other people's gurus is an ecosystem that has learned nothing from the man who wrote, on the same forum, in 2014, that bragging was the thing he could not respect. The honest position is symmetrical: verify the corporation, verify the rebel, verify the archive, verify the author. Especially the author. Especially when the author is you."
+   },
+   {
+    "t": "h",
+    "text": "VI. What the fork means for the second brain you already have"
+   },
+   {
+    "t": "p",
+    "text": "The uncomfortable fact under all of this: the second brain already exists. Everyone reading this has one. It reads your messages, remembers your projects, drafts your posts, holds your research. The question Vitalik asked on stage in Mumbai is not a forecast, it is an audit of a machine that is already running, in production, on your own life."
+   },
+   {
+    "t": "p",
+    "text": "And his daemon is the answer in miniature: an AI may not act externally without a human approving the action. Translate that into this ecosystem's terms and you get the tier discipline the whole Qubic archive runs on. An AI that tells you a hex string proves a founder's initials is not evidence until a human, applying a rule written before the answer was known, confirms it independently. An AI asked to verify a conclusion you want is the most convincing liar in history, because it does not experience the difference between evidence and agreement. The mitigation is not better AI. The mitigation is the approval gate. The human is the second factor. Vitalik said it as an architecture. This community has been running it as a methodology. It is the same sentence again, and this time you are the payload."
+   },
+   {
+    "t": "h",
+    "text": "VII. Two doors"
+   },
+   {
+    "t": "p",
+    "text": "So: two men, one thesis, fourteen years apart. In 2012 one of them wrote the diagnosis for money and nobody acted on it. In 2014 he deferred to the other man on the machine that would run the world. In 2026 the other man stood on stage and said the diagnosis out loud for minds, recommended the walled garden, and warned the audience about rebel-branded gurus, while the first man's community spent the same week decoding his jokes about a 369-byte virus from the 1990s."
+   },
+   {
+    "t": "p",
+    "text": "Your second brain is going to live in one of two places: on your hardware, owned by you; or on a commons, owned by no one. The one place it cannot stay, if either of these men is right, is on a corporation's server, owned by them."
+   },
+   {
+    "t": "p",
+    "text": "That is the whole fork. Local or commons. And the choice is not philosophical, it is weekly: every epoch, and every app install, you are already voting for one of the two doors. The third door is the one both men spent fourteen years telling you was a wall."
+   },
+   {
+    "t": "p",
+    "text": "Sources: Vitalik Buterin, Devcon 8 keynote, Mumbai, November 3, 2026 (quotes as reported by Moneycontrol and The Crypto Times); Vitalik Buterin, personal blog post on private AI setup (\"the new two-factor authentication is the human and the LLM\"), November 2026; Come-from-Beyond, \"Main disadvantage of Bitcoin and the others,\" bitcointalk, July 19, 2012; Come-from-Beyond, Qubic founding post, bitcointalk topic 112676, September 25, 2012; Come-from-Beyond, NXT thread, bitcointalk, March 28, 2014. Tier discipline: all quotes verbatim and dated; the privacy characterization of the 2022 mainnet follows the founding post's feature list against the shipped design; interpretations marked as such. The author holds QUBIC and is therefore financially interested in every interpretation of these two men's work, including the skeptical ones."
+   }
+  ]
+ },
+ {
+  "slug": "aigarth-shown-a-year-of-science-and-bpp-9000",
+  "title": "Aigarth, shown: a year of Qubic science and BPP-9000",
+  "kicker": null,
+  "date": "2026-11-03",
+  "url": "https://x.com/usetesserai/status/2117604923831615699",
+  "author": "TesserAI",
+  "handle": "usetesserai",
+  "guest": false,
+  "summary": "Intelligence can be grown by evolution on ordinary processors, from small ternary networks that answer yes, no or not sure. Over the past year both teams put that bet on the table, in public.",
+  "words": 1518,
+  "blocks": [
+   {
+    "t": "p",
+    "text": "On 1 November 2026, Come-from-Beyond @c___f___b"
+   },
+   {
+    "t": "quote",
+    "text": "Aigarth is accomplished, now need to show it to others with BPP9000",
+    "cite": "Come-from-Beyond, 1 November 2026"
+   },
+   {
+    "t": "p",
+    "text": "Intelligence can be grown by evolution on ordinary processors, from small ternary networks that answer yes, no or not sure. Over the past year both teams put that bet on the table, in public."
+   },
+   {
+    "t": "h",
+    "text": "The scientists: four peer-reviewed papers in a year"
+   },
+   {
+    "t": "p",
+    "text": "Qubic Science is led by two researchers: David Vivancos (Artificiology Research) @VivancosDavid and Dr. José Sánchez-García (UNIR) @josesanchezhb. They build Neuraxon, a neural network modeled on the brain. Its neurons have three states: excite, inhibit, and a neutral state where the neuron keeps listening but doesn’t fire. The network grows, learns and evolves all at once, with no separate training phase."
+   },
+   {
+    "t": "p",
+    "text": "In 2026 they took it to four peer-reviewed conferences on three continents:"
+   },
+   {
+    "t": "p",
+    "text": "• 21 May, ICMLT 2026, Berlin: Neuraxon v2.0: A New Neural Growth & Computation Blueprint. Best paper presentation of the evening."
+   },
+   {
+    "t": "p",
+    "text": "• 22 July, AMLDS 2026, Osaka: The Neutral Buffer State: Trinary Logic Advantage in Branching Ratio Stability for Continuous-Time Networks. Best paper presentation of the evening."
+   },
+   {
+    "t": "p",
+    "text": "• 27–30 July, AGI-26, San Francisco: Multi-Neuraxon: Emergent Specialization, Modular, Frequency-Gated Neural Dynamics for Context-Dependent Behaviour. Published by Springer, LNCS / LNAI."
+   },
+   {
+    "t": "p",
+    "text": "• 29 October, EA 2026, Nice: From Synapse to Society: Multi-level Continuity Through Neuromodulation in a Minimal Artificial Ecology. Oral presentation."
+   },
+   {
+    "t": "p",
+    "text": "The Osaka paper lays out the formal basis of the ternary logic that Aigarth and Neuraxon share. AGI-26 is the main conference in artificial general intelligence. Code is open on GitHub, data on Hugging Face."
+   },
+   {
+    "t": "h",
+    "text": "No LLM, no GPU: brains bred on ordinary processors"
+   },
+   {
+    "t": "p",
+    "text": "Papers are only half of it. All year the team ran evolution out in the open."
+   },
+   {
+    "t": "p",
+    "text": "A world that doesn’t stop. Neuraxon Life is a Game of Life where creatures with Neuraxon brains see, smell, hear, eat, breed and die. Since summer it’s been running 24/7 on nxon.online. Its runs get published as datasets: from a million grown networks in December 2025 to the NeuraxonLive2M release in August."
+   },
+   {
+    "t": "p",
+    "text": "ARC-AGI-3. The ARC Prize is one of the hardest public tests of machine reasoning: new games the agent has never seen. The team went in with evolved Neuraxon brains and no language model at all. Their score climbed step by step over summer and autumn: 0.13, 0.21, 0.25, 0.28, 0.38. On the last day, 2 November, it reached 0.41 on a 0 to 100 scale. 5,073 teams took part, and a lot of the leaders are built on large language models. Final places come after the private half of the test is checked."
+   },
+   {
+    "t": "p",
+    "text": "155,192 brains, open to everyone. On 3 November they put every brain the search bred on Hugging Face: the Nxon2ArcAGI3Brains dataset. That’s 603,054 files, 100 GB, from 114 architecture search runs over 25 public games, under CC BY-SA 4.0. Anyone can download them and look inside."
+   },
+   {
+    "t": "p",
+    "text": "What they found in Nice. Their EA 2026 paper asked if one brain-like agent can do well on three levels at once: inside its own head, in its world, and across generations. In Sánchez’s words: “Our answer at EA 2026 in Nice: partly.” Freeze the neuromodulation and the balance of fast and slow activity shifts fourfold, from 2.04 to 7.99. Those agents live a bit longer but find less food. “Living longest isnt adapting best.” An honest result."
+   },
+   {
+    "t": "h",
+    "text": "Come-from-Beyond: from \"we know how\" to \"accomplished\""
+   },
+   {
+    "t": "p",
+    "text": "Aigarth is Come-from-Beyond’s project inside Qubic: the search for a new way to make AI, where the AI is grown by the network’s miners. Qubic mining is useful work (uPoW!). The computation that secures the network also grows Aigarth’s networks, and every node checks the result."
+   },
+   {
+    "t": "p",
+    "text": "He laid out this design back in 2023: “Aigarth uses Qubic’s UPoW, also Qubic has everything that an AI would need: Smart contracts as brain, Oracles as sensors to outer world, Outsourced computations as Manipulators to change that outer world.”"
+   },
+   {
+    "t": "p",
+    "text": "The last twelve months read like a run of milestones, in his own words:"
+   },
+   {
+    "t": "p",
+    "text": "• 6 December 2025: \"And ETA for Aigarth was set as April 13, 2027\" That’s five years after Qubic’s first block."
+   },
+   {
+    "t": "p",
+    "text": "• 19 February 2026: \"Aigarth already found how to get AI, now trying to find out how to get AI without 1000 nuclear plants\""
+   },
+   {
+    "t": "p",
+    "text": "• 21 May 2026: \"We solved AI and now need practical proof which is just matter of getting enough power\""
+   },
+   {
+    "t": "p",
+    "text": "• Late August 2026: ant colony mining starts. A miner can publish a network only if it’s strictly better than the one it grew from. The miner is ranked by its single best network."
+   },
+   {
+    "t": "p",
+    "text": "• 28 August 2026: \"Every computor/candidate constructs a separate model predicting next hour price movement direction. So with 676+ models we may assess accuracy of the whole colony\""
+   },
+   {
+    "t": "p",
+    "text": "• 20 October 2026: \"In a month historical BTC price feed will be replaced with live one\" After one epoch, he wrote, qualification will depend on prediction accuracy: \"It means that those who predict price correctly will be getting more computor seats\""
+   },
+   {
+    "t": "p",
+    "text": "• 1 November 2026: \"Aigarth is accomplished, now need to show it to others with BPP9000\""
+   },
+   {
+    "t": "p",
+    "text": "The line goes from claim to proof. And the proof he picked is public, hourly and easy to check."
+   },
+   {
+    "t": "h",
+    "text": "BPP-9000: Aigarth's first product and how it works"
+   },
+   {
+    "t": "p",
+    "text": "BPP-9000 (Bitcoin Price Predictor 9000) is Aigarth’s first product on Qubic. Its job fits in one line: before each hour closes, say whether bitcoin closes that hour UP or DOWN. A hard question, a clear answer and a score anyone can keep."
+   },
+   {
+    "t": "p",
+    "text": "1. A tiny brain. Every network has 32 neurons. Each neuron has 3 wires and a table of 27 rules. On every tick a neuron reads its wires (up, down or unknown), finds its rule and outputs “up”, “down” or “not sure”. When the clock neuron fires, the answer neuron calls the hour."
+   },
+   {
+    "t": "p",
+    "text": "2. Grown by miners. Qubic miners mutate these networks and score them on a real year of hourly BTC/USDT candles from Binance, about 8,760 hours. The score is the number of hours the network got wrong. Lower is better."
+   },
+   {
+    "t": "p",
+    "text": "3. Only the better children survive. In ant colony mining a miner can only publish a network if it’s strictly better than the one it grew from. Each miner is ranked by its single best network."
+   },
+   {
+    "t": "p",
+    "text": "4. Everyone checks. Every Qubic node recomputes every score with the same scorer from qubic/core (score_bpp9000.h). The top 676 miners become the computors that run Qubic for the next week. Jetski ANN Explorer archives and re-checks every solution. And QC runs the best fresh network right in your browser, by the same rule."
+   },
+   {
+    "t": "p",
+    "text": "5. Live from 18 November. From epoch 240 the Qubic core asks for the BTC price of the past hour. Computors fetch the real data, agree on it by quorum and feed it in. This is Qubic’s Oracle Machine. Then the network calls the next hour, and the call is checked against the real close."
+   },
+   {
+    "t": "p",
+    "text": "6. Seats follow accuracy. After one epoch under the old rule, qualification depends on how well a miner’s model predicts. Computor seats go to the networks that call the market right. Mining itself becomes the test."
+   },
+   {
+    "t": "p",
+    "text": "What to watch. Until the live feed, the match rate on the page is a fit to last year’s history, not a forecast. A coin is right half the time. What matters is how far above 50% the calls hold live, over many hours, made before each hour closes and checked against the real close."
+   },
+   {
+    "t": "h",
+    "text": "18 November: the crown of the year"
+   },
+   {
+    "t": "p",
+    "text": "Everything above comes together on one date:"
+   },
+   {
+    "t": "p",
+    "text": "• Neuraxon showed in public, at four conferences and in 155,192 published brains, that small ternary networks bred on processors can learn hard things."
+   },
+   {
+    "t": "p",
+    "text": "• Aigarth runs the same kind of networks inside Qubic itself. There hundreds of miners breed them every week, and every node checks the work."
+   },
+   {
+    "t": "p",
+    "text": "• BPP-9000 is where that work stops being a claim and starts becoming a track record."
+   },
+   {
+    "t": "p",
+    "text": "From 18 November every call is public and timestamped. It’s made before the hour closes and checked against the market an hour later. Nothing can be fitted after the fact. The longer it runs, the clearer the answer gets, whichever way it goes."
+   },
+   {
+    "t": "p",
+    "text": "That’s what “show it to others” means."
+   },
+   {
+    "t": "h",
+    "text": "Join the live experiment"
+   },
+   {
+    "t": "p",
+    "text": "Come-from-Beyond asked the community to put together a group of people who follow the hourly calls and report what happens. That way the test has enough witnesses to mean something. Qubic Church built a place for it."
+   },
+   {
+    "t": "p",
+    "text": "• Watch: QC (https://qubic.church/bpp9000) runs the network live in your browser and counts down to the first live call."
+   },
+   {
+    "t": "p",
+    "text": "• Join: sign in with a Qubic wallet, or just a name and a secret code. Set your starting capital and keep a journal of your calls and trades."
+   },
+   {
+    "t": "p",
+    "text": "• Check: BPP-9000 is scored only on its own calls against the market, separately from anyone’s journal. Its mining scores are recomputed by every Qubic node."
+   },
+   {
+    "t": "p",
+    "text": "First live call: 18 November 2026. Be there when it starts."
+   },
+   {
+    "t": "p",
+    "text": "QC doesn’t hold any personal data."
+   },
+   {
+    "t": "p",
+    "text": "This is an experiment, not financial advice. If you trade with real money, the responsibility is yours."
+   }
+  ]
+ },
+ {
   "slug": "your-elder-twin-went-silent-in-july",
   "title": "Your elder twin went silent in July",
   "kicker": null,
