@@ -17,18 +17,9 @@ const {
   mask,
 } = await import('../doctor.ts')
 const {
-  mariaSystemPrompt,
-  stalenessNote,
-  noteLanguage,
   STALE_ERA,
-  checklistBlock,
-  moneyBlock,
-  faqBlock,
 } = await import('../prompt.ts')
-const { FAQ } = await import('../faq.ts')
-const { FACTS } = await import('../knowledge.ts')
 const { PROCEDURES } = await import('../practice.ts')
-const { HARD_RULES } = await import('../rules.ts')
 
 const NOW = new Date('2026-11-05T12:00:00Z')
 const ids = (log: string) => diagnose(log).findings.map(f => f.id)
@@ -339,124 +330,12 @@ test('doctor: durations and timestamps in the forms miners write them', () => {
 
 /* ---------- the staleness note the API route appends ---------- */
 
-test('staleness: an E229/E233-era answer without "predates" gets one caveat line', () => {
-  assert.match(
-    stalenessNote('Our record rig ran 2,460 sol/h in epoch 233.'),
-    /^\n\nNote: those measurements predate the E235\/E236 changes\.$/
-  )
-  assert.match(
-    stalenessNote('On 7 Sep 2026 six cards plus CPU looped.'),
-    /predate/
-  )
-  assert.match(stalenessNote('Our runs show 12 threads per card.'), /predate/)
-  assert.equal(
-    stalenessNote('Epoch 233 numbers, which predates the E235/E236 changes.'),
-    ''
-  )
-  assert.equal(stalenessNote('E233-Daten, vor den Änderungen in E236.'), '')
-  assert.equal(stalenessNote('Wait 20 minutes, then judge by solutions.'), '')
-  assert.equal(stalenessNote('It ran 2,233 sol/h.'), '')
-  assert.match(
-    stalenessNote('В эпоху 233 наш риг...', 'Сколько ставить потоков?'),
-    /до изменений E235\/E236/
-  )
-  assert.match(
-    stalenessNote(
-      'In E229 lief die Karte heiß.',
-      'Ist 84 Grad zu heiß für meine Karte und wie soll ich das Power Limit setzen?'
-    ),
-    /Hinweis/
-  )
-  assert.equal(
-    noteLanguage('¿Cómo puedo minar con mi 3070 y es para mi casa?'),
-    'es'
-  )
-  assert.equal(noteLanguage('how do I start'), 'en')
-  assert.ok(
-    STALE_ERA.test('E229') &&
-      STALE_ERA.test('30 Sep') &&
-      !STALE_ERA.test('8 Oct 2026')
-  )
-})
 
 /* ---------- prompt and knowledge ---------- */
 
-test('prompt: the checklist asks for every question, must-say facts, scoped unknowns and the 800 cap', () => {
-  const c = checklistBlock()
-  assert.match(c, /answer every question the user literally asked/)
-  assert.match(c, /MUST facts, in order, before any extra/)
-  assert.match(
-    c,
-    /about 800 for expert, rental, comparison or multi-part questions/
-  )
-  // round 4: "no confirmed fix" is scoped to open cases, and even there the general troubleshooting follows
-  assert.match(c, /"no confirmed fix yet" only for an OPEN CASE, and then still the general troubleshooting that fits the log/)
-  assert.match(c, /"not measured" only for a "Never measured" item/)
-  assert.match(c, /never open with "I don't know" when they cover it/)
-})
 
-test('prompt: cost maths with rental prices is allowed; income and price predictions are not', () => {
-  const m = moneyBlock()
-  assert.match(m, /Rental prices and power bills are costs, not price talk/)
-  assert.match(m, /compute cost per solution for each option/)
-  assert.match(m, /0\.00075 USD.*0\.0013/)
-  assert.ok(
-    HARD_RULES.some(r =>
-      /Rental and power costs are costs, not price talk/.test(r)
-    )
-  )
-  assert.match(
-    mariaSystemPrompt(NOW),
-    /Per-card values are averages over a whole rig/
-  )
-})
 
-test('prompt: every FAQ topic has 2 to 4 ranked must-say facts, rendered numbered', () => {
-  for (const e of FAQ) {
-    assert.ok(e.must.length >= 2 && e.must.length <= 4, e.id)
-    assert.equal(e.a, [...e.must, ...(e.more ? [e.more] : [])].join(' '))
-  }
-  assert.match(faqBlock(), /\(1\) .* \(2\) /)
-  const p = mariaSystemPrompt(NOW)
-  assert.ok(
-    p.length / 4 <= 20_000,
-    `prompt is about ${Math.round(p.length / 4)} tokens`
-  )
-})
 
-test('knowledge: measured heat, power-cap and thread facts are in, the unsourced ones are out', () => {
-  const p = mariaSystemPrompt(NOW)
-  assert.match(
-    p,
-    /hotspot of 82 to 89 C, which we treated as normal \(epoch 229, 5 Sep 2026\)/
-  )
-  assert.match(
-    p,
-    /5080s to 250 W \(stock 360\) and 5090s to 400 W \(stock 575\)/
-  )
-  assert.match(p, /Running with single thread probably" \(2 Aug 2026\)/)
-  assert.ok(
-    FACTS.some(
-      f =>
-        /Heat and power/.test(f.text) &&
-        /predates the E235\/E236 changes/.test(f.text)
-    )
-  )
-  assert.doesNotMatch(
-    JSON.stringify([PROCEDURES, FAQ, FACTS]),
-    /10% below the default/
-  )
-  assert.doesNotMatch(
-    p,
-    /which is why pooling helps|high scores count for nothing/
-  )
-  // regional failures are another pool's endpoints, stale, and this pool untested
-  assert.doesNotMatch(p, /could not reach the pool/)
-  assert.match(
-    FAQ.find(e => e.id === 'avoid-hosts')!.a,
-    /jetski endpoints.*another pool and stale.*never tested by region/
-  )
-})
 
 test('a typed multi-line question is not treated as a log', async () => {
   const { looksLikeLog } = await import('../doctor.ts')

@@ -11,10 +11,7 @@ const P = await import('../practice.ts')
 const { PROCEDURES, PRACTICE_SOURCES, TIPS, MINER_COMMAND, proceduresFor, procedureText, sourceOf, withCommand, runScript, detachCommand, stopCommand, SYSTEMD_UNIT, POWER_UNIT } = P
 const { buildPlan } = await import('../wizard.ts')
 const { diagnose, RULES, SYMPTOMS } = await import('../doctor.ts')
-const { mariaSystemPrompt } = await import('../prompt.ts')
-const { HARD_RULES } = await import('../rules.ts')
 const { POOL } = await import('../config.ts')
-const { renderMiningCard } = await import('../../../../scripts/pool-card.mts')
 
 const ADDR = 'A'.repeat(56) + 'BCDE'
 const NOW = new Date(Date.UTC(2026, 10, 4, 16, 0))
@@ -43,10 +40,6 @@ test('epoch: formatting and the prompt line', () => {
   assert.equal(nowLine(NOW), 'Now: Wed 4 Nov 2026 16:00 UTC. Epoch 238, started Wed 4 Nov 2026 12:00 UTC, ends Wed 11 Nov 2026 12:00 UTC, in 6 d 20 h.')
 })
 
-test('the prompt carries "now" at request time', () => {
-  assert.match(mariaSystemPrompt(NOW), /Epoch 238, .* ends Wed 11 Nov 2026 12:00 UTC, in 6 d 20 h/)
-  assert.match(mariaSystemPrompt(new Date(Date.UTC(2026, 10, 11, 12, 0))), /Epoch 239, .* in 7 d 0 h/)
-})
 
 /* ---------- practice data ---------- */
 
@@ -68,22 +61,6 @@ test('every step, tip and rule source resolves to a dated source', () => {
   }
 })
 
-test('practice text keeps the hard rules', () => {
-  const all = allText()
-  assert.doesNotMatch(all, /—/)
-  assert.doesNotMatch(JSON.stringify([PROCEDURES, TIPS, RULES, SYMPTOMS]), /\$\d{2,}|\$\d+\.\d|earn(ing)?s? per|profit|\bROI\b|income|price/i)
-  assert.doesNotMatch(all, /[a-z]{55}/)
-  // jetski only ever with "not recommended" (or as the endpoints of our old runs) within a few words
-  for (const m of all.matchAll(/jetski/gi)) assert.match(all.slice(m.index!, m.index! + 70), /not recommend|endpoints/i, all.slice(m.index!, m.index! + 70))
-  assert.doesNotMatch(all, /\bCODED\b/)
-  assert.doesNotMatch(JSON.stringify([PROCEDURES, TIPS]), /radeon/i)
-  assert.ok(HARD_RULES.some(r => /AMD Radeon GPUs: we have no measurements/.test(r)))
-  assert.ok(HARD_RULES.some(r => r.includes(MINER_COMMAND)))
-  assert.ok(TIPS.some(t => /daily cost ÷ solutions per day/.test(t.text)))
-  // General GPU-efficiency advice is labelled as general.
-  assert.match(PROCEDURES['gpu-power'].summary, /General GPU advice, not measured on Qubic/)
-  assert.ok(TIPS.filter(t => /power limit/i.test(t.title)).every(t => t.general))
-})
 
 test('procedures never invent the pool command', () => {
   const all = JSON.stringify(PROCEDURES)
@@ -312,49 +289,7 @@ test('doctor: new symptoms exist and every rule has a fix', () => {
 
 /* ---------- prompt ---------- */
 
-test('prompt: procedures, tips and rules, compact and clean', () => {
-  const p = mariaSystemPrompt(NOW)
-  for (const re of [/systemctl enable --now qubic-miner/, /caffeinate -dimsu/, /schtasks \/create/, /Installation URL/, /On-start/, /nvidia-smi -pl <WATTS>/, /general, not Qubic-measured/, /AMD Radeon GPUs: we have no measurements/])
-    assert.match(p, re)
-  assert.ok(p.includes(MINER_COMMAND))
-  assert.match(p, /never invent it/)
-  assert.doesNotMatch(p, /—/)
-  assert.equal(p.match(/\bCODED\b/g)!.length, 1) // only in the "who runs it" line
-  assert.doesNotMatch(p, /--wallet/)
-  // Budget: 17k tokens at about 4 chars per token (exam round 1 fixes added 5 Nov 2026; was 16k).
-  // 72k chars (about 18k tokens) since the round 3 must-say FAQ, Nov 2026; 78k since round 5, 80k since round 6
-  assert.ok(p.length <= 80_000, `prompt is ${p.length} chars`)
-})
 
 /* ---------- the Discord Maria card ---------- */
 
-test('discord card: format of the bot repo, from the same facts', () => {
-  const md = renderMiningCard('abc1234')
-  assert.match(md, /^---\ndomain: mining\ntitle: .+\nversion: 1\nas_of: 2026-11-04\nstatus: черновик — ждёт «да» Боба\nrule: .+\n---\n/)
-  const heads = [...md.matchAll(/^## (mining-(\d{3})) · .+$/gm)]
-  assert.ok(heads.length >= 25)
-  for (const [i, h] of heads.entries()) assert.equal(Number(h[2]), i + 1)
-  for (const block of md.split(/^## /m).slice(1)) {
-    for (const field of ['- tags: ', '- claim: ', '- source: ', '- as_of: ', '- status: ']) assert.ok(block.includes(field), `${block.slice(0, 40)}: ${field}`)
-  }
-  // Same facts as the site.
-  for (const s of [SYSTEMD_UNIT.split('\n')[0]!, 'Restart=always', 'caffeinate -dimsu', 'schtasks /create', 'Installation URL', MINER_COMMAND, POOL.onboardingUrl, ...HARD_RULES])
-    assert.ok(md.includes(s), s)
-  // Em dash only in the required status line; the partner is named in one entry only.
-  assert.deepEqual(md.split('\n').filter(l => l.includes('—')), ['status: черновик — ждёт «да» Боба'])
-  assert.equal(md.split(/^## /m).filter(b => b.includes(POOL.partner.name)).length, 1)
-  assert.doesNotMatch(md, /[a-z]{55}/)
-  assert.match(md, /коммит abc1234/)
-})
 
-test('field measurements: 5080 is golden from our runs, 4090 carries its measured rate', async () => {
-  const hw = await import('../hardware.ts')
-  const fn = Object.values(hw).find((f: any) => typeof f === 'function' && /gpu/i.test(f.name) && f.length >= 1) as any
-  const { FACTS, isField } = await import('../knowledge.ts')
-  assert.ok(FACTS.some(f => f.sources.some(isField) && /2,440 sol\/h/.test(f.text)))
-  assert.ok(FACTS.some(f => f.sources.some(isField) && /20 minutes/.test(f.text)))
-  if (fn) {
-    const c = fn('RTX 5080')
-    if (c && c.verdict) assert.equal(c.verdict, 'Golden')
-  }
-})

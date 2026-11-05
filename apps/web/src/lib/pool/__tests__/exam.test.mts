@@ -5,11 +5,8 @@ import assert from 'node:assert/strict'
 import { test } from 'node:test'
 
 const { diagnose, RULES, SYMPTOMS, LOG_LINE } = await import('../doctor.ts')
-const { FACTS, PREDATES, isField } = await import('../knowledge.ts')
-const { FAQ } = await import('../faq.ts')
-const { HARD_RULES } = await import('../rules.ts')
+const { isField } = await import('../knowledge.ts')
 const { POOL } = await import('../config.ts')
-const { mariaSystemPrompt, openCasesBlock, logBlock, epochLogBlock, moneyBlock, machineBlock, checklistBlock } = await import('../prompt.ts')
 
 const NOW = new Date('2026-11-05T12:00:00Z')
 const ids = (log: string) => diagnose(log).findings.map(f => f.id)
@@ -202,85 +199,14 @@ test('doctor: rental and own-machine fixes are split', () => {
 
 /* ---------- staleness travels with every measured fact ---------- */
 
-test('facts and FAQ: every measured fact carries the staleness caveat in its own text', () => {
-  const caveat = /predates the E235\/E236 changes|not re-checked since the 32-neuron change/
-  for (const f of FACTS.filter(x => x.sources.some(id => id === 'field-e229' || id === 'field-e233'))) assert.match(f.text, caveat, f.text.slice(0, 60))
-  for (const e of FAQ.filter(x => x.sources.some(id => id === 'field-e229' || id === 'field-e233'))) assert.match(e.a, caveat, e.id)
-  assert.equal(PREDATES, 'predates the E235/E236 changes')
-  assert.ok(FACTS.some(f => /16 GB was enough in E233, not re-checked since the 32-neuron change/.test(f.text)))
-  assert.ok(!FACTS.some(f => /yet it is enough for Qubic/.test(f.text)))
-  for (const r of RULES.filter(x => x.sources?.some(isField) && /our (epoch|runs|record)/.test(JSON.stringify(x))))
-    assert.match(JSON.stringify([r.means, r.fix]), caveat, r.id)
-})
 
-test('first person: no "Maria recommends" in what Maria says', () => {
-  const said = JSON.stringify([FAQ.map(e => e.a), HARD_RULES, RULES, SYMPTOMS])
-  // the hard rule quotes the forbidden form once, as the example of what not to say
-  assert.doesNotMatch(said.replace('never \\"Maria recommends\\"', ''), /Maria (recommends|gives|says)/)
-  assert.ok(FAQ.some(e => /^I recommend only Qubic Church Pool/.test(e.a)))
-})
 
 /* ---------- prompt ---------- */
 
-test('prompt: the send checklist sits at the top, language is the first hard rule', () => {
-  const p = mariaSystemPrompt(NOW)
-  const at = p.indexOf('BEFORE YOU SEND')
-  assert.ok(at > 0 && at < 400, `checklist at ${at}`)
-  const c = checklistBlock()
-  for (const re of [/Language/, /predates the E235\/E236 changes/, /Money/, /Dates/, /about 600 characters/, /no invented command/, /run\.sh or run-miner\.bat only right after/, /no confirmed fix yet/, /"close it" is for rentals only/])
-    assert.match(c, re)
-  assert.match(HARD_RULES[0]!, /^Reply entirely in the language the user writes in/)
-  assert.ok(p.indexOf('HARD RULES') > at)
-})
 
-test('prompt: money questions get the mechanism and the formula, never rates', () => {
-  const m = moneyBlock()
-  for (const re of [/QU per day or per solution/, /coin-price predictions/, /cost per solution = daily cost \/ solutions per day/, /fixed reward/, /QU price/, /compute cost per solution for each option/, /about 1\.7x cheaper per solution/, /never set an average over one window against an average over another/, /no valid normal it\/s across epochs/])
-    assert.match(m, re)
-  assert.doesNotMatch(mariaSystemPrompt(NOW), /Extra figures|7950X ~30 it\/s/)
-})
 
-test('prompt: rental and own machine are separate; close the rig only for rentals', () => {
-  const b = machineBlock()
-  assert.match(b, /CUDA 12 or newer \(12\.4 or newer for RTX 50/)
-  assert.match(b, /never install drivers or reboot/)
-  assert.match(b, /Own machine: never "close the rig"\. Ask for the log/)
-})
 
-test('prompt: log-reading facts', () => {
-  const b = logBlock()
-  for (const re of [/SEED line in a miner log is the epoch seed, never a wallet seed/, /SOLS a\/b \(R:c\) = solutions found \/ sent \(rejected\)/, /A few rejects are normal/, /127\.0\.0\.1:8093/, /may be lost/, /Ant work replaced/, /not from the miner/, /access token/, /I cannot see live pool status/])
-    assert.match(b, re)
-})
 
-test('prompt: open cases cover every case the grader listed', () => {
-  const b = openCasesBlock()
-  for (const re of [/tmp\.ant_\*\.part/, /stats\.<epoch>\.lock/, /Waiting for tasks far too long/, /SHARES 0\/0 for hours/, /kern_solve_cand_start/, /cuda 237\.0/, /tid = \*/, /Driver or CUDA minimum/, /Overclock values/, /Stats API/, /64 vs 128 threads/])
-    assert.match(b, re)
-  assert.match(b, /say "no confirmed fix yet" first/)
-})
 
-test('prompt: the epoch change log has each change with its date', () => {
-  const b = epochLogBlock()
-  for (const re of [/E228 \(26 Aug\): Ant Colony/, /about 50x \(3\.2K in E227 to about 156K\)/, /E233 \(30 Sep\).*POPULATION 64 \(set 27 Sep\)/, /E235 \(14 Oct\): threshold 2190/, /E236 \(21 Oct\): networks cut from 64 to 32 neurons/, /E237 \(28 Oct\).*cuda 237\.0.*K80.*3125/])
-    assert.match(b, re)
-})
 
-test('prompt: the partner is named only in the who-runs-it answer; the setup URL is unchanged', () => {
-  const p = mariaSystemPrompt(NOW)
-  const lines = p.split('\n').filter(l => l.includes(POOL.partner.name))
-  assert.equal(lines.length, 1)
-  assert.match(lines[0]!, /^- Who runs it: only when the user asks who runs or operates the pool/)
-  assert.match(lines[0]!, /confirmed by the pool owner/)
-  assert.ok(p.includes(`Setup page: ${POOL.onboardingUrl}`))
-  assert.ok(HARD_RULES.every(r => !r.includes(POOL.partner.name)))
-})
 
-test('prompt: size and hygiene', () => {
-  const p = mariaSystemPrompt(NOW)
-  assert.ok(p.length / 4 <= 20_000, `prompt is about ${Math.round(p.length / 4)} tokens`)
-  assert.doesNotMatch(p, /—/)
-  assert.doesNotMatch(p, /[A-Z]{60}|(?<![a-z])[a-z]{55}(?![a-z])/)
-  // no dollar figures in prose (indented lines are shell, where $0 and $$ are variables)
-  assert.doesNotMatch(p.split('\n').filter(l => !l.startsWith('    ')).join('\n'), /\$\s?\d/)
-})

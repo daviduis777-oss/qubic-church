@@ -9,10 +9,7 @@ import assert from 'node:assert/strict'
 import { test } from 'node:test'
 
 const { diagnose, RULES, cpuIsa, rootKeys, restarts, isLogPaste, checkerHints, ERRORISH } = await import('../doctor.ts')
-const { mariaSystemPrompt, playbookBlock, ecosystemBlock, checklistBlock, detectLanguage, userProse, languageLine, requestBlock, mariaRequestBlock, noteLanguage } = await import('../prompt.ts')
-const { FAQ } = await import('../faq.ts')
-const { ECOSYSTEM } = await import('../knowledge.ts')
-const { HARD_RULES } = await import('../rules.ts')
+const { detectLanguage, userProse } = await import('../prompt.ts')
 
 const NOW = new Date('2026-11-05T12:00:00Z')
 const ids = (log: string) => diagnose(log).findings.map(f => f.id)
@@ -230,23 +227,8 @@ test('route helpers: what counts as a paste, and the hints it gets', () => {
   assert.doesNotMatch(checkerHints('"accessToken": "eyJhbGciOiJSUzI1NiJ9.eyJJZCI6IjEifQ.sig"'), /eyJJZCI6/)
 })
 
-test('request block: language by code, hints only for a paste, a removed seed is announced', () => {
-  const es = mariaRequestBlock([{ role: 'user', content: 'PS C:\\miner> .\\rqiner.exe -t 4\nError: reqwest::Error { kind: Decode, source: Error("expected value", line: 1, column: 1) }\n\nes todo lo que hace' }])
-  assert.match(es, /Language: Reply in Spanish \(Spanish, not Portuguese\)/)
-  assert.match(es, /PRIVATE HINTS .*Never mention a checker.*Verify every hint against the log; drop any hint the log does not support/)
-  assert.match(es, /not JSON/)
-  const q = mariaRequestBlock([{ role: 'user', content: 'Which CPU should I buy for mining?' }])
-  assert.match(q, /Reply in English/)
-  assert.doesNotMatch(q, /HINTS/)
-  const seed = mariaRequestBlock([{ role: 'user', content: 'my id is [seed removed], why does it fail' }], 'my id is qwertyuiopasdfghjklzxcvbnmqwertyuiopasdfghjklzxcvbnmabc, why does it fail')
-  assert.match(seed, /pasted a wallet seed .*never ask for it/)
-  assert.doesNotMatch(seed, /qwertyuiop/)
-  // a log-only follow-up keeps the language of the earlier words
-  assert.match(languageLine([{ role: 'user', content: 'Mi minero no funciona, ¿qué hago?' }, { role: 'assistant', content: 'Pega el log.' }, { role: 'user', content: '[INFO] E:237 | 0 it/s\n[ERROR] x' }]), /Spanish/)
-  assert.match(requestBlock('Reply in English.'), /^REQUEST/)
-})
 
-test('language: script, stopwords, and the user words under a log', () => {
+test('language: script, stopwords, and the user words under a log [public part]', () => {
   for (const [text, code] of [
     ['¿Por qué se cierra mi minero?', 'es'],
     ['Meu minerador não funciona no Windows, o que faço?', 'pt'],
@@ -266,45 +248,10 @@ test('language: script, stopwords, and the user words under a log', () => {
     assert.equal(detectLanguage(text), code, text)
   assert.equal(detectLanguage('2026-11-01 12:00:01 [INFO] E:237\n2026-11-01 12:00:02 [ERROR] boom'), null)
   assert.equal(userProse('[INFO] a\n```\nError: x\n```\nhola, no funciona'), 'hola, no funciona')
-  assert.equal(noteLanguage('¿Cómo puedo minar con mi 3070?'), 'es')
 })
 
 /* ---------- the prompt ---------- */
 
-test('prompt: the support playbook, labels and specific asks', () => {
-  const p = mariaSystemPrompt(NOW)
-  const b = playbookBlock()
-  for (const re of [/"From your log:"/, /"Likely:"/, /"General tip:"/, /ASK FOR/, /ldd --version/, /uname -m/, /nvidia-smi output/, /trainer version line/, /not "the full log"/, /PRIVATE HINTS/, /never cite the checker/, /set 20 threads, log says 23/])
-    assert.match(b, re)
-  assert.ok(p.indexOf('HOW I HELP') > p.indexOf('BEFORE YOU SEND') && p.indexOf('HOW I HELP') < p.indexOf('HARD RULES'))
-  assert.match(checklistBlock(), /Never only "paste the full log"/)
-  assert.match(checklistBlock(), /General Linux, Windows, Docker, driver and HiveOS commands are fine/)
-  assert.doesNotMatch(p, /never add causes|only these safe steps/)
-})
 
-test('prompt: ecosystem facts are dated, sourced and cite other clients as theirs', () => {
-  const e = ecosystemBlock()
-  for (const re of [/qli-worker-XMR is the QLI client's built-in XMRig/, /"trainer" block at the JSON root/, /custom-get <install URL> -f/, /qubicli\/client:latest/, /22\.04 2\.35/, /Ryzen 3000\/5000 \(e\.g\. the 5900X\)/, /vm\.nr_hugepages/, /--gpus all/, /OneDrive/, /linker64/, /rqiner/])
-    assert.match(e, re)
-  assert.match(e, /never as this pool's/)
-  for (const f of ECOSYSTEM) assert.match(f.source, /\d{4}|docs|specs|notes/, f.topic)
-  assert.ok(mariaSystemPrompt(NOW).includes(e))
-})
 
-test('prompt: one pool only, no comparison or switching method', () => {
-  const best = FAQ.find(e => e.id === 'which-pool')!
-  assert.match(best.a, /^I recommend only Qubic Church Pool, and I do not compare or rank pools/)
-  assert.match(best.a, /decentralization/)
-  assert.doesNotMatch(best.a, /fair comparison|wallet total for the same rig|test both|compare the/i)
-  assert.doesNotMatch(JSON.stringify(FAQ), /Ask the pool you leave|test both|switch only at an epoch boundary/i)
-  assert.ok(HARD_RULES.some(r => /never describe how to test, compare or switch pools/.test(r)))
-})
 
-test('prompt: size and hygiene after round 4', () => {
-  const p = mariaSystemPrompt(NOW)
-  assert.ok(p.length <= 80_000, `prompt is ${p.length} chars`)
-  assert.doesNotMatch(p, /—/)
-  assert.doesNotMatch(JSON.stringify([RULES, ECOSYSTEM, FAQ]), /—/)
-  // the Ant work replaced line is tied to its miner and era
-  assert.match(p, /"Ant work replaced" line when the log is from that miner/)
-})

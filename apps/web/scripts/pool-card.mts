@@ -1,7 +1,9 @@
-// Renders the Discord Maria knowledge card (cards/mining.md in maria-aigarth-botv3) from lib/pool/*.ts,
-// so the site Maria and the Discord Maria say the same things. Regenerate, never edit the card by hand:
-//   node --experimental-strip-types apps/web/scripts/pool-card.mts ../maria-aigarth-botv3/cards/mining.md
-// Without a path it prints to stdout.
+// Renders the Discord Maria knowledge card (cards/mining.md in maria-aigarth-botv3) from lib/pool/*.ts and
+// Maria's brain (pool/brain.json, private repo maria-aigarth-botv3, branch pool-brain), so the site Maria and
+// the Discord Maria say the same things. Regenerate, never edit the card by hand:
+//   node --experimental-strip-types apps/web/scripts/pool-card.mts --brain ../maria-aigarth-botv3/pool ../maria-aigarth-botv3/cards/mining.md
+// --brain takes a local checkout (the pool/ folder, the repo root or brain.json); without it MARIA_BRAIN_DIR,
+// else the GitHub API with MARIA_BRAIN_TOKEN (see lib/pool/brain-local.ts). Without an output path it prints to stdout.
 import { execFileSync } from 'node:child_process'
 import { writeFileSync } from 'node:fs'
 import { dirname } from 'node:path'
@@ -10,14 +12,14 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 const { HARDWARE_FIGURES, HARDWARE_FIGURES_SOURCE, OS_LABEL, POOL, RENTALS, WALLET, keepPercent } = await import('../src/lib/pool/config.ts')
 const { RULES, SYMPTOMS } = await import('../src/lib/pool/doctor.ts')
 const { EPOCH_ANCHOR, EPOCH_SOURCE, formatUtc, epochStart } = await import('../src/lib/pool/epoch.ts')
-const { BUILDS, FACTS, GLANCE } = await import('../src/lib/pool/knowledge.ts')
-const { FAQ, FAQ_THEMES } = await import('../src/lib/pool/faq.ts')
-const { stalenessBlock } = await import('../src/lib/pool/prompt.ts')
+const { BUILDS, GLANCE } = await import('../src/lib/pool/knowledge.ts')
+const { faqEntries, hardRules, promptBlock } = await import('../src/lib/pool/prompt.ts')
+const { loadBrain } = await import('../src/lib/pool/brain-local.ts')
 const P = await import('../src/lib/pool/practice.ts')
-const { HARD_RULES } = await import('../src/lib/pool/rules.ts')
 const { SEED_WARNING } = await import('../src/lib/pool/wizard.ts')
 
 type AnySource = Parameters<typeof P.sourceOf>[0]
+type Brain = import('../src/lib/pool/brain-schema.ts').Brain
 type Entry = { title: string; tags: string[]; tier?: number; claim: string; extra?: string; sources: string; doNot?: string; status?: string }
 
 const AS_OF = P.KNOWLEDGE_AS_OF
@@ -58,15 +60,19 @@ function procedureBlock(p: (typeof P.PROCEDURES)[keyof typeof P.PROCEDURES]): st
   return [`- steps:\n\n${indent(steps.join('\n'), 2)}`, checks.length ? `- check:\n${indent(checks.join('\n'), 2)}` : ''].filter(Boolean).join('\n')
 }
 
-export function entries(): Entry[] {
+export function entries(brain: Brain): Entry[] {
   const out: Entry[] = []
+  const HARD_RULES = hardRules(brain)
+  const FACTS = brain.facts
+  const FAQ = faqEntries(brain)
+  const FAQ_THEMES = brain.faq.themes
 
   out.push({
     title: 'Как Мария держит тему майнинга',
     tags: ['mining rules', 'income', 'profit', 'price', 'seed', 'jetski', 'amd radeon'],
     tier: 0,
     claim: HARD_RULES.join(' '),
-    sources: SITE_SRC('rules.ts'),
+    sources: `maria-aigarth-botv3 pool/brain.json, hardRules (brain ${brain.version})`,
     doNot: 'не обещать и не считать доход; не говорить о цене; не придумывать команду майнера, имя бинарника или API статистики',
   })
 
@@ -201,12 +207,12 @@ export function entries(): Entry[] {
   out.push({
     title: 'Свежесть наших замеров',
     tags: ['stale', 'old data', 'epoch 229', 'epoch 233', 'jetski', '32 neurons', 'prediction accuracy'],
-    claim: stalenessBlock().replace(/^STALENESS\n/, '').replace(/^- /gm, '').replace(/\n/g, ' '),
+    claim: promptBlock(brain, 'staleness').replace(/^STALENESS\n/, '').replace(/^- /gm, '').replace(/\n/g, ' '),
     sources: src(['field', 'field-e229', 'field-e233', 'cfb']),
     doNot: 'не выдавать цифры эпох 229 и 233 за текущие; не сравнивать sol/h между эпохами 229 и 233',
   })
 
-  for (const [theme, label] of Object.entries(FAQ_THEMES) as [keyof typeof FAQ_THEMES, string][]) {
+  for (const [theme, label] of Object.entries(FAQ_THEMES)) {
     const es = FAQ.filter(e => e.theme === theme)
     if (!es.length) continue
     out.push({
@@ -228,8 +234,8 @@ export function entries(): Entry[] {
   return out
 }
 
-export function renderMiningCard(rev?: string): string {
-  const es = entries()
+export function renderMiningCard(brain: Brain, rev?: string): string {
+  const es = entries(brain)
   const head = [
     '---',
     'domain: mining',
@@ -242,7 +248,7 @@ export function renderMiningCard(rev?: string): string {
     '',
     '# Майнинг: карточки',
     '',
-    `Сгенерировано из qubic-church \`apps/web/src/lib/pool/*.ts\`${rev ? ` (коммит ${rev})` : ''} скриптом \`apps/web/scripts/pool-card.mts\`. Руками не править: поменять факт на сайте и перегенерировать.`,
+    `Сгенерировано из qubic-church \`apps/web/src/lib/pool/*.ts\`${rev ? ` (коммит ${rev})` : ''} и мозга Марии (maria-aigarth-botv3 \`pool/brain.json\`, версия ${brain.version}) скриптом \`apps/web/scripts/pool-card.mts\`. Руками не править: поменять факт на сайте или в мозге и перегенерировать.`,
     '',
     `Команды пула пока нет: в процедурах она записана как \`${P.MINER_COMMAND}\`, то есть «команда со страницы настройки пула». Живые данные (номер эпохи, время до конца) считает код в момент ответа.`,
     '',
@@ -273,8 +279,11 @@ if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) {
   try {
     rev = execFileSync('git', ['rev-parse', '--short', 'HEAD'], { cwd: dirname(fileURLToPath(import.meta.url)) }).toString().trim()
   } catch {}
-  const md = renderMiningCard(rev)
-  const out = process.argv[2]
+  const args = process.argv.slice(2)
+  const at = args.indexOf('--brain')
+  const brainPath = at >= 0 ? args.splice(at, 2)[1] : undefined
+  const md = renderMiningCard(await loadBrain(brainPath), rev)
+  const out = args[0]
   if (out) writeFileSync(out, md)
   else process.stdout.write(md)
 }

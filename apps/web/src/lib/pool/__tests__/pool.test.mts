@@ -3,11 +3,10 @@ import assert from 'node:assert/strict'
 import { test } from 'node:test'
 
 const { classifyCpu, classifyGpu, classifyRam, pick, isAsic } = await import('../hardware.ts')
-const { FACTS, GLANCE, BUILDS, SOURCES } = await import('../knowledge.ts')
+const { GLANCE, BUILDS, SOURCES } = await import('../knowledge.ts')
 const { checkWallet, checkWorker, cleanWorker, suggestWorker, backendFor, buildPlan, threadsFor } = await import('../wizard.ts')
 const { diagnose, RULES } = await import('../doctor.ts')
 const { redactWallets } = await import('../redact.ts')
-const { mariaSystemPrompt } = await import('../prompt.ts')
 const { POOL } = await import('../config.ts')
 
 const ADDR = 'A'.repeat(56) + 'BCDE'
@@ -114,14 +113,11 @@ test('RAM follows the Academy minimum', () => {
   assert.equal(pick({ mode: 'own', cpu: 'Ryzen 9 7950X', ramGb: 8 }).overall, 'Works')
 })
 
-test('every fact and glance row has a dated source', () => {
-  for (const f of [...FACTS, ...GLANCE]) {
+test('every fact and glance row has a dated source [public part]', () => {
+  for (const f of GLANCE) {
     assert.ok(f.sources.length > 0)
     for (const id of f.sources) assert.ok(SOURCES[id].date.length > 0, id)
   }
-  assert.ok(FACTS.some(f => /CUDA 12/.test(f.text)))
-  assert.ok(FACTS.some(f => /16 GB.*32 GB/.test(f.text)))
-  assert.ok(FACTS.some(f => /ASIC/.test(f.text)))
 })
 
 /* ---------- wizard ---------- */
@@ -245,18 +241,6 @@ test('redaction removes addresses and seeds', () => {
   assert.equal(redactWallets('RTX 5070 Ti'), 'RTX 5070 Ti')
 })
 
-test('system prompt carries the hard rules and no internal split', () => {
-  const p = mariaSystemPrompt()
-  assert.match(p, /Never promise, project or estimate income/)
-  assert.match(p, /Describe jetski only with dated facts, and say I do not recommend it/) // only as "do not recommend"
-  assert.match(p, /Never use em dashes/)
-  assert.match(p, /CUDA 12/)
-  assert.match(p, /ASICs are not for this pool/)
-  assert.match(p, /Qubic Academy/)
-  assert.match(p, new RegExp(`${POOL.feePercent}% fee`))
-  assert.doesNotMatch(p, /\b3%|\b4%|\bfund\b/i)
-  assert.doesNotMatch(p, /—/)
-})
 
 test('user-facing strings have no em dashes', () => {
   const all = JSON.stringify([RULES, pick({ mode: 'buy', scale: 'large', os: 'macos' }), buildPlan({ os: 'linux', hw: 'cpu', avx: 'avx2', wallet: ADDR, worker: 'QC.a', dedicated: false })])

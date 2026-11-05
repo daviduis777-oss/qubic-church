@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { getBrain } from '@/lib/pool/brain'
 import { MARIA_LIMITS } from '@/lib/pool/config'
 import { poolAllowed } from '@/lib/pool/gate'
 import { mariaNowBlock, mariaRequestBlock, mariaSystemStatic, stalenessNote } from '@/lib/pool/prompt'
@@ -44,10 +45,14 @@ export async function POST(req: Request) {
   // only, never mentioned to the user; the AI verifies each against the log and drops what the log does not support.
   // Only the fact that a seed was removed passes on.
   const rawLast = raw.filter((m): m is Msg => !!m && typeof m === 'object' && (m as Msg).role === 'user' && typeof (m as Msg).content === 'string').at(-1)?.content ?? ''
-  const request = mariaRequestBlock(messages, rawLast)
 
   const key = process.env.ANTHROPIC_API_KEY
   if (!key) return fail(503, 'no_key', `Ask Maria is offline: the AI is not connected yet. ${TOOLS_HINT}`)
+
+  // the brain (prompt text, playbook, rules, FAQ) comes from the private repo, cached about 10 minutes;
+  // without it a public fallback prompt with the hard safety rules answers, so the AI never goes down with it
+  const { brain } = await getBrain()
+  const request = mariaRequestBlock(brain, messages, rawLast)
 
   const quota = await takeMessage(clientIp(req), MARIA_LIMITS.perDay)
   if (!quota.ok) return fail(429, 'limit', `That is today's ${MARIA_LIMITS.perDay} questions from this connection. The limit resets at 00:00 UTC. ${TOOLS_HINT}`)
@@ -65,7 +70,7 @@ export async function POST(req: Request) {
         max_tokens: 700,
         // the long static prompt is cached; the epoch line and the request block (language, private hints) change per request
         system: [
-          { type: 'text', text: mariaSystemStatic(measured), cache_control: { type: 'ephemeral' } },
+          { type: 'text', text: mariaSystemStatic(brain, measured), cache_control: { type: 'ephemeral' } },
           { type: 'text', text: mariaNowBlock() },
           { type: 'text', text: request },
         ],
@@ -121,7 +126,7 @@ export async function POST(req: Request) {
         ctrl.enqueue(enc.encode('\n\nThe answer was cut off. Ask again.'))
       }
       // E229/E233-era numbers without their "predates" caveat get one short line, in the user's language
-      const note = cut ? '' : stalenessNote(said, last.content)
+      const note = cut ? '' : stalenessNote(brain, said, last.content)
       if (note) ctrl.enqueue(enc.encode(note))
       ctrl.close()
     },
@@ -131,5 +136,7 @@ export async function POST(req: Request) {
 
 export async function GET(req: Request) {
   if (!(await poolAllowed(req))) return NextResponse.json({ error: 'Not found' }, { status: 404, headers })
-  return NextResponse.json({ ai: Boolean(process.env.ANTHROPIC_API_KEY), perDay: MARIA_LIMITS.perDay, maxInput: MARIA_LIMITS.maxInput }, { headers })
+  // brain: the private brain's version stamp, or "fallback" (no token, fetch failed or a malformed file)
+  const { brain } = await getBrain()
+  return NextResponse.json({ ai: Boolean(process.env.ANTHROPIC_API_KEY), perDay: MARIA_LIMITS.perDay, maxInput: MARIA_LIMITS.maxInput, brain: brain.version }, { headers })
 }
