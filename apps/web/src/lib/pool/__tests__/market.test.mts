@@ -134,3 +134,15 @@ test('wiring: the gated route, Rent a box shows the live list first, Maria gets 
   assert.match(fetcher, /headers: \{ auth: key/)
   assert.doesNotMatch(fetcher, /console\.(log|warn)\([^)]*key/, 'the key is never logged')
 })
+
+test('maria route: a 1,200-token cap, a plain cut notice, more questions only for the moderator', async () => {
+  const { MARIA_LIMITS } = await import('../config.ts')
+  assert.equal(MARIA_LIMITS.maxTokens, 1200)
+  assert.equal(MARIA_LIMITS.perDay, 3)
+  assert.ok(MARIA_LIMITS.modPerDay > MARIA_LIMITS.perDay)
+  const maria = src('../../../app/api/pool/maria/route.ts')
+  assert.match(maria, /max_tokens: MARIA_LIMITS\.maxTokens/)
+  assert.match(maria, /stop_reason === 'max_tokens'/)
+  assert.match(maria, /продолжи/)
+  assert.match(maria, /\(await isModerator\(req\)\) \? MARIA_LIMITS\.modPerDay : MARIA_LIMITS\.perDay/)
+})

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { isModerator } from '@/lib/forum/auth'
 import { getBrain } from '@/lib/pool/brain'
 import { MARIA_LIMITS } from '@/lib/pool/config'
 import { poolAllowed } from '@/lib/pool/gate'
@@ -56,8 +57,10 @@ export async function POST(req: Request) {
   const { brain } = await getBrain()
   const request = mariaRequestBlock(brain, messages, rawLast)
 
-  const quota = await takeMessage(clientIp(req), MARIA_LIMITS.perDay)
-  if (!quota.ok) return fail(429, 'limit', `That is today's ${MARIA_LIMITS.perDay} questions from this connection. The limit resets at 00:00 UTC. ${TOOLS_HINT}`)
+  // the moderator tests with a larger allowance; everyone else gets the daily few
+  const perDay = (await isModerator(req)) ? MARIA_LIMITS.modPerDay : MARIA_LIMITS.perDay
+  const quota = await takeMessage(clientIp(req), perDay)
+  if (!quota.ok) return fail(429, 'limit', `That is today's ${perDay} questions from this connection. The limit resets at 00:00 UTC. ${TOOLS_HINT}`)
 
   // MEASURED table: a per-epoch snapshot, so the cached block only changes when the epoch does
   // LIVE RENTALS: cached for a few minutes; a marketplace that does not answer never blocks the reply
@@ -70,7 +73,7 @@ export async function POST(req: Request) {
       headers: { 'x-api-key': key, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
       body: JSON.stringify({
         model: model(),
-        max_tokens: 700,
+        max_tokens: MARIA_LIMITS.maxTokens,
         // the long static prompt is cached; the epoch line and the request block (language, private hints) change per request
         system: [
           { type: 'text', text: mariaSystemStatic(brain, measured), cache_control: { type: 'ephemeral' } },
@@ -113,7 +116,12 @@ export async function POST(req: Request) {
             const data = evt.split('\n').find(l => l.startsWith('data:'))?.slice(5).trim()
             if (!data) continue
             try {
-              const j = JSON.parse(data) as { type?: string; delta?: { type?: string; text?: string } }
+              const j = JSON.parse(data) as { type?: string; delta?: { type?: string; text?: string; stop_reason?: string } }
+              // hit the length cap: say so instead of stopping mid-word
+              if (j.type === 'message_delta' && j.delta?.stop_reason === 'max_tokens') {
+                cut = true
+                ctrl.enqueue(enc.encode(/[\u0400-\u04ff]/.test(last.content) ? '…\n\nОтвет получился длинным и обрезан. Напишите «продолжи».' : '…\n\nThe answer ran long and was cut. Write "continue".'))
+              }
               if (j.type === 'content_block_delta' && j.delta?.type === 'text_delta' && j.delta.text) {
                 said += j.delta.text
                 ctrl.enqueue(enc.encode(j.delta.text))
@@ -142,5 +150,5 @@ export async function GET(req: Request) {
   if (!(await poolAllowed(req))) return NextResponse.json({ error: 'Not found' }, { status: 404, headers })
   // brain: the private brain's version stamp, or "fallback" (no token, fetch failed or a malformed file)
   const { brain } = await getBrain()
-  return NextResponse.json({ ai: Boolean(process.env.ANTHROPIC_API_KEY), perDay: MARIA_LIMITS.perDay, maxInput: MARIA_LIMITS.maxInput, brain: brain.version }, { headers })
+  return NextResponse.json({ ai: Boolean(process.env.ANTHROPIC_API_KEY), perDay: (await isModerator(req)) ? MARIA_LIMITS.modPerDay : MARIA_LIMITS.perDay, maxInput: MARIA_LIMITS.maxInput, brain: brain.version }, { headers })
 }
