@@ -57,6 +57,14 @@ const PARSED = /(?!)/
 export const LOG_LINE =
   /^\s*(?:\d{4}-\d\d-\d\d|\d{1,2}[./]\d{1,2}[./]\d{2,4}\b|\d{1,2}:\d\d|(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)\s+\w{3}\s+\d|[[|{<"#]|E:\s?\d|(?:current |average |total )?hashrate\b|iterations?\b|(?:SOLS|SHARES|INFO|WARN|WARNING|ERROR|ERR|DEBUG|TRACE|FATAL)\b|(?:CUDA|AVX2|AVX512|CPU|GPU)\s*[:\]|]|[\w.-]+@[\w.-]+:|[A-Za-z][\w.-]{0,24}:\s)/
 
+/** Pasted miner output rather than a typed question: at least two log-shaped lines, or nvidia-smi / JSON config. */
+export function looksLikeLog(text: string): boolean {
+  const lines = text.split(/\r?\n/).filter(l => l.trim())
+  if (lines.length < 2) return false
+  if (/NVIDIA-SMI|\+-{5,}|"(?:accessToken|cpuVersion|alias|poolAddress)"\s*:/i.test(text)) return true
+  return lines.filter(l => LOG_LINE.test(l)).length >= 2
+}
+
 /** The user says it has gone on for hours, days or weeks. */
 export const LONG_TIME = /\b(?:\d+\s*(?:h|hrs?|hours?|days?|weeks?|months?)\b|(?:hours|days|weeks|months)\b|overnight|all night|since (?:last night|yesterday)|all day|endless(?:ly)?)/i
 const MOBILE = /\b(?:app|mobile|phones?|android|apk|smartphone|cellphone)\b/i

@@ -3,7 +3,7 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import { Activity, ChevronRight, Cpu, MessageCircle, PlugZap, Stethoscope } from 'lucide-react'
 import { type CSSProperties, type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { diagnose } from '@/lib/pool/doctor'
+import { diagnose, looksLikeLog } from '@/lib/pool/doctor'
 import { poolFontVars } from '../fonts'
 import { AskFlow } from './AskFlow'
 import { AiContext, type Answers, NavFocus, RingContext } from './flow'
@@ -117,7 +117,8 @@ export function MariaApp({ ai: aiHint }: { ai?: boolean } = {}) {
 
   const fromComposer = (text: string) => {
     // A pasted log goes to the log doctor, which runs here; a question goes to the AI.
-    if (text.includes('\n') && diagnose(text).findings.length) return go('doctor', { mode: text })
+    // Only miner output goes to the log checker; a multi-line question stays a question.
+    if (looksLikeLog(text) && diagnose(text).findings.length) return go('doctor', { mode: text })
     ;(go as (to: Screen, h?: Answers, first?: string) => void)('ask', undefined, text)
   }
 
