@@ -6,6 +6,7 @@ import { type CSSProperties, type ReactNode, useCallback, useEffect, useMemo, us
 import { type HardwareRow, selfReportedLine, type Summary } from '@/lib/pool/aggregate'
 import { MEASURE, POOL } from '@/lib/pool/config'
 import { diagnose } from '@/lib/pool/doctor'
+import { epochAt } from '@/lib/pool/epoch'
 import { extractMetrics, fmtRate } from '@/lib/pool/measure'
 import {
   type CardFormat,
@@ -51,6 +52,7 @@ import { type Answers, Screen, useStickToBottom } from './flow'
 import type { Go } from './flows'
 import { Halo } from './Halo'
 import { useMeasured } from './measured'
+import { RecordCard } from './record'
 import { Avatar, Chips, cx, Field, PRESS, SPRING, TONE, Tags } from './ui'
 import s from './maria.module.css'
 import r from './rig.module.css'
@@ -194,6 +196,10 @@ function Peer({ st }: { st: Standing }) {
 
 /* ---------------- one rig ---------------- */
 
+/** A log's numbers can join the record: this epoch or the last, with solutions or a first window behind them. */
+const canRecord = (rd: RigReading | null, demo: boolean, now: Date) =>
+  !demo && !!rd && rd.source === 'log' && rd.epoch >= epochAt(now).epoch - 1 && ((rd.solutions ?? 0) > 0 || (rd.uptimeMin ?? 0) >= MEASURE.minWindowMin)
+
 function Dashboard({ rig, reading, st, fresh, peer, demo, now, onFix }: { rig: MyRig; reading: RigReading | null; st: StatusView; fresh: Freshness; peer: Standing; demo: boolean; now: Date; onFix: () => void }) {
   const coach = coachLine(reading, st, peer)
   const cards = reading ? gpuCount(reading.hw) : 0
@@ -283,6 +289,7 @@ function Dashboard({ rig, reading, st, fresh, peer, demo, now, onFix }: { rig: M
 
       {reading && reading.series.length > 1 && <Spark points={reading.series} />}
       <EpochBar now={now} />
+      <RecordCard canRecord={canRecord(reading, demo, now)} demo={demo} reading={reading} rig={rig} />
       {demo && <p className={s.note}>Sample data, so you can see the design. Add your own rig to watch it.</p>}
     </div>
   )

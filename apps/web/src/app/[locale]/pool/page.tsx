@@ -1,4 +1,4 @@
-import { Cpu, LifeBuoy, MessageCircle, PlugZap, Stethoscope, Wallet } from 'lucide-react'
+import { Cpu, LifeBuoy, MessageCircle, PlugZap, Stamp, Stethoscope, Wallet } from 'lucide-react'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { setRequestLocale } from 'next-intl/server'
@@ -9,6 +9,7 @@ import { type HardwareRow, type Summary, selfReportedLine } from '@/lib/pool/agg
 import { keepPercent, MEASURE, POOL, WALLET } from '@/lib/pool/config'
 import { poolAllowed, poolPublic } from '@/lib/pool/gate'
 import { GLANCE, SOURCES } from '@/lib/pool/knowledge'
+import { ledger } from '@/lib/pool/ledger'
 import { fmtRate } from '@/lib/pool/measure'
 import { runDates, type StatsView, statsView } from '@/lib/pool/stats-view'
 import { measureStore } from '@/lib/pool/store'
@@ -16,6 +17,7 @@ import { PAYOUT_TERMS } from '@/lib/pool/ui-config'
 import type { Bar, Usage } from '@/lib/pool/usage'
 import { PoolStage } from './PoolStage'
 import p from './pool.module.css'
+import { Independence, RecordStrip, Why } from './why'
 
 /*
  * Qubic Church Pool, with Maria, the mining coach.
@@ -39,6 +41,7 @@ const FACTS = [
   { icon: Wallet, text: `Rewards go straight to your own wallet, every week. Pool fee ${POOL.feePercent}%.` },
   { icon: Cpu, text: 'Mine with a CPU, an NVIDIA GPU or a Mac with Apple Silicon.' },
   { icon: LifeBuoy, text: 'Get help from Maria at every step, from buying to fixing.' },
+  { icon: Stamp, text: 'Your solutions and hours are recorded.' },
 ]
 
 /** soon: shown as coming soon while the AI is not connected, never as a promise */
@@ -304,9 +307,14 @@ export default async function PoolPage(props: { params: Promise<{ locale: string
   if (!(await poolAllowed())) notFound()
   const { locale } = await props.params
   setRequestLocale(locale)
-  const measured = await measureStore()
-    .summary()
-    .catch(() => null)
+  const [measured, record] = await Promise.all([
+    measureStore()
+      .summary()
+      .catch(() => null),
+    ledger()
+      .totals()
+      .catch(() => null),
+  ])
   // the same check as GET /api/pool/maria: without a key, questions are "coming soon", never promised
   const ai = Boolean(process.env.ANTHROPIC_API_KEY)
 
@@ -355,6 +363,8 @@ export default async function PoolPage(props: { params: Promise<{ locale: string
           <MariaApp ai={ai} />
         </PoolStage>
 
+        <Why />
+
         <section aria-labelledby="how" className={p.section}>
           <h2 className={p.h2} id="how">
             How it works
@@ -371,6 +381,10 @@ export default async function PoolPage(props: { params: Promise<{ locale: string
             ))}
           </ol>
         </section>
+
+        <Independence />
+
+        <RecordStrip rec={record} />
 
         <section aria-labelledby="hw" className={p.section}>
           <h2 className={p.h2} id="hw">
@@ -452,6 +466,13 @@ export default async function PoolPage(props: { params: Promise<{ locale: string
               <dd>
                 Mining pays unevenly and nothing here promises or projects income. Check your own cost per solution: daily cost ÷ solutions per day, over one
                 real epoch.
+              </dd>
+            </div>
+            <div>
+              <dt>The record</dt>
+              <dd>
+                Each entry holds its epoch, a shortened worker name, the hardware and where the number came from: the pool, a miner log, or the
+                miner's own word. Never a wallet or an IP.
               </dd>
             </div>
             <div>
