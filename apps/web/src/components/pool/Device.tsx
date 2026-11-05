@@ -45,10 +45,13 @@ function StatusBar() {
   )
 }
 
-/** An iPhone 16 Pro: titanium band, side buttons, dynamic island, glass. On phones the frame drops away. */
-export function Device({ children, label }: { children: ReactNode; label: string }) {
+/**
+ * An iPhone 16 Pro: titanium band, side buttons, dynamic island, glass. On phones the frame drops away.
+ * wide: the same tree as a page-wide panel without the phone chrome, so the app inside keeps its state.
+ */
+export function Device({ children, label, wide }: { children: ReactNode; label: string; wide?: boolean }) {
   return (
-    <section aria-label={label} className={d.device}>
+    <section aria-label={label} className={`${d.device} ${wide ? d.wide : ''}`} data-wide={wide ? '' : undefined}>
       <span aria-hidden className={`${d.btn} ${d.action}`} />
       <span aria-hidden className={`${d.btn} ${d.volUp}`} />
       <span aria-hidden className={`${d.btn} ${d.volDown}`} />

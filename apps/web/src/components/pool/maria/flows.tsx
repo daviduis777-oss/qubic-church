@@ -2,16 +2,18 @@
 
 import { ExternalLink } from 'lucide-react'
 import { useCallback, useState } from 'react'
-import { OS_LABEL, POOL, RENTALS, type Os } from '@/lib/pool/config'
+import { OS_LABEL, POOL, RENTALS, RIG, type Os } from '@/lib/pool/config'
 import type { Summary } from '@/lib/pool/aggregate'
 import { diagnose, type Finding, SYMPTOMS } from '@/lib/pool/doctor'
 import { classifyCpu, pick, type PickMode, type Scale } from '@/lib/pool/hardware'
-import type { BuildTier } from '@/lib/pool/knowledge'
+import { BUILDS, type BuildTier } from '@/lib/pool/knowledge'
 import { extractMetrics } from '@/lib/pool/measure'
-import { type Avx, buildPlan, checkWallet, checkWorker, cleanWorker, type Hw, suggestWorker, THREAD_COMMAND } from '@/lib/pool/wizard'
-import { type Answers, Flow, type Outcome, restartChip, type StepDef } from './flow'
+import { PROCEDURES } from '@/lib/pool/practice'
+import { RENTAL_GUIDE } from '@/lib/pool/ui-config'
+import { type Avx, buildPlan, checkWallet, checkWorkerInput, cleanWorker, type Hw, hardwareTag, PREFIX_WHY, type Plan, suggestWorker, THREAD_COMMAND } from '@/lib/pool/wizard'
+import { type Answers, Flow, type Outcome, restartChip, type StepDef, useAi } from './flow'
 import { LogMeasure, useMeasured } from './measured'
-import { Checklist, Command, CopyButton, Group, Reveal, SEVERITY_LABEL, StatusCard, severityIcon, severityTone, TONE, VerdictCard, verdictTone } from './ui'
+import { Checklist, type ChipOpt, Command, CopyButton, Group, Reveal, SEVERITY_LABEL, StatusCard, severityIcon, severityTone, TONE, VerdictCard, verdictTone } from './ui'
 import s from './maria.module.css'
 
 export type Screen = 'home' | 'pick' | 'connect' | 'doctor' | 'ask' | 'rig'
@@ -96,7 +98,7 @@ const PICK_STEPS: StepDef[] = [
     id: 'cores',
     when: a => a.mode === 'own' && !!a.gpu && a.gpu !== 'none',
     ask: () => 'How many CPU cores? It decides whether the CPU can feed the cards.',
-    chips: () => [{ value: '0', label: 'Not sure' }],
+    chips: () => [...['6', '8', '12', '16', '32'].map(v => ({ value: v, label: v })), { value: '0', label: 'Not sure' }],
     text: {
       label: 'CPU cores',
       placeholder: 'Cores, for example 16',
@@ -126,7 +128,26 @@ const PICK_STEPS: StepDef[] = [
   },
 ]
 
-function pickOutcome(a: Answers, go: Go, measured: Summary | null): Outcome {
+/** The next steps after a result: never a dead end. Ask only while the AI is connected. */
+const nextChips = (ai: boolean, first: ChipOpt[]): ChipOpt[] => [...first, { value: 'doctor', label: 'Fix my rig' }, ...(ai ? [{ value: 'ask', label: 'Ask Maria' }] : []), restartChip()]
+
+/** A connect handoff for what Buy recommends: the build's CPU, or an NVIDIA card for the GPU tiers. */
+function buyHandoff(a: Answers): Answers {
+  const b = BUILDS[(a.build as BuildTier) ?? 'entry'] ?? BUILDS.entry
+  const spec = (k: string) => b.specs.find(([x]) => x === k)?.[1] ?? ''
+  const os = a.os && a.os !== 'any' ? a.os : undefined
+  const gpuTier = a.build === 'gpu' || a.build === 'server'
+  const h: Answers = { hw: gpuTier ? 'nvidia' : 'cpu' }
+  if (a.build === 'gpu') h.model = 'RTX 5070 Ti'
+  if (!gpuTier) {
+    h.model = spec('CPU').replace(/ \(.*$/, '')
+    h.avx = 'avx512'
+  }
+  if (os) h.os = os
+  return h
+}
+
+function pickOutcome(a: Answers, go: Go, measured: Summary | null, ai: boolean): Outcome {
   const r = pick({
     mode: a.mode as PickMode,
     scale: a.scale as Scale,
@@ -150,6 +171,25 @@ function pickOutcome(a: Answers, go: Go, measured: Summary | null): Outcome {
       : 'What to rent, best first. No prices: they change weekly, so compare them yourself.'
   const cards = r.cards.map(c => <VerdictCard c={c} key={c.title} />)
   if (a.mode === 'rent') {
+    const check = PROCEDURES.rental.steps.slice(0, 3)
+    cards.push(
+      <Group key="checklist" label="Before you rent">
+        {check.map(st => (
+          <li className={s.row} key={st.title} style={{ alignItems: 'flex-start' }}>
+            <div className={s.rowMain}>
+              <div className={s.rowTitle}>{st.title}</div>
+              {st.body && <p className={s.rowBody}>{st.body}</p>}
+            </div>
+          </li>
+        ))}
+        <li className={s.row}>
+          <a className={s.cta} href={RENTAL_GUIDE.href} rel="noopener" target="_blank">
+            {RENTAL_GUIDE.label}
+            <ExternalLink aria-hidden size={14} />
+          </a>
+        </li>
+      </Group>,
+    )
     cards.push(
       <Group key="rent" label="Where people rent">
         {RENTALS.map(x => (
@@ -174,9 +214,15 @@ function pickOutcome(a: Answers, go: Go, measured: Summary | null): Outcome {
     tone: verdictTone(r.overall),
     lead,
     cards: [<Reveal key="r">{cards}</Reveal>],
-    chips: [...(own && r.overall !== 'Skip' ? [{ value: 'connect', label: 'Set it up', primary: true }] : []), restartChip()],
+    chips: own
+      ? [...(r.overall !== 'Skip' ? [{ value: 'connect', label: 'Set it up', primary: true }] : []), restartChip()]
+      : nextChips(ai, [{ value: 'connect', label: a.mode === 'rent' ? 'Connect it' : 'When it arrives: connect it', primary: true }]),
     onChip: (v: string) => {
       if (v === 'home') return go('home')
+      if (v === 'doctor' || v === 'ask') return go(v)
+      if (v === 'connect' && a.mode === 'rent')
+        return go('connect', { where: 'rental', hw: 'nvidia', ...(a.scale === 'small' ? { gpus: '1' } : {}) })
+      if (v === 'connect' && a.mode === 'buy') return go('connect', buyHandoff(a))
       if (v === 'connect') {
         const gpu = a.gpu && a.gpu !== 'none' ? a.gpu : ''
         const cpu = classifyCpu(a.cpu ?? '')
@@ -187,6 +233,9 @@ function pickOutcome(a: Answers, go: Go, measured: Summary | null): Outcome {
           handoff.cpuModel = a.cpu ?? ''
           if (cpu.avx === 'avx512' || cpu.avx === 'avx2') handoff.avx = cpu.avx
         }
+        // asked once in Pick, never again in Connect: the card count, and the cores as threads (two per core)
+        if (hw === 'nvidia' && a.gpus) handoff.gpus = a.gpus
+        if (a.cores && a.cores !== '0') handoff.threads = String(Number(a.cores) * 2)
         go('connect', handoff)
       }
     },
@@ -195,7 +244,8 @@ function pickOutcome(a: Answers, go: Go, measured: Summary | null): Outcome {
 
 export function PickFlow({ go }: { go: Go }) {
   const { summary } = useMeasured()
-  return <Flow intro="Let's find hardware that wins on cost per solution." onBack={() => go('home')} outcome={a => pickOutcome(a, go, summary)} steps={PICK_STEPS} sub="What to buy, what to rent, or how yours does." title="Pick hardware" />
+  const ai = useAi() === true
+  return <Flow intro="Let's find hardware that wins on cost per solution." onBack={() => go('home')} outcome={a => pickOutcome(a, go, summary, ai)} steps={PICK_STEPS} sub="What to buy, what to rent, or how yours does." title="Pick hardware" />
 }
 
 /* ---------------- Connect my machine ---------------- */
@@ -204,7 +254,7 @@ const LAST = 'qc-pool:connect'
 const loadLast = (): Answers | null => {
   try {
     const j = JSON.parse(localStorage.getItem(LAST) ?? 'null') as Answers | null
-    return j && typeof j === 'object' && j.os ? j : null
+    return j && typeof j === 'object' && (j.os || j.where === 'rental') ? j : null
   } catch {
     return null
   }
@@ -212,8 +262,8 @@ const loadLast = (): Answers | null => {
 const saveLast = (a: Answers) => {
   try {
     // Never the wallet: only what the machine is.
-    const { os, hw, model, avx, dedicated, threads, worker } = a
-    localStorage.setItem(LAST, JSON.stringify({ os, hw, model, avx, dedicated, threads, worker }))
+    const { where, os, hw, model, avx, gpus, threads, worker } = a
+    localStorage.setItem(LAST, JSON.stringify({ where, os, hw, model, avx, gpus, threads, worker }))
   } catch {}
 }
 
@@ -222,29 +272,63 @@ const avxFromModel = (model?: string): Avx => {
   return c.avx === 'avx512' || c.avx === 'avx2' ? c.avx : c.avx === 'apple' ? 'apple' : c.avx === 'none' ? 'none' : 'unknown'
 }
 
+/** A rented box is always a Linux container. */
+const osOf = (a: Answers): Os => (a.where === 'rental' ? 'linux' : ((a.os as Os) ?? 'linux'))
+const isNum = (v: string) => /^\d{1,4}$/.test(v.trim()) && Number(v) > 0
+const SHELL_WHERE: Record<Os, string> = { windows: 'In Command Prompt, run', macos: 'In Terminal, run', linux: 'Run', hiveos: 'In the Hive shell, run' }
+
 const CONNECT_STEPS: StepDef[] = [
-  { id: 'os', ask: () => 'Which system does the machine run?', chips: () => OS_CHIPS },
+  {
+    // asked first: a rented box gets the container procedure, never a bare-metal plan
+    id: 'where',
+    ask: () => 'Where does it run?',
+    chips: () => [
+      { value: 'own-use', label: 'My computer, I also use it' },
+      { value: 'own-box', label: 'A dedicated mining box' },
+      { value: 'rental', label: 'Rented (Clore, Vast, Octa)' },
+    ],
+  },
+  { id: 'os', when: a => a.where !== 'rental', ask: () => 'Which system does the machine run?', chips: () => OS_CHIPS },
   {
     id: 'hw',
-    ask: a => (a.os === 'macos' ? 'Which Mac?' : 'What will mine?'),
+    ask: a => (a.where === 'rental' ? 'What did you rent?' : a.os === 'macos' ? 'Which Mac?' : 'What will mine?'),
     chips: a =>
-      a.os === 'macos'
+      a.where === 'rental'
         ? [
-            { value: 'apple', label: 'Apple Silicon' },
-            { value: 'cpu', label: 'Intel Mac' },
-          ]
-        : [
-            { value: 'nvidia', label: 'NVIDIA GPU' },
+            { value: 'nvidia', label: 'NVIDIA GPUs' },
             { value: 'cpu', label: 'CPU only' },
-            { value: 'amd', label: 'AMD Radeon GPU' },
-          ],
+          ]
+        : a.os === 'macos'
+          ? [
+              { value: 'apple', label: 'Apple Silicon' },
+              { value: 'cpu', label: 'Intel Mac' },
+            ]
+          : [
+              { value: 'nvidia', label: 'NVIDIA GPU' },
+              { value: 'cpu', label: 'CPU only' },
+              { value: 'amd', label: 'AMD Radeon GPU' },
+            ],
   },
   {
     id: 'model',
     ask: a => (a.hw === 'nvidia' ? 'Which card? I use it for the worker name.' : a.hw === 'apple' ? 'Which chip? For example M3 Pro.' : 'Which CPU? I use it to pick the backend.'),
-    chips: () => [{ value: '-', label: 'Skip' }],
+    chips: a => [...(a.hw === 'nvidia' ? ['RTX 4070', 'RTX 4090', 'RTX 5070 Ti', 'RTX 5080'].map(v => ({ value: v, label: v })) : []), { value: '-', label: 'Skip' }],
     text: { label: 'Model', placeholder: 'Model name', maxLength: 80 },
     echo: v => (v === '-' ? 'Skipped' : v),
+  },
+  {
+    id: 'gpus',
+    when: a => a.hw === 'nvidia',
+    ask: () => 'How many cards in this machine?',
+    chips: () => ['1', '2', '4', '6', '8'].map(v => ({ value: v, label: v })),
+    text: {
+      label: 'Cards',
+      placeholder: 'Cards, for example 3',
+      numeric: true,
+      maxLength: 2,
+      validate: v => (/^\d{1,2}$/.test(v.trim()) && Number(v) > 0 && Number(v) <= 16 ? { ok: true, value: String(Number(v)) } : { ok: false, error: 'A whole number from 1 to 16.' }),
+    },
+    echo: v => `${v} card${v === '1' ? '' : 's'}`,
   },
   {
     id: 'cpuModel',
@@ -260,7 +344,7 @@ const CONNECT_STEPS: StepDef[] = [
     ask: a => (
       <>
         Does the CPU have AVX-512?{' '}
-        {a.os === 'linux' || a.os === 'hiveos' ? (
+        {osOf(a) === 'linux' || osOf(a) === 'hiveos' ? (
           <>
             Run <code>grep -o -m1 avx512f /proc/cpuinfo</code>: it prints avx512f if yes.
           </>
@@ -276,27 +360,19 @@ const CONNECT_STEPS: StepDef[] = [
     ],
   },
   {
-    id: 'dedicated',
-    ask: () => 'Is this a dedicated mining box, or a computer you also use?',
-    chips: () => [
-      { value: 'yes', label: 'Dedicated or rented' },
-      { value: 'no', label: 'I also use it' },
-    ],
-  },
-  {
     id: 'threads',
     ask: a => (
       <>
-        How many CPU threads? Run <code>{THREAD_COMMAND[a.os as Os] ?? 'nproc'}</code> on it.
+        How many CPU threads{a.hw === 'nvidia' ? ` (${RIG.threadsPerGpu} or more per card)` : ''}? {SHELL_WHERE[osOf(a)]} <code>{THREAD_COMMAND[osOf(a)]}</code> on it.
       </>
     ),
-    chips: () => [{ value: '0', label: 'Not sure' }],
+    chips: () => [...['8', '12', '16', '32', '64'].map(v => ({ value: v, label: v })), { value: '0', label: 'Not sure' }],
     text: {
       label: 'Threads',
       placeholder: 'Threads, for example 32',
       numeric: true,
       maxLength: 4,
-      validate: v => (/^\d{1,4}$/.test(v.trim()) && Number(v) > 0 ? { ok: true, value: String(Number(v)) } : { ok: false, error: 'A whole number, the output of the command.' }),
+      validate: v => (isNum(v) ? { ok: true, value: String(Number(v)) } : { ok: false, error: 'A whole number, the output of the command.' }),
     },
     echo: v => (v === '0' ? 'Not sure' : `${v} threads`),
   },
@@ -320,38 +396,79 @@ const CONNECT_STEPS: StepDef[] = [
   },
   {
     id: 'worker',
-    ask: () => `Name this machine. Worker names start with ${POOL.workerPrefix}; one unique name per machine.`,
+    ask: a => (
+      <>
+        Name this machine. The name must start with <code>{POOL.workerPrefix}</code> (capital Q, capital C, a dot). {PREFIX_WHY}
+        {osOf(a) === 'hiveos' ? ' On HiveOS, use the part after the dot as the rig name.' : ' One unique name per machine.'}
+      </>
+    ),
     text: {
       label: 'Worker name',
       placeholder: `${POOL.workerPrefix}rig-a`,
       mono: true,
       maxLength: POOL.workerMaxLength + 8,
-      suggest: a => suggestWorker(a.hw as Hw, a.model === '-' ? '' : a.model),
+      // "QC.7x5080-a" for a multi-card box, so the name says what the machine is
+      suggest: a => (a.gpus && a.gpus !== '1' ? cleanWorker(`${POOL.workerPrefix}${a.gpus}x${hardwareTag(a.hw as Hw, a.model === '-' ? '' : a.model)}-a`) : suggestWorker(a.hw as Hw, a.model === '-' ? '' : a.model)),
       validate: v => {
-        const w = cleanWorker(v)
-        const c = checkWorker(w)
-        return c.ok ? { ok: true, value: w } : { ok: false, error: c.message }
+        const c = checkWorkerInput(v)
+        return c.ok ? { ok: true, value: c.value } : { ok: false, error: c.message }
       },
     },
     monoEcho: true,
   },
 ]
 
+/** The QC. prefix, impossible to miss: the exact name with a copy button and one line on why. */
+function WorkerBox({ plan }: { plan: Plan }) {
+  const w = plan.worker
+  return (
+    <section aria-label="Your worker name" className={s.prefixBox}>
+      <div className={s.prefixHead}>
+        <span className={s.prefixLabel}>Worker name, exactly</span>
+        <span className={s.prefixTag}>starts with {POOL.workerPrefix}</span>
+      </div>
+      <div className={s.prefixRow}>
+        <code className={s.prefixValue}>{w.name}</code>
+        <CopyButton label="worker name" text={w.name} />
+      </div>
+      {w.template && (
+        <>
+          <div className={s.prefixHead} style={{ marginTop: 10 }}>
+            <span className={s.prefixLabel}>HiveOS flight sheet, worker template</span>
+          </div>
+          <div className={s.prefixRow}>
+            <code className={s.prefixValue}>{w.template}</code>
+            <CopyButton label="worker template" text={w.template} />
+          </div>
+          <p className={s.prefixWhy}>
+            HiveOS puts each rig's name in place of %WORKER_NAME%. Name this rig <code>{w.rigName}</code> in HiveOS.
+          </p>
+        </>
+      )}
+      <p className={s.prefixWhy}>{w.why}</p>
+    </section>
+  )
+}
+
 function connectOutcome(a: Answers, go: Go): Outcome {
   const hw = a.hw as Hw
   const model = a.model === '-' ? '' : a.model
   const avx: Avx = a.avx ? (a.avx as Avx) : hw === 'apple' ? 'apple' : hw === 'nvidia' ? 'unknown' : avxFromModel(hw === 'amd' ? a.cpuModel : model)
   const plan = buildPlan({
-    os: a.os as Os,
+    os: osOf(a),
     hw,
     avx,
     model,
     wallet: a.wallet ?? '',
     worker: a.worker ?? '',
     threads: a.threads && a.threads !== '0' ? Number(a.threads) : undefined,
-    dedicated: a.dedicated === 'yes',
+    gpuCount: hw === 'nvidia' && a.gpus ? Number(a.gpus) : undefined,
+    dedicated: a.where !== 'own-use',
+    where: a.where === 'rental' ? 'rental' : 'own',
+    now: new Date(),
   })
   const cards = [
+    <WorkerBox key="worker" plan={plan} />,
     ...plan.warnings.map(w => (
       <p className={s.warn} key={w}>
         {w}
@@ -382,26 +499,29 @@ function connectOutcome(a: Answers, go: Go): Outcome {
                 <ExternalLink aria-hidden size={14} />
               </a>
             )}
-            {st.command && <Command label={st.title} text={st.command} />}
+            {st.command && <Command label={st.title} prompt={plan.shell.prompt} shell={plan.shell.label} text={st.command} />}
           </div>
         </li>
       ))}
     </Group>,
     <Group key="checks" label="Check it is working">
-      <Checklist items={plan.checks} />
+      <Checklist items={plan.checks} prompt={plan.shell.prompt} shell={plan.shell.label} />
     </Group>,
+    <p className={s.note} key="terms">
+      {plan.terms}
+    </p>,
   ]
   return {
     tone: plan.warnings.length ? TONE.gold : TONE.sage,
-    lead: 'Here is your setup. Copy each value exactly.',
+    lead: a.where === 'rental' ? 'Here is your setup for the rented box. Copy each value exactly.' : 'Here is your setup. Copy each value exactly.',
     cards: [<Reveal key="r">{cards}</Reveal>],
-    chips: [{ value: 'rig', label: 'Watch it in My rig', primary: true }, { value: 'doctor', label: 'Something looks wrong' }, restartChip('Another machine')],
+    chips: [{ value: 'rig', label: 'Add it to My rig', primary: true }, { value: 'doctor', label: 'Something looks wrong' }, restartChip('Another machine')],
     onChip: (v: string) => {
       if (v === 'rig') {
         // the worker and the machine go to My rig; never the wallet
         const gpu = hw === 'nvidia' ? (model ?? '') : ''
         const cpu = hw === 'amd' ? (a.cpuModel === '-' ? '' : (a.cpuModel ?? '')) : hw === 'cpu' || hw === 'apple' ? (model ?? '') : ''
-        return go('rig', { worker: a.worker ?? '', gpu, gpuCount: gpu ? '1' : '', cpu, threads: a.threads && a.threads !== '0' ? a.threads : '' })
+        return go('rig', { worker: a.worker ?? '', gpu, gpuCount: gpu ? (a.gpus ?? '1') : '', cpu, threads: a.threads && a.threads !== '0' ? a.threads : '' })
       }
       go(v === 'doctor' ? 'doctor' : 'home')
     },
@@ -412,11 +532,14 @@ export function ConnectFlow({ go, handoff }: { go: Go; handoff?: Answers }) {
   const [start, setStart] = useState<Answers | undefined | null>(() => (handoff ? handoff : undefined))
   const [last] = useState(() => (handoff ? null : loadLast()))
   const persist = useCallback((a: Answers) => {
-    if (a.os && a.hw) saveLast(a)
+    if ((a.os || a.where === 'rental') && a.hw) saveLast(a)
   }, [])
 
   if (start === undefined && last) {
-    const summary = [OS_LABEL[last.os as Os], last.model && last.model !== '-' ? last.model : null, last.worker].filter(Boolean).join(', ')
+    const summary = [last.where === 'rental' ? 'Rented box' : OS_LABEL[last.os as Os], last.gpus && last.gpus !== '1' ? `${last.gpus}x` : null, last.model && last.model !== '-' ? last.model : null, last.worker]
+      .filter(Boolean)
+      .join(', ')
+      .replace(/(\d+x), /, '$1 ')
     const steps: StepDef[] = [
       {
         id: 'reuse',
@@ -429,6 +552,7 @@ export function ConnectFlow({ go, handoff }: { go: Go; handoff?: Answers }) {
     ]
     return (
       <Flow
+        key="reuse"
         onAnswers={a => {
           if (a.reuse === 'yes') {
             const { worker: _w, ...rest } = last
@@ -446,7 +570,8 @@ export function ConnectFlow({ go, handoff }: { go: Go; handoff?: Answers }) {
   return (
     <Flow
       initial={start ?? undefined}
-      intro={handoff ? 'I carried over your hardware. A few more details.' : "Let's get your machine mining in the pool."}
+      key="connect"
+      intro={handoff?.where === 'rental' ? 'A rented box: I set it up as a Linux container. A few details.' : handoff ? 'I carried over your hardware. A few more details.' : "Let's get your machine mining in the pool."}
       onAnswers={persist}
       onBack={() => go('home')}
       outcome={a => connectOutcome(a, go)}
@@ -491,10 +616,10 @@ const DOCTOR_STEPS: StepDef[] = [
   },
 ]
 
-function doctorOutcome(a: Answers, go: Go): Outcome {
+function doctorOutcome(a: Answers, go: Go, ai: boolean): Outcome {
   const v = a.mode ?? ''
-  const chips = [restartChip('Check another'), { value: 'ask', label: 'Ask Maria' }]
-  const onChip = (x: string) => go(x === 'ask' ? 'ask' : 'home')
+  const chips = [restartChip('Check another'), ...(ai ? [{ value: 'ask', label: 'Ask Maria' }] : [{ value: 'connect', label: 'Connect my machine' }])]
+  const onChip = (x: string) => go(x === 'ask' ? 'ask' : x === 'connect' ? 'connect' : 'home')
   if (v.startsWith('sym:')) {
     const f = SYMPTOMS.find(x => `sym:${x.id}` === v)?.finding
     if (f) return { tone: severityTone(f.severity), lead: f.severity === 'fine' ? "It's fine. Wait." : 'Here is what that usually means.', cards: [<Reveal key="r">{[<FindingCard f={f} key="f" />]}</Reveal>], chips, onChip }
@@ -510,7 +635,9 @@ function doctorOutcome(a: Answers, go: Go): Outcome {
         : n > 1
           ? `${n} things to fix, most important first.`
           : 'Found it.'
-  const cards = d.findings.map(f => <FindingCard f={f} key={f.id} />)
+  // no green "Fine" next to a problem: a fine card only shows when nothing else was found
+  const shown = d.findings.some(f => f.severity !== 'fine') ? d.findings.filter(f => f.severity !== 'fine') : d.findings
+  const cards = shown.map(f => <FindingCard f={f} key={f.id} />)
   // Numbers in the log: show them, compare the rig with its peers, and offer to save the result.
   if (!d.seedWarning && extractMetrics(v).found) cards.push(<LogMeasure findings={d.findings.map(f => f.id)} key="measure" log={v} />)
   if (d.seedWarning) {
@@ -524,5 +651,6 @@ function doctorOutcome(a: Answers, go: Go): Outcome {
 }
 
 export function DoctorFlow({ go, initial }: { go: Go; initial?: Answers }) {
-  return <Flow initial={initial} intro="The log stays in your browser." onBack={() => go('home')} outcome={a => doctorOutcome(a, go)} steps={DOCTOR_STEPS} sub="Paste a log or pick what you see." title="Fix my rig" />
+  const ai = useAi() === true
+  return <Flow initial={initial} intro="The log stays in your browser." onBack={() => go('home')} outcome={a => doctorOutcome(a, go, ai)} steps={DOCTOR_STEPS} sub="Paste a log or pick what you see." title="Fix my rig" />
 }

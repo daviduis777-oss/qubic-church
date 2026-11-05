@@ -44,6 +44,31 @@ type RingApi = { think: () => void; settle: (tone: string) => void; idle: () => 
 export const RingContext = createContext<RingApi>({ think: () => {}, settle: () => {}, idle: () => {}, state: { mode: 'idle', tone: TONE.gold } })
 export const useRing = () => useContext(RingContext)
 
+/** Whether Ask Maria's AI is connected: null while unknown, then the answer of GET /api/pool/maria. */
+export const AiContext = createContext<boolean | null>(null)
+export const useAi = () => useContext(AiContext)
+
+/**
+ * Focus after navigation: once the user has moved (a push, a pop, a view change inside a screen), every
+ * new screen title takes focus, so a keyboard or screen-reader user lands on it instead of <body>.
+ * The first render of the app never steals focus from the page.
+ */
+export const NavFocus = createContext<{ armed: () => boolean }>({ armed: () => false })
+
+/** Focus this element when `key` changes, once navigation has happened. */
+export function useFocusOnNav<T extends HTMLElement>(key: string) {
+  const ref = useRef<T>(null)
+  const nav = useContext(NavFocus)
+  // biome-ignore lint/correctness/useExhaustiveDependencies: key is the trigger, not a value read inside
+  useEffect(() => {
+    if (!nav.armed()) return
+    // after the dock's own autofocus, so the title wins and the reader starts at the top
+    const t = setTimeout(() => ref.current?.focus({ preventScroll: true }), 30)
+    return () => clearTimeout(t)
+  }, [key, nav])
+  return ref
+}
+
 /** Keep the newest message in view. */
 export function useStickToBottom(dep: unknown) {
   const ref = useRef<HTMLDivElement>(null)
@@ -93,6 +118,7 @@ export function Screen({
   serif?: boolean
 }) {
   const [collapsed, setCollapsed] = useState(false)
+  const titleRef = useFocusOnNav<HTMLHeadingElement>(title)
   return (
     <>
       <header className={cx(s.nav, collapsed && s.navCollapsed)}>
@@ -123,7 +149,9 @@ export function Screen({
       </header>
       <div className={s.scroll} onScroll={e => setCollapsed(e.currentTarget.scrollTop > 34)} ref={scrollRef}>
         {/* the serif rides on a span: the site's global heading rule forces its own face on every h2 */}
-        <h2 className={s.largeTitle}>{serif ? <span className={s.largeSerif}>{title}</span> : title}</h2>
+        <h2 className={s.largeTitle} ref={titleRef} tabIndex={-1}>
+          {serif ? <span className={s.largeSerif}>{title}</span> : title}
+        </h2>
         {sub && <p className={s.largeSub}>{sub}</p>}
         <div aria-live="polite" className={s.thread}>
           {children}

@@ -1008,7 +1008,8 @@ test('era window: an epoch 229 row is no peer for ranking a current row', () => 
   assert.equal(tierOf(r5070.latest.median, 'card', onlyField.rows, 229), undefined)
   const card = pick({ mode: 'own', cpu: 'EPYC 7B12', gpu: 'RTX 5070 Ti', gpuCount: 2 }, onlyField).cards.find(c => /5070/.test(c.title))!
   assert.equal(card.verdict, 'Golden')
-  assert.equal(card.measured!.disagree, undefined)
+  // the epoch 229 row is an older era than the newest data (233): no measured line at all, so no 4.5 sol/h
+  assert.equal(card.measured, undefined)
   // without an epoch the old behaviour stays: every row is a peer
   assert.ok(tierOf(r5070.latest.median, 'card', onlyField.rows))
 })

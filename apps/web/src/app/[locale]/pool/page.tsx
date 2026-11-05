@@ -2,17 +2,19 @@ import { Cpu, LifeBuoy, MessageCircle, PlugZap, Stethoscope, Wallet } from 'luci
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { setRequestLocale } from 'next-intl/server'
-import { Device } from '@/components/pool/Device'
 import { poolFontVars } from '@/components/pool/fonts'
 import { MariaApp } from '@/components/pool/maria/MariaApp'
 import { PoolTabs } from '@/components/pool/PoolTabs'
-import { type HardwareRow, type Summary, selfReportedLine, topRows } from '@/lib/pool/aggregate'
+import { type HardwareRow, type Summary, selfReportedLine } from '@/lib/pool/aggregate'
 import { keepPercent, MEASURE, POOL, WALLET } from '@/lib/pool/config'
 import { poolAllowed, poolPublic } from '@/lib/pool/gate'
 import { GLANCE, SOURCES } from '@/lib/pool/knowledge'
 import { fmtRate } from '@/lib/pool/measure'
+import { runDates, type StatsView, statsView } from '@/lib/pool/stats-view'
 import { measureStore } from '@/lib/pool/store'
+import { PAYOUT_TERMS } from '@/lib/pool/ui-config'
 import type { Bar, Usage } from '@/lib/pool/usage'
+import { PoolStage } from './PoolStage'
 import p from './pool.module.css'
 
 /*
@@ -34,16 +36,17 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 const FACTS = [
-  { icon: Wallet, text: 'Rewards go straight to your own wallet, every week.' },
+  { icon: Wallet, text: `Rewards go straight to your own wallet, every week. Pool fee ${POOL.feePercent}%.` },
   { icon: Cpu, text: 'Mine with a CPU, an NVIDIA GPU or a Mac with Apple Silicon.' },
   { icon: LifeBuoy, text: 'Get help from Maria at every step, from buying to fixing.' },
 ]
 
+/** soon: shown as coming soon while the AI is not connected, never as a promise */
 const JOBS = [
   { icon: Cpu, text: 'Picks hardware' },
   { icon: PlugZap, text: 'Connects your machine' },
   { icon: Stethoscope, text: 'Fixes your rig' },
-  { icon: MessageCircle, text: 'Answers questions' },
+  { icon: MessageCircle, text: 'Answers questions', soon: 'Questions: coming soon' },
 ]
 
 const STEPS = [
@@ -57,55 +60,64 @@ const STEPS = [
   },
   {
     title: 'Get paid after the epoch',
-    body: `An epoch runs ${POOL.payout.epoch}. Rewards are ${POOL.payout.timing} and paid in ${POOL.payout.currency} to your wallet.`,
+    body: `An epoch runs ${POOL.payout.epoch}. After it closes, the pool sends your rewards in ${POOL.payout.currency} to your wallet. Pool fee ${POOL.feePercent}%.`,
   },
 ]
 
 const unitLabel = (r: HardwareRow) => (r.unit === 'card' ? 'per card, GPU only' : r.key.startsWith('mix|') ? 'per rig, GPU and CPU' : 'per rig, CPU only')
 
-/** "What it delivers": medians per card (GPU-only rigs) or per rig, with n and the epoch. Rates only. */
-function Delivers({ rows, drift }: { rows: HardwareRow[]; drift: HardwareRow[] }) {
+function MinerTable({ rows }: { rows: HardwareRow[] }) {
+  return (
+    <table className={p.mTable}>
+      <thead>
+        <tr>
+          <th scope="col">Hardware</th>
+          <th scope="col">Median sol/h</th>
+          <th scope="col">Spread</th>
+          <th scope="col">Rigs</th>
+          <th scope="col">Epoch</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map(r => (
+          <tr key={r.key}>
+            <th scope="row">
+              <span className={p.glancePick}>{r.label}</span>
+              <span className={p.mUnit}>{unitLabel(r)}</span>
+              {selfReportedLine(r) && <span className={p.mUnit}>{selfReportedLine(r)}</span>}
+              <TagList tags={r.tags} />
+            </th>
+            <td className={p.mNum} data-label="Median">
+              {fmtRate(r.latest.median ?? 0)}
+              <span className={p.mPer}> sol/h</span>
+            </td>
+            <td className={p.mSpread} data-label="Spread">
+              {r.latest.n > 1 && r.latest.p25 !== undefined && r.latest.p75 !== undefined ? `${fmtRate(r.latest.p25)} to ${fmtRate(r.latest.p75)}` : 'one rig'}
+            </td>
+            <td data-label="Rigs">{r.latest.n}</td>
+            <td data-label="Epoch">{r.latest.epoch}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  )
+}
+
+/** "What it delivers": medians per card (GPU-only rigs) or per rig, newest algorithm era only. Rates only. */
+function Delivers({ v, drift }: { v: StatsView; drift: HardwareRow[] }) {
   return (
     <>
       <p className={p.tabLede}>
-        Median solutions per hour from saved runs and our own field runs. Rates only, never income. Under {MEASURE.fewData} rigs is few data; older than{' '}
-        {MEASURE.olderAfterEpochs} epochs is marked older, because the algorithm changes every few weeks.
+        Median solutions per hour from rigs that saved their numbers, epoch {v.eraEpoch} era only: the algorithm changes every few weeks, so older rates are not
+        comparable. Rates only, never income. Under {MEASURE.fewData} rigs is few data.
       </p>
-      {rows.length ? (
-        <table className={p.mTable}>
-          <thead>
-            <tr>
-              <th scope="col">Hardware</th>
-              <th scope="col">Median sol/h</th>
-              <th scope="col">Spread</th>
-              <th scope="col">Rigs</th>
-              <th scope="col">Epoch</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map(r => (
-              <tr key={r.key}>
-                <th scope="row">
-                  <span className={p.glancePick}>{r.label}</span>
-                  <span className={p.mUnit}>{unitLabel(r)}</span>
-                  {selfReportedLine(r) && <span className={p.mUnit}>{selfReportedLine(r)}</span>}
-                  <TagList tags={r.tags} />
-                </th>
-                <td className={p.mNum} data-label="Median">
-                  {fmtRate(r.latest.median ?? 0)}
-                  <span className={p.mPer}> sol/h</span>
-                </td>
-                <td className={p.mSpread} data-label="Spread">
-                  {r.latest.n > 1 && r.latest.p25 !== undefined && r.latest.p75 !== undefined ? `${fmtRate(r.latest.p25)} to ${fmtRate(r.latest.p75)}` : 'one rig'}
-                </td>
-                <td data-label="Rigs">{r.latest.n}</td>
-                <td data-label="Epoch">{r.latest.epoch}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      ) : (
-        <p className={p.sectionLede}>No measured rigs yet.</p>
+      {v.rows.length ? <MinerTable rows={v.rows} /> : <p className={p.sectionLede}>No measured rigs yet.</p>}
+      {v.older.length > 0 && (
+        <details className={p.older}>
+          <summary>Older runs ({v.older.length})</summary>
+          <p className={p.olderNote}>Measured under an earlier algorithm. Not comparable with epoch {v.eraEpoch}.</p>
+          <MinerTable rows={v.older} />
+        </details>
       )}
       {drift.map(r =>
         r.drift ? (
@@ -169,8 +181,9 @@ function Uses({ u }: { u?: Usage }) {
   return (
     <>
       <p className={p.tabLede}>
-        {u.n} rig{u.n === 1 ? '' : 's'} from saved runs and our own field runs, epoch{u.from === u.to ? ` ${u.to}` : `s ${u.from} to ${u.to}`}. Each rig counts once.
-        GPU medians are per card, from GPU-only rigs; CPU medians are per rig, from CPU-only rigs.
+        {u.real} rig{u.real === 1 ? '' : 's'} that saved their numbers{u.n > u.real ? `, plus ${u.n - u.real} of our own test runs` : ''}, epoch
+        {u.from === u.to ? ` ${u.to}` : `s ${u.from} to ${u.to}`}. Each rig counts once. GPU medians are per card, from GPU-only rigs; CPU medians are per rig, from
+        CPU-only rigs.
       </p>
       <TagList tags={[...(u.few ? ['few data'] : []), ...(u.older ? ['older'] : [])]} />
       <div className={p.uGrid}>
@@ -193,21 +206,66 @@ function Uses({ u }: { u?: Usage }) {
   )
 }
 
-/** One section, two tabs: what people mine with, and what it delivers. */
+/** Our own test rentals, said plainly: what they are, when, and only the newest algorithm era. */
+function TestRuns({ v }: { v: StatsView }) {
+  const { current, older, epoch } = v.tests
+  if (!current.length) return null
+  return (
+    <div className={p.tests}>
+      <h3 className={p.h3}>Our own test runs</h3>
+      <p className={p.tabLede}>
+        Boxes we rented to test the setup, epoch {epoch}, {runDates(current)}. They show the setup works, not what our miners run.
+      </p>
+      <ul className={p.testList}>
+        {current.map(f => (
+          <li key={f.label}>
+            <span className={p.testName}>{f.label}</span>
+            <span className={p.testMeta}>
+              {f.host} rental · {fmtRate(f.solPerHour)} sol/h per rig
+              {f.perCard !== undefined && ` (${fmtRate(f.perCard)} per card)`}
+            </span>
+          </li>
+        ))}
+      </ul>
+      {older.length > 0 && (
+        <details className={p.older}>
+          <summary>
+            Older runs ({older.length}), epoch {[...new Set(older.map(f => f.epoch))].join(', ')}
+          </summary>
+          <p className={p.olderNote}>
+            Measured under an earlier algorithm, so their rates are not comparable with epoch {epoch} and are not shown. {older.map(f => f.label).join('; ')}.
+          </p>
+        </details>
+      )}
+    </div>
+  )
+}
+
+/** One section: our test runs as test runs; miner statistics only once enough rigs report. */
 function WhoMines({ sum }: { sum: Summary | null }) {
+  const v = statsView(sum)
   return (
     <section aria-labelledby="measured" className={p.section}>
       <h2 className={p.h2} id="measured">
         Who mines with what
       </h2>
-      <p className={p.sectionLede}>What our miners run and what it measures, with n and the epoch on every number.</p>
-      <PoolTabs
-        classes={{ list: p.tabs, tab: p.tab, on: p.tabOn, panel: p.tabPanel }}
-        tabs={[
-          { label: 'What people use', panel: <Uses u={sum?.usage} /> },
-          { label: 'What it delivers', panel: <Delivers drift={(sum?.rows ?? []).filter(r => r.drift)} rows={topRows(sum, 8)} /> },
-        ]}
-      />
+      {v.show ? (
+        <>
+          <p className={p.sectionLede}>What rigs in the pool run and what they measure, with n and the epoch on every number.</p>
+          <PoolTabs
+            classes={{ list: p.tabs, tab: p.tab, on: p.tabOn, panel: p.tabPanel }}
+            tabs={[
+              { label: 'What people use', panel: <Uses u={sum?.usage} /> },
+              { label: 'What it delivers', panel: <Delivers drift={(sum?.rows ?? []).filter(r => r.drift && v.rows.some(x => x.key === r.key))} v={v} /> },
+            ]}
+          />
+        </>
+      ) : (
+        <p className={p.sectionLede}>
+          Miner statistics appear once enough rigs report: {v.real} of {v.need} so far. Until then we show no shares or medians, so nothing here reads as what our miners run.
+        </p>
+      )}
+      <TestRuns v={v} />
     </section>
   )
 }
@@ -249,49 +307,53 @@ export default async function PoolPage(props: { params: Promise<{ locale: string
   const measured = await measureStore()
     .summary()
     .catch(() => null)
+  // the same check as GET /api/pool/maria: without a key, questions are "coming soon", never promised
+  const ai = Boolean(process.env.ANTHROPIC_API_KEY)
 
   return (
     <div className={`${p.backdrop} ${poolFontVars}`}>
       <div aria-hidden className={p.glow} />
       <div className={p.page}>
-        <div className={p.top}>
-          <header className={p.intro}>
-            {!poolPublic() && (
-              <p className={p.pill} role="note">
-                <span aria-hidden className={p.pillDot} />
-                Private preview
-              </p>
-            )}
-            <h1 className={p.title}>{POOL.name}</h1>
-            <p className={p.lede}>Mine Qubic with the hardware you have or the hardware you choose. Maria sets it up with you and keeps it running.</p>
-            <ul className={p.facts}>
-              {FACTS.map(({ icon: Icon, text }) => (
-                <li key={text}>
-                  <Icon aria-hidden className={p.factIcon} size={18} strokeWidth={1.6} />
-                  {text}
-                </li>
-              ))}
-            </ul>
-            <div className={p.jobs}>
-              <h2 className={p.jobsLabel}>What Maria does</h2>
-              <ul>
-                {JOBS.map(({ icon: Icon, text }) => (
+        <PoolStage
+          backdrop={<DotField />}
+          intro={
+            <>
+              {!poolPublic() && (
+                <p className={p.pill} role="note">
+                  <span aria-hidden className={p.pillDot} />
+                  Private preview
+                </p>
+              )}
+              <h1 className={p.title}>{POOL.name}</h1>
+              <p className={p.lede}>Mine Qubic with the hardware you have or the hardware you choose. Maria sets it up with you and keeps it running.</p>
+            </>
+          }
+          rest={
+            <>
+              <ul className={p.facts}>
+                {FACTS.map(({ icon: Icon, text }) => (
                   <li key={text}>
-                    <Icon aria-hidden size={15} strokeWidth={1.8} />
+                    <Icon aria-hidden className={p.factIcon} size={18} strokeWidth={1.6} />
                     {text}
                   </li>
                 ))}
               </ul>
-            </div>
-          </header>
-
-          <div className={p.deviceWrap}>
-            <DotField />
-            <Device label="Maria, the mining coach">
-              <MariaApp />
-            </Device>
-          </div>
-        </div>
+              <div className={p.jobs}>
+                <h2 className={p.jobsLabel}>What Maria does</h2>
+                <ul>
+                  {JOBS.map(({ icon: Icon, text, soon }) => (
+                    <li className={soon && !ai ? p.jobSoon : undefined} key={text}>
+                      <Icon aria-hidden size={15} strokeWidth={1.8} />
+                      {soon && !ai ? soon : text}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </>
+          }
+        >
+          <MariaApp ai={ai} />
+        </PoolStage>
 
         <section aria-labelledby="how" className={p.section}>
           <h2 className={p.h2} id="how">
@@ -352,14 +414,37 @@ export default async function PoolPage(props: { params: Promise<{ locale: string
             <div>
               <dt>Payouts</dt>
               <dd>
-                Rewards are {POOL.payout.timing} and paid in {POOL.payout.currency} straight to your wallet. They usually land within about a week of the epoch
-                closing.
+                The pool sends your rewards in {POOL.payout.currency} straight to your wallet after each epoch closes. {POOL.payout.lands}.
+              </dd>
+            </div>
+            <div>
+              <dt>Epoch</dt>
+              <dd>
+                One epoch runs {POOL.payout.epoch}. Rewards are {POOL.payout.timing}.
               </dd>
             </div>
             <div>
               <dt>Fee</dt>
               <dd>
                 Pool fee: {POOL.feePercent}%. You keep {keepPercent}%.
+              </dd>
+            </div>
+            <div>
+              <dt>How rewards are split</dt>
+              <dd className={PAYOUT_TERMS.method ? undefined : p.pending}>{PAYOUT_TERMS.method ?? PAYOUT_TERMS.pending}</dd>
+            </div>
+            <div>
+              <dt>Minimum payout</dt>
+              <dd className={PAYOUT_TERMS.minimum ? undefined : p.pending}>{PAYOUT_TERMS.minimum ?? PAYOUT_TERMS.pending}</dd>
+            </div>
+            <div>
+              <dt>Who runs it</dt>
+              <dd>
+                Our partner{' '}
+                <a href={POOL.partner.url} rel="noopener noreferrer" target="_blank">
+                  {POOL.partner.name}
+                </a>{' '}
+                operates the pool infrastructure. Qubic Church provides Maria and this page.
               </dd>
             </div>
             <div>

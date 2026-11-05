@@ -29,6 +29,8 @@ export type Usage = {
   to: number
   /** rigs counted */
   n: number
+  /** of those, saved rigs that are not our own test runs (pool-reported and self-reported) */
+  real: number
   few: boolean
   older: boolean
   gpu: Bar[]
@@ -121,6 +123,7 @@ export function usage(samples: Sample[], currentEpoch: number): Usage {
     from,
     to,
     n: list.length,
+    real: list.filter(s => s.source !== 'field').length,
     few: list.length < MEASURE.fewData,
     older: list.length > 0 && currentEpoch - to > MEASURE.olderAfterEpochs,
     // per card from GPU-only rigs; a GPU+CPU rig's rate includes its CPU, so it does not count toward the card median

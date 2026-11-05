@@ -6,6 +6,7 @@
  */
 import type { Os } from './config.ts'
 import { judge, type Measured, rowFor, type Summary } from './aggregate.ts'
+import { newestEraSummary } from './stats-view.ts'
 import { HARDWARE_FIGURES, HARDWARE_FIGURES_SOURCE } from './config.ts'
 import { BUILDS, type BuildTier, type SourceId } from './knowledge.ts'
 import { normalizeCpu, normalizeGpu } from './measure.ts'
@@ -222,7 +223,9 @@ function shopping(mode: 'buy' | 'rent', p: PickInput): Card[] {
  * (enough pool-reported rigs over enough epochs); otherwise a disagreement is shown next to the verdict.
  * The guide's own hand-written "Measured" line steps aside when live measurements exist.
  */
-export function withMeasured(c: Card, key: string, sum: Summary | null | undefined): Card {
+export function withMeasured(c: Card, key: string, all: Summary | null | undefined): Card {
+  // only the newest algorithm era: a rate from an older era next to today's would read as a slow card
+  const sum = newestEraSummary(all)
   const row = rowFor(sum, key)
   if (!row || !sum) return c
   const j = judge(row, sum.rows, c.verdict)

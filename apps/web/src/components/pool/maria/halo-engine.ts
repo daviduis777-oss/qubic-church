@@ -6,6 +6,8 @@
  * Pure TypeScript, no React. State changes are eased with springs; nothing jumps.
  */
 
+import { HALO_FPS } from '@/lib/pool/ui-config'
+
 export type HaloMode = 'idle' | 'thinking' | 'settled'
 export type HaloOptions = { size: number; face: number; dpr?: number }
 
@@ -360,10 +362,21 @@ export function createHalo(back: HTMLCanvasElement, front: HTMLCanvasElement, op
 
   let raf = 0
   let last = 0
+  let due = 0
   let running = false
   const stats = { frames: 0, drawMs: 0 }
 
+  /** Anything moving fast: thinking, the verdict's shockwave, the breath and the tint settling back. */
+  const busy = () => mode === 'thinking' || shock >= 0 || Math.abs(think.x) > 0.02 || Math.abs(kick.x) > 0.02 || Math.abs(kick.v) > 0.05 || tint > 0.03
+
+  // Idle is the slow orbit of the dust: HALO_FPS.idle frames a second keep the look at a fraction of the cost.
+  // While she works or gives a verdict it runs at full rate. Frames are paced on an average, not on every tick.
   const loop = (now: number) => {
+    raf = running ? requestAnimationFrame(loop) : 0
+    const every = 1000 / (busy() ? HALO_FPS.active : HALO_FPS.idle)
+    if (now < due - 1) return
+    // the next slot; after a pause (or the first frame) start the count again from now
+    due = due + every < now ? now + every : due + every
     const dt = Math.min(0.05, (now - last) / 1000)
     last = now
     update(dt)
@@ -371,7 +384,6 @@ export function createHalo(back: HTMLCanvasElement, front: HTMLCanvasElement, op
     draw()
     stats.drawMs += performance.now() - t0
     stats.frames++
-    raf = running ? requestAnimationFrame(loop) : 0
   }
 
   return {
@@ -380,6 +392,7 @@ export function createHalo(back: HTMLCanvasElement, front: HTMLCanvasElement, op
       if (running) return
       running = true
       last = performance.now()
+      due = 0
       raf = requestAnimationFrame(loop)
     },
     stop() {

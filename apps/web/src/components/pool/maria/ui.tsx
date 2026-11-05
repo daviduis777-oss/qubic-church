@@ -104,8 +104,8 @@ export function useCopy() {
   return { done, copy }
 }
 
-/** A terminal block with a copy button that confirms. */
-export function Command({ text, label = 'command', shell = 'Terminal' }: { text: string; label?: string; shell?: string }) {
+/** A terminal block with a copy button that confirms. shell names the window ("Command Prompt" on Windows, with no $). */
+export function Command({ text, label = 'command', shell = 'Terminal', prompt = true }: { text: string; label?: string; shell?: string; prompt?: boolean }) {
   const { done, copy } = useCopy()
   return (
     <div className={s.term}>
@@ -120,9 +120,11 @@ export function Command({ text, label = 'command', shell = 'Terminal' }: { text:
         </motion.button>
       </div>
       <pre className={s.termBody}>
-        <span aria-hidden className={s.prompt}>
-          ${' '}
-        </span>
+        {prompt && (
+          <span aria-hidden className={s.prompt}>
+            ${' '}
+          </span>
+        )}
         {text}
       </pre>
     </div>
@@ -267,7 +269,7 @@ export function Group({ label, children }: { label?: string; children: ReactNode
   )
 }
 
-export function Checklist({ items }: { items: { title: string; body?: string; command?: string }[] }) {
+export function Checklist({ items, shell, prompt }: { items: { title: string; body?: string; command?: string }[]; shell?: string; prompt?: boolean }) {
   const [on, setOn] = useState<Record<number, boolean>>({})
   const base = useId()
   return (
@@ -280,7 +282,7 @@ export function Checklist({ items }: { items: { title: string; body?: string; co
               {c.title}
             </label>
             {c.body && <p className={s.rowBody}>{c.body}</p>}
-            {c.command && <Command label={c.title} text={c.command} />}
+            {c.command && <Command label={c.title} prompt={prompt} shell={shell} text={c.command} />}
           </div>
         </li>
       ))}

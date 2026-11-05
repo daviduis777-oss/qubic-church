@@ -52,8 +52,8 @@ test('status: warming up in the first 20 minutes, early under 2 hours', () => {
   assert.equal(R.rigStatus(rd({ uptimeMin: MEASURE.warmupMin }), NOW).status, 'mining')
 })
 
-test('status: no signal without a reading or when the reading is stale for its source', () => {
-  assert.equal(R.rigStatus(null, NOW).status, 'no-signal')
+test('status: waiting without a reading, no signal when the reading is stale for its source', () => {
+  assert.equal(R.rigStatus(null, NOW).status, 'waiting')
   assert.equal(R.rigStatus(rd({ at: T - (RIG.noSignalMin.log + 1) * 60_000 }), NOW).status, 'no-signal')
   assert.equal(R.rigStatus(rd({ at: T - (RIG.noSignalMin.log - 1) * 60_000 }), NOW).status, 'mining')
   // pool stats refresh often, so they go stale sooner

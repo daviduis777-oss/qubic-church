@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { MARIA_LIMITS } from '@/lib/pool/config'
 import { redactWallets } from '@/lib/pool/redact'
-import { Screen, useRing, useStickToBottom } from './flow'
+import { Screen, useAi, useRing, useStickToBottom } from './flow'
 import type { Go } from './flows'
 import { Halo } from './Halo'
 import { Chips, Field, Rich, Say, TONE, You } from './ui'
@@ -22,6 +22,7 @@ export function AskFlow({ go, first }: { go: Go; first?: string }) {
   const [msgs, setMsgs] = useState<Msg[]>([])
   const [busy, setBusy] = useState(false)
   const ring = useRing()
+  const ai = useAi()
   const sent = useRef(false)
   const scroller = useStickToBottom(msgs.map(m => m.content.length).join(',') + busy)
 
@@ -68,7 +69,7 @@ export function AskFlow({ go, first }: { go: Go; first?: string }) {
   }
 
   useEffect(() => {
-    if (first && !sent.current) {
+    if (first && !sent.current && ai !== false) {
       sent.current = true
       ask(first)
     }
@@ -76,14 +77,22 @@ export function AskFlow({ go, first }: { go: Go; first?: string }) {
   }, [first])
 
   const lastOffline = msgs.at(-1)?.offline
+  const tools = <Chips label="Tools" onPick={v => go(v as 'pick' | 'connect' | 'doctor')} options={TOOL_CHIPS} />
+  // The AI is not connected: no composer and no promise, only what works now.
+  if (ai === false) {
+    return (
+      <Screen dock={tools} onBack={() => go('home')} scrollRef={scroller} sub="Coming soon." title="Ask Maria">
+        <Say>
+          Questions to Maria are coming soon: the AI is not connected yet. Until then these three tools answer most setups, right here in your browser: Pick hardware, Connect
+          my machine, and Fix my rig.
+        </Say>
+      </Screen>
+    )
+  }
   const dock = (
     <>
-      {lastOffline && (
-        <div style={{ marginBottom: 8 }}>
-          <Chips label="Tools" onPick={v => go(v as 'pick' | 'connect' | 'doctor')} options={TOOL_CHIPS} />
-        </div>
-      )}
-      <Field label="Ask Maria" maxLength={MARIA_LIMITS.maxInput} multiline onSubmit={ask} placeholder="Ask Maria" />
+      {lastOffline && <div style={{ marginBottom: 8 }}>{tools}</div>}
+      {ai && <Field label="Ask Maria" maxLength={MARIA_LIMITS.maxInput} multiline onSubmit={ask} placeholder="Ask Maria" />}
     </>
   )
   return (

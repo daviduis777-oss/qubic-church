@@ -112,10 +112,12 @@ export const perCard = (r: Pick<RigReading, 'solPerHour' | 'hw'>) => {
 
 /* ---------------- status ---------------- */
 
-export type RigStatus = 'mining' | 'warming' | 'early' | 'idle' | 'no-signal' | 'look'
+/** waiting: the rig is in the list but nothing has been read from it yet (just added, or never pasted). */
+export type RigStatus = 'waiting' | 'mining' | 'warming' | 'early' | 'idle' | 'no-signal' | 'look'
 export type StatusView = { status: RigStatus; title: string; line: string }
 
 export const STATUS_TITLE: Record<RigStatus, string> = {
+  waiting: 'Waiting for first data',
   mining: 'Mining',
   warming: 'Warming up',
   early: 'Early',
@@ -127,12 +129,12 @@ export const STATUS_TITLE: Record<RigStatus, string> = {
 const ago = (min: number) => (min >= 1440 ? `${Math.floor(min / 1440)} d` : min >= 60 ? `${Math.floor(min / 60)} h` : `${Math.max(1, Math.round(min))} min`)
 
 /**
- * The state, in order: no signal, idle at the epoch change, a fault, warming up (first 20 minutes: do not judge),
+ * The state, in order: waiting (no reading yet), no signal, idle at the epoch change, a fault, warming up (first 20 minutes: do not judge),
  * nothing found after 20 minutes, too many rejected, early (under 2 hours: rates run high), mining.
  */
 export function rigStatus(r: RigReading | null | undefined, now: Date = new Date()): StatusView {
   const v = (status: RigStatus, line: string): StatusView => ({ status, title: STATUS_TITLE[status], line })
-  if (!r) return v('no-signal', 'Nothing from this rig yet. Paste a log to see it now.')
+  if (!r) return v('waiting', `Nothing read from this rig yet. Start the miner, give it ${MEASURE.minWindowMin} minutes, then paste the log.`)
   const age = (now.getTime() - r.at) / 60_000
   if (age > RIG.noSignalMin[r.source]) return v('no-signal', `Nothing new for ${ago(age)}. Check the machine is on and the miner runs.`)
   const e = epochAt(now)
@@ -147,6 +149,34 @@ export function rigStatus(r: RigReading | null | undefined, now: Date = new Date
   if (rej !== undefined && rej >= RIG.rejectedLookPct) return v('look', `${rej}% of solutions rejected.`)
   if (up !== undefined && up < MEASURE.warmupMin) return v('early', `Under ${MEASURE.warmupMin / 60} hours in. Early rates run ${MEASURE.warmupFactor} high.`)
   return v('mining', 'Solutions are coming in. Steady.')
+}
+
+/**
+ * How old the numbers are, for their labels. Numbers from an earlier epoch say which epoch, never
+ * "this epoch"; a stale reading (no signal) is greyed out, gives no list rate and makes no share card.
+ */
+export type Freshness = {
+  /** no signal: the numbers are old */
+  stale: boolean
+  /** the reading belongs to an earlier epoch than now */
+  previousEpoch: boolean
+  /** "this epoch", "in this log", or "epoch 237" */
+  scope: string
+  /** "epoch 237 · 3 d ago", only when stale or from an earlier epoch */
+  note?: string
+  /** a share card may be made from it */
+  shareable: boolean
+}
+
+export function freshness(r: RigReading | null | undefined, st: StatusView, now: Date = new Date()): Freshness {
+  if (!r) return { stale: false, previousEpoch: false, scope: 'this epoch', shareable: false }
+  const cur = epochAt(now).epoch
+  const previousEpoch = r.epoch < cur
+  const stale = st.status === 'no-signal'
+  const age = Math.max(0, (now.getTime() - r.at) / 60_000)
+  const scope = previousEpoch ? `epoch ${r.epoch}` : r.source === 'log' ? 'in this log' : 'this epoch'
+  const note = stale || previousEpoch ? `epoch ${r.epoch} · ${ago(age)} ago` : undefined
+  return { stale, previousEpoch, scope, note, shareable: !stale && !previousEpoch && st.status !== 'waiting' }
 }
 
 /* ---------------- against similar rigs ---------------- */
@@ -235,12 +265,13 @@ export const vsMedian = (s: Extract<Standing, { kind: 'ok' }>) => {
 
 /* ---------------- the coach ---------------- */
 
-export type CoachId = 'no-signal' | 'idle' | 'fault' | 'close' | 'restart' | 'cpu-feed' | 'warming' | 'rejected' | 'early' | 'slow' | 'healthy'
+export type CoachId = 'waiting' | 'no-signal' | 'idle' | 'fault' | 'close' | 'restart' | 'cpu-feed' | 'warming' | 'rejected' | 'early' | 'slow' | 'healthy'
 export type Coach = { id: CoachId; text: string; doctor?: boolean }
 
 /** The single most useful next action, from the field rules, most urgent first. */
 export function coachLine(r: RigReading | null | undefined, st: StatusView, s?: Standing): Coach {
-  if (!r || st.status === 'no-signal') return { id: 'no-signal', text: 'Check the machine is on and the miner runs, then paste a fresh log.' }
+  if (!r || st.status === 'waiting') return { id: 'waiting', text: `Start the miner and leave it ${MEASURE.minWindowMin} minutes. Then paste the last 30 to 50 log lines here.` }
+  if (st.status === 'no-signal') return { id: 'no-signal', text: 'Check the machine is on and the miner runs, then paste a fresh log.' }
   if (st.status === 'idle') return { id: 'idle', text: 'Epoch change. Leave it running; restarting does not help.' }
   if (r.faults.length) return { id: 'fault', text: `Fix this first: ${r.faults[0]}.`, doctor: true }
   const up = r.uptimeMin
@@ -546,7 +577,8 @@ export type CardData = {
   cost?: number
 }
 
-const STATUSES: RigStatus[] = ['mining', 'warming', 'early', 'idle', 'no-signal', 'look']
+/** Statuses a card may carry. No signal and waiting make no card: old numbers would circulate as current. */
+const STATUSES: RigStatus[] = ['mining', 'warming', 'early', 'idle', 'look']
 
 /**
  * Check a card payload. The browser may ask for `log` and `demo` cards only; `pool` cards are signed
@@ -565,6 +597,7 @@ export function checkCard(raw: unknown, opts: { allowPool?: boolean } = {}): { o
   const up = fin(r.up, 0, 14 * 1440)
   const ep = fin(r.ep, 1, 100_000)
   if (sol === undefined || rate === undefined || up === undefined || ep === undefined) return { ok: false, error: 'Numbers out of range.' }
+  if (r.st === 'no-signal' || r.st === 'waiting') return { ok: false, error: 'No card for a rig without fresh numbers. Paste a fresh log first.' }
   const st = STATUSES.includes(r.st as RigStatus) ? (r.st as RigStatus) : undefined
   if (!st) return { ok: false, error: 'Unknown status.' }
   const pct = fin(r.pct, 1, 99)
