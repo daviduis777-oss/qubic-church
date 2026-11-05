@@ -1,12 +1,15 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { ChevronLeft, RotateCcw } from 'lucide-react'
+import { ChevronLeft, ChevronRight, RotateCcw } from 'lucide-react'
 import { createContext, type CSSProperties, type ReactNode, type RefObject, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import type { HaloMode as RingMode } from './halo-engine'
 import { Halo } from './Halo'
 import { type ChipOpt, Chips, cx, Field, PRESS, Say, TONE } from './ui'
 import s from './maria.module.css'
+
+/** More answer options than this show as a list in the thread instead of chips in the dock. */
+const LIST_AT = 6
 
 export type Answers = Record<string, string>
 export type Checked = { ok: true; value: string } | { ok: false; error: string }
@@ -205,9 +208,13 @@ export function Flow({
 
   const label = (st: StepDef, v: string) => st.echo?.(v, answers) ?? st.chips?.(answers).find(c => c.value === v)?.label ?? v
 
+  // A long answer list (e.g. the doctor's symptoms) reads as a grouped list inside the thread;
+  // the dock keeps only a few chips so the conversation never gets squeezed.
+  const opts = current?.chips?.(answers) ?? []
+  const asList = opts.length > LIST_AT
   const dock = (
     <>
-      {current?.chips && <Chips label="Answers" onPick={v => answer(current, v)} options={current.chips(answers)} />}
+      {current?.chips && !asList && <Chips label="Answers" onPick={v => answer(current, v)} options={opts} />}
       {current?.text && <TextStep a={answers} hasChips={Boolean(current.chips)} key={current.id} onError={setError} onValue={v => answer(current, v)} st={current} />}
       {result?.chips && <Chips label="Next" onPick={v => (v === '__restart' ? setOrder([]) : result.onChip?.(v))} options={result.chips} />}
       {done && pending && <div style={{ height: 36 }} />}
@@ -228,6 +235,16 @@ export function Flow({
           </div>
         ))}
       {current && <Say>{current.ask(answers)}</Say>}
+      {current && asList && (
+        <div aria-label="Answers" className={s.pickList} role="group">
+          {opts.map(o => (
+            <motion.button className={s.pickRow} key={o.value} onClick={() => answer(current, o.value)} type="button" whileTap={PRESS}>
+              <span>{o.label}</span>
+              <ChevronRight aria-hidden size={17} strokeWidth={2.2} />
+            </motion.button>
+          ))}
+        </div>
+      )}
       {error && <Say fault>{error}</Say>}
       {(pending || result) && (
         // One halo for the whole moment: it works while she thinks, then sends the verdict out as a shockwave.
