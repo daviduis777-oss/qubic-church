@@ -1378,3 +1378,16 @@ select.fInput option {
     font-size: 36px;
   }
 }
+
+/* Fix my rig: the save, written to the record */
+.recordedLine {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin: 8px 0 0;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--gold);
+}

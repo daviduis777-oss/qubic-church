@@ -43,6 +43,7 @@ import {
   TONE,
   Tags,
 } from './ui'
+import { Seal } from './seal'
 import s from './maria.module.css'
 
 /* ---------------- the aggregates, fetched once per app ---------------- */
@@ -329,6 +330,7 @@ export function LogMeasure({
   const [phase, setPhase] = useState<Phase>('offer')
   const [error, setError] = useState('')
   const [saved, setSaved] = useState('')
+  const [recorded, setRecorded] = useState<number | null>(null)
   const formRef = useRef<HTMLFormElement>(null)
   // after a save, keep comparing with the peers as they were, not with this rig's own new row
   const before = useRef<Summary | null>(null)
@@ -385,6 +387,7 @@ export function LogMeasure({
         ok?: boolean
         error?: string
         epoch?: number
+        recorded?: number
         row?: { latest: { n: number } } | null
         summary?: Summary
       }
@@ -398,6 +401,7 @@ export function LogMeasure({
       setSaved(
         `Saved. Maria now has ${nn} rig${nn === 1 ? '' : 's'} like yours in epoch ${j.epoch}. Thank you.`
       )
+      setRecorded(j.recorded ? (j.epoch ?? null) : null)
       setPhase('saved')
     } catch {
       setError('Not saved: the connection failed. Try again.')
@@ -422,7 +426,7 @@ export function LogMeasure({
             className={s.rowBody}
             style={{ margin: '0 0 10px', color: 'var(--bone)', fontSize: 14.5 }}
           >
-            Save this result to help Maria learn? (no wallet, no name stored)
+            Save this result to help Maria learn? No wallet is stored.
           </p>
           <Chips
             label="Save this result"
@@ -443,6 +447,12 @@ export function LogMeasure({
           <p className={s.rowBody} style={{ marginTop: 8 }}>
             {saved}
           </p>
+          {recorded !== null && (
+            <p className={s.recordedLine}>
+              <Seal size={18} />
+              Recorded · E{recorded}
+            </p>
+          )}
           {own !== undefined && (
             <p className={s.rowBody}>
               Your own cost per solution:{' '}
@@ -596,7 +606,7 @@ export function LogMeasure({
               wide
             />
             <Input
-              hint="Optional. Hashed to count your rig once a day, then dropped. Never stored."
+              hint="Optional. With it, this result joins your rig's record under a shortened name. Never a wallet."
               label="Worker name"
               onChange={set('worker')}
               placeholder={`${POOL.workerPrefix}rig-a`}

@@ -146,3 +146,24 @@ export const RIG = {
   /** Share card links expire after this many seconds; the PNG itself is the thing people post. */
   cardTtlS: 30 * 60,
 } as const
+
+/**
+ * The record (ledger.ts): every contribution through the pool, one journal entry each, hash chained.
+ * Limits that shape what may be written; the page and My rig read the display counts from here.
+ */
+export const LEDGER = {
+  /** Record requests per connection per day (saves from Fix my rig count against MEASURE.postsPerDay instead). */
+  postsPerDay: 8,
+  /** Entries per worker per epoch. A rig that saves every few hours stays well under it. */
+  perWorkerEpoch: 24,
+  /** One epoch is 168 hours: no single entry claims more. */
+  maxHours: 168,
+  /** Rented machines: up to this many cards in one entry. */
+  maxCards: 32,
+  /** Entries per worker returned to My rig, newest first. */
+  workerEntries: 40,
+  /** Newest entries on the page strip, anonymised. */
+  newest: 5,
+  /** Pool-wide totals are recomputed at most this often per server instance. */
+  cacheMs: 60_000,
+} as const

@@ -38,7 +38,7 @@ export function verifyCard(token: string | null | undefined, secret: string, now
     if (typeof j.exp !== 'number' || j.exp < nowMs / 1000) return null
     const { exp: _exp, ...rest } = j
     // signed cards were checked before signing; a pool card is allowed here because only the server signs those
-    const c = checkCard(rest, { allowPool: true })
+    const c = checkCard(rest, { allowPool: true, trusted: true })
     return c.ok ? c.value : null
   } catch {
     return null

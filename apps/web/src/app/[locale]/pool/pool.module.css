@@ -10,6 +10,9 @@
   --hair: rgba(255, 255, 255, 0.1);
   --sans: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
   --mono: var(--font-geist-mono), ui-monospace, monospace;
+  --serif: var(--font-instrument-serif), 'Instrument Serif', Georgia, serif;
+  --sage: #9fc39a;
+  --coral: #f66d67;
 
   position: relative;
   width: 100%;
@@ -874,4 +877,541 @@
    Hide it while the pool page is mounted, so the phone's halo is the only thing drawing frames. */
 :global(body):has(.backdrop) :global(.fixed.inset-0.z-0) {
   display: none;
+}
+
+/* ---------- the why: "ask miners", again and again, then the machine ---------- */
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.why {
+  display: grid;
+  grid-template-columns: 236px minmax(0, 1fr);
+  gap: 72px;
+  align-items: center;
+}
+
+.ask {
+  margin: 0;
+  padding-right: 40px;
+  border-right: 1px solid var(--hair);
+}
+
+.askList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.askList li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 16px;
+  padding: 2px 0;
+  /* the oldest is faintest; the newest is as present as the first time */
+  opacity: calc(0.34 + 0.66 * var(--i) / (var(--n) - 1));
+}
+
+.askQ {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 22px;
+  line-height: 1.45;
+  color: var(--bone);
+  quotes: none;
+}
+
+.askDate {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.askCap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 18px;
+  padding-top: 12px;
+  border-top: 1px solid var(--hair);
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.askCapName {
+  font-weight: 600;
+  color: var(--fog);
+}
+
+.anchorCol {
+  min-width: 0;
+}
+
+.anchor {
+  margin: 0;
+}
+
+.anchorQ {
+  margin: 0;
+}
+
+.anchorQ p {
+  position: relative;
+  margin: 0;
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(2.1rem, 3.6vw, 3.3rem);
+  line-height: 1.1;
+  letter-spacing: -0.012em;
+  color: var(--bone);
+  text-wrap: balance;
+}
+
+/* hanging punctuation: the text block stays flush, the mark sits in the margin */
+.qOpen {
+  position: absolute;
+  left: -0.42em;
+  color: var(--gold);
+}
+
+.anchorQ p > span:last-child {
+  color: var(--gold);
+}
+
+.sign {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+  margin-top: 28px;
+}
+
+.signName {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--bone);
+}
+
+.signMeta {
+  font-size: 14px;
+  color: var(--fog);
+}
+
+.answer {
+  margin-top: 44px;
+  padding-top: 28px;
+  border-top: 1px solid var(--hair);
+}
+
+.answerLine {
+  margin: 0;
+  font-size: clamp(1.6rem, 2.4vw, 2.1rem);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  color: var(--bone);
+}
+
+.answerGold {
+  color: var(--gold);
+}
+
+.answerSub {
+  margin: 12px 0 0;
+  max-width: 36rem;
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--fog);
+}
+
+/* ---------- decentralization: one factual block ---------- */
+
+.indep {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 56px;
+  align-items: center;
+}
+
+.indepBody {
+  margin: 12px 0 0;
+  max-width: 34rem;
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--fog);
+}
+
+.indepLine {
+  margin: 24px 0 0;
+  max-width: 34rem;
+  padding-left: 18px;
+  border-left: 2px solid var(--gold);
+  font-size: 1.22rem;
+  line-height: 1.45;
+  letter-spacing: -0.012em;
+  color: var(--bone);
+}
+
+.census {
+  margin: 0;
+  padding: 26px 28px 22px;
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 231, 124, 0.1),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.07);
+}
+
+.censusNums {
+  display: flex;
+  align-items: flex-start;
+  gap: 22px;
+}
+
+.censusN {
+  display: block;
+  font-family: var(--mono);
+  font-size: 4.2rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+}
+
+.censusL {
+  display: block;
+  margin-top: 10px;
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--bone);
+}
+
+.censusPlus {
+  padding-top: 14px;
+  font-family: var(--mono);
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--muted);
+}
+
+.censusGone {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 22px 0 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--hair);
+  font-size: 0.9rem;
+  color: var(--fog);
+}
+
+.censusRing {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px var(--muted);
+}
+
+.censusCap {
+  margin-top: 10px;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+/* ---------- the record ---------- */
+
+.recHead {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.recSeal {
+  flex: none;
+  filter: drop-shadow(0 0 16px rgba(254, 206, 52, 0.18));
+}
+
+.recHead .sectionLede {
+  margin-top: 6px;
+}
+
+.recPanel {
+  margin-top: 26px;
+  border-radius: 22px;
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 231, 124, 0.1),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.07);
+}
+
+.recStats {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.recStats > div {
+  padding: 20px 24px 18px;
+}
+
+.recStats > div + div {
+  border-left: 1px solid var(--hair);
+}
+
+.recStats dt {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.recStats dd {
+  margin: 8px 0 0;
+  font-family: var(--mono);
+  font-size: 1.9rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+}
+
+.recLines {
+  list-style: none;
+  margin: 0;
+  padding: 4px 24px;
+  border-top: 1px solid var(--hair);
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.recLines li {
+  /* a ledger: every column lines up, so the eye runs down epochs, amounts, rigs and sources */
+  display: grid;
+  grid-template-columns: 52px 44px minmax(0, 13rem) minmax(0, 11rem) minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 18px;
+  padding: 11px 0;
+  font-family: var(--mono);
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: var(--fog);
+  font-variant-numeric: tabular-nums;
+}
+
+.recLines li + li {
+  border-top: 1px dashed rgba(255, 255, 255, 0.07);
+}
+
+.recSeq,
+.recHash {
+  font-size: 0.76rem;
+  color: var(--muted);
+}
+
+.recEp {
+  font-weight: 600;
+  color: var(--gold);
+}
+
+.recWhat {
+  color: var(--bone);
+}
+
+.recWho {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recSrc,
+.recSrcSelf,
+.recSrcPool {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.recSrcSelf {
+  font-style: italic;
+  color: var(--fog);
+}
+
+.recSrcPool {
+  color: var(--gold);
+}
+
+.recEmpty {
+  margin: 0;
+  padding: 22px 24px;
+  border-top: 1px solid var(--hair);
+  font-size: 0.95rem;
+  color: var(--fog);
+}
+
+.recFoot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 14px;
+  padding: 14px 24px 16px;
+  border-top: 1px solid var(--hair);
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.recFootLabel {
+  font-weight: 500;
+}
+
+.recHead64 {
+  flex: 1 1 22rem;
+  min-width: 0;
+  font-family: var(--mono);
+  font-size: 0.74rem;
+  color: var(--fog);
+  overflow-wrap: anywhere;
+}
+
+.recOk {
+  color: var(--sage);
+}
+
+.recBad {
+  color: var(--coral);
+}
+
+@media (max-width: 1023px) {
+  .why {
+    grid-template-columns: 200px minmax(0, 1fr);
+    gap: 40px;
+  }
+  .ask {
+    padding-right: 28px;
+  }
+  .indep {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .census {
+    max-width: 30rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .why {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+  .ask {
+    padding: 0;
+    border: 0;
+  }
+  /* on a phone the column becomes a line: the same two words, wrapping like a refrain */
+  .askList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 14px;
+  }
+  .askList li {
+    display: inline-flex;
+    gap: 6px;
+    padding: 0;
+  }
+  .askQ {
+    font-size: 18px;
+  }
+  .askDate {
+    font-size: 10px;
+  }
+  .qOpen {
+    position: static;
+  }
+  .answer {
+    margin-top: 32px;
+    padding-top: 22px;
+  }
+  .indepLine {
+    font-size: 1.1rem;
+  }
+  .census {
+    padding: 22px 20px 18px;
+  }
+  .recHead {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .recSeal {
+    width: 44px;
+    height: 44px;
+  }
+  .recStats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .recStats > div {
+    padding: 16px 16px 14px;
+  }
+  .recStats > div:nth-child(3) {
+    border-left: 0;
+  }
+  .recStats > div:nth-child(n + 3) {
+    border-top: 1px solid var(--hair);
+  }
+  .recStats dd {
+    font-size: 1.5rem;
+  }
+  .recLines {
+    padding: 2px 16px;
+  }
+  .recLines li {
+    grid-template-columns: 44px minmax(0, 1fr) auto;
+    grid-template-areas:
+      'ep what src'
+      '. who seq';
+    gap: 2px 10px;
+    font-size: 0.82rem;
+  }
+  .recEp {
+    grid-area: ep;
+  }
+  .recWhat {
+    grid-area: what;
+  }
+  .recSrc,
+  .recSrcSelf,
+  .recSrcPool {
+    grid-area: src;
+    font-size: 0.74rem;
+  }
+  .recWho {
+    grid-area: who;
+    font-size: 0.76rem;
+  }
+  .recSeq {
+    grid-area: seq;
+    text-align: right;
+  }
+  .recHash {
+    display: none;
+  }
+  .recEmpty,
+  .recFoot {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
 }

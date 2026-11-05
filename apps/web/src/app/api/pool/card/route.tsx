@@ -7,6 +7,7 @@ import { cardSecret, signCard, verifyCard } from '@/lib/pool/card-sign'
 import { POOL, RIG } from '@/lib/pool/config'
 import { epochAt, formatLeft } from '@/lib/pool/epoch'
 import { poolAllowed, poolPublic } from '@/lib/pool/gate'
+import { ledger } from '@/lib/pool/ledger'
 import { fmtRate } from '@/lib/pool/measure'
 import { shareLink } from '@/lib/pool/share'
 import { CARD_SIZE, type CardData, type CardFormat, checkCard, fmtCost, fmtInt, fmtUpShort, percentileLine, type RigStatus, SOURCE_LABEL, STATUS_TITLE, shortWorker } from '@/lib/pool/rig'
@@ -28,7 +29,10 @@ export async function POST(req: Request) {
   const body = (await req.json().catch(() => null)) as { card?: unknown } | null
   const c = checkCard(body?.card)
   if (!c.ok) return NextResponse.json({ ok: false, error: c.error }, { status: 422, headers })
-  const { token, exp } = signCard(c.value, secret)
+  // "Recorded · E238" only when the record holds this worker in this epoch
+  const inRecord = c.value.src !== 'demo' ? await ledger().forWorker(c.value.w).catch(() => null) : null
+  const card = inRecord?.epochs.some(e => e.epoch === c.value.ep) ? { ...c.value, rec: c.value.ep } : c.value
+  const { token, exp } = signCard(card, secret)
   const url = (f: CardFormat) => `/api/pool/card?f=${f}&t=${encodeURIComponent(token)}`
   // the link the card prints and the X post carries: the field guide until the pool page is public
   return NextResponse.json({ ok: true, story: url('story'), x: url('x'), exp, ttl: RIG.cardTtlS, link: shareLink(poolPublic()) }, { headers })
@@ -167,6 +171,28 @@ const Mark = ({ size }: { size: number }) => (
   </div>
 )
 
+/** "Recorded · E238", with the engraved seal: only when the server found the worker in the record. */
+function Recorded({ epoch, size }: { epoch: number; size: number }) {
+  const s = Math.round(size * 1.25)
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', fontSize: size }}>
+      {/* biome-ignore lint/performance/noImgElement: next/og draws plain img */}
+      <img alt="" height={s} src={svgUri(sealSvg())} width={s} />
+      <span style={{ marginLeft: Math.round(size * 0.4), fontFamily: 'Geist Mono', fontWeight: 600, letterSpacing: 1.5, color: GOLD }}>{`RECORDED · E${epoch}`}</span>
+    </div>
+  )
+}
+
+/** The seal from the app (seal.tsx), as a standalone SVG string for the PNG. */
+function sealSvg() {
+  const ticks = Array.from({ length: 40 }, (_, i) => {
+    const a = (i / 40) * Math.PI * 2
+    return `M${(24 + Math.cos(a) * 19).toFixed(2)} ${(24 + Math.sin(a) * 19).toFixed(2)}L${(24 + Math.cos(a) * 21.2).toFixed(2)} ${(24 + Math.sin(a) * 21.2).toFixed(2)}`
+  }).join('')
+  const check = 'M17.6 24.6l4.3 4.2 8.6-9.4'
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="23" fill="${GOLD}" fill-opacity="0.07"/><g stroke="#000" stroke-opacity="0.85" transform="translate(0 0.7)"><circle cx="24" cy="24" r="23" stroke-width="1.1"/><path d="${ticks}"/><circle cx="24" cy="24" r="16.4" stroke-width="0.9"/><path d="${check}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></g><circle cx="24" cy="24" r="23" stroke="${GOLD}" stroke-opacity="0.9" stroke-width="1.1"/><path d="${ticks}" stroke="${GOLD}" stroke-opacity="0.55"/><circle cx="24" cy="24" r="16.4" stroke="${GOLD}" stroke-opacity="0.7" stroke-width="0.9"/><path d="${check}" stroke="${GOLD_HI}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+}
+
 /** The three numbers share one size: the largest that fits the longest of them. */
 const statSize = (c: CardData, width: number, max: number) => Math.min(...[fmtInt(c.sol), fmtRate(c.rate), fmtUpShort(c.up)].map(v => fit(v, width - 16, max)))
 const solSub = (c: CardData) => (c.src === 'log' ? 'in this log' : 'this epoch')
@@ -231,6 +257,11 @@ function Story({ c, face }: { c: CardData; face: string }) {
         </div>
       )}
       <div style={{ display: 'flex', flex: 1, minHeight: 36 }} />
+      {c.rec !== undefined && (
+        <div style={{ display: 'flex', marginBottom: 26 }}>
+          <Recorded epoch={c.rec} size={24} />
+        </div>
+      )}
       <EpochStrip c={c} size={25} width={W - 144} />
       <div style={{ display: 'flex', marginTop: 30 }}>
         <Mark size={25} />
@@ -263,6 +294,11 @@ function Wide({ c, face }: { c: CardData; face: string }) {
           <Extras c={c} size={21} />
         </div>
         <div style={{ display: 'flex', flex: 1 }} />
+        {c.rec !== undefined && (
+          <div style={{ display: 'flex', marginBottom: 16 }}>
+            <Recorded epoch={c.rec} size={18} />
+          </div>
+        )}
         <EpochStrip c={c} size={19} width={right} />
         <div style={{ display: 'flex', marginTop: 20 }}>
           <Mark size={19} />

@@ -575,6 +575,8 @@ export type CardData = {
   pn?: number
   /** the user's own cost per solution in USD, only when they turned it on */
   cost?: number
+  /** the epoch this worker has in the record: set by the server after checking the ledger, never by the browser */
+  rec?: number
 }
 
 /** Statuses a card may carry. No signal and waiting make no card: old numbers would circulate as current. */
@@ -582,9 +584,10 @@ const STATUSES: RigStatus[] = ['mining', 'warming', 'early', 'idle', 'look']
 
 /**
  * Check a card payload. The browser may ask for `log` and `demo` cards only; `pool` cards are signed
- * from the pool's own numbers on the server (allowPool), once that API exists.
+ * from the pool's own numbers on the server (allowPool), once that API exists. `rec` is kept only when
+ * `trusted`: the browser cannot claim the record, the server adds it after checking the ledger.
  */
-export function checkCard(raw: unknown, opts: { allowPool?: boolean } = {}): { ok: true; value: CardData } | { ok: false; error: string } {
+export function checkCard(raw: unknown, opts: { allowPool?: boolean; trusted?: boolean } = {}): { ok: true; value: CardData } | { ok: false; error: string } {
   if (!raw || typeof raw !== 'object') return { ok: false, error: 'Nothing to draw.' }
   const r = raw as Record<string, unknown>
   const src = r.src
@@ -617,6 +620,8 @@ export function checkCard(raw: unknown, opts: { allowPool?: boolean } = {}): { o
     pct: pct !== undefined && pn !== undefined ? Math.round(pct) : undefined,
     pn: pct !== undefined && pn !== undefined ? Math.round(pn) : undefined,
     cost: fin(r.cost, 0, 10_000),
+    // "Recorded" rides only on a card the server signed after looking the worker up in the record
+    rec: opts.trusted ? fin(r.rec, 1, 100_000) : undefined,
   }
   return { ok: true, value: Object.fromEntries(Object.entries(card).filter(([, v]) => v !== undefined)) as CardData }
 }

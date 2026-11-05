@@ -922,3 +922,215 @@
 .older summary:hover {
   color: var(--bone);
 }
+
+/* ---------- the record: one journal line per contribution, an engraved seal ---------- */
+
+.record {
+  position: relative;
+  padding: 13px 14px 10px;
+  border-radius: 16px;
+  background: var(--glass);
+  box-shadow:
+    inset 0 1px 0 var(--glass-top),
+    inset 0 0 0 1px var(--glass-line);
+}
+
+.recordHead {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr) auto;
+  gap: 11px;
+  align-items: center;
+}
+
+.recordSeal {
+  display: grid;
+  place-items: center;
+  filter: drop-shadow(0 0 10px rgba(254, 206, 52, 0.16));
+}
+
+.recordTitles {
+  min-width: 0;
+}
+
+.recordH {
+  margin: 0;
+  line-height: 1;
+}
+
+.recordTitle {
+  display: inline-block;
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 22px;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: var(--bone);
+}
+
+.recordSub {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: var(--fog);
+  font-variant-numeric: tabular-nums;
+}
+
+.journal {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 4px 11px;
+  border-radius: 11px;
+  background: rgba(0, 0, 0, 0.45);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.jLine {
+  /* narrow: what happened on the first row with its source; who or what hardware below */
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) auto;
+  grid-template-areas:
+    'ep what src'
+    '. who who';
+  align-items: baseline;
+  gap: 1px 8px;
+  padding: 7px 0;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  line-height: 1.4;
+  font-variant-numeric: tabular-nums;
+  color: var(--fog);
+}
+
+.jLine + .jLine {
+  border-top: 1px dashed rgba(255, 255, 255, 0.07);
+}
+
+.jEp {
+  grid-area: ep;
+  font-weight: 600;
+  color: var(--gold);
+}
+
+.jWhat {
+  grid-area: what;
+  min-width: 0;
+  color: var(--bone);
+}
+
+.jWho {
+  grid-area: who;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11px;
+  color: var(--fog);
+}
+
+.jSrc {
+  grid-area: src;
+  font-size: 10.5px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.jSrcPool {
+  color: var(--gold);
+}
+
+.jSrcSelf {
+  color: var(--fog);
+  font-style: italic;
+}
+
+/* the wide view has room for the whole line */
+.journal {
+  container-type: inline-size;
+}
+
+@container (min-width: 460px) {
+  .jLine {
+    grid-template-columns: 44px minmax(0, 1.1fr) minmax(0, 1fr) auto;
+    grid-template-areas: 'ep what who src';
+  }
+  .jWho {
+    font-size: 11.5px;
+  }
+}
+
+.jFresh {
+  animation: jIn 1.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+@keyframes jIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-4px);
+    background: rgba(254, 206, 52, 0.16);
+  }
+  30% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    background: transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jFresh {
+    animation: none;
+  }
+}
+
+.recordEmpty {
+  margin: 10px 0 0;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--fog);
+}
+
+.recordChain {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 8px 2px 0;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.recordActions {
+  margin-top: 10px;
+}
+
+.recordMsg {
+  min-height: 1.3em;
+  margin: 6px 2px 0;
+  font-size: 12px;
+  color: var(--sage);
+}
+
+.recordMsgWarn {
+  color: var(--coral);
+}
+
+.rent {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--hair);
+}
+
+.rentLead {
+  margin: 0 0 8px;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 18px;
+  line-height: 1;
+  color: var(--bone);
+}
+
+.rentNote {
+  margin: 9px 0 0;
+  font-size: 12px;
+  color: var(--fog);
+}
