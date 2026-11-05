@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { MARIA_LIMITS } from '@/lib/pool/config'
 import { poolAllowed } from '@/lib/pool/gate'
-import { mariaNowBlock, mariaSystemStatic, stalenessNote } from '@/lib/pool/prompt'
+import { mariaNowBlock, mariaRequestBlock, mariaSystemStatic, stalenessNote } from '@/lib/pool/prompt'
 import { clientIp, takeMessage } from '@/lib/pool/ratelimit'
 import { redactWallets } from '@/lib/pool/redact'
 import { measureStore } from '@/lib/pool/store'
@@ -32,6 +32,11 @@ export async function POST(req: Request) {
   if (!last || last.role !== 'user' || !last.content.trim()) return fail(400, 'empty', 'Write a question first.')
   if (last.content.length > MARIA_LIMITS.maxInput) return fail(413, 'too_long', `Keep it under ${MARIA_LIMITS.maxInput} characters. For a long log, use Fix my rig.`)
 
+  // Decided by code for this request: the answer language, and for a pasted log the checker's findings as hints
+  // (the AI reads the log itself; the checker can be wrong). Only the fact that a seed was removed passes on.
+  const rawLast = raw.filter((m): m is Msg => !!m && typeof m === 'object' && (m as Msg).role === 'user' && typeof (m as Msg).content === 'string').at(-1)?.content ?? ''
+  const request = mariaRequestBlock(messages, rawLast)
+
   const key = process.env.ANTHROPIC_API_KEY
   if (!key) return fail(503, 'no_key', `Ask Maria is offline: the AI is not connected yet. ${TOOLS_HINT}`)
 
@@ -49,10 +54,11 @@ export async function POST(req: Request) {
       body: JSON.stringify({
         model: process.env.MARIA_MODEL || 'claude-haiku-5-5',
         max_tokens: 700,
-        // the long static prompt is cached; only the live epoch line changes per request
+        // the long static prompt is cached; the epoch line and the request block (language, checker hints) change per request
         system: [
           { type: 'text', text: mariaSystemStatic(measured), cache_control: { type: 'ephemeral' } },
           { type: 'text', text: mariaNowBlock() },
+          { type: 'text', text: request },
         ],
         messages,
         stream: true,

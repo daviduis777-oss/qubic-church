@@ -226,7 +226,7 @@ export const PROCEDURES: Record<ProcedureId, Procedure> = {
       { title: 'See the allowed range', command: 'nvidia-smi -q -d POWER', body: 'Shows the current, default, minimum and maximum power limit of each card, in watts.', sources: ['nvidiaSmi'] },
       { title: 'Set a lower limit', command: 'sudo nvidia-smi -pl <WATTS>', body: 'Watts, between the minimum and maximum. Add -i 0 for one card only. No tested offset exists for Qubic: pick a lower value inside that range and judge it by solutions per hour. Lower power is the safe direction: do not raise clocks or voltage.', sources: ['nvidiaSmi'] },
       { title: 'Measure solutions, not it/s', body: 'Keep each setting for several hours (est.) and compare solutions per hour. Keep the lowest limit that does not cost solutions. As a general example, Puget Systems kept about 95% of ML training performance with RTX 3090 cards limited from 350 W to 280 W (24 Nov 2020).', sources: ['pugetPower', 'guide'] },
-      { title: 'Re-apply it at every boot', command: `${writeUnit('gpu-power-limit', POWER_UNIT)}\nsudo systemctl daemon-reload && sudo systemctl enable --now gpu-power-limit`, body: 'Put your watts in place of <WATTS>. Persistence mode resets at reboot, so a small boot service sets both before the miner starts.', sources: ['nvidiaSmi', 'pugetPower', 'localCheck'] },
+      { title: 'Re-apply it at every boot', command: `${writeUnit('gpu-power-limit', POWER_UNIT)}\nsudo systemctl daemon-reload && sudo systemctl enable --now gpu-power-limit`, body: 'Put your watts in place of <WATTS>. Persistence mode resets at reboot, so a small boot service sets both before the miner starts.', sources: ['nvidiaSmi', 'pugetPower', 'localCheck'], extra: true },
     ],
     checks: [
       { title: 'Why the clocks are held', command: 'nvidia-smi -q -d PERFORMANCE', body: 'SW Power Cap: Active is expected at a limit you set. HW Slowdown or Thermal Slowdown: Active means heat or power trouble: improve the cooling.' },
@@ -354,7 +354,8 @@ export function procedureText(p: Procedure, opts: { sources?: boolean; brief?: b
     const head = `${n + 1}. ${s.title}.${s.body ? ` ${s.body}` : ''}${opts.sources ? ` [${practiceSourceLine(s.sources)}]` : ''}`
     return s.command ? `${head}\n${s.command.split('\n').map(l => `    ${l}`).join('\n')}` : head
   })
-  const checks = p.checks.map(c => `- Check: ${c.title}${c.command ? `: ${c.command}` : ''}${c.body ? `. ${c.body}` : ''}`)
+  // the prompt's brief form keeps the first check only; the page shows them all
+  const checks = (opts.brief ? p.checks.slice(0, 1) : p.checks).map(c => `- Check: ${c.title}${c.command ? `: ${c.command}` : ''}${c.body ? `. ${c.body}` : ''}`)
   return [opts.brief ? `${p.title}.` : `${p.title}. ${p.summary}`, ...steps, ...checks].join('\n')
 }
 
