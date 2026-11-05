@@ -102,7 +102,7 @@ export type Procedure = { id: ProcedureId; title: string; summary: string; steps
 
 /* ---------- shared pieces ---------- */
 
-const ONLY_OFFICIAL = 'Only for the miner you downloaded from the pool setup page. Never for a file from a chat, a video or a "faster" fork.'
+export const ONLY_OFFICIAL = 'Only for the miner you downloaded from the pool setup page. Never for a file from a chat, a video or a "faster" fork.'
 
 /** The start script. The quoted 'EOF' keeps the pasted command byte for byte; the pid file lets one command stop it. */
 export const runScript = (dir: string) =>
@@ -157,8 +157,8 @@ const CPU_CHECK: PStep[] = [
 export const PROCEDURES: Record<ProcedureId, Procedure> = {
   'linux-nvidia': {
     id: 'linux-nvidia',
-    title: 'NVIDIA driver on Ubuntu 22.04 / 24.04',
-    summary: 'Install a driver that supports CUDA 12 with ubuntu-drivers, then check it with nvidia-smi.',
+    title: 'NVIDIA driver on Ubuntu 22.04 / 24.04 (your own machine)',
+    summary: 'Own machine only: install a driver that supports CUDA 12 with ubuntu-drivers, then check it with nvidia-smi. On a rented container never install drivers or reboot: pick an image with CUDA instead.',
     steps: [
       { title: 'Update and reboot', command: 'sudo apt update && sudo apt upgrade -y && sudo reboot', sources: ['ubuntuNvidia'] },
       { title: 'See which drivers fit the card', command: 'sudo ubuntu-drivers list', body: 'On a headless server use sudo ubuntu-drivers list --gpgpu for the -server branches.', sources: ['ubuntuNvidia'] },
@@ -294,7 +294,7 @@ export const PROCEDURES: Record<ProcedureId, Procedure> = {
     steps: [
       { title: 'Deposit small, test one box for an hour', body: 'Scale only after one box mines cleanly. Never type a card number or the seed into a rental site.', sources: ['guide'] },
       { title: 'Check before you rent', body: 'CPU model with AVX-512, at least 8 CPU cores per GPU, PCIe x8 or better per card, 99% or better reliability, 16 GB RAM or more, and a region that can reach the pool (Worker package download failed means try another country).', sources: ['guide', 'academy'] },
-      { title: 'Choose the image and the access', body: 'An Ubuntu image with CUDA 12 or newer that matches the host driver: Clore offers official CUDA images, Vast has an [Automatic] tag that matches the host CUDA. Connect over SSH with your public key (OctaSpace: Dashboard, Service sessions), or the web terminal where offered. Clore spot rentals are cheaper but can be outbid; on-demand cannot.', sources: ['clore', 'vast', 'octa'] },
+      { title: 'Choose the image and the access', body: 'An Ubuntu image with CUDA 12 or newer that matches the host driver (12.4 or newer for RTX 50 / Blackwell cards: the Clore filter needed it on 6 Sep 2026): Clore offers official CUDA images, Vast has an [Automatic] tag that matches the host CUDA. Never install drivers or reboot inside the container: if nvidia-smi is missing, change the image or the box. Connect over SSH with your public key (OctaSpace: Dashboard, Service sessions), or the web terminal where offered. Clore spot rentals are cheaper but can be outbid; on-demand cannot.', sources: ['clore', 'vast', 'octa', 'field-e229'] },
       { title: 'Paste this as the on-start command', command: `${runScript('/root/qubic-miner')}\n${detachCommand('/root/qubic-miner')}`, body: `Clore runs it after the container starts; on Vast it is the On-start script, in the SSH or Jupyter launch mode. Put every line the setup page gives, download included, in place of ${MINER_COMMAND}: the container can start fresh.`, sources: ['clore', 'vast', 'localCheck'] },
       { title: 'Give each box its own worker name', body: `${POOL.workerPrefix}5070ti-a, ${POOL.workerPrefix}5070ti-b and so on.`, sources: ['guide'] },
     ],
@@ -314,7 +314,7 @@ export type Tip = { title: string; text: string; general?: boolean; sources: Any
 export const TIPS: Tip[] = [
   { title: 'One miner per machine', text: 'Two copies fight over the same CPU and cards. Check with pgrep, systemctl status or Task Manager.', sources: ['guide'] },
   { title: 'Unique worker names', text: `Every machine its own ${POOL.workerPrefix} name, or the dashboard blurs them and one looks dead.`, sources: ['guide'] },
-  { title: '8+ CPU cores per GPU', text: 'The CPU feeds the cards. Fewer cores means rejected or expired candidates.', sources: ['guide'] },
+  { title: '8+ CPU cores per GPU', text: 'The CPU feeds the cards: at least 12 threads per card in our epoch 233 runs (predates the E235/E236 changes).', sources: ['guide', 'field-e233'] },
   { title: 'Lower the power limit, then measure', text: 'General GPU advice, not measured on Qubic: a lower power limit often keeps most of the throughput. Step down, run each step for hours, keep the lowest limit that keeps solutions per hour.', general: true, sources: ['nvidiaSmi', 'pugetPower'] },
   { title: 'Cool before you push', text: 'Clean fans and free airflow first. HW Slowdown or Thermal Slowdown in nvidia-smi -q -d PERFORMANCE means heat or power trouble.', general: true, sources: ['nvidiaSmi', 'macTemp'] },
   { title: 'No sleep, no surprise reboots', text: 'Turn sleep off (powercfg, caffeinate, Energy settings) and use an autostart (systemd, Task Scheduler) so a reboot does not end mining.', sources: ['winPower', 'caffeinate', 'systemdService'] },
@@ -347,14 +347,14 @@ export function withCommand(text: string, command?: string | null): string {
   return command ? text.split(MINER_COMMAND).join(command) : text
 }
 
-/** Compact text form for Maria's AI prompt and the Discord card. */
-export function procedureText(p: Procedure, opts: { sources?: boolean } = {}): string {
+/** Compact text form for Maria's AI prompt and the Discord card. `brief` drops the summary line (the prompt). */
+export function procedureText(p: Procedure, opts: { sources?: boolean; brief?: boolean } = {}): string {
   const steps = p.steps.map((s, n) => {
     const head = `${n + 1}. ${s.title}.${s.body ? ` ${s.body}` : ''}${opts.sources ? ` [${practiceSourceLine(s.sources)}]` : ''}`
     return s.command ? `${head}\n${s.command.split('\n').map(l => `    ${l}`).join('\n')}` : head
   })
   const checks = p.checks.map(c => `- Check: ${c.title}${c.command ? `: ${c.command}` : ''}${c.body ? `. ${c.body}` : ''}`)
-  return [`${p.title}. ${p.summary}`, ...steps, ...checks].join('\n')
+  return [opts.brief ? `${p.title}.` : `${p.title}. ${p.summary}`, ...steps, ...checks].join('\n')
 }
 
 export const procedureSources = (p: Procedure): AnySource[] => [...new Set(p.steps.flatMap(s => s.sources))]

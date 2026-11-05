@@ -145,7 +145,7 @@ test('jetski: status with dates, never "gone since 10 Oct", never recommended', 
   assert.doesNotMatch(all, /jetski[^"]{0,20}\b(now )?gone\b/i)
   assert.ok(HARD_RULES.some(r => /Recommend only Qubic Church Pool/.test(r) && /18 Sep 2026/.test(r) && /still operating and paying on 3 Nov 2026/.test(r)))
   const st = FAQ.find(e => e.id === 'jetski-status')!
-  assert.match(st.a, /^Not recommended here; Maria recommends only Qubic Church Pool/)
+  assert.match(st.a, /^Not recommended here; I recommend only Qubic Church Pool/)
   for (const re of [/18 Sep 2026/, /might be paused/, /no ARM support/, /epoch 236 payout set for 4 Nov/, /until 2 Nov/]) assert.match(st.a, re)
 })
 
@@ -158,7 +158,7 @@ test('no jetski recommendation and no partner name in the new material', () => {
 
 /* ---------- prompt and card ---------- */
 
-test('prompt: sources listed once, tags in facts, compact triage, under 16k tokens', () => {
+test('prompt: sources listed once, tags in facts, compact triage, under 17k tokens', () => {
   const p = mariaSystemPrompt(NOW)
   assert.match(p, /\nSOURCES \(tag = source, date/)
   assert.match(sourcesBlock(), /- QLI team = Qubic Discord #mining-general, QLI team \(Pomm3sgab3l, Zoxx\) \(1 Aug to 4 Nov 2026\)/)
@@ -166,9 +166,12 @@ test('prompt: sources listed once, tags in facts, compact triage, under 16k toke
   assert.match(p, /Steps in PROCEDURES\./)
   assert.match(p, /up to about 10 days/)
   assert.match(p, /kern_solve_cand_start/)
-  assert.doesNotMatch(p, /\bCODED\b/)
+  // the partner is named once, in the answer to "who runs the pool" (owner-confirmed, Nov 2026)
+  assert.equal(p.match(/\bCODED\b/g)!.length, 1)
+  assert.match(p, /Who runs it: only when the user asks who runs or operates the pool, say: "Qubic Church Pool runs on the infrastructure of our partner CODED \(confirmed by the pool owner\)\."/)
   assert.doesNotMatch(p, /—/)
-  assert.ok(p.length / 4 <= 16_000, `prompt is about ${Math.round(p.length / 4)} tokens`)
+  // Budget raised from 16k to 17k tokens for the exam fixes (checklist, open cases, log reading, epoch log), Nov 2026.
+  assert.ok(p.length / 4 <= 17_000, `prompt is about ${Math.round(p.length / 4)} tokens`)
 })
 
 test('discord card: carries the new FAQ entries with their Discord citations', () => {

@@ -14,9 +14,13 @@ export const OS_LABEL: Record<Os, string> = { linux: 'Linux', macos: 'macOS', wi
 export const POOL = {
   name: 'Qubic Church Pool',
 
-  /** Partner that operates the pool infrastructure. Shown once, in the partners line at the end of the page. */
+  /**
+   * Partner that operates the pool infrastructure. Shown once, in the partners line at the end of the page.
+   * Maria names it only when asked who runs the pool (prompt.ts, THE POOL); the pool owner confirmed it.
+   */
   partner: {
     name: 'CODED',
+    confirmedBy: 'the pool owner',
     // TODO(Bob): final public site of the partner (the beta host is the only one we have confirmed).
     url: 'https://beta.codedonqubic.com',
   },

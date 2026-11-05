@@ -319,10 +319,10 @@ test('prompt: procedures, tips and rules, compact and clean', () => {
   assert.ok(p.includes(MINER_COMMAND))
   assert.match(p, /never invent it/)
   assert.doesNotMatch(p, /—/)
-  assert.doesNotMatch(p, /\bCODED\b/)
+  assert.equal(p.match(/\bCODED\b/g)!.length, 1) // only in the "who runs it" line
   assert.doesNotMatch(p, /--wallet/)
-  // Budget: 16k tokens at about 4 chars per token (Discord #mining-general knowledge added 4 Nov 2026).
-  assert.ok(p.length < 64_000, `prompt is ${p.length} chars`)
+  // Budget: 17k tokens at about 4 chars per token (exam round 1 fixes added 5 Nov 2026; was 16k).
+  assert.ok(p.length <= 68_000, `prompt is ${p.length} chars`)
 })
 
 /* ---------- the Discord Maria card ---------- */
