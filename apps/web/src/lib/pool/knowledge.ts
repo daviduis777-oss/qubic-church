@@ -191,6 +191,11 @@ export const ECOSYSTEM: EcoFact[] = [
     source: 'qubic-li/hiveos README 5 Nov 2026, #30, #31; Hiveon forum',
   },
   {
+    topic: 'HiveOS troubleshooting',
+    text: 'Miner dies at once ("Miner screen is not running") while the same flight sheet works on another rig: this rig\'s install. Read the first error in miner log, then the latest stable image: hive-replace --stable --yes (qubic.li package README; beta in 2024). If that command fails, the install is damaged: Hive\'s replace guide, else reflash from a PC or a new drive (Hive staff, May 2024).',
+    source: 'qubic-li/hiveos README 5 Nov 2026; Hiveon forum, 2024',
+  },
+  {
     topic: 'QLI Docker',
     text: 'qubic.li images: qubicli/client:latest (CPU) and qubicli/client:cuda (NVIDIA + CPU); "qubicli/qubic-client" was a README typo (#134, Mar 2026). Not this pool\'s images.',
     source: 'qubic-li/client README 5 Nov 2026',
@@ -202,12 +207,12 @@ export const ECOSYSTEM: EcoFact[] = [
   },
   {
     topic: 'glibc',
-    text: 'Stock glibc: Ubuntu 20.04 2.31, 22.04 2.35, 24.04 2.39; Debian 11 2.31, 12 2.36; check with ldd --version. QLI\'s "GLIBC Version must be >= 2.34" on Ubuntu 22.04 was misleading and cleared at the next epoch (#112, Nov 2024). "GLIBC_2.xx not found": the binary was built on a newer system. Never upgrade glibc by hand (hiveos #13, Apr 2024: a new error after it); use a newer OS release or image.',
+    text: 'Stock glibc: Ubuntu 20.04 2.31, 22.04 2.35, 24.04 2.39; Debian 11 2.31, 12 2.36; check with ldd --version. QLI\'s "GLIBC Version must be >= 2.34" on Ubuntu 22.04 was misleading and cleared at the next epoch (#112, Nov 2024). "GLIBC_2.xx not found": the binary was built on a newer system. Never upgrade glibc by hand (hiveos #13, Apr 2024: a new error after it), and on HiveOS never an Ubuntu apt source (hiveos #3, #5: can brick it); use a newer OS release or the latest stable image.',
     source: 'Ubuntu and Debian release notes; qubic-li issues',
   },
   {
     topic: 'CPU instructions',
-    text: '"Illegal instruction", "invalid opcode", SIGILL, exit code 132: an instruction this CPU or VM does not run; use the AVX2 (or Auto) build. AVX-512: Ryzen 7000/9000, EPYC 9004/9005, Threadripper 7000, Xeon Scalable, Core X-series and 11th gen. None: Ryzen 3000/5000 (e.g. the 5900X), EPYC 7xx2/7xx3, Core 12th gen and later, Core Ultra. No AVX2: Core 2nd/3rd gen, Xeon E5 v1/v2. An early AVX-512 Xeon (Gold 61xx) can still fail on builds using VNNI or BF16, and VMs can hide flags.',
+    text: '"Illegal instruction", "invalid opcode", SIGILL, exit code 132: an instruction this CPU or VM does not run; use the AVX2 (or Auto) build. AVX-512: Ryzen 7000/9000, EPYC 9004/9005, Threadripper 7000, Xeon Scalable, Core X-series and 11th gen. None: Ryzen 3000/5000 (e.g. the 5900X), EPYC 7xx2/7xx3, Core 12th gen and later, Core Ultra. No AVX2: Core 2nd/3rd gen, Xeon E5 v1/v2, AMD Opteron and FX; apoolminer prints "not find any flag to support" for a CPU it cannot use. An early AVX-512 Xeon (Gold 61xx) can still fail on builds using VNNI or BF16, and VMs can hide flags.',
     source: 'AMD and Intel specs; qubic-li/client #110, #117',
   },
   {
@@ -222,13 +227,23 @@ export const ECOSYSTEM: EcoFact[] = [
   },
   {
     topic: 'NVIDIA',
-    text: '"Failed to load module", "no kernel image is available", "driver/library version mismatch" (reboot after a driver update): the card is seen but its CUDA code does not load; update or clean-reinstall the driver. Hybrid-graphics laptop: NVIDIA GPU as high-performance for the miner, on AC power. WSL2 takes CUDA from the Windows driver: no Linux driver inside WSL; users with lasting WSL GPU trouble fixed it on native Ubuntu or HiveOS (qubic-li/client #22, 2024).',
+    text: '"Failed to load module", "no kernel image is available", "driver/library version mismatch" (reboot after a driver update): the card is seen but its CUDA code does not load; update or clean-reinstall the driver. Xid 13/31/43/45/62/79 in dmesg and "an illegal memory access was encountered": the GPU faults under load; stock clocks first, then PSU, riser, heat (an OC stable in one epoch can fail the next). Hybrid-graphics laptop: NVIDIA GPU as high-performance for the miner, on AC power. WSL2 takes CUDA from the Windows driver: no Linux driver inside WSL; users with lasting WSL GPU trouble fixed it on native Ubuntu or HiveOS (qubic-li/client #22, 2024).',
     source: 'NVIDIA docs; qubic-li issues',
   },
   {
     topic: 'Windows',
-    text: 'Antivirus removes miner files: "Could not find file ...qli-runner.exe" = quarantined or never extracted (#109, Sep 2024). Restore it from Protection history and exclude only the miner folder (setup-page miner only); never switch protection off. Avoid OneDrive-synced folders. Run as a normal user; the QLI runner needs the VC++ Redistributable 2015-2022.',
+    text: 'Antivirus removes miner files: "Could not find file ...qli-runner.exe" = quarantined or never extracted (#109, Sep 2024). Restore it from Protection history and exclude only the miner folder (setup-page miner only); never switch protection off. Avoid OneDrive-synced folders. "Access is denied" starting a miner: usually the antivirus; "is not recognized as an internal or external command": a .bat run as admin starts in System32, so put cd /d "%~dp0" first. .NET "HttpClient.Timeout" = the client never reaches its server (antivirus, firewall, network); "unexpected EOF ... transport stream" = a TLS download cut off (network, VPN, AV web shield). Run as a normal user; the QLI runner needs the VC++ Redistributable 2015-2022.',
     source: 'Microsoft docs; qubic-li/client README, #109',
+  },
+  {
+    topic: 'QLI versions',
+    text: 'qubic.li client (not this pool\'s miner): 3.11 with worker cuda 237.0 at E237 (28 Oct 2026), 3.13.x by 4 Nov 2026 (its HiveOS package v3.13.0); CPU autodetection from 3.5.1, XMR idle removed in 3.5.3. Releases move weekly: never call a number current; for this pool, "check the setup page for the current version".',
+    source: 'qubic-li/client and hiveos releases, read 4 to 5 Nov 2026',
+  },
+  {
+    topic: 'Datacenter GPUs',
+    text: 'General tip, reasoning not measurement: the mining work is integer and bit-level on the CUDA cores, not float matrix math, so tensor cores, TF32 and BF16 do not apply and no setting switches the miner to TF32; an RTX 4090/5090 can match an H100/H800 (est.). Compare by solutions over 6 to 12 hours.',
+    source: 'NVIDIA architecture docs, general reasoning, 5 Nov 2026',
   },
   {
     topic: 'ARM',

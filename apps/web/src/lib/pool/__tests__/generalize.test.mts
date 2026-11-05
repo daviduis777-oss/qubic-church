@@ -419,7 +419,7 @@ test('prompt: every FAQ topic has 2 to 4 ranked must-say facts, rendered numbere
   assert.match(faqBlock(), /\(1\) .* \(2\) /)
   const p = mariaSystemPrompt(NOW)
   assert.ok(
-    p.length / 4 <= 18_000,
+    p.length / 4 <= 19_500,
     `prompt is about ${Math.round(p.length / 4)} tokens`
   )
 })

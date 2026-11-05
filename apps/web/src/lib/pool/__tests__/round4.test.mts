@@ -225,25 +225,25 @@ test('route helpers: what counts as a paste, and the hints it gets', () => {
   const h = checkerHints('[ERROR] GLIBC_2.34 not found\n[INFO] waiting')
   assert.match(h, /\[fault\] The system C library/)
   assert.match(h, /First step: /)
-  assert.match(checkerHints('just words'), /No rule matched/)
+  assert.match(checkerHints('just words'), /No pattern matched/)
   // a token in the quoted line is masked
   assert.doesNotMatch(checkerHints('"accessToken": "eyJhbGciOiJSUzI1NiJ9.eyJJZCI6IjEifQ.sig"'), /eyJJZCI6/)
 })
 
 test('request block: language by code, hints only for a paste, a removed seed is announced', () => {
   const es = mariaRequestBlock([{ role: 'user', content: 'PS C:\\miner> .\\rqiner.exe -t 4\nError: reqwest::Error { kind: Decode, source: Error("expected value", line: 1, column: 1) }\n\nes todo lo que hace' }])
-  assert.match(es, /Language: Answer in Spanish/)
-  assert.match(es, /CHECKER HINTS .*verify each against the log/)
+  assert.match(es, /Language: Reply in Spanish \(Spanish, not Portuguese\)/)
+  assert.match(es, /PRIVATE HINTS .*Never mention a checker.*Verify every hint against the log; drop any hint the log does not support/)
   assert.match(es, /not JSON/)
   const q = mariaRequestBlock([{ role: 'user', content: 'Which CPU should I buy for mining?' }])
-  assert.match(q, /Answer in English/)
-  assert.doesNotMatch(q, /CHECKER HINTS/)
+  assert.match(q, /Reply in English/)
+  assert.doesNotMatch(q, /HINTS/)
   const seed = mariaRequestBlock([{ role: 'user', content: 'my id is [seed removed], why does it fail' }], 'my id is qwertyuiopasdfghjklzxcvbnmqwertyuiopasdfghjklzxcvbnmabc, why does it fail')
   assert.match(seed, /pasted a wallet seed .*never ask for it/)
   assert.doesNotMatch(seed, /qwertyuiop/)
   // a log-only follow-up keeps the language of the earlier words
   assert.match(languageLine([{ role: 'user', content: 'Mi minero no funciona, ¿qué hago?' }, { role: 'assistant', content: 'Pega el log.' }, { role: 'user', content: '[INFO] E:237 | 0 it/s\n[ERROR] x' }]), /Spanish/)
-  assert.match(requestBlock('Answer in English.'), /^REQUEST/)
+  assert.match(requestBlock('Reply in English.'), /^REQUEST/)
 })
 
 test('language: script, stopwords, and the user words under a log', () => {
@@ -274,7 +274,7 @@ test('language: script, stopwords, and the user words under a log', () => {
 test('prompt: the support playbook, labels and specific asks', () => {
   const p = mariaSystemPrompt(NOW)
   const b = playbookBlock()
-  for (const re of [/"From your log:"/, /"Likely:"/, /"General tip:"/, /ASK FOR/, /ldd --version/, /uname -m/, /nvidia-smi output/, /trainer version line/, /not "the full log"/, /CHECKER HINTS/, /set 20 threads, log says 23/])
+  for (const re of [/"From your log:"/, /"Likely:"/, /"General tip:"/, /ASK FOR/, /ldd --version/, /uname -m/, /nvidia-smi output/, /trainer version line/, /not "the full log"/, /PRIVATE HINTS/, /never cite the checker/, /set 20 threads, log says 23/])
     assert.match(b, re)
   assert.ok(p.indexOf('HOW I HELP') > p.indexOf('BEFORE YOU SEND') && p.indexOf('HOW I HELP') < p.indexOf('HARD RULES'))
   assert.match(checklistBlock(), /Never only "paste the full log"/)
@@ -302,7 +302,7 @@ test('prompt: one pool only, no comparison or switching method', () => {
 
 test('prompt: size and hygiene after round 4', () => {
   const p = mariaSystemPrompt(NOW)
-  assert.ok(p.length <= 72_000, `prompt is ${p.length} chars`)
+  assert.ok(p.length <= 78_000, `prompt is ${p.length} chars`)
   assert.doesNotMatch(p, /—/)
   assert.doesNotMatch(JSON.stringify([RULES, ECOSYSTEM, FAQ]), /—/)
   // the Ant work replaced line is tied to its miner and era

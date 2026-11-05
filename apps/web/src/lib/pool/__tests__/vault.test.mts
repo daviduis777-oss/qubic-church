@@ -226,7 +226,7 @@ test('prompt: STALENESS and MINER FAQ are in the cached block, compact and clean
   assert.match(p, /\nMINER FAQ \(/)
   for (const e of FAQ) assert.ok(p.includes(`"${e.q}"`), e.id)
   assert.equal(p.match(/All our measurements are from epochs 229 and 233/g)!.length, 1) // not repeated under HARDWARE
-  assert.ok(faqBlock().length < 26_000, `faq block is ${faqBlock().length} chars`)
+  assert.ok(faqBlock().length < 26_500, `faq block is ${faqBlock().length} chars`)
   assert.ok(stalenessBlock().length < 1_000)
   assert.doesNotMatch(p, /—/)
   assert.equal(p.match(/\bCODED\b/g)!.length, 1) // only in the "who runs it" line

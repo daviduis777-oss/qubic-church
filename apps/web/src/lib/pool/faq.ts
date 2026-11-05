@@ -462,6 +462,17 @@ const DRAFTS: Draft[] = [
     cite: `${DISCORD}, 27 Aug and 29 Sep 2026, Pomm3sgab3l (QLI)`,
   },
   {
+    id: 'rate-drops',
+    theme: 'missing',
+    q: 'My rate drops after running a while. Why?',
+    must: [
+      'On any rig, own or rented, the first 1 to 2 hours overstate the rate by about 1.3 to 1.5x (our E229/E233 runs, predates the E235/E236 changes). Judge over 6 to 12 hours, by solutions.',
+      'A fall to 0 after a working start is not warm-up: read the log then; check heat, clocks and HugePages_Free.',
+    ],
+    sources: ['field-e229', 'field-e233'],
+    asOf: 'Sep to Nov 2026',
+  },
+  {
     id: 'zero-solutions',
     theme: 'missing',
     q: 'My rig shows 0 solutions. Cancel or wait?',
@@ -643,10 +654,10 @@ const DRAFTS: Draft[] = [
   {
     id: 'arm',
     theme: 'arm-mac',
-    q: 'ARM or Linux ARM64 support?',
+    q: 'ARM or Linux ARM64 support? How do I mine on ARM?',
     must: [
-      'A QLI moderator (24 Sep 2026): ARM64 via a Docker Linux image with "cpuVersion": "ARM64" in appsettings.json, and a new ARM64 build for every algorithm.',
-      'On 10 Oct a pool still sent ARM64 Linux an Android worker (client issue #136). No confirmed ARM payout, no measurement.',
+      'Here: the setup page lists Linux, macOS, Windows and HiveOS; a Linux ARM64 build is not confirmed in my sources, so check the page. Check the box: uname -m and file <binary>.',
+      'Elsewhere (another pool\'s client, dated, not the way to mine here): ARM64 via a Docker image (24 Sep 2026), an x64 package from its install script (28 Aug) and an Android worker for ARM64 Linux (10 Oct). No ARM payout or measurement.',
     ],
     sources: ['qli-team', 'community'],
     asOf: '24 Sep to 10 Oct 2026',

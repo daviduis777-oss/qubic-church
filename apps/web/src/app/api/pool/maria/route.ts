@@ -12,6 +12,12 @@ type Msg = { role: 'user' | 'assistant'; content: string }
 
 const TOOLS_HINT = 'Pick hardware, Connect my machine and Fix my rig still work: they run right here, without the AI.'
 const headers = { 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex, nofollow' }
+
+/**
+ * The model, configurable with MARIA_MODEL. Exam 4 (blind grade, 30 fresh items, 5 Nov 2026) on the same prompt:
+ * Sonnet 86.7%, Haiku 65.0%. The default stays Haiku until Bob decides.
+ */
+const model = () => process.env.MARIA_MODEL || 'claude-haiku-5-5'
 const fail = (status: number, reason: string, message: string) => NextResponse.json({ reason, message }, { status, headers })
 
 /**
@@ -32,8 +38,10 @@ export async function POST(req: Request) {
   if (!last || last.role !== 'user' || !last.content.trim()) return fail(400, 'empty', 'Write a question first.')
   if (last.content.length > MARIA_LIMITS.maxInput) return fail(413, 'too_long', `Keep it under ${MARIA_LIMITS.maxInput} characters. For a long log, use Fix my rig.`)
 
-  // Decided by code for this request: the answer language, and for a pasted log the checker's findings as hints
-  // (the AI reads the log itself; the checker can be wrong). Only the fact that a seed was removed passes on.
+  // Decided by code for this request: the answer language (from the user's own sentences only, never from pasted
+  // log or config lines), and for a pasted log the pattern scan's findings as PRIVATE HINTS: unverified, for the AI
+  // only, never mentioned to the user; the AI verifies each against the log and drops what the log does not support.
+  // Only the fact that a seed was removed passes on.
   const rawLast = raw.filter((m): m is Msg => !!m && typeof m === 'object' && (m as Msg).role === 'user' && typeof (m as Msg).content === 'string').at(-1)?.content ?? ''
   const request = mariaRequestBlock(messages, rawLast)
 
@@ -52,9 +60,9 @@ export async function POST(req: Request) {
       method: 'POST',
       headers: { 'x-api-key': key, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
       body: JSON.stringify({
-        model: process.env.MARIA_MODEL || 'claude-haiku-5-5',
+        model: model(),
         max_tokens: 700,
-        // the long static prompt is cached; the epoch line and the request block (language, checker hints) change per request
+        // the long static prompt is cached; the epoch line and the request block (language, private hints) change per request
         system: [
           { type: 'text', text: mariaSystemStatic(measured), cache_control: { type: 'ephemeral' } },
           { type: 'text', text: mariaNowBlock() },
