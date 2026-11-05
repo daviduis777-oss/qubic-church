@@ -194,7 +194,7 @@ export function LoginBox({ onLogin }: { onLogin: (me: Me) => void }) {
           </p>
         )}
         <p className="qcf-small" style={{ margin: '12px 0 0' }}>
-          One account for the Crypt, BPP-9000 and W4W. No personal data.{' '}
+          One account for the Crypt and BPP-9000. No personal data.{' '}
           <a href="/account" style={{ textDecoration: 'underline' }} target="_top">
             How it works
           </a>

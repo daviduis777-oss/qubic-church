@@ -6,7 +6,6 @@ import { usePathname } from '@/navigation'
 
 const LINKS = [
   ['/bpp9000', 'BPP-9000'],
-  ['/w4w', 'W4W'],
   ['/articles', 'Crypt'],
   ['/books', 'Books'],
   ['/docs', 'Research'],
@@ -88,7 +87,7 @@ export function GlobalNavTrigger() {
               aria-label="Account: one key, no personal data"
               className={`inline-flex h-10 items-center gap-1.5 whitespace-nowrap px-1.5 text-sm font-medium xl:px-3 transition-colors hover:text-foreground ${active('/account') ? 'text-foreground' : 'text-fg-2'}`}
               href="/account"
-              title="One account for the Crypt, BPP-9000 and W4W. No personal data."
+              title="One account for the Crypt and BPP-9000. No personal data."
             >
               <svg aria-hidden fill="none" height="15" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width="15"><circle cx="7.5" cy="15.5" r="4.5" /><path d="M10.7 12.3L20 3M16 7l3 3M14 9l2 2" /></svg>
               <span className="hidden xl:inline">Account</span>
