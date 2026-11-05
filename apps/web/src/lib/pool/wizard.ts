@@ -55,7 +55,7 @@ export function suggestWorker(hw: Hw, model?: string, suffix = 'a'): string {
 }
 
 /** One line on why the prefix matters, shown next to the worker name everywhere it is asked or given. */
-export const PREFIX_WHY = `${POOL.workerPrefix} tags the machine as Qubic Church Pool. Without it the pool does not count it as ours.`
+export const PREFIX_WHY = `${POOL.workerPrefix} tags the machine as ${POOL.name}. Without it the pool does not count it as ours.`
 
 /** The HiveOS flight-sheet worker template: HiveOS puts each rig's name in place of %WORKER_NAME%. */
 export const HIVE_WORKER_TEMPLATE = `${POOL.workerPrefix}%WORKER_NAME%`

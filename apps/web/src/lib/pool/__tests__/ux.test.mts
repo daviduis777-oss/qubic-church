@@ -257,7 +257,7 @@ test('share: one helper for the link, the post text and the X intent', () => {
   assert.deepEqual(shareLink(true), { url: SHARE.publicUrl, text: 'qubic.church/pool' })
   const card = R.cardFrom(rd(), R.rigStatus(rd(), NOW), { kind: 'none', text: '' })
   const t = shareText(card)
-  assert.equal(t, `My rig in the Qubic Church Pool, epoch ${CUR}: 410 sol/h on 2x RTX 5070 Ti · EPYC 7B12, read from my miner log. Set up with Maria, the mining coach.`)
+  assert.equal(t, `My rig in Aigarth Pool, epoch ${CUR}: 410 sol/h on 2x RTX 5070 Ti · EPYC 7B12, read from my miner log. Set up with Maria, the mining coach.`)
   assert.doesNotMatch(t, /—|\$|USD|\bQUBIC\b/)
   assert.doesNotMatch(t, /earn|profit|income/i)
   const u = new URL(xIntentUrl(t, shareLink(false)))

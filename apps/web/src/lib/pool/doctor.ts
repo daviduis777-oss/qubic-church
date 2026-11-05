@@ -1248,7 +1248,7 @@ export const RULES: Rule[] = [
     prose: true,
     severity: 'fault',
     title: 'A phone miner login was rejected (another pool\'s app)',
-    means: 'On 2 Oct 2026 another pool\'s moderator said "Authentication failed" in its phone app meant the phone was blacklisted for sending too many shares in a short time, and that they were fixing it. Qubic Church Pool has no Android option.',
+    means: 'On 2 Oct 2026 another pool\'s moderator said "Authentication failed" in its phone app meant the phone was blacklisted for sending too many shares in a short time, and that they were fixing it. Aigarth Pool has no Android option.',
     fix: ['Mine on a PC or a server: the pool setup page offers Linux, macOS, Windows and HiveOS.', 'For that app, ask the pool that runs it.'],
     test: /authentication failed(?! because the remote party)|auth(entication)? (error|rejected)/i,
     when: MOBILE,
@@ -1637,13 +1637,13 @@ export const RULES: Rule[] = [
     id: 'worker-not-qc',
     severity: 'check',
     title: 'The worker name does not start with QC.',
-    means: 'On Qubic Church Pool a worker name starts with QC. (for example QC.5070ti-a) and is unique per machine. If this config is for another pool, that pool\'s own naming applies.',
+    means: 'On Aigarth Pool a worker name starts with QC. (for example QC.5070ti-a) and is unique per machine. If this config is for another pool, that pool\'s own naming applies.',
     fix: ['Rename the worker to QC.<something unique> on the pool setup page and run the command it gives.', 'One name per machine, so two rigs never merge on the dashboard.'],
     test: /"?(?:alias|worker|workerName|worker_name|rigName|rig_name)"?\s*[:=]\s*"([^"\n]*)"|--(?:worker|alias)[ =]"?([^\s"]+)/i,
     read: (m, log) => {
       const v = (m[1] ?? m[2] ?? '').trim()
       if (REDACTED.test(v) || v.startsWith('QC.') || /%[A-Z_]+%/.test(v) || FOREIGN.test(log) || INJECTION.test(v)) return null
-      return { means: `This worker name does not start with QC. On Qubic Church Pool every worker name starts with QC. (for example QC.5070ti-a) and is unique per machine. If this config is for another pool, that pool's own naming applies.` }
+      return { means: `This worker name does not start with QC. On Aigarth Pool every worker name starts with QC. (for example QC.5070ti-a) and is unique per machine. If this config is for another pool, that pool's own naming applies.` }
     },
   },
   {
@@ -1651,12 +1651,12 @@ export const RULES: Rule[] = [
     prose: true,
     severity: 'check',
     title: 'A phone miner (another pool\'s app)',
-    means: 'Qubic Church Pool has no Android option. Phone miners come from another pool\'s app (an Android beta since 22 Aug 2026), and in Oct 2026 phones there were erratic: days at 0 and most shares invalid in some epochs, which that pool called a backend issue (21 Oct). Not measured by us.',
+    means: 'Aigarth Pool has no Android option. Phone miners come from another pool\'s app (an Android beta since 22 Aug 2026), and in Oct 2026 phones there were erratic: days at 0 and most shares invalid in some epochs, which that pool called a backend issue (21 Oct). Not measured by us.',
     fix: ['For that app, ask the pool that runs it.', 'For this pool, mine on a PC or a server: Linux, macOS, Windows or HiveOS from the setup page.'],
     test: /\b(?:mobile|phone|android|apk|cellphone)\b[^\n]{0,60}\b(?:stopped|not working|doesn.t work|don.t work|zero|0|invalid|shut down|failed|no (?:shares|solutions))|\b(?:stopped|zero|invalid|failed)\b[^\n]{0,40}\b(?:mobile|phone|android) (?:mining|miner|app)|^\s*(?:v?\d+(?:\.\d+)+\s+)?apk\s*$|\b(?:android|apk)\b[^\n]{0,40}\b(?:installer|version|shows?|still)\b/i,
     read: (_m, log) =>
       RATE_FALLS_ZERO.test(log) || /no shares/i.test(log)
-        ? { means: "Qubic Church Pool has no Android option. This is another pool's phone app (an Android beta since 22 Aug 2026); a rate that falls to 0 after a few minutes with no shares matches what its users reported in Oct 2026, with days at 0 and most shares invalid in some epochs (that pool called it a backend issue, 21 Oct). Not measured by us; for that app, ask the pool that runs it." }
+        ? { means: "Aigarth Pool has no Android option. This is another pool's phone app (an Android beta since 22 Aug 2026); a rate that falls to 0 after a few minutes with no shares matches what its users reported in Oct 2026, with days at 0 and most shares invalid in some epochs (that pool called it a backend issue, 21 Oct). Not measured by us; for that app, ask the pool that runs it." }
         : undefined,
     sources: ['qli-team', 'community'],
   },
@@ -1718,8 +1718,8 @@ export const RULES: Rule[] = [
     severity: 'check',
     tier: 3,
     title: 'This config points to another pool',
-    means: 'The pool address is another pool\'s endpoint, not Qubic Church Pool. Its status, share rules and support are that pool\'s.',
-    fix: ['For problems with that pool, check its status channel.', 'To mine on Qubic Church Pool, use the command from its setup page.'],
+    means: 'The pool address is another pool\'s endpoint, not Aigarth Pool. Its status, share rules and support are that pool\'s.',
+    fix: ['For problems with that pool, check its status channel.', 'To mine on Aigarth Pool, use the command from its setup page.'],
     test: FOREIGN,
   },
   {

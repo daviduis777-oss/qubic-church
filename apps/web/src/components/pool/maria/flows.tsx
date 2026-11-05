@@ -617,10 +617,20 @@ const DOCTOR_STEPS: StepDef[] = [
   },
 ]
 
+/** What a report from Fix my rig carries: the symptom or the rule ids it found. Never the log itself. */
+function reportStep(v: string): string {
+  const raw = v.startsWith('sym:') ? `symptom:${v.slice(4)}` : `log:${diagnose(v).findings.map(f => f.id).slice(0, 4).join('+') || 'none'}`
+  return raw.toLowerCase().replace(/[^a-z0-9:+._-]/g, '-').slice(0, 80)
+}
+
 function doctorOutcome(a: Answers, go: Go, ai: boolean): Outcome {
   const v = a.mode ?? ''
-  const chips = [restartChip('Check another'), ...(ai ? [{ value: 'ask', label: 'Ask Maria' }] : [{ value: 'connect', label: 'Connect my machine' }])]
-  const onChip = (x: string) => go(x === 'ask' ? 'ask' : x === 'connect' ? 'connect' : 'home')
+  const chips: ChipOpt[] = [
+    restartChip('Check another'),
+    ...(ai ? [{ value: 'ask', label: 'Ask Maria' }] : [{ value: 'connect', label: 'Connect my machine' }]),
+    { value: 'report', label: 'Report a problem', quiet: true },
+  ]
+  const onChip = (x: string) => (x === 'report' ? go('report', { from: 'doctor', step: reportStep(v) }) : go(x === 'ask' ? 'ask' : x === 'connect' ? 'connect' : 'home'))
   if (v.startsWith('sym:')) {
     const f = SYMPTOMS.find(x => `sym:${x.id}` === v)?.finding
     if (f) return { tone: severityTone(f.severity), lead: f.severity === 'fine' ? "It's fine. Wait." : 'Here is what that usually means.', cards: [<Reveal key="r">{[<FindingCard f={f} key="f" />]}</Reveal>], chips, onChip }

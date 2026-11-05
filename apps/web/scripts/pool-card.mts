@@ -239,7 +239,7 @@ export function renderMiningCard(brain: Brain, rev?: string): string {
   const head = [
     '---',
     'domain: mining',
-    'title: Майнинг Qubic в Qubic Church Pool',
+    `title: Майнинг Qubic в ${POOL.name}`,
     'version: 1',
     `as_of: ${AS_OF}`,
     'status: черновик — ждёт «да» Боба',

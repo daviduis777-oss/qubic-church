@@ -1,10 +1,11 @@
 import { ChevronDown, LifeBuoy, Percent, Stamp, Wallet } from 'lucide-react'
 import { JOIN, MARIA } from '@/lib/pool/qc'
+import { ReportLink } from './ReportLink'
 import { DECENTRAL, MACHINE } from '@/lib/pool/why'
 import p from './pool.module.css'
 
 /*
- * QC Pool, top of the page: Come-from-Beyond's words once, the reason to join, and Maria.
+ * Aigarth Pool, top of the page: Come-from-Beyond's words once, the reason to join, and Maria.
  * Server components; every word lives in lib/pool/qc.ts and lib/pool/why.ts so tests can hold it verbatim.
  */
 
@@ -85,6 +86,10 @@ export function Join() {
   return (
     <section aria-labelledby="join-h" className={p.join} id="join">
       <div className={p.joinText}>
+        <p className={p.stageLine}>
+          <span className={p.stageTag}>{JOIN.stage.label}</span>
+          {JOIN.stage.line}
+        </p>
         <h1 className={p.joinTitle} id="join-h">
           {JOIN.title}
         </h1>
@@ -147,6 +152,7 @@ export function MariaIntro() {
         </p>
       ))}
       <p className={p.mariaHint}>{MARIA.hint}</p>
+      <ReportLink className={p.reportLink} />
     </div>
   )
 }

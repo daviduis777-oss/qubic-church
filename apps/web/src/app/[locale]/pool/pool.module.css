@@ -1,4 +1,4 @@
-/* Qubic Church Pool page. Palette from the Maria NFT; the site is dark only. */
+/* Aigarth Pool page. Palette from the Maria NFT; the site is dark only. */
 
 .backdrop {
   /* the site's tokens: --accent-gold #fece34, foreground #fafafa, fg-2 #b7b7b7, muted #8c8c8c on #000 */
@@ -1410,5 +1410,100 @@
   .recFoot {
     padding-left: 16px;
     padding-right: 16px;
+  }
+}
+
+/* ---------- Stage 0, the affiliation line, the report links ---------- */
+
+.stageLine {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin: 0 0 22px;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: var(--fog);
+}
+
+.stageTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 11px 4px 9px;
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold);
+  background: rgba(254, 206, 52, 0.06);
+  box-shadow: inset 0 0 0 1px rgba(254, 206, 52, 0.3);
+}
+
+/* a ring with one notch filled: the first of the stages */
+.stageTag::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: conic-gradient(var(--gold) 0 25%, transparent 25% 100%);
+  box-shadow: inset 0 0 0 1px rgba(254, 206, 52, 0.75);
+}
+
+.reportLink,
+.footReport {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+  color: var(--fog);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.reportLink {
+  margin-top: 14px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.reportLink:hover,
+.footReport:hover {
+  color: var(--gold);
+}
+
+.reportLink:focus-visible,
+.footReport:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.partners p {
+  margin: 0;
+}
+
+.affil {
+  margin-top: 6px !important;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.footReport {
+  margin-top: 14px;
+  font-size: 0.82rem;
+}
+
+@media (max-width: 480px) {
+  .stageLine {
+    gap: 8px 10px;
+    font-size: 0.85rem;
   }
 }

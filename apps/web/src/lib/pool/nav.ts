@@ -1,11 +1,11 @@
 /**
- * The hidden "QC Pool" tab. While POOL_PUBLIC is off only the forum moderator sees it; once it is on, everyone.
+ * The hidden "Aigarth Pool" tab. While POOL_PUBLIC is off only the forum moderator sees it; once it is on, everyone.
  * The moderator cookie is httpOnly, so the browser asks GET /api/pool/gate: {ok:true} for those who may see
  * the pool, a plain 404 for everyone else. The nav renders the link only after a yes, never hidden with CSS.
  * Pure and browser safe: the route and the nav share these, and the tests hold them.
  */
 
-export const POOL_TAB = { href: '/pool', label: 'QC Pool' } as const
+export const POOL_TAB = { href: '/pool', label: 'Aigarth Pool' } as const
 export const POOL_GATE_URL = '/api/pool/gate'
 
 /** Who may see the pool page, its API and the tab: everyone once public, the moderator before. */

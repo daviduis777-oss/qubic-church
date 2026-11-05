@@ -50,7 +50,7 @@ export function PoolStage({ intro, children }: { intro: ReactNode; children: Rea
           </button>
         )}
       </div>
-      <div className={p.deviceWrap}>
+      <div className={p.deviceWrap} id="maria-phone">
         <Device label="Maria, the mining coach" wide={wide}>
           {children}
         </Device>

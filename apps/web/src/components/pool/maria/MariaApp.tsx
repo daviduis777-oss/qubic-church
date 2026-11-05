@@ -9,7 +9,9 @@ import { AiContext, type Answers, NavFocus, RingContext } from './flow'
 import { ConnectFlow, DoctorFlow, type Go, PickFlow, type Screen } from './flows'
 import { HomeScreen } from './home'
 import { MeasuredProvider } from './measured'
+import { ReportApp } from './report'
 import { RigFlow } from './rig'
+import { OPEN_APP_EVENT, type OpenApp } from '@/lib/pool/qc'
 import { loadRigs } from '@/lib/pool/rig'
 import type { HaloMode as RingMode } from './halo-engine'
 import { SPRING, TONE } from './ui'
@@ -89,6 +91,17 @@ export function MariaApp({ ai: aiHint }: { ai?: boolean } = {}) {
     [api],
   )
 
+  // The page can open an app on the phone: its "Report a bug, idea or update" link, or a #report link.
+  useEffect(() => {
+    const open = (ev: Event) => {
+      const d = (ev as CustomEvent<OpenApp>).detail
+      if (d?.app) go(d.app, { from: d.from || 'page' })
+    }
+    window.addEventListener(OPEN_APP_EVENT, open)
+    if (window.location.hash === '#report') go('report', { from: 'page' })
+    return () => window.removeEventListener(OPEN_APP_EVENT, open)
+  }, [go])
+
   const remove = useCallback((id: number) => setEntries(prev => prev.filter(e => e.id !== id || !e.leaving)), [])
   // Safety net: an exit that never reports completion is removed anyway.
   useEffect(() => {
@@ -146,6 +159,7 @@ export function MariaApp({ ai: aiHint }: { ai?: boolean } = {}) {
                 {e.screen === 'record' && <RecordApp go={go} />}
                 {e.screen === 'who' && <WhoApp go={go} />}
                 {e.screen === 'help' && <HelpApp go={go} />}
+                {e.screen === 'report' && <ReportApp from={e.handoff} go={go} />}
               </motion.div>
             ))}
           </div>

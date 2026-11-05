@@ -27,12 +27,12 @@ export const DECENTRAL = {
   },
   inactive: 'MinerLab is no longer active.',
   why: 'The more independent pools there are, the less the network’s compute depends on any one operator.',
-  line: 'Mining through Qubic Church Pool adds weight to an independent pool, in a network that depends on very few.',
+  line: 'Mining through Aigarth Pool adds weight to an independent pool, in a network that depends on very few.',
 } as const
 
 /** The record, said once. No reason given: it is recorded, and that is all it says. */
 export const RECORD = {
   title: 'Recorded. Remembered.',
-  line: 'Every contribution through Qubic Church Pool is recorded.',
+  line: 'Every contribution through Aigarth Pool is recorded.',
   empty: 'The first entry is written when a miner records a result.',
 } as const
