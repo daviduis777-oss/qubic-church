@@ -18,7 +18,7 @@ const nextConfig: NextConfig = {
   // The link-preview route reads only public/fonts and public/og-src, but its dynamic path makes the tracer
   // pull in all of public/, which pushed the function past Vercel's 250 MB limit.
   outputFileTracingExcludes: {
-    '/og/**': ['./public/images/**', './public/data/**', './public/books/**', './public/w4w-assets/**', './public/blog-og/**'],
+    '/og/**': ['./public/images/**', './public/data/**', './public/books/**', './public/blog-og/**'],
     // Vercel runs glibc Linux: sharp's musl build (about 19 MB per function) is dead weight in every deployment
     '/**': ['../../node_modules/.pnpm/@img+sharp-libvips-linuxmusl*/**', '../../node_modules/.pnpm/@img+sharp-linuxmusl*/**'],
   },
@@ -65,6 +65,10 @@ const nextConfig: NextConfig = {
       { source: '/satoshi-nakamoto', destination: '/timeline#satoshi', permanent: true },
       { source: '/chto-takoe-qubic', destination: '/what-is-qubic', permanent: true },
       { source: '/articles/cfb', destination: '/articles/board/founder', permanent: false },
+      // W4W Act I is frozen on the archive/w4w-act1 branch; /w4w points at mining until Stage 0 opens.
+      { source: '/w4w', destination: '/mine-qubic', permanent: false },
+      { source: '/w4w/:path*', destination: '/mine-qubic', permanent: false },
+      { source: '/pt/w4w', destination: '/pt/mine-qubic', permanent: false },
       { source: '/kto-takoy-come-from-beyond', destination: '/who-is-come-from-beyond', permanent: true },
       { source: '/chto-takoe-anna-aigarth', destination: '/what-is-anna-aigarth', permanent: true },
       {
