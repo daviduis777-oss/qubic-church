@@ -252,7 +252,7 @@ test('doctor: every injected line is counted; a placeholder token is not a leak;
 
 test('route: model stays configurable, default unchanged, exam4 result noted [public part]', () => {
   const src = readFileSync(new URL('../../../app/api/pool/maria/route.ts', import.meta.url), 'utf8')
-  assert.match(src, /process\.env\.MARIA_MODEL \|\| 'claude-haiku-5-5'/)
+  assert.match(src, /process\.env\.MARIA_MODEL \|\| 'claude-sonnet-5-5'/)
   assert.match(src, /Sonnet 86\.7%, Haiku 65\.0%/)
   assert.doesNotMatch(src, /CHECKER HINTS|checker's findings as hints/)
 })

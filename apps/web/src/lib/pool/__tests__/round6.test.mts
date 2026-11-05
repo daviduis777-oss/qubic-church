@@ -201,6 +201,6 @@ test('the AI path gets hints for these pastes; a plain question does not', () =>
 
 test('route: default unchanged, exam4 and exam5 results noted; prompt about 20k tokens, clean [public part]', () => {
   const src = readFileSync(new URL('../../../app/api/pool/maria/route.ts', import.meta.url), 'utf8')
-  assert.match(src, /process\.env\.MARIA_MODEL \|\| 'claude-haiku-5-5'/)
+  assert.match(src, /process\.env\.MARIA_MODEL \|\| 'claude-sonnet-5-5'/)
   assert.match(src, /exam 4 Sonnet 86\.7%, Haiku 65\.0%; exam 5 Sonnet 80\.0%, Haiku 70\.0%/)
 })

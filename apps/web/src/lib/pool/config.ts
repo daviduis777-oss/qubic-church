@@ -89,7 +89,7 @@ export const WALLET = {
   address: { length: 60, pattern: /^[A-Z]{60}$/, rule: 'The address (Qubic ID) is 60 uppercase letters. It is safe to share and it is all the pool needs.' },
 } as const
 
-export const MARIA_LIMITS = { perDay: 20, maxInput: 1200, maxTurns: 8 } as const
+export const MARIA_LIMITS = { perDay: 3, maxInput: 1200, maxTurns: 8 } as const
 
 /**
  * Measured results: how Maria learns from real runs (measure.ts, aggregate.ts, store.ts).

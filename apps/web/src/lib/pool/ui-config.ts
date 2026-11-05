@@ -34,9 +34,6 @@ export const SHARE = {
   xIntent: 'https://x.com/intent/post',
 }
 
-/** The expanded "wide" view of the app is offered from this viewport width. */
-export const WIDE_MIN_PX = 1280
-
 /** Halo frame rate: idle is throttled to save battery; thinking and the verdict run at full rate. */
 export const HALO_FPS = { idle: 24, active: 60 }
 

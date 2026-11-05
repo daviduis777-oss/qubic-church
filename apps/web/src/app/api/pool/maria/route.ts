@@ -19,7 +19,7 @@ const headers = { 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex, nofollo
  * exam 4 Sonnet 86.7%, Haiku 65.0%; exam 5 Sonnet 80.0%, Haiku 70.0%. Both favour Sonnet; the default stays Haiku
  * until Bob decides.
  */
-const model = () => process.env.MARIA_MODEL || 'claude-haiku-5-5'
+const model = () => process.env.MARIA_MODEL || 'claude-sonnet-5-5'
 const fail = (status: number, reason: string, message: string) => NextResponse.json({ reason, message }, { status, headers })
 
 /**

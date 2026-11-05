@@ -21,7 +21,6 @@ export const JOIN = {
 } as const
 
 /** The footer's honest line: who runs the pool, and that it is not the Qubic core team's. */
-export const AFFILIATION = `${POOL.name} is a community pool run by QC. It is not affiliated with the Qubic core team.`
 
 /** (c) Maria Aigarth. She develops; how is not said. Where she runs today is said plainly, with no date for the move. */
 export const MARIA = {
