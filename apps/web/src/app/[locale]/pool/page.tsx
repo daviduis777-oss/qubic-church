@@ -12,7 +12,6 @@ import { ledger } from '@/lib/pool/ledger'
 import { fmtRate } from '@/lib/pool/measure'
 import { runDates, type StatsView, statsView } from '@/lib/pool/stats-view'
 import { measureStore } from '@/lib/pool/store'
-import { AFFILIATION } from '@/lib/pool/qc'
 import { PAYOUT_TERMS } from '@/lib/pool/ui-config'
 import type { Bar, Usage } from '@/lib/pool/usage'
 import { PoolStage } from './PoolStage'
@@ -415,7 +414,6 @@ export default async function PoolPage(props: { params: Promise<{ locale: string
               {POOL.partner.name}
             </a>
           </p>
-          <p className={p.affil}>{AFFILIATION}</p>
           <ReportLink className={p.footReport} />
         </footer>
       </div>

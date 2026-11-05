@@ -84,18 +84,16 @@ function useRecord() {
 function AppIcon({ id, label, a11y, badge, grad, dock, onOpen }: { id: AppId; label: string; a11y: string; badge?: number; grad: string; dock?: boolean; onOpen: () => void }) {
   const Glyph = GLYPH[id]
   return (
-    <motion.button aria-label={a11y} className={h.app} data-app={id} onClick={onOpen} title={dock ? label : undefined} transition={EASE} type="button" whileTap={TAP}>
+    <motion.button aria-label={a11y} className={h.app} data-app={id} onClick={onOpen} transition={EASE} type="button" whileTap={TAP}>
       <span aria-hidden className={h.icon}>
         <span className={h.face}>
           <Glyph className={h.glyph} color={`url(#${grad})`} strokeWidth={1.6} />
         </span>
         {badge ? <span className={h.badge}>{badge > 9 ? '9+' : badge}</span> : null}
       </span>
-      {!dock && (
-        <span aria-hidden className={h.label}>
-          {label}
-        </span>
-      )}
+      <span aria-hidden className={`${h.label} ${dock ? h.dockLabel : ''}`}>
+        {label}
+      </span>
     </motion.button>
   )
 }

@@ -172,11 +172,11 @@ test('stage 0: one short line in the Join block, no dates, no promises, no game'
   assert.ok(join.indexOf('JOIN.stage.label') > 0 && join.indexOf('JOIN.stage.label') < join.indexOf('JOIN.title'), 'the stage line sits above the title')
 })
 
-test('affiliation: one honest line in the footer, never a claim to be official', () => {
-  assert.equal(Q.AFFILIATION, 'Aigarth Pool is a community pool run by QC. It is not affiliated with the Qubic core team.')
+test('footer: the partner and the report link, no affiliation disclaimer', () => {
+  assert.equal((Q as Record<string, unknown>).AFFILIATION, undefined)
   const page = src('../../../app/[locale]/pool/page.tsx')
   const foot = page.slice(page.indexOf('className={p.partners}'))
-  assert.match(foot, /\{AFFILIATION\}/)
+  assert.doesNotMatch(foot, /not affiliated/)
   assert.match(foot, /<ReportLink/)
 })
 
