@@ -30,6 +30,8 @@ export const POOL = {
    * TODO(Bob): final (non-beta) onboarding URL, and whether it takes a parameter that tags the sub-pool.
    */
   onboardingUrl: 'https://beta.codedonqubic.com/pool/onboarding',
+  /** How Maria names the setup page: never its address, so a miner is led through our app, not away from it. */
+  setupRef: 'the pool setup page (the Open pool setup button at the end of Connect my machine)',
 
   /** Fields the onboarding page asks for, in its order. */
   onboardingFields: ['Operating system', 'Qubic wallet address', 'Worker name', 'Backend', 'Threads'] as const,

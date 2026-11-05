@@ -376,11 +376,7 @@ export default async function PoolPage(props: { params: Promise<{ locale: string
             <div>
               <dt>Who runs it</dt>
               <dd>
-                Our partner{' '}
-                <a href={POOL.partner.url} rel="noopener noreferrer" target="_blank">
-                  {POOL.partner.name}
-                </a>{' '}
-                operates the pool infrastructure. QC provides Maria and this page.
+                Our partner {POOL.partner.name} operates the pool infrastructure. QC provides Maria and this page.
               </dd>
             </div>
             <div>
@@ -409,10 +405,7 @@ export default async function PoolPage(props: { params: Promise<{ locale: string
 
         <footer className={p.partners}>
           <p>
-            Our partner:{' '}
-            <a href={POOL.partner.url} rel="noopener noreferrer" target="_blank">
-              {POOL.partner.name}
-            </a>
+            Our partner: {POOL.partner.name}
           </p>
           <ReportLink className={p.footReport} />
         </footer>
