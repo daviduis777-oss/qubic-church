@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { getTranslations } from 'next-intl/server'
 
 import { siteConfig } from '@/config/site'
+import { DONATION_ADDRESS } from '@/lib/donate'
 
 const FOOTER_LINKS = [
   { href: '/what-is-qubic', label: 'What is Qubic?' },
@@ -19,9 +20,6 @@ const FOOTER_LINKS = [
   { href: 'https://discord.gg/DTnCtckwRs', label: 'Discord' },
   { href: 'https://x.com/QubicChurch', label: 'X' },
 ]
-
-const DONATION_ADDRESS =
-  'BDRFCOFWHRTEHHMQQUIYJBXEOLNARADAGFUSBFGJFABYZBZLQNWJIPPFRTXO'
 
 export async function SiteFooter() {
   const t = await getTranslations('site.footer')

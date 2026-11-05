@@ -10,6 +10,7 @@ import { ConnectFlow, DoctorFlow, type Go, PickFlow, type Screen } from './flows
 import { HomeScreen } from './home'
 import { MeasuredProvider } from './measured'
 import { ReportApp } from './report'
+import { TipApp } from './tip'
 import { RigFlow } from './rig'
 import { OPEN_APP_EVENT, type OpenApp } from '@/lib/pool/qc'
 import { loadRigs } from '@/lib/pool/rig'
@@ -160,6 +161,7 @@ export function MariaApp({ ai: aiHint }: { ai?: boolean } = {}) {
                 {e.screen === 'who' && <WhoApp go={go} />}
                 {e.screen === 'help' && <HelpApp go={go} />}
                 {e.screen === 'report' && <ReportApp from={e.handoff} go={go} />}
+                {e.screen === 'tip' && <TipApp go={go} />}
               </motion.div>
             ))}
           </div>

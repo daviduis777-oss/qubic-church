@@ -7,9 +7,8 @@ import { useState } from 'react'
 
 import { PageHeader } from '@/components/ui/page-header'
 import { cn } from '@/lib/utils'
+import { DONATION_ADDRESS } from '@/lib/donate'
 
-const DONATION_ADDRESS =
-  'BDRFCOFWHRTEHHMQQUIYJBXEOLNARADAGFUSBFGJFABYZBZLQNWJIPPFRTXO'
 
 const SUPPORTS = [
   {
