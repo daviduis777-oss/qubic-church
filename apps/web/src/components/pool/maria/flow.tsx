@@ -212,6 +212,17 @@ export function Flow({
   // the dock keeps only a few chips so the conversation never gets squeezed.
   const opts = current?.chips?.(answers) ?? []
   const asList = opts.length > LIST_AT
+  const listRef = useRef<HTMLDivElement>(null)
+  // A long list is read from its question down, so land on the question, not the last row.
+  useEffect(() => {
+    const el = scroller.current
+    const l = listRef.current
+    if (!asList || !el || !l) return
+    const t = setTimeout(() => {
+      el.scrollTop = Math.max(0, l.getBoundingClientRect().top - el.getBoundingClientRect().top + el.scrollTop - 150)
+    }, 60)
+    return () => clearTimeout(t)
+  }, [asList, current?.id, scroller])
   const dock = (
     <>
       {current?.chips && !asList && <Chips label="Answers" onPick={v => answer(current, v)} options={opts} />}
@@ -236,7 +247,7 @@ export function Flow({
         ))}
       {current && <Say>{current.ask(answers)}</Say>}
       {current && asList && (
-        <div aria-label="Answers" className={s.pickList} role="group">
+        <div aria-label="Answers" className={s.pickList} ref={listRef} role="group">
           {opts.map(o => (
             <motion.button className={s.pickRow} key={o.value} onClick={() => answer(current, o.value)} type="button" whileTap={PRESS}>
               <span>{o.label}</span>
