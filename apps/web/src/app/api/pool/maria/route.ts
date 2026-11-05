@@ -5,6 +5,8 @@ import { poolAllowed } from '@/lib/pool/gate'
 import { mariaNowBlock, mariaRequestBlock, mariaSystemStatic, stalenessNote } from '@/lib/pool/prompt'
 import { clientIp, takeMessage } from '@/lib/pool/ratelimit'
 import { redactWallets } from '@/lib/pool/redact'
+import { marketPromptBlock, ratesFrom } from '@/lib/pool/market'
+import { liveOffers } from '@/lib/pool/market-fetch'
 import { measureStore } from '@/lib/pool/store'
 
 export const dynamic = 'force-dynamic'
@@ -58,7 +60,8 @@ export async function POST(req: Request) {
   if (!quota.ok) return fail(429, 'limit', `That is today's ${MARIA_LIMITS.perDay} questions from this connection. The limit resets at 00:00 UTC. ${TOOLS_HINT}`)
 
   // MEASURED table: a per-epoch snapshot, so the cached block only changes when the epoch does
-  const measured = await measureStore().promptSnapshot().catch(() => null)
+  // LIVE RENTALS: cached for a few minutes; a marketplace that does not answer never blocks the reply
+  const [measured, live] = await Promise.all([measureStore().promptSnapshot().catch(() => null), Promise.race([liveOffers().catch(() => null), new Promise<null>(r => setTimeout(() => r(null), 2500))])])
 
   let upstream: Response
   try {
@@ -73,6 +76,7 @@ export async function POST(req: Request) {
           { type: 'text', text: mariaSystemStatic(brain, measured), cache_control: { type: 'ephemeral' } },
           { type: 'text', text: mariaNowBlock() },
           { type: 'text', text: request },
+          { type: 'text', text: marketPromptBlock(live, ratesFrom(measured)) },
         ],
         messages,
         stream: true,
