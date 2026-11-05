@@ -172,8 +172,8 @@ export type EcoFact = { topic: string; text: string; source: string }
 export const ECOSYSTEM: EcoFact[] = [
   {
     topic: 'QLI config',
-    text: 'qubic.li client: appsettings.json next to the executable (Linux service: /q/appsettings.json; appsettings.production.json overrides it). Shape: {"ClientSettings": {"poolAddress", "accessToken", "qubicAddress", "alias", "pps", "autoUpdate", "trainer": {"cpu", "cpuVersion" (AVX512, AVX2, GENERIC, ARM64; null = auto), "cpuThreads", "gpu", "gpuVersion" (CUDA), "gpuCards"}}}. A "trainer" block at the JSON root, outside ClientSettings, is likely ignored: the client then uses its defaults (all threads minus one). CLI: --ClientSettings:Trainer:CpuThreads=N; Docker env: ClientSettings__Trainer__CpuThreads. Logs: the "log" folder, or /var/log/qli.log for the service. Its README advises least privilege: not as Administrator, not as root.',
-    source: 'qubic-li/client and hiveos READMEs, 5 Nov 2026',
+    text: 'qubic.li client: appsettings.json next to the executable (Linux service: /q/appsettings.json; appsettings.production.json overrides it). Shape: {"ClientSettings": {"poolAddress", "accessToken", "qubicAddress", "alias", "pps", "autoUpdate", "trainer": {"cpu", "cpuVersion" (AVX512, AVX2, GENERIC, ARM64; null = auto), "cpuThreads", "gpu", "gpuVersion" (CUDA), "gpuCards"}}}. A "trainer" block at the JSON root, outside ClientSettings, is likely ignored: the client then uses its defaults (all threads minus one). CLI: --ClientSettings:Trainer:CpuThreads=N; Docker env: ClientSettings__Trainer__CpuThreads. "allowHwInfoCollect" (since 1.3.4) lets it read CPU model, RAM and CPU cache to pick a runner; a WMI exception from HardwareHelper.GetCPUCache at start is that optional step, not fatal: false skips it. Version 3.0 removed the custom runner ("customRunner", CustomRunner.md is a DRAFT for the old protocol), so a custom trainer on 3.x is unsupported. Logs: the "log" folder, or /var/log/qli.log for the service. Its README advises least privilege: not as Administrator, not as root.',
+    source: 'qubic-li/client README and Releasenotes, hiveos README, 5 Nov 2026',
   },
   {
     topic: 'QLI workers',
@@ -187,8 +187,8 @@ export const ECOSYSTEM: EcoFact[] = [
   },
   {
     topic: 'HiveOS',
-    text: 'QLI\'s custom miner qubminer recreates appsettings.json from the flight sheet on every start and merges each Extra Config line: fix the flight sheet, not the file. One instance mines CPU and GPU together, no second custom miner (Hiveon staff, 15 Aug 2025). A cached old package: miner stop, /hive/miners/custom/custom-get <install URL> -f, miner start (hiveos #30, Nov 2024, not a fix for everyone). "custom exited (exitcode=...), waiting to cooldown a bit" is HiveOS restarting a dying miner: read miner log above it.',
-    source: 'qubic-li/hiveos README 5 Nov 2026, #30, #31; Hiveon forum',
+    text: 'QLI\'s custom miner qubminer recreates appsettings.json from the flight sheet on every start and merges each Extra Config line: fix the flight sheet, not the file. "amountOfThreads":0 = all threads minus one (-1 is not documented); with it alone the wrapper runs CPU and GPU with that cpuThreads, CPU only needs "cpuOnly":true. A trainer line asking for the "proxy" call scheme needs "env": {"GATEWAY":"host:7733"} for a gateway you run; without it the miner falls back to its developer\'s default LAN gateway and sits idle: drop "proxy" from a copied sheet. One instance mines CPU and GPU together, no second custom miner (Hiveon staff, 15 Aug 2025). A cached old package: miner stop, /hive/miners/custom/custom-get <install URL> -f, miner start (hiveos #30, Nov 2024, not a fix for everyone). "custom exited (exitcode=...), waiting to cooldown a bit" is HiveOS restarting a dying miner: read miner log above it.',
+    source: 'qubic-li/hiveos README and h-config.sh, 2 Nov 2026, #30, #31; Hiveon forum',
   },
   {
     topic: 'HiveOS troubleshooting',
@@ -202,7 +202,7 @@ export const ECOSYSTEM: EcoFact[] = [
   },
   {
     topic: 'rqiner',
-    text: 'Qubic-Solutions\' Rust CPU/CUDA miner for other pools, builds per CPU (x86, znver3/zen4, aarch64, android), issues up to Dec 2024 (v1.1.x then); flags there: -t threads, -i the 60-letter public ID, -l label. "reqwest ... Decode ... expected value, line 1 column 1" = the server answered non-JSON (maintenance, wrong endpoint, outdated miner). 1.1.2-experimental segfaulted with --enable-hugepages; dropping the flag fixed it (#54, Dec 2024).',
+    text: 'Qubic-Solutions\' Rust CPU/CUDA miner for other pools, builds per CPU (x86, znver3/zen4, aarch64, android), issues up to Dec 2024 (v1.1.x then); flags there: -t threads, -i the 60-letter public ID, -l label. "reqwest ... Decode ... expected value, line 1 column 1" = the server answered non-JSON (maintenance, wrong endpoint, outdated miner). 1.1.2-experimental segfaulted with --enable-hugepages; dropping the flag fixed it (#54, Dec 2024). The aarch64 build targets Neoverse-N1, ARMv8.2 (developer, #4, Mar 2024): "Illegal instruction" on ARMv8.0 cores (Jetson Nano, Raspberry Pi, Snapdragon 625), runs on a Snapdragon 7 Gen 2.',
     source: 'Qubic-Solutions/rqiner-builds issues, 2024',
   },
   {
@@ -237,8 +237,8 @@ export const ECOSYSTEM: EcoFact[] = [
   },
   {
     topic: 'QLI versions',
-    text: 'qubic.li client (not this pool\'s miner): 3.11 with worker cuda 237.0 at E237 (28 Oct 2026), 3.13.x by 4 Nov 2026 (its HiveOS package v3.13.0); CPU autodetection from 3.5.1, XMR idle removed in 3.5.3. Releases move weekly: never call a number current; for this pool, "check the setup page for the current version".',
-    source: 'qubic-li/client and hiveos releases, read 4 to 5 Nov 2026',
+    text: 'qubic.li client (not this pool\'s miner): its current line was 3.13.x on 2 Nov 2026 (HiveOS package v3.13.0; release notes reach 3.13.4 by 4 Nov); 3.13.0 is marked "MANDATORY UPDATE FOR QUBIC ANT Algorithm", 3.12.0 fixed share counting, 3.9.2 added Gateway/Proxy support, 3.11 ran worker cuda 237.0 at E237. Older clients are outdated for Ant. Fixed defects, so the answer is the update: failing to start "ldd" (1.8.5 and 1.8.6; on a Chinese Windows "系统找不到指定的文件") fixed in 1.8.9 (#30, Mar 2024); AVX2 autodetection in 1.9.7; duplicate local share counting in 3.8.8 (reject reasons shown from 3.8.5). For this pool, "check the setup page for the current version".',
+    source: 'qubic-li/client Releasenotes and issues, hiveos releases, read 2 to 5 Nov 2026',
   },
   {
     topic: 'Datacenter GPUs',

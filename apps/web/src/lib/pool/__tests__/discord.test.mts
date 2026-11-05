@@ -171,8 +171,9 @@ test('prompt: sources listed once, tags in facts, compact triage, under 18k toke
   assert.match(p, /Who runs it: only when the user asks who runs or operates the pool, say: "Qubic Church Pool runs on the infrastructure of our partner CODED \(confirmed by the pool owner\)\."/)
   assert.doesNotMatch(p, /—/)
   // Budget raised from 16k to 17k tokens for the exam fixes, Nov 2026, to 18k for the round 3 must-say FAQ, and to
-  // 19.5k for round 5 (language from prose only, the setup-page path, private hints, the new log classes).
-  assert.ok(p.length / 4 <= 19_500, `prompt is about ${Math.round(p.length / 4)} tokens`)
+  // 19.5k for round 5 (language from prose only, the setup-page path, private hints, the new log classes), and to
+  // 20k for round 6 (dated client facts, update-first and log-only playbook lines).
+  assert.ok(p.length / 4 <= 20_000, `prompt is about ${Math.round(p.length / 4)} tokens`)
 })
 
 test('discord card: carries the new FAQ entries with their Discord citations', () => {

@@ -487,13 +487,13 @@ const DRAFTS: Draft[] = [
   {
     id: 'counter',
     theme: 'missing',
-    q: 'Dashboard and miner disagree, or a worker is missing.',
+    q: 'Client and pool counts differ, or a worker is missing.',
     must: [
-      'The worker counter resets on restart and lags (our runs, predates the E235/E236 changes); dashboards lagged and HiveOS graphs showed gaps in Sep 2026.',
-      'Two machines on one worker name look like one dead worker: give each its own QC. name. The wallet total counts, not it/s.',
+      "The pool's accepted count is the one that counts; local counters differ (rejected, late, duplicate or epoch-boundary sends; QLI fixed duplicate local counting in client 3.8.8). Nobody, not me and not pool support, can credit the difference by hand; ask for each solution's log lines and the epoch.",
+      'The worker counter resets on restart (our runs, predates the E235/E236 changes); two machines on one worker name look like one dead worker: one QC. name each.',
     ],
     sources: ['field-e229', 'field-e233', 'community'],
-    asOf: 'Sep to Oct 2026',
+    asOf: 'Sep to Nov 2026',
   },
   {
     id: 'paid-less',

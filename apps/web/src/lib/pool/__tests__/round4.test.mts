@@ -302,7 +302,7 @@ test('prompt: one pool only, no comparison or switching method', () => {
 
 test('prompt: size and hygiene after round 4', () => {
   const p = mariaSystemPrompt(NOW)
-  assert.ok(p.length <= 78_000, `prompt is ${p.length} chars`)
+  assert.ok(p.length <= 80_000, `prompt is ${p.length} chars`)
   assert.doesNotMatch(p, /—/)
   assert.doesNotMatch(JSON.stringify([RULES, ECOSYSTEM, FAQ]), /—/)
   // the Ant work replaced line is tied to its miner and era
