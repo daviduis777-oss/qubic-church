@@ -18,7 +18,8 @@ import { LiveRentals } from './rentals'
 import { Checklist, type ChipOpt, Command, CopyButton, Group, Reveal, SEVERITY_LABEL, StatusCard, severityIcon, severityTone, TONE, VerdictCard, verdictTone } from './ui'
 import s from './maria.module.css'
 
-export type Screen = 'home' | AppId
+/** 'tip' is a screen, not an app on the home grid: it opens from the row under an answer. */
+export type Screen = 'home' | AppId | 'tip'
 export type Go = (screen: Screen, handoff?: Answers) => void
 
 const OS_CHIPS = (['linux', 'windows', 'macos', 'hiveos'] as Os[]).map(o => ({ value: o, label: OS_LABEL[o] }))
