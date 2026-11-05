@@ -389,7 +389,9 @@ test('prompt: the checklist asks for every question, must-say facts, scoped unkn
     c,
     /about 800 for expert, rental, comparison or multi-part questions/
   )
-  assert.match(c, /only for an OPEN CASE or a "Never measured" item/)
+  // round 4: "no confirmed fix" is scoped to open cases, and even there the general troubleshooting follows
+  assert.match(c, /"no confirmed fix yet" only for an OPEN CASE, and then still the general troubleshooting that fits the log/)
+  assert.match(c, /"not measured" only for a "Never measured" item/)
   assert.match(c, /never open with "I don't know" when they cover it/)
 })
 

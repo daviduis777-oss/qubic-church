@@ -159,3 +159,80 @@ export const BUILDS: Record<BuildTier, { title: string; specs: [string, string][
     sources: ['academy', 'guide', 'field-e233'],
   },
 }
+
+/**
+ * The Qubic ecosystem around the pool and the general systems miners run on: other clients' config and logs,
+ * HiveOS, Docker, glibc, CPU instruction sets, huge pages, Windows. Each fact names its source and date; a
+ * client's keys and images are cited as that client's, never as this pool's. Sources: qubic-li/client and
+ * qubic-li/hiveos READMEs (read 5 Nov 2026) and issues, Qubic-Solutions/rqiner-builds issues, the Hiveon forum,
+ * and vendor or distribution documentation for the general lines. Maria's prompt lists these verbatim.
+ */
+export type EcoFact = { topic: string; text: string; source: string }
+
+export const ECOSYSTEM: EcoFact[] = [
+  {
+    topic: 'QLI config',
+    text: 'qubic.li client: appsettings.json next to the executable (Linux service: /q/appsettings.json; appsettings.production.json overrides it). Shape: {"ClientSettings": {"poolAddress", "accessToken", "qubicAddress", "alias", "pps", "autoUpdate", "trainer": {"cpu", "cpuVersion" (AVX512, AVX2, GENERIC, ARM64; null = auto), "cpuThreads", "gpu", "gpuVersion" (CUDA), "gpuCards"}}}. A "trainer" block at the JSON root, outside ClientSettings, is likely ignored: the client then uses its defaults (all threads minus one). CLI: --ClientSettings:Trainer:CpuThreads=N; Docker env: ClientSettings__Trainer__CpuThreads. Logs: the "log" folder, or /var/log/qli.log for the service. Its README advises least privilege: not as Administrator, not as root.',
+    source: 'qubic-li/client and hiveos READMEs, 5 Nov 2026',
+  },
+  {
+    topic: 'QLI workers',
+    text: 'One worker per backend: qli-worker-CUDA, -AVX512, -AVX2, -GENERIC (CPU without AVX2), -ARM64, -XMR. "<worker> not running or has exited. Starting the process..." once is a start; every few seconds it is a crash loop, with the cause in the lines after "is starting". The trainer line ("pplns cuda 234.0 is starting") and E:<epoch> name the release: one failure on several machines and both OSes in one epoch points to that release, not the hardware.',
+    source: 'qubic-li/client #114, #135, #138, 2025 to Oct 2026',
+  },
+  {
+    topic: 'QLI XMR idle',
+    text: 'qli-worker-XMR is the QLI client\'s built-in XMRig: it mines Monero while Qubic is idle (xmrSettings block; "disable": true worked, "disabled" did not, #118, Apr 2025). Its lines ([XMR] Trainer, XMRig/6.x, msr, HUGE PAGES, READY threads n/n, ryzen_19h) are not the Qubic trainer and have their own threads; the trainer\'s "Received exit signal" as it starts is the idle switch. An MSR failure only lowers XMR hashrate; the Linux fix (sudo modprobe msr, run as root) trades against least privilege.',
+    source: 'qubic-li/client #118, #122, #129, #133, 2025 to Jan 2026',
+  },
+  {
+    topic: 'HiveOS',
+    text: 'QLI\'s custom miner qubminer recreates appsettings.json from the flight sheet on every start and merges each Extra Config line: fix the flight sheet, not the file. One instance mines CPU and GPU together, no second custom miner (Hiveon staff, 15 Aug 2025). A cached old package: miner stop, /hive/miners/custom/custom-get <install URL> -f, miner start (hiveos #30, Nov 2024, not a fix for everyone). "custom exited (exitcode=...), waiting to cooldown a bit" is HiveOS restarting a dying miner: read miner log above it.',
+    source: 'qubic-li/hiveos README 5 Nov 2026, #30, #31; Hiveon forum',
+  },
+  {
+    topic: 'QLI Docker',
+    text: 'qubic.li images: qubicli/client:latest (CPU) and qubicli/client:cuda (NVIDIA + CPU); "qubicli/qubic-client" was a README typo (#134, Mar 2026). Not this pool\'s images.',
+    source: 'qubic-li/client README 5 Nov 2026',
+  },
+  {
+    topic: 'rqiner',
+    text: 'Qubic-Solutions\' Rust CPU/CUDA miner for other pools, builds per CPU (x86, znver3/zen4, aarch64, android), issues up to Dec 2024 (v1.1.x then); flags there: -t threads, -i the 60-letter public ID, -l label. "reqwest ... Decode ... expected value, line 1 column 1" = the server answered non-JSON (maintenance, wrong endpoint, outdated miner). 1.1.2-experimental segfaulted with --enable-hugepages; dropping the flag fixed it (#54, Dec 2024).',
+    source: 'Qubic-Solutions/rqiner-builds issues, 2024',
+  },
+  {
+    topic: 'glibc',
+    text: 'Stock glibc: Ubuntu 20.04 2.31, 22.04 2.35, 24.04 2.39; Debian 11 2.31, 12 2.36; check with ldd --version. QLI\'s "GLIBC Version must be >= 2.34" on Ubuntu 22.04 was misleading and cleared at the next epoch (#112, Nov 2024). "GLIBC_2.xx not found": the binary was built on a newer system. Never upgrade glibc by hand (hiveos #13, Apr 2024: a new error after it); use a newer OS release or image.',
+    source: 'Ubuntu and Debian release notes; qubic-li issues',
+  },
+  {
+    topic: 'CPU instructions',
+    text: '"Illegal instruction", "invalid opcode", SIGILL, exit code 132: an instruction this CPU or VM does not run; use the AVX2 (or Auto) build. AVX-512: Ryzen 7000/9000, EPYC 9004/9005, Threadripper 7000, Xeon Scalable, Core X-series and 11th gen. None: Ryzen 3000/5000 (e.g. the 5900X), EPYC 7xx2/7xx3, Core 12th gen and later, Core Ultra. No AVX2: Core 2nd/3rd gen, Xeon E5 v1/v2. An early AVX-512 Xeon (Gold 61xx) can still fail on builds using VNNI or BF16, and VMs can hide flags.',
+    source: 'AMD and Intel specs; qubic-li/client #110, #117',
+  },
+  {
+    topic: 'Huge pages',
+    text: 'sudo sysctl -w vm.nr_hugepages=N (QLI prints the N it wants, 52 per thread), kept in /etc/sysctl.conf, set early after boot because memory fragments. Without them miners fall back to normal memory, a little slower. A crash with a hugepages flag: drop the flag first.',
+    source: 'Linux docs; qubic-li/client README',
+  },
+  {
+    topic: 'Docker GPU',
+    text: 'The host needs the NVIDIA driver and the NVIDIA Container Toolkit (sudo nvidia-ctk runtime configure --runtime=docker, restart docker), and docker run needs --gpus all; "could not select device driver ... [[gpu]]" = toolkit missing. "pull access denied ... repository does not exist" = usually a wrong image name, not login.',
+    source: 'NVIDIA and Docker docs',
+  },
+  {
+    topic: 'NVIDIA',
+    text: '"Failed to load module", "no kernel image is available", "driver/library version mismatch" (reboot after a driver update): the card is seen but its CUDA code does not load; update or clean-reinstall the driver. Hybrid-graphics laptop: NVIDIA GPU as high-performance for the miner, on AC power. WSL2 takes CUDA from the Windows driver: no Linux driver inside WSL; users with lasting WSL GPU trouble fixed it on native Ubuntu or HiveOS (qubic-li/client #22, 2024).',
+    source: 'NVIDIA docs; qubic-li issues',
+  },
+  {
+    topic: 'Windows',
+    text: 'Antivirus removes miner files: "Could not find file ...qli-runner.exe" = quarantined or never extracted (#109, Sep 2024). Restore it from Protection history and exclude only the miner folder (setup-page miner only); never switch protection off. Avoid OneDrive-synced folders. Run as a normal user; the QLI runner needs the VC++ Redistributable 2015-2022.',
+    source: 'Microsoft docs; qubic-li/client README, #109',
+  },
+  {
+    topic: 'ARM',
+    text: 'The QLI Linux-arm64 client was sent an Android worker (interpreter /system/bin/linker64): open since 28 Aug 2026 (#136), not fixable locally; never patch the ELF. Check uname -m. Workaround in that thread: the x64 client under emulation (Rosetta in a Linux VM on Apple Silicon), slow.',
+    source: 'qubic-li/client #136, Aug to Oct 2026',
+  },
+]

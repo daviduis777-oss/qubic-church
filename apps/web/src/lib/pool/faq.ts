@@ -399,11 +399,11 @@ const DRAFTS: Draft[] = [
     theme: 'breakage',
     q: 'kern_solve_cand_start not found in map, over and over?',
     must: [
-      'No confirmed fix yet: 4 to 5 Windows NVIDIA miners reported it 9 to 14 Oct 2026 and nobody answered. Other pools\' GPU miners worked on the same cards, so it is one client\'s bug, not the card.',
-      'Run the current miner from the setup page; mine CPU only meanwhile and report it with the log.',
+      'No confirmed fix yet: Windows NVIDIA miners reported it from 9 Oct 2026 (qubic-li/client #138, no maintainer reply by 5 Nov). It sits in the CUDA trainer 234.0: CPU mining on the same PC worked, other miners ran the same cards, so not the driver or the card.',
+      'A user with the same RTX 3070 and driver mined overnight on client 3.10.2.1 with worker CUDA 235.4: update, check that the worker version line changes, mine CPU only meanwhile.',
     ],
     sources: ['community'],
-    asOf: '9 to 14 Oct 2026, unanswered',
+    asOf: '9 Oct to 5 Nov 2026, unanswered',
   },
   {
     id: 'many-rejected',
@@ -536,10 +536,10 @@ const DRAFTS: Draft[] = [
   {
     id: 'switch-pool',
     theme: 'payout',
-    q: 'Switching pool or address mid-epoch?',
+    q: 'Changing address mid-epoch?',
     must: [
-      'Each pool pays each address for its own work; a miner who changed address mid-epoch got the early part paid to the old one (29 Oct 2026).',
-      'Ask the pool you leave how it counts a partial epoch.',
+      'Work is paid to the address it was sent with: a miner who changed address mid-epoch got the early part paid to the old one (29 Oct 2026).',
+      'On this pool your work counts from the moment the setup page command runs with your address; I do not compare it with other pools.',
     ],
     sources: ['community'],
     asOf: 'Oct 2026',
@@ -635,7 +635,7 @@ const DRAFTS: Draft[] = [
     q: 'Can I mine on a Mac?',
     must: [
       'Yes, on the CPU via the pool macOS miner from the setup page, slowly (pool page: about 40 it/s on an M3 Pro, 23 Oct 2026, est.). No measurement of ours, no Metal GPU mining.',
-      'Elsewhere Mac and ARM mining was fragile in Sep to Oct 2026 (Docker images, a new ARM64 build per algorithm). Judge by solutions, not it/s.',
+      'Elsewhere Mac and ARM mining was fragile in Sep to Oct 2026. Judge by solutions, not it/s.',
     ],
     sources: ['partner', 'community', 'qli-team'],
     asOf: 'Oct 2026',
@@ -658,7 +658,7 @@ const DRAFTS: Draft[] = [
     q: 'Can I mine on my Android phone? Where is the APK?',
     must: [
       'Not on this pool: its setup page offers Linux, macOS, Windows and HiveOS; use a PC or a server.',
-      'Another pool released an Android beta (22 Aug 2026); phones were erratic there (days at 0, most shares invalid, Oct 2026), and "Authentication failed" was a blacklist for too many shares too fast (2 Oct), per its moderator. For that APK, ask that pool.',
+      'Another pool\'s Android beta (22 Aug 2026) was erratic (days at 0, most shares invalid, Oct 2026); "Authentication failed" there was a blacklist for too many shares too fast (2 Oct). For that APK, ask that pool.',
     ],
     sources: ['qli-team', 'community'],
     asOf: 'Aug to Oct 2026',
@@ -742,8 +742,8 @@ const DRAFTS: Draft[] = [
     theme: 'trust',
     q: 'Which pool is best right now?',
     must: [
-      'I recommend only Qubic Church Pool and do not rank others; its setup page has the command.',
-      'Share counts do not compare between pools: "Every pool has its own parameters and its own share system" (QLI, 23 Sep 2026). The only fair comparison is the wallet total for the same rig over full epochs.',
+      'I recommend only Qubic Church Pool, and I do not compare or rank pools. Why ours: support that reads your logs (me), a public record of dated measurements from our own rigs, and decentralization: more independent pools, no single pool dominating the network.',
+      'it/s and share counts from different miners or pools are not comparable: "Every pool has its own parameters and its own share system" (QLI, 23 Sep 2026). To start: your 60-letter address, the setup page, the command it gives.',
     ],
     sources: ['qli-team'],
     asOf: 'Sep to Nov 2026',
