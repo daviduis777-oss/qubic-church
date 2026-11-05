@@ -1,11 +1,11 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Activity, ChartNoAxesColumn, Cpu, LifeBuoy, type LucideIcon, MessageCircle, PlugZap, ScrollText, Search, Stethoscope } from 'lucide-react'
+import { Activity, ChartNoAxesColumn, Cpu, LifeBuoy, type LucideIcon, MessageCircle, MessageSquareWarning, PlugZap, ScrollText, Search, Stethoscope } from 'lucide-react'
 import { type RefObject, useEffect, useId, useRef, useState } from 'react'
 import { epochAt, formatLeft } from '@/lib/pool/epoch'
 import type { PoolRecord } from '@/lib/pool/ledger-view'
-import { APPS, type AppId, askLabel, dockApps, gridApps } from '@/lib/pool/qc'
+import { APPS, type AppId, askLabel, dockApps, gridRows } from '@/lib/pool/qc'
 import type { HaloMode } from './halo-engine'
 import { Halo } from './Halo'
 import { Seal } from './seal'
@@ -20,6 +20,7 @@ const GLYPH: Record<AppId, LucideIcon> = {
   record: ScrollText,
   who: ChartNoAxesColumn,
   help: LifeBuoy,
+  report: MessageSquareWarning,
 }
 
 const TAP = { scale: 0.93 }
@@ -121,6 +122,7 @@ export function HomeScreen({
   const epoch = useEpoch()
   const rec = useRecord()
   const ask = askLabel(ai)
+  const rows = gridRows(ai)
   // the halo sits in the widget's left third; its canvas needs whole pixels
   const halo = width ? Math.max(96, Math.min(168, Math.round(width * 0.36))) : 0
   const seal = width ? Math.max(20, Math.round(width * 0.075)) : 26
@@ -164,7 +166,7 @@ export function HomeScreen({
         </section>
 
         <nav aria-label="Maria apps" className={h.grid}>
-          {gridApps(ai).map(id => (
+          {rows[0].map(id => (
             <AppIcon grad={grad} id={id} key={id} onOpen={() => go(id)} {...meta(id)} />
           ))}
         </nav>
@@ -204,6 +206,14 @@ export function HomeScreen({
             </span>
           </div>
         </div>
+
+        {rows[1].length > 0 && (
+          <nav aria-label="More apps" className={h.grid}>
+            {rows[1].map(id => (
+              <AppIcon grad={grad} id={id} key={id} onOpen={() => go(id)} {...meta(id)} />
+            ))}
+          </nav>
+        )}
 
         <div className={h.spacer} />
 

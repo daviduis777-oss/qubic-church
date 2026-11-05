@@ -9,7 +9,7 @@ import type { Card as HwCard, Verdict } from '@/lib/pool/hardware'
 import { SOURCES, type SourceId } from '@/lib/pool/knowledge'
 import s from './maria.module.css'
 
-/** The site's gold (--accent-gold), a muted sage for OK, the site's --danger for faults. No blue: her face is the only colour. */
+/** Verdict tones: the site's gold (--accent-gold), a muted sage for OK, the site's --danger for faults. Her halo adds a deep blue. */
 export const TONE = { gold: '#FECE34', sage: '#9FC39A', coral: '#F66D67', fog: '#8C8C8C' } as const
 
 export const verdictTone = (v: Verdict) => (v === 'Golden' ? TONE.gold : v === 'Good' || v === 'Works' ? TONE.sage : v === 'Skip' ? TONE.coral : TONE.fog)
@@ -78,13 +78,14 @@ export function Typing({ label = 'Maria is working' }: { label?: string }) {
 
 /* ---------- controls ---------- */
 
-export type ChipOpt = { value: string; label: string; primary?: boolean; mono?: boolean }
+/** quiet: a small text-only chip for a side door, such as Report a problem */
+export type ChipOpt = { value: string; label: string; primary?: boolean; mono?: boolean; quiet?: boolean }
 
 export function Chips({ options, onPick, label }: { options: ChipOpt[]; onPick: (v: string) => void; label: string }) {
   return (
     <div aria-label={label} className={s.chips} role="group">
       {options.map(o => (
-        <motion.button className={cx(s.chip, o.primary && s.chipPrimary, o.mono && s.chipMono)} key={o.value} onClick={() => onPick(o.value)} transition={SPRING} type="button" whileTap={PRESS}>
+        <motion.button className={cx(s.chip, o.primary && s.chipPrimary, o.mono && s.chipMono, o.quiet && s.chipQuiet)} key={o.value} onClick={() => onPick(o.value)} transition={SPRING} type="button" whileTap={PRESS}>
           {o.label}
         </motion.button>
       ))}

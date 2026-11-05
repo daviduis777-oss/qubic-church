@@ -12,18 +12,21 @@ import { ledger } from '@/lib/pool/ledger'
 import { fmtRate } from '@/lib/pool/measure'
 import { runDates, type StatsView, statsView } from '@/lib/pool/stats-view'
 import { measureStore } from '@/lib/pool/store'
+import { AFFILIATION } from '@/lib/pool/qc'
 import { PAYOUT_TERMS } from '@/lib/pool/ui-config'
 import type { Bar, Usage } from '@/lib/pool/usage'
 import { PoolStage } from './PoolStage'
 import p from './pool.module.css'
 import { Hero, Join, MariaIntro } from './qc'
+import { ReportLink } from './ReportLink'
 import { RecordStrip } from './why'
 
 /*
- * QC Pool: Qubic Church Pool, with Maria Aigarth, the mining coach.
+ * Aigarth Pool, run by QC, with Maria Aigarth, the mining coach. Miner-facing copy names the org "QC".
+ * The worker prefix QC. is technical and stays.
  * Order: Come-from-Beyond's quote, why join, Maria beside her phone, then how it works and the details.
  * Private preview: a plain 404 for everyone but the forum moderator until POOL_PUBLIC=1. Not in the sitemap or
- * llms.txt; the only link is the QC Pool tab, which the nav renders for the moderator alone (lib/pool/nav.ts).
+ * llms.txt; the only link is the Aigarth Pool tab, which the nav renders for the moderator alone (lib/pool/nav.ts).
  */
 
 export const dynamic = 'force-dynamic'
@@ -31,8 +34,8 @@ export const dynamic = 'force-dynamic'
 export async function generateMetadata(): Promise<Metadata> {
   if (!(await poolAllowed())) return { robots: { index: false, follow: false } }
   return {
-    title: { absolute: `${POOL.name} · Qubic Church` },
-    description: 'Join Qubic Church Pool. Maria Aigarth, our self-learning mining coach, helps you pick hardware, connect your machine and fix your rig.',
+    title: { absolute: `${POOL.name} · QC` },
+    description: `Join ${POOL.name}. Maria Aigarth, our self-learning mining coach, helps you pick hardware, connect your machine and fix your rig.`,
     // TODO(Bob): when going public, switch this to index and add /pool to sitemap.ts and llms.txt.
     robots: { index: false, follow: false, googleBot: { index: false, follow: false } },
   }
@@ -378,7 +381,7 @@ export default async function PoolPage(props: { params: Promise<{ locale: string
                 <a href={POOL.partner.url} rel="noopener noreferrer" target="_blank">
                   {POOL.partner.name}
                 </a>{' '}
-                operates the pool infrastructure. Qubic Church provides Maria and this page.
+                operates the pool infrastructure. QC provides Maria and this page.
               </dd>
             </div>
             <div>
@@ -405,12 +408,16 @@ export default async function PoolPage(props: { params: Promise<{ locale: string
           </dl>
         </section>
 
-        <p className={p.partners}>
-          Our partner:{' '}
-          <a href={POOL.partner.url} rel="noopener noreferrer" target="_blank">
-            {POOL.partner.name}
-          </a>
-        </p>
+        <footer className={p.partners}>
+          <p>
+            Our partner:{' '}
+            <a href={POOL.partner.url} rel="noopener noreferrer" target="_blank">
+              {POOL.partner.name}
+            </a>
+          </p>
+          <p className={p.affil}>{AFFILIATION}</p>
+          <ReportLink className={p.footReport} />
+        </footer>
       </div>
     </div>
   )

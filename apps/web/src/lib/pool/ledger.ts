@@ -1,5 +1,5 @@
 /**
- * The record: an append-only journal of every contribution through Qubic Church Pool, one entry each.
+ * The record: an append-only journal of every contribution through Aigarth Pool, one entry each.
  * Same Upstash / Vercel KV REST store as store.ts; without that env (dev, tests) it is memory, per instance.
  * Server only by use: the API routes and the pool page import it; the browser reads ledger-view.ts.
  *

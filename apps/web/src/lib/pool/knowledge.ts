@@ -24,10 +24,10 @@ export type SourceId =
 export const SOURCES: Record<SourceId, { label: string; url: string; date: string }> = {
   academy: { label: 'Qubic Academy, Mining 1.2', url: 'https://qubic.org/academy/mining/module-1/lesson-2', date: 'checked 4 Nov 2026' },
   cointribune: { label: 'Cointribune 2026 mining guide', url: 'https://www.cointribune.com/en/start-mining-qubic-the-complete-2026-guide/', date: '20 Sep 2026' },
-  guide: { label: 'Qubic Church mining guide', url: '/mine-qubic', date: 'v0.3, epoch 230' },
+  guide: { label: 'QC mining guide', url: '/mine-qubic', date: 'v0.3, epoch 230' },
   partner: { label: "Pool partner's hardware table (pool page)", url: '', date: '23 Oct 2026, est.' },
   doge: { label: 'Qubic DOGE launch release', url: 'https://doge-stats.qubic.org/', date: '1 Apr 2026' },
-  field: { label: 'Qubic Church field runs on Clore', url: '', date: 'epochs 229 and 233, Sep to Oct 2026' },
+  field: { label: 'QC field runs on Clore', url: '', date: 'epochs 229 and 233, Sep to Oct 2026' },
   'field-e229': { label: 'Our field runs, epoch 229', url: '', date: '5 to 8 Sep 2026' },
   'field-e233': { label: 'Our field runs, epoch 233', url: '', date: '30 Sep to 3 Oct 2026' },
   'pool-lanes': { label: 'Pool-wide sol/h by lane, jetski dashboard (pool not recommended)', url: '', date: '6 Sep and 3 Oct 2026' },

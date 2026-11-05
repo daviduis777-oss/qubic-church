@@ -114,6 +114,11 @@ export function AskFlow({ go, first }: { go: Go; first?: string }) {
           ) : null
         ),
       )}
+      {!busy && msgs.some(m => m.role === 'assistant' && !m.offline && m.content) && (
+        <div className={s.quietRow}>
+          <Chips label="Report" onPick={() => go('report', { from: 'ask', step: `answer:${msgs.filter(m => m.role === 'assistant').length}` })} options={[{ value: 'report', label: 'Report a problem', quiet: true }]} />
+        </div>
+      )}
       {busy && (msgs.at(-1)?.role === 'user' || !msgs.at(-1)?.content) && (
         <div className={s.haloSlot}>
           <Halo face={40} label="Maria is thinking" mode={ring.state.mode} size={152} tone={ring.state.tone} />

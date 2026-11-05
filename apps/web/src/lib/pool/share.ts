@@ -23,7 +23,7 @@ export function shareText(c: Pick<CardData, 'src' | 'rate' | 'ep' | 'hw'>): stri
   const hw = c.hw && c.hw !== 'Hardware not given' ? ` on ${c.hw}` : ''
   const from = c.src === 'demo' ? 'A demo rig' : 'My rig'
   const note = c.src === 'log' ? ', read from my miner log' : c.src === 'demo' ? ', sample numbers' : ''
-  return `${from} in the ${POOL.name}, epoch ${c.ep}: ${fmtRate(c.rate)} sol/h${hw}${note}. Set up with Maria, the mining coach.`
+  return `${from} in ${POOL.name}, epoch ${c.ep}: ${fmtRate(c.rate)} sol/h${hw}${note}. Set up with Maria, the mining coach.`
 }
 
 /** X web intent with the text and the link. The image cannot ride along: the sheet saves it for the user to attach. */

@@ -1,5 +1,5 @@
 /**
- * Qubic Church Pool: every pool fact in one place.
+ * Aigarth Pool: every pool fact in one place. QC runs it; the worker prefix QC. stays as it is.
  * The page, the deterministic tools (picker, wizard, log doctor) and Maria's AI prompt all read from here,
  * so the two layers never disagree. No secrets in this file: it ships to the browser.
  *
@@ -12,7 +12,7 @@ export type Backend = 'Auto' | 'GPU' | 'AVX2' | 'AVX512'
 export const OS_LABEL: Record<Os, string> = { linux: 'Linux', macos: 'macOS', windows: 'Windows', hiveos: 'HiveOS' }
 
 export const POOL = {
-  name: 'Qubic Church Pool',
+  name: 'Aigarth Pool',
 
   /**
    * Partner that operates the pool infrastructure. Shown once, in the partners line at the end of the page.

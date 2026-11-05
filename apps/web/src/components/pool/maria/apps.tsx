@@ -131,7 +131,7 @@ const HELP: Qa[] = [
   },
   {
     q: 'Who runs the pool?',
-    a: `Our partner ${POOL.partner.name} operates the pool infrastructure. Qubic Church provides Maria.`,
+    a: `Our partner ${POOL.partner.name} operates the pool infrastructure. QC provides Maria.`,
   },
   {
     q: 'My rig stopped mining',

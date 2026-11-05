@@ -1,5 +1,5 @@
 // node --experimental-strip-types --test apps/web/src/lib/pool/__tests__/qcpool.test.mts
-// QC Pool: the hidden nav tab and its gate endpoint, the page order and its copy, Maria's home screen.
+// Aigarth Pool: the hidden nav tab and its gate endpoint, the page order and its copy, Maria's home screen.
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { test } from 'node:test'
@@ -63,11 +63,11 @@ test('nav probe: a tab only after a 200 with ok:true; anything else means no tab
   assert.ok(seen.every(x => x.url === '/api/pool/gate' && x.init?.cache === 'no-store' && x.init?.credentials === 'same-origin'))
 })
 
-test('nav: the QC Pool link is rendered only after the gate says yes, never in the static list', () => {
-  assert.deepEqual(N.POOL_TAB, { href: '/pool', label: 'QC Pool' })
+test('nav: the Aigarth Pool link is rendered only after the gate says yes, never in the static list', () => {
+  assert.deepEqual(N.POOL_TAB, { href: '/pool', label: 'Aigarth Pool' })
   const nav = src('../../../components/church/navigation/GlobalNavTrigger.tsx')
   const list = nav.slice(nav.indexOf('const LINKS'), nav.indexOf('] as const'))
-  assert.doesNotMatch(list, /'\/pool'|QC Pool/)
+  assert.doesNotMatch(list, /'\/pool'|Aigarth Pool|QC Pool/)
   assert.match(nav, /probePoolTab\(\)/)
   // both the desktop and the mobile menu render the tab behind the same condition, and nowhere else
   assert.equal(nav.match(/\{pool\.show && \(/g)?.length, 2)
@@ -92,7 +92,7 @@ test('page: the quote first, then join, then Maria beside her phone, then the de
 })
 
 test('copy: verbatim where it must be, our aim never a claim about others, no em dashes', () => {
-  assert.equal(Q.JOIN.title, 'Join Qubic Church Pool.')
+  assert.equal(Q.JOIN.title, 'Join Aigarth Pool.')
   assert.match(Q.JOIN.aim, /^Our key task is decentralization\. We aim to keep Qubic’s founding principle/)
   assert.match(Q.JOIN.aim, /no single operator/)
   assert.deepEqual(
@@ -106,17 +106,18 @@ test('copy: verbatim where it must be, our aim never a claim about others, no em
   const all = JSON.stringify({ Q, W })
   assert.doesNotMatch(all, /—/)
   assert.doesNotMatch(all, /\bthe (only )?independent pool\b/i)
-  assert.doesNotMatch(all, /revolutionary|crown of|game.?chang|guarantee|profit|\b20[0-9]{2}\b.*Aigarth/i)
+  // no date for her move to Aigarth (the pool's name, Aigarth Pool, is not the move)
+  assert.doesNotMatch(all, /revolutionary|crown of|game.?chang|guarantee|profit|\b20[0-9]{2}\b[^"]*Aigarth(?! Pool)/i)
   // how she learns is not explained
   assert.doesNotMatch(JSON.stringify(Q.MARIA), /fine-tun|train(ed|ing)|weights|dataset|model/i)
 })
 
 /* ---------------- Maria's home screen ---------------- */
 
-test('home screen: eight apps, each a real screen, each shown once in the grid or the dock', () => {
+test('home screen: nine apps, each a real screen, each shown once in the grid or the dock', () => {
   assert.deepEqual(
     Q.APPS.map(a => a.label),
-    ['Pick hardware', 'Connect', 'Fix my rig', 'My rig', 'Ask Maria', 'The record', 'Who mines', 'Help'],
+    ['Pick hardware', 'Connect', 'Fix my rig', 'My rig', 'Ask Maria', 'The record', 'Who mines', 'Help', 'Report'],
   )
   const app = src('../../../components/pool/maria/MariaApp.tsx')
   for (const a of Q.APPS) assert.match(app, new RegExp(`e\\.screen === '${a.id}'`), a.id)
@@ -126,8 +127,13 @@ test('home screen: eight apps, each a real screen, each shown once in the grid o
     const dock = Q.dockApps(ai)
     const grid = Q.gridApps(ai)
     assert.equal(dock.length, 4)
-    assert.equal(grid.length, 4, 'one full row of four')
-    assert.deepEqual([...dock, ...grid].sort(), Q.APPS.map(a => a.id).sort(), 'all eight, none twice')
+    assert.equal(grid.length, 5)
+    // a full row of four under her widget, the fifth (Report) on a second row under the small widgets
+    const [row1, row2] = Q.gridRows(ai)
+    assert.equal(row1.length, 4)
+    assert.deepEqual(row2, ['report'])
+    assert.deepEqual([...row1, ...row2], grid)
+    assert.deepEqual([...dock, ...grid].sort(), Q.APPS.map(a => a.id).sort(), 'all nine, none twice')
     // the grid keeps the list's order
     assert.deepEqual(grid, Q.APPS.map(a => a.id).filter(id => grid.includes(id)))
   }
@@ -137,8 +143,8 @@ test('home screen: the dock holds the four most used, Ask Maria only once the AI
   assert.deepEqual(Q.dockApps(true), ['pick', 'connect', 'doctor', 'ask'])
   assert.deepEqual(Q.dockApps(false), ['pick', 'connect', 'doctor', 'rig'])
   assert.deepEqual(Q.dockApps(null), Q.dockApps(false))
-  assert.deepEqual(Q.gridApps(false), ['ask', 'record', 'who', 'help'])
-  assert.deepEqual(Q.gridApps(true), ['rig', 'record', 'who', 'help'])
+  assert.deepEqual(Q.gridApps(false), ['ask', 'record', 'who', 'help', 'report'])
+  assert.deepEqual(Q.gridApps(true), ['rig', 'record', 'who', 'help', 'report'])
   assert.deepEqual(Q.askLabel(false), { pill: 'Ask Maria · coming soon', a11y: 'Ask Maria, coming soon' })
   assert.deepEqual(Q.askLabel(true), { pill: 'Ask Maria', a11y: 'Ask Maria' })
 })
@@ -146,4 +152,68 @@ test('home screen: the dock holds the four most used, Ask Maria only once the AI
 test('home screen: a pasted log in Ask Maria still goes to the log doctor', () => {
   const ask = src('../../../components/pool/maria/AskFlow.tsx')
   assert.match(ask, /if \(looksLikeLog\(raw\) && diagnose\(raw\)\.findings\.length\) return go\('doctor', \{ mode: raw \}\)/)
+})
+
+/* ---------------- Aigarth Pool: the name, Stage 0, who runs it, QC ---------------- */
+
+test('name: Aigarth Pool everywhere the pool is named; the worker prefix stays QC.', async () => {
+  assert.equal(POOL.name, 'Aigarth Pool')
+  assert.equal(POOL.workerPrefix, 'QC.')
+  const { PREFIX_WHY } = await import('../wizard.ts')
+  assert.equal(PREFIX_WHY, 'QC. tags the machine as Aigarth Pool. Without it the pool does not count it as ours.')
+  assert.match(W.RECORD.line, /^Every contribution through Aigarth Pool is recorded\.$/)
+})
+
+test('stage 0: one short line in the Join block, no dates, no promises, no game', () => {
+  assert.deepEqual(Q.JOIN.stage, { label: 'Stage 0', line: 'The pool will keep growing from here.' })
+  assert.doesNotMatch(JSON.stringify(Q.JOIN.stage), /\b20\d\d\b|week|month|soon|will (pay|earn)|game|—/i)
+  const qc = src('../../../app/[locale]/pool/qc.tsx')
+  const join = qc.slice(qc.indexOf('export function Join'))
+  assert.ok(join.indexOf('JOIN.stage.label') > 0 && join.indexOf('JOIN.stage.label') < join.indexOf('JOIN.title'), 'the stage line sits above the title')
+})
+
+test('affiliation: one honest line in the footer, never a claim to be official', () => {
+  assert.equal(Q.AFFILIATION, 'Aigarth Pool is a community pool run by QC. It is not affiliated with the Qubic core team.')
+  const page = src('../../../app/[locale]/pool/page.tsx')
+  const foot = page.slice(page.indexOf('className={p.partners}'))
+  assert.match(foot, /\{AFFILIATION\}/)
+  assert.match(foot, /<ReportLink/)
+})
+
+test('QC wording: miner-facing pool copy says QC, never Qubic Church', () => {
+  const files = [
+    '../../../app/[locale]/pool/page.tsx',
+    '../../../app/[locale]/pool/qc.tsx',
+    '../../../app/[locale]/pool/why.tsx',
+    '../../../app/[locale]/pool/ReportLink.tsx',
+    '../../../app/[locale]/pool/reports/ReportsBoard.tsx',
+    '../../../components/pool/maria/apps.tsx',
+    '../../../components/pool/maria/home.tsx',
+    '../../../components/pool/maria/report.tsx',
+    '../../../components/pool/maria/flows.tsx',
+    '../../../components/pool/maria/rig.tsx',
+    '../../../app/api/pool/card/route.tsx',
+    '../qc.ts',
+    '../why.ts',
+    '../wizard.ts',
+    '../doctor.ts',
+    '../knowledge.ts',
+    '../share.ts',
+    '../report.ts',
+    '../config.ts',
+  ]
+  for (const f of files) assert.doesNotMatch(src(f), /Qubic Church|QC Pool/, f)
+  // the quote section's line stays
+  assert.match(src('../../../app/[locale]/pool/page.tsx') + src('../../../app/[locale]/pool/qc.tsx') + src('../../../app/[locale]/pool/why.tsx'), /<Hero/)
+})
+
+test('report link: the page opens the phone\'s Report app, and /pool#report opens it on load', () => {
+  const link = src('../../../app/[locale]/pool/ReportLink.tsx')
+  assert.match(link, /<button/)
+  assert.match(link, /Report a bug, idea or update/)
+  assert.match(link, /OPEN_APP_EVENT/)
+  const app = src('../../../components/pool/maria/MariaApp.tsx')
+  assert.match(app, /addEventListener\(OPEN_APP_EVENT/)
+  assert.match(app, /window\.location\.hash === '#report'/)
+  assert.match(src('../../../app/[locale]/pool/PoolStage.tsx'), /id="maria-phone"/)
 })

@@ -316,7 +316,7 @@ export async function GET(req: Request) {
   if (!c) return NextResponse.json({ error: 'This card link is not valid or has expired. Make a new one in My rig.' }, { status: 410, headers })
   const f: CardFormat = u.searchParams.get('f') === 'x' ? 'x' : 'story'
   const [face, fontList] = await Promise.all([faceUri(), fonts()])
-  const name = `qubic-church-pool-${shortWorker(c.w, 40).replace(/[^A-Za-z0-9._-]/g, '')}-${f}.png`
+  const name = `aigarth-pool-${shortWorker(c.w, 40).replace(/[^A-Za-z0-9._-]/g, '')}-${f}.png`
   return new ImageResponse(f === 'x' ? <Wide c={c} face={face} /> : <Story c={c} face={face} />, {
     ...CARD_SIZE[f],
     fonts: fontList,
