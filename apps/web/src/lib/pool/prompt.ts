@@ -21,7 +21,8 @@ const fieldSummary = () => aggregate(FIELD_SAMPLES, epochAt().epoch, 0)
 function publicVars(brain: Brain): Record<string, string> {
   return {
     'POOL.name': POOL.name,
-    'POOL.onboardingUrl': POOL.onboardingUrl,
+    // Maria names the setup page by where it opens in the app, never by its address (config.ts, setupRef)
+    'POOL.onboardingUrl': POOL.setupRef,
     'POOL.workerPrefix': POOL.workerPrefix,
     'POOL.workerMaxLength': String(POOL.workerMaxLength),
     'POOL.partner.name': POOL.partner.name,

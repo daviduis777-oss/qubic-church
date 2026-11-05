@@ -53,7 +53,7 @@ test('fallback: valid, safe, generic, and fully filled', () => {
   const p = P.mariaSystemPrompt(b, new Date('2026-11-05T12:00:00Z'))
   assert.doesNotMatch(p, /\{\{|\}\}|undefined/)
   assert.ok(p.startsWith(`You are Maria, the mining helper of ${POOL.name}.`))
-  for (const re of [/wallet seed/, /income, profit, payback/, /coin prices/, /Do not make up commands/, POOL.onboardingUrl, /funds belong in a new wallet/, /NOW \(computed by code/])
+  for (const re of [/wallet seed/, /income, profit, payback/, /coin prices/, /Do not make up commands/, POOL.setupRef, /funds belong in a new wallet/, /NOW \(computed by code/])
     assert.ok(typeof re === 'string' ? p.includes(re) : re.test(p), String(re))
   assert.ok(p.length < 4000, `fallback is ${p.length} chars`)
   const r = P.mariaRequestBlock(b, [{ role: 'user', content: '¿Por qué se cierra mi minero?' }])
