@@ -455,3 +455,10 @@ test('knowledge: measured heat, power-cap and thread facts are in, the unsourced
     /jetski endpoints.*another pool and stale.*never tested by region/
   )
 })
+
+test('a typed multi-line question is not treated as a log', async () => {
+  const { looksLikeLog } = await import('../doctor.ts')
+  assert.equal(looksLikeLog('hi maria\nmy 4090 shows 0 shares for hours, what do i do?'), false)
+  assert.equal(looksLikeLog('2026-11-02 10:00:01 INFO started\nE:237 | SHARES: 0/0 | [CUDA] 0 it/s'), true)
+  assert.equal(looksLikeLog('{\n  "accessToken": "x",\n  "cpuVersion": "AVX2"\n}'), true)
+})
