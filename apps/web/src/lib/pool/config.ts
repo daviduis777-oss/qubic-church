@@ -81,7 +81,7 @@ export const HARDWARE_FIGURES_SOURCE = { label: "the partner's public hardware t
 export const RENTALS = [
   { name: 'Clore.ai', note: 'Decentralized, usually cheapest, mining allowed.', url: 'https://clore.ai/register?ref_id=tgwpwvbi', referral: true },
   { name: 'Octaspace', note: 'Clean access-token flow; good cards sell out fast.', url: 'https://cube.octa.computer', referral: false },
-  { name: 'Vast.ai', note: 'The other big decentralized marketplace.', url: 'https://vast.ai', referral: false },
+  { name: 'Vast.ai', note: 'The other big decentralized marketplace. Mining only on credits bought with crypto, not by card (Vast terms).', url: 'https://vast.ai', referral: false },
 ] as const
 
 export const WALLET = {

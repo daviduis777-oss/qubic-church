@@ -14,6 +14,7 @@ import { RENTAL_GUIDE } from '@/lib/pool/ui-config'
 import { type Avx, buildPlan, checkWallet, checkWorkerInput, cleanWorker, type Hw, hardwareTag, PREFIX_WHY, type Plan, suggestWorker, THREAD_COMMAND } from '@/lib/pool/wizard'
 import { type Answers, Flow, type Outcome, restartChip, type StepDef, useAi } from './flow'
 import { LogMeasure, useMeasured } from './measured'
+import { LiveRentals } from './rentals'
 import { Checklist, type ChipOpt, Command, CopyButton, Group, Reveal, SEVERITY_LABEL, StatusCard, severityIcon, severityTone, TONE, VerdictCard, verdictTone } from './ui'
 import s from './maria.module.css'
 
@@ -169,9 +170,10 @@ function pickOutcome(a: Answers, go: Go, measured: Summary | null, ai: boolean):
         : 'Here is how your hardware does, part by part.'
     : a.mode === 'buy'
       ? 'Your build first, then one step either side. No prices: they change weekly, so compare them yourself.'
-      : 'What to rent, best first. No prices: they change weekly, so compare them yourself.'
+      : 'The best boxes to rent right now, by what 1,000 solutions cost. Then what to look for.'
   const cards = r.cards.map(c => <VerdictCard c={c} key={c.title} />)
   if (a.mode === 'rent') {
+    cards.unshift(<LiveRentals key="live" scale={a.scale as Scale} />)
     const check = PROCEDURES.rental.steps.slice(0, 3)
     cards.push(
       <Group key="checklist" label="Before you rent">
