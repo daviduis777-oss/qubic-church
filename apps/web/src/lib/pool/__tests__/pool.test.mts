@@ -248,7 +248,7 @@ test('redaction removes addresses and seeds', () => {
 test('system prompt carries the hard rules and no internal split', () => {
   const p = mariaSystemPrompt()
   assert.match(p, /Never promise, project or estimate income/)
-  assert.match(p, /JetSki/) // only as "do not recommend"
+  assert.match(p, /Describe jetski only with dated facts, and say I do not recommend it/) // only as "do not recommend"
   assert.match(p, /Never use em dashes/)
   assert.match(p, /CUDA 12/)
   assert.match(p, /ASICs are not for this pool/)

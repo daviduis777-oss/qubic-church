@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { MARIA_LIMITS } from '@/lib/pool/config'
 import { poolAllowed } from '@/lib/pool/gate'
-import { mariaNowBlock, mariaSystemStatic } from '@/lib/pool/prompt'
+import { mariaNowBlock, mariaSystemStatic, stalenessNote } from '@/lib/pool/prompt'
 import { clientIp, takeMessage } from '@/lib/pool/ratelimit'
 import { redactWallets } from '@/lib/pool/redact'
 import { measureStore } from '@/lib/pool/store'
@@ -71,6 +71,9 @@ export async function POST(req: Request) {
   const dec = new TextDecoder()
   const enc = new TextEncoder()
   let buf = ''
+  // the whole answer, for the staleness caveat appended after the last delta
+  let said = ''
+  let cut = false
   const stream = new ReadableStream<Uint8Array>({
     async start(ctrl) {
       const reader = upstream.body!.getReader()
@@ -87,14 +90,24 @@ export async function POST(req: Request) {
             if (!data) continue
             try {
               const j = JSON.parse(data) as { type?: string; delta?: { type?: string; text?: string } }
-              if (j.type === 'content_block_delta' && j.delta?.type === 'text_delta' && j.delta.text) ctrl.enqueue(enc.encode(j.delta.text))
-              if (j.type === 'error') ctrl.enqueue(enc.encode('\n\nThe answer was cut off. Ask again.'))
+              if (j.type === 'content_block_delta' && j.delta?.type === 'text_delta' && j.delta.text) {
+                said += j.delta.text
+                ctrl.enqueue(enc.encode(j.delta.text))
+              }
+              if (j.type === 'error') {
+                cut = true
+                ctrl.enqueue(enc.encode('\n\nThe answer was cut off. Ask again.'))
+              }
             } catch {}
           }
         }
       } catch {
+        cut = true
         ctrl.enqueue(enc.encode('\n\nThe answer was cut off. Ask again.'))
       }
+      // E229/E233-era numbers without their "predates" caveat get one short line, in the user's language
+      const note = cut ? '' : stalenessNote(said, last.content)
+      if (note) ctrl.enqueue(enc.encode(note))
       ctrl.close()
     },
   })

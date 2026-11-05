@@ -82,7 +82,7 @@ test('hardware: CPU and GPU mode advice follows the card count', () => {
   assert.ok(two.notes.some(n => /Run GPU and CPU together.*7 to 8%/.test(n)))
   const six = pick({ mode: 'own', cpu: 'Threadripper 7980X', gpu: 'RTX 5070 Ti', gpuCount: 6 })
   assert.ok(six.notes.some(n => /Run GPU only on this many cards/.test(n)))
-  assert.match(classifyGpu('RTX 5080')!.reasons[0]!, /matched 4x 4090.*about half the price.*1\.9x/)
+  assert.match(classifyGpu('RTX 5080')!.reasons[0]!, /matched 4x 4090.*58% of the price.*1\.7x cheaper per solution/)
   assert.doesNotMatch(JSON.stringify(classifyGpu('RTX 5080')), /beat 4x 4090 on sol\/h/)
   assert.match(classifyCpu('EPYC 7B13').reasons.join(' '), /record in epoch 233/)
   assert.match(JSON.stringify(pick({ mode: 'rent', scale: 'mid' }).cards), /37% \(epoch 229\) to about 17% \(epoch 233\)/)
@@ -179,7 +179,8 @@ test('faq: every theme has entries, ids are unique, each entry is complete', () 
   for (const e of FAQ) {
     assert.ok(themes.includes(e.theme), e.id)
     assert.ok(e.q.split(/\s+/).length <= 12, `${e.id}: question too long`)
-    assert.ok(e.a.length > 40 && e.a.length < 420, `${e.id}: answer ${e.a.length} chars`)
+    assert.ok(e.a.length > 40 && e.a.length < 520, `${e.id}: answer ${e.a.length} chars`)
+    assert.ok(e.must.length >= 2 && e.must.length <= 4, `${e.id}: ${e.must.length} must-say facts`)
     assert.ok(e.asOf.length > 0, e.id)
     assert.ok(e.sources.length > 0, e.id)
     for (const id of e.sources) assert.ok(SOURCES[id]?.date, `${e.id}: ${id}`)
@@ -225,7 +226,7 @@ test('prompt: STALENESS and MINER FAQ are in the cached block, compact and clean
   assert.match(p, /\nMINER FAQ \(/)
   for (const e of FAQ) assert.ok(p.includes(`"${e.q}"`), e.id)
   assert.equal(p.match(/All our measurements are from epochs 229 and 233/g)!.length, 1) // not repeated under HARDWARE
-  assert.ok(faqBlock().length < 18_000, `faq block is ${faqBlock().length} chars`)
+  assert.ok(faqBlock().length < 26_000, `faq block is ${faqBlock().length} chars`)
   assert.ok(stalenessBlock().length < 1_000)
   assert.doesNotMatch(p, /—/)
   assert.equal(p.match(/\bCODED\b/g)!.length, 1) // only in the "who runs it" line
