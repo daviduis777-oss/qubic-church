@@ -89,7 +89,11 @@ export const WALLET = {
   address: { length: 60, pattern: /^[A-Z]{60}$/, rule: 'The address (Qubic ID) is 60 uppercase letters. It is safe to share and it is all the pool needs.' },
 } as const
 
-export const MARIA_LIMITS = { perDay: 3, maxInput: 1200, maxTurns: 8 } as const
+/**
+ * perDay: questions per connection per day. modPerDay: the moderator, for testing.
+ * maxTokens: room for a full answer in Russian or other non-Latin text, which costs 2 to 3 times the tokens.
+ */
+export const MARIA_LIMITS = { perDay: 3, modPerDay: 60, maxInput: 1200, maxTurns: 8, maxTokens: 1600 } as const
 
 /**
  * Measured results: how Maria learns from real runs (measure.ts, aggregate.ts, store.ts).
