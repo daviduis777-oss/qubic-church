@@ -6,8 +6,9 @@ import { haloSvg, svgUri } from '@/components/pool/maria/halo-svg'
 import { cardSecret, signCard, verifyCard } from '@/lib/pool/card-sign'
 import { POOL, RIG } from '@/lib/pool/config'
 import { epochAt, formatLeft } from '@/lib/pool/epoch'
-import { poolAllowed } from '@/lib/pool/gate'
+import { poolAllowed, poolPublic } from '@/lib/pool/gate'
 import { fmtRate } from '@/lib/pool/measure'
+import { shareLink } from '@/lib/pool/share'
 import { CARD_SIZE, type CardData, type CardFormat, checkCard, fmtCost, fmtInt, fmtUpShort, percentileLine, type RigStatus, SOURCE_LABEL, STATUS_TITLE, shortWorker } from '@/lib/pool/rig'
 
 /**
@@ -29,7 +30,8 @@ export async function POST(req: Request) {
   if (!c.ok) return NextResponse.json({ ok: false, error: c.error }, { status: 422, headers })
   const { token, exp } = signCard(c.value, secret)
   const url = (f: CardFormat) => `/api/pool/card?f=${f}&t=${encodeURIComponent(token)}`
-  return NextResponse.json({ ok: true, story: url('story'), x: url('x'), exp, ttl: RIG.cardTtlS }, { headers })
+  // the link the card prints and the X post carries: the field guide until the pool page is public
+  return NextResponse.json({ ok: true, story: url('story'), x: url('x'), exp, ttl: RIG.cardTtlS, link: shareLink(poolPublic()) }, { headers })
 }
 
 /* ---------------- drawing ---------------- */
@@ -40,7 +42,7 @@ const BONE = '#FAFAFA'
 const FOG = '#B7B7B7'
 const MUTED = '#8C8C8C'
 const CORAL = '#F66D67'
-const TONE: Record<RigStatus, string> = { mining: GOLD, warming: GOLD_HI, early: GOLD, idle: FOG, 'no-signal': MUTED, look: CORAL }
+const TONE: Record<RigStatus, string> = { waiting: MUTED, mining: GOLD, warming: GOLD_HI, early: GOLD, idle: FOG, 'no-signal': MUTED, look: CORAL }
 
 let fontCache: Promise<{ name: string; data: Buffer; weight: 400 | 500 | 600; style: 'normal' | 'italic' }[]> | null = null
 function fonts() {
@@ -161,7 +163,7 @@ const Mark = ({ size }: { size: number }) => (
   <div style={{ display: 'flex', alignItems: 'baseline', fontFamily: 'Geist', fontSize: size, color: FOG }}>
     <span style={{ fontWeight: 600, color: BONE }}>{POOL.name}</span>
     <span style={{ margin: `0 ${Math.round(size * 0.5)}px`, color: MUTED }}>·</span>
-    <span style={{ fontFamily: 'Geist Mono', fontWeight: 500, color: GOLD }}>qubic.church/pool</span>
+    <span style={{ fontFamily: 'Geist Mono', fontWeight: 500, color: GOLD }}>{shareLink(poolPublic()).text}</span>
   </div>
 )
 

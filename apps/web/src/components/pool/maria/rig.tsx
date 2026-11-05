@@ -3,7 +3,7 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import { ChevronRight, Download, Share2, Stethoscope, X } from 'lucide-react'
 import { type CSSProperties, type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { type HardwareRow, selfReportedLine, type Summary, topRows } from '@/lib/pool/aggregate'
+import { type HardwareRow, selfReportedLine, type Summary } from '@/lib/pool/aggregate'
 import { MEASURE, POOL } from '@/lib/pool/config'
 import { diagnose } from '@/lib/pool/doctor'
 import { extractMetrics, fmtRate } from '@/lib/pool/measure'
@@ -13,6 +13,8 @@ import {
   coachLine,
   demoRigs,
   epochStrip,
+  type Freshness,
+  freshness,
   fmtCost,
   fmtInt,
   fmtUpShort,
@@ -41,6 +43,8 @@ import {
   upsertRig,
   vsMedian,
 } from '@/lib/pool/rig'
+import { type ShareLink, shareText, xIntentUrl } from '@/lib/pool/share'
+import { runDates, type StatsView, statsView } from '@/lib/pool/stats-view'
 import type { Bar, Usage } from '@/lib/pool/usage'
 import { checkWorker, cleanWorker } from '@/lib/pool/wizard'
 import { type Answers, Screen, useStickToBottom } from './flow'
@@ -53,7 +57,7 @@ import r from './rig.module.css'
 
 /* ---------------- status look ---------------- */
 
-export const STATUS_TONE: Record<RigStatus, string> = { mining: TONE.gold, warming: '#FFE77C', early: TONE.gold, idle: '#B7B7B7', 'no-signal': TONE.fog, look: TONE.coral }
+export const STATUS_TONE: Record<RigStatus, string> = { waiting: TONE.fog, mining: TONE.gold, warming: '#FFE77C', early: TONE.gold, idle: '#B7B7B7', 'no-signal': TONE.fog, look: TONE.coral }
 
 export function StatusChip({ status, title, live }: { status: RigStatus; title: string; live?: boolean }) {
   return (
@@ -65,7 +69,7 @@ export function StatusChip({ status, title, live }: { status: RigStatus; title: 
 }
 
 /** Maria's halo as the rig's pulse: a heartbeat while mining, working while warming up, a slow coral beat when it needs a look. */
-function RigHalo({ status, size, face }: { status: RigStatus; size: number; face: number }) {
+function RigHalo({ status, title, size, face }: { status: RigStatus; title: string; size: number; face: number }) {
   const [beat, setBeat] = useState(false)
   const reduce = useReducedMotion()
   useEffect(() => {
@@ -83,10 +87,10 @@ function RigHalo({ status, size, face }: { status: RigStatus; size: number; face
   }, [status, reduce])
   // each beat is one settled shockwave from her face; warming up is her working
   const mode = status === 'warming' ? 'thinking' : beat ? 'settled' : 'idle'
-  const tone = status === 'look' ? TONE.coral : status === 'idle' || status === 'no-signal' ? TONE.fog : TONE.gold
+  const tone = status === 'look' ? TONE.coral : status === 'idle' || status === 'no-signal' || status === 'waiting' ? TONE.fog : TONE.gold
   return (
-    <div className={cx(r.halo, (status === 'no-signal' || status === 'idle') && r.haloDim, status === 'look' && r.haloLook)}>
-      <Halo face={face} label={`Rig status: ${status}`} mode={mode} size={size} tone={tone} />
+    <div className={cx(r.halo, (status === 'no-signal' || status === 'idle' || status === 'waiting') && r.haloDim, status === 'look' && r.haloLook)}>
+      <Halo face={face} label={`Rig status: ${title}`} mode={mode} size={size} tone={tone} />
     </div>
   )
 }
@@ -97,10 +101,10 @@ function RigHalo({ status, size, face }: { status: RigStatus; size: number; face
 const fmtSol = (v: number) => (v === 0 ? '0' : fmtRate(v))
 
 /** One of the three: the size is shared (--len on the row), fitted to the column by a container query. */
-function Big({ value, label, sub }: { value?: string; label: string; sub?: string }) {
+function Big({ value, label, sub, stale }: { value?: string; label: string; sub?: string; stale?: boolean }) {
   return (
     <div className={r.big}>
-      <span className={cx(r.bigValue, !value && r.bigNone)}>{value ?? 'n/a'}</span>
+      <span className={cx(r.bigValue, !value && r.bigNone, value && stale && r.bigStale)}>{value ?? 'n/a'}</span>
       <span className={r.bigLabel}>{label}</span>
       <span className={r.bigSub}>{sub ?? ' '}</span>
     </div>
@@ -147,8 +151,11 @@ function EpochBar({ now }: { now: Date }) {
     <section aria-label="Epoch" className={r.epoch}>
       <div className={r.epochHead}>
         <span className={r.epochName}>Epoch {e.epoch}</span>
+        <span>Day {e.day} of 7</span>
+      </div>
+      <div className={r.epochHead} style={{ marginTop: 2 }}>
         <span>
-          day {e.day} of 7 · <span className={r.mono}>{e.left}</span> left
+          <span className={r.mono}>{e.left}</span> left
         </span>
       </div>
       <div aria-label={`${Math.round(e.frac * 100)}% through epoch ${e.epoch}`} aria-valuemax={100} aria-valuemin={0} aria-valuenow={Math.round(e.frac * 100)} className={r.epochTrack} role="progressbar">
@@ -187,7 +194,7 @@ function Peer({ st }: { st: Standing }) {
 
 /* ---------------- one rig ---------------- */
 
-function Dashboard({ rig, reading, st, peer, demo, now, onFix }: { rig: MyRig; reading: RigReading | null; st: StatusView; peer: Standing; demo: boolean; now: Date; onFix: () => void }) {
+function Dashboard({ rig, reading, st, fresh, peer, demo, now, onFix }: { rig: MyRig; reading: RigReading | null; st: StatusView; fresh: Freshness; peer: Standing; demo: boolean; now: Date; onFix: () => void }) {
   const coach = coachLine(reading, st, peer)
   const cards = reading ? gpuCount(reading.hw) : 0
   const pc = reading ? perCard(reading) : undefined
@@ -204,7 +211,7 @@ function Dashboard({ rig, reading, st, peer, demo, now, onFix }: { rig: MyRig; r
   return (
     <div className={r.dash}>
       <section aria-label="Status" className={r.hero}>
-        <RigHalo face={46} size={176} status={st.status} />
+        <RigHalo face={46} size={176} status={st.status} title={st.title} />
         <div className={r.heroText}>
           <StatusChip live={st.status === 'mining'} status={st.status} title={st.title} />
           <p className={r.heroLine}>{st.line}</p>
@@ -216,10 +223,15 @@ function Dashboard({ rig, reading, st, peer, demo, now, onFix }: { rig: MyRig; r
         </div>
       </section>
 
-      <section aria-label="Key numbers" className={r.bigs} style={{ '--len': Math.max(4, ...nums.map(v => v?.length ?? 0)) } as CSSProperties}>
-        <Big label="solutions" sub={reading?.source === 'log' && !demo ? 'in this log' : 'this epoch'} value={nums[0]} />
-        <Big label="sol/h" sub={pc !== undefined ? `${fmtRate(pc)} per card` : cards === 1 ? 'one card' : undefined} value={nums[1]} />
-        <Big label="uptime" sub="this epoch" value={nums[2]} />
+      {fresh.note && (
+        <p className={r.staleNote}>
+          Old numbers: {fresh.note}. Paste a fresh log to update them.
+        </p>
+      )}
+      <section aria-label={fresh.note ? `Key numbers, ${fresh.note}` : 'Key numbers'} className={r.bigs} style={{ '--len': Math.max(4, ...nums.map(v => v?.length ?? 0)) } as CSSProperties}>
+        <Big label="solutions" stale={fresh.stale} sub={fresh.previousEpoch ? fresh.scope : reading?.source === 'log' && !demo ? 'in this log' : 'this epoch'} value={nums[0]} />
+        <Big label="sol/h" stale={fresh.stale} sub={pc !== undefined ? `${fmtRate(pc)} per card` : cards === 1 ? 'one card' : undefined} value={nums[1]} />
+        <Big label="uptime" stale={fresh.stale} sub={fresh.previousEpoch ? fresh.scope : 'this epoch'} value={nums[2]} />
       </section>
 
       <motion.button className={cx(r.coach, coach.doctor && r.coachAct)} disabled={!coach.doctor} onClick={coach.doctor ? onFix : undefined} type="button" whileTap={coach.doctor ? PRESS : undefined}>
@@ -278,9 +290,54 @@ function Dashboard({ rig, reading, st, peer, demo, now, onFix }: { rig: MyRig; r
 
 /* ---------------- the share sheet ---------------- */
 
-type CardUrls = { story: string; x: string }
+type CardUrls = { story: string; x: string; link?: ShareLink }
+
+const FOCUSABLE = 'button:not([disabled]), a[href], input:not([disabled]), [tabindex]:not([tabindex="-1"])'
+
+/**
+ * A real modal: focus moves to Close on open, Tab stays inside, Escape closes,
+ * and focus returns to the control that opened it.
+ */
+function useModal(onClose: () => void) {
+  const root = useRef<HTMLElement>(null)
+  const first = useRef<HTMLButtonElement>(null)
+  const close = useRef(onClose)
+  close.current = onClose
+  useEffect(() => {
+    const back = document.activeElement instanceof HTMLElement ? document.activeElement : null
+    first.current?.focus({ preventScroll: true })
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        close.current()
+        return
+      }
+      if (e.key !== 'Tab' || !root.current) return
+      const list = [...root.current.querySelectorAll<HTMLElement>(FOCUSABLE)].filter(x => x.getClientRects().length > 0)
+      const a = list[0]
+      const z = list.at(-1)
+      if (!a || !z) return
+      const inside = root.current.contains(document.activeElement)
+      if (e.shiftKey && (document.activeElement === a || !inside)) {
+        e.preventDefault()
+        z.focus()
+      } else if (!e.shiftKey && (document.activeElement === z || !inside)) {
+        e.preventDefault()
+        a.focus()
+      }
+    }
+    document.addEventListener('keydown', onKey, true)
+    return () => {
+      document.removeEventListener('keydown', onKey, true)
+      if (back?.isConnected) back.focus({ preventScroll: true })
+    }
+  }, [])
+  return { root, first }
+}
 
 function ShareSheet({ rig, reading, st, peer, demo, onClose }: { rig: MyRig; reading: RigReading; st: StatusView; peer: Standing; demo: boolean; onClose: () => void }) {
+  const modal = useModal(onClose)
+  const [link, setLink] = useState<ShareLink | null>(null)
   const [fmt, setFmt] = useState<CardFormat>('story')
   const [withCost, setWithCost] = useState(false)
   const [blobs, setBlobs] = useState<Partial<Record<CardFormat, { blob: Blob; url: string }>>>({})
@@ -301,6 +358,7 @@ function ShareSheet({ rig, reading, st, peer, demo, onClose }: { rig: MyRig; rea
         const res = await fetch('/api/pool/card', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ card }) })
         const j = (await res.json().catch(() => ({}))) as Partial<CardUrls> & { ok?: boolean; error?: string }
         if (!res.ok || !j.ok || !j.story || !j.x) throw new Error(j.error ?? `The card could not be made (${res.status}).`)
+        if (live && j.link) setLink(j.link)
         for (const f of ['story', 'x'] as CardFormat[]) {
           const b = await fetch(j[f]!).then(x => (x.ok ? x.blob() : Promise.reject(new Error(`The image could not be drawn (${x.status}).`))))
           const url = URL.createObjectURL(b)
@@ -319,15 +377,26 @@ function ShareSheet({ rig, reading, st, peer, demo, onClose }: { rig: MyRig; rea
   }, [card])
 
   const cur = blobs[fmt]
-  const save = () => {
-    if (!cur) return
+  const download = (f: CardFormat) => {
+    const b = blobs[f]
+    if (!b) return false
     const a = document.createElement('a')
-    a.href = cur.url
-    a.download = name(fmt)
+    a.href = b.url
+    a.download = name(f)
     document.body.appendChild(a)
     a.click()
     a.remove()
-    setDone('Saved')
+    return true
+  }
+  const save = () => {
+    if (download(fmt)) setDone('Image saved.')
+  }
+  // X cannot take an image through a link: save the 16:9 card, then open the post with the text and the link
+  const postX = () => {
+    if (!link || !blobs.x) return
+    download('x')
+    window.open(xIntentUrl(shareText(card), link), '_blank', 'noopener,noreferrer')
+    setDone('The 16:9 image is saved. Attach it to your post on X.')
   }
   const share = () => {
     if (!cur) return
@@ -345,12 +414,14 @@ function ShareSheet({ rig, reading, st, peer, demo, onClose }: { rig: MyRig; rea
 
   return (
     <div className={r.sheetWrap}>
-      <motion.button animate={{ opacity: 1 }} aria-label="Close share" className={r.scrim} initial={{ opacity: 0 }} onClick={onClose} type="button" />
-      <motion.section animate={{ y: 0 }} aria-label="Share your rig" aria-modal="true" className={r.sheet} initial={{ y: '100%' }} role="dialog" transition={SPRING}>
+      <motion.button animate={{ opacity: 1 }} aria-label="Close share" className={r.scrim} initial={{ opacity: 0 }} onClick={onClose} tabIndex={-1} type="button" />
+      <motion.section animate={{ y: 0 }} aria-labelledby="qcp-share-title" aria-modal="true" className={r.sheet} initial={{ y: '100%' }} ref={modal.root} role="dialog" transition={SPRING}>
         <span aria-hidden className={r.grabber} />
         <div className={r.sheetHead}>
-          <h3 className={r.sheetTitle}>Share</h3>
-          <motion.button aria-label="Close" className={r.close} onClick={onClose} type="button" whileTap={PRESS}>
+          <h3 className={r.sheetTitle} id="qcp-share-title">
+            Share
+          </h3>
+          <motion.button aria-label="Close" className={r.close} onClick={onClose} ref={modal.first} type="button" whileTap={PRESS}>
             <X aria-hidden size={18} strokeWidth={2.4} />
           </motion.button>
         </div>
@@ -381,6 +452,7 @@ function ShareSheet({ rig, reading, st, peer, demo, onClose }: { rig: MyRig; rea
         )}
         <p className={r.sheetNote}>
           {demo ? 'A demo card: it says DEMO across it.' : `Marked "${SOURCE_LABEL[reading.source]}" so people know where the numbers come from.`} No wallet on it.
+          {link && ` The link on it: ${link.text}.`}
         </p>
         <div className={r.sheetActions}>
           <motion.button className={r.primary} disabled={!cur} onClick={share} type="button" whileTap={PRESS}>
@@ -392,11 +464,25 @@ function ShareSheet({ rig, reading, st, peer, demo, onClose }: { rig: MyRig; rea
             Save image
           </motion.button>
         </div>
-        <p aria-live="polite" className={s.srOnly}>
+        <motion.button className={cx(r.secondary, r.postX)} disabled={!blobs.x || !link} onClick={postX} type="button" whileTap={PRESS}>
+          <XLogo />
+          Post on X
+        </motion.button>
+        <p aria-live="polite" className={r.sheetDone}>
           {done}
         </p>
       </motion.section>
     </div>
+  )
+}
+
+/** The X mark, drawn small; no brand colour. */
+function XLogo() {
+  return (
+    <svg aria-hidden height="15" viewBox="0 0 24 24" width="15">
+      <title>X</title>
+      <path d="M17.75 3h3.07l-6.7 7.66L22 21h-6.17l-4.83-6.32L5.47 21H2.4l7.17-8.2L2 3h6.33l4.37 5.77L17.75 3Zm-1.08 16.17h1.7L7.4 4.74H5.58l11.09 14.43Z" fill="currentColor" />
+    </svg>
   )
 }
 
@@ -452,9 +538,54 @@ function Delivers({ rows }: { rows: HardwareRow[] }) {
   )
 }
 
+/** Our own test rentals, labelled as such: newest algorithm era only, older eras folded away. */
+export function TestRuns({ v }: { v: StatsView }) {
+  const { current, older, epoch } = v.tests
+  if (!current.length) return null
+  return (
+    <section aria-label="Our own test runs">
+      <h3 className={s.groupLabel}>Our own test runs, epoch {epoch}</h3>
+      <ul className={s.group}>
+        {current.map(f => (
+          <li className={s.row} key={f.label} style={{ alignItems: 'flex-start' }}>
+            <div className={s.rowMain}>
+              <div className={s.rowTitle}>{f.label}</div>
+              <div className={s.rowNote}>
+                {f.host} rental, {runDates([f])}
+                {f.perCard !== undefined ? ` · ${fmtRate(f.perCard)} sol/h per card` : ''}
+              </div>
+            </div>
+            <span className={r.rowRate}>{fmtRate(f.solPerHour)}</span>
+          </li>
+        ))}
+      </ul>
+      <p className={s.note}>sol/h per rig. Rented by us to test the setup, so they are not what our miners run.</p>
+      {older.length > 0 && (
+        <details className={r.older}>
+          <summary>
+            Older runs ({older.length}), epoch {[...new Set(older.map(f => f.epoch))].join(', ')}
+          </summary>
+          <p className={s.note}>Measured under an earlier algorithm. Rates from then are not comparable with epoch {epoch}, so they are not shown here.</p>
+        </details>
+      )}
+    </section>
+  )
+}
+
 export function UsageView({ summary }: { summary: Summary | null }) {
   const [tab, setTab] = useState<'use' | 'deliver'>('use')
   const u: Usage | undefined = summary?.usage
+  const v = statsView(summary)
+  if (!v.show) {
+    return (
+      <div className={r.dash}>
+        <p className={s.note}>
+          Miner statistics appear once enough rigs report: {v.real} of {v.need} so far. Until then nothing here is presented as what our miners run.
+        </p>
+        <TestRuns v={v} />
+      </div>
+    )
+  }
   return (
     <div className={r.dash}>
       <div aria-label="Who mines with what" className={r.seg} role="tablist">
@@ -469,7 +600,8 @@ export function UsageView({ summary }: { summary: Summary | null }) {
         u && u.n ? (
           <>
             <p className={r.tileNote}>
-              {u.n} rig{u.n === 1 ? '' : 's'}, epoch{u.from === u.to ? ` ${u.to}` : `s ${u.from} to ${u.to}`}. Saved runs and our own field runs.
+              {u.real} saved rig{u.real === 1 ? '' : 's'}
+              {u.n > u.real ? ` and ${u.n - u.real} of our own test runs` : ''}, epoch{u.from === u.to ? ` ${u.to}` : `s ${u.from} to ${u.to}`}.
             </p>
             <Tags tags={[...(u.few ? ['few data'] : []), ...(u.older ? ['older'] : [])]} />
             <Bars bars={u.gpu} rate title="GPU" />
@@ -488,10 +620,20 @@ export function UsageView({ summary }: { summary: Summary | null }) {
         )
       ) : (
         <>
-          <p className={r.tileNote}>Median sol/h. Rates only, never income. Under {MEASURE.fewData} rigs is few data.</p>
-          <Delivers rows={topRows(summary, 8)} />
+          <p className={r.tileNote}>
+            Median sol/h, epoch {v.eraEpoch} era only. Rates only, never income. Under {MEASURE.fewData} rigs is few data.
+          </p>
+          <Delivers rows={v.rows} />
+          {v.older.length > 0 && (
+            <details className={r.older}>
+              <summary>Older runs ({v.older.length})</summary>
+              <p className={s.note}>Measured under an earlier algorithm, not comparable with epoch {v.eraEpoch}.</p>
+              <Delivers rows={v.older} />
+            </details>
+          )}
         </>
       )}
+      <TestRuns v={v} />
     </div>
   )
 }
@@ -703,7 +845,7 @@ export function RigFlow({ go, handoff }: { go: Go; handoff?: Answers }) {
 
   if (view.kind === 'stats') {
     return (
-      <Screen backLabel="Rigs" dock={<Chips label="Next" onPick={() => setView({ kind: 'list' })} options={[{ value: 'list', label: 'Back to my rigs' }]} />} onBack={() => setView({ kind: 'list' })} scrollRef={scroller} sub="From saved runs and our own field runs." title="Who mines with what">
+      <Screen backLabel="Rigs" dock={<Chips label="Next" onPick={() => setView({ kind: 'list' })} options={[{ value: 'list', label: 'Back to my rigs' }]} />} onBack={() => setView({ kind: 'list' })} scrollRef={scroller} sub="From rigs that saved their numbers." title="Who mines with what">
         <UsageView summary={summary} />
       </Screen>
     )
@@ -720,6 +862,7 @@ export function RigFlow({ go, handoff }: { go: Go; handoff?: Answers }) {
     }
     const reading = readingOf(rig, view.demo)
     const st = rigStatus(reading, now)
+    const fresh = freshness(reading, st, now)
     const peer = standing(reading, summary)
     const dock = pasting ? (
       <>
@@ -740,8 +883,9 @@ export function RigFlow({ go, handoff }: { go: Go; handoff?: Answers }) {
           }
         }}
         options={[
-          ...(reading ? [{ value: 'share', label: 'Share', primary: true }] : []),
-          ...(view.demo ? [] : [{ value: 'log', label: reading ? 'Paste a new log' : 'Paste a log', primary: !reading }, { value: 'edit', label: 'Edit' }]),
+          // no card from old numbers: a stale or previous-epoch reading cannot be shared
+          ...(reading && fresh.shareable ? [{ value: 'share', label: 'Share', primary: true }] : []),
+          ...(view.demo ? [] : [{ value: 'log', label: reading ? 'Paste a new log' : 'Paste a log', primary: !reading || !fresh.shareable }, { value: 'edit', label: 'Edit' }]),
         ]}
       />
     )
@@ -749,7 +893,7 @@ export function RigFlow({ go, handoff }: { go: Go; handoff?: Answers }) {
       <>
         <Screen backLabel="Rigs" dock={dock} onBack={() => setView({ kind: 'list' })} scrollRef={scroller} serif title={shortWorker(rig.worker, 22)}>
           {notice && <p className={s.warn}>{notice}</p>}
-          <Dashboard demo={view.demo} now={now} onFix={() => go('doctor')} peer={peer} reading={reading} rig={rig} st={st} />
+          <Dashboard demo={view.demo} fresh={fresh} now={now} onFix={() => go('doctor')} peer={peer} reading={reading} rig={rig} st={st} />
           {!view.demo && !reading && (
             <p className={s.note}>
               The pool does not report per-worker stats yet. Until it does, paste the miner log: Maria reads the numbers here and the log stays in this browser.
@@ -768,7 +912,7 @@ export function RigFlow({ go, handoff }: { go: Go; handoff?: Answers }) {
             </button>
           )}
         </Screen>
-        {sharing && reading && <ShareSheet demo={view.demo} onClose={() => setSharing(false)} peer={peer} reading={reading} rig={rig} st={st} />}
+        {sharing && reading && fresh.shareable && <ShareSheet demo={view.demo} onClose={() => setSharing(false)} peer={peer} reading={reading} rig={rig} st={st} />}
       </>
     )
   }
@@ -796,7 +940,7 @@ export function RigFlow({ go, handoff }: { go: Go; handoff?: Answers }) {
       }
       onBack={() => go('home')}
       scrollRef={scroller}
-      sub="Watch it mine. Share it."
+      sub="Paste a log, see the numbers. Share it."
       title="My rig"
     >
       {rows.length === 0 && (
@@ -810,7 +954,7 @@ export function RigFlow({ go, handoff }: { go: Go; handoff?: Answers }) {
         <span>
           <span className={s.rowTitle}>Who mines with what</span>
           <span className={s.rowNote} style={{ display: 'block' }}>
-            GPUs, CPUs and setups across our miners
+            {statsView(summary).show ? 'GPUs, CPUs and setups across our miners' : 'Appears once enough rigs report'}
           </span>
         </span>
         <ChevronRight aria-hidden size={18} />
@@ -845,6 +989,8 @@ function ListSection({
         {items.map(({ rig, demo: d }) => {
           const rd = readingOf(rig, d)
           const st = rigStatus(rd, now)
+          const fr = freshness(rd, st, now)
+          const rate = rd?.solPerHour !== undefined && !fr.stale && !fr.previousEpoch ? fmtSol(rd.solPerHour) : undefined
           return (
             <li className={s.row} key={`${d}-${rig.worker}`} style={{ padding: 0 }}>
               <motion.button className={r.rigRow} onClick={() => onOpen(rig.worker, d)} type="button" whileTap={PRESS}>
@@ -854,8 +1000,8 @@ function ListSection({
                   <StatusChip live={st.status === 'mining'} status={st.status} title={st.title} />
                 </span>
                 <span className={r.rigRate}>
-                  <span className={r.rigRateV}>{rd?.solPerHour !== undefined ? fmtSol(rd.solPerHour) : 'n/a'}</span>
-                  <span className={r.rigRateU}>sol/h</span>
+                  <span className={cx(r.rigRateV, !rate && r.rigRateNone)}>{rate ?? (fr.note ? 'old' : 'n/a')}</span>
+                  <span className={r.rigRateU}>{rate ? 'sol/h' : fr.note ? `epoch ${rd?.epoch}` : 'sol/h'}</span>
                 </span>
                 <ChevronRight aria-hidden className={r.rigChev} size={18} />
               </motion.button>
