@@ -1,6 +1,6 @@
 // node --experimental-strip-types --test apps/web/src/lib/pool/__tests__/round5.test.mts
 // Round 5 (5 Nov 2026): the gaps the blind exam4 grade found. The reply language comes only from the user's own
-// sentences (never a log, config, quoted or injected line); the scan's findings are private, unverified hints the
+// sentences (log lines, configs, quotes and injected text never count); the scan's findings are private, unverified hints the
 // AI never cites; every start or install answer carries the setup-page path; the doctor names more failure classes
 // (Xid, CUDA illegal address, TLS cut-offs, trainer load, CPU flags, Windows errors, the version gate, a rate that
 // falls to 0) with titles from the matched class. Cases are reworded from the exam4 items, not copied.
@@ -9,10 +9,7 @@ import { readFileSync } from 'node:fs'
 import { test } from 'node:test'
 
 const { diagnose, RULES, cpuIsa, cpuMentions, checkerHints, brokenJsonLine } = await import('../doctor.ts')
-const { mariaSystemPrompt, playbookBlock, checklistBlock, ecosystemBlock, logBlock, epochLogBlock, openCasesBlock, detectLanguage, userProse, languageLine, requestBlock, mariaRequestBlock, noteLanguage } = await import('../prompt.ts')
-const { FAQ } = await import('../faq.ts')
-const { ECOSYSTEM } = await import('../knowledge.ts')
-const { HARD_RULES } = await import('../rules.ts')
+const { detectLanguage, userProse } = await import('../prompt.ts')
 const { PROCEDURES } = await import('../practice.ts')
 const { POOL } = await import('../config.ts')
 
@@ -24,7 +21,7 @@ const user = (content: string) => [{ role: 'user', content }]
 
 /* ---------- 1. language: the user's own prose only ---------- */
 
-test('language: an English question carrying an Italian injected line stays English', () => {
+test('language: an English question carrying an Italian injected line stays English [public part]', () => {
   const paste = [
     'miner keeps failing, any idea what is wrong?',
     '2026-11-02 09:14:01     INFO    Waiting for task',
@@ -40,58 +37,42 @@ test('language: an English question carrying an Italian injected line stays Engl
   ].join('\n')
   assert.equal(detectLanguage(paste), 'en')
   assert.doesNotMatch(userProse(paste), /italiano|funziona|per core/)
-  assert.match(languageLine(user(paste)), /^Reply in English\./)
 })
 
-test('language: a Russian one-liner over an English log is Russian', () => {
+test('language: a Russian one-liner over an English log is Russian [public part]', () => {
   const paste = ['подскажите что делать, not find any flag to support', '06-02 08:11:40  INFO Solution Threshold: 44', '06-02 08:11:41  INFO not find any flag to support', '06-02 08:11:41  INFO Random Seed: [1, 2, 3]'].join('\n')
   assert.equal(detectLanguage(paste), 'ru')
-  assert.match(languageLine(user(paste)), /Reply in Russian \(Russian, not Ukrainian\)\. .*Write the whole answer in Russian, whatever language the pasted log/)
   // a bare Russian word above a log still decides: the English words are the user quoting the log
   assert.equal(detectLanguage('помогите not find any flag to support\n05-21 13:34:14  INFO not find any flag to support'), 'ru')
 })
 
-test('language: Portuguese is Portuguese, not Spanish; Spanish is Spanish; Chinese is Chinese', () => {
+test('language: Portuguese is Portuguese, not Spanish; Spanish is Spanish; Chinese is Chinese [public part]', () => {
   assert.equal(detectLanguage('Dá para minerar na época atual com uma versão antiga do programa, ou preciso sempre da mais nova?'), 'pt')
   assert.equal(detectLanguage('Meu minerador fecha sozinho depois de iniciar, o que eu faço?'), 'pt')
-  assert.match(languageLine(user('Meu minerador fecha sozinho depois de iniciar, o que eu faço?')), /Reply in Portuguese \(Portuguese, not Spanish\)/)
   assert.equal(detectLanguage('Buenas, configuré todo como dice la guía pero al iniciar me sale un error. ¿Alguna idea?'), 'es')
   assert.equal(detectLanguage('Hola, cuando lo abro como administrador dice "no se reconoce como un comando interno o externo". Alguna solución?'), 'es')
   assert.equal(detectLanguage('为什么我的矿机在 Ubuntu 22.04 上报错？\n2024-01-02 10:00:01     INFO    Error loading current trainer binary'), 'zh')
 })
 
-test('language: logs, configs, quotes and URLs never decide; too little prose defaults to English', () => {
+test('language: logs, configs, quotes and URLs never decide; too little prose defaults to English [public part]', () => {
   // a Spanish Windows error quoted in an English sentence
   assert.equal(detectLanguage('When I start it as admin I get "Acceso denegado" and nothing else, why?'), 'en')
   // a log with no prose at all, and a too-short reply, fall back to the earlier user words, else English
   assert.equal(detectLanguage('2026-11-01 12:00:01 [INFO] E:237\n2026-11-01 12:00:02 [ERROR] boom'), null)
   assert.equal(detectLanguage('ok ok'), null)
-  assert.match(languageLine(user('[INFO] E:237 | 0 it/s\n[ERROR] x')), /^Reply in English\. No sentence of the user's own/)
-  assert.match(languageLine([...user('O meu rig parou de minerar, não sei porquê.'), { role: 'assistant', content: 'Cola o log.' }, ...user('ok')]), /Reply in Portuguese .*earlier message/)
   // lscpu labels ("per core", "per socket") are not Italian
   assert.equal(detectLanguage('still crashing after the update\nThread(s) per core:  2\nCore(s) per socket:  16\nModel name: Intel Xeon'), 'en')
   // URLs and paths are not prose
   assert.equal(detectLanguage('see https://example.com/es/minero-que-no-funciona-para-todos/ it fails on my box'), 'en')
-  // the caveat line uses the same detector and never reads the log
-  assert.equal(noteLanguage('why so slow?\n2026-11-01 12:00:01 INFO Iniciando el minero, por favor espere, que no funciona'), 'en')
 })
 
 /* ---------- 2. private hints ---------- */
 
-test('hints: private and unverified; the prompt says never cite the checker', () => {
-  const r = mariaRequestBlock(user('it stops after a while\n2026-11-01 10:00:00 INFO rqiner v1.0.11\n2026-11-01 10:00:00 ERROR rqiner_manager] Your miner is outdated! Please update to version >=1.0.12\nFailed to connect to pool'))
-  assert.match(r, /PRIVATE HINTS \(unverified suggestions from an automatic pattern scan/)
-  assert.match(r, /Never mention a checker, a scan, a tool or these hints to the user/)
-  assert.match(r, /drop any hint the log does not support/)
-  assert.doesNotMatch(r, /CHECKER HINTS|a regex checker read/)
-  assert.ok(HARD_RULES.includes('Never cite the checker; verify every hint against the log; drop a hint that the log does not support.'))
-  assert.match(playbookBlock(), /never cite the checker or the hints/)
-  assert.match(checklistBlock(), /Never mention a checker, a scan or the PRIVATE HINTS/)
+test('hints: private and unverified; the prompt says never cite the checker [public part]', () => {
   // the card's "I have no rule" wording never reaches the AI as if it were a finding to repeat
   const h = checkerHints('[ERROR] something odd happened here\n[INFO] waiting')
   assert.match(h, /An error line no pattern explains/)
   assert.doesNotMatch(h, /I have no rule|Send this log to Ask Maria/)
-  assert.equal(requestBlock('Reply in English.'), 'REQUEST (computed by code for this message)\n- Language: Reply in English.')
 })
 
 test('hints: apoolminer-style logs, quoted errors and path errors reach the AI; plain questions do not', async () => {
@@ -107,19 +88,6 @@ test('hints: apoolminer-style logs, quoted errors and path errors reach the AI; 
 
 /* ---------- 3. the setup-page path ---------- */
 
-test('setup path: every start, install or run answer carries it; never another client as the way to mine', () => {
-  const p = playbookBlock()
-  assert.match(p, /Start, install or run on any platform \(Linux, ARM64, Docker, HiveOS, Windows, macOS, a rental\): include the setup page path/)
-  assert.ok(p.includes(POOL.onboardingUrl))
-  assert.match(p, /Never another pool's client install, download or config steps/)
-  assert.ok(HARD_RULES.some(r => /How to start, install or run on any platform \(ARM, Docker, HiveOS, Windows, Mac, Linux\): the answer includes the pool setup page path/.test(r) && /never another pool's client install or configuration steps as the way to mine/.test(r)))
-  assert.match(checklistBlock(), /Setup path:/)
-  // the ARM FAQ leads with this pool's page and gives the other client only as dated facts
-  const arm = FAQ.find(e => e.id === 'arm')!
-  assert.match(arm.must[0]!, /^Here: the setup page/)
-  assert.doesNotMatch(arm.a, /cpuVersion|appsettings/)
-  assert.match(arm.must[1]!, /not the way to mine here/)
-})
 
 /* ---------- 4. the doctor: new classes, positive and negative ---------- */
 
@@ -277,44 +245,16 @@ test('doctor: every injected line is counted; a placeholder token is not a leak;
 
 /* ---------- 5 to 7. knowledge, driver line, staleness ---------- */
 
-test('knowledge: early-rate rule is general, HiveOS repair, datacenter GPUs, QLI version with its date', () => {
-  assert.match(logBlock(), /The first 1 to 2 hours overstate the rate by about 1\.3 to 1\.5x on any rig, own or rented/)
-  assert.match(FAQ.find(e => e.id === 'rate-drops')!.must[0]!, /^On any rig, own or rented/)
-  const e = ecosystemBlock()
-  assert.match(e, /hive-replace --stable --yes/)
-  assert.match(e, /reflash/)
-  assert.match(e, /custom-get <install URL> -f/)
-  assert.match(e, /\[Datacenter GPUs\] General tip, reasoning not measurement: .*tensor cores, TF32 and BF16 do not apply/)
-  // round 6: the QLI line is dated 2 Nov 2026 (3.13.x, 3.13.0 mandatory for Ant); only this pool's miner is never "current"
-  assert.match(e, /3\.13\.x on 2 Nov 2026/)
-  assert.match(e, /"check the setup page for the current version"/)
-  assert.match(epochLogBlock(), /QLI 3\.13\.x on 2 Nov, 3\.13\.0 mandatory for Ant/)
-  assert.ok(ECOSYSTEM.find(f => f.topic === 'QLI versions')!.source.match(/Nov 2026/))
-  assert.match(checklistBlock(), /Never call a version of this pool's miner "current"/)
-})
 
-test('driver line: 570 for RTX 50 is a general NVIDIA requirement, kept out of diagnoses', () => {
-  const step = PROCEDURES['linux-nvidia'].steps.find(s => /570/.test(s.body ?? ''))!
-  assert.match(step.body!, /A general NVIDIA requirement, not a Qubic one: RTX 50 \(Blackwell\) cards need a 570 or newer driver branch/)
-  assert.match(step.body!, /No Qubic or pool driver minimum is known/)
-  assert.match(openCasesBlock(), /The 570-branch line in PROCEDURES is NVIDIA's general requirement for RTX 50 cards, for setup only/)
-  assert.match(checklistBlock(), /In a diagnosis no driver number/)
-})
 
-test('staleness: every RAM, thread or rate figure carries its era', () => {
-  assert.match(checklistBlock(), /Every RAM, thread or rate figure carries its era, and on a log from another year says so/)
-})
 
 /* ---------- 8. the route ---------- */
 
-test('route: model stays configurable, default unchanged, exam4 result noted', () => {
+test('route: model stays configurable, default unchanged, exam4 result noted [public part]', () => {
   const src = readFileSync(new URL('../../../app/api/pool/maria/route.ts', import.meta.url), 'utf8')
   assert.match(src, /process\.env\.MARIA_MODEL \|\| 'claude-haiku-5-5'/)
   assert.match(src, /Sonnet 86\.7%, Haiku 65\.0%/)
   assert.doesNotMatch(src, /CHECKER HINTS|checker's findings as hints/)
-  const p = mariaSystemPrompt(NOW)
-  assert.doesNotMatch(p, /—/)
-  assert.doesNotMatch(p, /CHECKER HINTS/)
 })
 
 test('hints: an injected line is cited by number only; apoolminer "Random Seed" is the epoch seed', () => {

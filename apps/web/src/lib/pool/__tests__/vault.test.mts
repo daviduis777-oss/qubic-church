@@ -3,15 +3,11 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
 
-const { FACTS, GLANCE, SOURCES, isField } = await import('../knowledge.ts')
-const { FAQ, FAQ_THEMES } = await import('../faq.ts')
+const { GLANCE, SOURCES, isField } = await import('../knowledge.ts')
 const { classifyCpu, classifyGpu, pick } = await import('../hardware.ts')
 const { diagnose, RULES, SYMPTOMS } = await import('../doctor.ts')
-const { mariaSystemPrompt, faqBlock, stalenessBlock } = await import('../prompt.ts')
-const { HARD_RULES } = await import('../rules.ts')
 const { buildPlan } = await import('../wizard.ts')
 const { POOL } = await import('../config.ts')
-const { renderMiningCard } = await import('../../../../scripts/pool-card.mts')
 
 const NOW = new Date('2026-11-04T12:00:00Z')
 const MONEY = /\$\s?\d|\bUSD\b|€|\bearn(ing)?s? per\b|\bprofit\b|\bROI\b|payback|revenue|per day you/i
@@ -20,46 +16,9 @@ const first = (log: string) => diagnose(log).findings[0]?.id
 
 /* ---------- corrected facts ---------- */
 
-test('facts: 7x 5080 matched 4x 4090 on sol/h and won only per dollar', () => {
-  const all = FACTS.map(f => f.text).join('\n')
-  assert.doesNotMatch(all, /on both sol\/h and solutions per dollar/)
-  assert.doesNotMatch(all, /10 Oct 2026: 7x RTX 5080/)
-  const f = FACTS.find(x => /7x RTX 5080/.test(x.text) && x.topic === 'Measured')!
-  assert.ok(f.sources.includes('field-e233'))
-  // cost per solution from each rig's own window, not "same raw rate at half the price" (exam round 1, X01)
-  for (const re of [/epoch 233/, /EPYC 7B13/, /PCIe 4\.0 x16/, /3,650 sol\/h in hour 1/, /2,900 in hour 2/, /2,460 sol\/h steady/, /2,570 averaged over 14 hours/, /0\.075 US cents/, /0\.13 for the 4x 4090 rig/, /overstated first hours/, /1\.7x cheaper per solution at 58% of the price/, /not a pure card test/, /predates the E235\/E236 changes/])
-    assert.match(f.text, re)
-  assert.doesNotMatch(f.text, /Same raw rate|1\.9x/)
-})
 
-test('facts: the CPU backbone claim is kept as a dated guide claim, next to our measurements', () => {
-  const guide = FACTS.find(f => f.sources.includes('cointribune') && /backbone/.test(f.text))!
-  assert.match(guide.text, /^Cointribune \(Sep 2026\)/)
-  assert.match(guide.text, /CPU-only and home builds/)
-  const ours = FACTS.find(f => f.topic === 'CPU' && /measured otherwise/.test(f.text))!
-  for (const re of [/7 to 8%/, /37% \(epoch 229\)/, /17% \(epoch 233\)/, /79%/, /found 0/, /feeds and verifies/]) assert.match(ours.text, re)
-  assert.ok(FACTS.some(f => /^Which applies when/.test(f.text)))
-})
 
-test('facts: AMD is unmeasured, not a flat no; staleness carries the later changes', () => {
-  const amd = FACTS.find(f => /AMD Radeon/.test(f.text))!
-  assert.match(amd.text, /^AMD Radeon: no measurements from us\. Support depends on the pool's miner/)
-  assert.match(amd.text, /NVIDIA\/CUDA is the proven path/)
-  assert.doesNotMatch(amd.text, /not supported/)
-  assert.ok(!GLANCE.some(g => /AMD/.test(g.pick) && /Not for this pool/.test(g.part)))
-  const st = FACTS.find(f => f.topic === 'Staleness')!
-  for (const re of [/epochs 229 and 233/, /jetski pool and its miner \(not recommended/, /epoch 235 changed the threshold and task file/, /epoch 236 moved to 32-neuron/, /epoch 241/]) assert.match(st.text, re)
-  assert.ok(FACTS.some(f => /POPULATION was set to 64, about 3 GB per colony/.test(f.text)))
-  assert.ok(FACTS.some(f => /computor seats/.test(f.text) && /Miners reported losses in some epochs/.test(f.text)))
-})
 
-test('facts: every field fact names its epoch, and every source has a date', () => {
-  for (const f of FACTS) {
-    for (const id of f.sources) assert.ok(SOURCES[id].date.length > 0, id)
-    if (f.sources.some(isField) && f.topic !== 'Staleness') assert.match(f.text, /epoch \d{3}|epochs \d{3}|\b20\d\d\b/i, f.text.slice(0, 60))
-  }
-  assert.doesNotMatch(JSON.stringify(FACTS), /—/)
-})
 
 test('hardware: Xeon E5 is a skip for CPU mining and works as a GPU host', () => {
   const c = classifyCpu('Intel(R) Xeon(R) CPU E5-2696 v3 @ 2.30GHz')
@@ -88,13 +47,6 @@ test('hardware: CPU and GPU mode advice follows the card count', () => {
   assert.match(JSON.stringify(pick({ mode: 'rent', scale: 'mid' }).cards), /37% \(epoch 229\) to about 17% \(epoch 233\)/)
 })
 
-test('AMD wording is the same everywhere', () => {
-  assert.ok(HARD_RULES.some(r => /AMD Radeon GPUs: we have no measurements, and support depends on the pool's miner/.test(r)))
-  assert.ok(!HARD_RULES.some(r => /not supported/.test(r)))
-  const w = buildPlan({ os: 'linux', hw: 'amd', avx: 'avx512', wallet: 'A'.repeat(60), worker: 'QC.a', dedicated: true }).warnings.join(' ')
-  assert.match(w, /no AMD Radeon measurements/)
-  assert.doesNotMatch(w, /not supported/)
-})
 
 /* ---------- doctor: rules from our runs ---------- */
 
@@ -171,71 +123,10 @@ test('doctor: every rule has a fix and a source, no money words, no em dash', ()
 
 /* ---------- the miner FAQ ---------- */
 
-test('faq: every theme has entries, ids are unique, each entry is complete', () => {
-  const themes = Object.keys(FAQ_THEMES)
-  for (const t of ['profitability', 'hardware', 'cpu-gpu', 'ram', 'breakage', 'missing', 'payout', 'algo', 'amd', 'arm-mac', 'rentals', 'trust'])
-    assert.ok(themes.includes(t) && FAQ.some(e => e.theme === t), t)
-  assert.equal(new Set(FAQ.map(e => e.id)).size, FAQ.length)
-  for (const e of FAQ) {
-    assert.ok(themes.includes(e.theme), e.id)
-    assert.ok(e.q.split(/\s+/).length <= 12, `${e.id}: question too long`)
-    assert.ok(e.a.length > 40 && e.a.length < 520, `${e.id}: answer ${e.a.length} chars`)
-    assert.ok(e.must.length >= 2 && e.must.length <= 4, `${e.id}: ${e.must.length} must-say facts`)
-    assert.ok(e.asOf.length > 0, e.id)
-    assert.ok(e.sources.length > 0, e.id)
-    for (const id of e.sources) assert.ok(SOURCES[id]?.date, `${e.id}: ${id}`)
-  }
-})
 
-test('faq: no income figures, quotes under 15 words, jetski only as not recommended, no partner name', () => {
-  const all = JSON.stringify(FAQ)
-  assert.doesNotMatch(all, MONEY)
-  assert.doesNotMatch(all, /—/)
-  assert.doesNotMatch(all, new RegExp(`\\b${POOL.partner.name}\\b`))
-  for (const e of FAQ) {
-    // quoted text inside an answer (miner or CfB quotes, log lines) stays short
-    for (const m of e.a.matchAll(/"([^"]+)"/g)) assert.ok(m[1]!.split(/\s+/).length < 15, `${e.id}: ${m[1]}`)
-    for (const m of e.a.matchAll(/jetski/gi)) assert.match(e.a.slice(m.index!, m.index! + 40), /not recommended|endpoints/, e.id)
-    assert.doesNotMatch(e.a, /\brecommend(ed)? jetski\b/i)
-  }
-  // losses only as a plain statement
-  assert.ok(FAQ.filter(e => /loss/i.test(e.a)).every(e => /Miners reported losses in some epochs/.test(e.a)))
-})
 
-test('faq: profitability explains the value of a solution without a figure', () => {
-  const p = FAQ.filter(e => e.theme === 'profitability').map(e => e.a).join(' ')
-  for (const re of [/fixed reward, divided by all solutions/, /More miners/, /each worth less/, /noise until about 80 to 90% of the epoch/, /computor seats/, /I do not project income/, /I give no income figures/])
-    assert.match(p, re)
-})
 
-test('faq: AMD and the staleness of our data', () => {
-  const amd = FAQ.find(e => e.theme === 'amd')!
-  assert.match(amd.a, /^No measurements from us\. Support depends on the pool's miner/)
-  assert.match(amd.a, /NVIDIA\/CUDA is the proven path/)
-  assert.ok(FAQ.some(e => /epoch 236 moved to 32 neurons/.test(e.a)))
-  assert.ok(FAQ.some(e => e.id === 'accuracy' && /All our data predates it/.test(e.a)))
-})
 
 /* ---------- prompt and card ---------- */
 
-test('prompt: STALENESS and MINER FAQ are in the cached block, compact and clean', () => {
-  const p = mariaSystemPrompt(NOW)
-  assert.match(p, /\nSTALENESS\n- All our measurements are from epochs 229 and 233/)
-  assert.match(p, /No rig measurements of ours exist after epoch 233/)
-  assert.match(p, /Never compare sol\/h across eras/)
-  assert.match(p, /\nMINER FAQ \(/)
-  for (const e of FAQ) assert.ok(p.includes(`"${e.q}"`), e.id)
-  assert.equal(p.match(/All our measurements are from epochs 229 and 233/g)!.length, 1) // not repeated under HARDWARE
-  assert.ok(faqBlock().length < 26_500, `faq block is ${faqBlock().length} chars`)
-  assert.ok(stalenessBlock().length < 1_000)
-  assert.doesNotMatch(p, /—/)
-  assert.equal(p.match(/\bCODED\b/g)!.length, 1) // only in the "who runs it" line
-  assert.doesNotMatch(faqBlock() + stalenessBlock(), MONEY)
-})
 
-test('discord card: carries the FAQ and the staleness entry', () => {
-  const md = renderMiningCard('abc1234')
-  assert.match(md, /^## mining-\d{3} · Свежесть наших замеров$/m)
-  for (const label of Object.values(FAQ_THEMES)) assert.match(md, new RegExp(`^## mining-\\d{3} · Вопросы майнеров: ${label}$`, 'm'))
-  for (const e of FAQ) assert.ok(md.includes(e.a), e.id)
-})

@@ -30,8 +30,7 @@ const { createStore, memoryBackend, dedupeHash, parseRow, listKey } =
   await import('../store.ts')
 const { pick } = await import('../hardware.ts')
 const { diagnose } = await import('../doctor.ts')
-const { FACTS, FIELD_RUNS } = await import('../knowledge.ts')
-const { mariaSystemPrompt, mariaSystemStatic } = await import('../prompt.ts')
+const { FIELD_RUNS } = await import('../knowledge.ts')
 const { MEASURE } = await import('../config.ts')
 const { epochAt, epochStart } = await import('../epoch.ts')
 
@@ -220,23 +219,6 @@ test('keys: per card for GPU-only, per rig for CPU-only and GPU+CPU', () => {
 
 /* ---------------- field seeds ---------------- */
 
-test('field seeds match the measured facts in knowledge.ts', () => {
-  assert.equal(FIELD_SAMPLES.length, FIELD_RUNS.length)
-  const row = (gpu: string) => {
-    const s = FIELD_SAMPLES.find(x => x.hw.gpu === gpu)!
-    return [s.hw.gpuCount, s.result.solPerHour, s.result.epoch, s.hw.cpu, s.hw.mode, epochAt(new Date(s.at)).epoch]
-  }
-  assert.deepEqual(row('RTX 4090'), [4, 2440, 233, 'Xeon E5-2696 v3', 'gpu', 233])
-  // QC-C69: the steady rate after hour 2, epoch 233 (2 to 3 Oct 2026), not epoch 234
-  assert.deepEqual(row('RTX 5080'), [7, 2460, 233, 'EPYC 7B13', 'gpu', 233])
-  // QC-C04, epoch 229: the only E229 run with a measured sol/h over a long window
-  assert.deepEqual(row('RTX 5070 Ti'), [2, 8.9, 229, 'EPYC 7B12', 'gpu', 229])
-  assert.ok(FACTS.some(f => /2,440 sol\/h/.test(f.text) && /epoch 233/.test(f.text) && /about 4 hours/.test(f.text)))
-  assert.ok(FACTS.some(f => /2,460 sol\/h steady/.test(f.text) && /2,570 averaged over 14 hours/.test(f.text) && /epoch 233/.test(f.text)))
-  assert.ok(FACTS.some(f => /8\.9 sol\/h over 13\.6 hours/.test(f.text) && /epoch 229/.test(f.text)))
-  assert.ok(FIELD_SAMPLES.every(s => s.source === 'field'))
-  assert.ok(FIELD_RUNS.every(r => r.windowMin && r.windowMin >= MEASURE.warmupMin))
-})
 
 /* ---------------- aggregation ---------------- */
 
@@ -877,29 +859,6 @@ test('stats adapter: pool rows flow into the aggregates as pool-sourced', async 
 
 /* ---------------- prompt and page ---------------- */
 
-test('prompt: MEASURED table with n and epoch, the instruction, and the field rows by default', () => {
-  const p = mariaSystemPrompt(NOW)
-  assert.match(p, /MEASURED \(our miners' results/)
-  assert.match(p, /Prefer these numbers over guide figures when n is 5 or more/)
-  assert.match(p, /Always state n and the epoch/)
-  assert.match(
-    p,
-    /- RTX 4090: 610 sol\/h per card, 2,440 per rig; n 1, epoch 233 \[our own run, few data, older\]/
-  )
-  assert.match(
-    p,
-    /- RTX 5080: 351 sol\/h per card, 2,460 per rig; n 1, epoch 233 \[our own run, few data, older\]/
-  )
-  assert.match(
-    p,
-    /- RTX 5070 Ti: 4\.5 sol\/h per card, 8\.9 per rig; n 1, epoch 229 \[our own run, few data, older\]/
-  )
-  assert.doesNotMatch(p, /—/)
-  // the static block only depends on the snapshot, so it is stable for the cache
-  const snap = aggregate(FIELD_SAMPLES, 238, 0)
-  assert.equal(mariaSystemStatic(snap), mariaSystemStatic(snap))
-  assert.match(mariaSystemStatic(aggregate([], 238, 0)), /No measured rows yet/)
-})
 
 test('page rows: per card first by median, then per rig; no income anywhere', () => {
   const sum = aggregate(
