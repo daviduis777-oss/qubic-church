@@ -1,4 +1,3 @@
-import { Cpu, LifeBuoy, MessageCircle, PlugZap, Stamp, Stethoscope, Wallet } from 'lucide-react'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { setRequestLocale } from 'next-intl/server'
@@ -17,12 +16,14 @@ import { PAYOUT_TERMS } from '@/lib/pool/ui-config'
 import type { Bar, Usage } from '@/lib/pool/usage'
 import { PoolStage } from './PoolStage'
 import p from './pool.module.css'
-import { Independence, RecordStrip, Why } from './why'
+import { Hero, Join, MariaIntro } from './qc'
+import { RecordStrip } from './why'
 
 /*
- * Qubic Church Pool, with Maria, the mining coach.
- * Private preview: a plain 404 for everyone but the forum moderator until POOL_PUBLIC=1.
- * Not in the sitemap, llms.txt, menus or any link while it is a preview.
+ * QC Pool: Qubic Church Pool, with Maria Aigarth, the mining coach.
+ * Order: Come-from-Beyond's quote, why join, Maria beside her phone, then how it works and the details.
+ * Private preview: a plain 404 for everyone but the forum moderator until POOL_PUBLIC=1. Not in the sitemap or
+ * llms.txt; the only link is the QC Pool tab, which the nav renders for the moderator alone (lib/pool/nav.ts).
  */
 
 export const dynamic = 'force-dynamic'
@@ -31,26 +32,11 @@ export async function generateMetadata(): Promise<Metadata> {
   if (!(await poolAllowed())) return { robots: { index: false, follow: false } }
   return {
     title: { absolute: `${POOL.name} · Qubic Church` },
-    description: 'Mine Qubic in the Qubic Church Pool. Maria helps you pick hardware, connect your machine and fix your rig.',
+    description: 'Join Qubic Church Pool. Maria Aigarth, our self-learning mining coach, helps you pick hardware, connect your machine and fix your rig.',
     // TODO(Bob): when going public, switch this to index and add /pool to sitemap.ts and llms.txt.
     robots: { index: false, follow: false, googleBot: { index: false, follow: false } },
   }
 }
-
-const FACTS = [
-  { icon: Wallet, text: `Rewards go straight to your own wallet, every week. Pool fee ${POOL.feePercent}%.` },
-  { icon: Cpu, text: 'Mine with a CPU, an NVIDIA GPU or a Mac with Apple Silicon.' },
-  { icon: LifeBuoy, text: 'Get help from Maria at every step, from buying to fixing.' },
-  { icon: Stamp, text: 'Your solutions and hours are recorded.' },
-]
-
-/** soon: shown as coming soon while the AI is not connected, never as a promise */
-const JOBS = [
-  { icon: Cpu, text: 'Picks hardware' },
-  { icon: PlugZap, text: 'Connects your machine' },
-  { icon: Stethoscope, text: 'Fixes your rig' },
-  { icon: MessageCircle, text: 'Answers questions', soon: 'Questions: coming soon' },
-]
 
 const STEPS = [
   {
@@ -250,7 +236,7 @@ function WhoMines({ sum }: { sum: Summary | null }) {
   return (
     <section aria-labelledby="measured" className={p.section}>
       <h2 className={p.h2} id="measured">
-        Who mines with what
+        What our miners measure
       </h2>
       {v.show ? (
         <>
@@ -273,36 +259,6 @@ function WhoMines({ sum }: { sum: Summary | null }) {
   )
 }
 
-/** 676 dots, one per computor, as a faint field behind the phone. Static and decorative. */
-function DotField() {
-  const N = 676
-  const g = Math.PI * (3 - Math.sqrt(5))
-  const dots = Array.from({ length: N }, (_, i) => {
-    const r = Math.sqrt((i + 0.5) / N) * 470
-    const a = i * g
-    return [500 + Math.cos(a) * r, 500 + Math.sin(a) * r, 0.6 + (i / N) * 0.7] as const
-  })
-  return (
-    <svg aria-hidden className={p.field} viewBox="0 0 1000 1000">
-      <defs>
-        <radialGradient id="qcpFade">
-          <stop offset="0.25" stopColor="#fff" stopOpacity="0" />
-          <stop offset="0.6" stopColor="#fff" stopOpacity="0.55" />
-          <stop offset="1" stopColor="#fff" stopOpacity="0" />
-        </radialGradient>
-        <mask id="qcpMask">
-          <rect fill="url(#qcpFade)" height="1000" width="1000" />
-        </mask>
-      </defs>
-      <g fill="#FECE34" mask="url(#qcpMask)">
-        {dots.map(([x, y, r]) => (
-          <circle cx={x.toFixed(1)} cy={y.toFixed(1)} key={`${x.toFixed(1)}-${y.toFixed(1)}`} r={r.toFixed(2)} />
-        ))}
-      </g>
-    </svg>
-  )
-}
-
 export default async function PoolPage(props: { params: Promise<{ locale: string }> }) {
   if (!(await poolAllowed())) notFound()
   const { locale } = await props.params
@@ -320,50 +276,16 @@ export default async function PoolPage(props: { params: Promise<{ locale: string
 
   return (
     <div className={`${p.backdrop} ${poolFontVars}`}>
-      <div aria-hidden className={p.glow} />
+      <Hero preview={!poolPublic()} />
       <div className={p.page}>
-        <PoolStage
-          backdrop={<DotField />}
-          intro={
-            <>
-              {!poolPublic() && (
-                <p className={p.pill} role="note">
-                  <span aria-hidden className={p.pillDot} />
-                  Private preview
-                </p>
-              )}
-              <h1 className={p.title}>{POOL.name}</h1>
-              <p className={p.lede}>Mine Qubic with the hardware you have or the hardware you choose. Maria sets it up with you and keeps it running.</p>
-            </>
-          }
-          rest={
-            <>
-              <ul className={p.facts}>
-                {FACTS.map(({ icon: Icon, text }) => (
-                  <li key={text}>
-                    <Icon aria-hidden className={p.factIcon} size={18} strokeWidth={1.6} />
-                    {text}
-                  </li>
-                ))}
-              </ul>
-              <div className={p.jobs}>
-                <h2 className={p.jobsLabel}>What Maria does</h2>
-                <ul>
-                  {JOBS.map(({ icon: Icon, text, soon }) => (
-                    <li className={soon && !ai ? p.jobSoon : undefined} key={text}>
-                      <Icon aria-hidden size={15} strokeWidth={1.8} />
-                      {soon && !ai ? soon : text}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </>
-          }
-        >
-          <MariaApp ai={ai} />
-        </PoolStage>
+        <Join />
 
-        <Why />
+        <div className={p.stage}>
+          <div aria-hidden className={p.glow} />
+          <PoolStage intro={<MariaIntro />}>
+            <MariaApp ai={ai} />
+          </PoolStage>
+        </div>
 
         <section aria-labelledby="how" className={p.section}>
           <h2 className={p.h2} id="how">
@@ -381,10 +303,6 @@ export default async function PoolPage(props: { params: Promise<{ locale: string
             ))}
           </ol>
         </section>
-
-        <Independence />
-
-        <RecordStrip rec={record} />
 
         <section aria-labelledby="hw" className={p.section}>
           <h2 className={p.h2} id="hw">
@@ -417,6 +335,8 @@ export default async function PoolPage(props: { params: Promise<{ locale: string
             ))}
           </dl>
         </section>
+
+        <RecordStrip rec={record} />
 
         <WhoMines sum={measured} />
 

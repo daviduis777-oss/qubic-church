@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from '@/navigation'
+import { NO_TAB, POOL_TAB, type PoolTab, probePoolTab } from '@/lib/pool/nav'
 
 const LINKS = [
   ['/bpp9000', 'BPP-9000'],
@@ -22,6 +23,18 @@ export function GlobalNavTrigger() {
   const pathname = usePathname()
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
+  // The hidden QC Pool tab: asked once per page load; rendered only after the gate says yes, never hidden with CSS.
+  const [pool, setPool] = useState<PoolTab>(NO_TAB)
+
+  useEffect(() => {
+    let live = true
+    probePoolTab().then(t => {
+      if (live) setPool(t)
+    })
+    return () => {
+      live = false
+    }
+  }, [])
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20)
@@ -82,6 +95,19 @@ export function GlobalNavTrigger() {
                 {label}
               </Link>
             ))}
+            {pool.show && (
+              <Link
+                aria-current={active(POOL_TAB.href) ? 'page' : undefined}
+                className={`inline-flex h-10 items-center gap-1.5 whitespace-nowrap px-1.5 text-[13px] font-medium transition-colors hover:text-foreground xl:px-3 xl:text-sm ${
+                  active(POOL_TAB.href) ? 'text-foreground' : 'text-fg-2'
+                }`}
+                href={POOL_TAB.href}
+                title={pool.preview ? 'Private preview: only you see this tab' : undefined}
+              >
+                {POOL_TAB.label}
+                {pool.preview && <span aria-label="private preview" className="inline-block h-1.5 w-1.5 rounded-full border border-gold" role="img" />}
+              </Link>
+            )}
             <Link
               aria-current={active('/account') ? 'page' : undefined}
               aria-label="Account: one key, no personal data"
@@ -133,6 +159,12 @@ export function GlobalNavTrigger() {
                 {label}
               </Link>
             ))}
+            {pool.show && (
+              <Link className="flex h-12 items-center gap-2 border-b border-border/60 text-lg text-foreground" href={POOL_TAB.href}>
+                {POOL_TAB.label}
+                {pool.preview && <span className="text-xs font-medium text-fg-2">Private preview</span>}
+              </Link>
+            )}
             <Link className="flex h-12 items-center gap-2 border-b border-border/60 text-lg text-foreground" href="/account">
               <svg aria-hidden fill="none" height="18" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width="18"><circle cx="7.5" cy="15.5" r="4.5" /><path d="M10.7 12.3L20 3M16 7l3 3M14 9l2 2" /></svg>
               Account

@@ -1,4 +1,3 @@
-import type { CSSProperties } from 'react'
 import { Seal } from '@/components/pool/maria/seal'
 import {
   entryParts,
@@ -6,122 +5,13 @@ import {
   GENESIS,
   type PoolRecord,
 } from '@/lib/pool/ledger-view'
-import {
-  ANSWER,
-  ASK,
-  ASK_SPAN,
-  CFB,
-  DECENTRAL,
-  MACHINE,
-  RECORD,
-} from '@/lib/pool/why'
+import { RECORD } from '@/lib/pool/why'
 import p from './pool.module.css'
 
 /*
- * The why and the hook, below the hero: Come-from-Beyond's words, one factual block on decentralization,
- * and the record. Server components; the copy lives in lib/pool/why.ts so tests can hold it verbatim.
+ * The record strip, lower on the page. Server component; the copy lives in lib/pool/why.ts so tests can
+ * hold it verbatim. The hero quote and the decentralization facts are in qc.tsx.
  */
-
-/** "ask miners", again and again, as a quiet column of dated repeats; then the machine quote as the anchor. */
-export function Why() {
-  return (
-    <section aria-labelledby="why" className={`${p.section} ${p.why}`}>
-      <h2 className={p.srOnly} id="why">
-        Why this pool
-      </h2>
-      <figure className={p.ask}>
-        <ol
-          aria-label={`“ask miners”, ${CFB.who}'s answer, ${ASK.length} times, ${ASK_SPAN}`}
-          className={p.askList}
-        >
-          {ASK.map((a, i) => (
-            <li
-              key={`${a.iso}-${i}`}
-              style={{ '--i': i, '--n': ASK.length } as CSSProperties}
-            >
-              <q className={p.askQ}>{a.text}</q>
-              <time className={p.askDate} dateTime={a.iso}>
-                {a.date}
-              </time>
-            </li>
-          ))}
-        </ol>
-        <figcaption className={p.askCap}>
-          <span className={p.askCapName}>{CFB.who}</span>
-          <span>
-            {CFB.where}, {ASK_SPAN}
-          </span>
-        </figcaption>
-      </figure>
-
-      <div className={p.anchorCol}>
-        <figure className={p.anchor}>
-          <blockquote className={p.anchorQ}>
-            <p>
-              <span aria-hidden className={p.qOpen}>
-                “
-              </span>
-              {MACHINE.text}
-              <span aria-hidden>”</span>
-            </p>
-          </blockquote>
-          <figcaption className={p.sign}>
-            <span className={p.signName}>{MACHINE.who}</span>
-            <span className={p.signMeta}>
-              {MACHINE.where}, <time dateTime="2026-07-20">{MACHINE.date}</time>
-            </span>
-          </figcaption>
-        </figure>
-        <div className={p.answer}>
-          <p className={p.answerLine}>
-            <span>Miners ask.</span>{' '}
-            <span className={p.answerGold}>Maria answers.</span>
-          </p>
-          <p className={p.answerSub}>{ANSWER.sub}</p>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-/** One short, factual block: how few pools there are, and what one more independent pool does. */
-export function Independence() {
-  const c = DECENTRAL.count
-  return (
-    <section aria-labelledby="indep" className={`${p.section} ${p.indep}`}>
-      <div className={p.indepText}>
-        <h2 className={p.h2} id="indep">
-          {DECENTRAL.title}
-        </h2>
-        <p className={p.indepBody}>{DECENTRAL.why}</p>
-        <p className={p.indepLine}>{DECENTRAL.line}</p>
-      </div>
-      <figure className={p.census}>
-        <div className={p.censusNums}>
-          <div>
-            <span className={p.censusN}>{c.public}</span>
-            <span className={p.censusL}>public</span>
-          </div>
-          <span aria-hidden className={p.censusPlus}>
-            +
-          </span>
-          <div>
-            <span className={p.censusN}>{c.independent}</span>
-            <span className={p.censusL}>independent</span>
-          </div>
-        </div>
-        <p className={p.censusGone}>
-          <span aria-hidden className={p.censusRing} />
-          {DECENTRAL.inactive}
-        </p>
-        <figcaption className={p.censusCap}>
-          “{c.quote}”, {c.who}, {c.where},{' '}
-          <time dateTime="2026-11-02">{c.date}</time>
-        </figcaption>
-      </figure>
-    </section>
-  )
-}
 
 const int = (n: number) => Math.round(n).toLocaleString('en-US')
 

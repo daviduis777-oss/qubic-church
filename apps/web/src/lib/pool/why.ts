@@ -6,40 +6,12 @@
 
 export const CFB = { who: 'Come-from-Beyond', where: 'Qubic Discord' } as const
 
-/** The anchor. No closing full stop: that is how he wrote it. */
+/** The hero of the pool page, shown once. No closing full stop: that is how he wrote it. */
 export const MACHINE = {
   text: 'All depends on miners. I constructed a machine, throw computing power into it and it will do anything',
   ...CFB,
-  date: '20 Jul 2026',
-} as const
-
-/** His answer, again and again, lowercase as he writes it. Two on 31 Aug and two on 14 Oct. All 2026. */
-export const ASK: {
-  text: 'ask miners' | 'ask miner devs'
-  date: string
-  iso: string
-}[] = [
-  { text: 'ask miners', date: '26 Aug', iso: '2026-08-26' },
-  { text: 'ask miners', date: '31 Aug', iso: '2026-08-31' },
-  { text: 'ask miners', date: '31 Aug', iso: '2026-08-31' },
-  { text: 'ask miners', date: '2 Sep', iso: '2026-09-02' },
-  { text: 'ask miners', date: '7 Sep', iso: '2026-09-07' },
-  { text: 'ask miners', date: '9 Sep', iso: '2026-09-09' },
-  { text: 'ask miners', date: '14 Sep', iso: '2026-09-14' },
-  { text: 'ask miners', date: '20 Sep', iso: '2026-09-20' },
-  { text: 'ask miner devs', date: '7 Oct', iso: '2026-10-07' },
-  { text: 'ask miner devs', date: '10 Oct', iso: '2026-10-10' },
-  { text: 'ask miners', date: '14 Oct', iso: '2026-10-14' },
-  { text: 'ask miners', date: '14 Oct', iso: '2026-10-14' },
-  { text: 'ask miners', date: '22 Oct', iso: '2026-10-22' },
-]
-
-export const ASK_SPAN = 'Aug to Oct 2026'
-
-/** Our answer: plain, no em dashes, no promise beyond what the pool does today. */
-export const ANSWER = {
-  line: 'Miners ask. Maria answers.',
-  sub: 'Qubic Church Pool is built around what miners ask for: help choosing hardware, a clean setup, a rig that keeps running, and a record of every contribution.',
+  date: '20 July 2026',
+  iso: '2026-07-20',
 } as const
 
 /** Facts only; no other pool is named except one that is no longer active. */
