@@ -14,8 +14,9 @@ const TOOLS_HINT = 'Pick hardware, Connect my machine and Fix my rig still work:
 const headers = { 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex, nofollow' }
 
 /**
- * The model, configurable with MARIA_MODEL. Exam 4 (blind grade, 30 fresh items, 5 Nov 2026) on the same prompt:
- * Sonnet 86.7%, Haiku 65.0%. The default stays Haiku until Bob decides.
+ * The model, configurable with MARIA_MODEL. Blind grades, 30 fresh items each, 5 Nov 2026, same prompt per exam:
+ * exam 4 Sonnet 86.7%, Haiku 65.0%; exam 5 Sonnet 80.0%, Haiku 70.0%. Both favour Sonnet; the default stays Haiku
+ * until Bob decides.
  */
 const model = () => process.env.MARIA_MODEL || 'claude-haiku-5-5'
 const fail = (status: number, reason: string, message: string) => NextResponse.json({ reason, message }, { status, headers })

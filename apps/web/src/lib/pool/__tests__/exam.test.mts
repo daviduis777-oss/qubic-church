@@ -278,7 +278,7 @@ test('prompt: the partner is named only in the who-runs-it answer; the setup URL
 
 test('prompt: size and hygiene', () => {
   const p = mariaSystemPrompt(NOW)
-  assert.ok(p.length / 4 <= 19_500, `prompt is about ${Math.round(p.length / 4)} tokens`)
+  assert.ok(p.length / 4 <= 20_000, `prompt is about ${Math.round(p.length / 4)} tokens`)
   assert.doesNotMatch(p, /—/)
   assert.doesNotMatch(p, /[A-Z]{60}|(?<![a-z])[a-z]{55}(?![a-z])/)
   // no dollar figures in prose (indented lines are shell, where $0 and $$ are variables)

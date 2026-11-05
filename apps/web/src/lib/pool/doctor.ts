@@ -13,7 +13,7 @@
 import { RIG } from './config.ts'
 import { classifyCpu } from './hardware.ts'
 import type { AnySource } from './practice.ts'
-import { containsSeed } from './redact.ts'
+import { containsSeed, SEED_PATTERN } from './redact.ts'
 
 export type Severity = 'fault' | 'check' | 'fine'
 /** 0 safety (secrets, injected text), 1 root cause, 2 generic symptom, 3 context. Lower tiers lead. */
@@ -21,6 +21,8 @@ export type Tier = 0 | 1 | 2 | 3
 /**
  * sources: where the fix comes from (practice.ts / knowledge.ts ids). Rules without it come from our mining guide.
  * logOnly: match only lines that look like miner output, never the user's own sentences.
+ * prose: a described symptom or setup: may also match the user's own sentences when the paste holds a log
+ *   (other rules then read only the pasted lines). A finding matched on a sentence never quotes it.
  * when / unless: the whole paste must (not) match. drops: findings this one makes moot.
  * skipLine: lines this rule never reads (the epoch SEED line for the wallet-seed rule).
  * read: turn the matched line into a specific reading (for counters such as SOLS a/b (R:c)); null = not a hit,
@@ -37,6 +39,7 @@ export type Rule = {
   test: RegExp
   sources?: AnySource[]
   logOnly?: boolean
+  prose?: boolean
   when?: RegExp | ((log: string) => boolean)
   unless?: RegExp | ((log: string) => boolean)
   skipLine?: RegExp
@@ -58,6 +61,77 @@ const PARSED = /(?!)/
 export const LOG_LINE =
   /^\s*(?:\d{4}-\d\d-\d\d|\d\d-\d\d\s+\d\d?:\d\d|\d{1,2}[./]\d{1,2}[./]\d{2,4}\b|\d{1,2}:\d\d|(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)\s+\w{3}\s+\d|[[|{<"#]|E:\s?\d|(?:current |average |total )?hashrate\b|iterations?\b|(?:SOLS|SHARES|INFO|WARN|WARNING|ERROR|ERR|DEBUG|TRACE|FATAL)\b|(?:CUDA|AVX2|AVX512|CPU|GPU)\s*[:\]|]|[\w.-]+@[\w.-]+:|[A-Za-z][\w.-]{0,24}:\s)/
 
+/** Miner and system output LOG_LINE misses: "05-21 13:34:13 INFO", NVRM lines, .NET and Rust frames, exception
+ * names, path-prefixed errors ("./rqiner: /lib/...", "run.sh: line 1:"), call chains ("-> Worker.Run"). */
+export const MORE_LOG =
+  /^\s*(?:\d\d-\d\d\s+\d\d?:\d\d|\d{1,2}:\d\d:\d\d|NVRM:|Trainer:|at [\w.<>`[\]]+\(|---\s?(?:>|End of)|System\.[\w.]+(?:Exception|Error)\b|[\w.]+Exception:|thread '[^']*' panicked|note: run with|called `|custom exited|GPUassert|\$'\\E|bash:|sh:|PS [A-Za-z]:|\.{0,2}\/[\w./+-]+:\s|[\w.-]+\.(?:sh|exe|bat|py|so(?:\.\d+)*):\s|(?:Error|ERROR|error|Fatal|fatal|FATAL|panic|Warning|WARNING)\b[^\n:]{0,40}:\s|[\w-]{2,12}\s+(?:ERROR|WARN(?:ING)?|INFO|FATAL|DEBUG)\b|[\w.-]+\.(?:exe|sh|bat)\s+(?:not |is |has |was |exited|crashed|stopped|failed)|-+>\s*\w|[A-Z]\w+(?:\.[A-Z]\w+)+\s*(?:\(.*)?$|Traceback \(|Linux \S+ \d+\.\d+|[^\n]*\bELF \d\d-bit\b|[^\n]*\binterpreter \/\S+)/
+/** A config line: braces, brackets, "key": value, key = value, an HTML or XML tag. */
+export const CONFIG_LINE = /^\s*(?:[{}[\],]|"[^"\n]*"\s*[:=,]|[\w.-]+\s*=\s*\S|<\/?[\w!-]+[^>]*>?)/
+/** A shell command the user pasted (apt, echo, wget, ./miner ...), not a sentence. */
+const COMMAND_LINE =
+  /^\s*(?:sudo\s+)?(?:apt(?:-get)?\s+(?:update|upgrade|install|remove|purge|full-upgrade|dist-upgrade)\b|echo\s+["'$\w-]|wget\s+\S|curl\s+-|chmod\s+[+\d]|chown\s|cd\s+[~/.\w]|bash\s+\S+\.sh\b|docker\s+(?:run|pull|ps|logs|exec|compose|start|stop)\b|nvidia-smi(?:\s+-|\s*$)|hive-replace\b|systemctl\s+\w|journalctl\s|dpkg\s+-|tar\s+-|unzip\s|nohup\s|export\s+[A-Z_]+=|sed\s+-|lscpu\s*$|ldd\s+-|uname\s+-|sysctl\s+-|miner\s+(?:start|stop|restart|log)\b|git\s+(?:clone|pull)\b)|^\s*\.\/[\w.-]+(?:\s|$)/
+/** A shell prompt line: what follows it, up to a blank line, is that command's output. */
+const SHELL_PROMPT = /^\s*(?:\(\w[\w.-]*\)\s+)?[\w.-]+@[\w.-]+:[^\n]*[$#]\s|^\s*[A-Za-z]:\\[^\n<>|"]*>|^\s*PS [A-Za-z]:\\[^\n]*>|^\s*\$ \S/
+/**
+ * Messages the OS or a program prints in natural language, in any locale: the Windows "pause" prompt, "file not
+ * found", "access denied", "not a command", Ctrl+C, segfaults. They are output even when they read like a sentence,
+ * so they never decide the reply language and never count as the user's prose.
+ */
+export const OS_OUTPUT =
+  /press any key|нажмите любую клавишу|按任意键|按任意鍵|beliebige taste|appuyez sur une touche|presione una tecla|pulse cualquier tecla|pressione qualquer tecla|premere un tasto|bir tuşa basın|naciśnij dowolny klawisz|任意のキーを押|아무 키나 누르|系统找不到|系統找不到|找不到指定的|拒绝访问|拒絕存取|不是内部或外部命令|不是內部或外部命令|cannot find the (?:file|path) specified|не удается найти указанн|отказано в доступе|не является внутренней или внешней|access is denied|is not recognized as an internal or external command|zugriff verweigert|das system kann die angegebene|le système ne peut pas trouver|el sistema no puede encontrar|o sistema não pode encontrar|acceso denegado|acesso negado|accès refusé|accesso negato|terminate batch job|завершить выполнение пакетного файла|终止批处理操作|segmentation fault|ошибка сегментирования|speicherzugriffsfehler|недопустимая инструкция|非法指令|段错误|\(core dumped\)|образ памяти сброшен|\s\.\s\.\s\.\s*$/i
+
+/**
+ * A line straight under a pasted one, with no blank line between, that reads like output rather than the user
+ * speaking: no question mark and no first-person word ("connection refused by host" under a rate line). Not used for
+ * the reply language, where the user may write in any language under the log.
+ */
+const OUTPUT_TAIL = (l: string) => !/\?\s*$/.test(l) && !/\b(?:i|i'm|i've|my|me|we|our|us|you|your|please|help|why|how|what)\b/i.test(l) && /\p{L}{3,}/u.test(l)
+
+/** One line of pasted output: a miner log line, a stack frame, a config or HTML line, a command, an OS message. */
+export const isLogLine = (line: string) =>
+  !!line.trim() && !labelledSentence(line) && (LOG_LINE.test(line) || MORE_LOG.test(line) || CONFIG_LINE.test(line) || COMMAND_LINE.test(line) || SHELL_PROMPT.test(line) || SEED_LOG_LINE.test(line))
+
+/** LOG_LINE without its "Label: value" branch. */
+const LOG_LINE_UNLABELLED = new RegExp(LOG_LINE.source.replace('|[A-Za-z][\\w.-]{0,24}:\\s)', ')'))
+/** The user speaking: a first- or second-person word, or a question. */
+const SPEAKER = /\b(?:i|i'm|i've|my|me|we|our|you|your)\b|\?\s*$|(?:^|\s)(?:я|мне|мой|моя|меня|у меня|yo|mi|eu|meu|minha|ich|mein|meine|je|mon|ma)(?=[\s,.!?]|$)|我/i
+/** "HiveOS: while it mines I see ...": a label the user typed before their own sentence, not a log key and value. */
+const labelledSentence = (line: string) => {
+  const m = /^\s*[A-Za-z][\w.-]{0,24}:\s+(.*)$/.exec(line)
+  return !!m && !LOG_LINE_UNLABELLED.test(line) && !MORE_LOG.test(line) && !SEED_LOG_LINE.test(line) && (m[1]!.match(/\p{L}+/gu) ?? []).length >= 5 && SPEAKER.test(m[1]!)
+}
+
+/**
+ * Per line: pasted output (true) or the user's own words (false). Fenced blocks count as pasted, so do the lines a
+ * shell prompt line prints up to the next blank line, an indented line that continues a pasted one, and, once a log
+ * has started, an OS or program message in any language (before any log it may be the user quoting it).
+ */
+export function pastedLines(lines: string[], loose = true): boolean[] {
+  let fence = false
+  let output = false
+  let prev = false
+  let seen = false
+  const marks = lines.map(l => {
+    let p: boolean
+    if (/^\s*```/.test(l)) {
+      fence = !fence
+      p = true
+    } else if (fence) p = true
+    else if (!l.trim()) {
+      output = false
+      p = false
+    } else if (SHELL_PROMPT.test(l)) {
+      output = true
+      p = true
+    } else p = output || isLogLine(l) || (prev && /^(?:\s{2,}|\t)\S/.test(l)) || (seen && OS_OUTPUT.test(l)) || (loose && prev && OUTPUT_TAIL(l))
+    prev = p && !!l.trim()
+    seen ||= prev
+    return p
+  })
+  // a line of output between two pasted lines ("worker.exe not running ...") is pasted too, unless it asks something
+  return marks.map((p, i) => p || (loose && !!lines[i]!.trim() && !/\?\s*$/.test(lines[i]!) && !!marks[i - 1] && !!marks[i + 1] && !!lines[i - 1]!.trim() && !!lines[i + 1]!.trim()))
+}
+
 /** Pasted miner output rather than a typed question: at least two log-shaped lines, or nvidia-smi / JSON config. */
 export function looksLikeLog(text: string): boolean {
   const lines = text.split(/\r?\n/).filter(l => l.trim())
@@ -71,8 +145,9 @@ export const LONG_TIME = /\b(?:\d+\s*(?:h|hrs?|hours?|days?|weeks?|months?)\b|(?
 const MOBILE = /\b(?:app|mobile|phones?|android|apk|smartphone|cellphone)\b/i
 
 /** An epoch seed printed by the miner, as opposed to a wallet seed the user pasted. */
-const SEED_LOG_LINE = /^\s*(?:[\d:.T-]+\s+|\[[^\]]*\]\s*|(?:INFO|DEBUG|WARN)\s+|E:\d+\s+(?:\|\s*)?){0,5}(?:SEED\b|(?:Mining|Random|Epoch) Seed\s*:)/
-const WALLET_SEED = /(?<![A-Za-z])[a-z]{55}(?![A-Za-z])/
+const SEED_LOG_LINE = /^\s*(?:[\d:.T-]+\s+|\[[^\]]*\]\s*|(?:INFO|DEBUG|WARN)\s+|E:\d+\s+(?:\|\s*)?|(?:Trainer|Miner|Worker|Client)\s*:\s*){0,5}(?:SEED\b|(?:Mining|Random|Epoch) Seed\s*:)/
+/** A wallet seed anywhere in the text, prose included (the same pattern the redaction uses). */
+const WALLET_SEED = new RegExp(SEED_PATTERN.source)
 const TOKEN_VALUE = /("?access_?token"?\s*[:=]\s*"?)(?!<)[A-Za-z0-9_.-]{6,}|\beyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_.-]{4,}/gi
 /** A secret value that is only a placeholder ("REDACTED", "***", "xxxx", "<removed>", "your_token"). */
 const BLANKED = /redacted|removed|hidden|^[*x.…]+$|^<[^>]*>$|^your\w*$|^(?:my|the|access)?_?token$|^(?:null|none|placeholder)$/i
@@ -81,6 +156,8 @@ const REDACTED = /removed|redacted|hidden|<[^>]*>|\.{3,}|…|\*{3,}|x{4,}|^your\
 
 /** it/s in the forms miners write it: 49 it/s, 15its, 2 its/s, 1.8 kH/s, 200H/s. */
 const READOUT = /(?<![\w.])(\d+(?:[.,]\d+)?)\s*(k)?\s*(?:it\s?\/\s?s|its\/s|its\b|i\/s|h\/s|iter\/s)/gi
+/** Any it/s or H/s readout, zero included: a rate line is a measurement, never a stalled step. */
+const READOUT_ANY = /\d\s*(?:k\s*)?(?:it\s?\/\s?s|its\/s|h\/s|sol\/h)\b/i
 
 const WORDS: Record<string, number> = { a: 1, an: 1, one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10, twelve: 12, few: 3, couple: 2, several: 4 }
 /** The longest duration a text names, in hours (minutes count as fractions). "overnight" = 8 h. */
@@ -143,7 +220,11 @@ const RATE_FALLS_ZERO =
   /\b(?:rate|hash ?rate|hashing|it\/s|speed|computing power|performance|shares?)\b[^\n.]{0,30}\b(?:drops?|dropped|dropping|falls?|fell|falling|goes|went|going|decreases?|decreased|reduces?|reduced|sinks?|sank)\b(?:\s+(?:down|back))?\s+(?:to\s+)?(?:0|zero)\b/i
 /** "drops after running a while", "after 5 minutes, rate drops": it ran first, then fell. */
 const RATE_FALLS_AFTER =
-  /\bafter (?:running|a while|some time|a (?:period|few)\b[^\n.]{0,15}|\d+\s*(?:min(?:ute)?s?|h|hours?|days?))\b[^\n.]{0,40}\b(?:drops?|dropped|falls?|fell|goes down|went down|reduces?|reduced|decreases?|decreased|slows? down)\b|\b(?:reduces?|reduced|drops?|dropped|falls?|fell|decreases?|decreased|slows? down)\b[^\n.]{0,50}\bafter (?:running|a while|some time|a period|\d+\s*(?:min(?:ute)?s?|h|hours?))/i
+  /\bafter (?:running|a while|some time|a (?:period|few)\b[^\n.]{0,15}|\d+\s*(?:min(?:ute)?s?|h|hours?|days?))\b[^\n.]{0,40}\b(?:drops?|dropped|falls?|fell|goes down|went down|reduces?|reduced|decreases?|decreased|slows? down)\b|\b(?:reduces?|reduced|drops?|dropped|falls?|fell|decreases?|decreased|slows? down)\b[^\n.]{0,50}\bafter (?:running|a while|some time|a period|\d+\s*(?:min(?:ute)?s?|h|hours?))|\b(?:normal|fine|works?|working|mines?)\b[^\n.]{0,30}\bfor (?:\d+(?:\s*(?:-|to)\s*\d+)?\s*(?:min(?:ute)?s?|h|hours?))\b[^\n.]{0,15}\bthen\b[^\n.]{0,20}\b(?:drops?|falls?|goes down|slows? down)\b/i
+/** "Since the new epoch": a change that came with the epoch. */
+const EPOCH_WIDE = /\bsince (?:the )?(?:new|last|latest|this) epoch\b|\bnew epoch\b[^\n.]{0,40}\b(?:does (?:almost )?nothing|drops?|0 it\/s)/i
+/** The same symptom on more than one machine, or for other miners too. */
+const MANY_RIGS = /\bmore than one (?:pc|machine|rig|computer|box)|\bseveral (?:pcs|machines|rigs|users|miners)|\banother miner\b|\bother (?:users|miners)\b|\bsame on (?:wsl|both|all)\b|\bon (?:both|all) (?:pcs|machines|rigs)/i
 /** Under 20 minutes since start, said in words, nothing longer named, and not a rate that ran and then fell. */
 const tooEarly = (log: string) => {
   const h = hoursIn(log)
@@ -404,9 +485,18 @@ export function restarts(lines: string[]): number {
 }
 /** The trainer, worker or service exits: a line count, XMR idle-worker starts excluded. */
 const EXIT_LINE = /not running or has exited|custom exited \(exitcode|exited with (?:exit )?code|\bprocess (?:has )?exited\b|\bhas exited\b/i
+/** The miner itself going down: overrides any "it is mining" or other fine reading of the lines before it. */
+const EXITING = /flagged for shutdown|\bexiting\b|\bshutting down\b|(?<!(?:connection|stream|socket|session|lease|request|task|job) )\bterminated\b/i
 
-/** Another pool's endpoint in a config or log. */
-const FOREIGN = /wss?:\/\/[^\s"']*(qubic\.li|jetski|jtsk|minerlab|apool)/i
+/**
+ * Another pool's endpoint in a config, a log or flight-sheet arguments: a URL, a host:port, or a pool or URL key or
+ * flag ("-o", "--pool", "poolAddress", "baseUrl") that names one. "qubic.li client" in a sentence is not an endpoint.
+ */
+const FOREIGN_HOST = String.raw`(?:[\w-]+\.)*(?:qubic\.li|apool\.io|jetski[\w-]*\.\w+|jtsk[\w-]*\.\w+|minerlab[\w-]*\.\w+)`
+const FOREIGN = new RegExp(
+  String.raw`wss?:\/\/[^\s"']*(?:qubic\.li|jetski|jtsk|minerlab|apool)|https?:\/\/${FOREIGN_HOST}|\b${FOREIGN_HOST}:\d{2,5}\b|(?:\bpool(?:Address| url)?|\burl|\bbaseUrl|-o|--pool|--url)["']?\s*[:=]?\s*["']?(?:stratum\+tcp:\/\/|wss?:\/\/|https?:\/\/)?${FOREIGN_HOST}`,
+  'i',
+)
 
 const ZERO_LOG = /(?:^|[^\d.,])0(?:\.0+)?\s*(?:it\s?\/\s?s|its\b|h\/s)|hashrate:?\s*0(?:\.0+)?\b(?!\.\d*[1-9])/i
 const ZERO_PROSE = /\b(?:stuck|stays?|still|continuously|keeps?|always|showing|shows?|sits?|yielding|getting)\b[^\n.]{0,25}?(?<![\d.])0(?:\.0+)?\s*(?:it\s?\/\s?s|its\b|h\/s|hash ?rate)|\b(?:on|at) 0 hash ?rate|\bnearly zero hash/i
@@ -418,9 +508,9 @@ export const RULES: Rule[] = [
     severity: 'fault',
     tier: 0,
     title: 'A wallet seed is in this paste',
-    means: 'A 55-letter lowercase string is a wallet seed: the master key to the funds. Treat it as exposed: anyone who saw it can empty the wallet. I do not repeat it.',
+    means: 'A 55-letter lowercase string is a wallet seed: the master key to the funds. Treat it as exposed: anyone who saw it can empty the wallet. I do not repeat it, check it or use it.',
     fix: [
-      'Create a new wallet now and move every coin to it; do not wait.',
+      'Create a new wallet now and move every coin to it: move the funds today, with a new seed made on a safe device; do not wait.',
       'Delete the message or file that holds the seed, everywhere you posted it.',
       'The pool and the miner only need your 60-letter uppercase address, never the seed.',
     ],
@@ -586,6 +676,106 @@ export const RULES: Rule[] = [
     test: /glibc[^\n]{0,20}(?:version )?[^\n]{0,12}(?:must|>=|required|too old|not found)|\bGLIBC(?:XX)?_\d+\.\d+[^\n]{0,30}not found|version [`'"]GLIBC/i,
     drops: ['crash', 'worker-exit', 'trainer-load'],
     sources: ['community'],
+  },
+  {
+    id: 'ldd-windows',
+    severity: 'fault',
+    title: 'A known bug in an old client: it tries to run ldd',
+    means: 'The client tried to start "ldd", the Linux tool that prints the glibc version, and the start failed. In the qubic.li client 1.8.5 and 1.8.6 that was a bug of the client itself, on Windows and on Linux, fixed in its version 1.8.9 (qubic-li/client #30, Mar 2024). Nothing is missing on your PC.',
+    fix: [
+      'Update the client to the current version from the setup page (on the qubic.li client itself, 1.8.9 or later fixed this).',
+      'Do not install ldd, WSL, Cygwin or Wine to satisfy it.',
+      'If the current version still fails, paste the first error lines after "is starting".',
+    ],
+    test: /start(?:ing)? (?:the )?process ['"]?ldd\b|\bprocess ['"]?ldd['"]? (?:failed|could not|cannot)/i,
+    read: (_m, log) =>
+      WINDOWS.test(log)
+        ? {
+            means: `The client's Windows build tried to start "ldd", a Linux tool (it prints the glibc version); Windows has none, so the start fails${/系统找不到指定的文件|系統找不到指定的檔案/.test(log) ? ' (系统找不到指定的文件 = "The system cannot find the file specified")' : ''}. That is a bug in that client release, not a missing file on your PC: the qubic.li client fixed it in version 1.8.9 (qubic-li/client #30, Mar 2024).`,
+          }
+        : undefined,
+    drops: ['trainer-load', 'win-not-found', 'missing-file', 'crash', 'worker-exit'],
+  },
+  {
+    id: 'hw-info-wmi',
+    severity: 'check',
+    title: "The client's optional hardware check failed (WMI); not fatal by itself",
+    means: 'The exception comes from the qubic.li client reading the CPU model, RAM and CPU cache through WMI (HardwareHelper.GetCPUCache), an optional hardware-info collection it uses to pick its runner. When the trainer still starts after it, this is not fatal and does not show a broken Windows or .NET.',
+    fix: [
+      'On that client, turn the collection off: "allowHwInfoCollect": false in its appsettings.json (that client\'s key since 1.3.4, not this pool\'s); in the 2024 threads users hit this with it set to true.',
+      'No Windows or .NET reinstall is indicated by this trace.',
+      'If it/s then stays at 0 for 20 minutes, that is a separate problem: paste the log lines after 20 minutes.',
+    ],
+    test: /WmiNetUtilsHelper|HardwareHelper\.GetCPU\w*|ManagementPath\.CreateWbemPath/i,
+    drops: ['crash'],
+  },
+  {
+    id: 'custom-runner',
+    severity: 'check',
+    prose: true,
+    title: "A custom runner: removed from the qubic.li client in 3.0",
+    means: 'The qubic.li client release notes say version 3.0 removed its legacy constructs, the custom runner among them, and CustomRunner.md is a DRAFT written for the old protocol. A customRunner setup on a 3.x client is unsupported, so no setting there is a known fix.',
+    fix: [
+      'Run that client with its own trainer, or report the failure upstream with the call chain; no user-side config fix is known.',
+      'Stopgap: a supervisor that restarts the client when it dies (systemd Restart=always or similar).',
+      "A custom trainer is not part of this pool's setup: on this pool use the setup page command.",
+    ],
+    test: /\bcustom ?runner\b|CustomRunner\.md/i,
+    read: (_m, log) =>
+      /stack ?overflow/i.test(log)
+        ? {
+            title: 'A stack overflow in an unsupported custom runner',
+            means: `${/->|recurs/i.test(log) ? 'The call chain re-enters itself on every trainer update with no exit condition, so the stack grows per update until it overflows. ' : ''}A stack overflow in .NET cannot be caught, so the process dies with no handled exception. The qubic.li client release notes say version 3.0 removed the custom runner (CustomRunner.md is a DRAFT for the old protocol), so customRunner on a 3.x client is unsupported.`,
+          }
+        : undefined,
+    drops: ['error-line', 'crash'],
+  },
+  {
+    id: 'gateway-missing',
+    severity: 'fault',
+    title: "A copied flight sheet asks for a proxy gateway this rig does not have",
+    means: "This is the qubminer HiveOS wrapper (the qubic.li package, h-config.sh, 2 Nov 2026): the trainer line asks for the 'proxy' call scheme, but no GATEWAY is set, so the miner falls back to a default gateway compiled in by its developer, a private LAN address your rig cannot reach. That is why it sits idle.",
+    fix: [
+      "If you do not run a gateway yourself, remove the 'proxy' call scheme from the copied trainer line in Extra config, then restart the miner.",
+      'Only set "env": {"GATEWAY":"host:7733"} to a gateway you operate; never a host from a copied sheet.',
+      'For this pool: use the HiveOS instructions from the setup page rather than a copied flight sheet.',
+    ],
+    test: /requests '?proxy'? but no GATEWAY|no GATEWAY is set|fall back to the miner dev'?s default gateway/i,
+    drops: ['idle-long', 'epoch-idle'],
+  },
+  {
+    id: 'apt-foreign-source',
+    severity: 'fault',
+    title: 'Another Ubuntu release was added to the apt sources',
+    means: "The command adds an Ubuntu 22.04 (jammy) package source. Mixing releases means a later apt upgrade or install pulls that release's packages (libc6 and more) into a system built on another one, which breaks it.",
+    fix: [
+      'Remove that line from /etc/apt/sources.list (edit the file, or sudo sed -i \'/ubuntu jammy main/d\' /etc/apt/sources.list), then sudo apt update; run no apt upgrade while it is there.',
+      'Already broken: move to the latest stable image (hive-replace --stable --yes, per the qubminer README) or reflash.',
+      'For this pool: the HiveOS instructions on the setup page.',
+    ],
+    test: /\bdeb\s+\S*(?:ubuntu|debian)\S*\s+(?:jammy|noble|bookworm|trixie)\b|\b(?:jammy|noble|bookworm)\b[^\n]{0,60}sources\.list|sources\.list[^\n]{0,60}\b(?:jammy|noble|bookworm)\b/i,
+    read: (_m, log) =>
+      /hive/i.test(log)
+        ? {
+            title: 'An Ubuntu jammy apt source was added to HiveOS',
+            means: "The command adds an Ubuntu 22.04 (jammy) package source to HiveOS. A later apt upgrade or install then pulls jammy packages into the HiveOS base, which can break it: users and the qubminer maintainers reported a broken console and installs that needed a reflash (qubic-li/hiveos #3, #5, Mar 2024). The maintainers said the line must be removed after installing libc6, and the current qubminer wrapper no longer needs it (h-run.sh fetches its own helper, 2026).",
+          }
+        : undefined,
+    drops: ['glibc'],
+  },
+  {
+    id: 'tar-archive',
+    severity: 'check',
+    prose: true,
+    title: 'A Linux .tar.gz opened as a Windows archive',
+    means: 'A .tar.gz is a Linux archive: a tar file inside gzip. It is unpacked inside Linux (for Ubuntu under Windows, inside WSL) with tar. Renaming it to .rar is wrong, and the one file without an extension that comes out is the inner .tar, not a Windows program.',
+    fix: [
+      'Inside Linux or WSL, in the folder that holds it: tar -xzf <file>.tar.gz',
+      'On Windows, 7-Zip opens the .gz and then the .tar inside it; the Linux program still only runs inside Linux or WSL.',
+      'If tar also reports damage, download it again and compare the checksum when the release gives one.',
+      'For this pool: the command for the system you actually run (Linux in WSL, or Windows) from the setup page.',
+    ],
+    test: /\.tar(?:\.gz|\.xz)?\b[^\n]{0,120}\b(?:winrar|7-?zip|corrupt(?:ed)?|damaged|renam\w*)|\b(?:winrar|7-?zip)\b[^\n]{0,120}\.tar\b/i,
   },
   {
     id: 'trainer-load',
@@ -900,6 +1090,7 @@ export const RULES: Rule[] = [
   },
   {
     id: 'rate-falls',
+    prose: true,
     severity: 'check',
     title: 'The rate falls after running a while',
     means: `The rate drops after a working start. On any rig, own or rented, the first 1 to 2 hours overstate the rate by about 1.3 to 1.5x (${OURS}), and it/s also falls through an epoch as the work deepens with no change in solutions. A larger drop that keeps going points to heat or power throttling, or to memory: huge pages not reserved at start make the trainer fall back to normal memory.`,
@@ -911,7 +1102,18 @@ export const RULES: Rule[] = [
     test: new RegExp(`${RATE_FALLS_ZERO.source}|${RATE_FALLS_AFTER.source}`, 'i'),
     unless: log => MOBILE.test(log) || /\bepoch (?:change|switch|transition)\b/i.test(log),
     read: (_m, log) =>
-      RATE_FALLS_ZERO.test(log)
+      EPOCH_WIDE.test(log) && MANY_RIGS.test(log)
+        ? {
+            severity: 'fault',
+            title: 'The rate collapses on several machines since the new epoch',
+            means: "It started with the new epoch and hits more than one machine or other miners too: that points to the new epoch's trainer or client release, not your hardware (Likely, not confirmed). A reboot that helps for some minutes is not a fix; a scheduled reboot only resets the work each time.",
+            fix: [
+              'Do not script reboots or restart in a loop.',
+              'Watch for a client or trainer update for this epoch and update the client to the current version from the setup page when it comes.',
+              'Check with nvidia-smi while it shows 0 it/s whether the GPU is busy (use %, VRAM), and tell me the client and trainer version after any update.',
+            ],
+          }
+        : RATE_FALLS_ZERO.test(log)
         ? {
             severity: 'fault',
             title: 'The rate falls to 0 after a working start',
@@ -932,7 +1134,20 @@ export const RULES: Rule[] = [
     title: 'Out of memory',
     means: 'The card or the machine ran out of memory and the miner stopped.',
     fix: ['Close other programs that use the GPU (games, other miners, AI tools).', 'Lower the thread count.', 'On a rented box, pick one with more RAM.'],
-    test: /(?<!no )out of memory|cuda_error_out_of_memory|cudaErrorMemoryAllocation|std::bad_alloc|cannot allocate memory|oom[- ]kill|killed process \d+/i,
+    test: /(?<!no )out of memory|\bOutOfMemory\b|cuda_error_out_of_memory|cudaErrorMemoryAllocation|std::bad_alloc|cannot allocate memory|memory allocation failed|oom[- ]kill|killed process \d+/i,
+    read: (_m, log) =>
+      WINDOWS.test(log) && /\b(?:cuda|gpu|cards?|rtx|gtx)\b/i.test(log)
+        ? {
+            title: 'Out of memory on the host as cards are added (Windows)',
+            means: "Likely (general knowledge), not confirmed by the developers: a host memory limit, not one card's VRAM. On Windows each card's CUDA context reserves system memory against the commit limit (RAM plus page file); with a small page file or little RAM the allocation fails as cards are added, and the miner turns that into this OutOfMemory exit. A single broken card is not what this shows, all the more when each card works alone.",
+            fix: [
+              'Raise the Windows page file well above its current size (System, Advanced system settings, Performance, Virtual memory), reboot, then add the cards one at a time while watching Commit in Task Manager.',
+              'Tell me the system RAM, the page file size, and the card models with their VRAM.',
+              'For this pool: the Windows command from the setup page, not flags from another miner.',
+            ],
+          }
+        : undefined,
+    drops: ['crash'],
   },
   {
     id: 'no-avx',
@@ -946,6 +1161,16 @@ export const RULES: Rule[] = [
     ],
     test: /illegal instruction|invalid opcode|\bsigill\b|exit(?:ed with)? code 132\b|avx-?(2|512)[^\n]*(not (supported|available|found|detected)|unsupported|missing)|(cpu|processor) does not support avx|requires avx|status=4\/ill\b/i,
     read: (_m, log) => {
+      if (/\baarch64\b|\barm64\b/i.test(log) && !/avx/i.test(log))
+        return {
+          title: 'The ARM build uses instructions this CPU lacks (illegal instruction)',
+          means: `An aarch64 build stops with "Illegal instruction": it uses ARM instructions this CPU does not have; not a config or address problem. rqiner's developer said its aarch64 build is compiled for Neoverse-N1, an ARMv8.2 server core (rqiner-builds #4, Mar 2024), and offered builds for other CPUs on request; in that repo it failed on a Snapdragon 625 and a Raspberry Pi and worked on a Snapdragon 7 Gen 2 (2024).${/jetson|tegra/i.test(log) ? ' A Jetson Nano has Cortex-A57 cores (ARMv8.0), so it fails the same way, and its small Maxwell GPU is not a mining device here.' : ''}`,
+          fix: [
+            'Check: uname -m and grep -m1 -i features /proc/cpuinfo.',
+            'No setting fixes this: it needs a build for this CPU.',
+            'For this pool: the setup page lists the supported systems and gives the command; my sources confirm no Linux ARM64 option, so check the page.',
+          ],
+        }
       const cpus = isasIn(log)
       const avx512 = cpus.find(c => c.isa === 'avx512')
       const asked512 = /avx-?512/i.test(log)
@@ -958,6 +1183,7 @@ export const RULES: Rule[] = [
       if (low?.isa === 'avx') return { means: `${low.model} has no AVX2, so the AVX2 and AVX512 builds cannot run on it; only a generic build would, very slowly.` }
       return undefined
     },
+    drops: ['crash'],
   },
   {
     id: 'cpu-no-flag',
@@ -1019,6 +1245,7 @@ export const RULES: Rule[] = [
   },
   {
     id: 'auth-mobile',
+    prose: true,
     severity: 'fault',
     title: 'A phone miner login was rejected (another pool\'s app)',
     means: 'On 2 Oct 2026 another pool\'s moderator said "Authentication failed" in its phone app meant the phone was blacklisted for sending too many shares in a short time, and that they were fixing it. Qubic Church Pool has no Android option.',
@@ -1227,6 +1454,7 @@ export const RULES: Rule[] = [
   },
   {
     id: 'old-gpu',
+    prose: true,
     severity: 'fault',
     title: 'A Pascal or older card: out of Qubic GPU mining since epoch 237',
     means: 'From epoch 237 (28 Oct 2026, client 3.11, worker cuda 237.0) a GTX 1050 Ti CUDA worker exited every few seconds though it worked in epoch 236 (reported), and a Tesla K80 does not run on current CUDA (20 Oct 2026). Pascal (GTX 10, P104/P106) and older cards are out whatever the driver: a newer driver does not bring them back. The pool said it would look; no fix confirmed by 4 Nov 2026 and no workaround is known.',
@@ -1242,6 +1470,7 @@ export const RULES: Rule[] = [
   },
   {
     id: 'closes-at-start',
+    prose: true,
     severity: 'check',
     title: 'The miner closes right after it starts',
     means: 'A miner that closes within seconds is usually an outdated build (one was 3.8.10 while 3.9.1 was current, 6 Oct 2026, found by a miner) or a file your antivirus removed.',
@@ -1253,6 +1482,25 @@ export const RULES: Rule[] = [
     test: /\b(?:closes|closing|shuts? (?:itself )?down|shutting down|exits|quits)\b[^\n.]{0,40}\b(?:after \d+|within|right after|as soon as|immediately|automatically|on start|seconds?|sec\b)|automatically closes|keeps (?:closing|shutting down|crashing)/i,
     drops: ['crash'],
     sources: ['community', 'guide'],
+  },
+  {
+    id: 'gpu-unresponsive',
+    severity: 'fault',
+    title: 'The GPUs stopped responding and the miner exited',
+    means: "The miner's watchdog got no answer from the card within its timeout, flagged it for shutdown and, with no card left, exited. The it/s lines before that are history, not a working state. Cards failing within seconds of each other point at the shared driver layer, not one card. Likely (general knowledge): a driver hang or timeout.",
+    fix: [
+      'Read the system log for that moment (Windows: Event Viewer, System, display driver resets; Linux: dmesg for Xid or amdgpu errors), at stock clocks.',
+      'No restart script fixes it: a loop only restarts the hang.',
+      'For this pool: a supported device (CPU, or an NVIDIA card through CUDA) and the command from the setup page.',
+    ],
+    test: /\b(?:GPU|device|card)\s*#?\d*[^\n]{0,60}(?:didn'?t respond|did not respond|not responding|stopped responding|flagged for shutdown)|all gpus have been flagged/i,
+    read: (_m, log) =>
+      /zluda|radeon|\bamd\b|\brx ?\d{3,4}/i.test(log)
+        ? {
+            means: `Both cards stopped answering the miner's watchdog within seconds, were flagged for shutdown, and the miner exited: the it/s lines before that are history. ZLUDA runs CUDA code on AMD cards as an unofficial translation layer; a failure on every card at once points at that shared driver layer, not one card. Likely (general knowledge): a driver hang or timeout under ZLUDA. AMD Radeon: no measurements of ours, and NVIDIA/CUDA is the proven path.`,
+          }
+        : undefined,
+    drops: ['crash', 'worker-exit', 'miner-exits'],
   },
   {
     id: 'crash',
@@ -1307,6 +1555,28 @@ export const RULES: Rule[] = [
     drops: ['epoch-idle', 'cold-start', 'closes-at-start'],
   },
   {
+    id: 'miner-exits',
+    severity: 'fault',
+    title: 'The miner shuts down',
+    means: 'The log ends with the miner exiting, shutting down or being terminated: the lines before it are history, not a working state. The cause is in the lines just before the exit.',
+    fix: ['Read the lines just before the exit line, and paste 20 of them with the version line the miner prints at start.', 'Update the client to the current version from the setup page if the version line is old.', 'Do not wrap it in a restart loop before the cause is known.'],
+    test: EXITING,
+    logOnly: true,
+    skipLine: /xmr|exit signal/i,
+  },
+  {
+    id: 'stuck-loop',
+    severity: 'check',
+    title: 'The client repeats one step and never starts mining',
+    means: 'The same line repeats with no trainer start and no it/s line after it: the client is stuck at that step, not idle by design. What the step does is not documented for every client; Likely: a stale local file or a failed download.',
+    fix: [
+      'Stop the client, make sure no old worker process is left (Task Manager, or ps aux | grep -i qli), update the client to the current version from the setup page, and start it again.',
+      "On the qubic.li client, its README documents a Reset Configuration: stop it, remove the lock files, start again (that client's procedure).",
+      'Tell me whether the loop ever ends, and paste the lines right before the first repeat after a fresh start.',
+    ],
+    test: PARSED,
+  },
+  {
     id: 'error-line',
     severity: 'check',
     title: 'An error line I have no rule for',
@@ -1356,6 +1626,7 @@ export const RULES: Rule[] = [
   },
   {
     id: 'duplicate-worker',
+    prose: true,
     severity: 'check',
     title: 'Two machines share one worker name',
     means: 'The dashboard blurs them and one looks dead.',
@@ -1377,6 +1648,7 @@ export const RULES: Rule[] = [
   },
   {
     id: 'phone-miner',
+    prose: true,
     severity: 'check',
     title: 'A phone miner (another pool\'s app)',
     means: 'Qubic Church Pool has no Android option. Phone miners come from another pool\'s app (an Android beta since 22 Aug 2026), and in Oct 2026 phones there were erratic: days at 0 and most shares invalid in some epochs, which that pool called a backend issue (21 Oct). Not measured by us.',
@@ -1442,6 +1714,7 @@ export const RULES: Rule[] = [
   },
   {
     id: 'foreign-endpoint',
+    prose: true,
     severity: 'check',
     tier: 3,
     title: 'This config points to another pool',
@@ -1451,6 +1724,7 @@ export const RULES: Rule[] = [
   },
   {
     id: 'sleep',
+    prose: true,
     severity: 'check',
     title: 'The machine went to sleep',
     means: 'Sleep stops mining until the machine wakes up.',
@@ -1474,6 +1748,7 @@ export const RULES: Rule[] = [
   },
   {
     id: 'too-early',
+    prose: true,
     severity: 'fine',
     title: 'Too early to judge',
     means: 'Under 20 minutes, 0 it/s or 0 solutions on the dashboard is normal: the rig warms up, solutions come in bursts, and pool dashboards lag (a miner, 9 Sep 2026: "up to 10 behind").',
@@ -1509,6 +1784,7 @@ export const RULES: Rule[] = [
   },
   {
     id: 'pool-frozen',
+    prose: true,
     severity: 'fine',
     title: 'Shares frozen or not counting',
     means: 'Shares frozen, "reseeding", shares not going up or "miners locked" across rigs is pool or backend lag, most often around an epoch change (Wednesday 12:00 UTC). Not your rig.',
@@ -1528,6 +1804,7 @@ export const RULES: Rule[] = [
   },
   {
     id: 'bursts',
+    prose: true,
     severity: 'fine',
     title: 'Solutions come in bursts',
     means: 'Few or no solutions for an hour while the miner runs is normal under Ant Colony: solutions arrive in bursts, and a harder branch can drop the rate to almost nothing for hours (a pool operator, 5 Oct 2026). Even our top rigs had empty minutes.',
@@ -1538,6 +1815,7 @@ export const RULES: Rule[] = [
   },
   {
     id: 'dashboard-lag',
+    prose: true,
     severity: 'fine',
     title: 'The pool dashboard shows less than the miner',
     means: 'The miner reports work but the pool dashboard shows 0 or fewer: dashboards lag and can drop rows (a miner, 9 Sep 2026: "up to 10 behind"), two rigs on one worker name look like one dead worker, and one pool rejected shares on its side on 11 to 13 Sep 2026.',
@@ -1564,6 +1842,7 @@ export const RULES: Rule[] = [
   },
   {
     id: 'zero-shares-long',
+    prose: true,
     severity: 'check',
     tier: 2,
     title: 'SHARES 0/0 for hours, or no solutions for hours',
@@ -1580,6 +1859,7 @@ export const RULES: Rule[] = [
   },
   {
     id: 'no-shares',
+    prose: true,
     severity: 'check',
     tier: 2,
     title: 'No shares yet',
@@ -1786,6 +2066,27 @@ function parsed(log: string, lines: string[]): Finding[] {
     )
   }
 
+  // lscpu or /proc/cpuinfo flags without avx2, next to a log that picked the AVX2 build: it cannot run there
+  const flagsAt = lines.findIndex(l => /^\s*flags\s*:\s+\w/i.test(l))
+  if (flagsAt >= 0) {
+    const flags = new Set(lines[flagsAt]!.replace(/^\s*flags\s*:/i, '').trim().toLowerCase().split(/\s+/))
+    const pickedAt = lines.findIndex(l => /version:\s*AVX2\b|qli-worker-AVX2|\[AVX2\]|\bAVX2\b[^\n]{0,30}\b(?:trainer|worker|runner|build)\b|"cpuVersion"\s*:\s*"AVX2"/i.test(l))
+    if (!flags.has('avx2') && !flags.has('avx512f') && pickedAt >= 0) {
+      const loop = restarts(lines) >= 2 || LOOP_WORDS.test(log) || /restarts? every/i.test(log)
+      out.push(
+        finding('no-avx', pickedAt, lines[pickedAt], {
+          title: 'The CPU has no AVX2, but the AVX2 build was picked',
+          means: `The CPU flags list ${flags.has('avx') ? 'avx but not avx2 (an Intel Ivy Bridge class CPU or older, or a VM hiding the flag)' : 'no avx2 and no avx'}, yet the client picked its AVX2 trainer, which cannot run on this CPU${loop ? ': hence the restart every few seconds' : ''}. Not a setting you got wrong.`,
+          fix: [
+            'On the qubic.li client, force its generic trainer: "cpuVersion": "GENERIC" in its appsettings.json (that client\'s key; its README lists GENERIC for CPUs without AVX2 or AVX-512). Later QLI releases changed their AVX2 detection, so update that client too.',
+            'For this pool: pick the backend on the setup page and run the command it gives; if no backend there runs without AVX2, this CPU cannot mine here.',
+            'Expect low throughput from an AVX-only CPU even when a build runs.',
+          ],
+        }),
+      )
+    }
+  }
+
   // The backend: AVX2 or GENERIC on an AVX-512 CPU, or AVX512 on a CPU without it
   const backend = backendIn(log)
   const avx = models.map(m => cpuIsa(m))
@@ -1882,21 +2183,53 @@ function parsed(log: string, lines: string[]): Finding[] {
   return out
 }
 
+/** HTML or XML markup: a pasted table or page, not miner output. */
+const MARKUP = /^\s*<[a-z!/]/i
+/** Routine lines a healthy miner repeats (leases, backlog, keep-alives): never a stall. */
+const ROUTINE_REPEAT = /backlog|lease|cancelled|ant work replaced|heartbeat|keep-?alive|\bping\b|xmr/i
+/** The user says one line repeats ("prints this every second", "same line for minutes"). */
+const SAME_LINE_WORDS = /\bsame line\b|\bevery (?:second|few seconds)\b|\bprints? (?:this|it) (?:every|over and over|forever)\b|\bstuck (?:on|at) (?:this|that) (?:line|step)\b/i
+
+/**
+ * A stall: one pasted step repeating with no progress (the same line, timestamps aside, three times or more, not a
+ * waiting line, not a rate readout, not routine), or a repeat the user names next to a pasted line. Returns the first
+ * repeated line, or -1.
+ */
+function stalledAt(lines: string[], pasted: boolean[], log: string): number {
+  const seen = new Map<string, number[]>()
+  lines.forEach((l, i) => {
+    if (!pasted[i] || !l.trim() || WAITING.test(l) || ROUTINE_REPEAT.test(l) || READOUT_ANY.test(l) || START_LINE.test(l)) return
+    const k = normalized(l)
+    if (k.length < 8 || /^[\W\d]*$/.test(k)) return
+    seen.set(k, [...(seen.get(k) ?? []), i])
+  })
+  const top = [...seen.values()].sort((a, b) => b.length - a.length)[0]
+  if (top && top.length >= 3) return top[0]!
+  if (top && top.length >= 2 && SAME_LINE_WORDS.test(log)) return top[0]!
+  return -1
+}
+
 /** Run every rule over the log; each rule reports the latest line it matched. Mining is "fine" only if nothing is wrong. */
 export function diagnose(log: string): Diagnosis {
   const lines = log.split(/\r?\n/)
-  // The epoch seed a miner prints is not a wallet seed; only the rest of the paste can leak one.
+  // The epoch seed a miner prints is not a wallet seed; any other line, prose included, can leak one.
   const seedWarning = containsSeed(lines.filter(l => !SEED_LOG_LINE.test(l)).join('\n'))
   if (!log.trim()) return { status: 'empty', findings: [], seedWarning }
+  // Which lines are pasted output and which are the user's own sentences. With a log in the paste, rules read
+  // only the pasted lines; safety rules (seeds, tokens, injected text) and described symptoms (prose rules) read all.
+  const pasted = pastedLines(lines)
+  const hasLog = pasted.some(Boolean)
   let findings: Finding[] = []
   for (const r of RULES) {
     if (r.test === PARSED) continue
     if (r.when && !test(r.when, log)) continue
     if (r.unless && test(r.unless, log)) continue
+    const anyLine = !hasLog || r.prose || (r.tier ?? 1) === 0
     // Scan from the end: the latest occurrence is the one that matters.
     for (let i = lines.length - 1; i >= 0; i--) {
       const text = lines[i]!
-      if (r.logOnly && !LOG_LINE.test(text)) continue
+      if (!anyLine && !pasted[i]) continue
+      if (r.logOnly && (!LOG_LINE.test(text) || MARKUP.test(text))) continue
       if (r.skipLine?.test(text)) continue
       const m = new RegExp(r.test.source, r.test.flags.replace('g', '')).exec(text)
       if (!m) continue
@@ -1910,27 +2243,41 @@ export function diagnose(log: string): Diagnosis {
   const drop = new Set(findings.flatMap(f => rule(f.id).drops ?? []))
   findings = findings.filter(f => !drop.has(f.id))
   // Error lines no rule explains: never call that log "fine" or "mining".
-  const unexplained = lines.findIndex(l => ERRORISH.test(l) && !SEED_LOG_LINE.test(l) && !EXPLAINS.some(r => r.test.test(l)))
+  const unexplained = lines.findIndex((l, i) => (!hasLog || pasted[i]) && ERRORISH.test(l) && !SEED_LOG_LINE.test(l) && !EXPLAINS.some(r => r.test.test(l)))
   if (unexplained >= 0) {
     findings = findings.filter(f => !REASSURING.has(f.id))
     if (!findings.some(f => f.severity !== 'fine' && f.tier !== 3)) findings.push(finding('error-line', unexplained, lines[unexplained]))
+  }
+  // The miner going down ("flagged for shutdown", "exiting", "terminated"), a restart loop or one step repeating
+  // with no progress: nothing before it is "mining" or "fine", and a stall always gets a finding of its own.
+  const exiting = lines.some((l, i) => pasted[i] && EXITING.test(l) && !/xmr|exit signal/i.test(l))
+  const stall = stalledAt(lines, pasted, log)
+  if (exiting || stall >= 0) {
+    findings = findings.filter(f => !REASSURING.has(f.id))
+    if (stall >= 0 && !findings.some(f => f.severity !== 'fine' && f.tier !== 3)) findings.push(finding('stuck-loop', stall, lines[stall]))
   }
   // "Mining" next to a real fault or check is not reassurance; drop it so the problem leads.
   if (findings.some(f => f.severity === 'fault' || (f.severity === 'check' && f.tier !== 3 && f.id !== 'sols-counter'))) findings = findings.filter(f => f.id !== 'mining' && f.id !== 'gpu-ok')
   // Next to a fault, "do nothing, it resumes" readings (idle, cold start, too early) would contradict the fix.
   if (findings.some(f => f.severity === 'fault' && (f.tier ?? 1) !== 0)) findings = findings.filter(f => !REASSURING.has(f.id))
+  // A finding quotes pasted lines only, never the user's own sentence (an injected line keeps its number).
+  findings = findings.map(f => (f.line && !pasted[f.line.n - 1] && f.id !== 'not-a-log-line' ? (({ line: _drop, ...rest }) => rest)(f) : f))
   // Safety first; then faults, whatever their tier, outrank everything; then the root cause, generic symptoms, context.
   const rank = (f: Finding) => ((f.tier ?? 1) === 0 ? 0 : f.severity === 'fault' ? 1 : 2)
   findings.sort((a, b) => rank(a) - rank(b) || (a.tier ?? 1) - (b.tier ?? 1) || ORDER[a.severity] - ORDER[b.severity] || RULE_INDEX.get(a.id)! - RULE_INDEX.get(b.id)!)
   if (!findings.length) return { status: 'unknown', findings: [], seedWarning }
   // The verdict is the worst finding, so a fine line at the top never hides a fault below it.
-  const status = findings.reduce<Severity>((w, f) => (ORDER[f.severity] < ORDER[w] ? f.severity : w), 'fine')
+  let status = findings.reduce<Severity>((w, f) => (ORDER[f.severity] < ORDER[w] ? f.severity : w), 'fine')
+  // a paste whose only reading is that someone added orders to it is never "fine"
+  if (findings.every(f => f.id === 'not-a-log-line')) status = 'check'
   return { status, findings, seedWarning }
 }
 
 /** Pasted output rather than a typed question: log-shaped lines, a single error line, or one miner line a rule reads. */
 export function isLogPaste(text: string): boolean {
   if (looksLikeLog(text)) return true
+  // two or more pasted lines (a call chain, a command and its output) that a rule reads as a problem
+  if (pastedLines(text.split(/\r?\n/)).filter(Boolean).length >= 2 && diagnose(text).findings.some(f => f.severity !== 'fine')) return true
   if (text.split(/\r?\n/).some(l => (LOG_LINE.test(l) || /^\s*(?:[\w.-]+:\s|\$ |PS [A-Za-z]:|(?:error|fatal|panic|warning|unhandled exception)\b|-+>|[A-Z][\w.]+Exception\b|kernel:|bash:)/i.test(l)) && ERRORISH.test(l))) return true
   // one miner line a rule reads ("AntColony: parent not found ... server cache miss")
   if (diagnose(text).findings.some(f => f.line && LOG_LINE.test(f.line.text))) return true
@@ -1950,12 +2297,12 @@ export function checkerHints(text: string, max = 4): string {
   const d = diagnose(text)
   const lines = d.findings.slice(0, max).map(f => {
     // an injected line is named by its number only: its text never moves into the system block
-    const line = f.line ? (f.id === 'not-a-log-line' ? ` (line ${f.line.n})` : ` (line ${f.line.n}: "${f.line.text.slice(0, 160)}")`) : ''
+    const line = f.line ? (f.id === 'not-a-log-line' ? ` (line ${f.line.n})` : ` (line ${f.line.n}: "${f.line.text.slice(0, 160)}")`) : " (from the user's own words, not a log line)"
     // the card's "no rule" wording speaks to the user; the hint says what the AI should do with that line
     if (f.id === 'error-line') return `  - [check] An error line no pattern explains${line}: read it and the lines just before it; the cause is there.`
     return `  - [${f.severity}] ${f.title}${line}: ${f.means} First step: ${f.fix[0] ?? ''}`
   })
-  if (d.seedWarning && !d.findings.some(f => f.id === 'wallet-seed')) lines.unshift('  - [fault] The paste may contain a wallet seed: warn first, never repeat it.')
+  if (d.seedWarning && !d.findings.some(f => f.id === 'wallet-seed')) lines.unshift('  - [fault] The paste may contain a wallet seed: warn first, never repeat it, and tell them to move the funds to a new wallet now.')
   return lines.length ? lines.join('\n') : '  - No pattern matched: read the log yourself.'
 }
 

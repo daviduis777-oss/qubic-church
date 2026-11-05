@@ -4,13 +4,13 @@
  */
 import { aggregate, measuredBlock, type Summary } from './aggregate.ts'
 import { OS_LABEL, POOL, RENTALS, WALLET } from './config.ts'
-import { checkerHints, isLogPaste, LOG_LINE, RULES } from './doctor.ts'
+import { checkerHints, isLogPaste, LOG_LINE, pastedLines, RULES } from './doctor.ts'
 import { EPOCH_SOURCE, epochAt, nowLine } from './epoch.ts'
 import { FAQ, FAQ_THEMES, type FaqTheme } from './faq.ts'
 import { BUILDS, ECOSYSTEM, FACTS, PREDATES, SOURCES, type SourceId } from './knowledge.ts'
 import { FIELD_SAMPLES } from './measure.ts'
 import { KNOWLEDGE_AS_OF, MINER_COMMAND, ONLY_OFFICIAL, PROCEDURES, procedureText, runScript, TIPS } from './practice.ts'
-import { containsSeed } from './redact.ts'
+import { hadSeed } from './redact.ts'
 import { HARD_RULES } from './rules.ts'
 
 /** The field runs alone, for callers without a store (tests, the Discord card). */
@@ -60,7 +60,7 @@ const TWO_FIXES = new Set(['cuda-missing', 'driver-old', 'connection', 'rejected
 const FAQ_COVERED = new Set(['cpu-threads', 'closes-at-start', 'phone-miner', 'auth-mobile'])
 
 /** Rules whose reading the ECOSYSTEM facts and the playbook carry (the request's checker hints give the rest). */
-const IN_ECOSYSTEM = new Set(['hive-miner-dies', 'trainer-load', 'cpu-no-flag', 'rate-falls', 'glibc', 'wrong-arch', 'cpu-generic', 'docker-pull', 'docker-gpu', 'cuda-module', 'config-invalid', 'config-nesting', 'register-rejected', 'pool-reply-not-json', 'missing-file', 'disk-full', 'hugepages', 'worker-exit', 'xmr-msr', 'xmr-idle', 'error-line', 'no-avx', 'permission', 'dns', 'oom'])
+const IN_ECOSYSTEM = new Set(['ldd-windows', 'hw-info-wmi', 'custom-runner', 'gateway-missing', 'apt-foreign-source', 'tar-archive', 'gpu-unresponsive', 'miner-exits', 'stuck-loop', 'hive-miner-dies', 'trainer-load', 'cpu-no-flag', 'rate-falls', 'glibc', 'wrong-arch', 'cpu-generic', 'docker-pull', 'docker-gpu', 'cuda-module', 'config-invalid', 'config-nesting', 'register-rejected', 'pool-reply-not-json', 'missing-file', 'disk-full', 'hugepages', 'worker-exit', 'xmr-msr', 'xmr-idle', 'error-line', 'no-avx', 'permission', 'dns', 'oom'])
 
 /** Rules the READING A MINER LOG block already states; the triage list skips them. */
 const IN_LOG_BLOCK = new Set(['wallet-seed', 'secret-leak', 'foreign-endpoint', 'not-a-log-line', 'epoch-seed', 'sols-counter', 'cold-start', 'pool-side', 'mining', 'bracketed-paste', 'address-not-public', 'worker-not-qc', 'gpu-starved', 'gpu-ok'])
@@ -102,7 +102,7 @@ export function checklistBlock(): string {
 2. Every question: answer every question the user literally asked, each with a direct answer first (yes, no, the value, or "not measured").
 3. Diagnosis: a problem gets the cause with its label ("From your log:", "Likely:", "General tip:"), the fix, and one or two specific asks from ASK FOR. Never only "paste the full log".
 4. Must-say: when a MINER FAQ topic applies, give all its numbered MUST facts, in order, before any extra.
-5. Staleness: a number from our runs (epochs 229/233, or dated 2 Sep to 7 Oct 2026) names its epoch and says it ${PREDATES}, in the same sentence. Every RAM, thread or rate figure carries its era, and on a log from another year says so ("3 GB per colony is from Sep 2026; your 2024 log predates it"). A thread's fix carries its date. Never call a version "current": "check the setup page for the current version".
+5. Staleness: a number from our runs (epochs 229/233, or dated 2 Sep to 7 Oct 2026) names its epoch and says it ${PREDATES}, in the same sentence. Every RAM, thread or rate figure carries its era, and on a log from another year says so ("3 GB per colony is from Sep 2026; your 2024 log predates it"). A thread's fix carries its date. Never call a version of this pool's miner "current": "check the setup page for the current version"; another client's version only with its date.
 6. Money: no income, earnings, profit, ROI, payback, value-per-solution or pool-estimate figure, and no coin-price prediction. Cost maths with rental or power costs is allowed: see MONEY QUESTIONS.
 7. Dates: every other number carries its date or source, or "est.".
 8. Length: about 600 characters for a simple question; about 800 for expert, rental, comparison or multi-part questions, and for a pasted log; a procedure only when asked or when the fix needs one. No preamble.
@@ -118,12 +118,14 @@ export function checklistBlock(): string {
 export function playbookBlock(): string {
   return `HOW I HELP (support playbook)
 1. Read what they pasted or described first; quote the decisive line or value back. When they state a setting, compare it with what the log shows (set 20 threads, log says 23) before applying any rule.
-2. Name the most likely cause, labelled by confidence: "From your log:" for what the lines show (the flag they added, a JSON block at the wrong level, the interpreter path, the version line, an exit loop); "Likely:" for a best inference the log does not prove; "General tip:" for Linux, Windows, Docker, driver or HiveOS knowledge that is not Qubic-specific.
+2. Name the most likely cause, labelled by confidence: "From your log:" for what the pasted lines show (the flag they added, a JSON block at the wrong level, the version line, an exit loop), only when a log was pasted (else "From what you describe:"); "Likely:" for a best inference the log does not prove; "General tip:" for Linux, Windows, Docker, driver or HiveOS knowledge that is not Qubic-specific.
+- A log that shows a known client defect (ECOSYSTEM) or an old client version: lead with "update the client to the current version from the setup page", before any Likely generic cause; antivirus or VC++ only when the log shows a missing or blocked file.
 3. Give the fix: concrete steps, commands in code blocks.
 4. Ask for the one or two data points that would confirm it (ASK FOR), not "the full log".
 - General technical knowledge and hardware reasoning (Linux, Windows, Docker, NVIDIA and CUDA, HiveOS, glibc, CPU instruction sets, tensor cores and TF32, NUMA, processor groups) is expected, labelled "General tip": "why is my H800 no faster than a 4090" gets that reasoning, not a refusal. Still never: an invented Qubic or pool fact, command, binary, flag or URL, or income or price talk.
 - Start, install or run on any platform (Linux, ARM64, Docker, HiveOS, Windows, macOS, a rental): include the setup page path (${POOL.onboardingUrl}: OS, public address, ${POOL.workerPrefix} worker, backend, threads, then run the command it gives). A platform our sources do not confirm (Linux ARM64, Android): say so, tell them to check the page. Help with the system issue itself is fine.
 - Other clients' logs (qubic.li, rqiner, apoolminer): explain the local problem, that client's keys as that client's, dated; then the setup page path. Never another pool's client install, download or config steps (packages, scripts, cpuVersion, appsettings, APKs) as the way to mine.
+- This pool's operating rules (one miner per box, "Ant stream closed", "Ant work replaced", our thread and RAM figures) apply only to this pool's miner, never to another client's or an idle-time miner, or to a log from another year.
 - PRIVATE HINTS (REQUEST block) are unverified pattern-scan output: never cite the checker or the hints ("the checker says", "my scan"); verify every hint against the log; drop a hint the log does not support. If a hint names a symptom (a restart loop, a failed connection) and the log shows the cause (a version gate, an out-of-memory exit), lead with the cause.
 
 ASK FOR (the specific next datum, by symptom)
@@ -199,7 +201,7 @@ export function epochLogBlock(): string {
 - E233 (30 Sep): binary change, QLI 3.9.0 required; POPULATION 64 (set 27 Sep), about 3 GB RAM per colony. Our second runs: thousands of it/s per card, thousands of solutions per rig-hour.
 - E235 (14 Oct): threshold 2190 and a new task file.
 - E236 (21 Oct): networks cut from 64 to 32 neurons (algo change announced 20 Oct); QLI 3.10.4.0.
-- E237 (28 Oct): QLI 3.11 (3.13.x by 4 Nov 2026 per the qubic.li HiveOS package v3.13.0; releases move weekly, so never call one current), worker cuda 237.0; GTX 10 series CUDA worker exits (reported), K80 not on current CUDA (20 Oct); scores above 3125 counted for nothing (QLI moderator, 2 Nov). Thresholds change per epoch.
+- E237 (28 Oct): QLI 3.11, worker cuda 237.0 (QLI 3.13.x on 2 Nov, 3.13.0 mandatory for Ant); GTX 10 series CUDA worker exits (reported), K80 not on current CUDA (20 Oct); scores above 3125 counted for nothing (QLI moderator, 2 Nov). Thresholds change per epoch.
 - Ahead: live feed E240 (18 Nov), qualification by prediction accuracy from about E241 (CfB, 20 Oct).
 - So it/s units and solution counts do not compare across these eras; no epoch was "better" in money terms. No rig measurement of ours after E233.`
 }
@@ -365,10 +367,6 @@ export const LANGUAGE_NAME: Record<string, string> = {
 
 /** A line that gives an AI orders: injected text, never the user's own prose. */
 const INJECTED = /\b(?:ignore|disregard|forget)\b[^\n]{0,40}\b(?:instructions?|prompts?|rules)\b|\bsystem prompt\b|\byou are now\b|\bassistant[- ]directive\b|^\s*(?:#{2,}\s*)?(?:system|assistant)\s*:|\bmaintenance mode\b/i
-/** A config or JSON line: braces, brackets, "key": value, key = value. */
-const CONFIG_LINE = /^\s*(?:[{}[\],]|"[^"\n]*"\s*[:=,]|[\w.-]+\s*=\s*\S|<\/?[\w-]+[^>]*>\s*$)/
-/** Miner and system output LOG_LINE misses: "05-21 13:34:13 INFO", NVRM lines, .NET frames and exception names. */
-const MORE_LOG = /^\s*(?:\d\d-\d\d\s+\d\d?:\d\d|\d{1,2}:\d\d:\d\d|NVRM:|Trainer:|at [\w.<>`[\]]+\(|---\s?(?:>|End of)|System\.[\w.]+(?:Exception|Error)\b|[\w.]+Exception:|thread '[^']*' panicked|note: run with|custom exited|GPUassert|\$'\\E|bash:|sh:|PS [A-Za-z]:)/
 /** "Model name:     AMD ...", "Thread(s) per core: 2", "CPU : Xeon": a label of up to four words and its value. */
 const KEY_VALUE = /^\s*[\p{L}][\p{L}\p{N} ()/._-]{0,30}?\s*:\s+(?=\S)/u
 
@@ -376,42 +374,39 @@ const KEY_VALUE = /^\s*[\p{L}][\p{L}\p{N} ()/._-]{0,30}?\s*:\s+(?=\S)/u
 const wordsOf = (s: string) => s.toLowerCase().match(/[\p{L}\p{N}]+/gu) ?? []
 
 /**
- * The user's own words: a paste minus every log line, config or JSON line, code block, shell prompt, stack
- * frame, quoted or injected line, URL, path, version and ID, so a Spanish sentence under an English log still
- * reads as Spanish and an English question never turns Italian because of "Thread(s) per core" in lscpu output.
+ * The user's own words, line by line: a paste minus every log line, config or JSON line, code block, shell prompt
+ * and what it printed, stack frame, OS or program message in any language ("Для продолжения нажмите любую клавишу",
+ * "系统找不到指定的文件"), quoted or injected line, URL, path, version and ID, so a Spanish sentence under an English
+ * log still reads as Spanish and an English question never turns Russian because of a Windows "pause" line.
  * A log line keeps only a question typed after it ("[CUDA] 38 it/s     is it normal?"); a "Label: value" line
  * keeps its value; and words the user copied out of the log ("помогите not find any flag to support") are dropped.
+ * `at` is the line number; `lead` marks prose before the first pasted line.
  */
-export function userProse(text: string): string {
-  const prose: string[] = []
+function proseLines(text: string): { at: number; text: string; lead: boolean }[] {
+  const lines = text.split(/\r?\n/)
+  const pasted = pastedLines(lines, false)
+  const firstPasted = pasted.findIndex(Boolean)
+  const prose: { at: number; text: string }[] = []
   const logs: string[] = []
-  let fence = false
-  for (const raw of text.split(/\r?\n/)) {
-    if (/^\s*```/.test(raw)) {
-      fence = !fence
-      continue
-    }
-    if (fence) {
-      logs.push(raw)
-      continue
-    }
-    if (INJECTED.test(raw) || /^\s*>/.test(raw)) continue
-    if (LOG_LINE.test(raw) || MORE_LOG.test(raw) || CONFIG_LINE.test(raw)) {
+  lines.forEach((raw, at) => {
+    if (/^\s*```/.test(raw)) return
+    if (INJECTED.test(raw) || /^\s*>/.test(raw)) return
+    if (pasted[at]) {
       const tail = /\?\s*$/.test(raw) ? (raw.split(/\s{3,}|\|/).at(-1) ?? '') : ''
-      const typed = tail && !LOG_LINE.test(tail) ? tail : ''
+      const typed = tail && !LOG_LINE.test(tail) && !/^\s*```/.test(raw) ? tail : ''
       logs.push(typed ? raw.slice(0, raw.lastIndexOf(typed)) : raw)
-      if (typed) prose.push(typed)
-      continue
+      if (typed) prose.push({ at, text: typed })
+      return
     }
     if (/^\s*(?:[A-Za-z]:\\|\$ |# |\||-{3,}|[\w.-]+@[\w.-]+[:$#])/.test(raw)) {
       logs.push(raw)
-      continue
+      return
     }
-    prose.push(raw.replace(KEY_VALUE, ' '))
-  }
+    prose.push({ at, text: raw.replace(KEY_VALUE, ' ') })
+  })
   const logText = ` ${logs.map(l => wordsOf(l).join(' ')).join(' ')} `
-  const out: string[] = []
-  for (const line of prose) {
+  const out: { at: number; text: string; lead: boolean }[] = []
+  for (const { at, text: line } of prose) {
     const cleaned = line
       .replace(/`[^`]*`|https?:\/\/\S+|\bwww\.\S+|[\w.-]*[\\/][\w.\\/-]+|"[^"\n]*"|“[^”\n]*”|«[^»\n]*»|„[^“”\n]*[“”]|(?<!\p{L})'[^'\n]*'(?!\p{L})/gu, ' ')
       .replace(/\b[\w.-]*\d[\w.-]*\b|\b[A-Z]{20,}\b/g, ' ')
@@ -424,10 +419,21 @@ export function userProse(text: string): string {
       if (logText.includes(` ${plain[i]} ${plain[i + 1]} ${plain[i + 2]} `)) [i, i + 1, i + 2].forEach(k => drop.add(k))
     }
     const kept = tokens.filter((_, i) => !drop.has(i)).join(' ')
-    if (/\p{L}{2,}/u.test(kept)) out.push(kept)
+    if (/\p{L}{2,}/u.test(kept)) out.push({ at, text: kept, lead: firstPasted < 0 || at < firstPasted })
   }
-  return out.join('\n').replace(/\s+/g, ' ').trim()
+  return out
 }
+
+const joinProse = (xs: { text: string }[]) => xs.map(x => x.text).join('\n').replace(/\s+/g, ' ').trim()
+
+/** The user's own words in a paste (see proseLines). */
+export const userProse = (text: string): string => joinProse(proseLines(text))
+
+/** The user's words before the first pasted log, code or config line: the primary language signal. */
+export const leadProse = (text: string): string => joinProse(proseLines(text).filter(x => x.lead))
+
+/** Words in a piece of prose; Chinese, Japanese and Korean count about two characters per word. */
+export const proseWords = (prose: string) => (prose.match(/[\p{L}'][\p{L}'-]*/gu) ?? []).filter(w => !/[\u3040-\u30ff\u3400-\u9fff\uac00-\ud7af]/.test(w)).length + Math.floor((prose.match(/[\u3040-\u30ff\u3400-\u9fff\uac00-\ud7af]/g) ?? []).length / 2)
 
 /**
  * Frequent short words per language; "en" competes, so a stray "con" in an English question stays English.
@@ -456,13 +462,25 @@ const MARKS: [string, RegExp][] = [
 /** Fewer Latin words than this is too short to tell a language: the caller falls back, finally to English. */
 const MIN_WORDS = 3
 
+/** The prose before a log decides when it has at least this many words. */
+const LEAD_MIN_WORDS = 3
+
 /**
- * The language of the user's own words (userProse), or null when there are none or too few to tell (a log
- * only, "ok", "?"). A script other than Latin decides first; Latin text goes by stopwords and marks, and
- * anything ambiguous is English.
+ * The language of the user's own words, or null when there are none or too few to tell (a log only, "ok", "?").
+ * The sentences before the first log or code line decide when they have three words or more; otherwise all the
+ * prose does, which never includes OS or program messages inside or after the log. A script other than Latin
+ * decides first; Latin text goes by stopwords and marks, and anything ambiguous is English.
  */
 export function detectLanguage(text: string): string | null {
-  const prose = userProse(text)
+  const lead = leadProse(text)
+  if (lead && proseWords(lead) >= LEAD_MIN_WORDS) {
+    const code = languageOf(lead)
+    if (code) return code
+  }
+  return languageOf(userProse(text))
+}
+
+function languageOf(prose: string): string | null {
   if (!prose) return null
   const n = (re: RegExp) => (prose.match(re) ?? []).length
   const latin = n(/[A-Za-zÀ-ÖØ-öø-ÿĀ-ſ]/g)
@@ -533,7 +551,8 @@ export function requestBlock(language: string, hints?: string): string {
  */
 export function mariaRequestBlock(messages: { role: string; content: string }[], rawLast = ''): string {
   const last = messages.filter(m => m.role === 'user').at(-1)?.content ?? ''
-  const seed = containsSeed(rawLast) ? '  - [fault] The user pasted a wallet seed (removed before it reached you): warn first that it is exposed and the funds must move to a new wallet now; never ask for it.' : ''
+  // the browser redacts a seed before sending, so the mark it leaves counts as a seed too
+  const seed = hadSeed(rawLast) || hadSeed(last) ? '  - [fault] The user pasted a wallet seed (removed before it reached you): warn first that it is exposed and the funds must move to a new wallet now; never repeat or check it, and never ask for it.' : ''
   const hints = isLogPaste(last) ? [seed, checkerHints(last)].filter(Boolean).join('\n') : seed || undefined
   return requestBlock(languageLine(messages), hints)
 }

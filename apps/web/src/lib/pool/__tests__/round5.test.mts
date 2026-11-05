@@ -285,11 +285,12 @@ test('knowledge: early-rate rule is general, HiveOS repair, datacenter GPUs, QLI
   assert.match(e, /reflash/)
   assert.match(e, /custom-get <install URL> -f/)
   assert.match(e, /\[Datacenter GPUs\] General tip, reasoning not measurement: .*tensor cores, TF32 and BF16 do not apply/)
-  assert.match(e, /3\.13\.x by 4 Nov 2026/)
+  // round 6: the QLI line is dated 2 Nov 2026 (3.13.x, 3.13.0 mandatory for Ant); only this pool's miner is never "current"
+  assert.match(e, /3\.13\.x on 2 Nov 2026/)
   assert.match(e, /"check the setup page for the current version"/)
-  assert.match(epochLogBlock(), /3\.13\.x by 4 Nov 2026/)
+  assert.match(epochLogBlock(), /QLI 3\.13\.x on 2 Nov, 3\.13\.0 mandatory for Ant/)
   assert.ok(ECOSYSTEM.find(f => f.topic === 'QLI versions')!.source.match(/Nov 2026/))
-  assert.match(checklistBlock(), /Never call a version "current"/)
+  assert.match(checklistBlock(), /Never call a version of this pool's miner "current"/)
 })
 
 test('driver line: 570 for RTX 50 is a general NVIDIA requirement, kept out of diagnoses', () => {
