@@ -95,7 +95,8 @@ export type AnySource = SourceId | PracticeSourceId
 export const sourceOf = (id: AnySource): Src => (id in PRACTICE_SOURCES ? PRACTICE_SOURCES[id as PracticeSourceId] : SOURCES[id as SourceId])
 export const practiceSourceLine = (ids: AnySource[]) => [...new Set(ids)].map(id => `${sourceOf(id).label} (${sourceOf(id).date})`).join('; ')
 
-export type PStep = { title: string; body?: string; command?: string; sources: AnySource[] }
+/** extra: a nice-to-have step the wizard shows but the brief (AI prompt) text leaves out, to keep the prompt short. */
+export type PStep = { title: string; body?: string; command?: string; sources: AnySource[]; extra?: boolean }
 export type PCheck = { title: string; command?: string; body?: string }
 export type ProcedureId = 'linux-nvidia' | 'linux-cpu' | 'linux-run' | 'linux-systemd' | 'linux-nohup' | 'gpu-power' | 'windows' | 'macos' | 'hiveos' | 'rental'
 export type Procedure = { id: ProcedureId; title: string; summary: string; steps: PStep[]; checks: PCheck[] }
@@ -164,7 +165,7 @@ export const PROCEDURES: Record<ProcedureId, Procedure> = {
       { title: 'See which drivers fit the card', command: 'sudo ubuntu-drivers list', body: 'On a headless server use sudo ubuntu-drivers list --gpgpu for the -server branches.', sources: ['ubuntuNvidia'] },
       { title: 'Install the recommended driver and reboot', command: 'sudo ubuntu-drivers install && sudo reboot', body: 'ubuntu-drivers installs signed drivers, so Secure Boot keeps working. CUDA 12 needs driver 525.60.13 or newer; any current branch has that. RTX 50 cards need a 570 or newer branch with the open kernel modules (package names end in -open).', sources: ['ubuntuNvidia', 'cuda12', 'nvidiaOpen', 'rtx50'] },
       { title: 'Check the card', command: 'nvidia-smi', body: 'It must list every card and a driver version. "No devices were found": check lsmod | grep nouveau and follow the Ubuntu guide to blocklist nouveau.', sources: ['ubuntuNvidia', 'nvidiaSmi'] },
-      { title: 'Optional: keep the GPU initialized', command: 'sudo nvidia-smi -pm 1', body: 'Persistence mode keeps the driver loaded between runs. It resets at reboot; NVIDIA marks it legacy in favour of the nvidia-persistenced daemon.', sources: ['nvidiaSmi', 'persistence'] },
+      { title: 'Optional: keep the GPU initialized', command: 'sudo nvidia-smi -pm 1', body: 'Persistence mode keeps the driver loaded between runs. It resets at reboot; NVIDIA marks it legacy in favour of the nvidia-persistenced daemon.', sources: ['nvidiaSmi', 'persistence'], extra: true },
     ],
     checks: [{ title: 'nvidia-smi lists the card and the driver', command: 'nvidia-smi' }],
   },
@@ -223,7 +224,7 @@ export const PROCEDURES: Record<ProcedureId, Procedure> = {
     summary: 'General GPU advice, not measured on Qubic: a lower power limit often keeps most of the throughput for less power and heat.',
     steps: [
       { title: 'See the allowed range', command: 'nvidia-smi -q -d POWER', body: 'Shows the current, default, minimum and maximum power limit of each card, in watts.', sources: ['nvidiaSmi'] },
-      { title: 'Set a lower limit', command: 'sudo nvidia-smi -pl <WATTS>', body: 'Watts, between the minimum and maximum. Add -i 0 for one card only. Start about 10% below the default (est.). Lower power is the safe direction: do not raise clocks or voltage.', sources: ['nvidiaSmi'] },
+      { title: 'Set a lower limit', command: 'sudo nvidia-smi -pl <WATTS>', body: 'Watts, between the minimum and maximum. Add -i 0 for one card only. No tested offset exists for Qubic: pick a lower value inside that range and judge it by solutions per hour. Lower power is the safe direction: do not raise clocks or voltage.', sources: ['nvidiaSmi'] },
       { title: 'Measure solutions, not it/s', body: 'Keep each setting for several hours (est.) and compare solutions per hour. Keep the lowest limit that does not cost solutions. As a general example, Puget Systems kept about 95% of ML training performance with RTX 3090 cards limited from 350 W to 280 W (24 Nov 2020).', sources: ['pugetPower', 'guide'] },
       { title: 'Re-apply it at every boot', command: `${writeUnit('gpu-power-limit', POWER_UNIT)}\nsudo systemctl daemon-reload && sudo systemctl enable --now gpu-power-limit`, body: 'Put your watts in place of <WATTS>. Persistence mode resets at reboot, so a small boot service sets both before the miner starts.', sources: ['nvidiaSmi', 'pugetPower', 'localCheck'] },
     ],
@@ -262,8 +263,8 @@ export const PROCEDURES: Record<ProcedureId, Procedure> = {
       { title: 'Save the pool command in run.sh', command: runScript('~/qubic-miner'), body: `Paste the command the pool setup page gives in place of ${MINER_COMMAND}.`, sources: ['localCheck'] },
       { title: 'Count the threads', command: 'sysctl -n hw.logicalcpu', sources: ['guide'] },
       { title: 'Run it awake', command: 'caffeinate -dimsu ~/qubic-miner/run.sh', body: 'caffeinate holds the Mac awake for as long as the miner runs. Leave the Terminal window open; Ctrl+C stops both. The system-sleep part (-s) only holds on the power adapter, so keep a MacBook plugged in.', sources: ['caffeinate'] },
-      { title: 'Or turn off sleep in Settings', body: 'Desktop Mac: System Settings, Energy, Prevent automatic sleeping when the display is off. MacBook: System Settings, Battery, Options, Prevent automatic sleeping on power adapter when the display is off.', sources: ['macSleep'] },
-      { title: 'Keep a MacBook cool', body: 'Use it on a firm, level surface with free airflow, never on a bed or a cushion, in a room between 10 and 35 °C. A fanless MacBook Air gets hot under constant load: leave two threads free.', sources: ['macTemp', 'guide'] },
+      { title: 'Or turn off sleep in Settings', body: 'Desktop Mac: System Settings, Energy, Prevent automatic sleeping when the display is off. MacBook: System Settings, Battery, Options, Prevent automatic sleeping on power adapter when the display is off.', sources: ['macSleep'], extra: true },
+      { title: 'Keep a MacBook cool', body: 'Use it on a firm, level surface with free airflow, never on a bed or a cushion, in a room between 10 and 35 °C. A fanless MacBook Air gets hot under constant load: leave two threads free.', sources: ['macTemp', 'guide'], extra: true },
     ],
     checks: [
       { title: 'Terminal shows an it/s line' },
@@ -349,7 +350,7 @@ export function withCommand(text: string, command?: string | null): string {
 
 /** Compact text form for Maria's AI prompt and the Discord card. `brief` drops the summary line (the prompt). */
 export function procedureText(p: Procedure, opts: { sources?: boolean; brief?: boolean } = {}): string {
-  const steps = p.steps.map((s, n) => {
+  const steps = p.steps.filter(s => !(opts.brief && s.extra)).map((s, n) => {
     const head = `${n + 1}. ${s.title}.${s.body ? ` ${s.body}` : ''}${opts.sources ? ` [${practiceSourceLine(s.sources)}]` : ''}`
     return s.command ? `${head}\n${s.command.split('\n').map(l => `    ${l}`).join('\n')}` : head
   })
