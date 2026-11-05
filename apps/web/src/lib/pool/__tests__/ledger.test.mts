@@ -583,33 +583,20 @@ test('lines: the journal reads as Bob wrote it, labelled by source', () => {
 
 /* ---------------- the why: verbatim quotes, no em dashes, no reward talk ---------------- */
 
-test('why: the quotes are verbatim, sourced and dated', () => {
+test('why: the quote is verbatim, sourced and dated, and said once', () => {
   assert.equal(
     W.MACHINE.text,
     'All depends on miners. I constructed a machine, throw computing power into it and it will do anything'
   )
   assert.equal(W.MACHINE.who, 'Come-from-Beyond')
   assert.equal(W.MACHINE.where, 'Qubic Discord')
-  assert.equal(W.MACHINE.date, '20 Jul 2026')
-  assert.deepEqual(
-    W.ASK.map(a => `${a.text}|${a.date}`),
-    [
-      'ask miners|26 Aug',
-      'ask miners|31 Aug',
-      'ask miners|31 Aug',
-      'ask miners|2 Sep',
-      'ask miners|7 Sep',
-      'ask miners|9 Sep',
-      'ask miners|14 Sep',
-      'ask miners|20 Sep',
-      'ask miner devs|7 Oct',
-      'ask miner devs|10 Oct',
-      'ask miners|14 Oct',
-      'ask miners|14 Oct',
-      'ask miners|22 Oct',
-    ]
-  )
+  assert.equal(W.MACHINE.date, '20 July 2026')
+  assert.equal(W.MACHINE.iso, '2026-07-20')
+  // the repeated "ask miners" column is gone from the page and from the copy
+  assert.equal('ASK' in W, false)
+  assert.equal('ASK_SPAN' in W, false)
   const all = JSON.stringify(W)
+  assert.doesNotMatch(all, /ask miners/i)
   assert.doesNotMatch(all, /—/)
   assert.doesNotMatch(all, /airdrop|reward|earn|profit|income|\$\d|promise/i)
   assert.match(all, /2 public and one independent/)

@@ -9,6 +9,7 @@ import { classifyCpu, pick, type PickMode, type Scale } from '@/lib/pool/hardwar
 import { BUILDS, type BuildTier } from '@/lib/pool/knowledge'
 import { extractMetrics } from '@/lib/pool/measure'
 import { PROCEDURES } from '@/lib/pool/practice'
+import type { AppId } from '@/lib/pool/qc'
 import { RENTAL_GUIDE } from '@/lib/pool/ui-config'
 import { type Avx, buildPlan, checkWallet, checkWorkerInput, cleanWorker, type Hw, hardwareTag, PREFIX_WHY, type Plan, suggestWorker, THREAD_COMMAND } from '@/lib/pool/wizard'
 import { type Answers, Flow, type Outcome, restartChip, type StepDef, useAi } from './flow'
@@ -16,7 +17,7 @@ import { LogMeasure, useMeasured } from './measured'
 import { Checklist, type ChipOpt, Command, CopyButton, Group, Reveal, SEVERITY_LABEL, StatusCard, severityIcon, severityTone, TONE, VerdictCard, verdictTone } from './ui'
 import s from './maria.module.css'
 
-export type Screen = 'home' | 'pick' | 'connect' | 'doctor' | 'ask' | 'rig'
+export type Screen = 'home' | AppId
 export type Go = (screen: Screen, handoff?: Answers) => void
 
 const OS_CHIPS = (['linux', 'windows', 'macos', 'hiveos'] as Os[]).map(o => ({ value: o, label: OS_LABEL[o] }))

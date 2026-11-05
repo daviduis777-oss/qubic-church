@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { MARIA_LIMITS } from '@/lib/pool/config'
+import { diagnose, looksLikeLog } from '@/lib/pool/doctor'
 import { redactWallets } from '@/lib/pool/redact'
 import { Screen, useAi, useRing, useStickToBottom } from './flow'
 import type { Go } from './flows'
@@ -27,6 +28,8 @@ export function AskFlow({ go, first }: { go: Go; first?: string }) {
   const scroller = useStickToBottom(msgs.map(m => m.content.length).join(',') + busy)
 
   const ask = async (raw: string) => {
+    // A pasted miner log goes to the log doctor, which runs here; a question, even a multi-line one, stays a question.
+    if (looksLikeLog(raw) && diagnose(raw).findings.length) return go('doctor', { mode: raw })
     const text = redactWallets(raw.trim()).slice(0, MARIA_LIMITS.maxInput)
     if (!text || busy) return
     const history = [...msgs.filter(m => !m.offline), { role: 'user' as const, content: text }]

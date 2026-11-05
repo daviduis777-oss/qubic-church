@@ -9,11 +9,11 @@ import p from './pool.module.css'
 const KEY = 'qc-pool:wide'
 
 /**
- * The hero: the page's intro beside Maria's phone. From WIDE_MIN_PX a toggle opens the wide view, the same
- * app as a page-wide panel for long plans and logs. The phone stays the default; the choice is remembered
- * in this browser only. The app's tree never changes between the two, so nothing in it is lost.
+ * Maria beside her phone, the page's feature. From WIDE_MIN_PX a toggle opens the wide view, the same app as
+ * a page-wide panel for long plans and logs. The phone stays the default; the choice is remembered in this
+ * browser only. The app's tree never changes between the two, so nothing in it is lost.
  */
-export function PoolStage({ intro, rest, backdrop, children }: { intro: ReactNode; rest: ReactNode; backdrop?: ReactNode; children: ReactNode }) {
+export function PoolStage({ intro, children }: { intro: ReactNode; children: ReactNode }) {
   const [can, setCan] = useState(false)
   const [wide, setWide] = useState(false)
 
@@ -40,8 +40,8 @@ export function PoolStage({ intro, rest, backdrop, children }: { intro: ReactNod
     })
 
   return (
-    <div className={`${p.top} ${wide ? p.topWide : ''}`}>
-      <header className={p.intro}>
+    <section aria-labelledby="maria" className={`${p.top} ${wide ? p.topWide : ''}`}>
+      <div className={p.intro}>
         {intro}
         {can && (
           <button aria-pressed={wide} className={p.wideToggle} onClick={toggle} type="button">
@@ -49,15 +49,12 @@ export function PoolStage({ intro, rest, backdrop, children }: { intro: ReactNod
             {wide ? 'Phone view' : 'Wide view for long plans'}
           </button>
         )}
-        {rest}
-      </header>
+      </div>
       <div className={p.deviceWrap}>
-        {/* always rendered, hidden by CSS in the wide view: a changed child list would remount the app */}
-        {backdrop}
         <Device label="Maria, the mining coach" wide={wide}>
           {children}
         </Device>
       </div>
-    </div>
+    </section>
   )
 }

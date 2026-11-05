@@ -1,8 +1,8 @@
 /* iPhone 16 Pro (402 x 874 pt), Black Titanium, warm neutral. Scales with the viewport height on desktop. */
 
 .device {
-  /* fits the first screen: the site header (56px), the page top padding (72px) and a margin */
-  --h: min(874px, calc(100svh - 160px));
+  /* the page may set --device-h; by default it fits the first screen under the site header and a margin */
+  --h: var(--device-h, min(874px, calc(100svh - 160px)));
   position: relative;
   height: var(--h);
   min-height: 520px;
@@ -196,7 +196,7 @@
 /* A short laptop screen (1280x720): the page top padding shrinks to 28px, so the phone can grow into it. */
 @media (min-width: 768px) and (max-height: 820px) {
   .device {
-    --h: min(874px, calc(100svh - 104px));
+    --h: var(--device-h, min(874px, calc(100svh - 104px)));
   }
   .wide {
     --h: max(520px, calc(100svh - 104px));
