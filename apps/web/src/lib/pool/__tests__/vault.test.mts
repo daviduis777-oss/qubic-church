@@ -26,8 +26,10 @@ test('facts: 7x 5080 matched 4x 4090 on sol/h and won only per dollar', () => {
   assert.doesNotMatch(all, /10 Oct 2026: 7x RTX 5080/)
   const f = FACTS.find(x => /7x RTX 5080/.test(x.text) && x.topic === 'Measured')!
   assert.ok(f.sources.includes('field-e233'))
-  for (const re of [/epoch 233/, /EPYC 7B13/, /PCIe 4\.0 x16/, /3,650 sol\/h in hour 1/, /2,460 sol\/h steady/, /2,570 averaged over 14 hours/, /Same raw rate/, /1\.9x the solutions per dollar/])
+  // cost per solution from each rig's own window, not "same raw rate at half the price" (exam round 1, X01)
+  for (const re of [/epoch 233/, /EPYC 7B13/, /PCIe 4\.0 x16/, /3,650 sol\/h in hour 1/, /2,900 in hour 2/, /2,460 sol\/h steady/, /2,570 averaged over 14 hours/, /0\.075 US cents/, /0\.13 for the 4x 4090 rig/, /overstated first hours/, /1\.7x cheaper per solution at 58% of the price/, /not a pure card test/, /predates the E235\/E236 changes/])
     assert.match(f.text, re)
+  assert.doesNotMatch(f.text, /Same raw rate|1\.9x/)
 })
 
 test('facts: the CPU backbone claim is kept as a dated guide claim, next to our measurements', () => {
@@ -201,7 +203,7 @@ test('faq: no income figures, quotes under 15 words, jetski only as not recommen
 
 test('faq: profitability explains the value of a solution without a figure', () => {
   const p = FAQ.filter(e => e.theme === 'profitability').map(e => e.a).join(' ')
-  for (const re of [/fixed reward, divided by all solutions/, /More miners/, /each worth less/, /noise until about 80 to 90% of the epoch/, /computor seats/, /We do not project income/, /We give no income figures/])
+  for (const re of [/fixed reward, divided by all solutions/, /More miners/, /each worth less/, /noise until about 80 to 90% of the epoch/, /computor seats/, /I do not project income/, /I give no income figures/])
     assert.match(p, re)
 })
 
@@ -226,7 +228,7 @@ test('prompt: STALENESS and MINER FAQ are in the cached block, compact and clean
   assert.ok(faqBlock().length < 18_000, `faq block is ${faqBlock().length} chars`)
   assert.ok(stalenessBlock().length < 1_000)
   assert.doesNotMatch(p, /—/)
-  assert.doesNotMatch(p, /\bCODED\b/)
+  assert.equal(p.match(/\bCODED\b/g)!.length, 1) // only in the "who runs it" line
   assert.doesNotMatch(faqBlock() + stalenessBlock(), MONEY)
 })
 
