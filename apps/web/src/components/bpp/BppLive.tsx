@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { replay, type NetData } from '@/lib/bpp/sim'
+import { useRecord } from './TrackRecord'
 import { nx, sans } from './fonts'
 
 const NX = nx.style.fontFamily
@@ -44,6 +45,9 @@ export function BppLive({ liveAt }: { liveAt: string }) {
   const days = left == null ? 0 : Math.floor(left / 86400000)
   const hms = left == null ? '--:--:--' : `${two(Math.floor((left % 86400000) / 3600000))}:${two(Math.floor((left % 3600000) / 60000))}:${two(Math.floor((left % 60000) / 1000))}`
   const inSample = replayView ? replayView.total : null
+  const rec = useRecord()
+  const hourNow = now == null ? null : Math.floor(now / 3600000) * 3600
+  const current = rec?.hours.find(h => h.hour === hourNow) ?? null
 
   return (
     <section style={{ display: 'grid', gap: 'clamp(24px, 4vw, 40px)', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 480px), 1fr))', alignItems: 'start' }}>
@@ -68,11 +72,26 @@ export function BppLive({ liveAt }: { liveAt: string }) {
           </>
         ) : (
           <>
-            <p className="mute" style={{ fontSize: 17, margin: 0 }}>Bitcoin, the next hour</p>
-            <div className="nx lit" style={{ fontWeight: 300, fontSize: 'clamp(90px, 16vw, 200px)', lineHeight: 0.9, marginTop: 18 }}>
-              Waiting for the feed
-            </div>
-            <p className="mute" style={{ fontSize: 15 }}>The live feed is due now. The first call appears here as soon as the network publishes it.</p>
+            <p className="mute" style={{ fontSize: 17, margin: 0 }}>Bitcoin, this hour</p>
+            {current && current.side !== 'skip' ? (
+              <>
+                <div className="nx lit" style={{ fontWeight: 300, fontSize: 'clamp(110px, 20vw, 230px)', lineHeight: 0.85, marginTop: 18 }}>
+                  {current.side === 'up' ? '▲ UP' : '▼ DOWN'}
+                </div>
+                <p className="mute" style={{ fontSize: 15 }}>
+                  Sealed at {current.sealedAt.slice(11, 16)} UTC, before the hour closes. <a className="mute" href="#record" style={{ textDecoration: 'underline', textUnderlineOffset: 3 }}>The record</a> checks it against the close.
+                </p>
+              </>
+            ) : (
+              <>
+                <div className="nx lit" style={{ fontWeight: 300, fontSize: 'clamp(70px, 12vw, 150px)', lineHeight: 0.9, marginTop: 18 }}>
+                  {current ? 'Not sure' : 'Waiting for the feed'}
+                </div>
+                <p className="mute" style={{ fontSize: 15 }}>
+                  {current ? 'The network sits this hour out. Trader Maria does too.' : 'The live feed is due now. The call appears here as soon as the network makes it, and goes straight into the record.'}
+                </p>
+              </>
+            )}
           </>
         )}
 

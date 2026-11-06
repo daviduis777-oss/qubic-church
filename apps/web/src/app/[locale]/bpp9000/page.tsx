@@ -9,6 +9,7 @@ import { BppLive } from '@/components/bpp/BppLive'
 import { Crowd, HeaderNav } from '@/components/bpp/Crowd'
 import { Journal } from '@/components/bpp/Journal'
 import { BppHow } from '@/components/bpp/BppHow'
+import { RecordSection } from '@/components/bpp/RecordSection'
 import { BPP_FAQ, BPP_MD_URL, BPP_SUMMARY, BPP_URL } from '@/lib/bpp/explainer'
 import { bppFonts } from '@/components/bpp/fonts'
 
@@ -55,6 +56,8 @@ export default async function BppPage(props: { params: Promise<{ locale: string 
         </header>
 
         <BppLive liveAt={liveAt} />
+
+        <RecordSection />
 
         <Crowd initial={{ signedUp: count, trades: 0, total: 0 }} />
 

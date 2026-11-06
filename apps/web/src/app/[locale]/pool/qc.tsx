@@ -152,6 +152,9 @@ export function MariaIntro() {
         </p>
       ))}
       <p className={p.mariaHint}>{MARIA.hint}</p>
+      <a className={p.reportLink} href={MARIA.x.url} rel="noopener noreferrer" target="_blank">
+        {MARIA.x.label}
+      </a>
       <ReportLink className={p.reportLink} />
     </div>
   )

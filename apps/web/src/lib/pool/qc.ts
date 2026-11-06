@@ -31,6 +31,7 @@ export const MARIA = {
     'Today she runs on Claude by Anthropic. She is built to move to Aigarth when it is ready.',
   ],
   hint: 'Tap an app to open it.',
+  x: { url: 'https://x.com/maria_aigarth', label: '@maria_aigarth on X' },
 } as const
 
 /** The screens Maria's phone can open. 'home' is the home screen itself. */
