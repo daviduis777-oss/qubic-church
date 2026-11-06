@@ -14,8 +14,8 @@ const SPANS = [
 
 /**
  * Trader Maria: a paper bot that bets every live BPP-9000 call under real conditions, at a prediction market
- * and at a binary broker, so anyone can see what the network's calls would have done with $100. Paper only:
- * she never touches money. Below, the what-if: the typical outcome for any accuracy, before or after launch.
+ * and at a binary broker, so anyone can see what the network's calls would have done with $100. Paper only for now:
+ * she touches no money until the record has run for months. Below, the what-if: the typical outcome for any accuracy, before or after launch.
  */
 export function TraderMaria({ r }: { r: RecordResp | null }) {
   const hours = r?.hours ?? []
@@ -47,7 +47,7 @@ export function TraderMaria({ r }: { r: RecordResp | null }) {
       </div>
 
       <p style={{ margin: 0, fontSize: 16, lineHeight: 1.6, maxWidth: '68ch' }}>
-        Maria trades every live BPP-9000 call on paper, under real conditions: fees, slippage, the payout a real venue gives. She starts with $100, puts 5% of what she has on each call and sits out the hours the network is not sure. <span className="mute">No real money, ever. A bot on live calls comes later, after the record has run for months. Not before.</span>
+        Maria trades every live BPP-9000 call on paper, under real conditions: fees, slippage, the payout a real venue gives. She starts with $100, puts 5% of what she has on each call and sits out the hours the network is not sure. <span className="mute">No real money yet. A bot on live calls comes later, after the record has run for months. Not before.</span>
       </p>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))', gap: 16 }}>
@@ -115,7 +115,7 @@ export function TraderMaria({ r }: { r: RecordResp | null }) {
       </div>
 
       <p className="mute" style={{ margin: 0, fontSize: 12.5, lineHeight: 1.7 }}>
-        {VENUES.map(v => `${v.name}: ${v.note}`).join(' ')} Paper only, an experiment, not financial advice.
+        {VENUES.map(v => `${v.name}: ${v.note}`).join(' ')} Paper trading for now, an experiment, not financial advice.
       </p>
     </section>
   )
