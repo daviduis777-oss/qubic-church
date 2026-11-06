@@ -57,11 +57,15 @@ export function TrackRecord({ r }: { r: RecordResp | null }) {
       )}
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 18 }}>
-        <Big big={pct(s?.rate ?? null)} small={s?.checked ? `right, over ${s.checked} live ${s.checked === 1 ? 'hour' : 'hours'}` : 'right, live'} lit />
+        <Big big={pct(s?.rate ?? null)} label="Live accuracy" small={s?.checked ? `right, over ${s.checked} live ${s.checked === 1 ? 'hour' : 'hours'}` : 'right, live'} lit />
         <Big big={s?.last24.checked ? pct((s.last24.hits / s.last24.checked) * 100, 0) : '—'} small="in the last 24 hours" />
         <Big big={runText} small={s?.bestRun ? `in a row now, best run ${s.bestRun}` : 'in a row'} />
         <Big big={s?.luck == null ? '—' : s.luck < 0.001 ? '<0.1%' : pct(s.luck * 100)} small={s?.luck == null ? 'chance it is luck, shown from 10 hours' : 'chance a coin would do this well'} />
       </div>
+
+      <p style={{ margin: 0, fontSize: 15, lineHeight: 1.6, maxWidth: '68ch' }}>
+        Accuracy is the network&apos;s alone: its calls against the close, with no trading and no fees in it. <span className="mute">Trader Maria, below, is one way to use the calls.</span>
+      </p>
 
       <div>
         <div className="label" style={{ marginBottom: 10 }}>
@@ -106,9 +110,14 @@ export function TrackRecord({ r }: { r: RecordResp | null }) {
   )
 }
 
-function Big({ big, small, lit }: { big: string; small: string; lit?: boolean }) {
+function Big({ big, small, lit, label }: { big: string; small: string; lit?: boolean; label?: string }) {
   return (
     <div>
+      {label && (
+        <span className="label" style={{ display: 'block', marginBottom: 8 }}>
+          {label}
+        </span>
+      )}
       <b className={`nx${lit ? ' lit' : ''}`} style={{ display: 'block', fontWeight: lit ? 300 : 400, fontSize: lit ? 'clamp(48px, 7vw, 72px)' : 'clamp(30px, 4vw, 42px)', lineHeight: 1, color: lit ? undefined : 'var(--fil)' }}>
         {big}
       </b>

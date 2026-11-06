@@ -46,6 +46,9 @@ export function TraderMaria({ r }: { r: RecordResp | null }) {
         </div>
       </div>
 
+      <p className="mute" style={{ margin: 0, fontSize: 14.5, lineHeight: 1.6, maxWidth: '68ch' }}>
+        One way to use the calls. Her results depend on the venue, its fees and her stake; the network&apos;s accuracy is the record above.
+      </p>
       <p style={{ margin: 0, fontSize: 16, lineHeight: 1.6, maxWidth: '68ch' }}>
         Maria trades every live BPP-9000 call on paper, under real conditions: fees, slippage, the payout a real venue gives. She starts with $100, puts 5% of what she has on each call and sits out the hours the network is not sure. <span className="mute">No real money yet. A bot on live calls comes later, after the record has run for months. Not before.</span>
       </p>
