@@ -113,4 +113,5 @@ test('wiring: the tick is public and rate-limited, the live call waits for the c
   assert.match(wf, /cron: '7,37 \* \* \* \*'/)
   assert.match(wf, /https:\/\/qubic\.church\/api\/bpp\/tick/)
   assert.match(src('../../../components/bpp/TraderMaria.tsx'), /https:\/\/x\.com\/maria_aigarth/)
+  assert.match(src('../../../components/bpp/TraderMaria.tsx'), /<Halo face=\{36\} label="Trader Maria"/)
 })
