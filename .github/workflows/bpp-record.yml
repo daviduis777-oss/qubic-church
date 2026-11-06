@@ -1,0 +1,18 @@
+# BPP-9000 record: twice an hour, ask the site to seal the current hour's call and check closed hours.
+# The endpoint is public and idempotent, so this needs no secret; a late or doubled run changes nothing.
+name: BPP-9000 record
+
+on:
+  schedule:
+    - cron: '7,37 * * * *'
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  tick:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Tick
+        run: curl -fsS --max-time 60 -X POST https://qubic.church/api/bpp/tick
