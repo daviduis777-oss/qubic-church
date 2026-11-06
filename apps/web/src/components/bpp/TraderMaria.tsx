@@ -1,6 +1,7 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { Halo } from '@/components/pool/maria/Halo'
 import { betBreakEven, breakEven, money, TRADER, traderCurve, type Venue, VENUES, whatIf } from '@/lib/bpp/record-view'
 import type { RecordResp } from './TrackRecord'
 
@@ -22,10 +23,19 @@ export function TraderMaria({ r }: { r: RecordResp | null }) {
   const [rate, setRate] = useState(54.5)
   const [span, setSpan] = useState<(typeof SPANS)[number]>(SPANS[1])
   const curves = useMemo(() => VENUES.map(v => ({ v, c: traderCurve(hours, v) })), [hours])
+  // her halo idles like the pool's, and thinks for a moment whenever the what-if changes
+  const [busy, setBusy] = useState(false)
+  const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+  const think = () => {
+    setBusy(true)
+    clearTimeout(timer.current)
+    timer.current = setTimeout(() => setBusy(false), 1400)
+  }
+  useEffect(() => () => clearTimeout(timer.current), [])
   return (
     <section aria-labelledby="trader-h" id="trader" style={{ display: 'grid', gap: 24, paddingTop: 28, borderTop: '1px solid var(--line)', scrollMarginTop: 80 }}>
       <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
-        <img alt="" height={56} src="/pool/maria-256.webp" style={{ borderRadius: '50%', boxShadow: '0 0 0 1px var(--line), 0 0 22px rgba(232,145,46,.35)' }} width={56} />
+        <Halo face={36} label="Trader Maria" mode={busy ? 'thinking' : 'idle'} size={104} tone="#FFC46B" />
         <div style={{ flex: 1, minWidth: 220 }}>
           <h2 className="eng" id="trader-h" style={{ fontSize: 'clamp(18px, 2.4vw, 22px)', fontWeight: 400, margin: 0, color: '#f3e4ce' }}>
             Trader Maria
@@ -56,7 +66,10 @@ export function TraderMaria({ r }: { r: RecordResp | null }) {
             aria-label="Share of hours the network calls right"
             max={60}
             min={45}
-            onChange={e => setRate(Number(e.target.value))}
+            onChange={e => {
+              setRate(Number(e.target.value))
+              think()
+            }}
             step={0.5}
             style={{ flex: 1, minWidth: 180, accentColor: 'var(--fil)', padding: 0, border: 0, background: 'transparent' }}
             type="range"
@@ -64,7 +77,10 @@ export function TraderMaria({ r }: { r: RecordResp | null }) {
           />
           <div role="group" aria-label="Over how long" style={{ display: 'flex', gap: 6 }}>
             {SPANS.map(sp => (
-              <button aria-pressed={sp === span} className={`btn${sp === span ? ' btn-main' : ''}`} key={sp.bets} onClick={() => setSpan(sp)} style={{ minHeight: 36, padding: '6px 12px', fontSize: 13 }} type="button">
+              <button aria-pressed={sp === span} className={`btn${sp === span ? ' btn-main' : ''}`} key={sp.bets} onClick={() => {
+                  setSpan(sp)
+                  think()
+                }} style={{ minHeight: 36, padding: '6px 12px', fontSize: 13 }} type="button">
                 {sp.label}
               </button>
             ))}
