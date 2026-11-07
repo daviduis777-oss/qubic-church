@@ -7,6 +7,7 @@ import { NO_TAB, POOL_TAB, type PoolTab, probePoolTab } from '@/lib/pool/nav'
 
 const LINKS = [
   ['/bpp9000', 'BPP-9000'],
+  ['/bpp9000/brains', 'Brains'],
   ['/articles', 'Crypt'],
   ['/books', 'Books'],
   ['/docs', 'Research'],
@@ -45,7 +46,9 @@ export function GlobalNavTrigger() {
 
   useEffect(() => setOpen(false), [pathname])
 
-  const active = (href: string) => pathname === href || pathname.startsWith(`${href}/`)
+  // a tab is current on its own page and below it, unless a more specific tab (Brains under BPP-9000) owns that path
+  const under = (href: string) => pathname === href || pathname.startsWith(`${href}/`)
+  const active = (href: string) => under(href) && !LINKS.some(([h]) => h !== href && h.startsWith(`${href}/`) && under(h))
   // On the forum's blue bar the gold reads too loud: the wordmark and Donate turn white there.
   const crypt = pathname === '/articles' || pathname.startsWith('/articles/')
   const home = pathname === '/'
