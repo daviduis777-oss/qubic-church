@@ -135,38 +135,43 @@ function Ring({ g, live }: { g: CheckedGenome | null; live: LiveResult | null })
   useEffect(() => {
     if (!g || !w) return
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    // run the homework in one go, then tick through the exam hours slowly
+    // the homework runs in one go; then one exam hour per beat: tick until the clock lets the call neuron speak
     let s: Uint8Array = initial(g)
     let i = 0
+    let c: 0 | 1 | 2 | null = null
     const start = g.task.hours
     const last = live?.hours.at(-1) ? (live.hours.at(-1)!.hour - g.task.start) / 3600 : start + 168
+    const nextHour = () => {
+      for (let guard = 0; guard < 2000; guard++) {
+        s = step(g, w, s)
+        if (s[g.ctrl] !== 2) {
+          i++
+          c = s[g.out] as 0 | 1 | 2
+          return true
+        }
+      }
+      return false
+    }
     const jump = () => {
       s = initial(g)
       i = 0
-      let guard = 0
-      while (i < start && guard++ < 400_000) {
-        s = step(g, w, s)
-        if (s[g.ctrl] !== 2) i++
-      }
+      c = null
+      while (i < start && nextHour()) {}
+    }
+    const show = () => {
       setState(s)
       setIdx(i)
-      setCall(s[g.ctrl] !== 2 ? (s[g.out] as 0 | 1 | 2) : null)
+      setCall(c)
     }
     jump()
+    show()
     clearInterval(timer.current)
     timer.current = setInterval(
       () => {
-        s = step(g, w, s)
-        const emitted = s[g.ctrl] !== 2
-        if (emitted) i++
-        if (i > last) jump()
-        else {
-          setState(s)
-          setIdx(i)
-          setCall(emitted ? (s[g.out] as 0 | 1 | 2) : null)
-        }
+        if (!nextHour() || i > last) jump()
+        show()
       },
-      reduce ? 2400 : 700,
+      reduce ? 3000 : 1400,
     )
     return () => clearInterval(timer.current)
   }, [g, w, live])
@@ -190,7 +195,7 @@ function Ring({ g, live }: { g: CheckedGenome | null; live: LiveResult | null })
             const a = pos(src)
             const b = pos(t)
             const lit = state && state[src] === 1
-            return <path d={`M${a.x},${a.y} Q${cx},${cy} ${b.x},${b.y}`} fill="none" key={k} stroke={lit ? 'rgba(255,196,107,.28)' : 'rgba(255,200,140,.07)'} strokeWidth={slot === 0 ? 1 : 0.7} />
+            return <path d={`M${a.x},${a.y} Q${cx},${cy} ${b.x},${b.y}`} fill="none" key={k} stroke={lit ? 'rgba(255,196,107,.28)' : 'rgba(255,200,140,.07)'} strokeWidth={slot === 0 ? 1 : 0.7} style={{ transition: 'stroke .9s ease' }} />
           })}
         {Array.from({ length: N }, (_, n) => {
           const p = pos(n)
@@ -200,7 +205,7 @@ function Ring({ g, live }: { g: CheckedGenome | null; live: LiveResult | null })
           const r = isOut ? 11 : isCtrl ? 8 : 6
           return (
             <g key={n}>
-              {t === 1 && <circle cx={p.x} cy={p.y} fill="rgba(232,145,46,.28)" r={r + 7} />}
+              <circle cx={p.x} cy={p.y} fill="rgba(232,145,46,.28)" r={r + 7} style={{ opacity: t === 1 ? 1 : 0, transition: 'opacity .9s ease' }} />
               <circle
                 cx={p.x}
                 cy={p.y}
@@ -209,6 +214,7 @@ function Ring({ g, live }: { g: CheckedGenome | null; live: LiveResult | null })
                 stroke={t === 1 ? 'var(--fil)' : t === 0 ? 'rgba(255,200,140,.35)' : 'rgba(255,200,140,.18)'}
                 strokeDasharray={t === 2 ? '2 2' : undefined}
                 strokeWidth={isOut || isCtrl ? 1.6 : 1}
+                style={{ transition: 'fill .9s ease, stroke .9s ease' }}
               />
               {(isOut || isCtrl) && (
                 <text fill="var(--dim)" fontSize="9" textAnchor="middle" x={p.x} y={p.y + r + 12}>
@@ -218,15 +224,15 @@ function Ring({ g, live }: { g: CheckedGenome | null; live: LiveResult | null })
             </g>
           )
         })}
-        <circle cx={cx} cy={cy} fill="rgba(11,10,14,.82)" r={78} />
-        <text className="nx" fill={call == null ? 'var(--dim)' : call === 1 ? 'var(--hot)' : call === 0 ? 'var(--r)' : 'var(--dim)'} fontSize="54" fontWeight="300" textAnchor="middle" x={cx} y={cy + 8} style={{ fontFamily: 'var(--bpp-nx)' }}>
-          {!g ? '' : call === 1 ? '▲ UP' : call === 0 ? '▼ DOWN' : call === 2 ? '?' : '·'}
+        <circle cx={cx} cy={cy} fill="rgba(11,10,14,.82)" r={86} />
+        <text className="nx" key={idx} fill={call == null ? 'var(--dim)' : call === 1 ? 'var(--hot)' : call === 0 ? 'var(--r)' : 'var(--dim)'} fontSize={call === 2 ? 28 : 42} fontWeight="300" textAnchor="middle" x={cx} y={cy + 8} style={{ fontFamily: 'var(--bpp-nx)', animation: 'bw-in .6s ease both' }}>
+          {!g ? '' : call === 1 ? '▲ UP' : call === 0 ? '▼ DOWN' : call === 2 ? 'NOT SURE' : ''}
         </text>
         <text fill="var(--dim)" fontSize="11" textAnchor="middle" x={cx} y={cy + 32}>
           {hourNow && idx > 0 ? `${hh(hourNow)} UTC` : g ? 'running the training year…' : 'loading the brain…'}
         </text>
         {here && here.hit != null && (
-          <text fill={here.hit ? 'var(--fil)' : 'var(--r)'} fontSize="11" textAnchor="middle" x={cx} y={cy + 50}>
+          <text fill={here.hit ? 'var(--fil)' : 'var(--r)'} fontSize="11" key={`h${idx}`} style={{ animation: 'bw-in .6s ease .25s both' }} textAnchor="middle" x={cx} y={cy + 50}>
             bitcoin went {here.went ? 'up' : 'down'}: {here.hit ? 'right' : 'wrong'}
           </text>
         )}

@@ -32,6 +32,8 @@ export function BppStyles() {
 .bpp .lamps i.off { background: rgba(255,255,255,.02); }
 @media (max-width: 640px) { .bpp .bpp-hide-sm { display: none !important } .bpp .lamps { gap: 2px } .bpp .lamps i { height: 26px; font-size: 9px; border-radius: 7px 7px 3px 3px } }
 @keyframes bpp-dot { 50% { opacity: .45 } }
+@keyframes bw-in { from { opacity: 0; transform: translateY(4px) } to { opacity: 1; transform: none } }
+@media (prefers-reduced-motion: reduce) { .bpp svg * { transition: none !important; animation: none !important } }
 .bpp .pilot { display:inline-block; width:8px; height:8px; border-radius:50%; background: var(--fil); box-shadow: 0 0 8px var(--fil), 0 0 18px var(--amber); animation: bpp-dot 2.4s ease-in-out infinite; }
 .bpp .live-dot { display:inline-block; width:7px; height:7px; border-radius:50%; background:#7CFFA0; box-shadow:0 0 8px #7CFFA0; }
 @media (prefers-reduced-motion: reduce) { .bpp .pilot { animation: none } }
