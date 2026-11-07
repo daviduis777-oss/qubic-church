@@ -13,13 +13,17 @@ import { SITE_URL } from '@/lib/books'
  */
 export const dynamic = 'force-dynamic'
 
+const DESC = 'The best brain Qubic miners grew this epoch, under the glass: its homework, its exam on the hours it never saw, and the genome to download.'
+const IMG = `${SITE_URL}/og/bpp/brains.png`
+
 export async function generateMetadata(): Promise<Metadata> {
   if (!(await brainsAllowed())) return { robots: { index: false, follow: false } }
   return {
     title: { absolute: 'Brain Watch · BPP-9000' },
     description: 'The best brain Qubic miners grew this epoch, re-run with the core’s rule and graded on the hours it never saw. Download any brain and run it yourself.',
     alternates: { canonical: `${SITE_URL}/bpp9000/brains` },
-    openGraph: { type: 'website', title: 'Brain Watch · BPP-9000', description: 'The best brain Qubic miners grew this epoch, under the glass: its homework, its exam on the hours it never saw, and the genome to download.', url: `${SITE_URL}/bpp9000/brains`, images: [{ url: `${SITE_URL}/og/bpp/home.png`, width: 1200, height: 630 }] },
+    openGraph: { type: 'website', title: 'Brain Watch · BPP-9000', description: DESC, url: `${SITE_URL}/bpp9000/brains`, images: [{ url: IMG, width: 1200, height: 630 }] },
+    twitter: { card: 'summary_large_image', title: 'Brain Watch · BPP-9000', description: DESC, images: [IMG] },
     ...(brainsPublic() ? {} : { robots: { index: false, follow: false } }),
   }
 }

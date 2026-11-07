@@ -2,6 +2,7 @@ import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 import { ImageResponse } from 'next/og'
 import core from '@/data/bpp/net-core.json'
+import { brainGenome, liveOf, shelf, shelves, topBrains } from '@/lib/bpp/brains'
 import { getParticipant } from '@/lib/bpp/store'
 import { statsOf } from '@/lib/bpp/stats'
 import { initial, step, wiring, type NetCore } from '@/lib/bpp/sim'
@@ -72,6 +73,25 @@ function ringSvg(size: number, tick: number) {
   return `data:image/svg+xml;base64,${Buffer.from(svg).toString('base64')}`
 }
 
+/** Numbers for the Brain Watch card: the top brain of the newest shelf, else of the explorer's current epoch. */
+async function brainCard() {
+  const eps = await shelves()
+  const kept = eps[0] ? await shelf(eps[0]) : null
+  const top = kept ?? (await topBrains())
+  const best = top.rows[0]
+  if (!best) return null
+  const out = { epoch: top.epoch, rank: 1, homework: (1 - best.score / 8760) * 100, exam: null as number | null, examHours: 0 }
+  const g = await Promise.race([brainGenome(best.hash), new Promise<null>(r => setTimeout(() => r(null), 4000))]).catch(() => null)
+  if (g) {
+    const live = await Promise.race([liveOf(g), new Promise<null>(r => setTimeout(() => r(null), 6000))]).catch(() => null)
+    if (live) {
+      out.exam = live.all.rate
+      out.examHours = live.all.checked
+    }
+  }
+  return out
+}
+
 export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params
   const handle = id.replace(/\.png$/, '')
@@ -81,6 +101,40 @@ export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> 
   const RING = 560
   const ring = ringSvg(RING, 5400)
   const bg = 'radial-gradient(900px 600px at 82% 50%, #1a130b, #0B0A0E 65%)'
+
+  if (handle === 'brains') {
+    // the epoch's best brain: homework from the shelf (or live from the explorer), exam when Binance answers in time
+    const card = await brainCard().catch(() => null)
+    const rows: [string, string][] = [
+      [card ? `${card.homework.toFixed(1)}%` : '—', 'homework: the training year'],
+      [card?.exam == null ? '—' : `${card.exam.toFixed(1)}%`, card?.examHours ? `exam: ${card.examHours.toLocaleString('en-US')} hours it never saw` : 'exam: the hours it never saw'],
+    ]
+    return new ImageResponse(
+      <div style={{ display: 'flex', width: '100%', height: '100%', background: bg, color: INK, fontFamily: 'Geist', position: 'relative' }}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img alt="" height={RING} src={ring} style={{ position: 'absolute', right: 30, top: 35 }} width={RING} />
+        <div style={{ position: 'absolute', right: 30, top: 35, width: RING, height: RING, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: FIL }}>
+          <span style={{ fontSize: 16, letterSpacing: 3, color: DIM }}>{card ? `EPOCH ${card.epoch}` : 'THIS EPOCH'}</span>
+          <span style={{ fontFamily: 'Nx', fontWeight: 300, fontSize: 64, color: HOT }}>{card ? `BRAIN ${card.rank}` : 'BRAIN'}</span>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', padding: '64px 64px', width: 640, height: '100%' }}>
+          <span style={{ fontFamily: 'Eng', fontSize: 30, letterSpacing: 6, color: '#f3e4ce' }}>BRAIN WATCH</span>
+          <span style={{ fontFamily: 'Nx', fontWeight: 300, fontSize: 96, lineHeight: 0.95, color: HOT, marginTop: 34 }}>The best brain of the week.</span>
+          <div style={{ display: 'flex', gap: 40, marginTop: 30 }}>
+            {rows.map(([big, label]) => (
+              <div key={label} style={{ display: 'flex', flexDirection: 'column' }}>
+                <span style={{ fontFamily: 'Nx', fontWeight: 500, fontSize: 60, color: FIL, lineHeight: 1 }}>{big}</span>
+                <span style={{ fontSize: 17, color: DIM, marginTop: 6 }}>{label}</span>
+              </div>
+            ))}
+          </div>
+          <span style={{ fontSize: 22, lineHeight: 1.35, color: '#c9b9a8', marginTop: 24 }}>Re-run with the core&apos;s own rule. Download it and run it yourself.</span>
+          <span style={{ fontFamily: 'Eng', letterSpacing: 3, color: '#c9b39a', fontSize: 18, marginTop: 'auto' }}>qubic.church/bpp9000/brains</span>
+        </div>
+      </div>,
+      opts,
+    )
+  }
 
   if (!p) {
     return new ImageResponse(
