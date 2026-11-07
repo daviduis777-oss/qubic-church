@@ -5,11 +5,11 @@ import { BrainWatch } from '@/components/bpp/brains/BrainWatch'
 import { BppStyles } from '@/components/bpp/BppStyles'
 import { bppFonts } from '@/components/bpp/fonts'
 import { brainsAllowed, brainsPublic } from '@/lib/bpp/brains-gate'
+import { SITE_URL } from '@/lib/books'
 
 /*
  * Brain Watch: the best BPP-9000 brain of the epoch under the glass, with its exam on the hours it never saw,
- * a download for anyone, and a shelf per epoch. Private preview: a plain 404 for everyone but the forum
- * moderator until BRAINS_PUBLIC=1. Not in the sitemap or llms.txt; nothing links here yet.
+ * a download for anyone, and a shelf per epoch. Public; BRAINS_PUBLIC=0 makes it a moderator-only preview again.
  */
 export const dynamic = 'force-dynamic'
 
@@ -18,8 +18,9 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: { absolute: 'Brain Watch · BPP-9000' },
     description: 'The best brain Qubic miners grew this epoch, re-run with the core’s rule and graded on the hours it never saw. Download any brain and run it yourself.',
-    // TODO(Bob): when going public, switch this to index and add the page to sitemap.ts and llms.txt.
-    robots: { index: false, follow: false, googleBot: { index: false, follow: false } },
+    alternates: { canonical: `${SITE_URL}/bpp9000/brains` },
+    openGraph: { type: 'website', title: 'Brain Watch · BPP-9000', description: 'The best brain Qubic miners grew this epoch, under the glass: its homework, its exam on the hours it never saw, and the genome to download.', url: `${SITE_URL}/bpp9000/brains`, images: [{ url: `${SITE_URL}/og/bpp/home.png`, width: 1200, height: 630 }] },
+    ...(brainsPublic() ? {} : { robots: { index: false, follow: false } }),
   }
 }
 

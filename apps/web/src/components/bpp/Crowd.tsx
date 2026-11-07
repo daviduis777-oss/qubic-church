@@ -80,6 +80,9 @@ export function HeaderNav({ count: initial }: { count: number }) {
           'Be among the first participants'
         )}
       </span>
+      <a className="btn" href="/bpp9000/brains" style={{ minHeight: 40 }}>
+        Brain Watch
+      </a>
       {joined ? (
         <a className="btn btn-main" href="#journal">
           My journal

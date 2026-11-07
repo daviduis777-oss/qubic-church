@@ -20,7 +20,7 @@ export function GET() {
     'Readings that the September 2026 re-check did not confirm are listed openly, as open questions, on the re-check page.',
     '',
   )
-  out.push('## BPP-9000: the Bitcoin predictor of Aigarth', '', `- [BPP-9000, live](${BPP_URL}): ${BPP_SUMMARY}`, `- [How BPP-9000 works, as markdown](${BPP_MD_URL}): the task, mining, the ant colony, verification by every node, the Oracle Machine live feed from 18 November, and what counts as a forecast.`, '')
+  out.push('## BPP-9000: the Bitcoin predictor of Aigarth', '', `- [BPP-9000, live](${BPP_URL}): ${BPP_SUMMARY}`, `- [How BPP-9000 works, as markdown](${BPP_MD_URL}): the task, mining, the ant colony, verification by every node, the Oracle Machine live feed from 18 November, and what counts as a forecast.`, `- [Brain Watch](${BPP_URL}/brains): the best brain of the epoch re-run with the core's rule, its homework (the training year) and its exam (every hour since, which it never saw), the genome to download, one shelf per epoch.`, '')
   out.push('## Short answers (start here)', '', ...ANSWERS.map(x => `- [${x.question}](${answerUrl(x)}): ${(x.answer[0] ?? '').replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')}`), '')
   out.push('## Books (free, full text online)', '')
   for (const b of BOOKS) {
