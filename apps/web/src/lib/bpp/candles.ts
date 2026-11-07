@@ -35,3 +35,30 @@ export async function hourCandle(hour: number): Promise<Candle | null> {
     return coinbase(hour).catch(() => null)
   }
 }
+
+/**
+ * Hourly closes from `fromHour` up to the last closed hour, Binance BTC/USDT (the task's own venue). Fetched in
+ * fixed chunks of 1000 hours aligned to `fromHour`, so Next's data cache serves the old chunks and only the
+ * chunk holding the current hour is refreshed. Brain Watch grades brains on these hours.
+ */
+export async function hourlyCloses(fromHour: number, toHour = Math.floor(Date.now() / 3600000) * 3600 - 3600): Promise<{ hour: number; close: number }[]> {
+  const out: { hour: number; close: number }[] = []
+  const CHUNK = 1000
+  for (let start = fromHour; start <= toHour; start += CHUNK * 3600) {
+    const last = start + (CHUNK - 1) * 3600
+    const current = last >= toHour
+    const r = await fetch(`https://data-api.binance.vision/api/v3/klines?symbol=BTCUSDT&interval=1h&startTime=${start * 1000}&limit=${CHUNK}`, {
+      next: { revalidate: current ? 600 : 86400 },
+      signal: AbortSignal.timeout(12000),
+    })
+    if (!r.ok) throw new Error(`binance ${r.status}`)
+    const rows = (await r.json()) as [number, string, string, string, string, string, number][]
+    const now = Date.now()
+    for (const k of rows) {
+      const hour = k[0] / 1000
+      if (hour > toHour || k[6] >= now) break
+      out.push({ hour, close: Number(k[4]) })
+    }
+  }
+  return out
+}

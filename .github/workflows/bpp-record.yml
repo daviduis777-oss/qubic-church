@@ -12,7 +12,10 @@ permissions: {}
 jobs:
   tick:
     runs-on: ubuntu-latest
-    timeout-minutes: 2
+    timeout-minutes: 4
     steps:
       - name: Tick
         run: curl -fsS --max-time 60 -X POST https://qubic.church/api/bpp/tick
+      - name: Brain Watch shelf
+        # the epoch's best brains onto the archive shelf; also public and idempotent
+        run: curl -fsS --max-time 90 -X POST https://qubic.church/api/bpp/brains/tick || true

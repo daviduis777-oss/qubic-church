@@ -110,3 +110,23 @@ export async function allParticipants(): Promise<Participant[]> {
   const raws = await cmd<(string | null)[]>('MGET', ...handles.map(KEY))
   return raws.filter(Boolean).map(r => JSON.parse(r!) as Participant)
 }
+
+/* ---------------- small JSON values for other BPP features (Brain Watch keeps its archive here) ---------------- */
+
+export async function kvGetJson<T>(key: string): Promise<T | null> {
+  const raw = await cmd<string | null>('GET', key)
+  return raw ? (JSON.parse(raw) as T) : null
+}
+
+export async function kvSetJson(key: string, value: unknown, exSeconds?: number) {
+  if (exSeconds) await cmd('SET', key, JSON.stringify(value), 'EX', exSeconds)
+  else await cmd('SET', key, JSON.stringify(value))
+}
+
+export async function kvAddToSet(key: string, ...members: string[]) {
+  if (members.length) await cmd('SADD', key, ...members)
+}
+
+export async function kvSetMembers(key: string): Promise<string[]> {
+  return cmd<string[]>('SMEMBERS', key)
+}
