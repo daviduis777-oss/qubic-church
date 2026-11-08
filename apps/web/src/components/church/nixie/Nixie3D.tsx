@@ -23,9 +23,17 @@ function canRun3D() {
 export function Nixie3D({ text, h, label }: { text: string; h: number; label?: string }) {
   const [three, setThree] = useState(false)
   useEffect(() => setThree(canRun3D()), [])
+  // the 3D row's footprint (same numbers as NixieScene), held while the scene loads so nothing jumps
+  const w = Math.round(([...text].reduce((a, c) => a + (c === ':' ? 0.42 : 1.12), 0) / 3.05) * h)
   return (
     <span aria-label={label ?? text} role="img" style={{ display: 'inline-block', lineHeight: 0 }}>
-      {three ? <Scene h={h} text={text} /> : <NixieRow h={h} text={text} />}
+      {three ? (
+        <span style={{ display: 'inline-block', width: w, height: h }}>
+          <Scene h={h} text={text} />
+        </span>
+      ) : (
+        <NixieRow h={h} text={text} />
+      )}
     </span>
   )
 }

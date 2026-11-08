@@ -63,7 +63,7 @@ function buildGlow(ch: string) {
     g.lineCap = 'round'
     g.lineJoin = 'round'
     // the same light as the BPP-9000 number: 0 0 4px #ffd08a, 0 0 14px #FFC46B, 0 0 40px amber .7, 0 0 90px amber .35
-    for (const [blur, a, w, col] of [[40, 0.35, 8, '232,145,46'], [16, 0.5, 4, '255,196,107'], [5, 0.7, 1.8, '255,208,138']] as const) {
+    for (const [blur, a, w, col] of [[40, 0.35, 16, '232,145,46'], [16, 0.5, 11, '255,196,107'], [5, 0.7, 8.5, '255,208,138']] as const) {
       g.shadowColor = `rgba(${col},${a})`
       g.shadowBlur = blur
       g.strokeStyle = `rgba(${col},${a})`
@@ -235,7 +235,7 @@ function Tube({ ch, x, res }: { ch: string; x: number; res: Res }) {
       ['0', '8', '3', '6']
         .filter(g => g !== ch)
         .slice(0, 3)
-        .map((g, i) => ({ curves: digitCurves(g), z: -0.05 - i * 0.045 })),
+        .map((g, i) => ({ curves: digitCurves(g), z: -0.1 - i * 0.05 })),
     [ch],
   )
   const glow = useMemo(() => glowTexture(ch), [ch])
@@ -267,7 +267,7 @@ function Tube({ ch, x, res }: { ch: string; x: number; res: Res }) {
       <sprite material-blending={THREE.AdditiveBlending} material-depthWrite={false} material-map={glow} material-opacity={0.8} material-transparent position={[0, 1.2, 0.02]} scale={[1.33, 2.0, 1]} />
       {curves.map((c, j) => (
         <mesh key={j}>
-          <tubeGeometry args={[c, 160, 0.02, 8, false]} />
+          <tubeGeometry args={[c, 200, 0.05, 12, false]} />
           <meshBasicMaterial color={res.wireColor} ref={j === 0 ? wire : undefined} toneMapped={false} />
         </mesh>
       ))}
@@ -379,7 +379,7 @@ function makeRes() {
     }),
     anode: new THREE.CylinderGeometry(0.4, 0.4, 1.55, 64, 1, true, Math.PI),
     anodeMat: anodeMaterial(ledColor),
-    ghostMat: new THREE.MeshStandardMaterial({ color: '#2e2a26', emissive: '#2a221d', metalness: 0.9, roughness: 0.4 }),
+    ghostMat: new THREE.MeshStandardMaterial({ color: '#2e2a26', emissive: '#1a1512', metalness: 0.9, roughness: 0.4 }),
     base: new THREE.CylinderGeometry(0.52, 0.5, 0.14, 64),
     baseMat: new THREE.MeshStandardMaterial({ color: '#0e0d12', metalness: 0.6, roughness: 0.5 }),
     ledMat: new THREE.SpriteMaterial({ map: radialTexture([[0, 'rgba(255,255,255,1)'], [0.12, 'rgba(215,226,255,.95)'], [0.4, 'rgba(130,155,255,.45)'], [1, 'rgba(90,120,255,0)']]), color: ledColor, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true }),
