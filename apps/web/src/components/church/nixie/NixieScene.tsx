@@ -21,7 +21,20 @@ const VIEW_H = 3.05
 
 /* ---------------- shared resources ---------------- */
 
+// a ticking clock asks for the same ten digits over and over: build each once and keep it
+const curveCache = new Map<string, THREE.Curve<THREE.Vector3>[]>()
+const glowCache = new Map<string, THREE.Texture>()
 function digitCurves(ch: string): THREE.Curve<THREE.Vector3>[] {
+  let v = curveCache.get(ch)
+  if (!v) curveCache.set(ch, (v = buildCurves(ch)))
+  return v
+}
+function glowTexture(ch: string) {
+  let v = glowCache.get(ch)
+  if (!v) glowCache.set(ch, (v = buildGlow(ch)))
+  return v
+}
+function buildCurves(ch: string): THREE.Curve<THREE.Vector3>[] {
   const d = DIGITS[ch]
   if (!d) return []
   const data = new SVGLoader().parse(`<svg xmlns="http://www.w3.org/2000/svg"><path d="${d}"/></svg>`)
@@ -37,7 +50,7 @@ function digitCurves(ch: string): THREE.Curve<THREE.Vector3>[] {
 }
 
 /** The glow around a lit cathode, drawn once into a texture: soft gold falloff following the wire. */
-function glowTexture(ch: string) {
+function buildGlow(ch: string) {
   const d = DIGITS[ch]
   const c = document.createElement('canvas')
   c.width = 256
@@ -190,12 +203,12 @@ function Colon({ x, res }: { x: number; res: Res }) {
 /* ---------------- light rig: what the glass reflects ---------------- */
 
 function Rig({ res }: { res: Res }) {
-  const g = useRef<THREE.Group>(null)
   const led = useRef<THREE.PointLight>(null)
-  useFrame(({ clock }) => {
+  useFrame(({ clock, scene }) => {
     const t = clock.elapsedTime
-    // a slow sway, not a spin: the rims stay on the edges and slide a little, the film colours shift
-    if (g.current) g.current.rotation.y = 0.32 * Math.sin(t * 0.22) + 0.12 * Math.sin(t * 0.53)
+    // a slow sway, not a spin: the rims stay on the edges and slide a little, the film colours shift.
+    // The room is drawn into the environment map once; only its rotation moves, which costs nothing per frame.
+    scene.environmentRotation.y = 0.32 * Math.sin(t * 0.22) + 0.12 * Math.sin(t * 0.53)
     // the LED drifts blue -> violet -> blue
     const hue = 0.62 + 0.07 * Math.sin(t * 0.35)
     res.ledColor.setHSL(hue, 0.95, 0.55)
@@ -207,8 +220,8 @@ function Rig({ res }: { res: Res }) {
     <>
       <ambientLight intensity={0.15} />
       <pointLight color="#4a6bff" decay={2} distance={3} intensity={4} position={[0, 0.2, 0.6]} ref={led} />
-      <Environment frames={Infinity} resolution={128}>
-        <group ref={g}>
+      <Environment frames={1} resolution={256}>
+        <group>
           {/* tall soft strips far left and right: the bright rims down the glass edges */}
           <Lightformer color="#ffffff" form="rect" intensity={4} position={[-7, 1, 1.5]} rotation-y={Math.PI / 2.4} scale={[1.2, 9, 1]} />
           <Lightformer color="#dfe5ff" form="rect" intensity={2.2} position={[7, 1, 1.5]} rotation-y={-Math.PI / 2.4} scale={[0.9, 9, 1]} />
@@ -300,7 +313,7 @@ export default function NixieScene({ text, h }: { text: string; h: number }) {
       >
         <Rig res={res} />
         <group position-y={-TUBE_H / 2 + 0.12}>
-        {chars.map((c, i) => (c === ':' ? <Colon key={i} res={res} x={xs[i]!} /> : <Tube ch={c} key={`${i}-${c}`} res={res} x={xs[i]!} />))}
+        {chars.map((c, i) => (c === ':' ? <Colon key={i} res={res} x={xs[i]!} /> : <Tube ch={c} key={i} res={res} x={xs[i]!} />))}
         </group>
       </Canvas>
     </div>

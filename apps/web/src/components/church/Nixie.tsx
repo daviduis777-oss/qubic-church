@@ -78,14 +78,14 @@ export function NixieTube({ ch, h }: { ch: string; h: number }) {
         {/* the lit cathode: glow, wire, hot core */}
         {path && (
           <g transform="translate(9,20) scale(.7)">
-            <path d={path} fill="none" filter={`url(#gb${id})`} stroke="#ff4d00" strokeLinecap="round" strokeLinejoin="round" strokeOpacity=".8" strokeWidth="12" />
-            <path d={path} fill="none" filter={`url(#g${id})`} stroke="#ff7a1a" strokeLinecap="round" strokeLinejoin="round" strokeWidth="5.5" />
-            <path d={path} fill="none" stroke="#ff9a3c" strokeLinecap="round" strokeLinejoin="round" strokeWidth="3.4" />
-            <path d={path} fill="none" stroke="#fff0d8" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.4" />
+            <path d={path} fill="none" filter={`url(#gb${id})`} stroke="#E8912E" strokeLinecap="round" strokeLinejoin="round" strokeOpacity=".8" strokeWidth="12" />
+            <path d={path} fill="none" filter={`url(#g${id})`} stroke="#FFC46B" strokeLinecap="round" strokeLinejoin="round" strokeWidth="5.5" />
+            <path d={path} fill="none" stroke="#FFD58A" strokeLinecap="round" strokeLinejoin="round" strokeWidth="3.4" />
+            <path d={path} fill="none" stroke="#FFF1D6" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.4" />
           </g>
         )}
         {!path && (
-          <text fill="#ffb066" fontFamily="system-ui" fontSize="40" textAnchor="middle" x="30" y="66">
+          <text fill="#FFC46B" fontFamily="system-ui" fontSize="40" textAnchor="middle" x="30" y="66">
             {ch}
           </text>
         )}
@@ -113,7 +113,7 @@ export function NixieTube({ ch, h }: { ch: string; h: number }) {
 /** Two neon dots between tube groups. */
 function NixieColon({ h }: { h: number }) {
   const d = Math.max(4, Math.round(h * 0.06))
-  const dot = { width: d, height: d, borderRadius: '50%', background: '#ffc28a', boxShadow: '0 0 4px #ff7a1a, 0 0 10px rgba(255,90,10,.8), 0 0 18px rgba(60,110,255,.55)' }
+  const dot = { width: d, height: d, borderRadius: '50%', background: '#FFE3B0', boxShadow: '0 0 4px #FFC46B, 0 0 10px rgba(232,145,46,.8), 0 0 18px rgba(60,110,255,.55)' }
   return (
     <span aria-hidden style={{ display: 'inline-flex', flexDirection: 'column', justifyContent: 'center', gap: h * 0.2, height: h, padding: `0 ${Math.round(h * 0.06)}px` }}>
       <span style={dot} />
