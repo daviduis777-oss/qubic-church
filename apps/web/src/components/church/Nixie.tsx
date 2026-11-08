@@ -1,6 +1,7 @@
 'use client'
 
 import { useId } from 'react'
+import { DIGITS as D } from './nixie/digits'
 
 /**
  * Nixie tubes, drawn from Bob's IN-18 reference: clear glass (only its rims, dome ring and getter disc catch light),
@@ -8,19 +9,6 @@ import { useId } from 'react'
  * and a strong blue light pooling in the base and reflecting on the table. Each digit is a hand-drawn monoline path.
  */
 
-// Monoline cathodes in a 60 x 100 box, nixie style.
-const D: Record<string, string> = {
-  '0': 'M30,12 C44,12 52,28 52,50 C52,72 44,88 30,88 C16,88 8,72 8,50 C8,28 16,12 30,12 Z',
-  '1': 'M20,22 L32,12 L32,88',
-  '2': 'M11,30 C11,16 21,11 30,11 C41,11 49,18 49,30 C49,48 12,62 11,88 L50,88',
-  '3': 'M12,12 L48,12 L27,42 C42,41 51,52 51,66 C51,80 41,89 29,89 C19,89 12,84 9,77',
-  '4': 'M40,88 L40,12 L8,64 L53,64',
-  '5': 'M47,12 L15,12 L12,45 C18,40 24,38 31,38 C43,38 51,49 51,63 C51,79 41,89 29,89 C19,89 12,84 9,77',
-  '6': 'M45,16 C40,12 35,11 31,11 C17,11 9,28 9,56 C9,78 17,89 30,89 C42,89 51,79 51,65 C51,51 42,41 30,41 C20,41 12,48 9,58',
-  '7': 'M9,12 L51,12 L23,88',
-  '8': 'M30,11 C40,11 46,18 46,29 C46,40 39,47 30,47 C21,47 14,40 14,29 C14,18 20,11 30,11 Z M30,47 C42,47 51,56 51,68 C51,81 42,89 30,89 C18,89 9,81 9,68 C9,56 18,47 30,47 Z',
-  '9': 'M15,84 C20,88 25,89 29,89 C43,89 51,72 51,44 C51,22 43,11 30,11 C18,11 9,21 9,35 C9,49 18,59 30,59 C40,59 48,52 51,42',
-}
 const GHOSTS = ['0', '8', '6', '3']
 
 // fixed sparkle positions in the blue base (x, y, r) in tube units
