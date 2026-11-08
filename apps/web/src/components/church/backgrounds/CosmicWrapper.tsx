@@ -9,6 +9,7 @@
 import { memo, type ReactNode } from 'react'
 import { usePathname } from '@/navigation'
 import { CosmicBackground } from './CosmicBackground'
+import { TubeGlow } from './TubeGlow'
 
 // Reading and data pages: keep the background still and quiet behind text
 const QUIET_ROUTES = [
@@ -45,6 +46,16 @@ export const CosmicWrapper = memo(function CosmicWrapper({
     r => pathname === r || pathname.startsWith(`${r}/`)
   )
 
+
+  if (isHomepage) {
+    // The homepage: vacuum tubes (CfB's scheme), cold glass and hot filaments, no mesh, no stars
+    return (
+      <div className="relative min-h-screen bg-black">
+        <TubeGlow />
+        <div className="relative z-10">{children}</div>
+      </div>
+    )
+  }
 
   return (
     <div className="relative min-h-screen bg-black">

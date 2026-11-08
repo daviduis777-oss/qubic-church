@@ -63,20 +63,6 @@ export function BooksHome({ locale = 'en' }: { locale?: Locale }) {
     <div className="text-foreground">
       {/* ── HERO: the books, Anna, the clock ── */}
       <section className="relative overflow-hidden">
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div
-            className="qc-breathe absolute -right-40 -top-20 h-[900px] w-[900px] rounded-full"
-            style={{ background: 'radial-gradient(closest-side, rgba(60,90,230,0.55), rgba(20,30,110,0.28) 55%, transparent 75%)' }}
-          />
-          <div
-            className="qc-drift absolute -left-40 top-40 h-[700px] w-[700px] rounded-full"
-            style={{ background: 'radial-gradient(closest-side, rgba(120,60,220,0.35), rgba(40,20,90,0.15) 60%, transparent 78%)' }}
-          />
-          <div
-            className="qc-breathe absolute bottom-0 left-1/3 h-[420px] w-[420px] rounded-full [animation-delay:-4s]"
-            style={{ background: 'radial-gradient(closest-side, rgba(255,210,74,0.16), transparent 70%)' }}
-          />
-        </div>
         <div className="relative mx-auto grid w-full max-w-7xl gap-8 px-4 pb-14 pt-8 sm:px-6 md:pb-20 md:pt-14 lg:grid-cols-[1.25fr_1fr] lg:gap-4">
           <div className="flex flex-col">
             <p className="eyebrow text-gold">Qubic Church · books and open research by QC</p>
