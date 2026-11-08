@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { replay, type NetData } from '@/lib/bpp/sim'
-import { NixieRow } from '@/components/church/Nixie'
 import { useRecord } from './TrackRecord'
 import { nx, sans } from './fonts'
 
@@ -58,12 +57,14 @@ export function BppLive({ liveAt }: { liveAt: string }) {
             <p className="mute" style={{ fontSize: 17, margin: 0 }}>
               Bitcoin, hour by hour, <b style={{ color: 'var(--ink)', fontWeight: 600 }}>UP or DOWN</b>. The first live call in
             </p>
-            <div style={{ display: 'flex', alignItems: 'flex-end', gap: 18, marginTop: 22, flexWrap: 'wrap' }}>
-              <NixieRow gap={8} h={170} label={left == null ? 'days' : `${days} days`} text={left == null ? '00' : String(days).padStart(2, '0')} />
-              <span className="nx lit" style={{ fontWeight: 300, fontSize: 'clamp(44px, 7vw, 80px)', lineHeight: 1, letterSpacing: '.02em', marginBottom: 6 }}>{days === 1 ? 'day' : 'days'}</span>
+            <div className="nx lit" style={{ fontWeight: 300, fontSize: 'clamp(110px, 20vw, 230px)', lineHeight: 0.85, marginTop: 18, letterSpacing: '.01em' }}>
+              {left == null ? '··' : days}
+              <span style={{ fontSize: '.36em', marginLeft: '.18em', letterSpacing: '.02em' }}>{days === 1 ? 'day' : 'days'}</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 14, marginTop: 16, flexWrap: 'wrap' }}>
-              <NixieRow gap={5} h={84} label={hms} text={left == null ? '00:00:00' : hms} />
+              <b className="nx" style={{ fontWeight: 300, fontSize: 'clamp(40px, 6vw, 60px)', lineHeight: 1 }}>
+                {hms}
+              </b>
               <span className="mute" style={{ fontSize: 15 }}>
                 until 18 November, 12:00 UTC. From then on this space shows ▲ UP or ▼ DOWN for every hour, and keeps score.
               </span>
@@ -433,14 +434,6 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
         const blend = (M: number[][]) => M[0]!.map((_, i) => w[0]! * M[0]![i]! + w[1]! * M[1]![i]! + w[2]! * M[2]![i]!)
         const glow = w[1]!
         if (glow > 0.02) {
-          // the glass around the filament: a cold blue halo first, then the warm core
-          const halo = g.createRadialGradient(x, y, r * 0.8, x, y, r * 3.4)
-          halo.addColorStop(0, `rgba(110,80,255,${0.42 * glow})`)
-          halo.addColorStop(1, 'rgba(110,80,255,0)')
-          g.fillStyle = halo
-          g.beginPath()
-          g.arc(x, y, r * 3.4, 0, 7)
-          g.fill()
           g.shadowColor = `rgba(255,190,80,${0.9 * glow})`
           g.shadowBlur = 14 * glow
         }

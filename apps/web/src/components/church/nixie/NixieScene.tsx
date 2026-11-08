@@ -62,10 +62,11 @@ function buildGlow(ch: string) {
     g.scale(2.6, 2.6)
     g.lineCap = 'round'
     g.lineJoin = 'round'
-    for (const [blur, a, w] of [[28, 0.4, 7], [12, 0.45, 3.5], [4, 0.6, 1.6]] as const) {
-      g.shadowColor = `rgba(255,150,40,${a})`
+    // the same light as the BPP-9000 number: 0 0 4px #ffd08a, 0 0 14px #FFC46B, 0 0 40px amber .7, 0 0 90px amber .35
+    for (const [blur, a, w, col] of [[40, 0.35, 8, '232,145,46'], [16, 0.5, 4, '255,196,107'], [5, 0.7, 1.8, '255,208,138']] as const) {
+      g.shadowColor = `rgba(${col},${a})`
       g.shadowBlur = blur
-      g.strokeStyle = `rgba(255,196,107,${a})`
+      g.strokeStyle = `rgba(${col},${a})`
       g.lineWidth = w
       g.stroke(p)
     }
@@ -138,7 +139,7 @@ function catchMaterial(color: THREE.Color) {
         float rim = pow(f, 2.2);
         float h = exp(-vY * 1.55) * 1.25 + 0.05;
         float ripple = 0.9 + 0.1 * sin(vY * 7.0 - uTime * 0.8);
-        vec3 c = mix(uColor, vec3(0.86, 0.80, 1.0), smoothstep(0.55, 1.0, rim) * 0.35);
+        vec3 c = mix(uColor, vec3(0.80, 0.86, 1.0), smoothstep(0.55, 1.0, rim) * 0.35);
         float a = rim * h * ripple;
         a += exp(-vY * 7.0) * 0.35; // the glass foot, right at the LED
         gl_FragColor = vec4(c * a * 1.6, 1.0);
@@ -307,8 +308,8 @@ function Rig({ res }: { res: Res }) {
     // The room is drawn into the environment map once; only its rotation moves, which costs nothing per frame.
     scene.environmentRotation.y = 0.32 * Math.sin(t * 0.22) + 0.12 * Math.sin(t * 0.53)
     // the LED drifts blue-violet -> violet -> a touch of magenta and back, as in the references; never cyan
-    const hue = 0.715 + 0.035 * Math.sin(t * 0.31) + 0.012 * Math.sin(t * 0.9)
-    res.ledColor.setHSL(hue, 0.92, 0.56)
+    const hue = 0.655 + 0.028 * Math.sin(t * 0.31) + 0.008 * Math.sin(t * 0.9)
+    res.ledColor.setHSL(hue, 0.95, 0.55)
     res.ledMat.color.copy(res.ledColor)
     res.hazeMat.color.copy(res.ledColor)
     res.floorMat.color.copy(res.ledColor)
@@ -327,9 +328,9 @@ function Rig({ res }: { res: Res }) {
           {/* a broad faint panel in front: the body catches its iridescent film */}
           <Lightformer color="#c9b8ff" form="rect" intensity={0.35} position={[-4.5, 2.5, 5.5]} rotation-y={-0.6} scale={[3, 5, 1]} />
           {/* cold glass light above and a magenta edge, the warm room behind */}
-          <Lightformer color="#5a3bff" form="rect" intensity={2.2} position={[3, 5, -2]} rotation-x={Math.PI / 2} scale={[5, 3, 1]} />
-          <Lightformer color="#ff4fd8" form="rect" intensity={1.1} position={[-4, 3, -3]} scale={[2, 3, 1]} />
-          <Lightformer color="#6046ff" form="rect" intensity={3} position={[0, -3, 2]} rotation-x={-Math.PI / 2} scale={[6, 3, 1]} />
+          <Lightformer color="#4a4cff" form="rect" intensity={2.2} position={[3, 5, -2]} rotation-x={Math.PI / 2} scale={[5, 3, 1]} />
+          <Lightformer color="#a24cff" form="rect" intensity={0.7} position={[-4, 3, -3]} scale={[2, 3, 1]} />
+          <Lightformer color="#3d5cff" form="rect" intensity={3} position={[0, -3, 2]} rotation-x={-Math.PI / 2} scale={[6, 3, 1]} />
           <Lightformer color="#ffb44d" form="rect" intensity={1.2} position={[0, 1.2, -6]} scale={[5, 2, 1]} />
         </group>
       </Environment>
@@ -342,10 +343,10 @@ function Rig({ res }: { res: Res }) {
 type Res = ReturnType<typeof makeRes>
 
 function makeRes() {
-  const ledColor = new THREE.Color('#6a4cff')
+  const ledColor = new THREE.Color('#3a5cff')
   return {
     ledColor,
-    wireColor: new THREE.Color(GOLD).multiplyScalar(1.0),
+    wireColor: new THREE.Color(GOLD_HOT),
     glass: glassGeometry(),
     // glass on a dark page: only what it reflects shows, added on top (fresnel rims, iridescent films, the rig)
     glassMat: new THREE.MeshPhysicalMaterial({
@@ -378,10 +379,10 @@ function makeRes() {
     }),
     anode: new THREE.CylinderGeometry(0.4, 0.4, 1.55, 64, 1, true, Math.PI),
     anodeMat: anodeMaterial(ledColor),
-    ghostMat: new THREE.MeshStandardMaterial({ color: '#2e2a26', emissive: '#3b3029', metalness: 0.9, roughness: 0.4 }),
+    ghostMat: new THREE.MeshStandardMaterial({ color: '#2e2a26', emissive: '#2a221d', metalness: 0.9, roughness: 0.4 }),
     base: new THREE.CylinderGeometry(0.52, 0.5, 0.14, 64),
     baseMat: new THREE.MeshStandardMaterial({ color: '#0e0d12', metalness: 0.6, roughness: 0.5 }),
-    ledMat: new THREE.SpriteMaterial({ map: radialTexture([[0, 'rgba(255,255,255,1)'], [0.12, 'rgba(230,220,255,.95)'], [0.4, 'rgba(160,140,255,.45)'], [1, 'rgba(120,100,255,0)']]), color: ledColor, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true }),
+    ledMat: new THREE.SpriteMaterial({ map: radialTexture([[0, 'rgba(255,255,255,1)'], [0.12, 'rgba(215,226,255,.95)'], [0.4, 'rgba(130,155,255,.45)'], [1, 'rgba(90,120,255,0)']]), color: ledColor, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true }),
     // a tall soft haze: the light filling the glass volume, fading upwards
     hazeMat: new THREE.SpriteMaterial({ map: hazeTexture(), color: ledColor, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, opacity: 0.9 }),
     catchMat: catchMaterial(ledColor),

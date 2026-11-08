@@ -189,9 +189,6 @@ function Ring({ g, live }: { g: CheckedGenome | null; live: LiveResult | null })
   return (
     <figure style={{ margin: 0, display: 'grid', gap: 10, justifyItems: 'center' }}>
       <svg aria-label="The brain: 32 neurons, their wiring and their states, ticking hour by hour" role="img" style={{ width: '100%', maxWidth: 420, height: 'auto' }} viewBox="0 0 380 380">
-        <defs>
-          <radialGradient id="bw-blue"><stop offset=".35" stopColor="rgba(110,80,255,.5)" /><stop offset="1" stopColor="rgba(110,80,255,0)" /></radialGradient>
-        </defs>
         <circle cx={cx} cy={cy} fill="none" r={R + 22} stroke="rgba(255,200,140,.08)" />
         {g &&
           g.links.map(([t, slot, src], k) => {
@@ -208,7 +205,6 @@ function Ring({ g, live }: { g: CheckedGenome | null; live: LiveResult | null })
           const r = isOut ? 11 : isCtrl ? 8 : 6
           return (
             <g key={n}>
-              <circle cx={p.x} cy={p.y} fill="url(#bw-blue)" r={r + 16} style={{ opacity: t === 1 ? 1 : 0, transition: 'opacity .9s ease' }} />
               <circle cx={p.x} cy={p.y} fill="rgba(232,145,46,.28)" r={r + 7} style={{ opacity: t === 1 ? 1 : 0, transition: 'opacity .9s ease' }} />
               <circle
                 cx={p.x}
