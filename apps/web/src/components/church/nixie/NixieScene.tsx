@@ -171,13 +171,13 @@ function anodeMaterial(color: THREE.Color) {
       uniform vec3 uColor; uniform sampler2D uMap;
       varying vec2 vUv; varying float vY; varying float vFront;
       void main() {
-        float m = texture2D(uMap, vUv * vec2(15.0, 12.0)).r;
+        float m = texture2D(uMap, vUv * vec2(7.5, 12.0)).r;
         if (m < 0.2) discard;
         float y = vY + 0.775;                       // 0 at the bottom of the mesh
         vec3 steel = vec3(0.2, 0.19, 0.26);
         vec3 c = steel + uColor * (exp(-y * 1.5) * 1.5 + 0.12);
-        c += vec3(1.0, 0.72, 0.35) * 0.22 * exp(-pow((y - 0.85) * 1.6, 2.0)) * max(vFront, 0.0) ;
-        float a = m * (vFront < 0.0 ? 0.55 : 0.9);  // the far side of the cylinder dimmer
+        c += vec3(1.0, 0.72, 0.35) * 0.22 * exp(-pow((y - 0.85) * 1.6, 2.0));
+        float a = m * 0.8;
         gl_FragColor = vec4(c * a, a);
       }`,
     transparent: true,
@@ -377,7 +377,7 @@ function makeRes() {
       depthWrite: false,
       side: THREE.BackSide,
     }),
-    anode: new THREE.CylinderGeometry(0.4, 0.4, 1.55, 64, 1, true, Math.PI),
+    anode: new THREE.CylinderGeometry(0.4, 0.4, 1.55, 48, 1, true, Math.PI / 2, Math.PI) /* only the back half: the mesh sits behind the digit, never over it */,
     anodeMat: anodeMaterial(ledColor),
     ghostMat: new THREE.MeshStandardMaterial({ color: '#2e2a26', emissive: '#1a1512', metalness: 0.9, roughness: 0.4 }),
     base: new THREE.CylinderGeometry(0.52, 0.5, 0.14, 64),
