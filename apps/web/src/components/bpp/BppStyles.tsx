@@ -5,6 +5,16 @@ export function BppStyles() {
 .bpp { --bg:#0B0A0E; --amber:#E8912E; --fil:#FFC46B; --hot:#FFE3B0; --g:#FFC46B; --r:#d9776a; --c:#ecdfcb; --gold:#FFC46B;
   --ink:#ecdfcb; --dim:#93857a; --line:rgba(255,200,140,.14); --panel:rgba(255,205,110,.03);
   color: var(--ink); background: var(--bg); font-family: var(--bpp-sans), system-ui, sans-serif; }
+.bpp-glass .bpp {
+  /* Aigarth's vacuum tube, read as a room: the page is the dark behind the glass. Cold blue glass light falls
+     from the right, where the machine lives; the warm filament is the gold UI itself. Black stays black. */
+  background:
+    radial-gradient(70vw 60vh at 82% 18%, rgba(46,86,255,.13), transparent 62%),
+    radial-gradient(40vw 38vh at 88% 30%, rgba(70,110,255,.10), transparent 60%),
+    radial-gradient(60vw 40vh at 50% 108%, rgba(46,86,255,.08), transparent 65%),
+    radial-gradient(45vw 45vh at 8% 22%, rgba(232,145,46,.05), transparent 65%),
+    var(--bg);
+  background-attachment: fixed; }
 .bpp .nx { font-family: var(--bpp-nx), sans-serif; font-variant-numeric: tabular-nums; }
 .bpp .eng { font-family: var(--bpp-eng), sans-serif; letter-spacing: .12em; }
 .bpp .lit { color: var(--hot); text-shadow: 0 0 4px #ffd08a, 0 0 14px var(--fil), 0 0 40px rgba(232,145,46,.7), 0 0 90px rgba(232,145,46,.35); }
