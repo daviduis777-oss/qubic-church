@@ -189,15 +189,16 @@ function Ring({ g, live }: { g: CheckedGenome | null; live: LiveResult | null })
   return (
     <figure style={{ margin: 0, display: 'grid', gap: 10, justifyItems: 'center' }}>
       <svg aria-label="The brain: 32 neurons, their wiring and their states, ticking hour by hour" role="img" style={{ width: '100%', maxWidth: 420, height: 'auto' }} viewBox="0 0 380 380">
-        <defs><radialGradient id="bw-glass"><stop offset="0" stopColor="rgba(98,64,255,.42)" /><stop offset=".6" stopColor="rgba(70,40,200,.16)" /><stop offset="1" stopColor="rgba(70,40,200,0)" /></radialGradient></defs>
-        <circle cx={cx} cy={cy} fill="url(#bw-glass)" r={R + 34} />
-        <circle cx={cx} cy={cy} fill="none" r={R + 22} stroke="rgba(150,128,255,.35)" />
+        <defs>
+          <radialGradient id="bw-blue"><stop offset=".35" stopColor="rgba(110,80,255,.5)" /><stop offset="1" stopColor="rgba(110,80,255,0)" /></radialGradient>
+        </defs>
+        <circle cx={cx} cy={cy} fill="none" r={R + 22} stroke="rgba(255,200,140,.08)" />
         {g &&
           g.links.map(([t, slot, src], k) => {
             const a = pos(src)
             const b = pos(t)
             const lit = state && state[src] === 1
-            return <path d={`M${a.x},${a.y} Q${cx},${cy} ${b.x},${b.y}`} fill="none" key={k} stroke={lit ? 'rgba(255,196,107,.5)' : 'rgba(132,104,255,.22)'} strokeWidth={slot === 0 ? 1 : 0.7} style={{ transition: 'stroke .9s ease' }} />
+            return <path d={`M${a.x},${a.y} Q${cx},${cy} ${b.x},${b.y}`} fill="none" key={k} stroke={lit ? 'rgba(255,196,107,.28)' : 'rgba(255,200,140,.07)'} strokeWidth={slot === 0 ? 1 : 0.7} style={{ transition: 'stroke .9s ease' }} />
           })}
         {Array.from({ length: N }, (_, n) => {
           const p = pos(n)
@@ -207,13 +208,14 @@ function Ring({ g, live }: { g: CheckedGenome | null; live: LiveResult | null })
           const r = isOut ? 11 : isCtrl ? 8 : 6
           return (
             <g key={n}>
+              <circle cx={p.x} cy={p.y} fill="url(#bw-blue)" r={r + 16} style={{ opacity: t === 1 ? 1 : 0, transition: 'opacity .9s ease' }} />
               <circle cx={p.x} cy={p.y} fill="rgba(232,145,46,.28)" r={r + 7} style={{ opacity: t === 1 ? 1 : 0, transition: 'opacity .9s ease' }} />
               <circle
                 cx={p.x}
                 cy={p.y}
-                fill={t === 1 ? 'var(--hot)' : t === 0 ? '#2a1d8a' : 'rgba(98,64,255,.08)'}
+                fill={t === 1 ? 'var(--hot)' : t === 0 ? '#2a2630' : 'transparent'}
                 r={r}
-                stroke={t === 1 ? 'var(--fil)' : t === 0 ? 'rgba(156,134,255,.9)' : 'rgba(156,134,255,.4)'}
+                stroke={t === 1 ? 'var(--fil)' : t === 0 ? 'rgba(255,200,140,.35)' : 'rgba(255,200,140,.18)'}
                 strokeDasharray={t === 2 ? '2 2' : undefined}
                 strokeWidth={isOut || isCtrl ? 1.6 : 1}
                 style={{ transition: 'fill .9s ease, stroke .9s ease' }}
@@ -226,7 +228,7 @@ function Ring({ g, live }: { g: CheckedGenome | null; live: LiveResult | null })
             </g>
           )
         })}
-        <circle cx={cx} cy={cy} fill="rgba(9,6,24,.88)" r={86} stroke="rgba(150,128,255,.3)" />
+        <circle cx={cx} cy={cy} fill="rgba(11,10,14,.82)" r={86} />
         <text className="nx" key={idx} fill={call == null ? 'var(--dim)' : call === 1 ? 'var(--hot)' : call === 0 ? 'var(--r)' : 'var(--dim)'} fontSize={call === 2 ? 28 : 42} fontWeight="300" textAnchor="middle" x={cx} y={cy + 8} style={{ fontFamily: 'var(--bpp-nx)', animation: 'bw-in .6s ease both' }}>
           {!g ? '' : call === 1 ? '▲ UP' : call === 0 ? '▼ DOWN' : call === 2 ? 'NOT SURE' : ''}
         </text>
