@@ -24,7 +24,7 @@ const pad = (n: number) => String(n).padStart(2, '0')
  * Server HTML carries the date in words, so readers without JS
  * (and crawlers) still get the meaning.
  */
-export function Countdown({ compact = false }: { compact?: boolean }) {
+export function Countdown({ compact = false, date = false }: { compact?: boolean; date?: boolean }) {
   const [now, setNow] = useState<number | null>(null)
 
   useEffect(() => {
@@ -35,7 +35,12 @@ export function Countdown({ compact = false }: { compact?: boolean }) {
 
   const p = now === null ? null : parts(TARGET - now)
   const days = p ? String(p.days) : '···'
-  const hms = p ? `${pad(p.hours)}:${pad(p.minutes)}:${pad(p.seconds)}` : '--:--:--'
+  const time: [string, string][] = [
+    [p ? pad(p.hours) : '--', 'hours'],
+    [p ? pad(p.minutes) : '--', 'min'],
+    [p ? pad(p.seconds) : '--', 'sec'],
+  ]
+  const tSize = compact ? 'clamp(30px, 5vw, 44px)' : 'clamp(40px, 4.5vw, 56px)'
 
   // the BPP-9000 countdown, letter for letter: a big lit number in Big Shoulders with "days", the time below
   return (
@@ -43,12 +48,27 @@ export function Countdown({ compact = false }: { compact?: boolean }) {
       <time className="sr-only" dateTime="2027-04-13T00:00:00Z">
         13 April 2027
       </time>
+      {date && (
+        <div className="qc-lit" style={{ fontFamily: NX, fontWeight: 300, fontSize: compact ? 'clamp(26px, 4vw, 34px)' : 'clamp(30px, 3.4vw, 44px)', lineHeight: 1, letterSpacing: '.06em', marginBottom: 22 }}>
+          13.04.2027
+        </div>
+      )}
       <div className="qc-lit" style={{ fontFamily: NX, fontWeight: 300, fontSize: compact ? 'clamp(64px, 12vw, 110px)' : 'clamp(96px, 11vw, 160px)', lineHeight: 0.85, letterSpacing: '.01em' }}>
         {days}
         <span style={{ fontSize: '.36em', marginLeft: '.18em', letterSpacing: '.02em' }}>{p?.days === 1 ? 'day' : 'days'}</span>
       </div>
-      <div style={{ fontFamily: NX, fontWeight: 300, fontSize: compact ? 'clamp(30px, 5vw, 44px)' : 'clamp(40px, 4.5vw, 56px)', lineHeight: 1, marginTop: 14, color: '#ecdfcb', fontVariantNumeric: 'tabular-nums' }}>
-        {hms}
+      <div style={{ display: 'flex', alignItems: 'flex-start', marginTop: 14, fontFamily: NX, fontWeight: 300, fontSize: tSize, lineHeight: 1, color: '#ecdfcb', fontVariantNumeric: 'tabular-nums' }}>
+        {time.map(([v, l], i) => (
+          <span key={l} style={{ display: 'flex' }}>
+            {i > 0 && <span aria-hidden>:</span>}
+            <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              {v}
+              <span className="font-sans text-fg-2" style={{ marginTop: 8, fontSize: 10, letterSpacing: '0.3em', textTransform: 'uppercase', fontWeight: 400 }}>
+                {l}
+              </span>
+            </span>
+          </span>
+        ))}
       </div>
       <style>{`.qc-lit { color: #FFE3B0; font-variant-numeric: tabular-nums; text-shadow: 0 0 4px #ffd08a, 0 0 14px #FFC46B, 0 0 40px rgba(232,145,46,.7), 0 0 90px rgba(232,145,46,.35); }`}</style>
     </div>

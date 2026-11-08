@@ -106,8 +106,7 @@ export function BooksHome({ locale = 'en' }: { locale?: Locale }) {
             )}
 
             <div className="mt-12 border-t border-border pt-6 lg:mt-auto">
-              <p className="mb-4 font-mono text-sm tracking-[0.4em] text-gold">13.04.2027</p>
-              <Countdown />
+              <Countdown date />
             </div>
           </div>
 
