@@ -5,7 +5,7 @@
  * light rig, a gold monoline cathode with soft glow and the unlit cathodes behind it, a dark hex-mesh anode, and a
  * blue LED in the base whose hue drifts through violet. One canvas per row of tubes.
  */
-import { Environment, Lightformer, Sparkles } from '@react-three/drei'
+import { Environment, Lightformer } from '@react-three/drei'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { useMemo, useRef } from 'react'
 import * as THREE from 'three'
@@ -86,6 +86,103 @@ function radialTexture(stops: [number, string][]) {
   const t = new THREE.CanvasTexture(c)
   t.colorSpace = THREE.SRGBColorSpace
   return t
+}
+
+/** Vertical haze: brightest at the bottom, a wide soft column fading out by mid-tube. */
+function hazeTexture() {
+  const c = document.createElement('canvas')
+  c.width = 128
+  c.height = 256
+  const g = c.getContext('2d')!
+  const v = g.createLinearGradient(0, 256, 0, 0)
+  v.addColorStop(0, 'rgba(255,255,255,.55)')
+  v.addColorStop(0.25, 'rgba(255,255,255,.22)')
+  v.addColorStop(0.6, 'rgba(255,255,255,.06)')
+  v.addColorStop(1, 'rgba(255,255,255,0)')
+  g.fillStyle = v
+  g.fillRect(0, 0, 128, 256)
+  // soften the sides
+  g.globalCompositeOperation = 'destination-in'
+  const hgrad = g.createLinearGradient(0, 0, 128, 0)
+  hgrad.addColorStop(0, 'rgba(0,0,0,0)')
+  hgrad.addColorStop(0.5, 'rgba(0,0,0,1)')
+  hgrad.addColorStop(1, 'rgba(0,0,0,0)')
+  g.fillStyle = hgrad
+  g.fillRect(0, 0, 128, 256)
+  const t = new THREE.CanvasTexture(c)
+  t.colorSpace = THREE.SRGBColorSpace
+  return t
+}
+
+/**
+ * The glass lit from inside by the base LED. Light travels in the glass wall and leaks out where the wall is seen
+ * edge-on, so: fresnel (grazing) x height falloff from the base, with a slow travelling ripple so it breathes.
+ */
+function catchMaterial(color: THREE.Color) {
+  return new THREE.ShaderMaterial({
+    uniforms: { uColor: { value: color.clone() }, uTime: { value: 0 } },
+    vertexShader: `
+      varying vec3 vN; varying vec3 vV; varying float vY;
+      void main() {
+        vec4 wp = modelMatrix * vec4(position, 1.0);
+        vN = normalize(mat3(modelMatrix) * normal);
+        vV = normalize(cameraPosition - wp.xyz);
+        vY = position.y;
+        gl_Position = projectionMatrix * viewMatrix * wp;
+      }`,
+    fragmentShader: `
+      uniform vec3 uColor; uniform float uTime;
+      varying vec3 vN; varying vec3 vV; varying float vY;
+      void main() {
+        float f = 1.0 - abs(dot(normalize(vN), normalize(vV)));
+        float rim = pow(f, 2.2);
+        float h = exp(-vY * 1.55) * 1.25 + 0.05;
+        float ripple = 0.9 + 0.1 * sin(vY * 7.0 - uTime * 0.8);
+        vec3 c = mix(uColor, vec3(0.86, 0.80, 1.0), smoothstep(0.55, 1.0, rim) * 0.35);
+        float a = rim * h * ripple;
+        a += exp(-vY * 7.0) * 0.35; // the glass foot, right at the LED
+        gl_FragColor = vec4(c * a * 1.6, 1.0);
+      }`,
+    blending: THREE.AdditiveBlending,
+    transparent: true,
+    depthWrite: false,
+    side: THREE.DoubleSide,
+    toneMapped: false,
+  })
+}
+
+/**
+ * The anode mesh, lit by hand instead of by lamps (a point light would put hot specks on the glass):
+ * violet from the LED below, fading up into dark steel, with a warm touch where the digit glows.
+ */
+function anodeMaterial(color: THREE.Color) {
+  return new THREE.ShaderMaterial({
+    uniforms: { uColor: { value: color.clone() }, uMap: { value: hexTexture() } },
+    vertexShader: `
+      varying vec2 vUv; varying float vY; varying float vFront;
+      void main() {
+        vUv = uv; vY = position.y;
+        vec3 n = normalize(mat3(modelMatrix) * normal);
+        vFront = n.z;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }`,
+    fragmentShader: `
+      uniform vec3 uColor; uniform sampler2D uMap;
+      varying vec2 vUv; varying float vY; varying float vFront;
+      void main() {
+        float m = texture2D(uMap, vUv * vec2(15.0, 12.0)).r;
+        if (m < 0.2) discard;
+        float y = vY + 0.775;                       // 0 at the bottom of the mesh
+        vec3 steel = vec3(0.2, 0.19, 0.26);
+        vec3 c = steel + uColor * (exp(-y * 1.5) * 1.5 + 0.12);
+        c += vec3(1.0, 0.72, 0.35) * 0.22 * exp(-pow((y - 0.85) * 1.6, 2.0)) * max(vFront, 0.0) ;
+        float a = m * (vFront < 0.0 ? 0.55 : 0.9);  // the far side of the cylinder dimmer
+        gl_FragColor = vec4(c * a, a);
+      }`,
+    transparent: true,
+    depthWrite: false,
+    side: THREE.DoubleSide,
+  })
 }
 
 function hexTexture() {
@@ -173,11 +270,12 @@ function Tube({ ch, x, res }: { ch: string; x: number; res: Res }) {
           <meshBasicMaterial color={res.wireColor} ref={j === 0 ? wire : undefined} toneMapped={false} />
         </mesh>
       ))}
-      <pointLight color={GOLD} decay={2} distance={1.6} intensity={1.6} position={[0, 1.2, 0.1]} />
       {/* blue LED in the base */}
-      <sprite material={res.ledMat} position={[0, 0.2, 0.05]} scale={[1.15, 0.8, 1]} />
+      <sprite material={res.hazeMat} position={[0, 0.55, 0.02]} scale={[1.05, 1.6, 1]} />
+      <sprite material={res.ledMat} position={[0, 0.16, 0.05]} scale={[0.95, 0.5, 1]} />
+      {/* the inside of the glass catching the base light: violet rising up the walls, strongest at the grazing edges */}
+      <mesh geometry={res.glass} material={res.catchMat} renderOrder={3} scale={[0.985, 1, 0.985]} />
       <sprite material={res.floorMat} position={[0, -0.08, 0.25]} scale={[1.5, 0.3, 1]} />
-      <Sparkles color="#d6e4ff" count={14} noise={0.4} opacity={0.9} position={[0, 0.22, 0]} scale={[0.75, 0.22, 0.75]} size={2.2} speed={0.25} />
       {/* the glass */}
       <mesh geometry={res.glass} material={res.glassBackMat} renderOrder={1} />
       <mesh geometry={res.glass} material={res.glassMat} renderOrder={2} />
@@ -203,23 +301,24 @@ function Colon({ x, res }: { x: number; res: Res }) {
 /* ---------------- light rig: what the glass reflects ---------------- */
 
 function Rig({ res }: { res: Res }) {
-  const led = useRef<THREE.PointLight>(null)
   useFrame(({ clock, scene }) => {
     const t = clock.elapsedTime
     // a slow sway, not a spin: the rims stay on the edges and slide a little, the film colours shift.
     // The room is drawn into the environment map once; only its rotation moves, which costs nothing per frame.
     scene.environmentRotation.y = 0.32 * Math.sin(t * 0.22) + 0.12 * Math.sin(t * 0.53)
-    // the LED drifts blue -> violet -> blue
-    const hue = 0.62 + 0.07 * Math.sin(t * 0.35)
-    res.ledColor.setHSL(hue, 0.95, 0.55)
+    // the LED drifts blue-violet -> violet -> a touch of magenta and back, as in the references; never cyan
+    const hue = 0.715 + 0.035 * Math.sin(t * 0.31) + 0.012 * Math.sin(t * 0.9)
+    res.ledColor.setHSL(hue, 0.92, 0.56)
     res.ledMat.color.copy(res.ledColor)
+    res.hazeMat.color.copy(res.ledColor)
     res.floorMat.color.copy(res.ledColor)
-    if (led.current) led.current.color.copy(res.ledColor)
+    res.catchMat.uniforms.uColor!.value.copy(res.ledColor)
+    res.catchMat.uniforms.uTime!.value = t
+    res.anodeMat.uniforms.uColor!.value.copy(res.ledColor)
   })
   return (
     <>
       <ambientLight intensity={0.15} />
-      <pointLight color="#4a6bff" decay={2} distance={3} intensity={4} position={[0, 0.2, 0.6]} ref={led} />
       <Environment frames={1} resolution={256}>
         <group>
           {/* tall soft strips far left and right: the bright rims down the glass edges */}
@@ -230,7 +329,7 @@ function Rig({ res }: { res: Res }) {
           {/* cold glass light above and a magenta edge, the warm room behind */}
           <Lightformer color="#5a3bff" form="rect" intensity={2.2} position={[3, 5, -2]} rotation-x={Math.PI / 2} scale={[5, 3, 1]} />
           <Lightformer color="#ff4fd8" form="rect" intensity={1.1} position={[-4, 3, -3]} scale={[2, 3, 1]} />
-          <Lightformer color="#3b74ff" form="rect" intensity={3} position={[0, -3, 2]} rotation-x={-Math.PI / 2} scale={[6, 3, 1]} />
+          <Lightformer color="#6046ff" form="rect" intensity={3} position={[0, -3, 2]} rotation-x={-Math.PI / 2} scale={[6, 3, 1]} />
           <Lightformer color="#ffb44d" form="rect" intensity={1.2} position={[0, 1.2, -6]} scale={[5, 2, 1]} />
         </group>
       </Environment>
@@ -243,7 +342,7 @@ function Rig({ res }: { res: Res }) {
 type Res = ReturnType<typeof makeRes>
 
 function makeRes() {
-  const ledColor = new THREE.Color('#3b6bff')
+  const ledColor = new THREE.Color('#6a4cff')
   return {
     ledColor,
     wireColor: new THREE.Color(GOLD).multiplyScalar(1.0),
@@ -278,11 +377,14 @@ function makeRes() {
       side: THREE.BackSide,
     }),
     anode: new THREE.CylinderGeometry(0.4, 0.4, 1.55, 64, 1, true, Math.PI),
-    anodeMat: new THREE.MeshStandardMaterial({ color: '#3a3b46', metalness: 0.8, roughness: 0.4, alphaMap: hexTexture(), transparent: true, opacity: 0.95, depthWrite: false, side: THREE.DoubleSide }),
-    ghostMat: new THREE.MeshStandardMaterial({ color: '#2e2a26', metalness: 0.9, roughness: 0.4 }),
+    anodeMat: anodeMaterial(ledColor),
+    ghostMat: new THREE.MeshStandardMaterial({ color: '#2e2a26', emissive: '#3b3029', metalness: 0.9, roughness: 0.4 }),
     base: new THREE.CylinderGeometry(0.52, 0.5, 0.14, 64),
     baseMat: new THREE.MeshStandardMaterial({ color: '#0e0d12', metalness: 0.6, roughness: 0.5 }),
-    ledMat: new THREE.SpriteMaterial({ map: radialTexture([[0, 'rgba(235,242,255,1)'], [0.18, 'rgba(120,160,255,.9)'], [0.5, 'rgba(60,90,255,.35)'], [1, 'rgba(40,60,255,0)']]), color: ledColor, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true }),
+    ledMat: new THREE.SpriteMaterial({ map: radialTexture([[0, 'rgba(255,255,255,1)'], [0.12, 'rgba(230,220,255,.95)'], [0.4, 'rgba(160,140,255,.45)'], [1, 'rgba(120,100,255,0)']]), color: ledColor, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true }),
+    // a tall soft haze: the light filling the glass volume, fading upwards
+    hazeMat: new THREE.SpriteMaterial({ map: hazeTexture(), color: ledColor, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, opacity: 0.9 }),
+    catchMat: catchMaterial(ledColor),
     floorMat: new THREE.SpriteMaterial({ map: radialTexture([[0, 'rgba(120,150,255,.8)'], [0.5, 'rgba(70,90,255,.25)'], [1, 'rgba(40,60,255,0)']]), color: ledColor, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, opacity: 0.8 }),
     dotMat: new THREE.MeshBasicMaterial({ color: new THREE.Color(GOLD_HOT).multiplyScalar(1.5), toneMapped: false }),
     dotGlow: new THREE.SpriteMaterial({ map: radialTexture([[0, 'rgba(255,214,150,.9)'], [0.35, 'rgba(255,170,70,.35)'], [1, 'rgba(255,150,50,0)']]), blending: THREE.AdditiveBlending, depthWrite: false, transparent: true }),
