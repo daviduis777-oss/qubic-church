@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { replay, type NetData } from '@/lib/bpp/sim'
-import { Nixie3D } from '@/components/church/nixie/Nixie3D'
 import { useRecord } from './TrackRecord'
 import { nx, sans } from './fonts'
 
@@ -58,12 +57,14 @@ export function BppLive({ liveAt }: { liveAt: string }) {
             <p className="mute" style={{ fontSize: 17, margin: 0 }}>
               Bitcoin, hour by hour, <b style={{ color: 'var(--ink)', fontWeight: 600 }}>UP or DOWN</b>. The first live call in
             </p>
-            <div style={{ display: 'flex', alignItems: 'flex-end', gap: 'clamp(10px, 2vw, 18px)', marginTop: 18, flexWrap: 'wrap' }}>
-              <Nixie3D h={240} label={left == null ? 'days' : `${days} ${days === 1 ? 'day' : 'days'}`} text={left == null ? '00' : String(days).padStart(2, '0')} />
-              <span className="nx lit" style={{ fontWeight: 300, fontSize: 'clamp(46px, 7vw, 83px)', lineHeight: 1, letterSpacing: '.02em', marginBottom: 14 }}>{days === 1 ? 'day' : 'days'}</span>
+            <div className="nx lit" style={{ fontWeight: 300, fontSize: 'clamp(110px, 20vw, 230px)', lineHeight: 0.85, marginTop: 18, letterSpacing: '.01em' }}>
+              {left == null ? '··' : days}
+              <span style={{ fontSize: '.36em', marginLeft: '.18em', letterSpacing: '.02em' }}>{days === 1 ? 'day' : 'days'}</span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginTop: 16, flexWrap: 'wrap' }}>
-              <Nixie3D h={96} label={left == null ? 'hours, minutes, seconds' : hms} text={left == null ? '00:00:00' : hms} />
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 14, marginTop: 16, flexWrap: 'wrap' }}>
+              <b className="nx" style={{ fontWeight: 300, fontSize: 'clamp(40px, 6vw, 60px)', lineHeight: 1 }}>
+                {hms}
+              </b>
               <span className="mute" style={{ fontSize: 15 }}>
                 until 18 November, 12:00 UTC. From then on this space shows ▲ UP or ▼ DOWN for every hour, and keeps score.
               </span>
