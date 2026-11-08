@@ -55,7 +55,7 @@ export function Countdown({ compact = false }: { compact?: boolean }) {
         {cells.map(([v, l], i) => (
           <div className="flex items-end" key={l}>
             <div className="flex flex-col items-center">
-              <NixieRow gap={3} h={compact ? 40 : 52} label={`${v} ${l}`} text={v.replace(/—/g, '0')} />
+              <NixieRow gap={3} h={compact ? 48 : 66} label={`${v} ${l}`} text={v.replace(/—/g, '0')} />
               <span className="mt-2 text-[10px] uppercase tracking-[0.3em] text-fg-2">
                 {l}
               </span>

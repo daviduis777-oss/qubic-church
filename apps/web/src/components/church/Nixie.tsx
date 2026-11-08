@@ -1,78 +1,133 @@
-import { nx } from '@/components/bpp/fonts'
+'use client'
+
+import { useId } from 'react'
 
 /**
- * Nixie tubes: Aigarth's "vacuum tubes" in one element. Each digit burns orange inside its own glass, the other
- * nine cathodes stand behind it unlit, a hex mesh sits in front, and the glass glows blue at its base.
- * Pure CSS, server-safe. `text` may hold digits, ':' (two neon dots) and anything else (shown as a plain tube).
+ * Nixie tubes, drawn from Bob's IN-18 reference: clear glass (only its rims, dome ring and getter disc catch light),
+ * a dark hex-mesh anode behind the digit, the digit itself a thin glowing wire with unlit cathodes behind it,
+ * and a strong blue light pooling in the base and reflecting on the table. Each digit is a hand-drawn monoline path.
  */
-const FONT = nx.style.fontFamily
-const MESH = `url("data:image/svg+xml,${encodeURIComponent(
-  '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="17.32"><path d="M5 0l5 2.887v5.773L5 11.547 0 8.66V2.887z M0 14.434h0 M5 11.547v5.773" fill="none" stroke="rgba(190,170,150,0.22)" stroke-width="0.6"/></svg>',
-)}")`
+
+// Monoline cathodes in a 60 x 100 box, nixie style.
+const D: Record<string, string> = {
+  '0': 'M30,12 C44,12 52,28 52,50 C52,72 44,88 30,88 C16,88 8,72 8,50 C8,28 16,12 30,12 Z',
+  '1': 'M20,22 L32,12 L32,88',
+  '2': 'M11,30 C11,16 21,11 30,11 C41,11 49,18 49,30 C49,48 12,62 11,88 L50,88',
+  '3': 'M12,12 L48,12 L27,42 C42,41 51,52 51,66 C51,80 41,89 29,89 C19,89 12,84 9,77',
+  '4': 'M40,88 L40,12 L8,64 L53,64',
+  '5': 'M47,12 L15,12 L12,45 C18,40 24,38 31,38 C43,38 51,49 51,63 C51,79 41,89 29,89 C19,89 12,84 9,77',
+  '6': 'M45,16 C40,12 35,11 31,11 C17,11 9,28 9,56 C9,78 17,89 30,89 C42,89 51,79 51,65 C51,51 42,41 30,41 C20,41 12,48 9,58',
+  '7': 'M9,12 L51,12 L23,88',
+  '8': 'M30,11 C40,11 46,18 46,29 C46,40 39,47 30,47 C21,47 14,40 14,29 C14,18 20,11 30,11 Z M30,47 C42,47 51,56 51,68 C51,81 42,89 30,89 C18,89 9,81 9,68 C9,56 18,47 30,47 Z',
+  '9': 'M15,84 C20,88 25,89 29,89 C43,89 51,72 51,44 C51,22 43,11 30,11 C18,11 9,21 9,35 C9,49 18,59 30,59 C40,59 48,52 51,42',
+}
+const GHOSTS = ['0', '8', '6', '3']
+
+// fixed sparkle positions in the blue base (x, y, r) in tube units
+const SPARKS = [
+  [16, 108, 0.9], [22, 111, 0.6], [27, 106, 0.7], [33, 110, 1.0], [38, 107, 0.6], [44, 111, 0.8], [19, 113, 0.5],
+  [30, 113, 0.7], [41, 114, 0.5], [25, 115, 0.8], [36, 116, 0.6], [14, 104, 0.5], [47, 105, 0.5],
+] as const
 
 export function NixieTube({ ch, h }: { ch: string; h: number }) {
-  const w = Math.round(h * 0.62)
-  const fs = Math.round(h * 0.7)
-  const lit = /\d/.test(ch)
+  const id = useId().replace(/:/g, '')
+  const w = h * 0.5
+  const path = D[ch]
+  // tube: 60 wide, 120 tall, dome radius 30
+  const shape = 'M2,30 A28,28 0 0 1 58,30 L58,116 Q58,119 55,119 L5,119 Q2,119 2,116 Z'
   return (
-    <span
-      aria-hidden
-      style={{
-        position: 'relative',
-        display: 'inline-block',
-        width: w,
-        height: h,
-        borderRadius: `${w / 2}px ${w / 2}px ${h * 0.07}px ${h * 0.07}px`,
-        background:
-          'linear-gradient(90deg, rgba(255,255,255,.07), rgba(255,255,255,.015) 30%, rgba(255,255,255,.015) 70%, rgba(255,255,255,.06)), radial-gradient(70% 30% at 50% 100%, rgba(70,120,255,.55), rgba(70,120,255,0) 100%), #07060b',
-        boxShadow:
-          'inset 0 0 0 1px rgba(200,215,255,.20), inset 0 -10px 24px -8px rgba(80,140,255,.65), 0 14px 34px -14px rgba(70,120,255,.85), 0 0 26px -10px rgba(255,140,50,.5)',
-        overflow: 'hidden',
-        flex: 'none',
-      }}
-    >
-      {/* the other cathodes, unlit, stacked behind */}
-      {lit &&
-        ['0', '8', '3', '6'].map(g => (
-          <span
-            key={g}
-            style={{ position: 'absolute', inset: 0, display: 'grid', placeItems: 'center', fontFamily: FONT, fontWeight: 300, fontSize: fs, lineHeight: 1, color: 'transparent', WebkitTextStroke: '1px rgba(190,160,130,.13)' }}
-          >
-            {g}
-          </span>
+    <svg aria-hidden height={h} style={{ display: 'block', overflow: 'visible', flex: 'none' }} viewBox="0 0 60 120" width={w}>
+      <defs>
+        <clipPath id={`c${id}`}>
+          <path d={shape} />
+        </clipPath>
+        <pattern height="10.4" id={`m${id}`} patternTransform="scale(.7)" patternUnits="userSpaceOnUse" width="6">
+          <path d="M3,0 L6,1.73 L6,5.2 L3,6.93 L0,5.2 L0,1.73 Z M3,6.93 L3,10.4" fill="none" stroke="#0b0c12" strokeWidth=".7" />
+        </pattern>
+        <linearGradient id={`cy${id}`} x1="0" x2="1">
+          <stop offset="0" stopColor="#000" stopOpacity=".85" />
+          <stop offset=".25" stopColor="#000" stopOpacity=".15" />
+          <stop offset=".7" stopColor="#000" stopOpacity=".05" />
+          <stop offset="1" stopColor="#000" stopOpacity=".8" />
+        </linearGradient>
+        <radialGradient cx="50%" cy="100%" id={`b${id}`} r="85%">
+          <stop offset="0" stopColor="#bcd4ff" />
+          <stop offset=".14" stopColor="#4f8dff" />
+          <stop offset=".42" stopColor="#2457ff" stopOpacity=".45" />
+          <stop offset="1" stopColor="#1a3cff" stopOpacity="0" />
+        </radialGradient>
+        <linearGradient id={`mb${id}`} x1="0" x2="0" y1="0" y2="1">
+          <stop offset=".4" stopColor="#3f7bff" stopOpacity="0" />
+          <stop offset="1" stopColor="#5b92ff" stopOpacity=".9" />
+        </linearGradient>
+        <filter filterUnits="userSpaceOnUse" height="180" id={`g${id}`} width="120" x="-30" y="-30">
+          <feGaussianBlur stdDeviation="2.2" />
+        </filter>
+        <filter filterUnits="userSpaceOnUse" height="180" id={`gb${id}`} width="120" x="-30" y="-30">
+          <feGaussianBlur stdDeviation="5" />
+        </filter>
+      </defs>
+
+      {/* blue reflection on the table */}
+      <ellipse cx="30" cy="121" fill="#3a74ff" filter={`url(#gb${id})`} opacity=".55" rx="30" ry="5" />
+
+      <g clipPath={`url(#c${id})`}>
+        {/* what is seen through the glass: near-black */}
+        <rect fill="#050509" height="120" opacity=".55" width="60" />
+        {/* the blue light pooling in the base, behind the mesh and the digit */}
+        <rect fill={`url(#b${id})`} height="74" opacity=".95" width="60" y="46" />
+        {/* the anode: a dark hex mesh, a cylinder, lit blue from below */}
+        <rect fill={`url(#m${id})`} height="96" width="52" x="4" y="16" />
+        
+        <rect fill={`url(#cy${id})`} height="104" width="60" y="14" />
+
+        {/* unlit cathodes behind */}
+        {path &&
+          GHOSTS.filter(g => g !== ch).map((g, i) => (
+            <path d={D[g]} fill="none" key={g} stroke="#6d6660" strokeOpacity=".32" strokeWidth=".9" transform={`translate(${9 + i * 0.6},${20 - i * 0.4}) scale(.7)`} />
+          ))}
+
+        {/* the lit cathode: glow, wire, hot core */}
+        {path && (
+          <g transform="translate(9,20) scale(.7)">
+            <path d={path} fill="none" filter={`url(#gb${id})`} stroke="#ff4d00" strokeLinecap="round" strokeLinejoin="round" strokeOpacity=".8" strokeWidth="12" />
+            <path d={path} fill="none" filter={`url(#g${id})`} stroke="#ff7a1a" strokeLinecap="round" strokeLinejoin="round" strokeWidth="5.5" />
+            <path d={path} fill="none" stroke="#ff9a3c" strokeLinecap="round" strokeLinejoin="round" strokeWidth="3.4" />
+            <path d={path} fill="none" stroke="#fff0d8" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.4" />
+          </g>
+        )}
+        {!path && (
+          <text fill="#ffb066" fontFamily="system-ui" fontSize="40" textAnchor="middle" x="30" y="66">
+            {ch}
+          </text>
+        )}
+
+        {/* sparks in the blue base */}
+        {SPARKS.map(([x, y, r], i) => (
+          <circle cx={x} cy={y} fill="#e8f0ff" key={i} opacity=".85" r={r} />
         ))}
-      {/* the lit cathode */}
-      <span
-        style={{
-          position: 'absolute',
-          inset: 0,
-          display: 'grid',
-          placeItems: 'center',
-          fontFamily: FONT,
-          fontWeight: 300,
-          fontSize: fs,
-          lineHeight: 1,
-          color: '#ffd9a8',
-          textShadow: '0 0 2px #ffb066, 0 0 6px #ff8a2a, 0 0 16px rgba(255,110,20,.85), 0 0 34px rgba(255,90,10,.5)',
-        }}
-      >
-        {ch}
-      </span>
-      {/* the mesh in front */}
-      <span style={{ position: 'absolute', inset: '10% 8% 14%', backgroundImage: MESH, backgroundSize: `${Math.max(6, h * 0.08)}px auto`, opacity: 0.9, borderRadius: 4 }} />
-      {/* the glass: a cold highlight down the left side and a shine at the dome */}
-      <span style={{ position: 'absolute', left: '12%', top: '9%', width: '9%', height: '70%', borderRadius: 99, background: 'linear-gradient(180deg, rgba(255,255,255,.5), rgba(255,255,255,0))' }} />
-      <span style={{ position: 'absolute', left: '20%', right: '20%', top: '3%', height: '6%', borderRadius: 99, background: 'radial-gradient(closest-side, rgba(255,255,255,.35), transparent)' }} />
-    </span>
+      </g>
+
+      {/* the glass itself: rims, dome ring, getter disc, a soft cold sheen */}
+      <path d={shape} fill="none" stroke="rgba(220,230,255,.22)" strokeWidth=".8" />
+      <linearGradient id={`r${id}`} x1="0" x2="0" y1="0" y2="1"><stop offset="0" stopColor="#fff" stopOpacity=".8" /><stop offset=".6" stopColor="#fff" stopOpacity=".55" /><stop offset="1" stopColor="#6fa0ff" stopOpacity="1" /></linearGradient>
+      <path d="M5,34 L5,114" stroke={`url(#r${id})`} strokeLinecap="round" strokeWidth="1.1" />
+      <path d="M55,34 L55,114" stroke={`url(#r${id})`} strokeOpacity=".6" strokeLinecap="round" strokeWidth=".9" />
+      <path d="M9,30 L9,70" stroke="rgba(255,255,255,.18)" strokeLinecap="round" strokeWidth="2.5" />
+      <ellipse cx="30" cy="16" fill="rgba(210,214,224,.10)" rx="20" ry="2.6" stroke="rgba(235,238,245,.35)" strokeWidth=".6" />
+      <path d="M10,22 A22,22 0 0 1 50,22" fill="none" stroke="rgba(255,255,255,.35)" strokeWidth=".8" />
+      <ellipse cx="30" cy="3.2" fill="rgba(255,255,255,.35)" rx="4" ry="1.4" />
+      <path d="M3,117 L57,117" stroke="#7fa6ff" strokeOpacity=".9" strokeWidth="1.2" />
+    </svg>
   )
 }
 
 /** Two neon dots between tube groups. */
 function NixieColon({ h }: { h: number }) {
-  const d = Math.max(4, Math.round(h * 0.07))
-  const dot = { width: d, height: d, borderRadius: '50%', background: '#ffb066', boxShadow: '0 0 6px #ff8a2a, 0 0 14px rgba(255,110,20,.7), 0 0 22px rgba(70,120,255,.6)' }
+  const d = Math.max(4, Math.round(h * 0.06))
+  const dot = { width: d, height: d, borderRadius: '50%', background: '#ffc28a', boxShadow: '0 0 4px #ff7a1a, 0 0 10px rgba(255,90,10,.8), 0 0 18px rgba(60,110,255,.55)' }
   return (
-    <span aria-hidden style={{ display: 'inline-flex', flexDirection: 'column', justifyContent: 'center', gap: h * 0.22, height: h, padding: `0 ${Math.round(h * 0.08)}px` }}>
+    <span aria-hidden style={{ display: 'inline-flex', flexDirection: 'column', justifyContent: 'center', gap: h * 0.2, height: h, padding: `0 ${Math.round(h * 0.06)}px` }}>
       <span style={dot} />
       <span style={dot} />
     </span>

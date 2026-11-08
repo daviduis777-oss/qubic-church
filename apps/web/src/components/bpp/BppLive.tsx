@@ -59,11 +59,11 @@ export function BppLive({ liveAt }: { liveAt: string }) {
               Bitcoin, hour by hour, <b style={{ color: 'var(--ink)', fontWeight: 600 }}>UP or DOWN</b>. The first live call in
             </p>
             <div style={{ display: 'flex', alignItems: 'flex-end', gap: 18, marginTop: 22, flexWrap: 'wrap' }}>
-              <NixieRow gap={6} h={150} label={left == null ? 'days' : `${days} days`} text={left == null ? '00' : String(days).padStart(2, '0')} />
+              <NixieRow gap={8} h={170} label={left == null ? 'days' : `${days} days`} text={left == null ? '00' : String(days).padStart(2, '0')} />
               <span className="nx lit" style={{ fontWeight: 300, fontSize: 'clamp(44px, 7vw, 80px)', lineHeight: 1, letterSpacing: '.02em', marginBottom: 6 }}>{days === 1 ? 'day' : 'days'}</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 14, marginTop: 16, flexWrap: 'wrap' }}>
-              <NixieRow gap={4} h={64} label={hms} text={left == null ? '00:00:00' : hms} />
+              <NixieRow gap={5} h={84} label={hms} text={left == null ? '00:00:00' : hms} />
               <span className="mute" style={{ fontSize: 15 }}>
                 until 18 November, 12:00 UTC. From then on this space shows ▲ UP or ▼ DOWN for every hour, and keeps score.
               </span>
