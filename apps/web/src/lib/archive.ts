@@ -29,9 +29,23 @@ export const archivedUrl = (url: string) => `https://web.archive.org/web/2026/${
 /** Stable id for an archive entry: the last path segment of the original URL. */
 export const archiveId = (a: ArchiveEntry) => a.url.split('/').filter(Boolean).pop() ?? a.url
 export const getArchiveEntry = (id: string) => {
+  // ids with non-ASCII letters (Sønstebø) are stored encoded, as in the source URL, but can arrive decoded,
+  // encoded or encoded twice depending on the route stage: compare all forms
+  const forms = new Set([id])
   let d = id
-  try {
-    d = decodeURIComponent(id)
-  } catch {}
-  return CFB_ARTICLES.find(a => archiveId(a) === d || archiveId(a) === id)
+  for (let k = 0; k < 2; k++) {
+    try {
+      d = decodeURIComponent(d)
+    } catch {
+      break
+    }
+    forms.add(d)
+  }
+  for (const f of [...forms]) {
+    forms.add(f.normalize('NFC'))
+    try {
+      forms.add(encodeURIComponent(f)) // the stored ids keep the URL's own encoding (s%C3%B8nsteb%C3%B8)
+    } catch {}
+  }
+  return CFB_ARTICLES.find(a => forms.has(archiveId(a)) || forms.has(archiveId(a).normalize('NFC')))
 }

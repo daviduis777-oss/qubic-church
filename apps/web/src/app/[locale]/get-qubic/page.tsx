@@ -9,36 +9,19 @@ import { cn } from '@/lib/utils'
 // DATA
 // =============================================================================
 
+// QUBIC markets as counted on 4 October 2026 (Cointribune, "How to buy Qubic in 2026"). A list, not a
+// recommendation: availability, fees and regional rules change, and deposits can be paused.
 const exchanges = [
-  {
-    name: 'SafeTrade',
-    url: 'https://safe.trade/trading/qubiceth',
-    type: 'CEX',
-    pairs: ['QUBIC/ETH', 'QUBIC/BTC'],
-    description: 'Primary exchange for QUBIC trading',
-  },
-  {
-    name: 'Bitget',
-    url: 'https://www.bitget.com/spot/QUBICUSDT',
-    type: 'CEX',
-    pairs: ['QUBIC/USDT'],
-    description: 'Large exchange with high liquidity',
-  },
-  {
-    name: 'Gate.io',
-    url: 'https://www.gate.io/trade/QUBIC_USDT',
-    type: 'CEX',
-    pairs: ['QUBIC/USDT'],
-    description: 'Popular exchange with global reach',
-  },
-  {
-    name: 'MEXC',
-    url: 'https://www.mexc.com/exchange/QUBIC_USDT',
-    type: 'CEX',
-    pairs: ['QUBIC/USDT'],
-    description: 'High volume, low fees',
-  },
-]
+  { name: 'Gate', url: 'https://www.gate.com/trade/QUBIC_USDT' },
+  { name: 'MEXC', url: 'https://www.mexc.com/exchange/QUBIC_USDT' },
+  { name: 'LBank', url: 'https://www.lbank.com' },
+  { name: 'Bitget', url: 'https://www.bitget.com/spot/QUBICUSDT', note: 'Deposits and withdrawals of QUBIC were suspended on 4 October 2026.' },
+  { name: 'XT.com', url: 'https://www.xt.com' },
+  { name: 'DigiFinex', url: 'https://www.digifinex.com' },
+  { name: 'BYDFi', url: 'https://www.bydfi.com' },
+  { name: 'SafeTrade', url: 'https://safe.trade' },
+  { name: 'BitKan', url: 'https://bitkan.com', note: 'Subject to a UK FCA warning.' },
+] as { name: string; url: string; note?: string }[]
 
 const steps = [
   {
@@ -49,7 +32,7 @@ const steps = [
     action: { label: 'Download Wallet', url: 'https://wallet.qubic.org' },
     details: [
       'Available as web wallet (wallet.qubic.org)',
-      'Your private key = your QUBIC. Back it up!',
+      'Your seed (55 lowercase letters) is your QUBIC: write it down offline and never share it',
       'Copy your wallet address (60 characters, all uppercase)',
     ],
   },
@@ -60,8 +43,8 @@ const steps = [
       'Purchase QUBIC on any supported exchange and withdraw to your wallet.',
     action: { label: 'See Exchanges', url: '#exchanges' },
     details: [
-      'Register on an exchange (Bitget, Gate.io, MEXC, SafeTrade)',
-      'Deposit USDT, ETH, or BTC',
+      'Register on an exchange that lists QUBIC (see the list below)',
+      'Check that QUBIC deposits and withdrawals are open there',
       'Buy QUBIC and withdraw to your wallet address',
     ],
   },
@@ -69,12 +52,12 @@ const steps = [
     step: 3,
     title: 'Get an Anna NFT',
     description:
-      'Buy an Anna NFT on QubicBay to join the community and support independent research.',
+      'The Anna Aigarth collection: 200 hand-made Annas on Qubic, on QubicBay.',
     action: { label: 'Browse NFTs', url: 'https://qubicbay.io/collections/7' },
     details: [
       'Visit QubicBay.com and connect your wallet',
       'Browse the Anna Aigarth collection (200 NFTs)',
-      'Purchase = community membership + research access',
+      'Each Anna gives its holder the status of a founder of Qubic Church. And not only that.',
     ],
   },
 ]
@@ -82,19 +65,19 @@ const steps = [
 const faqs = [
   {
     q: 'What is Qubic?',
-    a: 'Qubic is a Layer 1 blockchain powered by Useful Proof of Work (UPoW). Instead of wasting energy on meaningless calculations, Qubic miners train AI models. It features the first ternary neural network architecture and aims to build Aigarth, an artificial general intelligence.',
+    a: 'Qubic is a decentralised network launched on 13 April 2022 by Come-from-Beyond. It is run by 676 computors and secured by Useful Proof of Work: the computation miners do to keep the network also trains Aigarth, its research project toward a new kind of artificial intelligence. See What is Qubic? on this site.',
   },
   {
     q: 'What makes Qubic different from other blockchains?',
-    a: 'Qubic uses Useful Proof of Work where mining power trains AI neural networks. It has no transaction fees, instant finality, and runs on ternary logic (0, 1, -1) instead of binary. The network processes over 40M transfers per second.',
+    a: 'Mining work is put to use: it evolves Aigarth\'s networks, which use ternary states (+1, 0, -1). Transfers between people carry no fee, and the network lives in weekly epochs that change every Wednesday around 12:00 UTC.',
   },
   {
     q: 'What are Anna NFTs?',
-    a: 'Anna NFTs are a collection of 200 unique digital artworks on the Qubic blockchain, each tied to the research of the 128x128 neural matrix called Anna. Holding an NFT grants community access and tiered research benefits.',
+    a: 'A collection of 200 hand-made Annas on Qubic. Each Anna gives its holder the status of a founder of Qubic Church. And not only that.',
   },
   {
     q: 'Is Qubic safe?',
-    a: 'Qubic is a public, decentralized blockchain. Your funds are secured by your private key. Always back up your seed phrase and never share it. The official wallet at wallet.qubic.org is the recommended way to store QUBIC.',
+    a: 'Your QUBIC is only as safe as your seed. Keep it offline, never type it into a website you did not open yourself, and never share it: no one from Qubic or Qubic Church will ever ask for it. The official wallet is at wallet.qubic.org.',
   },
   {
     q: 'How much QUBIC do I need for an NFT?',
@@ -113,7 +96,7 @@ export default function GetQubicPage() {
     <div className="min-h-screen">
       <PageHeader
         eyebrow="Getting started"
-        lede="Your guide to buying QUBIC, setting up a wallet, and joining the Qubic Church community. From zero to NFT holder in 10 minutes."
+        lede="A wallet, where QUBIC is traded, and the Anna Aigarth collection, step by step. Nothing here is financial advice."
         title="Get Qubic"
       />
 
@@ -170,10 +153,10 @@ export default function GetQubicPage() {
       <section className={cn(SECTION, 'scroll-mt-14')} id="exchanges">
         <SectionHeading
           label="Exchanges"
-          lede="Available on multiple exchanges worldwide."
+          lede="Markets with QUBIC as counted on 4 October 2026. A list, not a recommendation: check fees, local rules and that deposits are open before you send anything."
           title="Where to buy"
         />
-        <div className="grid gap-px border border-border bg-border sm:grid-cols-2">
+        <div className="grid gap-px border border-border bg-border sm:grid-cols-3">
           {exchanges.map(exchange => (
             <a
               className="group flex flex-col bg-card p-6 transition-colors duration-150 ease-out hover:bg-surface-2"
@@ -182,29 +165,26 @@ export default function GetQubicPage() {
               rel="noopener noreferrer"
               target="_blank"
             >
-              <div className="flex items-baseline justify-between gap-3">
+              <div className="flex items-center justify-between gap-3">
                 <h3 className="text-lg font-semibold text-foreground group-hover:text-gold">
                   {exchange.name}
                 </h3>
-                <span className="text-sm text-muted-foreground">
-                  {exchange.type}
-                </span>
-              </div>
-              <p className="mt-2 text-sm leading-relaxed text-fg-2">
-                {exchange.description}
-              </p>
-              <div className="mt-auto flex items-center justify-between gap-3 pt-4">
-                <p className="font-mono text-sm text-muted-foreground">
-                  {exchange.pairs.join(' · ')}
-                </p>
                 <ExternalLink
                   aria-hidden="true"
                   className="size-4 text-muted-foreground transition-colors group-hover:text-gold"
                 />
               </div>
+              {exchange.note && <p className="mt-2 text-sm leading-relaxed text-fg-2">{exchange.note}</p>}
             </a>
           ))}
         </div>
+        <p className="mt-4 text-sm text-muted-foreground">
+          Source:{' '}
+          <a className="underline decoration-gold/40 underline-offset-4 hover:text-gold" href="https://www.cointribune.com/en/how-to-buy-qubic-in-2026-exchanges-fees-and-kyc/" rel="noopener noreferrer" target="_blank">
+            Cointribune, How to buy Qubic in 2026
+          </a>
+          .
+        </p>
       </section>
 
       {/* FAQ */}

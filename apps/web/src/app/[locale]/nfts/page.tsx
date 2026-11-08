@@ -138,7 +138,7 @@ export default function NFTCollectionPage() {
             </div>
 
             {/* Rarity Filter */}
-            <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0">
+            <div className="flex w-full max-w-full items-center gap-2 overflow-x-auto pb-2 md:w-auto md:pb-0">
               <Filter className="w-4 h-4 text-muted-foreground/70 flex-shrink-0" />
               <button
                 aria-pressed={selectedRarity === 'all'}

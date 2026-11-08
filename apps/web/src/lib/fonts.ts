@@ -1,5 +1,4 @@
-import { JetBrains_Mono as FontMono, Inter, Caveat, Bebas_Neue, Cinzel, Cormorant_Garamond, Share_Tech_Mono, IBM_Plex_Mono } from 'next/font/google'
-import localFont from 'next/font/local'
+import { JetBrains_Mono as FontMono, Inter, Bebas_Neue, Cinzel, Cormorant_Garamond, Share_Tech_Mono, IBM_Plex_Mono } from 'next/font/google'
 
 import { absoluteUrl } from './utils'
 
@@ -17,24 +16,6 @@ export async function getSansFont() {
     return { variable: '' } as { variable: string }
   }
 }
-
-export const fontChalk = Caveat({
-  subsets: ['latin'],
-  variable: '--font-chalk',
-  weight: ['400', '700'],
-})
-
-export const fontHandodle = localFont({
-  src: '../../public/fonts/Handodle.ttf',
-  variable: '--font-handodle',
-  display: 'swap',
-})
-
-export const fontCrayon = localFont({
-  src: '../../public/fonts/DKCrayonCrumble.ttf',
-  variable: '--font-crayon',
-  display: 'swap',
-})
 
 export const fontDisplay = Bebas_Neue({
   subsets: ['latin'],

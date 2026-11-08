@@ -21,11 +21,11 @@ test('nav: the pool is visible to the moderator while private, to everyone once 
   assert.equal(N.canSeePool({ isPublic: true, moderator: true }), true)
 })
 
-test('gate endpoint: {ok:true} for those allowed, a plain 404 for everyone else', () => {
+test('gate endpoint: {ok:true} for those allowed, a plain {ok:false} for everyone else', () => {
   assert.deepEqual(N.gateReply(true, false), { status: 200, body: { ok: true, preview: true } })
   assert.deepEqual(N.gateReply(true, true), { status: 200, body: { ok: true, preview: false } })
-  assert.deepEqual(N.gateReply(false, false), { status: 404, body: { error: 'Not found' } })
-  // a 404 says nothing about why: no hint that a page or a moderator exists
+  assert.deepEqual(N.gateReply(false, false), { status: 200, body: { ok: false } })
+  // a no says nothing about why: no hint that a page or a moderator exists
   assert.doesNotMatch(JSON.stringify(N.gateReply(false, false)), /mod|pool|preview|private/i)
 })
 

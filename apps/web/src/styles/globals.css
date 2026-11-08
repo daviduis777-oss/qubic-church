@@ -2496,6 +2496,8 @@
   font-family: 'Iowan Old Style', 'Charter', 'Palatino Linotype', Palatino, Georgia, serif;
 }
 .book-prose {
+  /* long unbroken strings (wallet addresses, URLs) wrap instead of pushing the page sideways on phones */
+  overflow-wrap: anywhere;
   font-family: 'Iowan Old Style', 'Charter', 'Palatino Linotype', Palatino, Georgia, serif;
   font-size: 1.1875rem;
   line-height: 1.75;

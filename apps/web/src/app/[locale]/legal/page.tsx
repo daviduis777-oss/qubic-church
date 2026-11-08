@@ -4,6 +4,7 @@ export const metadata: Metadata = {
   title: 'Legal Notice & Privacy Policy - Qubic Church',
   description:
     'Legal notice, privacy policy, and disclaimers for the Qubic Church research platform.',
+  alternates: { canonical: 'https://qubic.church/legal' },
 }
 
 import { PageHeader } from '@/components/ui/page-header'
@@ -86,14 +87,63 @@ export default function LegalPage() {
           {/* Section: Privacy Policy */}
           <section>
             <h2 className={H2}>4. Privacy Policy</h2>
-            <h3 className={H3}>4.1 Data Collection</h3>
+            <h3 className={H3}>4.1 What we collect</h3>
             <p>
-              This website does not collect personal data, use cookies for
-              tracking, or employ third-party analytics services. No user
-              accounts or login systems exist.
+              Reading the site needs no account. We use no advertising, no tracking cookies and no
+              third-party analytics.
+            </p>
+            <p className="mt-3">
+              You can sign in to take part in the forum (The Crypt) and in the BPP-9000 experiment.
+              Sign-in works in one of two ways, and neither needs an e-mail address or a password
+              stored by us:
+            </p>
+            <ul className="mt-3 list-disc space-y-2 pl-5 marker:text-muted-foreground">
+              <li>
+                <span className="text-foreground">Qubic wallet:</span> you sign a one-time message
+                with your wallet. We keep your public Qubic ID; we never see or ask for your seed.
+              </li>
+              <li>
+                <span className="text-foreground">Tripcode:</span> you choose a secret word. We keep
+                only a code derived from it, never the word itself.
+              </li>
+            </ul>
+            <p className="mt-3">
+              With either, we keep the display name you choose and the handle made from your
+              sign-in. If you fill in your profile, we also keep what you add there: a link to
+              your X account, a short bio and an avatar.
             </p>
 
-            <h3 className={H3}>4.2 Hosting</h3>
+            <h3 className={H3}>4.2 What becomes public</h3>
+            <p>
+              The forum is public by design. Posts you submit wait for moderation; approved posts,
+              your name, handle, profile and avatar are published on this site and stored in
+              its public{' '}
+              <a className={A} href="https://github.com/daviduis777-oss/qubic-church" rel="noopener noreferrer" target="_blank">
+                GitHub repository
+              </a>
+              , where their history stays visible. Entries you log in the BPP-9000 experiment
+              (your calls and their times) are shown in your public journal and counted in
+              the experiment&apos;s totals. Do not post anything you do not want to be public.
+            </p>
+
+            <h3 className={H3}>4.3 Cookies and browser storage</h3>
+            <p>
+              Signing in sets one cookie, <span className="text-foreground">qcf_session</span>,
+              which keeps you signed in for up to 30 days; signing out removes it. Moderators get
+              a second one, <span className="text-foreground">qcf_mod</span>, for up to 14 days.
+              Both are strictly necessary for the feature you asked for and are not used for
+              tracking. Some pages also keep small settings in your browser&apos;s own storage
+              (for example a remembered choice); that data never leaves your device.
+            </p>
+
+            <h3 className={H3}>4.4 Your choices</h3>
+            <p>
+              You can sign out at any time. To have a post, your profile or your journal removed,
+              open an issue on the GitHub repository (see Contact). Removing it from the site is
+              straightforward; copies already in the repository&apos;s history may remain there.
+            </p>
+
+            <h3 className={H3}>4.5 Hosting</h3>
             <p>
               This site is hosted on{' '}
               <span className="text-foreground">Vercel Inc.</span> (San
@@ -111,7 +161,7 @@ export default function LegalPage() {
               for details.
             </p>
 
-            <h3 className={H3}>4.3 External Links</h3>
+            <h3 className={H3}>4.6 External Links</h3>
             <p>
               This site contains links to external websites. We are not
               responsible for the privacy practices or content of those sites.
@@ -161,7 +211,7 @@ export default function LegalPage() {
 
           {/* Footer date */}
           <div className="border-t border-border pt-8 text-sm text-muted-foreground">
-            Last updated: March 2026
+            Last updated: November 2026
           </div>
         </div>
       </div>

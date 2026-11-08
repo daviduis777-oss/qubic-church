@@ -53,7 +53,7 @@ export function AnswerPage({ slug }: { slug: string }) {
       <script dangerouslySetInnerHTML={{ __html: jsonLd(crumbs) }} type="application/ld+json" />
       <header>
         <p className="eyebrow text-gold">{t.eyebrow}</p>
-        <h1 className="mt-3 font-display text-5xl leading-[0.95] md:text-7xl">{a.question}</h1>
+        <h1 className="mt-3 font-display text-[clamp(2.25rem,11vw,3rem)] leading-[0.95] [hyphens:auto] [overflow-wrap:anywhere] md:text-7xl">{a.question}</h1>
         <div className="mt-8 space-y-4 font-serif text-xl leading-relaxed text-foreground/90">
           {a.answer.map((p, i) => <p className={i === 0 ? 'text-2xl leading-snug text-foreground' : ''} key={i}><Rich text={p} /></p>)}
         </div>

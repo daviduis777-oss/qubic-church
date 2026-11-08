@@ -18,7 +18,7 @@ export async function generateMetadata(props: { params: Promise<{ id: string }> 
   const { id } = await props.params
   const a = getArchiveEntry(id)
   if (!a) return {}
-  const url = `${SITE_URL}/articles/cfb/${id}`
+  const url = `${SITE_URL}/articles/cfb/${archiveId(a)}`
   return {
     title: seoTitle(`${a.title} · Come-from-Beyond`),
     description: seoDescription(a.summary),

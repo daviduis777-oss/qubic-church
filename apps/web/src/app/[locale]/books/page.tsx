@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { ogFor } from '@/lib/og-pages'
 import { jsonLd } from '@/lib/json-ld'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -13,7 +14,8 @@ export const metadata: Metadata = {
   title: { absolute: TITLE },
   description: DESC,
   alternates: { canonical: `${SITE_URL}/books` },
-  openGraph: { type: 'website', title: TITLE, description: DESC, url: `${SITE_URL}/books` },
+  openGraph: { type: 'website', title: TITLE, description: DESC, url: `${SITE_URL}/books`, images: ogFor('books').images },
+  twitter: ogFor('books').twitter,
 }
 
 const EXTRA: Record<string, { label: string; href: string }[]> = {

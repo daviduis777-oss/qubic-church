@@ -1,7 +1,7 @@
 /**
  * The hidden "Aigarth Pool" tab. While POOL_PUBLIC is off only the forum moderator sees it; once it is on, everyone.
  * The moderator cookie is httpOnly, so the browser asks GET /api/pool/gate: {ok:true} for those who may see
- * the pool, a plain 404 for everyone else. The nav renders the link only after a yes, never hidden with CSS.
+ * the pool, a plain {ok:false} for everyone else (a 200, so no visitor's console shows an error on every page). The nav renders the link only after a yes, never hidden with CSS.
  * Pure and browser safe: the route and the nav share these, and the tests hold them.
  */
 
@@ -13,11 +13,11 @@ export function canSeePool(g: { isPublic: boolean; moderator: boolean }): boolea
   return g.isPublic || g.moderator
 }
 
-export type GateReply = { status: 200; body: { ok: true; preview: boolean } } | { status: 404; body: { error: 'Not found' } }
+export type GateReply = { status: 200; body: { ok: true; preview: boolean } } | { status: 200; body: { ok: false } }
 
 /** The gate endpoint's answer. preview: the page is still private, so the tab can say so to the moderator. */
 export function gateReply(allowed: boolean, isPublic: boolean): GateReply {
-  return allowed ? { status: 200, body: { ok: true, preview: !isPublic } } : { status: 404, body: { error: 'Not found' } }
+  return allowed ? { status: 200, body: { ok: true, preview: !isPublic } } : { status: 200, body: { ok: false } }
 }
 
 export type PoolTab = { show: boolean; preview: boolean }

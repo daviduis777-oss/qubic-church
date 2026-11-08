@@ -69,13 +69,6 @@ const SEGMENTS: WheelSegment[] = [
     isPrimary: true,
   },
   {
-    label: 'SIMULATION',
-    href: '/simulation',
-    icon: '\u25C8',
-    description: 'Future Scenarios',
-    isPrimary: true,
-  },
-  {
     label: 'RESEARCH',
     href: '/docs',
     icon: '\u2261',

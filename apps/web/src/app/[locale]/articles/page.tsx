@@ -10,7 +10,7 @@ import { BOARDS, homeOf, profileHref, cryptOg } from '@/lib/forum'
 import { getForum } from '@/lib/forum/live'
 import { ForumShell, Quote, Stars } from '@/components/church/forum/ForumUI'
 
-const TITLE = 'The Crypt: the forum of Qubic Church. Articles on Qubic, Aigarth and Come-from-Beyond'
+const TITLE = 'The Crypt: the Qubic Church forum on Qubic, Aigarth and CfB'
 const DESC =
   'Old-style forum archive: the running story of Aigarth, guest articles on any topic, and every long-form article by Come-from-Beyond with dates.'
 

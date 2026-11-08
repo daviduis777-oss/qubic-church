@@ -4,8 +4,6 @@ import { useState, useEffect, useCallback, useRef, useId } from 'react'
 import { useLocale } from 'next-intl'
 import {
   RefreshCw,
-  TrendingUp,
-  TrendingDown,
   Copy,
   ExternalLink,
   Plus,
@@ -19,8 +17,6 @@ import {
   formatDecimal,
   formatInt,
   formatPercent,
-  formatUsd,
-  formatUsdCompact,
   numberLocale,
 } from '@/lib/format'
 import { cn } from '@/lib/utils'
@@ -84,6 +80,7 @@ function useMarketData(locale: string) {
       if (!res.ok) throw new Error('API error')
       const json = await res.json()
       if (json.error) throw new Error(json.error)
+      if (!json?.network?.tick) throw new Error('The Qubic network did not answer')
       setData(json)
       setError(null)
       setUpdatedAt(new Date().toLocaleTimeString(numberLocale(locale)))
@@ -239,68 +236,6 @@ function Bar({
   )
 }
 
-function Change({ value, locale }: { value: number; locale: string }) {
-  const up = value >= 0
-  const Icon = up ? TrendingUp : TrendingDown
-  return (
-    <span
-      className={cn(
-        'inline-flex items-center gap-1 font-mono tabular-nums',
-        up ? 'text-verified' : 'text-danger'
-      )}
-    >
-      <Icon aria-hidden="true" className="size-3.5" />
-      <span className="sr-only">{up ? 'Up' : 'Down'}</span>
-      {formatPercent(Math.abs(value), locale, 2)}
-    </span>
-  )
-}
-
-// =============================================================================
-// BLOCKS
-// =============================================================================
-
-function PriceBlock({
-  data,
-  loading,
-  locale,
-}: {
-  data: NetworkData | null
-  loading: boolean
-  locale: string
-}) {
-  return (
-    <Panel
-      aside="CoinGecko"
-      className="md:col-span-6 lg:col-span-3"
-      title="Price"
-    >
-      <Figure
-        caption={
-          data ? (
-            <>
-              <Change locale={locale} value={data.price.change_24h} /> in 24 h
-            </>
-          ) : undefined
-        }
-        loading={loading && !data}
-        value={data ? formatUsd(data.price.usd, locale) : EMPTY}
-      />
-      <p className="mt-auto pt-4 text-sm text-muted-foreground">
-        Market cap{' '}
-        <span className="font-mono tabular-nums text-fg-2">
-          {data ? formatUsdCompact(data.price.market_cap, locale) : EMPTY}
-        </span>
-        {' · '}
-        Volume{' '}
-        <span className="font-mono tabular-nums text-fg-2">
-          {data ? formatUsdCompact(data.price.volume_24h, locale) : EMPTY}
-        </span>
-      </p>
-    </Panel>
-  )
-}
-
 function healthOf(quality: number) {
   if (quality > 95)
     return { label: 'Healthy', tone: 'gold' as const, text: 'text-gold' }
@@ -321,7 +256,7 @@ function TickQualityBlock({
   const quality = data?.network.tick_quality ?? 0
   const health = healthOf(quality)
   return (
-    <Panel className="md:col-span-6 lg:col-span-3" title="Tick quality">
+    <Panel className="md:col-span-4" title="Tick quality">
       <Figure
         caption={
           data ? (
@@ -344,6 +279,16 @@ function TickQualityBlock({
   )
 }
 
+/** The epoch window around a moment: the last Wednesday 12:00 UTC at or before it, and a week later. */
+function epochWindow(at: number) {
+  const d = new Date(at)
+  const wed = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), 12))
+  wed.setUTCDate(wed.getUTCDate() - ((wed.getUTCDay() - 3 + 7) % 7))
+  if (wed.getTime() > at) wed.setUTCDate(wed.getUTCDate() - 7)
+  const start = wed.getTime()
+  return { start, end: start + 7 * 86_400_000 }
+}
+
 function EpochBlock({
   data,
   loading,
@@ -353,14 +298,15 @@ function EpochBlock({
   loading: boolean
   locale: string
 }) {
-  const EXPECTED_TICKS_PER_EPOCH = 604_800
+  // An epoch is one week, from Wednesday 12:00 UTC to the next. Ticks are not one per second
+  // (their pace varies), so progress is read from the clock, not from a tick count.
   const ticksInEpoch = data?.network.ticks_in_epoch ?? 0
-  const progress = Math.min(
-    (ticksInEpoch / EXPECTED_TICKS_PER_EPOCH) * 100,
-    100
-  )
-  const remaining = Math.max(EXPECTED_TICKS_PER_EPOCH - ticksInEpoch, 0)
-  const hoursRemaining = remaining / 3600
+  const { start, end } = epochWindow(data?.timestamp ?? Date.now())
+  const now = data?.timestamp ?? Date.now()
+  const progress = Math.min(Math.max(((now - start) / (end - start)) * 100, 0), 100)
+  const hoursRemaining = Math.max(end - now, 0) / 3_600_000
+  const elapsedSec = Math.max((now - start) / 1000, 1)
+  const tickRate = ticksInEpoch / elapsedSec
   const eta =
     hoursRemaining > 24
       ? `about ${formatDecimal(hoursRemaining / 24, locale, 1)} days`
@@ -402,9 +348,9 @@ function EpochBlock({
           value={data ? formatInt(ticksInEpoch, locale) : EMPTY}
         />
         <Fact
-          label="Ticks remaining"
+          label="Ticks per second, this epoch"
           loading={pending}
-          value={data ? formatInt(remaining, locale) : EMPTY}
+          value={data ? formatDecimal(tickRate, locale, 1) : EMPTY}
         />
         <Fact
           label="Empty ticks"
@@ -464,96 +410,6 @@ function SupplyBlock({
   )
 }
 
-function MiningEstimate({ price, locale }: { price: number; locale: string }) {
-  const inputId = useId()
-  const [hashrate, setHashrate] = useState('')
-  const [result, setResult] = useState<{
-    daily: number
-    weekly: number
-    monthly: number
-  } | null>(null)
-
-  const calculate = useCallback(() => {
-    const hr = Number.parseFloat(hashrate)
-    if (Number.isNaN(hr) || hr <= 0 || price <= 0) {
-      setResult(null)
-      return
-    }
-    const DAILY_EMISSION = 1_000_000_000_000 / 7
-    const NETWORK_HASHRATE = 500_000_000
-    const dailyUsd = DAILY_EMISSION * (hr / NETWORK_HASHRATE) * price
-    setResult({ daily: dailyUsd, weekly: dailyUsd * 7, monthly: dailyUsd * 30 })
-  }, [hashrate, price])
-
-  return (
-    <Panel className="md:col-span-12 lg:col-span-8" title="Mining estimate">
-      <form
-        className="flex flex-col gap-2 sm:flex-row sm:items-end"
-        onSubmit={e => {
-          e.preventDefault()
-          calculate()
-        }}
-      >
-        <div className="flex-1">
-          <label className="mb-1.5 block text-sm text-fg-2" htmlFor={inputId}>
-            Your hashrate in iterations per second
-          </label>
-          <input
-            className="h-10 w-full border border-input bg-background px-3 font-mono text-base tabular-nums text-foreground placeholder:text-muted-foreground focus-visible:border-gold sm:text-sm"
-            id={inputId}
-            inputMode="decimal"
-            min="0"
-            onChange={e => setHashrate(e.target.value)}
-            placeholder="e.g. 1500"
-            type="number"
-            value={hashrate}
-          />
-        </div>
-        <button
-          className="h-10 border border-gold/50 px-4 text-sm font-medium text-gold transition-colors duration-150 ease-out hover:border-gold hover:bg-gold/10"
-          type="submit"
-        >
-          Estimate
-        </button>
-      </form>
-
-      {result ? (
-        <dl className="mt-6 grid grid-cols-3 gap-x-6">
-          <div>
-            <dt className="text-sm text-muted-foreground">Per day</dt>
-            <dd className="mt-1 font-mono text-2xl font-semibold tabular-nums text-foreground">
-              {formatUsd(result.daily, locale)}
-            </dd>
-          </div>
-          <div>
-            <dt className="text-sm text-muted-foreground">Per week</dt>
-            <dd className="mt-1 font-mono text-base tabular-nums text-fg-2">
-              {formatUsd(result.weekly, locale)}
-            </dd>
-          </div>
-          <div>
-            <dt className="text-sm text-muted-foreground">Per month</dt>
-            <dd className="mt-1 font-mono text-base tabular-nums text-fg-2">
-              {formatUsd(result.monthly, locale)}
-            </dd>
-          </div>
-        </dl>
-      ) : (
-        <p className="mt-6 text-sm text-muted-foreground">
-          Enter a hashrate to see a rough daily, weekly and monthly figure at
-          the current price.
-        </p>
-      )}
-
-      <p className="mt-auto pt-5 text-sm text-muted-foreground">
-        A rough estimate based on fixed network assumptions that may be
-        outdated. Actual rewards depend on network hashrate, pool fees and the
-        price.
-      </p>
-    </Panel>
-  )
-}
-
 const LINKS = [
   {
     label: 'Qubic Explorer',
@@ -579,7 +435,7 @@ const LINKS = [
 
 function ExternalLinks() {
   return (
-    <Panel className="md:col-span-12 lg:col-span-4" title="External tools">
+    <Panel className="md:col-span-12" title="External tools">
       <ul className="-mx-2 divide-y divide-border">
         {LINKS.map(link => (
           <li key={link.url}>
@@ -779,7 +635,7 @@ export default function MonitoringPage() {
     <div className="min-h-screen pb-8">
       <PageHeader
         eyebrow="Live network"
-        lede="Price, ticks, epoch progress and supply of the Qubic network, refreshed every 30 seconds."
+        lede="Ticks, epoch progress and supply of the Qubic network, refreshed every 30 seconds."
         title="Network monitor"
       >
         <div className="inline-flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm">
@@ -837,9 +693,7 @@ export default function MonitoringPage() {
 
         {/* One 12-column hairline grid for every block on the page */}
         <div className="grid grid-cols-1 gap-px border border-border bg-border md:grid-cols-12">
-          <PriceBlock data={data} loading={loading} locale={locale} />
-
-          <Panel className="md:col-span-6 lg:col-span-3" title="Current tick">
+          <Panel className="md:col-span-4" title="Current tick">
             <Figure
               caption={data ? `Epoch ${data.network.epoch}` : undefined}
               loading={pending}
@@ -850,7 +704,7 @@ export default function MonitoringPage() {
           <TickQualityBlock data={data} loading={loading} locale={locale} />
 
           <Panel
-            className="md:col-span-6 lg:col-span-3"
+            className="md:col-span-4"
             title="Active addresses"
           >
             <Figure
@@ -864,14 +718,13 @@ export default function MonitoringPage() {
           <EpochBlock data={data} loading={loading} locale={locale} />
           <SupplyBlock data={data} loading={loading} locale={locale} />
 
-          <MiningEstimate locale={locale} price={data?.price.usd ?? 0} />
           <ExternalLinks />
 
           <Watchlist locale={locale} />
         </div>
 
         <p className="mt-4 text-sm text-muted-foreground">
-          Sources: CoinGecko for price data, Qubic RPC for network data.
+          Source: Qubic RPC.
         </p>
       </div>
     </div>

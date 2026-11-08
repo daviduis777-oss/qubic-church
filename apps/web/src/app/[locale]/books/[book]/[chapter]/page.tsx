@@ -93,7 +93,7 @@ export default async function ChapterPage(props: {
         <header className="mb-12 border-b border-border pb-10">
           {c.part && <p className="eyebrow mb-3 text-gold">{c.part}</p>}
           <p className="font-mono text-xs uppercase tracking-[0.3em] text-fg-2">{c.n ? c.label : b.title}</p>
-          <h1 className="mt-3 font-display text-5xl leading-[0.95] md:text-7xl">{c.title}</h1>
+          <h1 className="mt-3 font-display text-[clamp(2.25rem,11vw,3rem)] leading-[0.95] [hyphens:auto] [overflow-wrap:anywhere] md:text-7xl">{c.title}</h1>
           <p className="mt-6 text-sm text-fg-2">
             <span>
               From <em className="not-italic text-foreground">{b.title}</em> by{' '}
