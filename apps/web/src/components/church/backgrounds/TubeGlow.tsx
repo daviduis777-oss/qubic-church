@@ -5,8 +5,8 @@
  */
 const TUBES = [
   // x, y, w, h in vw/vh (the glass box); fx, fy = filament centre inside it, in %; a = strength
-  { x: 61, y: 4, w: 32, h: 96, fx: 52, fy: 84, a: 0.5, d: 0 },
-  { x: -9, y: 46, w: 20, h: 70, fx: 50, fy: 84, a: 0.3, d: -6 },
+  { x: 61, y: 4, w: 32, h: 96, fx: 52, fy: 84, a: 0.8, d: 0 },
+  { x: -9, y: 46, w: 20, h: 70, fx: 50, fy: 84, a: 0.45, d: -6 },
 ] as const
 
 export function TubeGlow() {

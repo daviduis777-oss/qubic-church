@@ -295,7 +295,7 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
       // the year ring
       const RR = R + S * 0.065
       g.lineWidth = 3
-      g.strokeStyle = 'rgba(255,205,110,.10)'
+      g.strokeStyle = 'rgba(132,104,255,.3)'
       g.beginPath()
       g.arc(cx, cy, RR, 0, Math.PI * 2)
       g.stroke()
@@ -326,7 +326,7 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
       }
       // wires
       g.lineWidth = 0.8
-      g.strokeStyle = 'rgba(255,205,110,.09)'
+      g.strokeStyle = 'rgba(132,104,255,.2)'
       for (const c of links) {
         if (!c) continue
         g.beginPath()
@@ -341,13 +341,13 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
         if (now < q.t0) continue
         const t = ease((now - q.t0) / PULSE)
         const tail = Math.max(0, t - 0.16)
-        g.strokeStyle = 'rgba(255,205,110,.16)'
+        g.strokeStyle = 'rgba(132,104,255,.3)'
         g.lineWidth = 1
         g.beginPath()
         g.moveTo(q.c[0]!, q.c[1]!)
         g.quadraticCurveTo(q.c[2]!, q.c[3]!, q.c[4]!, q.c[5]!)
         g.stroke()
-        g.strokeStyle = q.lit ? 'rgba(255,227,176,.95)' : 'rgba(255,205,110,.45)'
+        g.strokeStyle = q.lit ? 'rgba(255,227,176,.95)' : 'rgba(168,146,255,.75)'
         g.lineWidth = q.lit ? 2 : 1.4
         g.beginPath()
         for (let i = 0; i <= 8; i++) {
@@ -363,12 +363,12 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
         g.fill()
       }
       // hub
-      g.strokeStyle = 'rgba(255,205,110,.18)'
+      g.strokeStyle = 'rgba(150,128,255,.4)'
       g.lineWidth = 1
       g.beginPath()
       g.arc(cx, cy, HUB - S * 0.022, 0, 7)
       g.stroke()
-      g.fillStyle = '#0d0b10'
+      g.fillStyle = '#0a0720'
       g.beginPath()
       g.arc(cx, cy, HUB - S * 0.023, 0, 7)
       g.fill()
@@ -429,8 +429,8 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
         const r = big ? S * 0.027 : S * 0.0195
         const v = s[n]!
         const w = wt[n]!
-        const F = [[42, 29, 16], [255, 214, 138], [18, 16, 20]]
-        const L = [[255, 205, 110, 0.75], [255, 240, 207, 1], [255, 255, 255, 0.16]]
+        const F = [[40, 28, 140], [255, 214, 138], [14, 10, 34]]
+        const L = [[160, 138, 255, 0.85], [255, 240, 207, 1], [150, 128, 255, 0.3]]
         const blend = (M: number[][]) => M[0]!.map((_, i) => w[0]! * M[0]![i]! + w[1]! * M[1]![i]! + w[2]! * M[2]![i]!)
         const glow = w[1]!
         if (glow > 0.02) {
@@ -449,7 +449,7 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
         g.stroke()
         g.font = `700 ${big ? S * 0.024 : S * 0.019}px ${SANS}`
         g.textBaseline = 'middle'
-        const ink = (t: number) => (t === 1 ? 'rgba(58,34,6,' : t === 0 ? 'rgba(255,196,107,' : 'rgba(236,223,203,')
+        const ink = (t: number) => (t === 1 ? 'rgba(58,34,6,' : t === 0 ? 'rgba(214,204,255,' : 'rgba(236,223,203,')
         const sym = (t: number) => (t === 1 ? '+' : t === 0 ? '−' : '?')
         for (let t = 0; t < 3; t++) {
           if (w[t]! < 0.04) continue
