@@ -1,6 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { nx } from '@/components/bpp/fonts'
+
+const NX = nx.style.fontFamily
 
 const TARGET = Date.UTC(2027, 3, 13, 0, 0, 0)
 
@@ -31,53 +34,23 @@ export function Countdown({ compact = false }: { compact?: boolean }) {
   }, [])
 
   const p = now === null ? null : parts(TARGET - now)
-  const cells: [string, string][] = p
-    ? [
-        [String(p.days), 'days'],
-        [pad(p.hours), 'hours'],
-        [pad(p.minutes), 'min'],
-        [pad(p.seconds), 'sec'],
-      ]
-    : [
-        ['—', 'days'],
-        ['——', 'hours'],
-        ['——', 'min'],
-        ['——', 'sec'],
-      ]
+  const days = p ? String(p.days) : '···'
+  const hms = p ? `${pad(p.hours)}:${pad(p.minutes)}:${pad(p.seconds)}` : '--:--:--'
 
+  // the BPP-9000 countdown, letter for letter: a big lit number in Big Shoulders with "days", the time below
   return (
-    <div aria-label="Time left until 13 April 2027, 00:00 UTC" role="timer">
+    <div aria-label="Time left until 13 April 2027, 00:00 UTC" className={nx.variable} role="timer">
       <time className="sr-only" dateTime="2027-04-13T00:00:00Z">
         13 April 2027
       </time>
-      <div className={`flex items-end ${compact ? 'gap-3' : 'gap-4 md:gap-6'}`}>
-        {cells.map(([v, l], i) => (
-          <div className="flex items-end" key={l}>
-            <div className="flex flex-col items-center">
-              <span
-                className={`font-mono tabular-nums leading-none text-foreground ${
-                  compact ? 'text-3xl' : 'text-4xl sm:text-5xl md:text-6xl'
-                }`}
-              >
-                {v}
-              </span>
-              <span className="mt-2 text-[10px] uppercase tracking-[0.3em] text-fg-2">
-                {l}
-              </span>
-            </div>
-            {i < 3 && (
-              <span
-                aria-hidden="true"
-                className={`ml-3 font-mono text-gold/70 md:ml-5 ${
-                  compact ? 'mb-5 text-2xl' : 'mb-6 text-3xl md:text-5xl'
-                }`}
-              >
-                :
-              </span>
-            )}
-          </div>
-        ))}
+      <div className="qc-lit" style={{ fontFamily: NX, fontWeight: 300, fontSize: compact ? 'clamp(64px, 12vw, 110px)' : 'clamp(96px, 11vw, 160px)', lineHeight: 0.85, letterSpacing: '.01em' }}>
+        {days}
+        <span style={{ fontSize: '.36em', marginLeft: '.18em', letterSpacing: '.02em' }}>{p?.days === 1 ? 'day' : 'days'}</span>
       </div>
+      <div style={{ fontFamily: NX, fontWeight: 300, fontSize: compact ? 'clamp(30px, 5vw, 44px)' : 'clamp(40px, 4.5vw, 56px)', lineHeight: 1, marginTop: 14, color: '#ecdfcb', fontVariantNumeric: 'tabular-nums' }}>
+        {hms}
+      </div>
+      <style>{`.qc-lit { color: #FFE3B0; font-variant-numeric: tabular-nums; text-shadow: 0 0 4px #ffd08a, 0 0 14px #FFC46B, 0 0 40px rgba(232,145,46,.7), 0 0 90px rgba(232,145,46,.35); }`}</style>
     </div>
   )
 }
