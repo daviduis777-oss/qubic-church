@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { replay, type NetData } from '@/lib/bpp/sim'
+import { NixieRow } from '@/components/church/Nixie'
 import { useRecord } from './TrackRecord'
 import { nx, sans } from './fonts'
 
@@ -57,14 +58,12 @@ export function BppLive({ liveAt }: { liveAt: string }) {
             <p className="mute" style={{ fontSize: 17, margin: 0 }}>
               Bitcoin, hour by hour, <b style={{ color: 'var(--ink)', fontWeight: 600 }}>UP or DOWN</b>. The first live call in
             </p>
-            <div className="nx lit" style={{ fontWeight: 300, fontSize: 'clamp(110px, 20vw, 230px)', lineHeight: 0.85, marginTop: 18, letterSpacing: '.01em' }}>
-              {left == null ? '··' : days}
-              <span style={{ fontSize: '.36em', marginLeft: '.18em', letterSpacing: '.02em' }}>{days === 1 ? 'day' : 'days'}</span>
+            <div style={{ display: 'flex', alignItems: 'flex-end', gap: 18, marginTop: 22, flexWrap: 'wrap' }}>
+              <NixieRow gap={6} h={150} label={left == null ? 'days' : `${days} days`} text={left == null ? '00' : String(days).padStart(2, '0')} />
+              <span className="nx lit" style={{ fontWeight: 300, fontSize: 'clamp(44px, 7vw, 80px)', lineHeight: 1, letterSpacing: '.02em', marginBottom: 6 }}>{days === 1 ? 'day' : 'days'}</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 14, marginTop: 16, flexWrap: 'wrap' }}>
-              <b className="nx" style={{ fontWeight: 300, fontSize: 'clamp(40px, 6vw, 60px)', lineHeight: 1 }}>
-                {hms}
-              </b>
+              <NixieRow gap={4} h={64} label={hms} text={left == null ? '00:00:00' : hms} />
               <span className="mute" style={{ fontSize: 15 }}>
                 until 18 November, 12:00 UTC. From then on this space shows ▲ UP or ▼ DOWN for every hour, and keeps score.
               </span>
