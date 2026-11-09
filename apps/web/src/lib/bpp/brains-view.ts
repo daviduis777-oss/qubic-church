@@ -94,6 +94,26 @@ export function liveCheck(em: Uint8Array, task: BrainTask, closes: { hour: numbe
   return out.sort((a, b) => a.hour - b.hour)
 }
 
+/**
+ * Many brains, one call: every hour each brain says up, down or not sure; the side with more votes wins, and a tie
+ * (or nobody sure) is "not sure". Arrays may differ in length; the vote runs as far as the shortest one.
+ */
+export function vote(calls: Uint8Array[]): Uint8Array {
+  if (!calls.length) return new Uint8Array(0)
+  const n = Math.min(...calls.map(c => c.length))
+  const out = new Uint8Array(n)
+  for (let i = 0; i < n; i++) {
+    let up = 0
+    let down = 0
+    for (const c of calls) {
+      if (c[i] === 1) up++
+      else if (c[i] === 0) down++
+    }
+    out[i] = up > down ? 1 : down > up ? 0 : 2
+  }
+  return out
+}
+
 export type LiveStats = { checked: number; hits: number; rate: number | null; unsure: number; from: number | null; to: number | null }
 
 export function liveStats(hours: LiveHour[]): LiveStats {

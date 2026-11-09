@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { BrainRow, LiveHour } from '@/lib/bpp/brains-view'
-import type { CheckedGenome, LiveResult, TopList } from '@/lib/bpp/brains'
+import type { CheckedGenome, EnsembleResult, LiveResult, TopList } from '@/lib/bpp/brains'
 import { initial, step, wiring } from '@/lib/bpp/sim'
 import { luckChance } from '@/lib/bpp/stats'
 
@@ -106,6 +106,8 @@ export function BrainWatch({ preview }: { preview: boolean }) {
         <Sheet g={g} live={live} busy={busy} row={top?.rows.find(r => r.hash === hash) ?? null} rank={rank} />
       </section>
 
+      <Ensemble epoch={epoch ?? top?.epoch ?? null} onPick={setHash} />
+
       <TopTable top={top} hash={hash} onPick={setHash} epoch={epoch} onEpoch={e => {
           setEpoch(e)
           setHash(null)
@@ -117,6 +119,83 @@ export function BrainWatch({ preview }: { preview: boolean }) {
         Genomes and verified scores come from the public Jetski ANN Explorer, which replays the exact core release for every solution. We re-run each brain with the scorer&apos;s rule from qubic/core and show it only when our error count equals the verified score. &ldquo;Hours it never saw&rdquo; are the hours after the task sequence ends; &ldquo;since it was found&rdquo; are the hours after the solution was published, which nobody could have fitted. The core has not published its live-call rule yet; what the network itself will call live from 18 November is a separate matter, kept in <a className="mute" href="/bpp9000#record" style={{ textDecoration: 'underline', textUnderlineOffset: 3 }}>the record</a>. An experiment, not financial advice.
       </footer>
     </div>
+  )
+}
+
+/* ---------------- the ensemble: ten brains voting ---------------- */
+
+function Ensemble({ epoch, onPick }: { epoch: number | null; onPick: (h: string) => void }) {
+  const [r, setR] = useState<(EnsembleResult & { ok: true }) | null>(null)
+  const [state, setState] = useState<'loading' | 'ok' | 'none'>('loading')
+  useEffect(() => {
+    if (epoch == null) return
+    let on = true
+    setState('loading')
+    getJson<EnsembleResult & { ok: boolean }>(`/api/bpp/brains/ensemble?epoch=${epoch}`).then(x => {
+      if (!on) return
+      if (x?.ok) {
+        setR(x as EnsembleResult & { ok: true })
+        setState('ok')
+      } else setState('none')
+    })
+    return () => {
+      on = false
+    }
+  }, [epoch])
+  if (state === 'none') return null
+  const best = r?.members[0]?.exam ?? null
+  const n = r?.members.length ?? 10
+  return (
+    <section aria-labelledby="vote-h" className="panel" style={{ padding: 'clamp(18px, 3vw, 28px)', display: 'grid', gap: 20 }}>
+      <div style={{ maxWidth: '70ch' }}>
+        <h2 className="eng" id="vote-h" style={{ fontSize: 'clamp(16px, 2vw, 19px)', fontWeight: 400, margin: 0, color: '#f3e4ce' }}>
+          {n} brains voting
+        </h2>
+        <p className="mute" style={{ margin: '10px 0 0', fontSize: 14.5, lineHeight: 1.6 }}>
+          One brain could be luck. So the {n} best of the epoch vote every hour after their task: the side with more votes is the call, a tie is &ldquo;not sure&rdquo;. If the brains had learned something real about bitcoin, the crowd should beat any one of them.
+        </p>
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: 18 }}>
+        <Big big={r ? pct(r.vote.rate) : '…'} label="The vote" lit small={r ? `${r.vote.hits.toLocaleString('en-US')} of ${r.vote.checked.toLocaleString('en-US')} hours it never saw` : 'counting…'} />
+        <Big big={best ? pct(best.rate) : '…'} label="The best brain alone" small="the same hours" />
+        <Big big="50%" label="A coin" small="the line to beat" />
+      </div>
+      {r && (
+        <div>
+          <span className="label" style={{ display: 'block', marginBottom: 8 }}>
+            Each voter&apos;s own exam
+          </span>
+          <div style={{ position: 'relative' }}>
+          <span aria-hidden style={{ position: 'absolute', left: 0, right: 0, bottom: 44, borderTop: '1px dashed rgba(243,228,206,.35)', pointerEvents: 'none' }} />
+          <div role="list" style={{ display: 'grid', gridTemplateColumns: `repeat(${n}, minmax(0, 1fr))`, gap: 4, alignItems: 'end', height: 88 }}>
+            {r.members.map((m, i) => {
+              const rate = m.exam.rate ?? 50
+              const h = Math.max(6, Math.min(100, 50 + (rate - 50) * 8))
+              return (
+                <button
+                  aria-label={`Brain ${i + 1}, ${pct(m.exam.rate)} on its exam. Put it under the glass.`}
+                  key={m.hash}
+                  onClick={() => onPick(m.hash)}
+                  role="listitem"
+                  style={{ height: `${h}%`, border: 0, padding: 0, cursor: 'pointer', borderRadius: '4px 4px 0 0', background: rate >= 50 ? 'linear-gradient(180deg, #FFC46B, rgba(232,145,46,.35))' : 'linear-gradient(180deg, rgba(185,174,207,.55), rgba(185,174,207,.15))' }}
+                  title={`${pct(m.exam.rate)} · ${m.hash.slice(0, 10)}…`}
+                  type="button"
+                />
+              )
+            })}
+          </div>
+          </div>
+          <div className="mute" style={{ fontSize: 12.5, marginTop: 6 }}>
+            gold: above a coin · grey: below · dashed line: 50% · click a bar to put that brain under the glass
+          </div>
+        </div>
+      )}
+      {r && (
+        <p className="mute" style={{ margin: 0, fontSize: 12.5, lineHeight: 1.6 }}>
+          Only brains we reproduced to the exact error and that share one task vote. Ties: {r.ties.toLocaleString('en-US')} hours, left out like a single brain&apos;s &ldquo;not sure&rdquo;. Re-counted every half hour.
+        </p>
+      )}
+    </section>
   )
 }
 

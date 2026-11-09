@@ -144,3 +144,10 @@ test('genome: compacted from the explorer shape, and written out as a file anyon
   assert.throws(() => B.genomeOf({ ...rec, metrics: { ...rec.metrics, population: 64 } }, row))
   assert.equal(B.rowOf({ hash: 'p', computorId: 'c', epoch: 1, verification: { status: 'pending' } }), null)
 })
+
+test('vote: majority per hour, a tie or nobody sure is not sure', async () => {
+  const { vote } = await import('../brains-view.ts')
+  const v = vote([Uint8Array.from([1, 0, 2, 1, 0]), Uint8Array.from([1, 1, 2, 0, 2]), Uint8Array.from([0, 0, 2, 2, 2, 1])])
+  assert.deepEqual([...v], [1, 0, 2, 2, 0])
+  assert.equal(vote([]).length, 0)
+})

@@ -17,6 +17,7 @@ import {
   type LiveStats,
   rankBrains,
   rowOf,
+  vote,
 } from './brains-view'
 import { kvAddToSet, kvGetJson, kvSetJson, kvSetMembers } from './store'
 
@@ -127,6 +128,62 @@ export async function liveOf(g: Genome): Promise<LiveResult> {
     dataEnd,
     checkedAt: new Date().toISOString(),
   }
+}
+
+/* ---------------- the ensemble: the epoch's best brains voting ---------------- */
+
+export const ENSEMBLE = 10
+
+export type EnsembleResult = {
+  epoch: number
+  /** the brains that voted, best first, each with its own exam */
+  members: { hash: string; computor: string; exam: LiveStats }[]
+  /** the vote's exam on the same hours */
+  vote: LiveStats
+  /** hours where the vote was a tie */
+  ties: number
+  dataEnd: number
+  checkedAt: string
+}
+
+/**
+ * The epoch's ten best brains (only those we reproduced exactly, and only those on the same task) vote every hour
+ * after their task; the vote is graded like a single brain. Kept for half an hour: ten genomes and a year of hours.
+ */
+export async function ensembleOf(epoch?: number): Promise<EnsembleResult | null> {
+  const top = await topBrains(epoch).catch(async () => {
+    if (!epoch) throw new Error('explorer unavailable')
+    const sh = await shelf(epoch)
+    if (!sh) throw new Error('no shelf')
+    return { ...sh, fetchedAt: sh.updatedAt, live: false } as TopList
+  })
+  const half = Math.floor(Date.now() / 1_800_000)
+  const key = `bpp:ensemble:${top.epoch}:${half}`
+  const cached = await kvGetJson<EnsembleResult>(key).catch(() => null)
+  if (cached) return cached
+
+  const genomes: Genome[] = []
+  for (const r of top.rows) {
+    if (genomes.length >= ENSEMBLE) break
+    const g = await brainGenome(r.hash).catch(() => null)
+    if (!g?.check.matches) continue
+    if (genomes[0] && (g.task.start !== genomes[0].task.start || g.task.hours !== genomes[0].task.hours)) continue
+    genomes.push(g)
+  }
+  if (genomes.length < 2) return null
+  const task = genomes[0]!.task
+  const dataEnd = hourOfIndex(task, task.hours)
+  const closes = await hourlyCloses(dataEnd - 3600)
+  const lastHour = closes.at(-1)?.hour ?? dataEnd
+  const count = indexOfHour(task, lastHour) + 1
+  const ems = genomes.map(g => emits(g, count))
+  const members = genomes.map((g, k) => ({ hash: g.hash, computor: g.computor, exam: liveStats(liveCheck(ems[k]!, task, closes)) }))
+  const v = vote(ems)
+  let ties = 0
+  for (let i = task.hours; i < v.length; i++) if (v[i] === 2) ties++
+  const res: EnsembleResult = { epoch: top.epoch, members, vote: liveStats(liveCheck(v, task, closes)), ties, dataEnd, checkedAt: new Date().toISOString() }
+  await kvSetJson(key, res, 3600).catch(() => {})
+  return res
 }
 
 /* ---------------- the archive: the museum's shelves ---------------- */
