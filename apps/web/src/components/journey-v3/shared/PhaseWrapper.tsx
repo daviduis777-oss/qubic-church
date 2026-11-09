@@ -36,7 +36,7 @@ export function PhaseWrapper({
   return (
     <section
       className={cn(
-        'relative min-h-screen w-full py-16 md:py-24',
+        'relative min-h-screen w-full scroll-mt-16 py-16 md:py-24',
         backgroundStyles[background],
         className
       )}

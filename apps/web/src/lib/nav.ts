@@ -24,12 +24,14 @@ export const NAV: NavGroup[] = [
     id: 'read',
     label: 'Read',
     title: 'Read',
-    line: 'Two free books, the forum, and the questions people ask most.',
+    line: 'Two free books, the forum, Come-from-Beyond, Satoshi, and the questions people ask most.',
     items: [
       { href: '/books', name: 'The Books', desc: 'Come-from-Beyond and Qubic: The Long Version, chapter by chapter.', keys: 'book chapters read' },
       { href: '/articles', name: 'The Crypt', desc: 'The forum: articles by the community, and CfB’s own archive.', keys: 'forum articles crypt post write' },
       { href: '/cfb', name: 'Come-from-Beyond', desc: 'The person behind NXT, IOTA and Qubic, in his own words.', keys: 'cfb sergey ivancheglo' },
-      { href: '/timeline', name: 'The Road to The Day', desc: 'From 2000 to 13.04.2027, and the Satoshi Nakamoto question.', keys: 'satoshi timeline history 2027' },
+      { href: '/who-is-come-from-beyond', name: 'Who is Come-from-Beyond?', desc: 'The short answer, with sources.', keys: 'who is cfb' },
+      { href: '/timeline#phase-satoshi', name: 'Satoshi', desc: 'The Satoshi Nakamoto question: the case block by block, and CfB’s own answers on record.', keys: 'satoshi nakamoto bitcoin creator identity' },
+      { href: '/timeline', name: 'The Road to The Day', desc: 'Come-from-Beyond from 2000 to 13.04.2027, every item sourced.', keys: 'timeline history 2027 nxt iota' },
       { href: '/what-is-qubic', name: 'What is Qubic?', desc: 'The network in plain words: computors, epochs, useful proof of work.', keys: 'qubic explained basics' },
       { href: '/what-is-anna-aigarth', name: 'What is Anna?', desc: 'The AI the network grows, and what it can and cannot do yet.', keys: 'anna aigarth ai' },
     ],
@@ -64,6 +66,9 @@ export const NAV: NavGroup[] = [
 ]
 
 /** Pages the bar reaches directly (not inside a door), still findable by search. */
-const EXTRA = [{ href: '/account', name: 'Account', desc: 'One key for the Crypt and BPP-9000. No personal data.', keys: 'account login sign in key', group: 'Account' }]
+const EXTRA = [
+  { href: '/account', name: 'Account', desc: 'One key for the Crypt and BPP-9000. No personal data.', keys: 'account login sign in key', group: 'Account' },
+  { href: '/legal', name: 'Legal and privacy', desc: 'What the site keeps, cookies, and how to have your data removed.', keys: 'legal privacy cookies terms', group: 'About' },
+]
 
 export const ALL_ITEMS = [...NAV.flatMap(g => g.items.map(i => ({ ...i, group: g.label }))), ...EXTRA]

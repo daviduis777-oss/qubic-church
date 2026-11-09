@@ -67,6 +67,21 @@ function Badge({ kind, live }: { kind?: NavBadge; live: Live }) {
   return <span style={{ ...base, background: 'rgba(98,120,255,.16)', color: '#b9c4ff', border: '1px solid rgba(120,140,255,.4)' }}>new</span>
 }
 
+/** A link that also works for #anchors on another page: those get a plain load so the browser scrolls to them. */
+function Go({ href, className, onClick, children }: { href: string; className: string; onClick?: () => void; children: React.ReactNode }) {
+  if (href.includes('#'))
+    return (
+      <a className={className} href={href} onClick={onClick}>
+        {children}
+      </a>
+    )
+  return (
+    <Link className={className} href={href} onClick={onClick}>
+      {children}
+    </Link>
+  )
+}
+
 /* ---------------- the panel under a door ---------------- */
 
 function Panel({ g, live, onClose }: { g: NavGroup; live: Live; onClose: () => void }) {
@@ -87,13 +102,13 @@ function Panel({ g, live, onClose }: { g: NavGroup; live: Live; onClose: () => v
         <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: 10 }}>
           {g.items.map(it => (
             <li key={it.href}>
-              <Link className="nv2-card" href={it.href} onClick={onClose}>
+              <Go className="nv2-card" href={it.href} onClick={onClose}>
                 <span style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10 }}>
                   <b style={{ fontSize: 15.5, fontWeight: 600, color: '#f3e4ce' }}>{it.name}</b>
                   <Badge kind={it.badge} live={live} />
                 </span>
                 <span style={{ fontSize: 13.5, lineHeight: 1.5, color: '#a89fb8' }}>{it.desc}</span>
-              </Link>
+              </Go>
             </li>
           ))}
         </ul>
@@ -317,13 +332,13 @@ export function NavV2() {
               <section key={x.id} style={{ display: 'grid', gap: 6 }}>
                 <span className="nv2-lit" style={{ fontSize: 34 }}>{x.title}</span>
                 {x.items.map(it => (
-                  <Link className="nv2-row" href={it.href} key={it.href} onClick={() => setSheet(false)}>
+                  <Go className="nv2-row" href={it.href} key={it.href} onClick={() => setSheet(false)}>
                     <span style={{ display: 'flex', justifyContent: 'space-between', gap: 8, alignItems: 'center' }}>
                       <b style={{ color: '#f3e4ce', fontWeight: 600 }}>{it.name}</b>
                       <Badge kind={it.badge} live={live} />
                     </span>
                     <span style={{ color: '#a89fb8', fontSize: 13.5 }}>{it.desc}</span>
-                  </Link>
+                  </Go>
                 ))}
               </section>
             ))}

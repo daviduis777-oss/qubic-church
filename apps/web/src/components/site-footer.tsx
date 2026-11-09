@@ -12,7 +12,7 @@ const FOOTER_LINKS = [
   { href: '/docs', label: 'Research' },
   { href: '/articles', label: 'The Crypt' },
   { href: '/cfb', label: 'Come-from-Beyond' },
-  { href: '/timeline#satoshi', label: 'Satoshi Nakamoto' },
+  { href: '/timeline#phase-satoshi', label: 'Satoshi Nakamoto' },
   { href: '/maria-aigarth', label: 'Maria' },
   { href: '/about', label: 'About' },
   { href: '/donate', label: 'Donate' },

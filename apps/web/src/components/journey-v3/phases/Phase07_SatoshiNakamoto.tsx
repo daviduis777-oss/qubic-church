@@ -309,7 +309,7 @@ export function Phase07_SatoshiNakamoto() {
   const [open, setOpen] = useState(false)
   const top = useRef<HTMLDivElement>(null)
 
-  // A link to /timeline#satoshi opens the dossier straight away.
+  // A link to /timeline#phase-satoshi opens the dossier straight away.
   useEffect(() => {
     const check = () => {
       if (window.location.hash === '#satoshi') {

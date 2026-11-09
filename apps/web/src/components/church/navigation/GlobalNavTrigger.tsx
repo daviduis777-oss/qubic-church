@@ -12,7 +12,7 @@ const LINKS = [
   ['/books', 'Books'],
   ['/docs', 'Research'],
   ['/cfb', 'Come-from-Beyond'],
-  ['/timeline#satoshi', 'Satoshi'],
+  ['/timeline#phase-satoshi', 'Satoshi'],
   ['/nfts', 'Anna'],
   ['/maria-aigarth', 'Maria'],
   ['/mine-qubic', 'Mine'],
