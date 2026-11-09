@@ -59,7 +59,7 @@ import r from './rig.module.css'
 
 /* ---------------- status look ---------------- */
 
-export const STATUS_TONE: Record<RigStatus, string> = { waiting: TONE.fog, mining: TONE.gold, warming: '#FFE77C', early: TONE.gold, idle: '#B7B7B7', 'no-signal': TONE.fog, look: TONE.coral }
+export const STATUS_TONE: Record<RigStatus, string> = { waiting: TONE.fog, mining: TONE.gold, warming: '#ffe3b0', early: TONE.gold, idle: '#B7B7B7', 'no-signal': TONE.fog, look: TONE.coral }
 
 export function StatusChip({ status, title, live }: { status: RigStatus; title: string; live?: boolean }) {
   return (
@@ -136,12 +136,12 @@ function Spark({ points }: { points: { t: number; solPerHour: number }[] }) {
       <svg aria-label={`sol/h over the epoch, ${points.length} readings, from ${fmtRate(vs[0]!)} to ${fmtRate(last.solPerHour)}`} preserveAspectRatio="none" role="img" viewBox={`0 0 ${W} ${H}`}>
         <defs>
           <linearGradient id="rigSparkFill" x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0" stopColor="#FECE34" stopOpacity="0.28" />
-            <stop offset="1" stopColor="#FECE34" stopOpacity="0" />
+            <stop offset="0" stopColor="#ffc46b" stopOpacity="0.28" />
+            <stop offset="1" stopColor="#ffc46b" stopOpacity="0" />
           </linearGradient>
         </defs>
         <path d={area} fill="url(#rigSparkFill)" />
-        <path d={line} fill="none" stroke="#FECE34" strokeLinejoin="round" strokeWidth="1.6" vectorEffect="non-scaling-stroke" />
+        <path d={line} fill="none" stroke="#ffc46b" strokeLinejoin="round" strokeWidth="1.6" vectorEffect="non-scaling-stroke" />
       </svg>
     </figure>
   )

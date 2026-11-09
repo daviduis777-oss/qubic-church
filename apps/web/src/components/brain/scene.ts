@@ -58,17 +58,19 @@ function ringTexture() {
   return ringTex
 }
 
-export function mountBrain(el, { matrix, brain: B, miners = 2200, onPick, onHover, offset }) {
+export function mountBrain(el, opts) {
+  const { matrix, brain: B, miners = 2200, onPick, onHover, offset, wide = false } = opts
   const W = () => el.clientWidth || window.innerWidth, H = () => el.clientHeight || window.innerHeight
   const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' })
   renderer.setPixelRatio(Math.min(2, window.devicePixelRatio))
   renderer.setSize(W(), H())
-  renderer.setClearColor(0x02040a, 1)
+  renderer.setClearColor(0x0b0a0e, 1)
   el.appendChild(renderer.domElement)
   const scene = new THREE.Scene()
   const camera = new THREE.PerspectiveCamera(34, W() / H(), 0.05, 100)
   // far enough that the whole brain fits the width, on a phone too
-  const fit = () => Math.max(offset ? 5.6 : 4.9, 0.98 / (Math.tan((camera.fov * Math.PI) / 360) * camera.aspect))
+  // wide: the brain spreads behind something in the middle of the page (Maria's phone), so it is drawn larger
+  const fit = () => (wide ? Math.max(3.4, 0.62 / (Math.tan((camera.fov * Math.PI) / 360) * camera.aspect)) : Math.max(offset ? 5.6 : 4.9, 0.98 / (Math.tan((camera.fov * Math.PI) / 360) * camera.aspect)))
   // where the brain sits on the screen: shifted off the centre by the page (to leave room for a column, a title)
   const place = () => {
     const o = offset?.() ?? { x: 0, y: 0 }
@@ -111,12 +113,13 @@ export function mountBrain(el, { matrix, brain: B, miners = 2200, onPick, onHove
         float gyrus = 1.0 - smoothstep(0.35, 0.75, vS);          // crowns of the gyri light up, the sulci stay dark
         float sweep = 0.5 + 0.5*sin(vP.z*5.0 - uTime*0.8 + vP.y*3.0);
         vec3 deep = vec3(0.02, 0.10, 0.28);
-        vec3 cyan = vec3(0.20, 0.75, 1.00);
-        vec3 warm = vec3(1.00, 0.55, 0.25);
+        vec3 cyan = vec3(0.32, 0.60, 1.00);   // the site's blue glass
+        vec3 warm = vec3(1.00, 0.72, 0.36);   // and its amber filament
         // a soft light from above and in front, so the folds read like the gyri they are
         float lit = max(dot(vN, normalize(vec3(0.35, 0.8, 0.45))), 0.0);
         vec3 col = deep*0.5 + cyan*(rim*0.8 + gyrus*(0.22 + 0.5*lit)*(0.7+0.3*sweep)) + warm*pow(f, 8.0)*0.6;
         float a = clamp(0.02 + pow(f, 3.0)*0.42 + gyrus*(0.05 + 0.12*lit), 0.0, 1.0);
+        a *= smoothstep(-0.85, -0.7, vP.y);   // the brainstem thins away instead of ending on a cut
         gl_FragColor = vec4(col*a, a);
       }`,
     transparent: true, depthWrite: false, side: THREE.FrontSide, blending: THREE.AdditiveBlending,

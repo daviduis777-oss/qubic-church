@@ -4,8 +4,8 @@
 .app {
   /* the site's own tokens (globals.css, .dark): --accent-gold, --accent-gold-strong, --accent-gold-dim, greys */
   --black: #000;
-  --gold: #fece34;
-  --gold-hi: #ffe77c;
+  --gold: #ffc46b;
+  --gold-hi: #ffe3b0;
   --gold-dim: #b18406;
   --bone: #fafafa;
   --fog: #b7b7b7;
@@ -97,7 +97,7 @@
   overflow: hidden;
   /* opaque, so a pushed screen fully covers the one beneath it; the faint light of a watch dial at the top */
   background:
-    radial-gradient(85% 42% at 50% -4%, rgba(254, 206, 52, 0.11) 0%, rgba(254, 206, 52, 0.04) 38%, rgba(254, 206, 52, 0) 68%),
+    radial-gradient(85% 42% at 50% -4%, rgba(255, 196, 107, 0.11) 0%, rgba(255, 196, 107, 0.04) 38%, rgba(255, 196, 107, 0) 68%),
     #000;
   will-change: transform;
 }
@@ -110,7 +110,7 @@
   border-radius: 50%;
   object-fit: cover;
   box-shadow:
-    0 0 0 1px rgba(254, 206, 52, 0.7),
+    0 0 0 1px rgba(255, 196, 107, 0.7),
     0 2px 8px rgba(0, 0, 0, 0.6);
   background: #0b0b0b;
 }
@@ -158,8 +158,8 @@
   border-radius: 50%;
   object-fit: cover;
   box-shadow:
-    0 0 0 1px rgba(254, 206, 52, 0.55),
-    0 0 22px rgba(254, 206, 52, 0.16);
+    0 0 0 1px rgba(255, 196, 107, 0.55),
+    0 0 22px rgba(255, 196, 107, 0.16);
 }
 
 .haloSlot {
@@ -457,7 +457,7 @@
   color: var(--bone);
   background: linear-gradient(180deg, #393530 0%, #282522 100%);
   box-shadow:
-    inset 0 0 0 1px rgba(254, 206, 52, 0.26),
+    inset 0 0 0 1px rgba(255, 196, 107, 0.26),
     inset 0 1px 0 rgba(255, 231, 124, 0.14),
     0 4px 14px -6px rgba(0, 0, 0, 0.9);
   border-radius: 20px 20px 6px 20px;
@@ -493,7 +493,7 @@ button.you {
   height: 7px;
   border-radius: 50%;
   background: var(--gold);
-  box-shadow: 0 0 8px rgba(254, 206, 52, 0.7);
+  box-shadow: 0 0 8px rgba(255, 196, 107, 0.7);
 }
 
 /* ---------- dock: chips and the floating composer ---------- */
@@ -538,7 +538,7 @@ button.you {
 }
 
 .chipPrimary {
-  background: linear-gradient(180deg, #ffe77c, #fece34);
+  background: linear-gradient(180deg, #ffe3b0, #ffc46b);
   color: #000;
   font-weight: 600;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
@@ -602,7 +602,7 @@ button.you {
 .capsule:focus-within {
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.1),
-    inset 0 0 0 1px rgba(254, 206, 52, 0.55),
+    inset 0 0 0 1px rgba(255, 196, 107, 0.55),
     0 10px 30px -12px rgba(0, 0, 0, 0.9);
 }
 
@@ -641,12 +641,12 @@ button.you {
   height: 34px;
   border-radius: 50%;
   border: 0;
-  background: linear-gradient(180deg, #ffe77c, #fece34);
+  background: linear-gradient(180deg, #ffe3b0, #ffc46b);
   color: #000;
   display: grid;
   place-items: center;
   cursor: pointer;
-  box-shadow: 0 0 14px -3px rgba(254, 206, 52, 0.55);
+  box-shadow: 0 0 14px -3px rgba(255, 196, 107, 0.55);
 }
 
 .send:disabled {
@@ -837,12 +837,12 @@ button.you {
   display: grid;
   place-items: center;
   color: var(--gold);
-  background: rgba(254, 206, 52, 0.1);
+  background: rgba(255, 196, 107, 0.1);
   cursor: pointer;
 }
 
 .iconBtn:hover {
-  background: rgba(254, 206, 52, 0.18);
+  background: rgba(255, 196, 107, 0.18);
 }
 
 .num {
@@ -878,7 +878,7 @@ button.you {
   gap: 6px;
   margin-top: 8px;
   color: #000;
-  background: linear-gradient(180deg, #ffe77c, #fece34);
+  background: linear-gradient(180deg, #ffe3b0, #ffc46b);
   border-radius: 999px;
   padding: 8px 15px;
   font-size: 14.5px;
@@ -922,7 +922,7 @@ button.you {
   overflow: hidden;
   background: var(--term);
   box-shadow:
-    inset 0 0 0 1px rgba(254, 206, 52, 0.12),
+    inset 0 0 0 1px rgba(255, 196, 107, 0.12),
     0 6px 18px -10px rgba(0, 0, 0, 0.8);
 }
 
@@ -931,8 +931,8 @@ button.you {
   align-items: center;
   justify-content: space-between;
   padding: 5px 6px 5px 11px;
-  background: rgba(254, 206, 52, 0.04);
-  border-bottom: 1px solid rgba(254, 206, 52, 0.1);
+  background: rgba(255, 196, 107, 0.04);
+  border-bottom: 1px solid rgba(255, 196, 107, 0.1);
   font-size: 11.5px;
   color: var(--fog);
 }
@@ -953,7 +953,7 @@ button.you {
   font-size: 12px;
   font-weight: 600;
   color: var(--gold);
-  background: rgba(254, 206, 52, 0.1);
+  background: rgba(255, 196, 107, 0.1);
   border-radius: 7px;
   padding: 4px 9px;
   cursor: pointer;
@@ -1037,7 +1037,7 @@ button.you {
   padding: 8px 10px;
   border-radius: 11px;
   background: rgba(0, 0, 0, 0.45);
-  box-shadow: inset 0 0 0 1px rgba(254, 206, 52, 0.2);
+  box-shadow: inset 0 0 0 1px rgba(255, 196, 107, 0.2);
   font-family: var(--mono);
   font-size: 12px;
   line-height: 1.5;
@@ -1082,8 +1082,8 @@ button.you {
   font-size: 11px;
   font-weight: 500;
   color: var(--gold);
-  background: rgba(254, 206, 52, 0.07);
-  box-shadow: inset 0 0 0 1px rgba(254, 206, 52, 0.24);
+  background: rgba(255, 196, 107, 0.07);
+  box-shadow: inset 0 0 0 1px rgba(255, 196, 107, 0.24);
 }
 
 .tagOld {
@@ -1100,8 +1100,8 @@ button.you {
   font-size: 13px;
   line-height: 1.42;
   color: var(--bone);
-  background: rgba(254, 206, 52, 0.07);
-  box-shadow: inset 0 0 0 1px rgba(254, 206, 52, 0.28);
+  background: rgba(255, 196, 107, 0.07);
+  box-shadow: inset 0 0 0 1px rgba(255, 196, 107, 0.28);
 }
 
 .causeTitle {
@@ -1116,7 +1116,7 @@ button.you {
   font-size: 11px;
   font-weight: 600;
   color: var(--gold);
-  box-shadow: inset 0 0 0 1px rgba(254, 206, 52, 0.3);
+  box-shadow: inset 0 0 0 1px rgba(255, 196, 107, 0.3);
 }
 
 /* the short save form */
@@ -1185,7 +1185,7 @@ select.fInput option {
 .fInput:focus {
   box-shadow:
     inset 0 1px 0 rgba(255, 231, 124, 0.1),
-    inset 0 0 0 1px rgba(254, 206, 52, 0.55);
+    inset 0 0 0 1px rgba(255, 196, 107, 0.55);
 }
 
 .fHint {
@@ -1196,7 +1196,7 @@ select.fInput option {
 /* the compact halo around her nav-bar avatar: a deep blue hairline ring dotted with neurons; while she works
    a gold signal runs round it, and after a verdict the ring takes the verdict colour */
 .navHalo {
-  --tone: #fece34;
+  --tone: #ffc46b;
   position: relative;
   display: block;
   border-radius: 50%;
@@ -1231,14 +1231,14 @@ select.fInput option {
 
 .navHaloLive::before {
   opacity: 1;
-  background: conic-gradient(from 0deg, rgba(58, 98, 214, 0.6) 0deg, rgba(58, 98, 214, 0.6) 220deg, #ffe77c 312deg, #fff4cd 344deg, rgba(58, 98, 214, 0.6) 360deg);
+  background: conic-gradient(from 0deg, rgba(58, 98, 214, 0.6) 0deg, rgba(58, 98, 214, 0.6) 220deg, #ffe3b0 312deg, #fff4cd 344deg, rgba(58, 98, 214, 0.6) 360deg);
   animation: navSweep 0.9s linear infinite;
 }
 
 .navHaloLive::after {
   inset: -7px;
   box-shadow: none;
-  background: radial-gradient(closest-side, rgba(58, 98, 214, 0.32), rgba(254, 206, 52, 0.1) 70%, rgba(254, 206, 52, 0));
+  background: radial-gradient(closest-side, rgba(58, 98, 214, 0.32), rgba(255, 196, 107, 0.1) 70%, rgba(255, 196, 107, 0));
   z-index: -1;
   opacity: 1;
 }
@@ -1252,7 +1252,7 @@ select.fInput option {
 @media (prefers-reduced-motion: reduce) {
   .navHaloLive::before {
     animation: none;
-    background: conic-gradient(rgba(58, 98, 214, 0.6) 0deg 270deg, #ffe77c 270deg 360deg);
+    background: conic-gradient(rgba(58, 98, 214, 0.6) 0deg 270deg, #ffe3b0 270deg 360deg);
   }
 }
 
@@ -1293,7 +1293,7 @@ select.fInput option {
 
 .pickRow svg {
   flex: none;
-  color: rgba(254, 206, 52, 0.75);
+  color: rgba(255, 196, 107, 0.75);
 }
 
 .pickRow:hover {
@@ -1301,7 +1301,7 @@ select.fInput option {
 }
 
 .pickRow:focus-visible {
-  outline: 2px solid #fece34;
+  outline: 2px solid #ffc46b;
   outline-offset: -2px;
 }
 
@@ -1310,8 +1310,8 @@ select.fInput option {
 .prefixBox {
   border-radius: 16px;
   padding: 12px 12px 12px 14px;
-  background: linear-gradient(180deg, rgba(254, 206, 52, 0.12), rgba(254, 206, 52, 0.05));
-  box-shadow: inset 0 0 0 1px rgba(254, 206, 52, 0.4);
+  background: linear-gradient(180deg, rgba(255, 196, 107, 0.12), rgba(255, 196, 107, 0.05));
+  box-shadow: inset 0 0 0 1px rgba(255, 196, 107, 0.4);
 }
 
 .prefixHead {

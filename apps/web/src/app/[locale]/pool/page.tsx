@@ -4,7 +4,8 @@ import { setRequestLocale } from 'next-intl/server'
 import { poolFontVars } from '@/components/pool/fonts'
 import { MariaApp } from '@/components/pool/maria/MariaApp'
 import { PoolTabs } from '@/components/pool/PoolTabs'
-import { Brain } from '@/components/brain/Brain'
+import { PoolHero } from '@/components/brain/PoolHero'
+import { bppFonts } from '@/components/bpp/fonts'
 import { type HardwareRow, type Summary, selfReportedLine } from '@/lib/pool/aggregate'
 import { keepPercent, MEASURE, POOL, WALLET } from '@/lib/pool/config'
 import { poolAllowed, poolPublic } from '@/lib/pool/gate'
@@ -17,7 +18,6 @@ import { PAYOUT_TERMS } from '@/lib/pool/ui-config'
 import type { Bar, Usage } from '@/lib/pool/usage'
 import p from './pool.module.css'
 import { Join, MariaIntro } from './qc'
-import { MACHINE } from '@/lib/pool/why'
 import { Device } from '@/components/pool/Device'
 import { ReportLink } from './ReportLink'
 import { RecordStrip } from './why'
@@ -279,32 +279,23 @@ export default async function PoolPage(props: { params: Promise<{ locale: string
   const ai = Boolean(process.env.ANTHROPIC_API_KEY)
 
   return (
-    <div className={`${p.backdrop} ${poolFontVars}`}>
-      {/* the first thing a miner sees: the brain the pool grows, Maria beside it, the work in view */}
-      <Brain
-        variant="hero"
-        quote={MACHINE}
+    <div className={`${p.backdrop} ${poolFontVars} ${bppFonts}`}>
+      {/* the first thing a miner sees: Maria in the middle, the brain the pool grows behind her */}
+      <PoolHero
+        preview={!poolPublic()}
+        phone={
+          <Device label="Maria, the mining coach">
+            <MariaApp ai={ai} />
+          </Device>
+        }
         hooks={[
           { href: '#participants', title: 'Who is growing it', note: 'every worker, what each gives' },
           { href: '#join', title: 'Join in a few minutes', note: 'a wallet, a worker name, done' },
           { href: '#hw', title: 'What your hardware does', note: 'measured rigs, not promises' },
           { href: '#terms', title: `${keepPercent}% to the miners`, note: `pool fee ${POOL.feePercent}%, open` },
         ]}
-        aside={
-          <div className={p.deviceWrap} id="maria-phone">
-            <Device label="Maria, the mining coach">
-              <MariaApp ai={ai} />
-            </Device>
-          </div>
-        }
       />
       <div className={p.page}>
-        {!poolPublic() && (
-          <p className={p.pill} role="note">
-            <span aria-hidden className={p.pillDot} />
-            Private preview
-          </p>
-        )}
         <Join />
 
         <section className={p.section}>

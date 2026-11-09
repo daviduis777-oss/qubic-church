@@ -10,7 +10,7 @@ import { SOURCES, type SourceId } from '@/lib/pool/knowledge'
 import s from './maria.module.css'
 
 /** Verdict tones: the site's gold (--accent-gold), a muted sage for OK, the site's --danger for faults. Her halo adds a deep blue. */
-export const TONE = { gold: '#FECE34', sage: '#9FC39A', coral: '#F66D67', fog: '#8C8C8C' } as const
+export const TONE = { gold: '#ffc46b', sage: '#9FC39A', coral: '#F66D67', fog: '#8C8C8C' } as const
 
 export const verdictTone = (v: Verdict) => (v === 'Golden' ? TONE.gold : v === 'Good' || v === 'Works' ? TONE.sage : v === 'Skip' ? TONE.coral : TONE.fog)
 export const severityTone = (v: Severity) => (v === 'fine' ? TONE.sage : v === 'check' ? TONE.gold : TONE.coral)

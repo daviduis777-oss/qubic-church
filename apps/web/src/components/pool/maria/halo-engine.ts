@@ -21,7 +21,7 @@ export type RGB = [number, number, number]
 export const N = 676
 const TAU = Math.PI * 2
 
-export const GOLD: RGB = [254, 206, 52] // site --accent-gold
+export const GOLD: RGB = [255, 196, 107] // the site amber (filament)
 export const GOLD_HI: RGB = [255, 231, 124] // --accent-gold-strong
 export const GOLD_DIM: RGB = [177, 132, 6] // --accent-gold-dim
 export const HOT: RGB = [255, 244, 205]
@@ -510,14 +510,14 @@ export function createHalo(back: HTMLCanvasElement, front: HTMLCanvasElement, op
     }
   }
   const coreSprite = glowSprite(64, [
-    [0, 'rgba(254,206,52,0.55)'],
-    [0.45, 'rgba(254,206,52,0.16)'],
-    [1, 'rgba(254,206,52,0)'],
+    [0, 'rgba(255, 196, 107,0.55)'],
+    [0.45, 'rgba(255, 196, 107,0.16)'],
+    [1, 'rgba(255, 196, 107,0)'],
   ])
   const sparkSprite = glowSprite(32, [
     [0, 'rgba(255,244,205,0.95)'],
-    [0.28, 'rgba(254,206,52,0.42)'],
-    [1, 'rgba(254,206,52,0)'],
+    [0.28, 'rgba(255, 196, 107,0.42)'],
+    [1, 'rgba(255, 196, 107,0)'],
   ])
 
   /* --- state --- */

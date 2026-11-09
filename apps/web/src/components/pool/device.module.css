@@ -23,7 +23,7 @@
   box-shadow:
     0 0 0 1px rgba(0, 0, 0, 0.6),
     0 50px 90px -30px rgba(0, 0, 0, 0.95),
-    0 30px 140px -30px rgba(254, 206, 52, 0.16);
+    0 30px 140px -30px rgba(255, 196, 107, 0.16);
 }
 
 .bezel {
@@ -169,7 +169,7 @@
   aspect-ratio: auto;
   border-radius: 26px;
   padding: 1px;
-  background: linear-gradient(150deg, rgba(254, 206, 52, 0.42) 0%, rgba(255, 255, 255, 0.07) 34%, rgba(255, 255, 255, 0.05) 70%, rgba(254, 206, 52, 0.22) 100%);
+  background: linear-gradient(150deg, rgba(255, 196, 107, 0.42) 0%, rgba(255, 255, 255, 0.07) 34%, rgba(255, 255, 255, 0.05) 70%, rgba(255, 196, 107, 0.22) 100%);
 }
 
 .wide .bezel {
@@ -214,8 +214,8 @@
     border-radius: 28px;
     background: none;
     box-shadow:
-      0 0 0 1px rgba(254, 206, 52, 0.14),
-      0 30px 80px -30px rgba(254, 206, 52, 0.14);
+      0 0 0 1px rgba(255, 196, 107, 0.14),
+      0 30px 80px -30px rgba(255, 196, 107, 0.14);
   }
   .bezel {
     padding: 0;

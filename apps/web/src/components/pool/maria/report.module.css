@@ -54,7 +54,7 @@
   position: absolute;
   inset: 0;
   border-radius: 7px;
-  background: linear-gradient(180deg, #ffe77c, #fece34);
+  background: linear-gradient(180deg, #ffe3b0, #ffc46b);
   box-shadow:
     0 3px 8px rgba(0, 0, 0, 0.45),
     0 3px 1px rgba(0, 0, 0, 0.12),
@@ -97,7 +97,7 @@
 .group:focus-within {
   box-shadow:
     inset 0 1px 0 var(--glass-top),
-    inset 0 0 0 1px rgba(254, 206, 52, 0.42);
+    inset 0 0 0 1px rgba(255, 196, 107, 0.42);
 }
 
 .text,
@@ -312,8 +312,8 @@
   font-weight: 600;
   letter-spacing: -0.01em;
   color: #000;
-  background: linear-gradient(180deg, #ffe77c, #fece34);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 8px 22px -10px rgba(254, 206, 52, 0.55);
+  background: linear-gradient(180deg, #ffe3b0, #ffc46b);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 8px 22px -10px rgba(255, 196, 107, 0.55);
   cursor: pointer;
   transition: opacity 0.2s ease, filter 0.2s ease;
 }

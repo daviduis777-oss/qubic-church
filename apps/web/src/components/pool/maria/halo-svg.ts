@@ -37,7 +37,7 @@ export function haloSvg(size: number, face: number, opts: { t?: number; tone?: R
   const defs = [
     `<radialGradient id="lane" cx="${C}" cy="${C}" r="${f(R)}" gradientUnits="userSpaceOnUse"><stop offset="${(faceR / R).toFixed(3)}" stop-color="${rgba(BLUE_DEEP, 0)}"/><stop offset="${at(a0 - 0.08).toFixed(3)}" stop-color="${rgba(BLUE_DEEP, 0.1 * g)}"/><stop offset="${at(a0).toFixed(3)}" stop-color="${rgba(BLUE_DEEP, 0.55 * g)}"/><stop offset="${at((a0 + b0) / 2).toFixed(3)}" stop-color="${rgba(BLUE_DEEP, 0.32 * g)}"/><stop offset="${at(b0).toFixed(3)}" stop-color="${rgba(BLUE_DEEP, 0.5 * g)}"/><stop offset="1" stop-color="${rgba(BLUE_DEEP, 0)}"/></radialGradient>`,
     `<radialGradient id="core" cx="${C}" cy="${C}" r="${f(faceR * 2.2)}" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="${rgba(mix(GOLD, tone, 0.85), 0.2 * g)}"/><stop offset="0.45" stop-color="${rgba(GOLD, 0.06 * g)}"/><stop offset="1" stop-color="${rgba(GOLD, 0)}"/></radialGradient>`,
-    `<radialGradient id="spark"><stop offset="0" stop-color="rgba(255,244,205,0.95)"/><stop offset="0.28" stop-color="rgba(254,206,52,0.42)"/><stop offset="1" stop-color="rgba(254,206,52,0)"/></radialGradient>`,
+    `<radialGradient id="spark"><stop offset="0" stop-color="rgba(255,244,205,0.95)"/><stop offset="0.28" stop-color="rgba(255, 196, 107,0.42)"/><stop offset="1" stop-color="rgba(255, 196, 107,0)"/></radialGradient>`,
   ]
   const back: string[] = [`<rect width="${S}" height="${S}" fill="url(#lane)"/>`, `<rect width="${S}" height="${S}" fill="url(#core)"/>`]
 

@@ -30,7 +30,7 @@ function DotField() {
           <rect fill="url(#qcpFade)" height="1000" width="1000" />
         </mask>
       </defs>
-      <g fill="#FECE34" mask="url(#qcpMask)">
+      <g fill="#ffc46b" mask="url(#qcpMask)">
         {dots.map(([x, y, r]) => (
           <circle cx={x.toFixed(1)} cy={y.toFixed(1)} key={`${x.toFixed(1)}-${y.toFixed(1)}`} r={r.toFixed(2)} />
         ))}

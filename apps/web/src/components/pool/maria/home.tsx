@@ -136,7 +136,7 @@ export function HomeScreen({
         <defs>
           <linearGradient gradientUnits="userSpaceOnUse" id={grad} x1="0" x2="0" y1="2" y2="22">
             <stop offset="0" stopColor="#fff2b0" />
-            <stop offset="0.45" stopColor="#fece34" />
+            <stop offset="0.45" stopColor="#ffc46b" />
             <stop offset="1" stopColor="#c8960e" />
           </linearGradient>
         </defs>

@@ -20,8 +20,8 @@ export function Seal({
     const s = Math.sin(a)
     return `M${(24 + c * 19).toFixed(2)} ${(24 + s * 19).toFixed(2)}L${(24 + c * 21.2).toFixed(2)} ${(24 + s * 21.2).toFixed(2)}`
   }).join('')
-  const gold = dim ? '#8c8c8c' : '#fece34'
-  const hi = dim ? '#b7b7b7' : '#ffe77c'
+  const gold = dim ? '#8c8c8c' : '#ffc46b'
+  const hi = dim ? '#b7b7b7' : '#ffe3b0'
   return (
     <svg
       aria-hidden
