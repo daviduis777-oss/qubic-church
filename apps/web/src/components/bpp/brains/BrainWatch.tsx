@@ -111,10 +111,105 @@ export function BrainWatch({ preview }: { preview: boolean }) {
           setHash(null)
         }} />
 
+      <RunIt />
+
       <footer className="mute" style={{ fontSize: 12.5, lineHeight: 1.7, maxWidth: '80ch' }}>
         Genomes and verified scores come from the public Jetski ANN Explorer, which replays the exact core release for every solution. We re-run each brain with the scorer&apos;s rule from qubic/core and show it only when our error count equals the verified score. &ldquo;Hours it never saw&rdquo; are the hours after the task sequence ends; &ldquo;since it was found&rdquo; are the hours after the solution was published, which nobody could have fitted. The core has not published its live-call rule yet; what the network itself will call live from 18 November is a separate matter, kept in <a className="mute" href="/bpp9000#record" style={{ textDecoration: 'underline', textUnderlineOffset: 3 }}>the record</a>. An experiment, not financial advice.
       </footer>
     </div>
+  )
+}
+
+/* ---------------- run it yourself: the guide to the downloaded file ---------------- */
+
+const CODE: React.CSSProperties = {
+  margin: 0,
+  padding: '12px 14px',
+  borderRadius: 10,
+  background: 'rgba(0,0,0,.45)',
+  border: '1px solid var(--line)',
+  fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',
+  fontSize: 13.5,
+  lineHeight: 1.6,
+  color: '#f3e4ce',
+  overflowX: 'auto',
+  whiteSpace: 'pre',
+}
+
+function RunIt() {
+  const file = 'bpp9000-brain-e238-kybvxnhyepjq.json'
+  const steps: [string, React.ReactNode][] = [
+    [
+      'Download a brain',
+      <>
+        Pick a row in the table above and press <b style={{ color: '#f3e4ce' }}>Download the brain</b>. You get one small file, for example <code>{file}</code>.
+      </>,
+    ],
+    [
+      'Download the script',
+      <>
+        <a className="btn btn-main" download href="/bpp/run_brain.py" style={{ display: 'inline-flex', marginBottom: 10 }}>
+          Download run_brain.py
+        </a>
+        <br />
+        Put it in the same folder as the brain. It needs Python 3.8 or newer (
+        <a className="mute" href="https://www.python.org/downloads/" rel="noopener noreferrer" style={{ textDecoration: 'underline', textUnderlineOffset: 3 }} target="_blank">
+          python.org
+        </a>
+        ) and nothing else: no installs, no keys.
+      </>,
+    ],
+    [
+      'Run it',
+      <>
+        Open a terminal in that folder and type:
+        <pre style={{ ...CODE, marginTop: 10 }}>{`python3 run_brain.py ${file}`}</pre>
+        <span style={{ display: 'block', marginTop: 8 }}>
+          On Windows: <code>py run_brain.py {file}</code>
+        </span>
+      </>,
+    ],
+    [
+      'Read the answer',
+      <>
+        In a few seconds it prints something like this:
+        <pre style={{ ...CODE, marginTop: 10 }}>{`HOMEWORK  65.48%   (the year it was grown on, as the Qubic network scored it)
+EXAM      1,441 of 2,983 hours right = 48.31%   (hours since 08 Jul 2026 it never saw)
+
+50% is a coin. The exam is the number that matters.`}</pre>
+        <span style={{ display: 'block', marginTop: 8 }}>Your exam should match the one on this page. If it does not, tell us.</span>
+      </>,
+    ],
+  ]
+  return (
+    <section aria-labelledby="run-h" className="panel" id="run" style={{ padding: 'clamp(18px, 3vw, 28px)', display: 'grid', gap: 18, scrollMarginTop: 90 }}>
+      <div style={{ maxWidth: '70ch' }}>
+        <h2 className="eng" id="run-h" style={{ fontSize: 'clamp(16px, 2vw, 19px)', fontWeight: 400, margin: 0, color: '#f3e4ce' }}>
+          Run a brain yourself
+        </h2>
+        <p className="mute" style={{ margin: '10px 0 0', fontSize: 14.5, lineHeight: 1.6 }}>
+          The download is the brain itself: 32 neurons, who listens to whom, and each neuron&apos;s lookup table, exactly as the Qubic network stores it. A JSON viewer only shows numbers. To see it think, run it. You do not have to trust this page.
+        </p>
+      </div>
+      <ol style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gap: 18 }}>
+        {steps.map(([title, body], i) => (
+          <li key={title} style={{ display: 'grid', gridTemplateColumns: '34px minmax(0, 1fr)', gap: 12, alignItems: 'start' }}>
+            <span aria-hidden className="nx lit" style={{ fontSize: 28, lineHeight: 1, fontWeight: 300 }}>
+              {i + 1}
+            </span>
+            <div style={{ minWidth: 0 }}>
+              <div style={{ color: '#f3e4ce', fontWeight: 600, marginBottom: 6 }}>{title}</div>
+              <div className="mute" style={{ fontSize: 14.5, lineHeight: 1.65 }}>
+                {body}
+              </div>
+            </div>
+          </li>
+        ))}
+      </ol>
+      <p className="mute" style={{ margin: 0, fontSize: 13, lineHeight: 1.65, maxWidth: '80ch' }}>
+        What it does: it ticks the network the way the core scores it (every neuron reads its three sources and looks up its answer; whenever the control neuron is not &ldquo;unsure&rdquo;, the output neuron is the call for the next hour), then fetches hourly BTC/USDT closes from Binance and grades every hour after the year the brain was grown on. Up means the rounded close is at or above the previous hour&apos;s. The homework is the Qubic network&apos;s own score, read from the file. The script is about 120 lines; read it before you run it.
+      </p>
+    </section>
   )
 }
 
@@ -322,6 +417,9 @@ function Sheet({ g, live, busy, row, rank }: { g: CheckedGenome | null; live: Li
       <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
         <a className="btn btn-main" href={r ? `/api/bpp/brains/${r.hash}?download=1` : '#'} aria-disabled={!r} download>
           Download the brain
+        </a>
+        <a className="btn" href="#run">
+          How to run it
         </a>
         {g && (
           <a className="btn" href={g.source.explorer} rel="noopener noreferrer" target="_blank">
