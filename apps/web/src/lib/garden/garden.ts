@@ -14,7 +14,7 @@ const NEWEST = 60
 /** identities looked up per summary (one explorer call each) */
 const GARDENERS = 24
 /** generations walked per lineage call; a hop is two explorer calls */
-export const HOPS = 24
+export const HOPS = 16
 
 async function get<T>(path: string, revalidate = 0): Promise<T> {
   const r = await fetch(`${API}${path}`, {
@@ -48,7 +48,9 @@ const GEN_KEY = (hash: string) => `garden:gen:${hash}`
 export async function generation(hash: string): Promise<Gen> {
   const kept = await kvGetJson<Gen>(GEN_KEY(hash))
   if (kept) return kept
-  const [s, r] = await Promise.all([get<ExplorerSolution>(`/solutions/${hash}`), get<ExplorerReconstruction>(`/solutions/${hash}/reconstruction`)])
+  // one call at a time: the explorer rate-limits bursts (429)
+  const s = await get<ExplorerSolution>(`/solutions/${hash}`)
+  const r = await get<ExplorerReconstruction>(`/solutions/${hash}/reconstruction`)
   const col = r.antColony as (ExplorerReconstruction['antColony'] & { parentIsRoot?: boolean }) | undefined
   const g: Gen = {
     hash,
@@ -75,15 +77,24 @@ export async function lineage(top: string, hops = HOPS): Promise<Lineage> {
   const gens: Gen[] = kept?.gens ?? []
   let next: string | null = gens.length ? gens[gens.length - 1]!.parent : top
   let walked = 0
+  let limited = false
   while (next && walked < hops) {
-    const g = await generation(next)
-    gens.push(g)
-    next = g.parent && g.depth > 1 ? g.parent : null
-    walked++
+    try {
+      const g = await generation(next)
+      gens.push(g)
+      next = g.parent && g.depth > 1 ? g.parent : null
+      walked++
+    } catch (e) {
+      // the explorer asked us to slow down (or failed): keep what we have, the page asks again later
+      if (!gens.length) throw e
+      limited = true
+      break
+    }
+    await new Promise(r => setTimeout(r, 120))
   }
   const out: Lineage = { top, gens, done: !next }
   await kvSetJson(LIN_KEY(top), out, out.done ? undefined : 3600)
-  return out
+  return { ...out, ...(limited ? { limited: true } : {}) }
 }
 
 /* ---------------- the epoch ---------------- */
@@ -113,12 +124,11 @@ export async function epochGarden(): Promise<EpochGarden> {
   const ranked = verified(top.items)
 
   // the newest dozen with their generation, each a cached lookup after the first time
-  const births: Birth[] = await Promise.all(
-    fresh.slice(0, 12).map(async s => {
-      const g = await generation(s.hash).catch(() => null)
-      return { hash: s.hash, gardener: s.computorId, score: s.verification!.score!, ts: ms(s.timestamp), tick: s.tickNumber ?? null, depth: g?.depth ?? null }
-    }),
-  )
+  const births: Birth[] = []
+  for (const s of fresh.slice(0, 12)) {
+    const g = await generation(s.hash).catch(() => null)
+    births.push({ hash: s.hash, gardener: s.computorId, score: s.verification!.score!, ts: ms(s.timestamp), tick: s.tickNumber ?? null, depth: g?.depth ?? null })
+  }
 
   // gardeners: the identities behind the 100 best brains, with their own count of brains this epoch
   const bestOf = new Map<string, ExplorerSolution>()

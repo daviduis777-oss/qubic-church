@@ -28,6 +28,8 @@ export type Lineage = {
   /** from the top brain down to the root (depth 1); complete when `done` */
   gens: Gen[]
   done: boolean
+  /** the explorer rate-limited this walk; ask again after a pause */
+  limited?: boolean
 }
 
 /** One freshly grown brain in the births ticker. */

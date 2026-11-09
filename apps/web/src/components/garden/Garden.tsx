@@ -145,15 +145,23 @@ function Vine({ top, bestScore }: { top: string | null; bestScore: number | null
     setLin(null)
     setErr(null)
     const walk = async () => {
-      for (let i = 0; i < 40 && on; i++) {
+      let fails = 0
+      for (let i = 0; i < 60 && on; i++) {
         const r = await getJson<LinResp>(`/api/garden/lineage/${top}`)
         if (!on) return
         if (!r || !r.ok) {
-          setErr(r && !r.ok ? r.reason : 'no answer')
-          return
+          // the explorer rate-limits bursts: wait and ask again, a few times
+          if (++fails > 6) {
+            setErr(r && !r.ok ? r.reason : 'no answer')
+            return
+          }
+          await new Promise(res => setTimeout(res, 4000 * fails))
+          continue
         }
+        fails = 0
         setLin(r)
         if (r.done) return
+        if (r.limited) await new Promise(res => setTimeout(res, 6000))
       }
     }
     walk()
