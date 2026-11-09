@@ -56,6 +56,7 @@ export function GlobalNavTrigger() {
   return (
     <>
       <header
+        data-nav="v1"
         className={`fixed inset-x-0 top-0 z-50 border-b backdrop-blur-md transition-colors duration-200 ${
           pathname === '/articles' || pathname.startsWith('/articles/')
             ? 'border-[#2f4a63] bg-[#2f4a63]'
