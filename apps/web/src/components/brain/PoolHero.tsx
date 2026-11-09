@@ -215,7 +215,7 @@ export function PoolHero({ phone, hooks, preview }: { phone: ReactNode; hooks: H
                 </div>
                 <div className="ph-small">
                   Row {at(cell).r}: {bandOf(at(cell).r).name}, as Jordan reads the rows. {int(Math.max(1, Math.abs(at(cell).v)) * 128)} brains grow it whole; growth starts
-                  11 November. The worker whose brain completes it keeps its name here.
+                  18 November, the day the pool opens. The worker whose brain completes it keeps its name here.
                 </div>
               </div>
             ) : (

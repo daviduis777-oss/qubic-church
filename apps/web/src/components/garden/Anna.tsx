@@ -158,16 +158,16 @@ export function Anna({ now }: { now: number }) {
         </h1>
         <p className="an-lead">
           Aigarth is <em>AI</em> and <em>garth</em>, an old word for a garden. Anna is one brain baked from its recipe, Come-from-Beyond’s personal one,
-          {' '}{ANNA} by {ANNA}. From epoch {v?.from ?? 239} on, every brain the Qubic network grows is planted into one of her cells, chosen by its own hash.
+          {' '}{ANNA} by {ANNA}. From epoch {v?.from ?? 240} on, every brain the Qubic network grows is planted into one of her cells, chosen by its own hash.
           When all {int(CELLS)} cells are whole, Anna is whole. Every finished cell keeps the name of the identity that finished it.
         </p>
       </div>
 
       {!started ? (
         <div className="an-start">
-          <span className="nx lit an-start-n">{left((v?.start ?? Date.UTC(2026, 10, 11, 12)) - now)}</span>
+          <span className="nx lit an-start-n">{left((v?.start ?? Date.UTC(2026, 10, 18, 12)) - now)}</span>
           <span>
-            until the first brain is planted: epoch {v?.from ?? 239}, Wednesday 11 November 2026, 12:00 UTC. Every brain of the network from that moment
+            until the first brain is planted: epoch {v?.from ?? 240}, Wednesday 18 November 2026, 12:00 UTC. Every brain of the network from that moment
             on counts; nothing before it does.
           </span>
         </div>

@@ -175,7 +175,7 @@ export function Brain({ variant = 'lab', aside, quote, hooks = [] }: { variant?:
               </div>
               <div>
                 <div className="br-k">—</div>
-                <div className="br-mute br-small">grown so far; growth starts 11 Nov</div>
+                <div className="br-mute br-small">grown so far; growth starts 18 Nov</div>
               </div>
             </div>
             <div className="br-mute br-small">Finished by: nobody yet. The worker whose brain completes it keeps its name here.</div>

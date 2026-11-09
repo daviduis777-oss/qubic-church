@@ -11,9 +11,9 @@ export const ANNA = 128
 export const CELLS = ANNA * ANNA
 /** brains per unit of growth; one unit per step of |value| */
 export const UNIT = 128
-/** the first epoch whose brains grow Anna: Wednesday 11 November 2026, 12:00 UTC */
-export const ANNA_FROM = 239
-export const ANNA_START = Date.UTC(2026, 10, 11, 12)
+/** the first epoch whose brains grow Anna: Wednesday 18 November 2026, 12:00 UTC, the day the pool opens and BPP-9000 first sees live prices */
+export const ANNA_FROM = 240
+export const ANNA_START = Date.UTC(2026, 10, 18, 12)
 
 /** Brains a cell needs to be whole. */
 export const needOf = (v: number, unit = UNIT) => Math.max(1, Math.abs(v)) * unit
