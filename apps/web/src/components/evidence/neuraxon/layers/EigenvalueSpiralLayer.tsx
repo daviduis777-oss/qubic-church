@@ -226,7 +226,7 @@ export function EigenvalueSpiralLayer({
       {/* Spiral line */}
       {spiralPts.length > 1 && (
         <Line
-          color="#D4AF37"
+          color="#FFC46B"
           lineWidth={1.5}
           opacity={0.3}
           points={spiralPts}
@@ -238,14 +238,14 @@ export function EigenvalueSpiralLayer({
       {scaleRings.map(ring => (
         <group key={`sring-${ring.size}`}>
           <Line
-            color="#D4AF37"
+            color="#FFC46B"
             lineWidth={0.5}
             opacity={0.12}
             points={ring.pts}
             transparent
           />
           <Text
-            color="#D4AF37"
+            color="#FFC46B"
             fillOpacity={0.2}
             fontSize={0.12}
             position={[
@@ -280,7 +280,7 @@ export function EigenvalueSpiralLayer({
       </mesh>
       <mesh position={domPos} ref={ring2Ref}>
         <torusGeometry args={[2.2, 0.02, 8, 64]} />
-        <meshBasicMaterial color="#D4AF37" opacity={0.25} transparent />
+        <meshBasicMaterial color="#FFC46B" opacity={0.25} transparent />
       </mesh>
 
       {/* Dominant glow */}
@@ -323,7 +323,7 @@ export function EigenvalueSpiralLayer({
       {/* Section label */}
       <Text
         anchorX="center"
-        color="#D4AF37"
+        color="#FFC46B"
         fillOpacity={0.4}
         fontSize={0.25}
         position={[0, Y_OFFSET + 8, 0]}
@@ -345,7 +345,7 @@ export function EigenvalueSpiralLayer({
         <group position={[6, Y_OFFSET - 3, 0]}>
           <Text
             anchorX="center"
-            color="#D4AF37"
+            color="#FFC46B"
             fillOpacity={0.4}
             fontSize={0.16}
             position={[0, 1.2, 0]}
@@ -357,7 +357,7 @@ export function EigenvalueSpiralLayer({
               const x = (ci - 0.5) * 0.5
               const z = (ri - 0.5) * 0.5
               const h = Math.abs(val) * 0.02
-              const color = val >= 0 ? '#D4AF37' : '#3B82F6'
+              const color = val >= 0 ? '#FFC46B' : '#3B82F6'
               return (
                 <group key={`ess-${ri}-${ci}`} position={[x, h / 2, z]}>
                   <mesh>

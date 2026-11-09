@@ -9,9 +9,9 @@ import { CHURCH_CONFIG } from '@/config/church'
 import { siteConfig } from '@/config/site'
 
 const rarityColors: Record<NFTRarity, { bg: string; text: string; border: string }> = {
-  legendary: { bg: 'bg-[#D4AF37]/10', text: 'text-[#D4AF37]', border: 'border-[#D4AF37]/50' },
-  epic: { bg: 'bg-[#D4AF37]/10', text: 'text-[#D4AF37]', border: 'border-[#D4AF37]/50' },
-  rare: { bg: 'bg-[#D4AF37]/[0.06]', text: 'text-[#D4AF37]/60', border: 'border-[#D4AF37]/25' },
+  legendary: { bg: 'bg-[#FFC46B]/10', text: 'text-[#FFC46B]', border: 'border-[#FFC46B]/50' },
+  epic: { bg: 'bg-[#FFC46B]/10', text: 'text-[#FFC46B]', border: 'border-[#FFC46B]/50' },
+  rare: { bg: 'bg-[#FFC46B]/[0.06]', text: 'text-[#FFC46B]/60', border: 'border-[#FFC46B]/25' },
   common: { bg: 'bg-white/5', text: 'text-white/40', border: 'border-white/10' },
 }
 
@@ -36,11 +36,11 @@ export function NFTCollectionSection() {
   }, [])
 
   return (
-    <section className="relative min-h-screen py-20 md:py-32 bg-gradient-to-b from-black via-[#D4AF37]/5 to-black overflow-hidden">
+    <section className="relative min-h-screen py-20 md:py-32 bg-gradient-to-b from-black via-[#FFC46B]/5 to-black overflow-hidden">
       {/* Animated background gradient */}
-      <div className="absolute inset-0 bg-gradient-radial from-[#D4AF37]/5 via-transparent to-transparent pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-radial from-[#FFC46B]/5 via-transparent to-transparent pointer-events-none" />
       <motion.div
-        className="absolute inset-0 bg-gradient-radial from-[#D4AF37]/5 via-transparent to-transparent pointer-events-none"
+        className="absolute inset-0 bg-gradient-radial from-[#FFC46B]/5 via-transparent to-transparent pointer-events-none"
         animate={{ opacity: [0.3, 0.6, 0.3] }}
         transition={{ duration: 8, repeat: Infinity }}
       />
@@ -61,7 +61,7 @@ export function NFTCollectionSection() {
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
-            <Sparkles className="w-4 h-4 text-[#D4AF37]" />
+            <Sparkles className="w-4 h-4 text-[#FFC46B]" />
             <span className="text-sm text-white/70 uppercase tracking-wider">Anna Collection</span>
           </motion.div>
 
@@ -157,7 +157,7 @@ export function NFTCollectionSection() {
 
                     {/* Research connection indicator */}
                     {nft.researchConnection && (
-                      <div className="mt-2 flex items-center gap-1 text-[#D4AF37] text-xs">
+                      <div className="mt-2 flex items-center gap-1 text-[#FFC46B] text-xs">
                         <Sparkles className="w-3 h-3" />
                         <span className="truncate">{nft.researchConnection.title}</span>
                       </div>
@@ -178,7 +178,7 @@ export function NFTCollectionSection() {
           transition={{ duration: 0.6, delay: 0.4 }}
         >
           <div className="flex items-start gap-3">
-            <Sparkles className="w-6 h-6 text-[#D4AF37] flex-shrink-0 mt-1" />
+            <Sparkles className="w-6 h-6 text-[#FFC46B] flex-shrink-0 mt-1" />
             <div>
               <h3 className="text-xl font-semibold text-white/90 mb-2">
                 Connected to Research
@@ -188,7 +188,7 @@ export function NFTCollectionSection() {
                 Anna #1 links to the Matrix Symmetry chapter, #42 to the Genesis Block analysis,
                 and #200 to the September 2026 re-check.
               </p>
-              <p className="text-sm text-[#D4AF37]/80">
+              <p className="text-sm text-[#FFC46B]/80">
                 Owning these NFTs grants you a permanent connection to specific findings in the research.
               </p>
             </div>
@@ -207,7 +207,7 @@ export function NFTCollectionSection() {
             href={CHURCH_CONFIG.links.qubicBay}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-[#D4AF37] text-black font-semibold transition-all duration-300 hover:bg-[#D4AF37]/90 hover:scale-105 hover:shadow-2xl"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-[#FFC46B] text-black font-semibold transition-all duration-300 hover:bg-[#FFC46B]/90 hover:scale-105 hover:shadow-2xl"
           >
             <span>View Full Collection on QubicBay</span>
             <ExternalLink className="w-5 h-5" />

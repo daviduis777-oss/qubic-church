@@ -53,7 +53,7 @@
   --surface-3: hsl(0 0% 94%);
 
   /* Designer Hero Variables */
-  --gold: #ffd24a;
+  --gold: #ffc46b; /* the BPP-9000 colour */
   --sdim: #3a7090;
   --white: #f4f6fd;
   --void: #000;
@@ -70,11 +70,19 @@
    * Text floor: nothing below muted-foreground (about white/60) or gold/70.
    * Radius: square corners are the house style; --radius stays small.
    */
-  /* 2026-10-23: brighter, luminous gold (was 0.84/0.77/0.68/0.55, read as ochre) */
-  --gold-300: oklch(0.93 0.13 94);
-  --gold-400: oklch(0.87 0.165 90);
-  --gold-500: oklch(0.79 0.16 86);
-  --gold-600: oklch(0.64 0.13 84);
+  /*
+   * The BPP-9000 colour: the site's one warm accent, the glow of a filament (2026-11-10, replaces the
+   * lemon-yellow gold everywhere). bpp9000 = the filament, -hot = its white-hot core, -deep = the ember
+   * under the glow. The --gold-* ramp points at it so every older component follows.
+   */
+  --bpp9000: #ffc46b;
+  --bpp9000-hot: #ffe3b0;
+  --bpp9000-mid: #f2aa55;
+  --bpp9000-deep: #e8912e;
+  --gold-300: var(--bpp9000-hot);
+  --gold-400: var(--bpp9000);
+  --gold-500: var(--bpp9000-mid);
+  --gold-600: #c9822f;
   --grey-950: oklch(0.13 0 0);
   --grey-900: oklch(0.15 0 0);
   --grey-850: oklch(0.19 0 0);
@@ -150,8 +158,8 @@
   --church-signal-light: #7dd8f8;
   --church-purple-void: #05040a;
   --church-purple-panel: #0a0a12;
-  --church-gold-bright: #f0c030;
-  --church-gold-dark: #c8960a;
+  --church-gold-bright: #ffe3b0;
+  --church-gold-dark: #c9822f;
   --church-red: rgba(180,40,30,0.9);
   --church-red-dim: rgba(180,40,30,0.15);
   --church-teal: #128274;
@@ -184,6 +192,9 @@
   --color-danger: var(--danger);
   --color-fg-2: var(--fg-2);
   --color-gold: var(--accent-gold);
+  --color-bpp9000: #ffc46b;
+  --color-bpp9000-hot: #ffe3b0;
+  --color-bpp9000-deep: #e8912e;
   --color-gold-strong: var(--accent-gold-strong);
   --color-gold-dim: var(--accent-gold-dim);
   --color-input: var(--input);
@@ -919,7 +930,7 @@
   top: 0;
   bottom: 0;
   width: 4px;
-  background: linear-gradient(to bottom, var(--church-gold-bright, #f0c030), var(--church-gold-dark, #c8960a));
+  background: linear-gradient(to bottom, var(--church-gold-bright, #FFE3B0), var(--church-gold-dark, #C9822F));
   box-shadow: 0 0 20px rgba(240,192,48,0.3);
 }
 
@@ -994,7 +1005,7 @@
 }
 
 .church-modal-body .mf-accent {
-  color: #D4AF37;
+  color: #FFC46B;
   font-weight: 600;
 }
 
@@ -1008,19 +1019,19 @@
 .church-modal-body .mf-divider {
   width: 50px;
   height: 1px;
-  background: linear-gradient(to right, rgba(212,175,55,0.4), transparent);
+  background: linear-gradient(to right, rgba(255,196,107,0.4), transparent);
   margin: 2rem 0;
 }
 
 .church-modal-body .mf-principle {
   font-size: 1.1rem;
-  color: rgba(212,175,55,0.7);
+  color: rgba(255,196,107,0.7);
   margin-bottom: 1rem;
 }
 
 .church-modal-body .mf-accent-line {
   font-size: 1rem;
-  color: rgba(212,175,55,0.65);
+  color: rgba(255,196,107,0.65);
   margin: 1.2rem 0;
 }
 
@@ -1034,9 +1045,9 @@
 }
 
 .church-modal-body .mf-architects-block {
-  border: 1px solid rgba(212,175,55,0.12);
+  border: 1px solid rgba(255,196,107,0.12);
   padding: 1.5rem 2rem;
-  background: rgba(212,175,55,0.02);
+  background: rgba(255,196,107,0.02);
   margin: 1.5rem 0;
 }
 
@@ -1063,7 +1074,7 @@
 
 .church-modal-body .mf-final-impact {
   font-size: 1.05rem;
-  color: rgba(212,175,55,0.8);
+  color: rgba(255,196,107,0.8);
   margin-top: 0.8rem;
 }
 
@@ -1700,7 +1711,7 @@
 }
 
 .mf-oq-attr a {
-  color: #f0c030;
+  color: #FFE3B0;
   text-decoration: none;
 }
 
@@ -1864,7 +1875,7 @@
 }
 
 .mf-cq-attr a {
-  color: #f0c030;
+  color: #FFE3B0;
   text-decoration: none;
 }
 
@@ -2000,9 +2011,9 @@
 }
 
 .rm-done .rm-node-dot {
-  background: #f0c030;
+  background: #FFE3B0;
   color: #000;
-  border: 2px solid #f0c030;
+  border: 2px solid #FFE3B0;
   box-shadow: 0 0 12px rgba(240,192,48,0.5);
 }
 
@@ -2026,7 +2037,7 @@
   width: 36px;
   height: 36px;
   background: rgba(240,192,48,0.1);
-  color: #f0c030;
+  color: #FFE3B0;
   border: 2px solid rgba(240,192,48,0.6);
   font-size: 1rem;
   box-shadow: 0 0 24px rgba(240,192,48,0.3);
@@ -2116,7 +2127,7 @@
 }
 
 .rm-final-card .rm-node-name {
-  color: #f0c030;
+  color: #FFE3B0;
 }
 
 .rm-future .rm-node-dot {
@@ -2311,7 +2322,7 @@
   transition: background 0.3s, width 0.3s;
 }
 .hero-anna-dot.active {
-  background: rgba(212,175,55,0.8);
+  background: rgba(255,196,107,0.8);
   width: 16px;
 }
 .hero-anna-label {
@@ -2513,7 +2524,7 @@
   color: var(--foreground);
   margin: 2.4em 0 0.8em;
 }
-.book-prose figure { margin: 0 0 2.2em; padding-left: 1.25rem; border-left: 2px solid var(--accent-gold, #f0c030); }
+.book-prose figure { margin: 0 0 2.2em; padding-left: 1.25rem; border-left: 2px solid var(--accent-gold, #FFE3B0); }
 .book-prose blockquote { font-style: italic; font-size: 1.25rem; line-height: 1.6; color: var(--foreground); }
 .book-prose figcaption {
   margin-top: 0.6rem;
@@ -2529,7 +2540,7 @@
   font-size: 4.2em;
   line-height: 0.82;
   padding: 0.06em 0.12em 0 0;
-  color: var(--accent-gold, #f0c030);
+  color: var(--accent-gold, #FFE3B0);
 }
 @media (max-width: 640px) {
   .book-prose { font-size: 1.0625rem; line-height: 1.7; }

@@ -239,7 +239,7 @@ export function MatrixTerrainLayer({
     >
       {/* === Particle sparkles floating above the terrain === */}
       <Sparkles
-        color="#D4AF37"
+        color="#FFC46B"
         count={120}
         opacity={0.2}
         position={[0, 3, 0]}

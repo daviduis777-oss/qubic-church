@@ -281,7 +281,7 @@ export function AnnaBrain3D({
           minDistance={8}
         />
         <ambientLight intensity={0.22} />
-        <pointLight color="#D4AF37" intensity={0.8} position={[12, 12, 12]} />
+        <pointLight color="#FFC46B" intensity={0.8} position={[12, 12, 12]} />
         <pointLight
           color="#3B82F6"
           intensity={0.55}
@@ -299,7 +299,7 @@ export function AnnaBrain3D({
             speed={0.18}
           />
           <Sparkles
-            color="#D4AF37"
+            color="#FFC46B"
             count={150}
             opacity={0.22}
             scale={22}

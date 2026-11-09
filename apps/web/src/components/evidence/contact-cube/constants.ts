@@ -122,7 +122,7 @@ export const COLOR_THEMES: Record<ColorTheme, { negative: string; zero: string; 
   fire: {
     negative: '#1E3A5F', // Deep blue
     zero: '#DC2626',     // Red
-    positive: '#FCD34D', // Yellow
+    positive: '#FFE3B0', // Yellow
     background: '#0f0505',
   },
   ice: {
@@ -148,7 +148,7 @@ export const COLOR_THEMES: Record<ColorTheme, { negative: string; zero: string; 
 // Registration mark (anomaly) colors
 export const ANOMALY_COLORS = {
   normal: '#FF6B6B',     // Red for anomalies
-  special: '#FFD700',    // Gold for special [22,22]
+  special: '#FFC46B',    // Gold for special [22,22]
   highlight: '#00FFFF',  // Cyan for selected
   line: '#FF6B6B80',     // Semi-transparent red for mirror lines
 }
@@ -162,8 +162,8 @@ export const SPECIAL_POSITIONS = {
 
 // Anomaly column pair colors (each pair of columns sums to 127)
 export const ANOMALY_COLUMN_COLORS: Record<number, string> = {
-  22: '#D4AF37',  // Gold, 13 pairs
-  105: '#D4AF37',
+  22: '#FFC46B',  // Gold, 13 pairs
+  105: '#FFC46B',
   97: '#06B6D4',  // Cyan, 14 pairs
   30: '#06B6D4',  // Cyan, 4 pairs
   41: '#8B5CF6',  // Purple, 2 pairs

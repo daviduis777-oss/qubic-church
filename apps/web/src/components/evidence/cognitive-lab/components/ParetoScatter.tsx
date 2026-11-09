@@ -118,7 +118,7 @@ export function ParetoScatter({
           <Tooltip
             contentStyle={{
               backgroundColor: '#0A0A0A',
-              border: '1px solid #D4AF37',
+              border: '1px solid #FFC46B',
             }}
             formatter={v => (typeof v === 'number' ? v.toFixed(3) : String(v))}
           />
@@ -126,7 +126,7 @@ export function ParetoScatter({
           <Scatter data={data} fill="#7f7f7f" name="evolved candidates" />
           <Scatter
             data={[{ x: annaX, y: annaY, matrix: -1 }]}
-            fill="#D4AF37"
+            fill="#FFC46B"
             name="Anna"
             shape="cross"
           />

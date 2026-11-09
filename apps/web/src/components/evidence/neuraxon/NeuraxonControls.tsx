@@ -125,18 +125,18 @@ export function QortexControls({
       {metadata && (
         <div className="hidden md:flex items-center justify-center gap-4 lg:gap-6 text-[10px] lg:text-xs text-white/60">
           <span className="flex items-center gap-1.5">
-            <span className="w-2 h-2 bg-gradient-to-r from-[#D4AF37] to-[#D4AF37]" />
+            <span className="w-2 h-2 bg-gradient-to-r from-[#FFC46B] to-[#FFC46B]" />
             <span className="text-white/80 font-medium">{metadata.totalNodes.toLocaleString()}</span>
             <span>neurons</span>
           </span>
           <span className="hidden lg:flex items-center gap-1.5">
-            <span className="w-3 h-px bg-gradient-to-r from-[#D4AF37] via-[#D4AF37] to-[#D4AF37]" />
+            <span className="w-3 h-px bg-gradient-to-r from-[#FFC46B] via-[#FFC46B] to-[#FFC46B]" />
             <span className="text-white/80 font-medium">{metadata.totalEdges.toLocaleString()}</span>
             <span>synapses</span>
           </span>
           <span className="flex items-center gap-1.5" title="Positive state (+1)">
-            <span className="w-2 h-2 bg-[#D4AF37]/50" />
-            <span className="text-[#D4AF37] font-mono">{metadata.stateDistribution.positive}</span>
+            <span className="w-2 h-2 bg-[#FFC46B]/50" />
+            <span className="text-[#FFC46B] font-mono">{metadata.stateDistribution.positive}</span>
             <span className="text-white/40 hidden lg:inline">+1</span>
           </span>
           <span className="flex items-center gap-1.5" title="Neutral state (0)">
@@ -145,8 +145,8 @@ export function QortexControls({
             <span className="text-white/40 hidden lg:inline">0</span>
           </span>
           <span className="flex items-center gap-1.5" title="Negative state (-1)">
-            <span className="w-2 h-2 bg-[#D4AF37]/50" />
-            <span className="text-[#D4AF37] font-mono">{metadata.stateDistribution.negative}</span>
+            <span className="w-2 h-2 bg-[#FFC46B]/50" />
+            <span className="text-[#FFC46B] font-mono">{metadata.stateDistribution.negative}</span>
             <span className="text-white/40 hidden lg:inline">-1</span>
           </span>
         </div>

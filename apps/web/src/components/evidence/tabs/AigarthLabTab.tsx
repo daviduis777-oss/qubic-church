@@ -664,7 +664,7 @@ export default function AigarthLabTab() {
               <Tooltip
                 contentStyle={{
                   backgroundColor: '#0A0A0A',
-                  border: '1px solid #D4AF37',
+                  border: '1px solid #FFC46B',
                 }}
                 formatter={v =>
                   typeof v === 'number' ? v.toFixed(4) : String(v)
@@ -684,7 +684,7 @@ export default function AigarthLabTab() {
               <Legend wrapperStyle={{ fontSize: 12 }} />
               <Bar dataKey="random" fill="#1f77b4" name="Random" />
               <Bar dataKey="dense" fill="#7f7f7f" name="Density-matched" />
-              <Bar dataKey="anna" fill="#D4AF37" name="Anna" />
+              <Bar dataKey="anna" fill="#FFC46B" name="Anna" />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -735,7 +735,7 @@ export default function AigarthLabTab() {
                           s.delta_residual > 0.04
                             ? 'text-emerald-400'
                             : s.delta_residual > 0.005
-                              ? 'text-yellow-300'
+                              ? 'text-bpp9000-hot'
                               : 'text-muted-foreground'
                         )}
                       >
@@ -748,7 +748,7 @@ export default function AigarthLabTab() {
                           s.bias_corrected_verdict === 'GENUINE' &&
                             'text-emerald-400',
                           s.bias_corrected_verdict === 'WEAK_GENUINE' &&
-                            'text-yellow-300',
+                            'text-bpp9000-hot',
                           s.bias_corrected_verdict === 'BIAS_ARTIFACT' &&
                             'text-red-400',
                           s.bias_corrected_verdict === 'MARGINAL' &&
@@ -820,7 +820,7 @@ export default function AigarthLabTab() {
                 <Tooltip
                   contentStyle={{
                     backgroundColor: '#0A0A0A',
-                    border: '1px solid #D4AF37',
+                    border: '1px solid #FFC46B',
                   }}
                   formatter={v =>
                     typeof v === 'number' ? v.toFixed(4) : String(v)
@@ -842,7 +842,7 @@ export default function AigarthLabTab() {
                     <Cell
                       fill={
                         b.arm === 'anna'
-                          ? '#D4AF37'
+                          ? '#FFC46B'
                           : b.arm === 'dense'
                             ? '#7f7f7f'
                             : '#1f77b4'
@@ -981,7 +981,7 @@ export default function AigarthLabTab() {
               />
               <YAxis
                 domain={[0.45, 0.62]}
-                stroke="#D4AF37"
+                stroke="#FFC46B"
                 tick={{ fontSize: 11 }}
                 tickFormatter={v => v.toFixed(2)}
                 yAxisId="hit"
@@ -997,7 +997,7 @@ export default function AigarthLabTab() {
               <Tooltip
                 contentStyle={{
                   backgroundColor: '#0A0A0A',
-                  border: '1px solid #D4AF37',
+                  border: '1px solid #FFC46B',
                 }}
                 formatter={(v, n) => {
                   if (typeof v !== 'number') return String(v)
@@ -1031,9 +1031,9 @@ export default function AigarthLabTab() {
               <Legend wrapperStyle={{ fontSize: 12 }} />
               <Line
                 dataKey="hit"
-                dot={{ fill: '#D4AF37' }}
+                dot={{ fill: '#FFC46B' }}
                 name="Hit rate"
-                stroke="#D4AF37"
+                stroke="#FFC46B"
                 strokeWidth={2}
                 yAxisId="hit"
               />
@@ -1112,7 +1112,7 @@ export default function AigarthLabTab() {
                 <Tooltip
                   contentStyle={{
                     backgroundColor: '#0A0A0A',
-                    border: '1px solid #D4AF37',
+                    border: '1px solid #FFC46B',
                   }}
                   formatter={v =>
                     typeof v === 'number' ? v.toFixed(0) : String(v)
@@ -1162,7 +1162,7 @@ export default function AigarthLabTab() {
                 <Tooltip
                   contentStyle={{
                     backgroundColor: '#0A0A0A',
-                    border: '1px solid #D4AF37',
+                    border: '1px solid #FFC46B',
                   }}
                 />
                 <Bar dataKey="state">
@@ -1172,7 +1172,7 @@ export default function AigarthLabTab() {
                         s === 1
                           ? '#2ca02c'
                           : d10.output_neuron_indices.includes(i)
-                            ? '#D4AF37'
+                            ? '#FFC46B'
                             : '#7f7f7f'
                       }
                       key={`s-${i}`}

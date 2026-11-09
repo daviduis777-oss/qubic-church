@@ -354,7 +354,7 @@ export function Phase07_SatoshiNakamoto() {
     }
     window.addEventListener('keydown', onKey)
     // eslint-disable-next-line no-console
-    console.log('%cWhy 369? Guess why my virus had length of 369 bytes.%c\n…1d a1 cf b4 ad…  → /docs/03-results/17-cfb-satoshi-analysis', 'color:#ffd24a;font:bold 14px monospace', 'color:#999;font:12px monospace')
+    console.log('%cWhy 369? Guess why my virus had length of 369 bytes.%c\n…1d a1 cf b4 ad…  → /docs/03-results/17-cfb-satoshi-analysis', 'color:#FFC46B;font:bold 14px monospace', 'color:#999;font:12px monospace')
     return () => window.removeEventListener('keydown', onKey)
   }, [])
 

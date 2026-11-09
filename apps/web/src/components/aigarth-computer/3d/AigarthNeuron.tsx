@@ -9,7 +9,7 @@ import type { TernaryState } from '@/lib/aigarth/types'
 const STATE_COLORS = {
   '-1': new THREE.Color('#EF4444'), // Red (inhibited) - keep red for errors/negative
   '0': new THREE.Color('#6B7280'), // Gray (neutral)
-  '1': new THREE.Color('#D4AF37'), // Gold (excited)
+  '1': new THREE.Color('#FFC46B'), // Gold (excited)
 }
 
 interface AigarthNeuronProps {
@@ -86,7 +86,7 @@ export function AigarthNeuron({
         <mesh>
           <ringGeometry args={[size * 1.5, size * 1.8, 32]} />
           <meshBasicMaterial
-            color={isInput ? '#D4AF37' : '#D4AF37'}
+            color={isInput ? '#FFC46B' : '#FFC46B'}
             opacity={0.8}
             side={THREE.DoubleSide}
             transparent

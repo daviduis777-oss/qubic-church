@@ -101,7 +101,7 @@ const SEGMENTS: WheelSegment[] = [
   },
 ]
 
-const GOLD_BRIGHT = '#f0c030'
+const GOLD_BRIGHT = '#FFE3B0'
 
 function NavGrid({
   onNavigate,
@@ -308,7 +308,7 @@ export function NavigationWheel({
               style={{
                 background: '#05040a',
                 border: '1px solid rgba(240,192,48,0.2)',
-                borderLeft: '3px solid #f0c030',
+                borderLeft: '3px solid #FFE3B0',
                 padding: 'clamp(1.5rem, 4vw, 2.5rem) clamp(1rem, 4vw, 3rem)',
               }}
             >
@@ -316,14 +316,14 @@ export function NavigationWheel({
                 Research archive
               </div>
               <div
-                className="font-serif text-xl text-[#f0c030] tracking-widest mb-6"
+                className="font-serif text-xl text-[#FFE3B0] tracking-widest mb-6"
                 style={{ fontFamily: 'Cinzel, serif' }}
               >
                 Disclaimer
               </div>
               <p className="font-mono text-sm text-white/75 leading-8 mb-6">
                 You are entering the{' '}
-                <span className="text-[#f0c030]">Research Archive</span>. This
+                <span className="text-[#FFE3B0]">Research Archive</span>. This
                 section contains academic analysis, community-sourced
                 investigation, and speculative theories about the Qubic protocol
                 and its origins.
@@ -337,8 +337,8 @@ export function NavigationWheel({
               <div className="flex gap-4 flex-wrap">
                 <button
                   className="font-mono text-xs tracking-widest uppercase
-                             bg-[#f0c030]/10 border border-[#f0c030]/50 text-[#f0c030]
-                             px-7 py-3 cursor-pointer hover:bg-[#f0c030]/20 transition-all"
+                             bg-[#FFE3B0]/10 border border-[#FFE3B0]/50 text-[#FFE3B0]
+                             px-7 py-3 cursor-pointer hover:bg-[#FFE3B0]/20 transition-all"
                   onClick={() => {
                     setShowResearchDisclaimer(false)
                     router.push('/docs')

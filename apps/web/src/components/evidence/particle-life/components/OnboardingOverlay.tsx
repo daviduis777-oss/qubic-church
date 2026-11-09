@@ -84,7 +84,7 @@ export function OnboardingOverlay({ onComplete, onQuickDemo }: OnboardingOverlay
               key={i}
               className={cn(
                 'w-1.5 h-1.5 rounded-full transition-all',
-                i === step ? 'bg-[#D4AF37] w-4' : i < step ? 'bg-[#D4AF37]/30' : 'bg-white/10',
+                i === step ? 'bg-[#FFC46B] w-4' : i < step ? 'bg-[#FFC46B]/30' : 'bg-white/10',
               )}
             />
           ))}
@@ -93,8 +93,8 @@ export function OnboardingOverlay({ onComplete, onQuickDemo }: OnboardingOverlay
         {/* Content */}
         <div className="p-6 space-y-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-[#D4AF37]/10 border border-[#D4AF37]/20">
-              <Icon className="w-5 h-5 text-[#D4AF37]" />
+            <div className="p-2 bg-[#FFC46B]/10 border border-[#FFC46B]/20">
+              <Icon className="w-5 h-5 text-[#FFC46B]" />
             </div>
             <h3 className="text-base font-bold tracking-wider text-white/90">
               {currentStep.title}
@@ -105,7 +105,7 @@ export function OnboardingOverlay({ onComplete, onQuickDemo }: OnboardingOverlay
             {currentStep.description}
           </p>
 
-          <p className="text-xs text-[#D4AF37]/60 font-mono">
+          <p className="text-xs text-[#FFC46B]/60 font-mono">
             {currentStep.highlight}
           </p>
         </div>
@@ -135,13 +135,13 @@ export function OnboardingOverlay({ onComplete, onQuickDemo }: OnboardingOverlay
               <div className="flex items-center gap-2">
                 <button
                   onClick={handleQuickDemo}
-                  className="px-3 py-1.5 text-xs font-mono bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/20 hover:bg-[#D4AF37]/20 transition-colors"
+                  className="px-3 py-1.5 text-xs font-mono bg-[#FFC46B]/10 text-[#FFC46B] border border-[#FFC46B]/20 hover:bg-[#FFC46B]/20 transition-colors"
                 >
                   Quick Demo
                 </button>
                 <button
                   onClick={handleClose}
-                  className="px-3 py-1.5 text-xs font-mono bg-[#D4AF37]/20 text-[#D4AF37] border border-[#D4AF37]/30 hover:bg-[#D4AF37]/30 transition-colors"
+                  className="px-3 py-1.5 text-xs font-mono bg-[#FFC46B]/20 text-[#FFC46B] border border-[#FFC46B]/30 hover:bg-[#FFC46B]/30 transition-colors"
                 >
                   Start Exploring
                 </button>

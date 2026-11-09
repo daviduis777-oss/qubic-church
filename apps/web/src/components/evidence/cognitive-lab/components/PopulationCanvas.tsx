@@ -17,7 +17,7 @@ export interface PopulationCanvasProps {
   height?: number
 }
 
-const COLOR_TOP = '#D4AF37'
+const COLOR_TOP = '#FFC46B'
 const COLOR_MED = '#6b7280'
 const COLOR_LOW = '#a16060'
 

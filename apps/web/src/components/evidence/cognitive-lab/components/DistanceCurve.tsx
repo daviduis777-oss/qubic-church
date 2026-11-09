@@ -55,7 +55,7 @@ export function DistanceCurve({ history, height = 180 }: DistanceCurveProps) {
           <Tooltip
             contentStyle={{
               backgroundColor: '#0A0A0A',
-              border: '1px solid #D4AF37',
+              border: '1px solid #FFC46B',
             }}
             formatter={v =>
               typeof v === 'number' ? `${(v * 100).toFixed(1)}%` : String(v)

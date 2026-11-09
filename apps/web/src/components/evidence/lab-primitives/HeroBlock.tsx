@@ -28,7 +28,7 @@ export function HeroBlock({
   headline,
   tagline,
   stats,
-  accent = '#D4AF37',
+  accent = '#FFC46B',
 }: HeroBlockProps) {
   return (
     <FadeSection>

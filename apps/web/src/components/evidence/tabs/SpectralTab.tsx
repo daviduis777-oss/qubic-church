@@ -141,7 +141,7 @@ function RotationCanvas({
 
       // Radial glow
       const bg = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius * 2.5)
-      bg.addColorStop(0, 'rgba(212,175,55,0.05)')
+      bg.addColorStop(0, 'rgba(255,196,107,0.05)')
       bg.addColorStop(1, 'transparent')
       ctx.fillStyle = bg
       ctx.fillRect(0, 0, W, H)
@@ -167,7 +167,7 @@ function RotationCanvas({
       for (let r = 1; r <= 4; r++) {
         ctx.beginPath()
         ctx.arc(cx, cy, radius * r * 0.3, 0, Math.PI * 2)
-        ctx.strokeStyle = `rgba(212,175,55,${0.02 + r * 0.015})`
+        ctx.strokeStyle = `rgba(255,196,107,${0.02 + r * 0.015})`
         ctx.lineWidth = 0.5
         ctx.stroke()
       }
@@ -175,7 +175,7 @@ function RotationCanvas({
       // Main orbit
       ctx.beginPath()
       ctx.arc(cx, cy, radius, 0, Math.PI * 2)
-      ctx.strokeStyle = 'rgba(212,175,55,0.2)'
+      ctx.strokeStyle = 'rgba(255,196,107,0.2)'
       ctx.lineWidth = 1.5
       ctx.stroke()
 
@@ -197,13 +197,13 @@ function RotationCanvas({
       const arcR = radius * 0.38
       ctx.beginPath()
       ctx.arc(cx, cy, arcR, 0, -Math.PI / 2, true)
-      ctx.strokeStyle = 'rgba(212,175,55,0.7)'
+      ctx.strokeStyle = 'rgba(255,196,107,0.7)'
       ctx.lineWidth = 2.5
       ctx.stroke()
       // Arrow
       const aX = cx + Math.cos(-Math.PI / 2) * arcR,
         aY = cy + Math.sin(-Math.PI / 2) * arcR
-      ctx.fillStyle = 'rgba(212,175,55,0.9)'
+      ctx.fillStyle = 'rgba(255,196,107,0.9)'
       ctx.beginPath()
       ctx.moveTo(aX, aY)
       ctx.lineTo(aX + 6, aY + 8)
@@ -213,7 +213,7 @@ function RotationCanvas({
       // Angle label
       const fs = Math.max(14, radius * 0.1)
       ctx.font = `bold ${fs}px monospace`
-      ctx.fillStyle = '#D4AF37'
+      ctx.fillStyle = '#FFC46B'
       ctx.textAlign = 'center'
       ctx.fillText('90.456°', cx + arcR * 0.5, cy - arcR * 0.5)
 
@@ -292,8 +292,8 @@ function RotationCanvas({
         const dy = cy - ((data.dominant.imag * sign) / maxMag) * radius * 0.88
         const pr = 5 + Math.sin(frame * 0.04) * 2
         const dg = ctx.createRadialGradient(dx, dy, 2, dx, dy, pr * 3)
-        dg.addColorStop(0, 'rgba(212,175,55,0.5)')
-        dg.addColorStop(0.4, 'rgba(212,175,55,0.08)')
+        dg.addColorStop(0, 'rgba(255,196,107,0.5)')
+        dg.addColorStop(0.4, 'rgba(255,196,107,0.08)')
         dg.addColorStop(1, 'transparent')
         ctx.beginPath()
         ctx.arc(dx, dy, pr * 3, 0, Math.PI * 2)
@@ -301,13 +301,13 @@ function RotationCanvas({
         ctx.fill()
         ctx.beginPath()
         ctx.arc(dx, dy, 4, 0, Math.PI * 2)
-        ctx.fillStyle = '#D4AF37'
+        ctx.fillStyle = '#FFC46B'
         ctx.fill()
 
         if (sign === 1) {
           const lfs = Math.max(10, radius * 0.04)
           ctx.font = `bold ${lfs}px monospace`
-          ctx.fillStyle = '#D4AF37'
+          ctx.fillStyle = '#FFC46B'
           ctx.textAlign = 'left'
           ctx.fillText(
             `|λ| = ${data.dominant.magnitude.toLocaleString()}`,
@@ -315,7 +315,7 @@ function RotationCanvas({
             dy - 3
           )
           ctx.font = `${lfs * 0.8}px monospace`
-          ctx.fillStyle = 'rgba(212,175,55,0.4)'
+          ctx.fillStyle = 'rgba(255,196,107,0.4)'
           ctx.fillText(
             `angle = ${data.dominant.angle_deg}°`,
             dx + 14,
@@ -393,12 +393,12 @@ export default function SpectralTab() {
 
   const ttStyle = {
     backgroundColor: '#0a0a0a',
-    border: '1px solid rgba(212,175,55,0.3)',
+    border: '1px solid rgba(255,196,107,0.3)',
     fontSize: 11,
     fontFamily: 'monospace',
     color: '#e5e5e5',
   }
-  const ttLabelStyle = { color: 'rgba(212,175,55,0.6)' }
+  const ttLabelStyle = { color: 'rgba(255,196,107,0.6)' }
   const ttItemStyle = { color: '#e5e5e5' }
 
   if (loading || !data)
@@ -584,17 +584,17 @@ export default function SpectralTab() {
                     }}
                   />
                   <YAxis
-                    axisLine={{ stroke: 'rgba(212,175,55,0.12)' }}
+                    axisLine={{ stroke: 'rgba(255,196,107,0.12)' }}
                     domain={[85, 95]}
                     label={{
                       value: 'Angle (°)',
                       angle: -90,
                       position: 'insideLeft',
                       offset: -5,
-                      style: { fill: '#D4AF37', fontSize: 10 },
+                      style: { fill: '#FFC46B', fontSize: 10 },
                     }}
                     tick={{
-                      fill: '#D4AF37',
+                      fill: '#FFC46B',
                       fontSize: 10,
                       fontFamily: 'monospace',
                     }}
@@ -627,7 +627,7 @@ export default function SpectralTab() {
                     labelStyle={ttLabelStyle}
                   />
                   <ReferenceLine
-                    stroke="rgba(212,175,55,0.12)"
+                    stroke="rgba(255,196,107,0.12)"
                     strokeDasharray="8 4"
                     y={90}
                     yAxisId="a"
@@ -635,12 +635,12 @@ export default function SpectralTab() {
                   <Line
                     dataKey="angle_deg"
                     dot={{
-                      fill: '#D4AF37',
+                      fill: '#FFC46B',
                       r: 5,
                       strokeWidth: 2,
                       stroke: '#0a0a0a',
                     }}
-                    stroke="#D4AF37"
+                    stroke="#FFC46B"
                     strokeWidth={2.5}
                     type="monotone"
                     yAxisId="a"
@@ -766,10 +766,10 @@ export default function SpectralTab() {
                   <Scatter data={eigenPts}>
                     {eigenPts.map(e => (
                       <Cell
-                        fill={e.isDom ? '#D4AF37' : 'rgba(255,255,255,0.15)'}
+                        fill={e.isDom ? '#FFC46B' : 'rgba(255,255,255,0.15)'}
                         key={`ev-${e.real}-${e.imag}`}
                         r={e.isDom ? 10 : Math.max(2, e.magnitude / 250)}
-                        stroke={e.isDom ? 'rgba(212,175,55,0.4)' : 'none'}
+                        stroke={e.isDom ? 'rgba(255,196,107,0.4)' : 'none'}
                         strokeWidth={e.isDom ? 4 : 0}
                       />
                     ))}

@@ -95,7 +95,7 @@ function NeuralCircle({
     <group>
       {/* Ambient particles */}
       <Sparkles
-        color="#D4AF37"
+        color="#FFC46B"
         count={50}
         opacity={0.2}
         scale={8}
@@ -126,18 +126,18 @@ function NeuralCircle({
       {/* Central energy indicator */}
       <mesh>
         <sphereGeometry args={[0.3, 32, 32]} />
-        <meshBasicMaterial color="#D4AF37" opacity={0.1} transparent />
+        <meshBasicMaterial color="#FFC46B" opacity={0.1} transparent />
       </mesh>
 
       {/* Ring indicators */}
       <mesh rotation={[Math.PI / 2, 0, 0]}>
         <ringGeometry args={[2.4, 2.6, 64]} />
-        <meshBasicMaterial color="#D4AF37" opacity={0.1} side={2} transparent />
+        <meshBasicMaterial color="#FFC46B" opacity={0.1} side={2} transparent />
       </mesh>
       <mesh rotation={[Math.PI / 2, 0, 0]}>
         <ringGeometry args={[1.7, 1.9, 64]} />
         <meshBasicMaterial
-          color="#D4AF37"
+          color="#FFC46B"
           opacity={0.06}
           side={2}
           transparent
@@ -151,7 +151,7 @@ function LoadingFallback() {
   return (
     <mesh>
       <boxGeometry args={[0.5, 0.5, 0.5]} />
-      <meshBasicMaterial color="#D4AF37" wireframe />
+      <meshBasicMaterial color="#FFC46B" wireframe />
     </mesh>
   )
 }
@@ -260,13 +260,13 @@ export function AigarthScene({
           position={[5, 5, 5]}
         />
         <pointLight
-          color="#D4AF37"
+          color="#FFC46B"
           decay={2}
           intensity={0.6}
           position={[5, 5, 5]}
         />
         <pointLight
-          color="#D4AF37"
+          color="#FFC46B"
           decay={2}
           intensity={0.4}
           position={[-5, -5, -5]}

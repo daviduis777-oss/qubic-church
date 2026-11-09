@@ -108,7 +108,7 @@ export function FoldingAnimation({
             />
             {showOutlines && (
               <CubeFaceOutline
-                color={progress > 0.9 ? '#D4AF37' : '#6b5a1e'}
+                color={progress > 0.9 ? '#FFC46B' : '#6b5a1e'}
                 opacity={0.2 + progress * 0.3}
                 transform={transform}
               />
@@ -145,7 +145,7 @@ export function FoldingProgressIndicator({
   return (
     <mesh position={[0, -8, 0]} ref={meshRef}>
       <torusGeometry args={[2, 0.1, 8, 32, progress * Math.PI * 2]} />
-      <meshBasicMaterial color={isAnimating ? '#D4AF37' : '#333333'} />
+      <meshBasicMaterial color={isAnimating ? '#FFC46B' : '#333333'} />
     </mesh>
   )
 }

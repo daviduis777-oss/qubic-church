@@ -137,7 +137,7 @@ export function CubeFace({
         if (anomaly) {
           // Highlight anomalies, color-coded by column pair
           if (anomaly.special) {
-            color = new THREE.Color('#FFD700') // Gold for special [22,22]
+            color = new THREE.Color('#FFC46B') // Gold for special [22,22]
           } else if (
             selectedAnomaly?.pos[0] === anomaly.pos[0] &&
             selectedAnomaly?.pos[1] === anomaly.pos[1]
@@ -276,7 +276,7 @@ export function CubeFaceOutline({
   opacity?: number
 }) {
   const lineRef = useRef<THREE.LineSegments>(null)
-  const isGold = color === '#D4AF37'
+  const isGold = color === '#FFC46B'
 
   const geometry = useMemo(() => {
     const halfSize = CUBE_SCALE / 2
@@ -297,7 +297,7 @@ export function CubeFaceOutline({
   const material = useMemo(() => {
     if (isGold) {
       return new THREE.LineBasicMaterial({
-        color: '#D4AF37',
+        color: '#FFC46B',
         transparent: true,
         opacity: Math.min(opacity * 2, 1),
       })

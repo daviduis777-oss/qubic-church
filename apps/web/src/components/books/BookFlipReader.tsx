@@ -24,7 +24,7 @@ import {
 
 pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs'
 
-const GOLD = '#f0c030'
+const GOLD = '#FFE3B0'
 const TEXT_DIM = 'rgba(216, 216, 226, 0.55)'
 
 const PDF_ASPECT = 1.414 // ~A4 portrait

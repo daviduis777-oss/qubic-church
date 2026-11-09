@@ -27,7 +27,7 @@ async function fonts() {
 }
 
 const THEMES = {
-  gold: { bg: 'radial-gradient(900px 620px at 80% 45%, rgba(60,90,230,.45), #070914 70%)', accent: '#f0c030', glow: 'rgba(240,192,48,.35)' },
+  gold: { bg: 'radial-gradient(900px 620px at 80% 45%, rgba(60,90,230,.45), #070914 70%)', accent: '#FFE3B0', glow: 'rgba(240,192,48,.35)' },
   amber: { bg: 'radial-gradient(800px 600px at 78% 50%, #2a1a0a, #0B0A0E 68%)', accent: '#FFC46B', glow: 'rgba(232,145,46,.55)' },
   blue: { bg: 'radial-gradient(900px 620px at 80% 45%, #1d3b66, #070a14 70%)', accent: '#9cc3ff', glow: 'rgba(120,160,255,.35)' },
 } as const

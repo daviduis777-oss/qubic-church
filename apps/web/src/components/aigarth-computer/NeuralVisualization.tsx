@@ -52,7 +52,7 @@ export function NeuralVisualization({
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="0.5"
-                className="text-[#D4AF37]/30"
+                className="text-[#FFC46B]/30"
               />
             </pattern>
           </defs>
@@ -69,7 +69,7 @@ export function NeuralVisualization({
         {/* Glow effect */}
         <defs>
           <radialGradient id="centerGlow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="rgba(212, 175, 55, 0.2)" />
+            <stop offset="0%" stopColor="rgba(255, 196, 107, 0.2)" />
             <stop offset="100%" stopColor="transparent" />
           </radialGradient>
 
@@ -91,7 +91,7 @@ export function NeuralVisualization({
           cy={centerY}
           r={radius}
           fill="none"
-          stroke="rgba(212, 175, 55, 0.2)"
+          stroke="rgba(255, 196, 107, 0.2)"
           strokeWidth="1"
           strokeDasharray="4 4"
         />
@@ -102,7 +102,7 @@ export function NeuralVisualization({
           cy={centerY}
           r={radius * 0.5}
           fill="none"
-          stroke="rgba(212, 175, 55, 0.1)"
+          stroke="rgba(255, 196, 107, 0.1)"
           strokeWidth="1"
         />
 
@@ -125,7 +125,7 @@ export function NeuralVisualization({
                   y1={y}
                   x2={tx}
                   y2={ty}
-                  stroke="rgba(212, 175, 55, 0.1)"
+                  stroke="rgba(255, 196, 107, 0.1)"
                   strokeWidth="1"
                 />
               )
@@ -139,7 +139,7 @@ export function NeuralVisualization({
           const y = centerY + Math.sin(neuron.angle) * radius
 
           let color = 'rgb(75, 85, 99)' // gray for 0
-          if (neuron.state > 0) color = 'rgb(212, 175, 55)' // gold
+          if (neuron.state > 0) color = 'rgb(255, 196, 107)' // gold
           if (neuron.state < 0) color = 'rgb(239, 68, 68)' // red
 
           const size = neuron.isInput ? 3 : 4
@@ -163,7 +163,7 @@ export function NeuralVisualization({
                   cy={y}
                   r={size + 3}
                   fill="none"
-                  stroke={neuron.isInput ? 'rgba(212, 175, 55, 0.5)' : 'rgba(212, 175, 55, 0.3)'}
+                  stroke={neuron.isInput ? 'rgba(255, 196, 107, 0.5)' : 'rgba(255, 196, 107, 0.3)'}
                   strokeWidth="1"
                 />
               )}
@@ -187,7 +187,7 @@ export function NeuralVisualization({
             y={centerY + 5}
             textAnchor="middle"
             className={`text-lg font-bold ${
-              energy > 0 ? 'fill-[#D4AF37]' : energy < 0 ? 'fill-red-400' : 'fill-zinc-400'
+              energy > 0 ? 'fill-[#FFC46B]' : energy < 0 ? 'fill-red-400' : 'fill-zinc-400'
             }`}
           >
             {energy > 0 ? '+' : ''}{energy}
@@ -205,10 +205,10 @@ export function NeuralVisualization({
 
         {/* Legend */}
         <g transform="translate(10, 270)">
-          <circle cx={5} cy={5} r={4} fill="rgb(212, 175, 55)" />
+          <circle cx={5} cy={5} r={4} fill="rgb(255, 196, 107)" />
           <text x={15} y={9} className="fill-zinc-400 text-xs">Input (0-63)</text>
 
-          <circle cx={85} cy={5} r={4} fill="rgba(212, 175, 55, 0.5)" />
+          <circle cx={85} cy={5} r={4} fill="rgba(255, 196, 107, 0.5)" />
           <text x={95} y={9} className="fill-zinc-400 text-xs">Output (64-127)</text>
         </g>
       </svg>
@@ -218,7 +218,7 @@ export function NeuralVisualization({
         <div className="absolute bottom-4 left-4 right-4">
           <div className="h-1 bg-[#0a0a0a] overflow-hidden border border-white/[0.04]">
             <div
-              className="h-full bg-gradient-to-r from-[#D4AF37] to-[#D4AF37]/50 transition-all duration-100"
+              className="h-full bg-gradient-to-r from-[#FFC46B] to-[#FFC46B]/50 transition-all duration-100"
               style={{ width: `${(tick / 500) * 100}%` }}
             />
           </div>

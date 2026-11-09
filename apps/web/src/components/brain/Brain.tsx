@@ -257,7 +257,7 @@ function BrainStyles() {
 .br-mute { color: #8ea0c4; }
 .br-small { font-size: 12px; line-height: 1.5; }
 .br-quote { position: absolute; z-index: 3; left: clamp(16px, 2.5vw, 40px); top: 50%; transform: translateY(-20%); margin: 0; width: 250px; text-align: left; pointer-events: none; text-shadow: 0 1px 12px #02040a; }
-.br-quote blockquote { margin: 0; font-family: var(--font-instrument-serif), Georgia, serif; font-style: italic; font-size: 21px; line-height: 1.25; color: #f1e6c8; text-shadow: 0 0 18px rgba(254,206,52,.25); }
+.br-quote blockquote { margin: 0; font-family: var(--font-instrument-serif), Georgia, serif; font-style: italic; font-size: 21px; line-height: 1.25; color: #f1e6c8; text-shadow: 0 0 18px rgba(255,196,107,.25); }
 .br-quote figcaption { margin-top: 4px; font-size: 12px; color: #a99a78; }
 .br-tip { position: absolute; z-index: 4; pointer-events: none; font-size: 12px; background: rgba(6,10,22,.9); border: 1px solid rgba(120,170,255,.25); padding: 4px 8px; border-radius: 8px; font-variant-numeric: tabular-nums; }
 .br-card { position: absolute; z-index: 4; left: clamp(16px, 2.5vw, 40px); bottom: 150px; width: min(330px, calc(100% - 32px)); background: rgba(6,10,22,.86); border: 1px solid rgba(120,170,255,.28); border-radius: 16px; padding: 14px 16px; display: grid; gap: 8px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
@@ -274,7 +274,7 @@ function BrainStyles() {
 .br-btn.main.on { background: rgba(124,72,255,.45); color: #f3efff; border-color: rgba(185,166,255,.8); box-shadow: 0 0 34px rgba(124,72,255,.7); }
 .br-hooks { pointer-events: auto; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; padding: 0 16px; }
 .br-hooks a { display: grid; gap: 2px; text-decoration: none; color: #e6eefc; padding: 8px 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,.08); background: rgba(6,10,22,.55); min-width: 180px; text-align: left; transition: border-color .15s, background .15s; }
-.br-hooks a:hover { border-color: rgba(254,206,52,.45); background: rgba(254,206,52,.06); }
+.br-hooks a:hover { border-color: rgba(255,196,107,.45); background: rgba(255,196,107,.06); }
 .br-hooks b { font-size: 13px; font-weight: 600; }
 .br-hooks span { font-size: 12px; color: #8ea0c4; }
 .br-cue { width: 18px; height: 18px; border-right: 1.5px solid #9fb0d0; border-bottom: 1.5px solid #9fb0d0; transform: rotate(45deg); animation: br-cue 2.2s ease-in-out infinite; opacity: .8; }

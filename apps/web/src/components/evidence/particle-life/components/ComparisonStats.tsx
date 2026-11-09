@@ -89,7 +89,7 @@ function effectLabel(d: number): string {
 }
 
 function pColor(p: number): string {
-  if (p < 0.01) return 'text-[#D4AF37]'
+  if (p < 0.01) return 'text-[#FFC46B]'
   if (p < 0.05) return 'text-emerald-400'
   return 'text-white/45'
 }
@@ -228,7 +228,7 @@ export function ComparisonStats({ history1, history2, label1, label2, color1, co
       {/* Header */}
       <div className="flex items-center justify-between p-3 pb-0">
         <div className="flex items-center gap-2">
-          <Trophy className="w-3.5 h-3.5 text-[#D4AF37]/40" />
+          <Trophy className="w-3.5 h-3.5 text-[#FFC46B]/40" />
           <span className="text-xs font-mono text-white/55 uppercase tracking-wider">
             A/B Comparison
           </span>
@@ -239,14 +239,14 @@ export function ComparisonStats({ history1, history2, label1, label2, color1, co
         <div className="flex items-center gap-1">
           <button
             onClick={() => setViewMode('visual')}
-            className={cn('p-1 transition-colors', viewMode === 'visual' ? 'text-[#D4AF37]/60' : 'text-white/30 hover:text-white/45')}
+            className={cn('p-1 transition-colors', viewMode === 'visual' ? 'text-[#FFC46B]/60' : 'text-white/30 hover:text-white/45')}
             title="Visual comparison"
           >
             <BarChart3 className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={() => setViewMode('table')}
-            className={cn('p-1 transition-colors', viewMode === 'table' ? 'text-[#D4AF37]/60' : 'text-white/30 hover:text-white/45')}
+            className={cn('p-1 transition-colors', viewMode === 'table' ? 'text-[#FFC46B]/60' : 'text-white/30 hover:text-white/45')}
             title="Table view"
           >
             <Table2 className="w-3.5 h-3.5" />
@@ -259,13 +259,13 @@ export function ComparisonStats({ history1, history2, label1, label2, color1, co
         <div className="flex items-center gap-1.5">
           <div className="w-3 h-1.5" style={{ backgroundColor: color1 }} />
           <span style={{ color: color1 }}>{label1}</span>
-          {wins1 > wins2 && <Trophy className="w-2.5 h-2.5 text-[#D4AF37]/50" />}
+          {wins1 > wins2 && <Trophy className="w-2.5 h-2.5 text-[#FFC46B]/50" />}
         </div>
         <span className="text-white/30">vs</span>
         <div className="flex items-center gap-1.5">
           <div className="w-3 h-1.5" style={{ backgroundColor: color2 }} />
           <span style={{ color: color2 }}>{label2}</span>
-          {wins2 > wins1 && <Trophy className="w-2.5 h-2.5 text-[#D4AF37]/50" />}
+          {wins2 > wins1 && <Trophy className="w-2.5 h-2.5 text-[#FFC46B]/50" />}
         </div>
       </div>
 

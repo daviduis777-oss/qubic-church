@@ -211,7 +211,7 @@ function PositionLabel({
     <Text
       anchorX="center"
       anchorY="bottom"
-      color="#FFD700"
+      color="#FFC46B"
       font={undefined}
       fontSize={0.15}
       position={position}

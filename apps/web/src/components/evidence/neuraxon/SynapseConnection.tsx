@@ -17,7 +17,7 @@ interface SynapseConnectionProps {
 // Color mapping for connection types with gradients
 const TYPE_COLORS = {
   fast: { main: '#22C55E', glow: '#4ADE80' }, // Green
-  slow: { main: '#EAB308', glow: '#FDE047' }, // Yellow
+  slow: { main: '#E8912E', glow: '#FFE3B0' }, // Yellow
   meta: { main: '#8B5CF6', glow: '#A78BFA' }, // Purple
 }
 

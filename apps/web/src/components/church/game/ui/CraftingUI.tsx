@@ -355,7 +355,7 @@ export function CraftingUI({
                             )}
                             {getCraftedItem(selectedRecipe.outputId)!
                               .energyRestore && (
-                              <span className="text-yellow-400">
+                              <span className="text-bpp9000">
                                 +
                                 {
                                   getCraftedItem(selectedRecipe.outputId)!

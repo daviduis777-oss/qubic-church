@@ -89,7 +89,7 @@ function classifyBehavior(stats: SimulationStats[]): {
   if (energyTrend < -0.5) {
     return { state: 'Settling', color: '#F59E0B', description: 'Energy decreasing. System transitioning from chaos toward structured patterns.', confidence: 0.7 }
   }
-  return { state: 'Active Dynamics', color: '#D4AF37', description: 'Complex interaction patterns forming. Watch for emerging structures.', confidence: 0.6 }
+  return { state: 'Active Dynamics', color: '#FFC46B', description: 'Complex interaction patterns forming. Watch for emerging structures.', confidence: 0.6 }
 }
 
 export function RhythmDetector({ history, isOpen, onToggle }: RhythmDetectorProps) {
@@ -120,7 +120,7 @@ export function RhythmDetector({ history, isOpen, onToggle }: RhythmDetectorProp
         className="w-full flex items-center justify-between p-2 sm:p-3 hover:bg-white/[0.02] transition-colors"
       >
         <div className="flex items-center gap-2">
-          <Waves className="w-3.5 h-3.5 text-[#D4AF37]/40" />
+          <Waves className="w-3.5 h-3.5 text-[#FFC46B]/40" />
           <span className="text-xs font-mono text-white/55 uppercase tracking-wider">
             Behavioral Rhythm Analysis
           </span>
@@ -161,7 +161,7 @@ export function RhythmDetector({ history, isOpen, onToggle }: RhythmDetectorProp
           {/* Rhythm indicators */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
             {[
-              { label: 'Energy', rhythm: analysis.energyRhythm, color: '#D4AF37' },
+              { label: 'Energy', rhythm: analysis.energyRhythm, color: '#FFC46B' },
               { label: 'Segregation', rhythm: analysis.segRhythm, color: '#3B82F6' },
               { label: 'Cooperation', rhythm: analysis.coopRhythm, color: '#4ade80' },
             ].map(({ label, rhythm, color }) => (
@@ -188,7 +188,7 @@ export function RhythmDetector({ history, isOpen, onToggle }: RhythmDetectorProp
                     <ReferenceLine y={0.3} stroke="rgba(74,222,128,0.15)" strokeDasharray="2 2" />
                     <Line type="monotone" dataKey="acf" stroke={color} strokeWidth={1} dot={false} isAnimationActive={false} />
                     {rhythm.period > 0 && rhythm.strength > 0.3 && (
-                      <ReferenceLine x={rhythm.period} stroke="rgba(212,175,55,0.4)" strokeDasharray="3 3" />
+                      <ReferenceLine x={rhythm.period} stroke="rgba(255,196,107,0.4)" strokeDasharray="3 3" />
                     )}
                   </LineChart>
                 </ResponsiveContainer>

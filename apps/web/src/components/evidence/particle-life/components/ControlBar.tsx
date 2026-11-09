@@ -60,7 +60,7 @@ export function ControlBar({
   const [linkCopied, setLinkCopied] = useState(false)
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false)
   // FPS color (#15 - warning indicator)
-  const fpsColor = fps >= 50 ? 'text-emerald-400/50' : fps >= 30 ? 'text-yellow-400/50' : 'text-red-400/70'
+  const fpsColor = fps >= 50 ? 'text-emerald-400/50' : fps >= 30 ? 'text-bpp9000/50' : 'text-red-400/70'
 
   return (
     <>
@@ -73,7 +73,7 @@ export function ControlBar({
             onClick={isPlaying ? onPause : onPlay}
             className={cn(
               'h-7 px-2 sm:px-3 border-white/[0.08] bg-transparent text-xs',
-              isPlaying && 'border-[#D4AF37]/30 text-[#D4AF37]',
+              isPlaying && 'border-[#FFC46B]/30 text-[#FFC46B]',
             )}
           >
             {isPlaying ? <Pause className="w-3 h-3 sm:mr-1" /> : <Play className="w-3 h-3 sm:mr-1" />}
@@ -113,7 +113,7 @@ export function ControlBar({
               className={cn(
                 'px-1 sm:px-1.5 py-0.5 text-[11px] sm:text-xs font-mono transition-all',
                 speedMultiplier === speed
-                  ? 'bg-[#D4AF37]/20 text-[#D4AF37] font-bold'
+                  ? 'bg-[#FFC46B]/20 text-[#FFC46B] font-bold'
                   : 'text-white/35 hover:text-white/65',
               )}
               title={`${speed}x speed (${idx + 1})`}
@@ -141,7 +141,7 @@ export function ControlBar({
             size="sm"
             onClick={onToggleDensity}
             className={cn('h-7 px-1.5 border-white/[0.08] bg-transparent text-xs',
-              showDensity && 'border-[#D4AF37]/30 text-[#D4AF37]')}
+              showDensity && 'border-[#FFC46B]/30 text-[#FFC46B]')}
             title="Density heatmap (D)"
           >
             <Layers className="w-3 h-3" />
@@ -152,7 +152,7 @@ export function ControlBar({
             size="sm"
             onClick={onToggleGrid}
             className={cn('h-7 px-1.5 border-white/[0.08] bg-transparent text-xs',
-              showGrid && 'border-[#D4AF37]/30 text-[#D4AF37]')}
+              showGrid && 'border-[#FFC46B]/30 text-[#FFC46B]')}
             title="Spatial grid (G)"
           >
             <Grid3X3 className="w-3 h-3" />
@@ -212,7 +212,7 @@ export function ControlBar({
           {speedMultiplier > 1 && (
             <>
               <span className="text-white/8">|</span>
-              <span className="text-[#D4AF37]/50">{speedMultiplier}x</span>
+              <span className="text-[#FFC46B]/50">{speedMultiplier}x</span>
             </>
           )}
         </div>
@@ -292,7 +292,7 @@ export function ControlBar({
                 size="sm"
                 onClick={onToggleDensity}
                 className={cn('h-7 px-2 border-white/[0.08] bg-transparent text-xs',
-                  showDensity && 'border-[#D4AF37]/30 text-[#D4AF37]')}
+                  showDensity && 'border-[#FFC46B]/30 text-[#FFC46B]')}
               >
                 <Layers className="w-3 h-3 mr-1" />Density
               </Button>
@@ -302,7 +302,7 @@ export function ControlBar({
                 size="sm"
                 onClick={onToggleGrid}
                 className={cn('h-7 px-2 border-white/[0.08] bg-transparent text-xs',
-                  showGrid && 'border-[#D4AF37]/30 text-[#D4AF37]')}
+                  showGrid && 'border-[#FFC46B]/30 text-[#FFC46B]')}
               >
                 <Grid3X3 className="w-3 h-3 mr-1" />Grid
               </Button>

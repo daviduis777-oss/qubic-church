@@ -16,7 +16,7 @@ const CONCEPTS = [
     icon: Atom,
     title: 'What is Particle Life?',
     content: 'Imagine hundreds of colored dots floating in space. Each color has rules for how it interacts with other colors, some attract, some repel, some are neutral. From these simple rules, complex patterns emerge: swarms, crystals, predator-prey chases, and cooperative clusters. No pattern is programmed, everything you see is emergent.',
-    color: '#D4AF37',
+    color: '#FFC46B',
   },
   {
     icon: Brain,
@@ -84,7 +84,7 @@ export function WhatAmISeeing({ mode, comparisonMode, isOpen, onToggle }: WhatAm
         className="w-full flex items-center justify-between p-2 sm:p-3 hover:bg-white/[0.02] transition-colors"
       >
         <div className="flex items-center gap-2">
-          <HelpCircle className="w-3.5 h-3.5 text-[#D4AF37]/40" />
+          <HelpCircle className="w-3.5 h-3.5 text-[#FFC46B]/40" />
           <span className="text-xs font-mono text-white/55 uppercase tracking-wider">
             What Am I Seeing?
           </span>
@@ -98,7 +98,7 @@ export function WhatAmISeeing({ mode, comparisonMode, isOpen, onToggle }: WhatAm
       {isOpen && (
         <div className="p-3 pt-0 space-y-3">
           {/* Quick context */}
-          <div className="bg-[#D4AF37]/[0.04] border border-[#D4AF37]/[0.12] p-2.5">
+          <div className="bg-[#FFC46B]/[0.04] border border-[#FFC46B]/[0.12] p-2.5">
             <p className="text-xs text-white/60 font-sans leading-relaxed">
               {mode === 'anna'
                 ? 'You\'re watching particles interact using rules derived from the Anna Matrix. Watch how they self-organize into stable, cooperative structures.'
@@ -106,7 +106,7 @@ export function WhatAmISeeing({ mode, comparisonMode, isOpen, onToggle }: WhatAm
                   ? 'You\'re watching particles with random interaction rules. Compare this to the Anna Matrix to see the difference.'
                   : 'You\'re watching particles with custom rules you defined.'}
               {comparisonMode === 'side-by-side' && (
-                <span className="text-[#D4AF37]/60"> Side-by-side comparison is active, watch how the two simulations diverge over time.</span>
+                <span className="text-[#FFC46B]/60"> Side-by-side comparison is active, watch how the two simulations diverge over time.</span>
               )}
             </p>
           </div>
@@ -120,7 +120,7 @@ export function WhatAmISeeing({ mode, comparisonMode, isOpen, onToggle }: WhatAm
               { action: 'Press C', effect: 'A/B comparison', icon: 'compare' },
             ].map((item) => (
               <div key={item.action} className="bg-white/[0.02] border border-white/[0.04] p-2 text-center">
-                <div className="text-xs font-mono text-[#D4AF37]/40 mb-0.5">
+                <div className="text-xs font-mono text-[#FFC46B]/40 mb-0.5">
                   {item.icon === 'attract' ? '+' : item.icon === 'repel' ? '–' : item.icon === 'drag' ? '~' : 'A|B'}
                 </div>
                 <div className="text-[11px] font-mono text-white/65">{item.action}</div>

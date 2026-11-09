@@ -686,7 +686,7 @@ export function AnnaMatrixGame() {
       }
 
       if (pattern && !isDiscovered) {
-        return 'bg-yellow-500/20 hover:bg-yellow-500/30'
+        return 'bg-bpp9000/20 hover:bg-bpp9000/30'
       }
 
       // Resource node styling
@@ -797,23 +797,23 @@ export function AnnaMatrixGame() {
           </div>
 
           {/* Energy Bar */}
-          <div className="flex items-center gap-1.5 px-2 py-1.5  bg-yellow-500/10 border border-yellow-500/30">
-            <Zap className="w-3.5 h-3.5 text-yellow-400" />
+          <div className="flex items-center gap-1.5 px-2 py-1.5  bg-bpp9000/10 border border-bpp9000/30">
+            <Zap className="w-3.5 h-3.5 text-bpp9000" />
             <div className="w-16 h-2 bg-black/50  overflow-hidden">
               <motion.div
                 animate={{ width: `${(energy / maxEnergy) * 100}%` }}
-                className="h-full bg-gradient-to-r from-yellow-600 to-yellow-400"
+                className="h-full bg-gradient-to-r from-bpp9000-deep to-bpp9000"
               />
             </div>
-            <span className="text-yellow-400 text-xs font-medium">
+            <span className="text-bpp9000 text-xs font-medium">
               {energy}
             </span>
           </div>
 
           {/* Score */}
-          <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5  bg-yellow-500/20 border border-yellow-500/30">
-            <Trophy className="w-4 h-4 text-yellow-400" />
-            <span className="text-yellow-400 font-bold text-sm">
+          <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5  bg-bpp9000/20 border border-bpp9000/30">
+            <Trophy className="w-4 h-4 text-bpp9000" />
+            <span className="text-bpp9000 font-bold text-sm">
               {score.toLocaleString()}
             </span>
           </div>
@@ -995,7 +995,7 @@ export function AnnaMatrixGame() {
               }}
             >
               <div className="absolute inset-0 flex flex-col items-center">
-                <div className="w-3 h-3 bg-gold shadow-[0_0_8px_rgba(212,175,55,0.8)]" />
+                <div className="w-3 h-3 bg-gold shadow-[0_0_8px_rgba(255,196,107,0.8)]" />
                 <div className="w-4 h-2 bg-gold -mt-0.5" />
                 <div className="flex gap-[2px] -mt-[1px]">
                   <div className="w-[6px] h-[6px] bg-blue-600 rounded-sm" />
@@ -1117,7 +1117,7 @@ export function AnnaMatrixGame() {
               {PATTERNS.filter(p => discoveredPatterns.includes(p.id)).map(
                 p => (
                   <div
-                    className="absolute w-1 h-1 bg-yellow-400 "
+                    className="absolute w-1 h-1 bg-bpp9000 "
                     key={p.id}
                     style={{
                       top: `${(p.row / GRID_SIZE) * 100}%`,
@@ -1133,7 +1133,7 @@ export function AnnaMatrixGame() {
                   top: `${(position.row / GRID_SIZE) * 100}%`,
                   left: `${(position.col / GRID_SIZE) * 100}%`,
                 }}
-                className="absolute w-2 h-2 bg-gold  shadow-[0_0_6px_rgba(212,175,55,0.8)]"
+                className="absolute w-2 h-2 bg-gold  shadow-[0_0_6px_rgba(255,196,107,0.8)]"
                 style={{ transform: 'translate(-50%, -50%)' }}
                 transition={{ duration: 0.1 }}
               />
@@ -1187,7 +1187,7 @@ export function AnnaMatrixGame() {
                           +{quest.reward}
                         </span>
                       ) : (
-                        <span className="text-yellow-400 text-xs">
+                        <span className="text-bpp9000 text-xs">
                           {quest.reward} pts
                         </span>
                       )}
@@ -1219,10 +1219,10 @@ export function AnnaMatrixGame() {
                   Scanner
                 </h3>
                 <div className="flex items-center gap-2">
-                  <Zap className="w-3 h-3 text-yellow-400" />
+                  <Zap className="w-3 h-3 text-bpp9000" />
                   <div className="w-16 h-2 bg-white/10  overflow-hidden">
                     <div
-                      className="h-full bg-gradient-to-r from-yellow-500 to-orange-500 transition-all"
+                      className="h-full bg-gradient-to-r from-bpp9000 to-orange-500 transition-all"
                       style={{ width: `${(energy / maxEnergy) * 100}%` }}
                     />
                   </div>
@@ -1264,7 +1264,7 @@ export function AnnaMatrixGame() {
               >
                 <div className="flex items-center justify-between">
                   <span className="text-gold font-medium">Deep Scan</span>
-                  <span className="text-xs text-yellow-400">10 Energy</span>
+                  <span className="text-xs text-bpp9000">10 Energy</span>
                 </div>
                 <p className="text-white/50 text-xs mt-1">
                   Thorough analysis. Reveals hints.
@@ -1286,7 +1286,7 @@ export function AnnaMatrixGame() {
                   <span className="text-orange-400 font-medium">
                     Full Analysis
                   </span>
-                  <span className="text-xs text-yellow-400">50 Energy</span>
+                  <span className="text-xs text-bpp9000">50 Energy</span>
                 </div>
                 <p className="text-white/50 text-xs mt-1">
                   Guaranteed discovery if pattern exists.
@@ -1409,7 +1409,7 @@ export function AnnaMatrixGame() {
             animate={{ opacity: 1, y: 0, x: '-50%' }}
             className={`absolute top-16 left-1/2 z-50 px-4 py-2  backdrop-blur-sm border ${
               notification.type === 'discovery'
-                ? 'bg-yellow-500/20 border-yellow-500/50'
+                ? 'bg-bpp9000/20 border-bpp9000/50'
                 : notification.type === 'quest'
                   ? 'bg-gold/20 border-gold/50'
                   : notification.type === 'combat'
@@ -1421,7 +1421,7 @@ export function AnnaMatrixGame() {
           >
             <div className="flex items-center gap-2">
               {notification.type === 'discovery' && (
-                <Sparkles className="w-4 h-4 text-yellow-400" />
+                <Sparkles className="w-4 h-4 text-bpp9000" />
               )}
               {notification.type === 'quest' && (
                 <Trophy className="w-4 h-4 text-gold" />
@@ -1435,7 +1435,7 @@ export function AnnaMatrixGame() {
               <span
                 className={`font-medium text-sm ${
                   notification.type === 'discovery'
-                    ? 'text-yellow-300'
+                    ? 'text-bpp9000-hot'
                     : notification.type === 'quest'
                       ? 'text-gold/80'
                       : notification.type === 'combat'
@@ -1455,22 +1455,22 @@ export function AnnaMatrixGame() {
         {recentDiscovery && (
           <motion.div
             animate={{ opacity: 1, scale: 1 }}
-            className="absolute bottom-24 left-1/2 -translate-x-1/2 z-40 p-4  bg-black/90 border border-yellow-500/30 backdrop-blur-sm"
+            className="absolute bottom-24 left-1/2 -translate-x-1/2 z-40 p-4  bg-black/90 border border-bpp9000/30 backdrop-blur-sm"
             exit={{ opacity: 0, scale: 0.9 }}
             initial={{ opacity: 0, scale: 0.9 }}
           >
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12  bg-yellow-500/20 flex items-center justify-center text-2xl">
+              <div className="w-12 h-12  bg-bpp9000/20 flex items-center justify-center text-2xl">
                 {PATTERN_TYPES[recentDiscovery.category]?.icon}
               </div>
               <div>
-                <div className="text-yellow-400 font-bold">
+                <div className="text-bpp9000 font-bold">
                   {recentDiscovery.name}
                 </div>
                 <div className="text-white/50 text-sm">
                   {PATTERN_TYPES[recentDiscovery.category]?.name}
                 </div>
-                <div className="text-yellow-300 text-sm font-medium">
+                <div className="text-bpp9000-hot text-sm font-medium">
                   +{recentDiscovery.points} points
                 </div>
               </div>

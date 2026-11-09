@@ -166,7 +166,7 @@ function ConfettiParticles({
     common: ['#94a3b8', '#cbd5e1', '#e2e8f0'],
     rare: ['#3b82f6', '#60a5fa', '#93c5fd'],
     epic: ['#a855f7', '#c084fc', '#d8b4fe'],
-    legendary: ['#f59e0b', '#fbbf24', '#fcd34d', '#ef4444'],
+    legendary: ['#f59e0b', '#fbbf24', '#FFE3B0', '#ef4444'],
   }
 
   const particleColors = colors[rarity]

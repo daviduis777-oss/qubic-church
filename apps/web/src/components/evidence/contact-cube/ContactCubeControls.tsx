@@ -69,7 +69,7 @@ const THEME_LABELS: Record<ColorTheme, { label: string; swatch: string }> = {
   },
   fire: {
     label: 'Fire',
-    swatch: 'bg-gradient-to-r from-blue-900 via-red-600 to-yellow-300',
+    swatch: 'bg-gradient-to-r from-blue-900 via-red-600 to-bpp9000-hot',
   },
   ice: {
     label: 'Ice',

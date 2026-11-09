@@ -31,12 +31,12 @@ const IDENTITIES = [
   {
     name: 'COME-FROM-BEYOND',
     label: 'IDENTITY: COME-FROM-BEYOND',
-    color: '#f0c030',
+    color: '#FFE3B0',
   },
   {
     name: 'SERGEY IVANCHEGLO',
     label: 'BIRTH NAME: SERGEY IVANCHEGLO',
-    color: '#f0c030',
+    color: '#FFE3B0',
   },
   {
     name: 'BCNEXT',
@@ -56,14 +56,14 @@ const IDENTITIES = [
   {
     name: 'COME-FROM-BEYOND',
     label: 'IDENTITY: COME-FROM-BEYOND',
-    color: '#f0c030',
+    color: '#FFE3B0',
   },
-  { name: 'CFB', label: 'ALIAS: CfB, QUBIC FOUNDER', color: '#f0c030' },
+  { name: 'CFB', label: 'ALIAS: CfB, QUBIC FOUNDER', color: '#FFE3B0' },
   { name: '???', label: 'IDENTITY: [REDACTED]', color: '#888' },
   {
     name: 'COME-FROM-BEYOND',
     label: 'IDENTITY: COME-FROM-BEYOND',
-    color: '#f0c030',
+    color: '#FFE3B0',
   },
 ] as const
 
@@ -442,7 +442,7 @@ function DossierAccordion({
         >
           <ChevronDown size={14} />
         </motion.span>
-        <span className="group-hover:text-[#f0c030] transition-colors duration-200">
+        <span className="group-hover:text-[#FFE3B0] transition-colors duration-200">
           {open ? 'Close Dossier' : 'Open Dossier'}
         </span>
       </button>
@@ -1288,7 +1288,7 @@ function HomeButton() {
         className="group-hover:-translate-x-0.5 transition-transform duration-200"
         size={12}
       />
-      <span className="group-hover:text-[#f0c030] transition-colors duration-200">
+      <span className="group-hover:text-[#FFE3B0] transition-colors duration-200">
         HOME
       </span>
     </Link>

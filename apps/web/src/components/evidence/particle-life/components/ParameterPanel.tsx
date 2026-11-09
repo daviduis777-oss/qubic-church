@@ -106,7 +106,7 @@ export function ParameterPanel({
               <select
                 value={samplingStrategy}
                 onChange={(e) => onSamplingChange(e.target.value as SamplingStrategy)}
-                className="bg-[#0a0a0a] border border-white/[0.06] text-white/60 text-xs font-mono px-1.5 py-0.5 focus:outline-none focus:border-[#D4AF37]/30"
+                className="bg-[#0a0a0a] border border-white/[0.06] text-white/60 text-xs font-mono px-1.5 py-0.5 focus:outline-none focus:border-[#FFC46B]/30"
               >
                 <option value="block-average">Block Average</option>
                 <option value="diagonal">Diagonal</option>
@@ -149,7 +149,7 @@ export function ParameterPanel({
                           className="w-3.5 h-3.5 sm:w-4 sm:h-4"
                           style={{
                             backgroundColor: isAttract
-                              ? `rgba(212, 175, 55, ${intensity * 0.8})`
+                              ? `rgba(255, 196, 107, ${intensity * 0.8})`
                               : `rgba(59, 130, 246, ${intensity * 0.8})`,
                           }}
                           title={`[${i},${j}] = ${val.toFixed(3)} (${isAttract ? 'attract' : 'repel'})`}
@@ -160,7 +160,7 @@ export function ParameterPanel({
                 </div>
                 <div className="text-[11px] text-white/40 space-y-0.5">
                   <div className="flex items-center gap-1">
-                    <div className="w-2.5 h-2.5 bg-[#D4AF37]/60" />
+                    <div className="w-2.5 h-2.5 bg-[#FFC46B]/60" />
                     <span>Attraction</span>
                   </div>
                   <div className="flex items-center gap-1">

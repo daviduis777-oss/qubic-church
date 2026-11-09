@@ -52,7 +52,7 @@ function generateTemplate(template: MatrixTemplate, n: number): number[][] {
 function valueToColor(val: number): string {
   if (val > 0) {
     const intensity = Math.min(1, val)
-    return `rgba(212, 175, 55, ${0.2 + intensity * 0.8})`
+    return `rgba(255, 196, 107, ${0.2 + intensity * 0.8})`
   } else if (val < 0) {
     const intensity = Math.min(1, -val)
     return `rgba(59, 130, 246, ${0.2 + intensity * 0.8})`

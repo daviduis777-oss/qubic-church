@@ -582,7 +582,7 @@ export function CombatUI({
           ${isPlayer ? 'bg-cyan-500/30 border-cyan-400' : ''}
           ${enemy ? `bg-red-500/20 border-red-500/50 ${isTargetable ? 'hover:bg-red-500/40 hover:border-red-400' : ''}` : ''}
           ${!isPlayer && !enemy ? 'bg-white/5 border-white/10' : ''}
-          ${selectedEnemy !== null && enemies[selectedEnemy]?.combatPosition.row === row && enemies[selectedEnemy]?.combatPosition.col === col ? 'ring-2 ring-yellow-400' : ''}
+          ${selectedEnemy !== null && enemies[selectedEnemy]?.combatPosition.row === row && enemies[selectedEnemy]?.combatPosition.col === col ? 'ring-2 ring-bpp9000' : ''}
         `}
         key={`${row}-${col}`}
         onClick={() => {
@@ -676,13 +676,13 @@ export function CombatUI({
             <div className="p-3  bg-white/5 border border-white/10">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-white/70 text-sm flex items-center gap-1">
-                  <Zap className="w-4 h-4 text-yellow-400" /> Energy
+                  <Zap className="w-4 h-4 text-bpp9000" /> Energy
                 </span>
                 <span className="text-white font-medium">{energy}</span>
               </div>
               <div className="h-2 bg-black/50  overflow-hidden">
                 <div
-                  className="h-full bg-gradient-to-r from-yellow-600 to-yellow-400 transition-all"
+                  className="h-full bg-gradient-to-r from-bpp9000-deep to-bpp9000 transition-all"
                   style={{ width: `${(energy / 100) * 100}%` }}
                 />
               </div>
@@ -733,7 +733,7 @@ export function CombatUI({
                         >
                           {skill.name}
                         </span>
-                        <span className="text-xs text-yellow-400">
+                        <span className="text-xs text-bpp9000">
                           {skill.energyCost > 0
                             ? `${skill.energyCost}E`
                             : 'FREE'}
@@ -824,7 +824,7 @@ export function CombatUI({
                 </button>
               )}
               <button
-                className="px-4 py-2  bg-yellow-500/20 border border-yellow-500/50 text-yellow-400 hover:bg-yellow-500/30 disabled:opacity-30"
+                className="px-4 py-2  bg-bpp9000/20 border border-bpp9000/50 text-bpp9000 hover:bg-bpp9000/30 disabled:opacity-30"
                 disabled={
                   !isPlayerTurn || isAnimating || energy < ESCAPE_ENERGY_COST
                 }
@@ -996,7 +996,7 @@ export function CombatUI({
                 </div>
                 <div className="flex justify-between p-3  bg-white/5">
                   <span className="text-white/70">Points</span>
-                  <span className="text-yellow-400 font-bold">
+                  <span className="text-bpp9000 font-bold">
                     +{rewards.points}
                   </span>
                 </div>

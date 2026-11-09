@@ -16,7 +16,7 @@ const KEY_FINDINGS = [
     stat: 'Period-4',
     description: 'The Anna Matrix has a dominant eigenvalue at exactly 90.456°, creating a 4-step behavioral cycle: COOPERATE → COOPERATE → REST → REST. This rhythm is hardwired into the matrix\'s mathematical structure.',
     label: 'PROVEN',
-    color: '#D4AF37',
+    color: '#FFC46B',
   },
   {
     icon: TrendingUp,
@@ -113,14 +113,14 @@ function FindingCard({ finding, index }: { finding: typeof KEY_FINDINGS[number];
 
 export function ResearchResultsBanner({ isOpen = true, onToggle }: ResearchResultsBannerProps) {
   return (
-    <div className="border border-[#D4AF37]/15 bg-gradient-to-b from-[#D4AF37]/[0.03] to-transparent">
+    <div className="border border-[#FFC46B]/15 bg-gradient-to-b from-[#FFC46B]/[0.03] to-transparent">
       <button
         onClick={onToggle}
         className="w-full flex items-center justify-between p-3 hover:bg-white/[0.01] transition-colors"
       >
         <div className="flex items-center gap-2">
-          <FlaskConical className="w-4 h-4 text-[#D4AF37]/60" />
-          <span className="text-sm font-mono text-[#D4AF37]/70 uppercase tracking-wider font-medium">
+          <FlaskConical className="w-4 h-4 text-[#FFC46B]/60" />
+          <span className="text-sm font-mono text-[#FFC46B]/70 uppercase tracking-wider font-medium">
             Research Results
           </span>
           <span className="text-[11px] font-mono text-white/35">
@@ -145,8 +145,8 @@ export function ResearchResultsBanner({ isOpen = true, onToggle }: ResearchResul
         <div className="px-3 pb-3 space-y-2">
           {/* Hero stat row */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            <div className="bg-[#D4AF37]/[0.06] border border-[#D4AF37]/15 p-2.5 text-center">
-              <div className="text-lg font-mono text-[#D4AF37] font-bold">33.0%</div>
+            <div className="bg-[#FFC46B]/[0.06] border border-[#FFC46B]/15 p-2.5 text-center">
+              <div className="text-lg font-mono text-[#FFC46B] font-bold">33.0%</div>
               <div className="text-[11px] text-white/45 font-mono">Stable Cooperation</div>
             </div>
             <div className="bg-blue-500/[0.06] border border-blue-500/15 p-2.5 text-center">
@@ -189,7 +189,7 @@ export function ResearchResultsBanner({ isOpen = true, onToggle }: ResearchResul
               <span className="text-white/35">→</span>
               <span className="px-2 py-1 bg-emerald-500/10 text-emerald-400/70 border border-emerald-500/20">Cooperation</span>
               <span className="text-white/35">→</span>
-              <span className="px-2 py-1 bg-[#D4AF37]/10 text-[#D4AF37]/70 border border-[#D4AF37]/20">Sharing</span>
+              <span className="px-2 py-1 bg-[#FFC46B]/10 text-[#FFC46B]/70 border border-[#FFC46B]/20">Sharing</span>
               <span className="text-white/35">→</span>
               <span className="px-2 py-1 bg-amber-500/10 text-amber-400/70 border border-amber-500/20">Energy</span>
               <span className="text-white/30 ml-1">↻</span>

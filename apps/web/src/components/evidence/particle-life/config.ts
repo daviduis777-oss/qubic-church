@@ -2,7 +2,7 @@ import type { SimulationConfig, ResearchPreset, KeyboardShortcutCategory } from 
 
 // --- Particle Colors (matching project design system) ---
 export const PARTICLE_COLORS = [
-  '#D4AF37', // Gold (primary brand)
+  '#FFC46B', // Gold (primary brand)
   '#3B82F6', // Blue
   '#EF4444', // Red
   '#10B981', // Green
@@ -124,7 +124,7 @@ export const RESEARCH_PRESETS: ResearchPreset[] = [
     config: { numTypes: 4, particlesPerType: 120, radius: 100, viscosity: 0.7 },
     matrixMode: 'anna',
     badge: 'New',
-    badgeColor: 'bg-[#D4AF37]/15 text-[#D4AF37]/60 border-[#D4AF37]/20',
+    badgeColor: 'bg-[#FFC46B]/15 text-[#FFC46B]/60 border-[#FFC46B]/20',
     category: 'research',
   },
   {

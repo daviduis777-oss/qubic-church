@@ -37,11 +37,11 @@ export function Evolution3DScene({
     <div className={cn('relative w-full', className)} style={{ height: 460 }}>
       {/* Generation overlay */}
       <div className="absolute top-2 left-3 z-10 pointer-events-none">
-        <div className="text-[10px] uppercase tracking-[0.2em] text-[#D4AF37]/80 font-mono">
+        <div className="text-[10px] uppercase tracking-[0.2em] text-[#FFC46B]/80 font-mono">
           Live AI Evolution
         </div>
         <div className="text-[10px] text-white/45 font-mono mt-0.5">
-          gen <span className="text-[#D4AF37]">{generation}</span> / {totalGenerations}
+          gen <span className="text-[#FFC46B]">{generation}</span> / {totalGenerations}
         </div>
       </div>
       <div className="absolute top-2 right-3 z-10 pointer-events-none text-[10px] text-white/40 font-mono">
@@ -65,7 +65,7 @@ export function Evolution3DScene({
         />
 
         <ambientLight intensity={0.18} />
-        <pointLight position={[10, 10, 10]} intensity={0.9} color="#D4AF37" />
+        <pointLight position={[10, 10, 10]} intensity={0.9} color="#FFC46B" />
         <pointLight position={[-10, -5, -10]} intensity={0.5} color="#4f46e5" />
 
         <Suspense fallback={null}>
@@ -94,12 +94,12 @@ export function Evolution3DScene({
 
       <div className="absolute bottom-2 left-3 right-3 z-10 pointer-events-none flex justify-between items-end text-[10px] font-mono">
         <div className="flex gap-3 text-white/55">
-          <span><span className="inline-block w-2 h-2 rounded-full bg-[#D4AF37] mr-1 align-middle" /> top fitness</span>
+          <span><span className="inline-block w-2 h-2 rounded-full bg-[#FFC46B] mr-1 align-middle" /> top fitness</span>
           <span><span className="inline-block w-2 h-2 rounded-full bg-orange-400 mr-1 align-middle" /> upper</span>
           <span><span className="inline-block w-2 h-2 rounded-full bg-white/45 mr-1 align-middle" /> mid</span>
           <span><span className="inline-block w-2 h-2 rounded-full bg-rose-500 mr-1 align-middle" /> bottom</span>
         </div>
-        <div className="text-[#D4AF37]/70">Anna · gold beacon at center</div>
+        <div className="text-[#FFC46B]/70">Anna · gold beacon at center</div>
       </div>
     </div>
   )
@@ -131,8 +131,8 @@ function AnnaCenter({
       <mesh ref={meshRef}>
         <icosahedronGeometry args={[1.6, 1]} />
         <meshStandardMaterial
-          color="#D4AF37"
-          emissive="#D4AF37"
+          color="#FFC46B"
+          emissive="#FFC46B"
           emissiveIntensity={1.4}
           wireframe
           transparent
@@ -144,7 +144,7 @@ function AnnaCenter({
         <icosahedronGeometry args={[0.7, 2]} />
         <meshStandardMaterial
           color="#fff8d6"
-          emissive="#D4AF37"
+          emissive="#FFC46B"
           emissiveIntensity={2.2}
           roughness={0.2}
           metalness={0.6}
@@ -153,11 +153,11 @@ function AnnaCenter({
       {/* halo sphere for bloom-pickup */}
       <mesh>
         <sphereGeometry args={[2.2, 32, 32]} />
-        <meshBasicMaterial color="#D4AF37" transparent opacity={0.04} />
+        <meshBasicMaterial color="#FFC46B" transparent opacity={0.04} />
       </mesh>
       {/* Anna label sprite */}
       <Html position={[0, 2.4, 0]} center zIndexRange={[100, 0]} distanceFactor={10}>
-        <div className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#D4AF37] whitespace-nowrap pointer-events-none">
+        <div className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#FFC46B] whitespace-nowrap pointer-events-none">
           ANNA
         </div>
       </Html>
@@ -281,7 +281,7 @@ function Population({ perMatrix, annaBaseline, annaAntipodal }: PopulationProps)
         let radius = 0.18
         if (rank < topK) {
           color = '#fff2b8'
-          emissive = '#D4AF37'
+          emissive = '#FFC46B'
           emissiveIntensity = 2.4
           radius = 0.32
         } else if (t < 0.4) {

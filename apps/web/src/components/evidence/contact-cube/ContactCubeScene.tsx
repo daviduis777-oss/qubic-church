@@ -487,11 +487,11 @@ export function ContactCubeScene({
         <ambientLight intensity={0.35} />
         <directionalLight intensity={1.0} position={[10, 10, 5]} />
         <pointLight
-          color="#D4AF37"
+          color="#FFC46B"
           intensity={0.3}
           position={[-10, -10, -10]}
         />
-        <pointLight color="#D4AF37" intensity={0.2} position={[10, -10, 10]} />
+        <pointLight color="#FFC46B" intensity={0.2} position={[10, -10, 10]} />
         <pointLight color="#ffffff" intensity={0.15} position={[0, 10, 0]} />
 
         {/* Environment */}

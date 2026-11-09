@@ -26,7 +26,7 @@ export function ContactCubeLegend({ stats, colorTheme, className = '' }: Contact
     >
       {/* Header */}
       <div className="flex items-center gap-2">
-        <div className="w-8 h-8 bg-gradient-to-br from-[#D4AF37] via-[#D4AF37] to-[#D4AF37] flex items-center justify-center">
+        <div className="w-8 h-8 bg-gradient-to-br from-[#FFC46B] via-[#FFC46B] to-[#FFC46B] flex items-center justify-center">
           <Box className="w-4 h-4 text-white" />
         </div>
         <div>
@@ -43,19 +43,19 @@ export function ContactCubeLegend({ stats, colorTheme, className = '' }: Contact
           </div>
           <div className="grid grid-cols-3 gap-2">
             <div className="text-center">
-              <div className="text-lg font-bold text-[#D4AF37] font-mono">
+              <div className="text-lg font-bold text-[#FFC46B] font-mono">
                 {(stats.totalCells / 1000).toFixed(1)}k
               </div>
               <div className="text-[10px] text-gray-500">Cells</div>
             </div>
             <div className="text-center">
-              <div className="text-lg font-bold text-[#D4AF37] font-mono">
+              <div className="text-lg font-bold text-[#FFC46B] font-mono">
                 {stats.symmetryPercentage.toFixed(1)}%
               </div>
               <div className="text-[10px] text-gray-500">Symmetric</div>
             </div>
             <div className="text-center">
-              <div className="text-lg font-bold text-[#D4AF37] font-mono">{stats.anomalyCells}</div>
+              <div className="text-lg font-bold text-[#FFC46B] font-mono">{stats.anomalyCells}</div>
               <div className="text-[10px] text-gray-500">Anomalies</div>
             </div>
           </div>
@@ -87,14 +87,14 @@ export function ContactCubeLegend({ stats, colorTheme, className = '' }: Contact
         </div>
         <div className="space-y-1.5">
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-[#FFD700] shadow-lg shadow-[#FFD700]/50" />
+            <div className="w-3 h-3 bg-[#FFC46B] shadow-lg shadow-[#FFC46B]/50" />
             <span className="text-xs text-gray-400">
-              <span className="text-[#FFD700] font-mono">(22,22)</span> likely entry error
+              <span className="text-[#FFC46B] font-mono">(22,22)</span> likely entry error
             </span>
           </div>
           <div className="text-xs text-gray-500 mt-1 mb-0.5">Anomaly Columns</div>
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-[#D4AF37] shadow-lg shadow-[#D4AF37]/50" />
+            <div className="w-3 h-3 bg-[#FFC46B] shadow-lg shadow-[#FFC46B]/50" />
             <span className="text-xs text-gray-400 font-mono">22+105 <span className="text-gray-500">(13)</span></span>
           </div>
           <div className="flex items-center gap-2">
@@ -129,8 +129,8 @@ export function ContactCubeLegend({ stats, colorTheme, className = '' }: Contact
           )}
         </button>
         {showFormula && (
-          <div className="mt-2 p-2 bg-[#D4AF37]/10 border border-[#D4AF37]/20">
-            <code className="text-[#D4AF37] text-xs font-mono block">
+          <div className="mt-2 p-2 bg-[#FFC46B]/10 border border-[#FFC46B]/20">
+            <code className="text-[#FFC46B] text-xs font-mono block">
               M[r,c] + M[127-r,127-c] = -1
             </code>
             <p className="text-[10px] text-gray-500 mt-1">

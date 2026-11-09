@@ -35,10 +35,10 @@ export function MethodologyPanel({ isOpen, onToggle, samplingStrategy, numTypes 
         <div className="p-3 pt-0 space-y-4 text-sm font-mono text-white/55 leading-relaxed">
           {/* Key Findings */}
           <section>
-            <h4 className="text-[#D4AF37]/50 uppercase text-sm mb-1.5 tracking-wider">Key Findings (April 2026)</h4>
+            <h4 className="text-[#FFC46B]/50 uppercase text-sm mb-1.5 tracking-wider">Key Findings (April 2026)</h4>
             <div className="space-y-2 text-white/45">
-              <div className="bg-[#D4AF37]/[0.04] border border-[#D4AF37]/[0.12] p-2.5 space-y-1.5">
-                <div className="text-[#D4AF37]/70 text-sm font-medium">Eigenvalue Mechanism</div>
+              <div className="bg-[#FFC46B]/[0.04] border border-[#FFC46B]/[0.12] p-2.5 space-y-1.5">
+                <div className="text-[#FFC46B]/70 text-sm font-medium">Eigenvalue Mechanism</div>
                 <p>The Anna Matrix has a dominant eigenvalue at <span className="text-white/60">90.456&deg;</span> with <span className="text-white/60">40.4%</span> spectral dominance. This creates a <span className="text-white/60">period-4 attractor cycle</span> through energy levels &#123;-50, -38, 42, 56&#125;.</p>
                 <p>The cycle produces the behavioral sequence <span className="text-[#4ade80]/60">COOP</span> &rarr; <span className="text-[#4ade80]/60">COOP</span> &rarr; <span className="text-white/65">REST</span> &rarr; <span className="text-white/65">REST</span>, yielding ~33% stable cooperation in ALife simulations.</p>
               </div>
@@ -65,7 +65,7 @@ export function MethodologyPanel({ isOpen, onToggle, samplingStrategy, numTypes 
 
           {/* Physics Model */}
           <section>
-            <h4 className="text-[#D4AF37]/50 uppercase text-sm mb-1.5 tracking-wider">Physics Model</h4>
+            <h4 className="text-[#FFC46B]/50 uppercase text-sm mb-1.5 tracking-wider">Physics Model</h4>
             <div className="space-y-1.5 text-white/45">
               <p>For each particle pair (i, j) within interaction radius R:</p>
               <div className="bg-white/[0.02] border border-white/[0.04] p-2 font-mono text-sm">
@@ -80,7 +80,7 @@ export function MethodologyPanel({ isOpen, onToggle, samplingStrategy, numTypes 
 
           {/* Matrix Downsampling */}
           <section>
-            <h4 className="text-[#D4AF37]/50 uppercase text-sm mb-1.5 tracking-wider">
+            <h4 className="text-[#FFC46B]/50 uppercase text-sm mb-1.5 tracking-wider">
               Matrix Downsampling (128x128 &rarr; {numTypes}x{numTypes})
             </h4>
             <div className="space-y-1.5 text-white/45">
@@ -93,7 +93,7 @@ export function MethodologyPanel({ isOpen, onToggle, samplingStrategy, numTypes 
 
           {/* Metrics */}
           <section>
-            <h4 className="text-[#D4AF37]/50 uppercase text-sm mb-1.5 tracking-wider">Scientific Metrics</h4>
+            <h4 className="text-[#FFC46B]/50 uppercase text-sm mb-1.5 tracking-wider">Scientific Metrics</h4>
             <div className="space-y-1.5 text-white/45">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <div className="bg-white/[0.02] border border-white/[0.04] p-2">
@@ -127,7 +127,7 @@ export function MethodologyPanel({ isOpen, onToggle, samplingStrategy, numTypes 
 
           {/* Statistical Comparison */}
           <section>
-            <h4 className="text-[#D4AF37]/50 uppercase text-sm mb-1.5 tracking-wider">Statistical Comparison</h4>
+            <h4 className="text-[#FFC46B]/50 uppercase text-sm mb-1.5 tracking-wider">Statistical Comparison</h4>
             <div className="space-y-1.5 text-white/45">
               <p>Side-by-side mode runs identical engines with different rules (Anna vs Random).</p>
               <p>Both use the same seed (42), same particle count, same initial positions.</p>
@@ -138,7 +138,7 @@ export function MethodologyPanel({ isOpen, onToggle, samplingStrategy, numTypes 
 
           {/* Reproducibility */}
           <section>
-            <h4 className="text-[#D4AF37]/50 uppercase text-sm mb-1.5 tracking-wider">Reproducibility</h4>
+            <h4 className="text-[#FFC46B]/50 uppercase text-sm mb-1.5 tracking-wider">Reproducibility</h4>
             <div className="space-y-1.5 text-white/45">
               <p>PRNG: Mulberry32 (seeded, deterministic). Default seed: 42.</p>
               <p>All simulation parameters are encoded in the URL hash and can be shared for exact reproduction.</p>
@@ -152,13 +152,13 @@ export function MethodologyPanel({ isOpen, onToggle, samplingStrategy, numTypes 
               href="https://github.com/hunar4321/particle-life"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[#D4AF37]/30 hover:text-[#D4AF37]/60 flex items-center gap-1"
+              className="text-[#FFC46B]/30 hover:text-[#FFC46B]/60 flex items-center gap-1"
             >
               Original Particle Life <ExternalLink className="w-2.5 h-2.5" />
             </a>
             <Link
               href="/docs/03-results/25-aigarth-research-lab"
-              className="text-[#D4AF37]/30 hover:text-[#D4AF37]/60 flex items-center gap-1"
+              className="text-[#FFC46B]/30 hover:text-[#FFC46B]/60 flex items-center gap-1"
             >
               Full Research Paper <ExternalLink className="w-2.5 h-2.5" />
             </Link>

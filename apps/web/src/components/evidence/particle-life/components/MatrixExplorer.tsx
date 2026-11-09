@@ -63,10 +63,10 @@ export function MatrixExplorer({ matrix, numTypes, samplingStrategy, isOpen, onT
 
     // Overlay: Row 6 band
     if (showRow6) {
-      ctx.fillStyle = 'rgba(212, 175, 55, 0.12)'
+      ctx.fillStyle = 'rgba(255, 196, 107, 0.12)'
       ctx.fillRect(0, 6 * cellSize, size, cellSize)
       // Row 6 label
-      ctx.fillStyle = 'rgba(212, 175, 55, 0.5)'
+      ctx.fillStyle = 'rgba(255, 196, 107, 0.5)'
       ctx.font = `${Math.max(8, cellSize - 1)}px monospace`
       ctx.fillText('R6', 2, 6 * cellSize + cellSize - 1)
     }
@@ -96,7 +96,7 @@ export function MatrixExplorer({ matrix, numTypes, samplingStrategy, isOpen, onT
     // Overlay: Sampling grid
     if (showSamplingGrid) {
       const step = Math.floor(128 / numTypes)
-      ctx.strokeStyle = 'rgba(212, 175, 55, 0.35)'
+      ctx.strokeStyle = 'rgba(255, 196, 107, 0.35)'
       ctx.lineWidth = 1
       ctx.setLineDash([3, 3])
       for (let i = 0; i <= numTypes; i++) {
@@ -109,7 +109,7 @@ export function MatrixExplorer({ matrix, numTypes, samplingStrategy, isOpen, onT
 
     // Selected cell highlight
     if (selectedCell) {
-      ctx.strokeStyle = '#D4AF37'
+      ctx.strokeStyle = '#FFC46B'
       ctx.lineWidth = 2
       ctx.strokeRect(selectedCell.col * cellSize, selectedCell.row * cellSize, cellSize, cellSize)
       // Mirror cell
@@ -233,13 +233,13 @@ export function MatrixExplorer({ matrix, numTypes, samplingStrategy, isOpen, onT
             <div className="space-y-3 text-xs min-w-[200px] flex-shrink-0">
               {/* Selected cell detail */}
               {selectedCell && matrix && (
-                <div className="bg-[#0a0a0a] border border-[#D4AF37]/20 p-2.5 space-y-1.5">
-                  <div className="text-[#D4AF37]/60 font-mono uppercase text-[11px]">Selected Cell</div>
+                <div className="bg-[#0a0a0a] border border-[#FFC46B]/20 p-2.5 space-y-1.5">
+                  <div className="text-[#FFC46B]/60 font-mono uppercase text-[11px]">Selected Cell</div>
                   <div className="grid grid-cols-2 gap-x-3 gap-y-0.5 text-white/65 font-mono">
                     <span className="text-white/40">Position:</span>
                     <span>[{selectedCell.row}, {selectedCell.col}]</span>
                     <span className="text-white/40">Value:</span>
-                    <span className="text-[#D4AF37]">{matrix[selectedCell.row]![selectedCell.col]}</span>
+                    <span className="text-[#FFC46B]">{matrix[selectedCell.row]![selectedCell.col]}</span>
                     <span className="text-white/40">Mirror:</span>
                     <span>[{127 - selectedCell.row}, {127 - selectedCell.col}]</span>
                     <span className="text-white/40">Mirror val:</span>
@@ -261,7 +261,7 @@ export function MatrixExplorer({ matrix, numTypes, samplingStrategy, isOpen, onT
                 <div className="text-white/40 font-mono uppercase">Color Scale</div>
                 <div className="flex items-center gap-1">
                   <div className="w-full h-3 rounded-sm" style={{
-                    background: 'linear-gradient(to right, #3B82F6, #1a1a2e, #D4AF37)',
+                    background: 'linear-gradient(to right, #3B82F6, #1a1a2e, #FFC46B)',
                   }} />
                 </div>
                 <div className="flex justify-between text-white/35 font-mono text-[11px]">
@@ -279,11 +279,11 @@ export function MatrixExplorer({ matrix, numTypes, samplingStrategy, isOpen, onT
                   <span className="text-white/45">{symmetryBreaks.size} symmetry breaks (34 pairs)</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <div className="w-3 h-2.5 bg-[#D4AF37]/25 rounded-sm" />
+                  <div className="w-3 h-2.5 bg-[#FFC46B]/25 rounded-sm" />
                   <span className="text-white/45">Row 6 oracle (24x value 26)</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <div className="w-3 h-2.5 border border-[#D4AF37]/40 border-dashed rounded-sm" />
+                  <div className="w-3 h-2.5 border border-[#FFC46B]/40 border-dashed rounded-sm" />
                   <span className="text-white/45">Sampling grid ({numTypes}x{numTypes})</span>
                 </div>
               </div>
@@ -293,13 +293,13 @@ export function MatrixExplorer({ matrix, numTypes, samplingStrategy, isOpen, onT
                 <div className="text-white/40 font-mono uppercase">Matrix Properties</div>
                 <div className="grid grid-cols-2 gap-x-3 gap-y-0.5 font-mono">
                   <span className="text-white/40">Symmetry:</span>
-                  <span className="text-[#D4AF37]/70">{POINT_SYMMETRY_PERCENT}%</span>
+                  <span className="text-[#FFC46B]/70">{POINT_SYMMETRY_PERCENT}%</span>
                   <span className="text-white/40">Spectral r:</span>
-                  <span className="text-[#D4AF37]/70">{SPECTRAL_RADIUS}</span>
+                  <span className="text-[#FFC46B]/70">{SPECTRAL_RADIUS}</span>
                   <span className="text-white/40">Col sums:</span>
-                  <span className="text-[#D4AF37]/70">all = {FIXED_POINT_COLUMN_SUM}</span>
+                  <span className="text-[#FFC46B]/70">all = {FIXED_POINT_COLUMN_SUM}</span>
                   <span className="text-white/40">Energy lvls:</span>
-                  <span className="text-[#D4AF37]/70">{ENERGY_LEVELS.map((e) => `±${e}`).join(', ')}</span>
+                  <span className="text-[#FFC46B]/70">{ENERGY_LEVELS.map((e) => `±${e}`).join(', ')}</span>
                   <span className="text-white/40">Sampling:</span>
                   <span className="text-white/55">{samplingStrategy}</span>
                 </div>
@@ -323,7 +323,7 @@ export function MatrixExplorer({ matrix, numTypes, samplingStrategy, isOpen, onT
             >
               <div className="flex items-center gap-2">
                 <span className="text-white/55">[{hoveredCell.row},{hoveredCell.col}]</span>
-                <span className={hoveredCell.value > 0 ? 'text-[#D4AF37]' : hoveredCell.value < 0 ? 'text-blue-400' : 'text-white/45'}>
+                <span className={hoveredCell.value > 0 ? 'text-[#FFC46B]' : hoveredCell.value < 0 ? 'text-blue-400' : 'text-white/45'}>
                   {hoveredCell.value > 0 ? '+' : ''}{hoveredCell.value}
                 </span>
                 <span className="text-white/35">|</span>
@@ -347,7 +347,7 @@ function OverlayToggle({ label, active, color, onClick }: {
 }) {
   const colors = color === 'red'
     ? { active: 'bg-red-500/15 text-red-400/70 border-red-500/30', inactive: 'text-white/40 border-white/[0.06]' }
-    : { active: 'bg-[#D4AF37]/15 text-[#D4AF37]/70 border-[#D4AF37]/30', inactive: 'text-white/40 border-white/[0.06]' }
+    : { active: 'bg-[#FFC46B]/15 text-[#FFC46B]/70 border-[#FFC46B]/30', inactive: 'text-white/40 border-white/[0.06]' }
 
   return (
     <button

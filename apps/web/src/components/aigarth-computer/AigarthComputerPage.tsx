@@ -89,7 +89,7 @@ export function AigarthComputerPage() {
       {/* Hero Header */}
       <header className="relative overflow-hidden border-b border-border">
         <div className="absolute inset-0 bg-gradient-to-r from-gold/5 via-gold/3 to-gold/5" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(212,175,55,0.1),transparent_50%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(255,196,107,0.1),transparent_50%)]" />
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex items-center justify-between">

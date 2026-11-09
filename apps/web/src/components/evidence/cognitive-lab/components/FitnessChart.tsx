@@ -62,7 +62,7 @@ export function FitnessChart({
           <Tooltip
             contentStyle={{
               backgroundColor: '#0A0A0A',
-              border: '1px solid #D4AF37',
+              border: '1px solid #FFC46B',
             }}
             formatter={v => (typeof v === 'number' ? v.toFixed(4) : String(v))}
           />
@@ -81,10 +81,10 @@ export function FitnessChart({
             label={{
               value: `Anna ${annaBaseline.toFixed(3)}`,
               position: 'insideTopRight',
-              fill: '#D4AF37',
+              fill: '#FFC46B',
               fontSize: 9,
             }}
-            stroke="#D4AF37"
+            stroke="#FFC46B"
             strokeDasharray="6 3"
             y={annaBaseline}
           />
@@ -93,7 +93,7 @@ export function FitnessChart({
             dataKey="best"
             dot={false}
             name="Best"
-            stroke="#D4AF37"
+            stroke="#FFC46B"
             strokeWidth={2}
           />
           <Line

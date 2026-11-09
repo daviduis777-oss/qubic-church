@@ -133,17 +133,17 @@ function LoadingScreen({ progress }: { progress: number }) {
       <div className="flex flex-col items-center gap-6 max-w-md px-8">
         {/* Neural network animation */}
         <div className="relative w-32 h-32">
-          <div className="absolute inset-0 border-2 border-[#D4AF37]/30 animate-ping" />
-          <div className="absolute inset-4 border-2 border-[#D4AF37]/30 animate-ping animation-delay-200" />
+          <div className="absolute inset-0 border-2 border-[#FFC46B]/30 animate-ping" />
+          <div className="absolute inset-4 border-2 border-[#FFC46B]/30 animate-ping animation-delay-200" />
           <div className="absolute inset-8 border-2 border-gray-500/30 animate-ping animation-delay-400" />
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-16 h-16 bg-gradient-to-br from-[#D4AF37] via-gray-600 to-[#D4AF37] animate-pulse" />
+            <div className="w-16 h-16 bg-gradient-to-br from-[#FFC46B] via-gray-600 to-[#FFC46B] animate-pulse" />
           </div>
         </div>
 
         {/* Title */}
         <div className="text-center">
-          <h2 className="text-2xl font-bold bg-gradient-to-r from-[#D4AF37] via-gray-300 to-[#D4AF37] bg-clip-text text-transparent">
+          <h2 className="text-2xl font-bold bg-gradient-to-r from-[#FFC46B] via-gray-300 to-[#FFC46B] bg-clip-text text-transparent">
             Qortex Neural Network
           </h2>
           <p className="text-sm text-gray-500 mt-1">
@@ -155,7 +155,7 @@ function LoadingScreen({ progress }: { progress: number }) {
         <div className="w-full space-y-2">
           <div className="h-2 bg-gray-800 overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-[#D4AF37] via-gray-400 to-[#D4AF37] transition-all duration-300 ease-out"
+              className="h-full bg-gradient-to-r from-[#FFC46B] via-gray-400 to-[#FFC46B] transition-all duration-300 ease-out"
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -168,7 +168,7 @@ function LoadingScreen({ progress }: { progress: number }) {
         {/* Stats preview */}
         <div className="grid grid-cols-3 gap-4 text-center">
           <div>
-            <div className="text-xl font-bold text-[#D4AF37]">23,765</div>
+            <div className="text-xl font-bold text-[#FFC46B]">23,765</div>
             <div className="text-xs text-gray-600">Neurons</div>
           </div>
           <div>
@@ -176,7 +176,7 @@ function LoadingScreen({ progress }: { progress: number }) {
             <div className="text-xs text-gray-600">Synapses</div>
           </div>
           <div>
-            <div className="text-xl font-bold text-[#D4AF37]">47</div>
+            <div className="text-xl font-bold text-[#FFC46B]">47</div>
             <div className="text-xs text-gray-600">Frames</div>
           </div>
         </div>
@@ -196,10 +196,10 @@ const ERROR_ICONS: Record<QortexErrorType, React.ReactNode> = {
 }
 
 const ERROR_COLORS: Record<QortexErrorType, string> = {
-  NETWORK_ERROR: 'text-[#D4AF37]',
+  NETWORK_ERROR: 'text-[#FFC46B]',
   PARSE_ERROR: 'text-red-400',
   VALIDATION_ERROR: 'text-red-400',
-  TIMEOUT_ERROR: 'text-[#D4AF37]',
+  TIMEOUT_ERROR: 'text-[#FFC46B]',
   DATA_UNAVAILABLE: 'text-white/40',
   UNKNOWN_ERROR: 'text-gray-400',
 }
@@ -252,7 +252,7 @@ function ErrorScreen({
           <div className="space-y-3">
             <Button
               onClick={onRetry}
-              className="gap-2 bg-gradient-to-r from-[#D4AF37] to-[#D4AF37] hover:from-[#D4AF37] hover:to-[#D4AF37] text-white"
+              className="gap-2 bg-gradient-to-r from-[#FFC46B] to-[#FFC46B] hover:from-[#FFC46B] hover:to-[#FFC46B] text-white"
             >
               <RefreshCw className="w-4 h-4" />
               Try Again
@@ -654,7 +654,7 @@ export default function QortexScene({ onAnalyzeInAigarth }: QortexSceneProps = {
             <Button
               variant="ghost"
               size="icon"
-              className={`h-7 w-7 ${activeMobilePanel === 'info' ? 'bg-[#D4AF37]/20 text-[#D4AF37]' : 'text-white/60 hover:text-white hover:bg-white/10'}`}
+              className={`h-7 w-7 ${activeMobilePanel === 'info' ? 'bg-[#FFC46B]/20 text-[#FFC46B]' : 'text-white/60 hover:text-white hover:bg-white/10'}`}
               onClick={() => toggleMobilePanel('info')}
               title="Info"
             >
@@ -664,7 +664,7 @@ export default function QortexScene({ onAnalyzeInAigarth }: QortexSceneProps = {
             <Button
               variant="ghost"
               size="icon"
-              className={`h-7 w-7 ${activeMobilePanel === 'camera' ? 'bg-[#D4AF37]/20 text-[#D4AF37]' : 'text-white/60 hover:text-white hover:bg-white/10'}`}
+              className={`h-7 w-7 ${activeMobilePanel === 'camera' ? 'bg-[#FFC46B]/20 text-[#FFC46B]' : 'text-white/60 hover:text-white hover:bg-white/10'}`}
               onClick={() => toggleMobilePanel('camera')}
               title="Camera"
             >
@@ -674,7 +674,7 @@ export default function QortexScene({ onAnalyzeInAigarth }: QortexSceneProps = {
             <Button
               variant="ghost"
               size="icon"
-              className={`h-7 w-7 ${activeMobilePanel === 'live' ? 'bg-[#D4AF37]/20 text-[#D4AF37]' : 'text-white/60 hover:text-white hover:bg-white/10'}`}
+              className={`h-7 w-7 ${activeMobilePanel === 'live' ? 'bg-[#FFC46B]/20 text-[#FFC46B]' : 'text-white/60 hover:text-white hover:bg-white/10'}`}
               onClick={() => toggleMobilePanel('live')}
               title="Qubic Live"
             >
@@ -684,7 +684,7 @@ export default function QortexScene({ onAnalyzeInAigarth }: QortexSceneProps = {
             <Button
               variant="ghost"
               size="icon"
-              className={`h-7 w-7 ${activeMobilePanel === 'frame' ? 'bg-[#D4AF37]/20 text-[#D4AF37]' : 'text-white/60 hover:text-white hover:bg-white/10'}`}
+              className={`h-7 w-7 ${activeMobilePanel === 'frame' ? 'bg-[#FFC46B]/20 text-[#FFC46B]' : 'text-white/60 hover:text-white hover:bg-white/10'}`}
               onClick={() => toggleMobilePanel('frame')}
               title="Frame Range"
             >
@@ -733,27 +733,27 @@ export default function QortexScene({ onAnalyzeInAigarth }: QortexSceneProps = {
           {activeMobilePanel === 'info' && (
             <div className="mx-2 mt-1 bg-black/90 backdrop-blur-md border border-white/[0.06] p-3 max-h-[50vh] overflow-y-auto">
               <div className="flex items-center gap-2 mb-2">
-                <div className="w-6 h-6 bg-gradient-to-br from-[#D4AF37] via-gray-500 to-[#D4AF37]" />
+                <div className="w-6 h-6 bg-gradient-to-br from-[#FFC46B] via-gray-500 to-[#FFC46B]" />
                 <div>
                   <div className="text-xs font-semibold text-white">Qortex</div>
                   <div className="text-[9px] text-gray-400">Ternary Neural Network</div>
                 </div>
               </div>
-              <div className="p-1.5 bg-[#D4AF37]/10 border border-[#D4AF37]/30 mb-2">
-                <div className="text-[8px] text-[#D4AF37]/90">
+              <div className="p-1.5 bg-[#FFC46B]/10 border border-[#FFC46B]/30 mb-2">
+                <div className="text-[8px] text-[#FFC46B]/90">
                   <span className="font-bold">Seeds:</span> Real Qubic IDs from Anna Matrix. Network topology is a visualization model.
                 </div>
               </div>
               <div className="grid grid-cols-3 gap-2 text-center mb-2">
-                <div><div className="w-3 h-3 mx-auto bg-[#D4AF37]" /><span className="text-[8px] text-[#D4AF37] font-mono">+1</span></div>
+                <div><div className="w-3 h-3 mx-auto bg-[#FFC46B]" /><span className="text-[8px] text-[#FFC46B] font-mono">+1</span></div>
                 <div><div className="w-3 h-3 mx-auto bg-gray-500" /><span className="text-[8px] text-gray-400 font-mono">0</span></div>
-                <div><div className="w-3 h-3 mx-auto bg-[#D4AF37]" /><span className="text-[8px] text-[#D4AF37] font-mono">-1</span></div>
+                <div><div className="w-3 h-3 mx-auto bg-[#FFC46B]" /><span className="text-[8px] text-[#FFC46B] font-mono">-1</span></div>
               </div>
               <div className="grid grid-cols-2 gap-x-3 gap-y-0.5 text-[8px]">
-                <div className="flex justify-between"><span className="text-gray-500">K</span><span className="text-[#D4AF37] font-mono">14</span></div>
-                <div className="flex justify-between"><span className="text-gray-500">L</span><span className="text-[#D4AF37] font-mono">8</span></div>
-                <div className="flex justify-between"><span className="text-gray-500">N</span><span className="text-[#D4AF37] font-mono">120</span></div>
-                <div className="flex justify-between"><span className="text-gray-500">S</span><span className="text-[#D4AF37] font-mono">100</span></div>
+                <div className="flex justify-between"><span className="text-gray-500">K</span><span className="text-[#FFC46B] font-mono">14</span></div>
+                <div className="flex justify-between"><span className="text-gray-500">L</span><span className="text-[#FFC46B] font-mono">8</span></div>
+                <div className="flex justify-between"><span className="text-gray-500">N</span><span className="text-[#FFC46B] font-mono">120</span></div>
+                <div className="flex justify-between"><span className="text-gray-500">S</span><span className="text-[#FFC46B] font-mono">100</span></div>
               </div>
             </div>
           )}
@@ -782,7 +782,7 @@ export default function QortexScene({ onAnalyzeInAigarth }: QortexSceneProps = {
             <div className="mx-2 mt-1 bg-black/90 backdrop-blur-md border border-white/[0.06] p-3">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-1.5">
-                  {qubicConnected ? <Wifi className="w-3 h-3 text-[#D4AF37]" /> : <WifiOff className="w-3 h-3 text-red-400" />}
+                  {qubicConnected ? <Wifi className="w-3 h-3 text-[#FFC46B]" /> : <WifiOff className="w-3 h-3 text-red-400" />}
                   <span className="text-[9px] text-gray-500 uppercase tracking-wider">Qubic Live</span>
                 </div>
                 <Button variant="ghost" size="icon" className="h-5 w-5 text-white/50 hover:text-white" onClick={refreshQubic}>
@@ -792,8 +792,8 @@ export default function QortexScene({ onAnalyzeInAigarth }: QortexSceneProps = {
               {qubicConnected && qubicEpoch ? (
                 <div className="grid grid-cols-3 gap-2 text-[9px]">
                   <div className="text-center"><span className="text-gray-500 block">Epoch</span><span className="text-white font-mono">{qubicEpoch.epoch}</span></div>
-                  <div className="text-center"><span className="text-gray-500 block">Tick</span><span className="text-[#D4AF37] font-mono">{qubicEpoch.tick?.toLocaleString() || '-'}</span></div>
-                  {qubicNetwork && <div className="text-center"><span className="text-gray-500 block">Health</span><span className="text-[#D4AF37] font-mono capitalize">{qubicNetwork.health}</span></div>}
+                  <div className="text-center"><span className="text-gray-500 block">Tick</span><span className="text-[#FFC46B] font-mono">{qubicEpoch.tick?.toLocaleString() || '-'}</span></div>
+                  {qubicNetwork && <div className="text-center"><span className="text-gray-500 block">Health</span><span className="text-[#FFC46B] font-mono capitalize">{qubicNetwork.health}</span></div>}
                 </div>
               ) : (
                 <div className="text-[9px] text-gray-500 text-center">{qubicConnected === false ? 'Connecting...' : 'Offline'}</div>
@@ -817,7 +817,7 @@ export default function QortexScene({ onAnalyzeInAigarth }: QortexSceneProps = {
             {/* Legend */}
             <div className="bg-black/70 backdrop-blur-md border border-white/[0.04] p-4 space-y-3 pointer-events-auto max-w-[220px]">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-gradient-to-br from-[#D4AF37] via-gray-500 to-[#D4AF37]" />
+                <div className="w-8 h-8 bg-gradient-to-br from-[#FFC46B] via-gray-500 to-[#FFC46B]" />
                 <div>
                   <div className="text-sm font-semibold text-white">Qortex</div>
                   <div className="text-[10px] text-gray-400">Ternary Neural Network</div>
@@ -825,8 +825,8 @@ export default function QortexScene({ onAnalyzeInAigarth }: QortexSceneProps = {
               </div>
 
               {/* Data Source Info */}
-              <div className="p-2 bg-[#D4AF37]/10 border border-[#D4AF37]/30">
-                <div className="text-[9px] text-[#D4AF37]/90">
+              <div className="p-2 bg-[#FFC46B]/10 border border-[#FFC46B]/30">
+                <div className="text-[9px] text-[#FFC46B]/90">
                   <span className="font-bold">Seeds:</span> Real Qubic IDs from Anna Matrix. Network topology is a visualization model.
                 </div>
               </div>
@@ -836,8 +836,8 @@ export default function QortexScene({ onAnalyzeInAigarth }: QortexSceneProps = {
                 <div className="text-[10px] uppercase tracking-wider text-gray-500 font-medium">Neuron States (Ternary)</div>
                 <div className="grid grid-cols-3 gap-2">
                   <div className="flex flex-col items-center gap-1">
-                    <div className="w-4 h-4 bg-[#D4AF37] shadow-lg shadow-[#D4AF37]/50" />
-                    <span className="text-[10px] text-[#D4AF37] font-mono">+1</span>
+                    <div className="w-4 h-4 bg-[#FFC46B] shadow-lg shadow-[#FFC46B]/50" />
+                    <span className="text-[10px] text-[#FFC46B] font-mono">+1</span>
                     <span className="text-[8px] text-gray-500">Excited</span>
                   </div>
                   <div className="flex flex-col items-center gap-1">
@@ -846,8 +846,8 @@ export default function QortexScene({ onAnalyzeInAigarth }: QortexSceneProps = {
                     <span className="text-[8px] text-gray-500">Neutral</span>
                   </div>
                   <div className="flex flex-col items-center gap-1">
-                    <div className="w-4 h-4 bg-[#D4AF37] shadow-lg shadow-[#D4AF37]/50" />
-                    <span className="text-[10px] text-[#D4AF37] font-mono">-1</span>
+                    <div className="w-4 h-4 bg-[#FFC46B] shadow-lg shadow-[#FFC46B]/50" />
+                    <span className="text-[10px] text-[#FFC46B] font-mono">-1</span>
                     <span className="text-[8px] text-gray-500">Inhibited</span>
                   </div>
                 </div>
@@ -858,15 +858,15 @@ export default function QortexScene({ onAnalyzeInAigarth }: QortexSceneProps = {
                 <div className="text-[10px] uppercase tracking-wider text-gray-500 font-medium">Synapse Strength</div>
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <div className="w-6 h-0.5 bg-[#D4AF37]" />
+                    <div className="w-6 h-0.5 bg-[#FFC46B]" />
                     <span className="text-[10px] text-gray-400">Fast &gt;70%</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-6 h-0.5 bg-[#D4AF37]" />
+                    <div className="w-6 h-0.5 bg-[#FFC46B]" />
                     <span className="text-[10px] text-gray-400">Slow 40-70%</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-6 h-0.5 bg-[#D4AF37]" />
+                    <div className="w-6 h-0.5 bg-[#FFC46B]" />
                     <span className="text-[10px] text-gray-400">Meta &lt;40%</span>
                   </div>
                 </div>
@@ -878,19 +878,19 @@ export default function QortexScene({ onAnalyzeInAigarth }: QortexSceneProps = {
                 <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-[9px]">
                   <div className="flex justify-between">
                     <span className="text-gray-500">K (inputs)</span>
-                    <span className="text-[#D4AF37] font-mono">14</span>
+                    <span className="text-[#FFC46B] font-mono">14</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-500">L (outputs)</span>
-                    <span className="text-[#D4AF37] font-mono">8</span>
+                    <span className="text-[#FFC46B] font-mono">8</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-500">N (ticks)</span>
-                    <span className="text-[#D4AF37] font-mono">120</span>
+                    <span className="text-[#FFC46B] font-mono">120</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-500">S (mutations)</span>
-                    <span className="text-[#D4AF37] font-mono">100</span>
+                    <span className="text-[#FFC46B] font-mono">100</span>
                   </div>
                 </div>
                 <div className="mt-2 text-[8px] text-gray-600 italic">
@@ -977,7 +977,7 @@ export default function QortexScene({ onAnalyzeInAigarth }: QortexSceneProps = {
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
                     {qubicConnected ? (
-                      <Wifi className="w-3 h-3 text-[#D4AF37]" />
+                      <Wifi className="w-3 h-3 text-[#FFC46B]" />
                     ) : (
                       <WifiOff className="w-3 h-3 text-red-400" />
                     )}
@@ -1008,7 +1008,7 @@ export default function QortexScene({ onAnalyzeInAigarth }: QortexSceneProps = {
                         <Activity className="w-3 h-3" />
                         Tick
                       </span>
-                      <span className="text-[#D4AF37] font-mono">{qubicEpoch.tick?.toLocaleString() || '-'}</span>
+                      <span className="text-[#FFC46B] font-mono">{qubicEpoch.tick?.toLocaleString() || '-'}</span>
                     </div>
                     {qubicNetwork && (
                       <div className="flex items-center justify-between text-[10px]">
@@ -1017,9 +1017,9 @@ export default function QortexScene({ onAnalyzeInAigarth }: QortexSceneProps = {
                           Health
                         </span>
                         <span className={`font-mono capitalize ${
-                          qubicNetwork.health === 'excellent' ? 'text-[#D4AF37]' :
-                          qubicNetwork.health === 'good' ? 'text-[#D4AF37]' :
-                          qubicNetwork.health === 'fair' ? 'text-[#D4AF37]' : 'text-red-400'
+                          qubicNetwork.health === 'excellent' ? 'text-[#FFC46B]' :
+                          qubicNetwork.health === 'good' ? 'text-[#FFC46B]' :
+                          qubicNetwork.health === 'fair' ? 'text-[#FFC46B]' : 'text-red-400'
                         }`}>{qubicNetwork.health}</span>
                       </div>
                     )}

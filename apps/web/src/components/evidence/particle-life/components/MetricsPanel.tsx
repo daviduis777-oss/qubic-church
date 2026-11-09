@@ -96,14 +96,14 @@ function VelocityHistogram({ data, height = 80 }: {
           formatter={(value) => [String(value), 'particles']}
           labelFormatter={(speed) => `Speed ${typeof speed === 'number' ? speed.toFixed(2) : speed}`}
         />
-        <ReferenceLine x={meanSpeed} stroke="rgba(212,175,55,0.5)" strokeDasharray="3 3" label="" />
+        <ReferenceLine x={meanSpeed} stroke="rgba(255,196,107,0.5)" strokeDasharray="3 3" label="" />
         <Bar dataKey="count" isAnimationActive={false}>
           {data.map((entry) => {
             const intensity = maxCount > 0 ? entry.count / maxCount : 0
             return (
               <Cell
                 key={`speed-${entry.speed.toFixed(4)}`}
-                fill={`rgba(212, 175, 55, ${0.15 + intensity * 0.65})`}
+                fill={`rgba(255, 196, 107, ${0.15 + intensity * 0.65})`}
               />
             )
           })}
@@ -226,7 +226,7 @@ export function MetricsPanel({ history, currentStats, isOpen, onToggle, onExport
               {([
                 { key: 'cooperation', color: '#4ade80' },
                 { key: 'aggression', color: '#f87171' },
-                { key: 'energy', color: '#D4AF37' },
+                { key: 'energy', color: '#FFC46B' },
                 { key: 'segregation', color: '#3B82F6' },
                 { key: 'spatialEntropy', color: '#10B981' },
                 { key: 'moransI', color: '#8B5CF6' },

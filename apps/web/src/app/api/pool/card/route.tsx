@@ -40,7 +40,7 @@ export async function POST(req: Request) {
 
 /* ---------------- drawing ---------------- */
 
-const GOLD = '#FECE34'
+const GOLD = '#FFC46B'
 const GOLD_HI = '#FFE77C'
 const BONE = '#FAFAFA'
 const FOG = '#B7B7B7'
@@ -93,7 +93,7 @@ function Halo({ size, face, src }: { size: number; face: number; src: string }) 
         alt=""
         height={face}
         src={src}
-        style={{ borderRadius: face, boxShadow: `0 0 0 ${Math.round(face / 90)}px rgba(254,206,52,0.6), 0 0 ${Math.round(face / 4)}px rgba(254,206,52,0.22)` }}
+        style={{ borderRadius: face, boxShadow: `0 0 0 ${Math.round(face / 90)}px rgba(255,196,107,0.6), 0 0 ${Math.round(face / 4)}px rgba(255,196,107,0.22)` }}
         width={face}
       />
       {/* biome-ignore lint/performance/noImgElement: next/og draws plain img */}
@@ -125,8 +125,8 @@ function Badge({ c, size }: { c: CardData; size: number }) {
         fontSize: size,
         letterSpacing: 2,
         color: demo ? '#000' : GOLD,
-        background: demo ? GOLD : 'rgba(254,206,52,0.08)',
-        boxShadow: demo ? 'none' : 'inset 0 0 0 1.5px rgba(254,206,52,0.4)',
+        background: demo ? GOLD : 'rgba(255,196,107,0.08)',
+        boxShadow: demo ? 'none' : 'inset 0 0 0 1.5px rgba(255,196,107,0.4)',
       }}
     >
       {demo ? 'DEMO · SAMPLE DATA' : SOURCE_LABEL[c.src].toUpperCase()}
@@ -200,7 +200,7 @@ const solSub = (c: CardData) => (c.src === 'log' ? 'in this log' : 'this epoch')
 function Watermark({ w, h }: { w: number; h: number }) {
   return (
     <div style={{ position: 'absolute', left: 0, top: 0, width: w, height: h, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div style={{ display: 'flex', fontFamily: 'Geist', fontWeight: 600, fontSize: Math.round(w * 0.3), letterSpacing: 20, color: 'rgba(254,206,52,0.07)', transform: 'rotate(-24deg)' }}>DEMO</div>
+      <div style={{ display: 'flex', fontFamily: 'Geist', fontWeight: 600, fontSize: Math.round(w * 0.3), letterSpacing: 20, color: 'rgba(255,196,107,0.07)', transform: 'rotate(-24deg)' }}>DEMO</div>
     </div>
   )
 }
@@ -210,7 +210,7 @@ function Extras({ c, size, center }: { c: CardData; size: number; center?: boole
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: center ? 'center' : 'flex-start' }}>
       {c.pct !== undefined && (
-        <div style={{ display: 'flex', alignItems: 'center', padding: `${size * 0.4}px ${size * 0.9}px`, borderRadius: 999, background: 'rgba(254,206,52,0.08)', boxShadow: 'inset 0 0 0 1.5px rgba(254,206,52,0.32)', fontFamily: 'Geist', fontWeight: 500, fontSize: size, color: BONE }}>
+        <div style={{ display: 'flex', alignItems: 'center', padding: `${size * 0.4}px ${size * 0.9}px`, borderRadius: 999, background: 'rgba(255,196,107,0.08)', boxShadow: 'inset 0 0 0 1.5px rgba(255,196,107,0.32)', fontFamily: 'Geist', fontWeight: 500, fontSize: size, color: BONE }}>
           {percentileLine(c.pct)}
           <span style={{ marginLeft: size * 0.5, fontFamily: 'Geist Mono', fontSize: size * 0.8, color: FOG }}>{`n ${c.pn}`}</span>
         </div>
@@ -225,7 +225,7 @@ function Extras({ c, size, center }: { c: CardData; size: number; center?: boole
   )
 }
 
-const BG = 'radial-gradient(70% 46% at 50% 26%, rgba(254,206,52,0.13) 0%, rgba(254,206,52,0.04) 45%, rgba(0,0,0,0) 72%), #000'
+const BG = 'radial-gradient(70% 46% at 50% 26%, rgba(255,196,107,0.13) 0%, rgba(255,196,107,0.04) 45%, rgba(0,0,0,0) 72%), #000'
 
 function Story({ c, face }: { c: CardData; face: string }) {
   const { width: W, height: H } = CARD_SIZE.story
@@ -275,7 +275,7 @@ function Wide({ c, face }: { c: CardData; face: string }) {
   const right = 620
   const size = statSize(c, 196, 70)
   return (
-    <div style={{ position: 'relative', width: W, height: H, display: 'flex', alignItems: 'center', background: 'radial-gradient(48% 70% at 24% 50%, rgba(254,206,52,0.13) 0%, rgba(254,206,52,0.035) 50%, rgba(0,0,0,0) 76%), #000', padding: '0 64px 0 36px', color: BONE }}>
+    <div style={{ position: 'relative', width: W, height: H, display: 'flex', alignItems: 'center', background: 'radial-gradient(48% 70% at 24% 50%, rgba(255,196,107,0.13) 0%, rgba(255,196,107,0.035) 50%, rgba(0,0,0,0) 76%), #000', padding: '0 64px 0 36px', color: BONE }}>
       {c.src === 'demo' && <Watermark h={H} w={W} />}
       <Halo face={160} size={480} src={face} />
       <div style={{ display: 'flex', flexDirection: 'column', marginLeft: 24, width: right, height: H, padding: '50px 0 42px' }}>

@@ -23,7 +23,7 @@ export function SimulationCanvas({
   trailLength,
   particleSize,
   label,
-  labelColor = '#D4AF37',
+  labelColor = '#FFC46B',
   showDensity = false,
   showGrid = false,
   className,
@@ -270,7 +270,7 @@ function drawDensityHeatmap(ctx: CanvasRenderingContext2D, p: { x: Float32Array;
     for (let c = 0; c < gridSize; c++) {
       const intensity = bins[r * gridSize + c]! / maxBin
       if (intensity > 0.05) {
-        ctx.fillStyle = `rgba(212, 175, 55, ${intensity * 0.08})`
+        ctx.fillStyle = `rgba(255, 196, 107, ${intensity * 0.08})`
         ctx.fillRect(c * cellW, r * cellH, cellW, cellH)
       }
     }

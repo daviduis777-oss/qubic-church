@@ -121,8 +121,8 @@ export function EvolutionPlane({
           const t = rank / Math.max(1, n - 1) // 0 = top, 1 = bottom
           // gradient: gold → orange → grey → rose
           const color = lerpColor(
-            t < 0.15 ? '#D4AF37' : t < 0.4 ? '#f59e0b' : t < 0.75 ? '#9ca3af' : '#9c2932',
-            '#D4AF37',
+            t < 0.15 ? '#FFC46B' : t < 0.4 ? '#f59e0b' : t < 0.75 ? '#9ca3af' : '#9c2932',
+            '#FFC46B',
             rank < topK ? 0.3 : 0,
           )
           const r = (rank < topK ? 5 : 3) * pulse
@@ -165,11 +165,11 @@ export function EvolutionPlane({
         />
       </div>
       <div className="flex flex-wrap gap-3 text-[10px] text-white/45 px-1 mt-1">
-        <span><span className="inline-block w-2 h-2 rounded-full bg-[#D4AF37] mr-1 align-middle" /> top-15% fitness</span>
+        <span><span className="inline-block w-2 h-2 rounded-full bg-[#FFC46B] mr-1 align-middle" /> top-15% fitness</span>
         <span><span className="inline-block w-2 h-2 rounded-full bg-orange-400 mr-1 align-middle" /> upper</span>
         <span><span className="inline-block w-2 h-2 rounded-full bg-[#9ca3af] mr-1 align-middle" /> mid</span>
         <span><span className="inline-block w-2 h-2 rounded-full bg-[#9c2932] mr-1 align-middle" /> bottom</span>
-        <span className="ml-auto text-[#D4AF37]/70">
+        <span className="ml-auto text-[#FFC46B]/70">
           ✚ Anna at (fitness {annaBaseline.toFixed(3)}, antipodal {(annaAntipodal * 100).toFixed(1)} %)
         </span>
       </div>
@@ -232,27 +232,27 @@ function drawAxes(
   const ax = fitnessToX(annaFitness, w)
   const ay = antipodalToY(annaAntipodal, h)
   const grad = ctx.createRadialGradient(ax, ay, 0, ax, ay, 80)
-  grad.addColorStop(0, 'rgba(212,175,55,0.18)')
-  grad.addColorStop(1, 'rgba(212,175,55,0)')
+  grad.addColorStop(0, 'rgba(255,196,107,0.18)')
+  grad.addColorStop(1, 'rgba(255,196,107,0)')
   ctx.fillStyle = grad
   ctx.fillRect(0, 0, w, h)
 
   // Anna baseline lines (subtle)
-  ctx.strokeStyle = 'rgba(212,175,55,0.18)'
+  ctx.strokeStyle = 'rgba(255,196,107,0.18)'
   ctx.setLineDash([5, 4])
   ctx.beginPath(); ctx.moveTo(ax, 0); ctx.lineTo(ax, h); ctx.stroke()
   ctx.beginPath(); ctx.moveTo(0, ay); ctx.lineTo(w, ay); ctx.stroke()
   ctx.setLineDash([])
 
   // Anna gold cross
-  ctx.strokeStyle = '#D4AF37'
+  ctx.strokeStyle = '#FFC46B'
   ctx.lineWidth = 2.5
   ctx.beginPath()
   ctx.moveTo(ax - 11, ay); ctx.lineTo(ax + 11, ay)
   ctx.moveTo(ax, ay - 11); ctx.lineTo(ax, ay + 11)
   ctx.stroke()
   // Anna label
-  ctx.fillStyle = '#D4AF37'
+  ctx.fillStyle = '#FFC46B'
   ctx.font = 'bold 12px ui-monospace, monospace'
   ctx.fillText('ANNA', ax + 14, ay + 4)
 
@@ -270,7 +270,7 @@ function drawAxes(
   ctx.fillText('0.70', fitnessToX(0.70, w) - 14, h - 6)
 
   // Top-right hint
-  ctx.fillStyle = 'rgba(212,175,55,0.55)'
+  ctx.fillStyle = 'rgba(255,196,107,0.55)'
   ctx.font = '10px ui-monospace, monospace'
   ctx.fillText('higher antipodal-antisymmetry → more Anna-like', w - 280, 16)
   ctx.fillText('higher fitness →', w - 130, h - 24)

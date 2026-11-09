@@ -260,7 +260,7 @@ export default function QortexResearchScene() {
           position={[10, 20, 10]}
         />
         <pointLight color="#60A5FA" intensity={0.4} position={[-8, 15, -8]} />
-        <pointLight color="#D4AF37" intensity={0.3} position={[8, 25, 8]} />
+        <pointLight color="#FFC46B" intensity={0.3} position={[8, 25, 8]} />
         <pointLight color="#A78BFA" intensity={0.3} position={[0, 40, -5]} />
 
         {/* Layers */}

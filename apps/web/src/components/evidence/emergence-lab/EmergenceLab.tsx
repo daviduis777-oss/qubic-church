@@ -239,7 +239,7 @@ function ErrorSparkline({ history }: { history: number[] }) {
         <polyline
           fill="none"
           points={pts}
-          stroke="#D4AF37"
+          stroke="#FFC46B"
           strokeLinejoin="round"
           strokeWidth="1.2"
           vectorEffect="non-scaling-stroke"
@@ -286,17 +286,17 @@ function RippleCarry({
   }) => (
     <g>
       <rect
-        fill={on ? 'rgba(212,175,55,0.18)' : 'rgba(255,255,255,0.04)'}
+        fill={on ? 'rgba(255,196,107,0.18)' : 'rgba(255,255,255,0.04)'}
         height={20}
         rx={3}
-        stroke={on ? 'rgba(212,175,55,0.5)' : 'rgba(255,255,255,0.1)'}
+        stroke={on ? 'rgba(255,196,107,0.5)' : 'rgba(255,255,255,0.1)'}
         strokeWidth={1}
         width={cw}
         x={x}
         y={y}
       />
       <text
-        fill={on ? '#D4AF37' : 'rgba(255,255,255,0.75)'}
+        fill={on ? '#FFC46B' : 'rgba(255,255,255,0.75)'}
         fontFamily="monospace"
         fontSize={12}
         textAnchor="middle"
@@ -342,7 +342,7 @@ function RippleCarry({
                 d={`M ${x + cw / 2} ${padT + 2 * rowH + 20} q -${(cw + gap) / 2} 10 -${cw + gap} 0`}
                 fill="none"
                 markerEnd="url(#ah)"
-                stroke="rgba(212,175,55,0.55)"
+                stroke="rgba(255,196,107,0.55)"
                 strokeWidth={1.2}
               />
             )}
@@ -358,7 +358,7 @@ function RippleCarry({
           refX="3"
           refY="3"
         >
-          <path d="M0,0 L6,3 L0,6 Z" fill="rgba(212,175,55,0.7)" />
+          <path d="M0,0 L6,3 L0,6 Z" fill="rgba(255,196,107,0.7)" />
         </marker>
       </defs>
     </svg>

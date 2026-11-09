@@ -514,7 +514,7 @@ export default function ParticleLifeSimulation() {
     return (
       <div className="w-full h-[400px] flex items-center justify-center border border-white/[0.04] bg-[#050505]">
         <div className="flex flex-col items-center gap-3">
-          <Loader2 className="w-8 h-8 text-[#D4AF37]/40 animate-spin" />
+          <Loader2 className="w-8 h-8 text-[#FFC46B]/40 animate-spin" />
           <span className="text-sm text-white/45 font-mono">Loading Anna Matrix (128x128)...</span>
         </div>
       </div>
@@ -527,12 +527,12 @@ export default function ParticleLifeSimulation() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
         <div className="flex items-center gap-3">
           <h3 className="text-lg font-bold tracking-wider flex items-center gap-2">
-            <Zap className="w-5 h-5 text-[#D4AF37]" />
+            <Zap className="w-5 h-5 text-[#FFC46B]" />
             Emergence Lab
           </h3>
           <Link
             href="/docs/03-results/25-aigarth-research-lab"
-            className="text-xs font-mono text-[#D4AF37]/40 hover:text-[#D4AF37]/70 transition-colors flex items-center gap-1"
+            className="text-xs font-mono text-[#FFC46B]/40 hover:text-[#FFC46B]/70 transition-colors flex items-center gap-1"
           >
             Research <ExternalLink className="w-2.5 h-2.5" />
           </Link>
@@ -544,8 +544,8 @@ export default function ParticleLifeSimulation() {
             onChange={(e) => handlePreset(e.target.value)}
             value={activePreset}
             className={cn(
-              'bg-[#0a0a0a] border text-xs font-mono px-2 py-1 focus:outline-none focus:border-[#D4AF37]/30 max-w-[180px]',
-              activePreset ? 'border-[#D4AF37]/20 text-[#D4AF37]/70' : 'border-white/[0.06] text-white/65',
+              'bg-[#0a0a0a] border text-xs font-mono px-2 py-1 focus:outline-none focus:border-[#FFC46B]/30 max-w-[180px]',
+              activePreset ? 'border-[#FFC46B]/20 text-[#FFC46B]/70' : 'border-white/[0.06] text-white/65',
             )}
           >
             <option value="">Presets...</option>
@@ -570,7 +570,7 @@ export default function ParticleLifeSimulation() {
           <div className="flex items-center gap-px bg-[#0a0a0a] border border-white/[0.06] p-px">
             <button onClick={() => handleModeSwitch('anna')} className={cn(
               'px-2 sm:px-3 py-1 text-xs sm:text-sm font-mono transition-all',
-              mode === 'anna' ? 'bg-[#D4AF37]/15 text-[#D4AF37] border border-[#D4AF37]/30' : 'text-white/55 hover:text-white/60 border border-transparent',
+              mode === 'anna' ? 'bg-[#FFC46B]/15 text-[#FFC46B] border border-[#FFC46B]/30' : 'text-white/55 hover:text-white/60 border border-transparent',
             )}>Anna Matrix</button>
             <button onClick={() => handleModeSwitch('random')} className={cn(
               'px-2 sm:px-3 py-1 text-xs sm:text-sm font-mono transition-all',
@@ -587,7 +587,7 @@ export default function ParticleLifeSimulation() {
             onClick={() => setComparisonMode((m) => m === 'single' ? 'side-by-side' : 'single')}
             className={cn(
               'px-2 py-1 text-xs font-mono border transition-all',
-              comparisonMode === 'side-by-side' ? 'bg-[#D4AF37]/10 text-[#D4AF37]/70 border-[#D4AF37]/20' : 'text-white/45 border-white/[0.06] hover:text-white/65',
+              comparisonMode === 'side-by-side' ? 'bg-[#FFC46B]/10 text-[#FFC46B]/70 border-[#FFC46B]/20' : 'text-white/45 border-white/[0.06] hover:text-white/65',
             )}
             title="Compare Anna vs Random (C)"
           >
@@ -597,7 +597,7 @@ export default function ParticleLifeSimulation() {
           {/* Quick Demo */}
           <button
             onClick={handleQuickDemo}
-            className="px-2 py-1 text-[11px] font-mono text-[#D4AF37]/40 border border-[#D4AF37]/10 hover:bg-[#D4AF37]/10 hover:text-[#D4AF37]/70 transition-all hidden sm:flex items-center gap-1"
+            className="px-2 py-1 text-[11px] font-mono text-[#FFC46B]/40 border border-[#FFC46B]/10 hover:bg-[#FFC46B]/10 hover:text-[#FFC46B]/70 transition-all hidden sm:flex items-center gap-1"
             title="Run a quick comparison demo"
           >
             <Sparkles className="w-2.5 h-2.5" />
@@ -646,7 +646,7 @@ export default function ParticleLifeSimulation() {
       {/* Canvas */}
       <div className={cn(
         'border border-white/[0.06] bg-[#050505] overflow-hidden relative',
-        isPlaying && 'shadow-[0_0_30px_rgba(212,175,55,0.04)]',
+        isPlaying && 'shadow-[0_0_30px_rgba(255,196,107,0.04)]',
       )}>
         {/* Onboarding overlay */}
         <OnboardingOverlay onComplete={() => {}} onQuickDemo={handleQuickDemo} />
@@ -660,14 +660,14 @@ export default function ParticleLifeSimulation() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-white/[0.04]">
             <SimulationCanvas
               engine={engineRef.current} trailLength={config.trailLength} particleSize={config.particleSize}
-              label={mode === 'anna' ? 'ANNA MATRIX' : 'RANDOM'} labelColor={mode === 'anna' ? '#D4AF37' : '#3B82F6'}
+              label={mode === 'anna' ? 'ANNA MATRIX' : 'RANDOM'} labelColor={mode === 'anna' ? '#FFC46B' : '#3B82F6'}
               showDensity={showDensity} showGrid={showGrid}
               onPulse={(x, y, s) => engineRef.current?.applyPulse(x, y, s)}
               onResize={(w, h) => engineRef.current?.resize(w, h)}
             />
             <SimulationCanvas
               engine={engine2Ref.current} trailLength={config.trailLength} particleSize={config.particleSize}
-              label={mode === 'anna' ? 'RANDOM CONTROL' : 'ANNA MATRIX'} labelColor={mode === 'anna' ? '#3B82F6' : '#D4AF37'}
+              label={mode === 'anna' ? 'RANDOM CONTROL' : 'ANNA MATRIX'} labelColor={mode === 'anna' ? '#3B82F6' : '#FFC46B'}
               showDensity={showDensity} showGrid={showGrid}
               onPulse={(x, y, s) => engine2Ref.current?.applyPulse(x, y, s)}
               onResize={(w, h) => engine2Ref.current?.resize(w, h)}
@@ -676,7 +676,7 @@ export default function ParticleLifeSimulation() {
         ) : (
           <SimulationCanvas
             engine={engineRef.current} trailLength={config.trailLength} particleSize={config.particleSize}
-            label={mode === 'anna' ? 'ANNA MATRIX RULES' : mode === 'custom' ? 'CUSTOM RULES' : 'RANDOM RULES'} labelColor={mode === 'anna' ? '#D4AF37' : mode === 'custom' ? '#10B981' : '#3B82F6'}
+            label={mode === 'anna' ? 'ANNA MATRIX RULES' : mode === 'custom' ? 'CUSTOM RULES' : 'RANDOM RULES'} labelColor={mode === 'anna' ? '#FFC46B' : mode === 'custom' ? '#10B981' : '#3B82F6'}
             showDensity={showDensity} showGrid={showGrid}
             onPulse={(x, y, s) => engineRef.current?.applyPulse(x, y, s)}
             onResize={(w, h) => engineRef.current?.resize(w, h)}
@@ -732,8 +732,8 @@ export default function ParticleLifeSimulation() {
           history2={metricHistory2}
           label1={mode === 'anna' ? 'Anna Matrix' : 'Random'}
           label2={mode === 'anna' ? 'Random Control' : 'Anna Matrix'}
-          color1={mode === 'anna' ? '#D4AF37' : '#3B82F6'}
-          color2={mode === 'anna' ? '#3B82F6' : '#D4AF37'}
+          color1={mode === 'anna' ? '#FFC46B' : '#3B82F6'}
+          color2={mode === 'anna' ? '#3B82F6' : '#FFC46B'}
         />
       )}
 
@@ -830,11 +830,11 @@ export default function ParticleLifeSimulation() {
           <button onClick={() => setShowInfo(false)} className="absolute top-3 right-3 text-white/35 hover:text-white/65">
             <X className="w-4 h-4" />
           </button>
-          <h4 className="text-base font-bold text-[#D4AF37] tracking-wider">Emergence Lab</h4>
+          <h4 className="text-base font-bold text-[#FFC46B] tracking-wider">Emergence Lab</h4>
           <div className="text-sm text-white/65 space-y-2 leading-relaxed">
             <p><strong className="text-white/70">Particle Life</strong> simulates emergent behavior through attraction/repulsion rules between particle types. No patterns are programmed, all structures self-organize from the interaction matrix.</p>
             <p><strong className="text-white/70">Anna Matrix:</strong> The 128x128 Anna Matrix from the Aigarth system is downsampled to create interaction rules. Its unique properties (8 symmetric energy levels, 99.58% point symmetry, rank-2 fixed point with all column sums = 42) produce fundamentally different emergence than random matrices.</p>
-            <p><strong className="text-white/70">Proven in Paper:</strong> In controlled ablation studies (6 matrices, 5 seeds each, Bonferroni-corrected), the Anna Matrix produces <span className="text-[#D4AF37]">19% more cooperation</span>, <span className="text-[#D4AF37]">5.6x more aggression</span>, and dynamic boom-bust cycles. All significant metrics show Cliff's delta = 1.0 (zero distribution overlap).</p>
+            <p><strong className="text-white/70">Proven in Paper:</strong> In controlled ablation studies (6 matrices, 5 seeds each, Bonferroni-corrected), the Anna Matrix produces <span className="text-[#FFC46B]">19% more cooperation</span>, <span className="text-[#FFC46B]">5.6x more aggression</span>, and dynamic boom-bust cycles. All significant metrics show Cliff's delta = 1.0 (zero distribution overlap).</p>
             <p><strong className="text-white/70">Interact:</strong> Click to attract, Shift+Click to repel. Drag to continuously attract. Use the type selector in the control bar to isolate specific particle types. Toggle density heatmap and spatial grid overlays.</p>
             <p><strong className="text-white/70">Scientific Metrics:</strong> Open the metrics panel to see real-time Kinetic Energy, Segregation Index, Spatial Entropy (Shannon), Moran's I (spatial autocorrelation), and Mean Squared Displacement with rolling charts.</p>
           </div>
@@ -845,14 +845,14 @@ export default function ParticleLifeSimulation() {
               { value: '2342', label: 'Spectral Radius' }, { value: '68', label: 'Sym. Breaks' },
             ].map(({ value, label }) => (
               <div key={label} className="text-center">
-                <div className="text-base font-mono text-[#D4AF37]/70">{value}</div>
+                <div className="text-base font-mono text-[#FFC46B]/70">{value}</div>
                 <div className="text-[11px] text-white/40">{label}</div>
               </div>
             ))}
           </div>
           <div className="text-xs text-white/35 font-mono pt-2 border-t border-white/[0.04] flex items-center justify-between">
-            <span>Based on <a href="https://github.com/hunar4321/particle-life" target="_blank" rel="noopener noreferrer" className="text-[#D4AF37]/40 hover:text-[#D4AF37]/70 underline">hunar4321/particle-life</a> (MIT)</span>
-            <Link href="/docs/03-results/25-aigarth-research-lab" className="text-[#D4AF37]/40 hover:text-[#D4AF37]/70 underline flex items-center gap-1">
+            <span>Based on <a href="https://github.com/hunar4321/particle-life" target="_blank" rel="noopener noreferrer" className="text-[#FFC46B]/40 hover:text-[#FFC46B]/70 underline">hunar4321/particle-life</a> (MIT)</span>
+            <Link href="/docs/03-results/25-aigarth-research-lab" className="text-[#FFC46B]/40 hover:text-[#FFC46B]/70 underline flex items-center gap-1">
               Full Paper <ExternalLink className="w-2.5 h-2.5" />
             </Link>
           </div>
@@ -874,7 +874,7 @@ export default function ParticleLifeSimulation() {
               ],
             }].map((category) => (
               <div key={category.name}>
-                <div className="text-xs font-mono text-[#D4AF37]/40 uppercase mb-1.5">{category.name}</div>
+                <div className="text-xs font-mono text-[#FFC46B]/40 uppercase mb-1.5">{category.name}</div>
                 <div className="space-y-1">
                   {category.shortcuts.map((s) => (
                     <div key={s.key} className="flex items-center gap-2">
@@ -894,7 +894,7 @@ export default function ParticleLifeSimulation() {
         <kbd className="px-1 py-0.5 bg-white/[0.02] border border-white/[0.04]">?</kbd> shortcuts
         {' · '}Click = attract · Shift+Click = repel
         {' · '}
-        <Link href="/docs/03-results/25-aigarth-research-lab" className="text-[#D4AF37]/25 hover:text-[#D4AF37]/50 transition-colors">qubic.church/research</Link>
+        <Link href="/docs/03-results/25-aigarth-research-lab" className="text-[#FFC46B]/25 hover:text-[#FFC46B]/50 transition-colors">qubic.church/research</Link>
       </div>
     </div>
   )

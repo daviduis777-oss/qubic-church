@@ -122,9 +122,9 @@ export function StructuralRadar({
             />
             <Radar
               dataKey="Anna"
-              fill="#D4AF37"
+              fill="#FFC46B"
               fillOpacity={0.32}
-              stroke="#D4AF37"
+              stroke="#FFC46B"
             />
             <Radar
               dataKey="Evolved"

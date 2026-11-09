@@ -78,7 +78,7 @@ export function AnomalyMarkersLayer({
       {/* Section title */}
       <Text
         anchorX="center"
-        color="#D4AF37"
+        color="#FFC46B"
         fillOpacity={0.35}
         fontSize={0.2}
         position={[0, 8, -11]}

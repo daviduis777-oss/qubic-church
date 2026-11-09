@@ -169,7 +169,7 @@ export function Period4CycleLayer({
       })}
 
       <Line
-        color="#D4AF37"
+        color="#FFC46B"
         lineWidth={1}
         opacity={0.2}
         points={arrowPoints}
@@ -178,13 +178,13 @@ export function Period4CycleLayer({
 
       <mesh position={[0, Y, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <torusGeometry args={[RAD, 0.02, 8, 64]} />
-        <meshBasicMaterial color="#D4AF37" opacity={0.15} transparent />
+        <meshBasicMaterial color="#FFC46B" opacity={0.15} transparent />
       </mesh>
 
       <Text
         anchorX="center"
         anchorY="middle"
-        color="#D4AF37"
+        color="#FFC46B"
         fillOpacity={0.5}
         fontSize={0.25}
         position={[0, Y + 2.5, 0]}
@@ -204,7 +204,7 @@ export function Period4CycleLayer({
       <Text
         anchorX="center"
         anchorY="middle"
-        color="#D4AF37"
+        color="#FFC46B"
         fillOpacity={0.3}
         fontSize={0.12}
         position={[0, Y - 2.5, 0]}

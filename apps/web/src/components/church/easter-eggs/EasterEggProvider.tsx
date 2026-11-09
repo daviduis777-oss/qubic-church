@@ -140,7 +140,7 @@ function GoldenBurst({ show, onDone }: { show: boolean; onDone: () => void }) {
       {/* Number display */}
       <motion.div
         animate={{ scale: [0, 1.2, 1], opacity: [0, 1, 1] }}
-        className="absolute text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-400"
+        className="absolute text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-bpp9000 to-orange-400"
         initial={{ scale: 0, opacity: 0 }}
         transition={{ duration: 0.5 }}
       >
@@ -149,7 +149,7 @@ function GoldenBurst({ show, onDone }: { show: boolean; onDone: () => void }) {
 
       <motion.div
         animate={{ opacity: 1, y: 0 }}
-        className="absolute text-sm text-yellow-400/60 mt-20"
+        className="absolute text-sm text-bpp9000/60 mt-20"
         initial={{ opacity: 0, y: 10 }}
         transition={{ delay: 0.5 }}
       >

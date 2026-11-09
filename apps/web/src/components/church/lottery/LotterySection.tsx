@@ -19,7 +19,7 @@ function formatBigInt(num: bigint): string {
 }
 
 const placeIcons = [Crown, Medal, Award, Trophy, Trophy]
-const placeColors = ['text-[#D4AF37]', 'text-white/50', 'text-[#D4AF37]/60', 'text-[#D4AF37]/40', 'text-[#D4AF37]/30']
+const placeColors = ['text-[#FFC46B]', 'text-white/50', 'text-[#FFC46B]/60', 'text-[#FFC46B]/40', 'text-[#FFC46B]/30']
 
 export function LotterySection() {
   const [walletAddress, setWalletAddress] = useState('')
@@ -57,10 +57,10 @@ export function LotterySection() {
   return (
     <section className="relative w-full py-24 md:py-32 bg-black overflow-hidden">
       {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black via-[#D4AF37]/5 to-black" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black via-[#FFC46B]/5 to-black" />
 
       {/* Decorative glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#D4AF37]/10 blur-[200px] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#FFC46B]/10 blur-[200px] pointer-events-none" />
 
       <div className="relative z-10 container mx-auto px-4 max-w-6xl">
         {/* Section Header */}
@@ -72,14 +72,14 @@ export function LotterySection() {
           transition={{ duration: 0.6 }}
         >
           <motion.div
-            className="inline-flex items-center gap-2 bg-[#D4AF37]/10 border border-[#D4AF37]/20 px-4 py-2 mb-6"
+            className="inline-flex items-center gap-2 bg-[#FFC46B]/10 border border-[#FFC46B]/20 px-4 py-2 mb-6"
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
-            <Sparkles className="w-4 h-4 text-[#D4AF37]" />
-            <span className="text-[#D4AF37]/50 text-[11px] uppercase tracking-[0.4em] font-mono">
+            <Sparkles className="w-4 h-4 text-[#FFC46B]" />
+            <span className="text-[#FFC46B]/50 text-[11px] uppercase tracking-[0.4em] font-mono">
               The Holy Circle
             </span>
           </motion.div>
@@ -91,7 +91,7 @@ export function LotterySection() {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <span className="text-4xl md:text-6xl lg:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] via-[#D4AF37]/80 to-[#D4AF37]">
+            <span className="text-4xl md:text-6xl lg:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#FFC46B] via-[#FFC46B]/80 to-[#FFC46B]">
               76M QUBIC
             </span>
             <span className="block text-xl md:text-2xl text-white/60 font-semibold mt-2">
@@ -103,9 +103,9 @@ export function LotterySection() {
             The ultimate community lottery for Anna NFT holders
           </p>
 
-          <div className="inline-flex items-center gap-2 bg-[#D4AF37]/10 border border-[#D4AF37]/30 px-6 py-2">
-            <Sparkles className="w-4 h-4 text-[#D4AF37] animate-pulse" />
-            <span className="text-[#D4AF37]/50 text-[11px] uppercase tracking-[0.4em] font-mono">
+          <div className="inline-flex items-center gap-2 bg-[#FFC46B]/10 border border-[#FFC46B]/30 px-6 py-2">
+            <Sparkles className="w-4 h-4 text-[#FFC46B] animate-pulse" />
+            <span className="text-[#FFC46B]/50 text-[11px] uppercase tracking-[0.4em] font-mono">
               Coming Soon
             </span>
           </div>
@@ -119,9 +119,9 @@ export function LotterySection() {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.3 }}
           >
-            <div className="p-6 md:p-8 bg-[#050505] border border-white/[0.04] hover:bg-[#0a0a0a] hover:shadow-[0_0_30px_rgba(212,175,55,0.03)] transition-all duration-500">
+            <div className="p-6 md:p-8 bg-[#050505] border border-white/[0.04] hover:bg-[#0a0a0a] hover:shadow-[0_0_30px_rgba(255,196,107,0.03)] transition-all duration-500">
               <div className="flex items-center gap-2 mb-6">
-                <Trophy className="w-6 h-6 text-[#D4AF37]" />
+                <Trophy className="w-6 h-6 text-[#FFC46B]" />
                 <h3 className="text-xl font-semibold text-white">Prize Structure</h3>
               </div>
               <div className="space-y-3">
@@ -157,7 +157,7 @@ export function LotterySection() {
                 <div className="flex items-center justify-between text-lg font-semibold">
                   <span className="text-white/70">Total Prize Pool</span>
                   <div className="text-right">
-                    <div className="text-[#D4AF37]">
+                    <div className="text-[#FFC46B]">
                       {formatBigInt(LOTTERY_CONFIG.prizePool.qubic)} QUBIC
                     </div>
                   </div>
@@ -176,13 +176,13 @@ export function LotterySection() {
           >
             <div className="p-6 md:p-8 bg-[#050505] border border-white/[0.04]">
               <div className="flex items-center gap-2 mb-6">
-                <Coins className="w-6 h-6 text-[#D4AF37]" />
+                <Coins className="w-6 h-6 text-[#FFC46B]" />
                 <h3 className="text-xl font-semibold text-white">Enter the Draw</h3>
               </div>
 
-              <div className="p-4 bg-[#D4AF37]/10 border border-[#D4AF37]/20 mb-6">
-                <p className="text-sm text-[#D4AF37]/80">
-                  <strong className="text-[#D4AF37]">Requirements:</strong> Own an Anna NFT to enter the draw.
+              <div className="p-4 bg-[#FFC46B]/10 border border-[#FFC46B]/20 mb-6">
+                <p className="text-sm text-[#FFC46B]/80">
+                  <strong className="text-[#FFC46B]">Requirements:</strong> Own an Anna NFT to enter the draw.
                 </p>
               </div>
 
@@ -191,7 +191,7 @@ export function LotterySection() {
                 <div>
                   <label
                     htmlFor="lottery-wallet"
-                    className="text-[#D4AF37]/50 text-[11px] uppercase tracking-[0.4em] font-mono block mb-2"
+                    className="text-[#FFC46B]/50 text-[11px] uppercase tracking-[0.4em] font-mono block mb-2"
                   >
                     Qubic Wallet Address
                   </label>
@@ -201,7 +201,7 @@ export function LotterySection() {
                     value={walletAddress}
                     onChange={(e) => setWalletAddress(e.target.value)}
                     placeholder="Enter your Qubic address..."
-                    className="w-full px-4 py-3 bg-black border border-white/[0.06] text-white font-mono placeholder:text-white/30 focus:outline-none focus:border-[#D4AF37]/50 focus:shadow-[0_0_15px_rgba(212,175,55,0.05)] transition-all"
+                    className="w-full px-4 py-3 bg-black border border-white/[0.06] text-white font-mono placeholder:text-white/30 focus:outline-none focus:border-[#FFC46B]/50 focus:shadow-[0_0_15px_rgba(255,196,107,0.05)] transition-all"
                     required
                     disabled={isVerifying}
                   />
@@ -211,7 +211,7 @@ export function LotterySection() {
                 <div>
                   <label
                     htmlFor="lottery-nft-id"
-                    className="text-[#D4AF37]/50 text-[11px] uppercase tracking-[0.4em] font-mono block mb-2"
+                    className="text-[#FFC46B]/50 text-[11px] uppercase tracking-[0.4em] font-mono block mb-2"
                   >
                     Anna NFT ID
                   </label>
@@ -223,7 +223,7 @@ export function LotterySection() {
                     value={nftId}
                     onChange={(e) => setNftId(e.target.value)}
                     placeholder="1 - 200"
-                    className="w-full px-4 py-3 bg-black border border-white/[0.06] text-white font-mono placeholder:text-white/30 focus:outline-none focus:border-[#D4AF37]/50 focus:shadow-[0_0_15px_rgba(212,175,55,0.05)] transition-all"
+                    className="w-full px-4 py-3 bg-black border border-white/[0.06] text-white font-mono placeholder:text-white/30 focus:outline-none focus:border-[#FFC46B]/50 focus:shadow-[0_0_15px_rgba(255,196,107,0.05)] transition-all"
                     required
                     disabled={isVerifying}
                   />
@@ -233,7 +233,7 @@ export function LotterySection() {
                 <button
                   type="submit"
                   disabled={isVerifying || !walletAddress || !nftId}
-                  className="w-full py-4 bg-[#D4AF37] text-black font-bold text-lg hover:bg-[#D4AF37]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                  className="w-full py-4 bg-[#FFC46B] text-black font-bold text-lg hover:bg-[#FFC46B]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                 >
                   {isVerifying ? (
                     <span className="flex items-center justify-center gap-2">
@@ -250,18 +250,18 @@ export function LotterySection() {
                   <div
                     className={`flex items-start gap-3 p-4 ${
                       verificationResult.success
-                        ? 'bg-[#D4AF37]/10 border border-[#D4AF37]/20'
+                        ? 'bg-[#FFC46B]/10 border border-[#FFC46B]/20'
                         : 'bg-red-500/10 border border-red-500/20'
                     }`}
                   >
                     {verificationResult.success ? (
-                      <CheckCircle2 className="w-5 h-5 text-[#D4AF37] flex-shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-5 h-5 text-[#FFC46B] flex-shrink-0 mt-0.5" />
                     ) : (
                       <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
                     )}
                     <p
                       className={`text-sm ${
-                        verificationResult.success ? 'text-[#D4AF37]' : 'text-red-400'
+                        verificationResult.success ? 'text-[#FFC46B]' : 'text-red-400'
                       }`}
                     >
                       {verificationResult.message}
@@ -276,15 +276,15 @@ export function LotterySection() {
               <h4 className="font-semibold text-white mb-4">How it works:</h4>
               <ul className="space-y-3 text-sm text-white/50">
                 <li className="flex items-start gap-2">
-                  <span className="text-[#D4AF37] mt-1">•</span>
+                  <span className="text-[#FFC46B] mt-1">•</span>
                   <span>Each Anna NFT holder gets 1 lottery ticket</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-[#D4AF37] mt-1">•</span>
+                  <span className="text-[#FFC46B] mt-1">•</span>
                   <span>Winners drawn transparently using blockchain randomness</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-[#D4AF37] mt-1">•</span>
+                  <span className="text-[#FFC46B] mt-1">•</span>
                   <span>5 winners share the QUBIC prize pool</span>
                 </li>
               </ul>

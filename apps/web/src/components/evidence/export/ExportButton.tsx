@@ -158,7 +158,7 @@ export function ExportButton({
           {isExporting ? (
             <Loader2 className="w-4 h-4 mr-2 animate-spin" />
           ) : exportedFormat ? (
-            <Check className="w-4 h-4 mr-2 text-[#D4AF37]" />
+            <Check className="w-4 h-4 mr-2 text-[#FFC46B]" />
           ) : (
             <Download className="w-4 h-4 mr-2" />
           )}
@@ -181,7 +181,7 @@ export function ExportButton({
           disabled={isExporting}
           className="cursor-pointer"
         >
-          <FileJson className="w-4 h-4 mr-2 text-[#D4AF37]" />
+          <FileJson className="w-4 h-4 mr-2 text-[#FFC46B]" />
           <div className="flex-1">
             <div className="font-medium">JSON</div>
             <div className="text-xs text-muted-foreground">
@@ -195,7 +195,7 @@ export function ExportButton({
           disabled={isExporting}
           className="cursor-pointer"
         >
-          <FileSpreadsheet className="w-4 h-4 mr-2 text-[#D4AF37]" />
+          <FileSpreadsheet className="w-4 h-4 mr-2 text-[#FFC46B]" />
           <div className="flex-1">
             <div className="font-medium">CSV</div>
             <div className="text-xs text-muted-foreground">Excel compatible</div>
@@ -209,7 +209,7 @@ export function ExportButton({
           disabled={isExporting || !screenshotElementId}
           className="cursor-pointer"
         >
-          <ImageIcon className="w-4 h-4 mr-2 text-[#D4AF37]" />
+          <ImageIcon className="w-4 h-4 mr-2 text-[#FFC46B]" />
           <div className="flex-1">
             <div className="font-medium">Screenshot</div>
             <div className="text-xs text-muted-foreground">
@@ -323,7 +323,7 @@ export function BulkExport({ exports }: BulkExportProps) {
           disabled={isExporting}
           className="cursor-pointer"
         >
-          <FileJson className="w-4 h-4 mr-2 text-[#D4AF37]" />
+          <FileJson className="w-4 h-4 mr-2 text-[#FFC46B]" />
           <div className="flex-1">
             <div className="font-medium">All as JSON</div>
             <div className="text-xs text-muted-foreground">
@@ -337,7 +337,7 @@ export function BulkExport({ exports }: BulkExportProps) {
           disabled={isExporting}
           className="cursor-pointer"
         >
-          <FileSpreadsheet className="w-4 h-4 mr-2 text-[#D4AF37]" />
+          <FileSpreadsheet className="w-4 h-4 mr-2 text-[#FFC46B]" />
           <div className="flex-1">
             <div className="font-medium">All as CSV</div>
             <div className="text-xs text-muted-foreground">
