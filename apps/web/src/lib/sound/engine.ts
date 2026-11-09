@@ -1,13 +1,19 @@
 /**
- * The site's sound: one Web Audio graph for the whole visit. A quiet generative score underneath (made in the
- * browser, nothing downloaded), and small electric sounds on top for what people press and for what the machines
- * on the page do (BPP-9000's ticks and calls, the pool brain's sparks). Browsers let sound start only after a
- * press, so the score begins with the first press anywhere; the speaker in the header turns everything off, and
- * that choice is remembered in this browser.
+ * The site's sound: one Web Audio graph for the whole visit. A quiet music track underneath ("Ambient
+ * Electronics" by leberch, Pixabay Content License), and small electric sounds on top for what people press and for
+ * what the machines on the page do (BPP-9000's ticks and calls, the pool brain's sparks, Maria at work). Browsers
+ * let sound start only after a press, so the music is fetched and begins with the first press anywhere; the
+ * speaker in the header turns everything off, and that choice is remembered in this browser.
  *
  * Client only. Every call is safe before the first press (it does nothing) and when sound is off.
  */
-import { buildScore, type Score } from '@/components/brain/ambient'
+/** The track, prepared so it loops: the intro plays once, then LOOP_START..LOOP_END repeats; the last seconds
+ * before LOOP_END are already crossfaded into the music just before LOOP_START, so the seam is not heard. */
+const TRACK = '/audio/qc-theme.mp3'
+const LOOP_START = 35.7
+const LOOP_END = 157.6
+/** the track sits about 20 dB under its mastered level: a background, not a song */
+const MUSIC_LEVEL = 0.065
 
 export type Press = 'tap' | 'link' | 'open' | 'close' | 'primary' | 'on' | 'off' | 'none'
 
@@ -22,7 +28,10 @@ class Engine {
   private music!: GainNode
   private sfx!: GainNode
   private verb!: ConvolverNode
-  private score: Score | null = null
+  private track: AudioBuffer | null = null
+  private loading: Promise<AudioBuffer | null> | null = null
+  private playing: AudioBufferSourceNode | null = null
+  private played = false
   private noiseBuf!: AudioBuffer
   private listeners = new Set<Listener>()
   private last = new Map<string, number>()
@@ -99,27 +108,56 @@ class Engine {
     this.emit()
   }
 
+  private load(): Promise<AudioBuffer | null> {
+    const ctx = this.ctx!
+    if (!this.loading)
+      this.loading = fetch(TRACK)
+        .then(r => (r.ok ? r.arrayBuffer() : Promise.reject(new Error(String(r.status)))))
+        .then(b => ctx.decodeAudioData(b))
+        .then(buf => (this.track = buf))
+        .catch(() => {
+          this.loading = null
+          return null
+        })
+    return this.loading
+  }
+
   private startMusic() {
     const ctx = this.ctx
-    if (!ctx || this.score) return
-    this.score = buildScore(ctx, this.music, this.verb)
-    const t = ctx.currentTime
-    this.music.gain.cancelScheduledValues(t)
-    this.music.gain.setValueAtTime(this.music.gain.value, t)
-    this.music.gain.linearRampToValueAtTime(0.2, t + 4)
+    if (!ctx || this.playing) return
+    void this.load().then(buf => {
+      if (!buf || !this.enabled || this.playing || this.ctx !== ctx) return
+      const src = ctx.createBufferSource()
+      src.buffer = buf
+      src.loop = true
+      src.loopStart = LOOP_START
+      src.loopEnd = Math.min(LOOP_END, buf.duration)
+      src.connect(this.music)
+      // the intro once per visit; after a pause it picks up inside the loop
+      src.start(ctx.currentTime + 0.05, this.played ? LOOP_START : 0)
+      this.played = true
+      this.playing = src
+      const t = ctx.currentTime
+      this.music.gain.cancelScheduledValues(t)
+      this.music.gain.setValueAtTime(this.music.gain.value, t)
+      this.music.gain.linearRampToValueAtTime(MUSIC_LEVEL, t + 3)
+    })
   }
 
   private stopMusic() {
     const ctx = this.ctx
-    const sc = this.score
-    if (!ctx || !sc) return
-    this.score = null
+    const src = this.playing
+    if (!ctx || !src) return
+    this.playing = null
     const t = ctx.currentTime
     this.music.gain.cancelScheduledValues(t)
     this.music.gain.setValueAtTime(this.music.gain.value, t)
     this.music.gain.linearRampToValueAtTime(0, t + 0.6)
     window.setTimeout(() => {
-      sc.stop()
+      try {
+        src.stop()
+      } catch {}
+      src.disconnect()
       if (!this.enabled) void ctx.suspend()
     }, 700)
   }
