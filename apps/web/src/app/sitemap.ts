@@ -1,3 +1,4 @@
+import { DIGESTS } from '@/content/epochs'
 import type { MetadataRoute } from 'next'
 import { allBlogs, allDocs } from 'contentlayer/generated'
 import { BOOKS, SITE_URL } from '@/lib/books'
@@ -6,6 +7,8 @@ import { ARTICLES } from '@/lib/articles'
 import { MEMBERS } from '@/lib/forum'
 import { CFB_ARTICLES, archiveId } from '@/lib/archive'
 import { ANSWERS } from '@/lib/answers'
+
+const DIGEST_EPOCHS = DIGESTS.map(d => d.epoch)
 
 export default function sitemap(): MetadataRoute.Sitemap {
   if (!INDEXING) return []
@@ -22,6 +25,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     page('/bpp9000', 0.9),
     page('/bpp9000/brains', 0.8),
     page('/status', 0.7),
+    page('/epochs', 0.7),
+    ...DIGEST_EPOCHS.map(e => page(`/epochs/${e}`, 0.6)),
     page('/books', 0.9),
     ...BOOKS.flatMap(b => [
       page(`/books/${b.slug}`, 0.9, b.published),

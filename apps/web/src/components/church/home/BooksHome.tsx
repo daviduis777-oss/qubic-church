@@ -54,6 +54,8 @@ const INVESTIGATIONS = [
   { title: 'The Road to The Day', text: 'Come-from-Beyond from 2000 to 13.04.2027, and the Satoshi Nakamoto question. Some doors left open.', href: '/timeline' },
   { title: 'Matrix companion', text: 'The forensic appendix to chapter 13.', href: '/companion' },
   { title: 'Network monitor', text: 'Live state of the Qubic network.', href: '/monitoring' },
+  { title: 'Is Qubic down?', text: 'One answer, live: is the tick moving, and every stall we have seen.', href: '/status' },
+  { title: 'Epochs', text: 'The week in Aigarth, one page per epoch: what changed, what was released, what was said.', href: '/epochs' },
 ] as const
 
 export function BooksHome({ locale = 'en' }: { locale?: Locale }) {
