@@ -16,6 +16,7 @@ import { OPEN_APP_EVENT, type OpenApp } from '@/lib/pool/qc'
 import { loadRigs } from '@/lib/pool/rig'
 import type { HaloMode as RingMode } from './halo-engine'
 import { SPRING, TONE } from './ui'
+import { sound } from '@/lib/sound/engine'
 import s from './maria.module.css'
 
 type Entry = { id: number; screen: Screen; dir: 1 | -1; handoff?: Answers; first?: string; leaving?: 1 | -1; still?: boolean }
@@ -58,19 +59,31 @@ export function MariaApp({ ai: aiHint }: { ai?: boolean } = {}) {
     if (entries.some(e => e.screen === 'home' && !e.leaving)) setRigCount(loadRigs().length)
   }, [entries])
 
+  // her work has a sound: a patter while she thinks, a chord in the halo's mood when the answer is ready
+  const thinking = useRef(false)
+  const quiet = () => {
+    if (thinking.current) sound().thinkStop()
+    thinking.current = false
+  }
+  useEffect(() => quiet, [])
   const api = useMemo(
     () => ({
       think: () => {
         setRing({ mode: 'thinking', tone: TONE.gold })
         setStatus('Maria is working')
+        if (!thinking.current) sound().thinkStart()
+        thinking.current = true
       },
       settle: (tone: string) => {
         setRing({ mode: 'settled', tone })
         setStatus('Result ready')
+        quiet()
+        sound().settle(tone === TONE.gold ? 'great' : tone === TONE.sage ? 'good' : tone === TONE.coral ? 'warn' : 'plain')
       },
       idle: () => {
         setRing({ mode: 'idle', tone: TONE.gold })
         setStatus('')
+        quiet()
       },
     }),
     [],

@@ -253,6 +253,155 @@ class Engine {
     this.bell(PENTA[idx]!, t + 0.04, 1.1, 0.025, out, 0.8)
   }
 
+  /**
+   * The machine of the future switching on: a whoop up ("uuiiii"), a dip, then it settles into a warm hum with a
+   * vibrato that widens as it spins up ("uuuuuu"), a sub thump at the start and glass on top as it locks in.
+   */
+  powerUp() {
+    if (!this.ok('power', 400)) return
+    const ctx = this.ctx!
+    const t = ctx.currentTime + 0.01
+    const out = this.out(0, 0.35)
+    const lp = ctx.createBiquadFilter()
+    lp.type = 'lowpass'
+    lp.Q.value = 9
+    lp.frequency.setValueAtTime(300, t)
+    lp.frequency.exponentialRampToValueAtTime(3800, t + 0.42)
+    lp.frequency.exponentialRampToValueAtTime(1200, t + 0.75)
+    lp.frequency.linearRampToValueAtTime(1700, t + 2.4)
+    const env = ctx.createGain()
+    env.gain.setValueAtTime(0, t)
+    env.gain.linearRampToValueAtTime(0.14, t + 0.06)
+    env.gain.setValueAtTime(0.14, t + 1.6)
+    env.gain.exponentialRampToValueAtTime(0.0001, t + 3.2)
+    lp.connect(env).connect(out)
+    // vibrato: slow and shallow while it climbs, then wider and quicker as it hums
+    const vib = ctx.createOscillator()
+    vib.frequency.setValueAtTime(3, t)
+    vib.frequency.linearRampToValueAtTime(6.2, t + 1.2)
+    const vibAmt = ctx.createGain()
+    vibAmt.gain.setValueAtTime(2, t)
+    vibAmt.gain.linearRampToValueAtTime(14, t + 1.4)
+    vib.connect(vibAmt)
+    for (const [type, mul, det] of [['sawtooth', 1, -8], ['sawtooth', 1, 8], ['square', 0.5, 0]] as [OscillatorType, number, number][]) {
+      const o = ctx.createOscillator()
+      o.type = type
+      o.detune.value = det
+      o.frequency.setValueAtTime(110 * mul, t)
+      o.frequency.exponentialRampToValueAtTime(880 * mul, t + 0.38) // uu-iiii
+      o.frequency.exponentialRampToValueAtTime(392 * mul, t + 0.62) // u
+      o.frequency.exponentialRampToValueAtTime(587.33 * mul, t + 0.85) // UU
+      o.frequency.exponentialRampToValueAtTime(293.66 * mul, t + 1.35) // uuuuu
+      vibAmt.connect(o.frequency)
+      const g = ctx.createGain()
+      g.gain.value = type === 'square' ? 0.5 : 0.7
+      o.connect(g).connect(lp)
+      o.start(t)
+      o.stop(t + 3.3)
+    }
+    vib.start(t)
+    vib.stop(t + 3.3)
+    // the sub thump as it engages, and the glass as it locks
+    this.tone(150, t, 0.5, 0.12, out, 'sine', 45)
+    this.hiss(t + 0.3, 0.35, 0.04, out, 2000, 9000, 4)
+    this.bell(1174.66, t + 0.85, 1.8, 0.04, out, 1.2)
+    this.bell(1760, t + 0.92, 1.6, 0.025, out, 0.9)
+  }
+
+  /** And switching off: a last lift ("uu-ii") then it winds down and the vibrato slows with it ("uuuu"). */
+  powerDown() {
+    if (!this.ok('power', 400)) return
+    const ctx = this.ctx!
+    const t = ctx.currentTime + 0.01
+    const out = this.out(0, 0.35)
+    const lp = ctx.createBiquadFilter()
+    lp.type = 'lowpass'
+    lp.Q.value = 9
+    lp.frequency.setValueAtTime(1600, t)
+    lp.frequency.exponentialRampToValueAtTime(3200, t + 0.25)
+    lp.frequency.exponentialRampToValueAtTime(180, t + 1.7)
+    const env = ctx.createGain()
+    env.gain.setValueAtTime(0, t)
+    env.gain.linearRampToValueAtTime(0.12, t + 0.04)
+    env.gain.setValueAtTime(0.12, t + 0.9)
+    env.gain.exponentialRampToValueAtTime(0.0001, t + 2)
+    lp.connect(env).connect(out)
+    const vib = ctx.createOscillator()
+    vib.frequency.setValueAtTime(6.2, t)
+    vib.frequency.linearRampToValueAtTime(1.5, t + 1.8)
+    const vibAmt = ctx.createGain()
+    vibAmt.gain.setValueAtTime(14, t)
+    vibAmt.gain.linearRampToValueAtTime(3, t + 1.8)
+    vib.connect(vibAmt)
+    for (const [type, mul, det] of [['sawtooth', 1, -8], ['sawtooth', 1, 8], ['square', 0.5, 0]] as [OscillatorType, number, number][]) {
+      const o = ctx.createOscillator()
+      o.type = type
+      o.detune.value = det
+      o.frequency.setValueAtTime(293.66 * mul, t)
+      o.frequency.exponentialRampToValueAtTime(659.25 * mul, t + 0.22) // uu-ii
+      o.frequency.exponentialRampToValueAtTime(440 * mul, t + 0.4)
+      o.frequency.exponentialRampToValueAtTime(55 * mul, t + 1.8) // uuuu down
+      vibAmt.connect(o.frequency)
+      const g = ctx.createGain()
+      g.gain.value = type === 'square' ? 0.5 : 0.7
+      o.connect(g).connect(lp)
+      o.start(t)
+      o.stop(t + 2.1)
+    }
+    vib.start(t)
+    vib.stop(t + 2.1)
+    this.hiss(t + 0.2, 0.6, 0.03, out, 7000, 600, 4)
+    this.tone(220, t + 1.5, 0.4, 0.06, out, 'sine', 40)
+  }
+
+  /* Maria at work: a quiet patter of data while she thinks, a pop when she answers, a chord when it is ready */
+  private thinkers = 0
+  private thinkT = 0
+  thinkStart() {
+    this.thinkers++
+    if (this.thinkers > 1 || typeof window === 'undefined') return
+    const run = () => {
+      if (this.ctx && this.enabled && this.ctx.state === 'running') {
+        const ctx = this.ctx
+        const t = ctx.currentTime + 0.005
+        const out = this.out(Math.random() * 1.2 - 0.6, 0.3)
+        const f = PENTA[Math.floor(Math.random() * PENTA.length)]! * (Math.random() < 0.5 ? 1 : 2)
+        this.tone(f, t, 0.05, 0.012, out, 'sine', f * (Math.random() < 0.5 ? 1.12 : 0.9))
+        if (Math.random() < 0.25) this.hiss(t, 0.02, 0.012, out, 6000, 4000, 8)
+      }
+      this.thinkT = window.setTimeout(run, 70 + Math.random() * 110)
+    }
+    run()
+  }
+  thinkStop() {
+    this.thinkers = Math.max(0, this.thinkers - 1)
+    if (this.thinkers === 0) window.clearTimeout(this.thinkT)
+  }
+
+  /** a message from Maria appears */
+  reply(fault = false) {
+    if (!this.ok('reply', 220)) return
+    const t = this.ctx!.currentTime + 0.005
+    const out = this.out(-0.15, 0.35)
+    if (fault) {
+      this.tone(493.88, t, 0.18, 0.04, out, 'triangle')
+      this.tone(466.16, t + 0.12, 0.3, 0.04, out, 'triangle')
+      return
+    }
+    this.tone(880, t, 0.08, 0.035, out, 'sine', 1320)
+    this.bell(1318.51, t + 0.06, 0.45, 0.025, out, 0.7)
+  }
+
+  /** Maria's result is ready; the halo's colour says how it went */
+  settle(tone: 'good' | 'great' | 'warn' | 'plain') {
+    if (!this.ok('settle', 300)) return
+    const t = this.ctx!.currentTime + 0.01
+    const out = this.out(0, 0.5)
+    const notes =
+      tone === 'great' ? [587.33, 739.99, 880, 1174.66] : tone === 'good' ? [587.33, 880, 1174.66] : tone === 'warn' ? [440, 415.3] : [659.25, 880]
+    notes.forEach((f, i) => this.bell(f, t + i * 0.07, 1.2, tone === 'warn' ? 0.04 : 0.035, out, tone === 'warn' ? 0.5 : 1.1))
+  }
+
   /** what a press sounds like */
   press(kind: Press, pan = 0) {
     if (kind === 'none' || !this.ok(`press-${kind}`, 40)) return

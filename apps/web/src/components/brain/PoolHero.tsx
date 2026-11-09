@@ -149,11 +149,13 @@ export function PoolHero({ phone, hooks, preview }: { phone: ReactNode; hooks: H
               <button
                 type="button"
                 className={`ph-btn main${on ? ' on' : ''}`}
-                data-sound={on ? 'off' : 'primary'}
+                data-sound="none"
                 onClick={() => {
                   const next = !on
                   setOn(next)
                   api.current?.connect(next)
+                  if (next) sound().powerUp()
+                  else sound().powerDown()
                   if (next) setTimeout(() => document.getElementById('join')?.scrollIntoView({ behavior: 'smooth' }), 2600)
                 }}
               >

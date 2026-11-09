@@ -7,6 +7,7 @@ import type { Measured } from '@/lib/pool/aggregate'
 import type { Severity } from '@/lib/pool/doctor'
 import type { Card as HwCard, Verdict } from '@/lib/pool/hardware'
 import { SOURCES, type SourceId } from '@/lib/pool/knowledge'
+import { sound } from '@/lib/sound/engine'
 import s from './maria.module.css'
 
 /** Verdict tones: the site's gold (--accent-gold), a muted sage for OK, the site's --danger for faults. Her halo adds a deep blue. */
@@ -42,6 +43,7 @@ export function Avatar({ size = 30, label }: { size?: number; label?: string }) 
 
 /** One of Maria's messages: her avatar and a dark glass bubble. */
 export function Say({ children, fault }: { children: ReactNode; fault?: boolean }) {
+  useEffect(() => sound().reply(fault), [fault])
   return (
     <div className={s.mRow}>
       <Avatar size={26} />
@@ -58,6 +60,10 @@ export function You({ children, mono }: { children: ReactNode; mono?: boolean })
 
 export function Typing({ label = 'Maria is working' }: { label?: string }) {
   const reduce = useReducedMotion()
+  useEffect(() => {
+    sound().thinkStart()
+    return () => sound().thinkStop()
+  }, [])
   return (
     <div aria-label={label} className={s.mRow} role="status">
       <Avatar size={26} />
