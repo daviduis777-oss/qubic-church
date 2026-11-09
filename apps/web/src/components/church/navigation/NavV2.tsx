@@ -2,7 +2,9 @@
 
 import Link from 'next/link'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { bppFonts } from '@/components/bpp/fonts'
 import { ALL_ITEMS, NAV, type NavBadge, type NavGroup } from '@/lib/nav'
+import { NO_TAB, POOL_TAB, type PoolTab, probePoolTab } from '@/lib/pool/nav'
 import { usePathname } from '@/navigation'
 
 /*
@@ -183,6 +185,26 @@ export function NavV2() {
   const [sheet, setSheet] = useState(false)
   const [search, setSearch] = useState(false)
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  // The hidden QC Pool: asked once per page load; shown in Join only after the gate says yes.
+  const [pool, setPool] = useState<PoolTab>(NO_TAB)
+  useEffect(() => {
+    let on = true
+    probePoolTab().then(t => on && setPool(t))
+    return () => {
+      on = false
+    }
+  }, [])
+  const doors = useMemo(
+    () =>
+      pool.show
+        ? NAV.map(x =>
+            x.id === 'join'
+              ? { ...x, items: [{ href: POOL_TAB.href, name: POOL_TAB.label, desc: pool.preview ? 'Private preview: only you see this.' : 'Mine with Qubic Church.' }, ...x.items] }
+              : x,
+          )
+        : NAV,
+    [pool],
+  )
 
   useEffect(() => {
     setDoor(null)
@@ -214,19 +236,21 @@ export function NavV2() {
   }, [])
 
   const inGroup = (g: NavGroup) => g.items.some(it => pathname === it.href || pathname.startsWith(`${it.href}/`))
-  const g = NAV.find(x => x.id === door) ?? null
+  const g = doors.find(x => x.id === door) ?? null
+  // On the forum's blue bar the gold reads too loud: the bar turns the forum's blue there, as before.
+  const crypt = pathname === '/articles' || pathname.startsWith('/articles/')
 
   return (
     <>
       <style>{CSS}</style>
-      <header className="nv2" onMouseLeave={hoverClose}>
+      <header className={`nv2 ${bppFonts}${crypt ? ' nv2-crypt' : ''}`} onMouseLeave={hoverClose}>
         <div className="nv2-wrap nv2-bar">
           <Link aria-label="Home: Qubic Church" className="nv2-home" href="/">
             Qubic Church
           </Link>
 
           <nav aria-label="Primary" className="nv2-doors">
-            {NAV.map(x => (
+            {doors.map(x => (
               <button
                 aria-expanded={door === x.id}
                 className={`nv2-door${door === x.id ? ' is-open' : ''}${inGroup(x) ? ' is-here' : ''}`}
@@ -289,7 +313,7 @@ export function NavV2() {
               <Now k={`Epoch ${live.epoch}`} v={`ends in ${live.epochLeft}`} />
               <Now gold k="First live call" v={live.countdown === 'live' ? 'now' : `in ${live.countdown}`} />
             </div>
-            {NAV.map(x => (
+            {doors.map(x => (
               <section key={x.id} style={{ display: 'grid', gap: 6 }}>
                 <span className="nv2-lit" style={{ fontSize: 34 }}>{x.title}</span>
                 {x.items.map(it => (
@@ -314,6 +338,7 @@ export function NavV2() {
           </div>
         )}
       </header>
+      <div aria-hidden style={{ height: 60 }} />
       <Search onClose={() => setSearch(false)} open={search} />
     </>
   )
@@ -322,6 +347,8 @@ export function NavV2() {
 const CSS = `
 .nv2 { position: fixed; inset: 0 0 auto 0; z-index: 60; background: rgba(6,5,10,.82); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid rgba(255,255,255,.07); }
 .nv2-wrap { max-width: 1280px; margin: 0 auto; }
+.nv2-crypt { background: #2f4a63; border-bottom-color: #2f4a63; }
+.nv2-crypt .nv2-home, .nv2-crypt .nv2-donate { color: #fff; border-color: rgba(255,255,255,.5); }
 .nv2-bar { height: 60px; display: flex; align-items: center; gap: 18px; padding: 0 20px; }
 .nv2-home { font: 600 14px/1 var(--font-sans, system-ui); letter-spacing: .32em; text-transform: uppercase; color: ${GOLD}; text-decoration: none; white-space: nowrap; }
 .nv2-doors { display: flex; gap: 4px; margin-left: 12px; }

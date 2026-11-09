@@ -10,7 +10,7 @@ import type { LocaleOptions } from '@/lib/opendocs/types/i18n'
 import { ThemeProvider } from '@/components/theme-provider'
 import { SiteFooter } from '@/components/site-footer'
 import { CosmicWrapper } from '@/components/church/backgrounds/CosmicWrapper'
-import { GlobalNavTrigger } from '@/components/church/navigation'
+import { NavV2 } from '@/components/church/navigation/NavV2'
 import { ConditionalSiteFooter } from '@/components/ConditionalSiteFooter'
 import { INDEXING, SITE_DESCRIPTION } from '@/lib/indexing'
 import { SITE_URL } from '@/lib/books'
@@ -225,7 +225,7 @@ export default async function RootLayout(props: {
                         }}
                         type="application/ld+json"
                       />
-                      <GlobalNavTrigger />
+                      <NavV2 />
 
                       <main
                         className="flex-1 focus:outline-none"
