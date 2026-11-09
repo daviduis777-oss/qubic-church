@@ -2,6 +2,7 @@ import 'server-only'
 import { EXPLORER } from '@/lib/bpp/brains-view'
 import { kvGetJson, kvSetJson } from '@/lib/bpp/store'
 import { epochStart } from '@/lib/pool/epoch'
+import { annaFrom, growAnna } from './anna'
 import { type FieldState, type FieldView, type StreamItem, type Territory, countInto, edgeHas, edgeNote, emptyField, gridFor, territories } from './field-view'
 
 /**
@@ -17,8 +18,10 @@ const K_IDS = (e: number, k: number) => `garden:field:${e}:ids:${k}`
 const PAGE = 1000
 const IDS_PER_CHUNK = 3000
 /** pages per tick: catching up with the current epoch, and with the one before it after the change of epoch */
-const CATCH_PAGES = Number(process.env.GARDEN_CATCH_PAGES) || 12
-const PREV_PAGES = 6
+const CATCH_PAGES = Number(process.env.GARDEN_CATCH_PAGES) || 30
+const PREV_PAGES = 10
+/** a tick stops reading pages after this long, to stay inside the function's minute */
+const BUDGET_MS = 38_000
 const GAP_MS = 150
 
 type EpochItem = { epoch: number; algoFamily: string; solutions: number; verification?: { verified?: number } }
@@ -64,7 +67,14 @@ async function saveField(f: FieldState, savedIds: number) {
 
 /* ---------------- the tick ---------------- */
 
-export type TickResult = { epoch: number; caught: number; counted: number; grown: number; previous: { epoch: number; caught: number; sealed: boolean } | null }
+export type TickResult = {
+  epoch: number
+  caught: number
+  counted: number
+  grown: number
+  anna: { planted: number; finished: number } | null
+  previous: { epoch: number; caught: number; sealed: boolean } | null
+}
 
 const tickOf = (s: StreamItem) => s.tickNumber ?? 0
 
@@ -73,15 +83,22 @@ const tickOf = (s: StreamItem) => s.tickNumber ?? 0
  * shallow offsets quickly and deep ones slowly, so the field counts forward from the moment it opened; a
  * catch-up that does not reach the head in `pages` pages continues next tick from where it stopped.
  */
-async function catchUp(f: FieldState, pages: number): Promise<{ caught: number; reached: boolean }> {
+async function catchUp(f: FieldState, pages: number, deadline: number): Promise<{ caught: number; reached: boolean; got: StreamItem[] }> {
   const index = new Map(f.ids.map((id, i) => [id, i]))
   let caught = 0
+  const got: StreamItem[] = []
+  // an epoch that grows Anna is read whole, from its first brain: the head starts below its first tick
+  if (!f.head && f.epoch >= annaFrom()) {
+    f.head = { tick: 0, hashes: [] }
+    f.opened = epochStart(f.epoch).getTime()
+  }
   if (!f.head) {
     const p0 = await page(f.epoch, 0)
     let max = 0
     let min = Number.MAX_SAFE_INTEGER
     for (const s of p0.items) {
       countInto(f, s, index)
+      got.push(s)
       caught++
       max = Math.max(max, tickOf(s))
       min = Math.min(min, tickOf(s))
@@ -89,11 +106,11 @@ async function catchUp(f: FieldState, pages: number): Promise<{ caught: number; 
     f.head = { tick: max, hashes: p0.items.filter(s => tickOf(s) === max).map(s => s.hash) }
     f.opened = Date.now()
     f.oldestTick = p0.items.length ? min : null
-    return { caught, reached: true }
+    return { caught, reached: true, got }
   }
   const c = f.catchup ?? { offset: 0, newTick: 0, newHashes: [] as string[], min: { tick: Number.MAX_SAFE_INTEGER, hashes: [] as string[] } }
   let reached = false
-  for (let k = 0; k < pages && !reached; k++) {
+  for (let k = 0; k < pages && !reached && Date.now() < deadline; k++) {
     const pg = await page(f.epoch, c.offset)
     if (c.offset === 0 && pg.items.length) {
       const top = Math.max(...pg.items.map(tickOf))
@@ -113,6 +130,7 @@ async function catchUp(f: FieldState, pages: number): Promise<{ caught: number; 
       // a page read after the list shifted: only what is older than what this catch-up already counted
       if (t > c.min.tick || edgeHas(c.min, s)) continue
       countInto(f, s, index)
+      got.push(s)
       caught++
       edgeNote(c.min, s)
     }
@@ -124,7 +142,7 @@ async function catchUp(f: FieldState, pages: number): Promise<{ caught: number; 
     f.head = { tick: c.newTick || f.head.tick, hashes: c.newTick ? c.newHashes : f.head.hashes }
     f.catchup = null
   } else f.catchup = c
-  return { caught, reached }
+  return { caught, reached, got }
 }
 
 export async function fieldTick(): Promise<TickResult> {
@@ -132,9 +150,12 @@ export async function fieldTick(): Promise<TickResult> {
   const cur = epochs[0]
   if (!cur) throw new Error('no epoch')
   const E = cur.epoch
+  const deadline = Date.now() + BUDGET_MS
   const { f, savedIds } = await loadField(E)
-  const { caught } = await catchUp(f, CATCH_PAGES)
+  const { caught, got } = await catchUp(f, CATCH_PAGES, deadline)
   f.updatedAt = new Date().toISOString()
+  // the brains just counted go to Anna; the two saves follow each other within a second
+  const anna = await growAnna(E, got)
   await saveField(f, savedIds)
 
   // the epoch before: its stream is final, so one last catch-up seals it
@@ -143,14 +164,15 @@ export async function fieldTick(): Promise<TickResult> {
   if (prev) {
     const { f: pf, savedIds: pSaved } = await loadField(prev.epoch)
     if (pf.head && !pf.sealed) {
-      const r = await catchUp(pf, PREV_PAGES)
+      const r = await catchUp(pf, PREV_PAGES, deadline + 15_000)
+      await growAnna(prev.epoch, r.got)
       if (r.reached) pf.sealed = true
       pf.updatedAt = new Date().toISOString()
       await saveField(pf, pSaved)
       previous = { epoch: prev.epoch, caught: r.caught, sealed: pf.sealed }
     }
   }
-  return { epoch: E, caught, counted: f.counted, grown: cur.verification?.verified ?? cur.solutions, previous }
+  return { epoch: E, caught, counted: f.counted, grown: cur.verification?.verified ?? cur.solutions, anna, previous }
 }
 
 /* ---------------- reading ---------------- */

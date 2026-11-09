@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { type EpochGarden, type Gen, type Lineage, type Plot, homework, isIdentity, sittings } from '@/lib/garden/garden-view'
-import { Field, FieldStyles } from './Field'
+import { Anna } from './Anna'
 
 /**
  * The Garden: the epoch as a season of growth. Brains grown so far, the births as they come, the best brain's
@@ -74,28 +74,13 @@ export function Garden() {
   return (
     <div className="gd">
       <GardenStyles />
-      <FieldStyles />
-      <header className="gd-head">
-        <div className="gd-eyebrow mute">
-          The Garden <span className="gd-sep">·</span> epoch {g ? g.epoch : '…'} <span className="gd-sep">·</span> hidden preview
-        </div>
-        <h1 className="gd-h1">
-          <span className="nx lit gd-count">{g ? int(g.grown) : ep && !ep.ok ? '—' : '…'}</span>
-          <span className="gd-h1-text">brains grown this epoch</span>
-        </h1>
-        <p className="gd-lead">
-          Aigarth is <em>AI</em> and <em>garth</em>, an old word for a garden. Every solution a Qubic miner submits is a small neural network
-          grown from a parent network, checked by the whole network and kept with the name of the identity that grew it. In Bitcoin a
-          finished hash has no future. Here a finished brain has children. This page shows the garden as it grows.
-        </p>
-        <div className="gd-facts">
-          <Fact label="born per minute, lately" value={g?.perMinute != null ? g.perMinute.toFixed(1) : '—'} />
-          <Fact label="best brain's homework" value={best ? pct(homework(best.score)) : '—'} note={best ? `grown by ${short(best.gardener)}` : undefined} />
-          <Fact label="sunrise: first live prices" value={left(SUNRISE - now)} note="18 Nov, 12:00 UTC" />
-        </div>
-      </header>
+      <Anna now={now} />
 
-      <Field g={g} now={now} />
+      <div className="gd-facts">
+        <Fact label="brains born per minute, lately" value={g?.perMinute != null ? g.perMinute.toFixed(1) : '—'} />
+        <Fact label="best brain's homework this epoch" value={best ? pct(homework(best.score)) : '—'} note={best ? `grown by ${short(best.gardener)}` : undefined} />
+        <Fact label="sunrise: first live prices" value={left(SUNRISE - now)} note="18 Nov, 12:00 UTC" />
+      </div>
 
       <Vine top={best?.hash ?? null} bestScore={best?.score ?? null} />
 
