@@ -106,7 +106,7 @@ class Engine {
     const t = ctx.currentTime
     this.music.gain.cancelScheduledValues(t)
     this.music.gain.setValueAtTime(this.music.gain.value, t)
-    this.music.gain.linearRampToValueAtTime(0.85, t + 3)
+    this.music.gain.linearRampToValueAtTime(0.2, t + 4)
   }
 
   private stopMusic() {

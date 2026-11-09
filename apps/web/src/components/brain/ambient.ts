@@ -1,8 +1,8 @@
 /**
- * The site's score: a light, forward-moving electronic piece made in the browser with Web Audio, nothing
- * downloaded and nothing borrowed. A sequencer at 112 BPM runs a sixteenth-note arpeggio of glassy plucks through
- * a dotted-eighth echo over four chords in D (Dmaj9, Bm9, Gmaj7#11, A sus), a pad that breathes on the beat like
- * it is side-chained, soft off-beat ticks and a low pulse. The arpeggio mutates every four bars and the ticks
+ * The site's score: a calm, wide electronic piece made in the browser with Web Audio, nothing downloaded and
+ * nothing borrowed. A sequencer at 84 BPM runs an eighth-note arpeggio of soft glass plucks through a long echo
+ * over four chords in D (Dmaj9, Bm9, Gmaj7#11, A sus), a broad pad that swells with each bar over a held low root,
+ * a few soft ticks and a low pulse on the downbeat. The arpeggio mutates every four bars and the ticks
  * drop out now and then, so it never loops the same way twice. The sound engine (`@/lib/sound/engine`) plays it
  * into its music bus once someone has pressed something and sound is on.
  */
@@ -54,29 +54,29 @@ export function buildScore(ctx: AudioContext, out: AudioNode, verb: AudioNode): 
   }
 
   // the echo: dotted eighths, darkening as they repeat
-  const BEAT = 60 / 112
+  const BEAT = 60 / 84
   const SIX = BEAT / 4
   const echo = ctx.createDelay(2)
   echo.delayTime.value = SIX * 3
   const fb = ctx.createGain()
-  fb.gain.value = 0.38
+  fb.gain.value = 0.45
   const dark = ctx.createBiquadFilter()
   dark.type = 'lowpass'
-  dark.frequency.value = 2600
+  dark.frequency.value = 2000
   echo.connect(dark).connect(fb).connect(echo)
   const echoOut = ctx.createGain()
-  echoOut.gain.value = 0.32
+  echoOut.gain.value = 0.36
   dark.connect(echoOut).connect(master)
 
   // the pad: detuned saws through a soft filter, its level pumping on every beat
   const padF = ctx.createBiquadFilter()
   padF.type = 'lowpass'
-  padF.frequency.value = 1500
+  padF.frequency.value = 1100
   padF.Q.value = 0.6
   const pump = ctx.createGain()
   pump.gain.value = 0
   padF.connect(pump).connect(master)
-  send(pump, 0.4)
+  send(pump, 0.7)
   const padVoices: OscillatorNode[] = []
   for (let v = 0; v < 4; v++)
     for (const det of [-7, 7]) {
@@ -85,11 +85,21 @@ export function buildScore(ctx: AudioContext, out: AudioNode, verb: AudioNode): 
       o.detune.value = det
       o.frequency.value = hz(CHORDS[0]!.pad[v]!)
       const g = ctx.createGain()
-      g.gain.value = 0.018
+      g.gain.value = 0.022
       o.connect(g).connect(padF)
       o.start()
       padVoices.push(o)
     }
+
+  // a held low root under it all, the floor the chords stand on
+  const root = ctx.createOscillator()
+  root.type = 'triangle'
+  root.frequency.value = hz(CHORDS[0]!.root + 12)
+  const rootG = ctx.createGain()
+  rootG.gain.value = 0.05
+  root.connect(rootG).connect(padF)
+  root.start()
+  padVoices.push(root)
 
   const hiss = noise(ctx, 1)
   let stopped = false
@@ -104,12 +114,12 @@ export function buildScore(ctx: AudioContext, out: AudioNode, verb: AudioNode): 
     const lp = ctx.createBiquadFilter()
     lp.type = 'lowpass'
     lp.Q.value = 4
-    lp.frequency.setValueAtTime(4200, t)
-    lp.frequency.exponentialRampToValueAtTime(500, t + 0.2)
+    lp.frequency.setValueAtTime(2600, t)
+    lp.frequency.exponentialRampToValueAtTime(420, t + 0.5)
     const g = ctx.createGain()
     g.gain.setValueAtTime(0, t)
-    g.gain.linearRampToValueAtTime(vol, t + 0.003)
-    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.26)
+    g.gain.linearRampToValueAtTime(vol, t + 0.012)
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.7)
     const g2 = ctx.createGain()
     g2.gain.value = 0.35
     const p = ctx.createStereoPanner()
@@ -119,11 +129,11 @@ export function buildScore(ctx: AudioContext, out: AudioNode, verb: AudioNode): 
     lp.connect(g).connect(p)
     p.connect(master)
     p.connect(echo)
-    send(p, 0.18)
+    send(p, 0.35)
     o.start(t)
     o2.start(t)
-    o.stop(t + 0.3)
-    o2.stop(t + 0.3)
+    o.stop(t + 0.75)
+    o2.stop(t + 0.75)
   }
 
   const tick = (t: number, vol: number, open: boolean) => {
@@ -147,11 +157,11 @@ export function buildScore(ctx: AudioContext, out: AudioNode, verb: AudioNode): 
     o.frequency.exponentialRampToValueAtTime(f, t + 0.08)
     const g = ctx.createGain()
     g.gain.setValueAtTime(0, t)
-    g.gain.linearRampToValueAtTime(0.09, t + 0.005)
-    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.32)
+    g.gain.linearRampToValueAtTime(0.06, t + 0.02)
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.9)
     o.connect(g).connect(master)
     o.start(t)
-    o.stop(t + 0.4)
+    o.stop(t + 1)
   }
 
   // the sequencer: schedules a little ahead of the clock, a step at a time
@@ -169,21 +179,23 @@ export function buildScore(ctx: AudioContext, out: AudioNode, verb: AudioNode): 
       const ch = CHORDS[bar % 4]!
       if (s === 0) {
         // new bar: move the pad to the chord, maybe a new arpeggio, maybe a breath without ticks
-        for (let v = 0; v < 4; v++) for (let k = 0; k < 2; k++) padVoices[v * 2 + k]!.frequency.setTargetAtTime(hz(ch.pad[v]!), next, 0.04)
+        for (let v = 0; v < 4; v++) for (let k = 0; k < 2; k++) padVoices[v * 2 + k]!.frequency.setTargetAtTime(hz(ch.pad[v]!), next, 0.18)
         if (bar % 4 === 0 && bar > 0) pat = pattern()
         ticks = bar % 8 < 6
       }
-      if (s % 4 === 0) {
-        // the pad breathes on the beat; a low pulse on one and three
+      if (s === 0) {
+        // the pad swells with the bar instead of pumping on the beat; a soft pulse on the downbeat
         pump.gain.cancelScheduledValues(next)
-        pump.gain.setValueAtTime(0.25, next)
-        pump.gain.linearRampToValueAtTime(1, next + BEAT * 0.7)
-        if (s === 0 || s === 8) pulse(hz(ch.root), next)
+        pump.gain.setValueAtTime(pump.gain.value, next)
+        pump.gain.linearRampToValueAtTime(0.55, next + 0.08)
+        pump.gain.linearRampToValueAtTime(1, next + BEAT * 2.5)
+        pump.gain.linearRampToValueAtTime(0.8, next + BEAT * 4)
+        pulse(hz(ch.root), next)
+        root.frequency.setTargetAtTime(hz(ch.root + 12), next, 0.3)
       }
       const i = pat[s]!
-      if (i >= 0) pluck(hz(ch.arp[i]!), next, s % 4 === 0 ? 0.05 : 0.034, s % 2 ? 0.45 : -0.45)
-      if (ticks && s % 4 === 2) tick(next, 0.03, s === 14)
-      if (ticks && s % 2 === 1) tick(next, 0.009, false)
+      if (s % 2 === 0 && i >= 0) pluck(hz(ch.arp[i]!), next, s % 8 === 0 ? 0.04 : 0.026, s % 4 ? 0.4 : -0.4)
+      if (ticks && s === 12) tick(next, 0.014, true)
       next += SIX
       step++
       if (step % 16 === 0) bar++
