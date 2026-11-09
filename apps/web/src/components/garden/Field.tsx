@@ -12,6 +12,9 @@ import { BRAINS_PER_CELL, type FieldView, type Territory, cellAt, colourOf, hand
 type FieldResp = (FieldView & { ok: true; epochs: number[] }) | { ok: false; reason: string; epochs?: number[] }
 type FindResp = { ok: true; found: (Territory & { id: string }) | null } | { ok: false; reason: string }
 
+/** The record begins with this epoch: the first one counted whole, from its first brain to its seal. */
+export const RECORD_FROM = 239
+const RECORD_START = Date.UTC(2026, 10, 11, 12)
 const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 const short = (s: string, a = 6, b = 4) => `${s.slice(0, a)}…${s.slice(-b)}`
 const int = (n: number) => n.toLocaleString('en-US')
@@ -187,6 +190,15 @@ export function Field({ g, now }: { g: EpochGarden | null; now: number }) {
             One cell per {BRAINS_PER_CELL} verified brains. Every identity’s brains make one territory that only grows; nobody can take a cell away.
             {view ? (view.sealed ? ` Epoch ${view.epoch} is sealed: this is its map.` : ` Epoch ${view.epoch}, day ${dayOf} of 7, seals in ${left(view.end - now)}.`) : ''}
           </div>
+          {view && view.epoch < RECORD_FROM ? (
+            <div className="gd-record">
+              <span className="lit nx gd-record-n">{RECORD_FROM}</span>
+              <span>
+                The record begins with epoch {RECORD_FROM}, Wednesday 11 November, 12:00 UTC, {left(RECORD_START - now)} from now: the first epoch counted whole, from
+                its first brain to its seal. Epoch {view.epoch} is the rehearsal.
+              </span>
+            </div>
+          ) : null}
         </div>
         {f && 'epochs' in f && f.epochs?.length ? (
           <div className="gd-maps" role="tablist" aria-label="Epochs">
@@ -332,6 +344,8 @@ export function FieldStyles() {
     <style>{`
 .gd .gd-field { display: grid; gap: 14px; }
 .gd .gd-field-head { display: flex; justify-content: space-between; gap: 16px; align-items: flex-end; flex-wrap: wrap; }
+.gd .gd-record { display: flex; gap: 14px; align-items: center; margin-top: 10px; padding: 10px 14px; border: 1px solid rgba(255,200,140,.3); border-radius: 14px; background: rgba(255,196,107,.06); font-size: 14px; max-width: 760px; }
+.gd .gd-record-n { font-size: 36px; line-height: 1; }
 .gd .gd-maps { display: flex; gap: 6px; flex-wrap: wrap; }
 .gd .gd-map { font: inherit; font-size: 13px; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--dim); cursor: pointer; }
 .gd .gd-map.on { color: var(--hot); border-color: rgba(255,200,140,.5); background: rgba(255,196,107,.08); }
