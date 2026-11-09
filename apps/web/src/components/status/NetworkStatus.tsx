@@ -13,15 +13,6 @@ function dur(ms: number) {
   if (h < 48) return `${h} h ${m % 60} min`
   return `${Math.floor(h / 24)} days ${h % 24} h`
 }
-const when = (ms: number) =>
-  new Date(ms).toLocaleString('en-GB', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    timeZone: 'UTC',
-  }) + ' UTC'
 function ago(ms: number) {
   const s = Math.max(0, Math.round(ms / 1000))
   return s < 90 ? `${s} s ago` : `${Math.round(s / 60)} min ago`
@@ -153,72 +144,7 @@ export function NetworkStatus() {
         </dl>
       </section>
 
-      <section aria-labelledby="hist-h" style={{ display: 'grid', gap: 14 }}>
-        <h2
-          className="eng"
-          id="hist-h"
-          style={{
-            fontSize: 'clamp(16px, 2vw, 19px)',
-            fontWeight: 400,
-            margin: 0,
-            color: '#f3e4ce',
-          }}
-        >
-          Stalls we know of
-        </h2>
-        {st && st.incidents.length > 0 ? (
-          <ol
-            style={{
-              listStyle: 'none',
-              margin: 0,
-              padding: 0,
-              display: 'grid',
-              gap: 10,
-            }}
-          >
-            {st.incidents.map(i => (
-              <li
-                className="panel"
-                key={`${i.from}-${i.tick}`}
-                style={{ padding: '14px 18px', display: 'grid', gap: 4 }}
-              >
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    gap: 12,
-                    flexWrap: 'wrap',
-                    color: '#f3e4ce',
-                  }}
-                >
-                  <b style={{ fontWeight: 600 }}>
-                    {i.to
-                      ? `${dur(i.to - i.from)} stalled`
-                      : `Stalled for ${dur(now - i.from)}, still now`}
-                  </b>
-                  <span className="mute" style={{ fontSize: 13.5 }}>
-                    epoch {i.epoch} · tick {fmtInt(i.tick)}
-                  </span>
-                </div>
-                <span className="mute" style={{ fontSize: 14 }}>
-                  {i.reported ? 'About ' : 'No later than '}
-                  {when(i.from)} {i.to ? `to ${when(i.to)}` : ''}
-                  {i.reported ? ', from the computors’ announcements' : ''}
-                </span>
-                {i.note && (
-                  <span className="mute" style={{ fontSize: 14 }}>
-                    {i.note}
-                  </span>
-                )}
-              </li>
-            ))}
-          </ol>
-        ) : (
-          <p className="mute" style={{ margin: 0 }}>
-            {st ? 'None so far.' : '…'}
-          </p>
-        )}
-      </section>
+
 
       <footer
         className="mute"

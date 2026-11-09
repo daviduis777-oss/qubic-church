@@ -116,7 +116,7 @@ export const OG_PAGES: Record<string, OgPage> = {
     path: '/status',
     eyebrow: 'Live',
     title: 'Is Qubic down?',
-    sub: 'The live tick, how fast it moves, and every stall we have seen.',
+    sub: 'The live tick, how fast it moves, and whether it has stopped.',
     theme: 'blue',
     lamp: true,
   },

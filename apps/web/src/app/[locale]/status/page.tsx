@@ -7,7 +7,7 @@ import { SITE_URL } from '@/lib/books'
 import { ogFor } from '@/lib/og-pages'
 
 const TITLE = 'Is Qubic down? Live network status'
-const DESC = 'Is the Qubic network running right now? The live tick, how fast it moves, and every stall we have seen.'
+const DESC = 'Is the Qubic network running right now? The live tick, how fast it moves, and whether it has stopped.'
 
 export const metadata: Metadata = {
   title: { absolute: TITLE },

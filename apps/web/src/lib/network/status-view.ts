@@ -32,17 +32,8 @@ export type NetState = {
 export const STALL_MS = 10 * 60_000
 export const KEEP_INCIDENTS = 50
 
-/** Stops we know of from before the site watched, from the computors' own announcements. */
-export const KNOWN: Incident[] = [
-  {
-    from: Date.UTC(2026, 9, 18, 1, 26),
-    to: Date.UTC(2026, 9, 20, 5, 16),
-    tick: 85_371_949,
-    epoch: 235,
-    reported: true,
-    note: 'Halted by the computors after the weak-seed wallet drain, resumed after the recovery vote.',
-  },
-]
+/** Stops we know of from before the site watched. Empty: the page shows only what the site saw itself. */
+export const KNOWN: Incident[] = []
 
 export const empty = (): NetState => ({ last: null, changedAt: null, rate: null, incidents: [] })
 

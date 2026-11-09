@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { empty, history, observe, STALL_MS, verdict } from '../status-view.ts'
+import { empty, observe, STALL_MS, verdict } from '../status-view.ts'
 
 const T0 = Date.UTC(2026, 10, 9, 8, 0)
 const min = 60_000
@@ -32,10 +32,4 @@ test('a tick stuck for ten minutes opens a stall that the next movement closes',
 test('without a recent look we do not guess', () => {
   const s = observe(empty(), { tick: 1, epoch: 238, at: T0 })
   assert.equal(verdict(s, T0 + 3 * 3600_000).verdict, 'unknown')
-})
-
-test('history keeps the October halt', () => {
-  const h = history(empty())
-  assert.equal(h[0]!.tick, 85_371_949)
-  assert.equal(h[0]!.reported, true)
 })
