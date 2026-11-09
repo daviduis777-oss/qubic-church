@@ -149,7 +149,7 @@ export function PoolHero({ phone, hooks, preview }: { phone: ReactNode; hooks: H
           <div className="ph-left">
             <div className="ph-eng">
               <span aria-hidden className="ph-pilot" />
-              QUBIC CHURCH · MINING POOL
+              QC · MINING POOL
               {preview ? <span className="ph-pill">private preview</span> : null}
             </div>
             <h1 className="ph-title" id="ph-title">

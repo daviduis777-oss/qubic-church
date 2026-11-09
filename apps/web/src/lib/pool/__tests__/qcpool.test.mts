@@ -79,9 +79,9 @@ test('nav: the Aigarth Pool link is rendered only after the gate says yes, never
 
 /* ---------------- the page, top to bottom ---------------- */
 
-test('page: the quote first, then join, then Maria beside her phone, then the details', () => {
+test('page: the brain with Maria in the middle first, then join, then Maria, then the details', () => {
   const page = src('../../../app/[locale]/pool/page.tsx')
-  const order = ['<Hero', '<Join', '<MariaIntro', '<MariaApp', 'id="how"', 'id="hw"', '<RecordStrip', '<WhoMines', 'id="terms"', 'className={p.partners}']
+  const order = ['<PoolHero', '<MariaApp', '<Join', '<MariaIntro', 'id="how"', 'id="hw"', '<RecordStrip', '<WhoMines', 'id="terms"', 'className={p.partners}']
   const at = order.map(x => page.indexOf(x))
   assert.ok(at.every(i => i > 0), `missing: ${order.filter((_, i) => at[i] < 0).join(', ')}`)
   assert.deepEqual([...at].sort((a, b) => a - b), at)
@@ -203,8 +203,7 @@ test('QC wording: miner-facing pool copy says QC, never Qubic Church', () => {
     '../config.ts',
   ]
   for (const f of files) assert.doesNotMatch(src(f), /Qubic Church|QC Pool/, f)
-  // the quote section's line stays
-  assert.match(src('../../../app/[locale]/pool/page.tsx') + src('../../../app/[locale]/pool/qc.tsx') + src('../../../app/[locale]/pool/why.tsx'), /<Hero/)
+  assert.doesNotMatch(src('../../../components/brain/PoolHero.tsx'), /Qubic Church|QUBIC CHURCH|QC Pool/)
 })
 
 test('report link: the page opens the phone\'s Report app, and /pool#report opens it on load', () => {
@@ -215,5 +214,5 @@ test('report link: the page opens the phone\'s Report app, and /pool#report open
   const app = src('../../../components/pool/maria/MariaApp.tsx')
   assert.match(app, /addEventListener\(OPEN_APP_EVENT/)
   assert.match(app, /window\.location\.hash === '#report'/)
-  assert.match(src('../../../app/[locale]/pool/PoolStage.tsx'), /id="maria-phone"/)
+  assert.match(src('../../../components/brain/PoolHero.tsx'), /id="maria-phone"/)
 })
