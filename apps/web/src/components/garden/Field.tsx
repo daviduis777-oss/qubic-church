@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { type EpochGarden, homework, isIdentity } from '@/lib/garden/garden-view'
-import { BRAINS_PER_CELL, type FieldView, type Territory, cellAt, colourOf, marks, toNextCell } from '@/lib/garden/field-view'
+import { BRAINS_PER_CELL, type FieldView, type Territory, cellAt, colourOf, handleOf, marks, toNextCell } from '@/lib/garden/field-view'
 
 /**
  * The Field: the epoch as land. Every computor's brains claim cells along one curve, in the order the computors
@@ -10,6 +10,7 @@ import { BRAINS_PER_CELL, type FieldView, type Territory, cellAt, colourOf, mark
  * field; a sealed field is kept as the map of that epoch.
  */
 type FieldResp = (FieldView & { ok: true; epochs: number[] }) | { ok: false; reason: string; epochs?: number[] }
+type FindResp = { ok: true; found: (Territory & { id: string }) | null } | { ok: false; reason: string }
 
 const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 const short = (s: string, a = 6, b = 4) => `${s.slice(0, a)}…${s.slice(-b)}`
@@ -48,7 +49,9 @@ async function getJson<T>(url: string): Promise<T | null> {
 export function Field({ g, now }: { g: EpochGarden | null; now: number }) {
   const [epoch, setEpoch] = useState<number | null>(null)
   const [f, setF] = useState<FieldResp | null>(null)
-  const [sel, setSel] = useState<string | null>(null)
+  /** the chosen territory: by index when clicked, by full identity when found */
+  const [sel, setSel] = useState<{ i: number; id?: string } | null>(null)
+  const [found, setFound] = useState<(Territory & { id: string }) | null | 'none'>(null)
   const [hover, setHover] = useState<{ t: Territory; x: number; y: number } | null>(null)
   const [typed, setTyped] = useState('')
   const base = useRef<HTMLCanvasElement>(null)
@@ -78,20 +81,18 @@ export function Field({ g, now }: { g: EpochGarden | null; now: number }) {
   useEffect(() => {
     try {
       const k = localStorage.getItem('garden:id')
-      if (k && isIdentity(k)) {
-        setTyped(k)
-        setSel(k)
-      }
+      if (k && isIdentity(k)) setTyped(k)
     } catch {}
   }, [])
 
   const view = f && f.ok ? f : null
   const grid = useMemo(() => (view ? { w: view.grid.w, h: view.grid.h, block: view.grid.h } : null), [view])
   const ts = view?.territories ?? []
-  const byId = useMemo(() => new Map(ts.map(t => [t.id, t])), [ts])
-  const selected = sel ? (byId.get(sel) ?? null) : null
+  const byIndex = useMemo(() => new Map(ts.map(t => [t.i, t])), [ts])
+  const selected: Territory | null = sel ? (byIndex.get(sel.i) ?? (found && found !== 'none' && found.i === sel.i ? found : null)) : null
+  const selId = sel?.id ?? (found && found !== 'none' && found.i === sel?.i ? found.id : null)
   const pool = useMemo(() => new Set(view?.pool ?? []), [view])
-  const poolCells = ts.filter(t => pool.has(t.id)).reduce((a, t) => a + t.cells, 0)
+  const poolCells = ts.filter(t => pool.has(t.i)).reduce((a, t) => a + t.cells, 0)
   const newest = useMemo(() => [...ts].sort((a, b) => (b.last ?? 0) - (a.last ?? 0)).slice(0, 5), [ts])
 
   // the land itself: one pixel per cell on an offscreen canvas, scaled up crisp
@@ -104,7 +105,7 @@ export function Field({ g, now }: { g: EpochGarden | null; now: number }) {
     x.fillStyle = 'rgba(255,255,255,.03)'
     x.fillRect(0, 0, grid.w, grid.h)
     for (const t of ts) {
-      x.fillStyle = t.id === sel ? '#d9ccff' : pool.has(t.id) ? '#7c48ff' : colourOf(t.id)
+      x.fillStyle = t.i === sel?.i ? '#d9ccff' : pool.has(t.i) ? '#7c48ff' : colourOf(t.h + t.i)
       for (let d = t.at; d < t.at + t.cells; d++) {
         const [cx, cy] = cellAt(grid, d)
         x.fillRect(cx, cy, 1, 1)
@@ -114,7 +115,7 @@ export function Field({ g, now }: { g: EpochGarden | null; now: number }) {
     for (const t of [...newest, ...(selected ? [selected] : [])]) {
       if (!t.cells) continue
       const [cx, cy] = cellAt(grid, t.at + t.cells - 1)
-      x.fillStyle = t.id === sel ? '#ffffff' : '#FFE3B0'
+      x.fillStyle = t.i === sel?.i ? '#ffffff' : '#FFE3B0'
       x.fillRect(cx, cy, 1, 1)
     }
   }, [view, grid, ts, sel, pool, newest, selected])
@@ -155,19 +156,26 @@ export function Field({ g, now }: { g: EpochGarden | null; now: number }) {
     return null
   }
 
-  const pick = (e?: React.FormEvent) => {
+  const pick = async (e?: React.FormEvent) => {
     e?.preventDefault()
     const v = typed.trim().toUpperCase()
-    if (!isIdentity(v)) return
-    setSel(v)
+    if (!isIdentity(v) || !view) return
     try {
       localStorage.setItem('garden:id', v)
     } catch {}
+    const r = await getJson<FindResp>(`/api/garden/field?epoch=${view.epoch}&find=${v}`)
+    if (r && r.ok && r.found) {
+      setFound(r.found)
+      setSel({ i: r.found.i, id: v })
+    } else {
+      setFound('none')
+      setSel(null)
+    }
   }
 
   const dayOf = view ? Math.min(7, Math.max(1, Math.floor((now - view.start) / 86_400_000) + 1)) : null
-  const inHundred = selected != null && (g?.gardeners ?? []).some(x => x.id === selected.id)
-  const bestOf = selected != null && g?.best?.gardener === selected.id
+  const inHundred = selected != null && (g?.gardeners ?? []).some(x => handleOf(x.id) === selected.h)
+  const bestOf = selected != null && g?.best != null && handleOf(g.best.gardener) === selected.h
   const mk = marks(selected, inHundred, bestOf)
 
   return (
@@ -176,7 +184,7 @@ export function Field({ g, now }: { g: EpochGarden | null; now: number }) {
         <div>
           <div className="label">The field: the epoch as land, claimed brain by brain</div>
           <div className="mute gd-small">
-            One cell per {BRAINS_PER_CELL} verified brains. Every computor’s brains make one territory that only grows; nobody can take a cell away.
+            One cell per {BRAINS_PER_CELL} verified brains. Every identity’s brains make one territory that only grows; nobody can take a cell away.
             {view ? (view.sealed ? ` Epoch ${view.epoch} is sealed: this is its map.` : ` Epoch ${view.epoch}, day ${dayOf} of 7, seals in ${left(view.end - now)}.`) : ''}
           </div>
         </div>
@@ -201,12 +209,9 @@ export function Field({ g, now }: { g: EpochGarden | null; now: number }) {
               onMouseLeave={() => setHover(null)}
               onClick={ev => {
                 const h = findAt(ev)
-                if (h) {
-                  setSel(h.t.id)
-                  setTyped(h.t.id)
-                }
+                if (h) setSel({ i: h.t.i })
               }}
-              aria-label="The field: territories of the computors this epoch"
+              aria-label="The field: territories of the identities this epoch"
             />
           ) : (
             <div className="mute gd-small" style={{ padding: 18 }}>
@@ -215,7 +220,7 @@ export function Field({ g, now }: { g: EpochGarden | null; now: number }) {
           )}
           {hover ? (
             <div className="gd-tip" style={{ left: Math.min(hover.x + 14, size - 230), top: Math.max(0, hover.y - 56) }}>
-              <b>{short(hover.t.id, 8, 6)}</b>
+              <b>{hover.t.h}</b>
               <br />
               <span className="mute">
                 {int(hover.t.cells)} cells · {int(hover.t.brains)} brains · since {when(hover.t.first)}
@@ -228,7 +233,8 @@ export function Field({ g, now }: { g: EpochGarden | null; now: number }) {
             <div className="mute gd-small">{view ? `epoch ${view.epoch}${view.sealed ? ', sealed' : `, day ${dayOf} of 7`}` : 'epoch …'}</div>
             <div className="nx lit gd-side-n">{view ? int(view.grown) : '…'}</div>
             <div className="mute gd-small">
-              brains · {view ? int(view.cells) : '…'} cells claimed by {view ? int(ts.length) : '…'} computors
+              brains · {view ? int(view.cells) : '…'} cells claimed by {view ? int(ts.length) : '…'} identities
+              {view && view.counted < view.grown * 0.98 ? ` · field read ${Math.floor((view.counted / Math.max(1, view.grown)) * 100)}% so far` : ''}
             </div>
             {poolCells ? (
               <div className="gd-small" style={{ marginTop: 6 }}>
@@ -243,7 +249,7 @@ export function Field({ g, now }: { g: EpochGarden | null; now: number }) {
           </div>
 
           <form onSubmit={pick} className="gd-find">
-            <input value={typed} onChange={e => setTyped(e.target.value)} placeholder="find a territory: computor identity, 60 letters" spellCheck={false} autoComplete="off" aria-label="Computor identity" />
+            <input value={typed} onChange={e => setTyped(e.target.value)} placeholder="find a territory: identity, 60 letters" spellCheck={false} autoComplete="off" aria-label="Identity" />
             <button type="submit" className="btn">
               Find
             </button>
@@ -251,8 +257,8 @@ export function Field({ g, now }: { g: EpochGarden | null; now: number }) {
 
           {selected ? (
             <div className="gd-sel">
-              <div className="gd-sel-id" title={selected.id}>
-                <i className="gd-swatch" style={{ background: '#b9a6ff' }} /> {short(selected.id, 10, 8)}
+              <div className="gd-sel-id" title={selId ?? undefined}>
+                <i className="gd-swatch" style={{ background: '#b9a6ff' }} /> {selId ? short(selId, 10, 8) : selected.h}
               </div>
               <div className="gd-sel-nums">
                 <div>
@@ -272,16 +278,14 @@ export function Field({ g, now }: { g: EpochGarden | null; now: number }) {
                 first brain {when(selected.first)} · last {when(selected.last)}
               </div>
             </div>
-          ) : sel ? (
-            <div className="mute gd-small">
-              {short(sel, 8, 6)} holds no cell this epoch{byId.size ? '' : ' yet'}. {BRAINS_PER_CELL} verified brains claim the first one.
-            </div>
+          ) : found === 'none' ? (
+            <div className="mute gd-small">No brain under this identity in epoch {view?.epoch ?? '…'}, as far as the field has read. Identities rotate; check the one your miner shows now.</div>
           ) : (
             <div className="mute gd-small">Click a territory, or type a computor identity, to see its land and its marks.</div>
           )}
 
           <div>
-            <div className="mute gd-small">marks{selected ? ` of ${short(selected.id)}` : ''}</div>
+            <div className="mute gd-small">marks{selected ? ` of ${selected.h}` : ''}</div>
             <div className="gd-marks">
               {mk.map(m => (
                 <span key={m.key} className={m.got ? 'on' : ''} title={m.note}>
@@ -295,10 +299,10 @@ export function Field({ g, now }: { g: EpochGarden | null; now: number }) {
             <div className="mute gd-small">just now</div>
             <div className="gd-feed">
               {(g?.births ?? []).slice(0, 6).map(b => (
-                <div key={b.hash} className={b.gardener === sel ? 'you' : ''}>
+                <div key={b.hash} className={selected && handleOf(b.gardener) === selected.h ? 'you' : ''}>
                   <span className="mute">{ago(b.ts, now)}</span> +1 <i className="gd-swatch" style={{ background: colourOf(b.gardener) }} /> {short(b.gardener)}
                   {b.depth != null ? <span className="mute"> · gen {b.depth}</span> : null} <span className="glow-g">{pct(homework(b.score))}</span>
-                  {b.gardener === sel ? ' ✦' : ''}
+                  {selected && handleOf(b.gardener) === selected.h ? ' ✦' : ''}
                 </div>
               ))}
               {!g ? <div className="mute">…</div> : null}
@@ -307,7 +311,7 @@ export function Field({ g, now }: { g: EpochGarden | null; now: number }) {
 
           {newest.length ? (
             <div className="mute gd-small">
-              Growing right now: {newest.map(t => short(t.id)).join(', ')}.{' '}
+              Growing right now: {newest.map(t => t.h).join(', ')}.{' '}
               {view ? `Field read ${ago(new Date(view.updatedAt).getTime(), now)}.` : ''}
             </div>
           ) : null}

@@ -1,27 +1,49 @@
 /**
  * The Field, pure side: the epoch as land. One cell per BRAINS_PER_CELL verified brains, laid along a Hilbert
- * curve so that every computor's land is one contiguous territory, in the order the computors first appeared in
+ * curve so that every identity's land is one contiguous territory, in the order the identities first appeared in
  * the epoch. Counts only grow, so no territory ever shrinks; at the end of the epoch the field is sealed and kept.
  *
- * "Computor" is the explorer's word: the identity a solution is credited to. Pools mine into their computors'
- * seats, so a pool is one or a few territories; a pool worker's share lives in the pool's own record.
+ * An identity is the one the network credits a solution to. Since epoch 228 they rotate: a pool or a miner
+ * uses many over an epoch, each for a while. So a territory is a season's name; the pool keeps the worker.
  * Browser safe.
  */
 
 export const BRAINS_PER_CELL = 100
 
-/** Computors known to the explorer, listed once and extended as new ones appear. */
-export type ComputorMeta = { id: string; firstEpoch: number | null; lastEpoch: number | null; epochs: number | null; readAt?: number }
-
-/** One computor's record in one epoch, with what the marks need to know about the computor. */
-export type Holding = { id: string; n: number; first: number | null; last: number | null; fe?: number | null; ep?: number | null }
-
-/** The field of one epoch: holdings by computor index, plus whether it is sealed. */
+/** The state of one epoch's field, as the crawl keeps it: parallel arrays by identity index. */
 export type FieldState = {
   epoch: number
-  holdings: Holding[]
+  ids: string[]
+  /** verified brains per identity */
+  n: number[]
+  /** first and last brain seen, ms */
+  first: (number | null)[]
+  last: (number | null)[]
+  /** best (lowest) score seen */
+  best: (number | null)[]
+  /** brains counted so far */
+  counted: number
+  /** newest solution the catch-up has reached: everything newer is still to count, everything older is counted or the backfill's */
+  head: { tick: number; hashes: string[] } | null
+  /** a catch-up that did not reach the head in one tick continues here next tick; `min` is the oldest it counted */
+  catchup: { offset: number; newTick: number; newHashes: string[]; min: Edge } | null
+  /** the backfill walks from the oldest solution towards `boundary` (the first catch-up's oldest tick); `max` is where it has reached */
+  backfill: { pos: number; max: Edge; boundary: number; done: boolean }
   updatedAt: string
   sealed: boolean
+}
+
+export type Territory = {
+  /** a short handle: first six and last four letters of the identity */
+  h: string
+  i: number
+  /** curve offset of the first cell */
+  at: number
+  cells: number
+  brains: number
+  first: number | null
+  last: number | null
+  best: number | null
 }
 
 export type FieldView = {
@@ -30,26 +52,75 @@ export type FieldView = {
   end: number
   sealed: boolean
   updatedAt: string
-  /** brains verified this epoch, from /epochs (the sum of holdings lags it a little) */
+  /** brains verified this epoch, from the explorer's epoch record */
   grown: number
+  /** brains the crawl has counted so far */
+  counted: number
   grid: { w: number; h: number }
   /** territories in curve order */
   territories: Territory[]
   cells: number
-  /** the Aigarth Pool's computors, when known (GARDEN_POOL_COMPUTORS) */
-  pool: string[]
+  identities: number
+  /** the Aigarth Pool's identities, when known (GARDEN_POOL_COMPUTORS), as indexes */
+  pool: number[]
 }
 
-export type Territory = {
-  id: string
-  /** curve offset of the first cell */
-  at: number
-  cells: number
-  brains: number
-  first: number | null
-  last: number | null
-  firstEpoch: number | null
-  epochs: number | null
+export const handleOf = (id: string) => `${id.slice(0, 6)}…${id.slice(-4)}`
+
+export const emptyField = (epoch: number): FieldState => ({
+  epoch,
+  ids: [],
+  n: [],
+  first: [],
+  last: [],
+  best: [],
+  counted: 0,
+  head: null,
+  catchup: null,
+  backfill: { pos: 0, max: { tick: 0, hashes: [] }, boundary: Number.MAX_SAFE_INTEGER, done: false },
+  updatedAt: new Date(0).toISOString(),
+  sealed: false,
+})
+
+/** An edge of a crawl: a tick and the hashes already counted at that tick, since several solutions share a tick. */
+export type Edge = { tick: number; hashes: string[] }
+
+export const edgeHas = (e: Edge, s: StreamItem) => (s.tickNumber ?? 0) === e.tick && e.hashes.includes(s.hash)
+/** Move the edge to this solution: a new tick replaces the hashes, the same tick adds to them. */
+export function edgeNote(e: Edge, s: StreamItem) {
+  const t = s.tickNumber ?? 0
+  if (t === e.tick) e.hashes.push(s.hash)
+  else {
+    e.tick = t
+    e.hashes = [s.hash]
+  }
+}
+
+/** One solution of the stream, the fields the field needs. */
+export type StreamItem = { hash: string; computorId: string; tickNumber?: number; timestamp?: string | number; verification?: { score?: number } }
+
+/** Count a solution into the state (mutates). Returns the identity's index. */
+export function countInto(f: FieldState, s: StreamItem, index: Map<string, number>): number {
+  let i = index.get(s.computorId)
+  if (i == null) {
+    i = f.ids.length
+    f.ids.push(s.computorId)
+    f.n.push(0)
+    f.first.push(null)
+    f.last.push(null)
+    f.best.push(null)
+    index.set(s.computorId, i)
+  }
+  f.n[i]!++
+  f.counted++
+  const t = typeof s.timestamp === 'string' || typeof s.timestamp === 'number' ? Number(s.timestamp) : NaN
+  if (Number.isFinite(t) && t > 0) {
+    if (f.first[i] == null || t < f.first[i]!) f.first[i] = t
+    if (f.last[i] == null || t > f.last[i]!) f.last[i] = t
+  }
+  const sc = s.verification?.score
+  if (typeof sc === 'number' && (f.best[i] == null || sc < f.best[i]!)) f.best[i] = sc
+  return i
 }
 
 /* ---------------- Hilbert curve ---------------- */
@@ -95,19 +166,21 @@ export function cellAt(grid: { w: number; h: number; block: number }, d: number)
 
 /* ---------------- layout ---------------- */
 
-/** Territories from holdings: by first appearance, then by id; cells = floor(brains / BRAINS_PER_CELL). */
-export function territories(holdings: Holding[]): Territory[] {
-  const rows = holdings.filter(h => h.n >= BRAINS_PER_CELL).sort((a, b) => (a.first ?? Infinity) - (b.first ?? Infinity) || (a.id < b.id ? -1 : 1))
+/** Territories from the state: by first appearance, then by index; cells = floor(brains / BRAINS_PER_CELL). */
+export function territories(f: Pick<FieldState, 'ids' | 'n' | 'first' | 'last' | 'best'>): Territory[] {
+  const rows: number[] = []
+  for (let i = 0; i < f.ids.length; i++) if (f.n[i]! >= BRAINS_PER_CELL) rows.push(i)
+  rows.sort((a, b) => (f.first[a] ?? Infinity) - (f.first[b] ?? Infinity) || a - b)
   let at = 0
-  return rows.map(h => {
-    const cells = Math.floor(h.n / BRAINS_PER_CELL)
-    const t: Territory = { id: h.id, at, cells, brains: h.n, first: h.first, last: h.last, firstEpoch: h.fe ?? null, epochs: h.ep ?? null }
+  return rows.map(i => {
+    const cells = Math.floor(f.n[i]! / BRAINS_PER_CELL)
+    const t: Territory = { h: handleOf(f.ids[i]!), i, at, cells, brains: f.n[i]!, first: f.first[i] ?? null, last: f.last[i] ?? null, best: f.best[i] ?? null }
     at += cells
     return t
   })
 }
 
-/** A warm colour per computor, spread so that neighbours differ: hue 18..52, lightness 34..72, from the id's hash. */
+/** A warm colour per identity, spread so that neighbours differ: hue 18..52, lightness 34..72, from the id's hash. */
 export function colourOf(id: string): string {
   let h = 2166136261
   for (let i = 0; i < id.length; i++) {
@@ -125,18 +198,18 @@ export function colourOf(id: string): string {
 
 export type Mark = { key: string; label: string; got: boolean; note: string }
 
-/** What a territory has earned, all of it checkable against the explorer. */
-export function marks(t: Pick<Territory, 'brains' | 'cells' | 'epochs' | 'firstEpoch'> | null, inHundred: boolean, bestOfEpoch: boolean): Mark[] {
+/** What a territory has earned this epoch, all of it checkable against the explorer. */
+export function marks(t: Pick<Territory, 'brains' | 'cells' | 'best'> | null, inHundred: boolean, bestOfEpoch: boolean): Mark[] {
   const brains = t?.brains ?? 0
+  const best = t?.best ?? null
   return [
     { key: 'sprout', label: 'first sprout', got: brains >= 1, note: 'one verified brain' },
     { key: 'cell', label: 'a cell', got: brains >= BRAINS_PER_CELL, note: `${BRAINS_PER_CELL} brains claim one cell` },
     { key: 'ten', label: 'ten cells', got: brains >= 10 * BRAINS_PER_CELL, note: `${(10 * BRAINS_PER_CELL).toLocaleString('en-US')} brains` },
     { key: 'hundred', label: 'a hundred cells', got: brains >= 100 * BRAINS_PER_CELL, note: `${(100 * BRAINS_PER_CELL).toLocaleString('en-US')} brains` },
+    { key: 'sixty', label: 'past sixty', got: best != null && best <= 3504, note: 'a brain with homework over 60%' },
     { key: 'top', label: 'in the hundred', got: inHundred, note: 'one of the epoch’s hundred best brains' },
     { key: 'best', label: 'best of the epoch', got: bestOfEpoch, note: 'the epoch’s best brain, so far' },
-    { key: 'seven', label: 'seven epochs', got: (t?.epochs ?? 0) >= 7, note: 'seven epochs with at least one brain' },
-    { key: 'elder', label: 'elder', got: t?.firstEpoch != null && t.firstEpoch <= 200, note: 'in the garden since epoch 200 or earlier' },
   ]
 }
 
