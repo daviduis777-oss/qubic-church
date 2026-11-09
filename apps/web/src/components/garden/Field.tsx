@@ -59,7 +59,7 @@ export function Field({ g, now }: { g: EpochGarden | null; now: number }) {
     let on = true
     const load = () => getJson<FieldResp>(`/api/garden/field${epoch ? `?epoch=${epoch}` : ''}`).then(r => on && r && setF(r))
     load()
-    const t = setInterval(load, 60_000)
+    const t = setInterval(load, 120_000)
     return () => {
       on = false
       clearInterval(t)
@@ -314,9 +314,9 @@ export function Field({ g, now }: { g: EpochGarden | null; now: number }) {
         </aside>
       </div>
       <p className="mute gd-small gd-field-foot">
-        A computor is the identity the network credits a solution to. Pools mine into their computors’ seats, so a pool is one or a few territories
-        here; a pool worker’s share is kept in the pool’s own record. Territories lie along one curve in the order the computors first appeared this
-        epoch, so a territory can shift a little while the field grows, and never after the seal.
+        A computor is the identity the network credits a solution to; a pool or a miner may use several, and many appear for a few hours only.
+        Territories lie along one curve in the order the identities first appeared this epoch, so a territory can shift a little while the field
+        grows, and never after the seal. A pool worker’s own share is kept in the pool’s record.
       </p>
     </section>
   )

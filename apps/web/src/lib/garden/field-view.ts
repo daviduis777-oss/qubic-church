@@ -11,7 +11,7 @@
 export const BRAINS_PER_CELL = 100
 
 /** Computors known to the explorer, listed once and extended as new ones appear. */
-export type ComputorMeta = { id: string; firstEpoch: number | null; lastEpoch: number | null; epochs: number | null }
+export type ComputorMeta = { id: string; firstEpoch: number | null; lastEpoch: number | null; epochs: number | null; readAt?: number }
 
 /** One computor's record in one epoch, with what the marks need to know about the computor. */
 export type Holding = { id: string; n: number; first: number | null; last: number | null; fe?: number | null; ep?: number | null }

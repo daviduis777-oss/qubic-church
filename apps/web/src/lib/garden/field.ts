@@ -26,7 +26,7 @@ const LIST_PAGES_PER_TICK = 5
 const RELIST_MS = 7 * 24 * 3600_000
 const GAP_MS = 120
 
-type Scan = { listOffset: number; listed: boolean; listedAt: number; cursor: number; lastFullPassAt: number; queueDone: boolean; ticks: number }
+type Scan = { listOffset: number; listed: boolean; listedAt: number; cursor?: number; lastFullPassAt: number; queueDone: boolean; ticks: number }
 type EpochItem = { epoch: number; algoFamily: string; solutions: number }
 type ComputorRow = { computorId: string; epochsParticipated?: number; firstEpoch?: number; lastEpoch?: number }
 type Participation = { epoch: number; solutions: number; firstTimestamp?: string | number; lastTimestamp?: string | number; algorithms?: { algorithm: string; count: number }[] }
@@ -61,7 +61,7 @@ export async function fieldTick(): Promise<TickResult> {
   const E = epochs[0]?.epoch
   if (!E) throw new Error('no epoch')
   const known = new Set(epochs.map(e => e.epoch))
-  const scan: Scan = (await kvGetJson<Scan>(K_SCAN)) ?? { listOffset: 0, listed: false, listedAt: 0, cursor: 0, lastFullPassAt: 0, queueDone: false, ticks: 0 }
+  const scan: Scan = (await kvGetJson<Scan>(K_SCAN)) ?? { listOffset: 0, listed: false, listedAt: 0, lastFullPassAt: 0, queueDone: false, ticks: 0 }
   scan.ticks++
   let active = (await kvGetJson<ComputorMeta[]>(K_ACTIVE)) ?? []
   let queue = (await kvGetJson<string[]>(K_QUEUE)) ?? []
@@ -71,7 +71,7 @@ export async function fieldTick(): Promise<TickResult> {
   let queueDirty = false
   const activate = (id: string, meta?: Partial<ComputorMeta>) => {
     if (activeIds.has(id)) return
-    active.push({ id, firstEpoch: meta?.firstEpoch ?? null, lastEpoch: meta?.lastEpoch ?? null, epochs: meta?.epochs ?? null })
+    active.push({ id, firstEpoch: meta?.firstEpoch ?? null, lastEpoch: meta?.lastEpoch ?? null, epochs: meta?.epochs ?? null, ...(meta?.readAt ? { readAt: meta.readAt } : {}) })
     activeIds.add(id)
     activeDirty = true
   }
@@ -111,11 +111,8 @@ export async function fieldTick(): Promise<TickResult> {
     await sleep(GAP_MS)
   }
 
-  // 3. one slice of the rounds, one slice of the queue
-  const round = active.length ? Array.from({ length: Math.min(ACTIVE_PER_TICK, active.length) }, (_, k) => active[(scan.cursor + k) % active.length]!) : []
-  const wrapped = scan.listed && active.length > 0 && scan.cursor + ACTIVE_PER_TICK >= active.length
-  scan.cursor = active.length ? (scan.cursor + ACTIVE_PER_TICK) % active.length : 0
-  if (wrapped) scan.lastFullPassAt = Date.now()
+  // 3. the least recently read of the active computors (never-read ones first), and a slice of the queue
+  const round = [...active].sort((a, b) => (a.readAt ?? 0) - (b.readAt ?? 0)).slice(0, ACTIVE_PER_TICK)
   const fromQueue = queue.slice(0, QUEUE_PER_TICK)
 
   const fields = new Map<number, FieldState>()
@@ -154,10 +151,8 @@ export async function fieldTick(): Promise<TickResult> {
   for (const c of round) {
     try {
       const m = await record(c.id, c)
-      if (m.epochs !== c.epochs || m.firstEpoch !== c.firstEpoch || m.lastEpoch !== c.lastEpoch) {
-        Object.assign(c, m)
-        activeDirty = true
-      }
+      Object.assign(c, m, { readAt: Date.now() })
+      activeDirty = true
       refreshed++
     } catch {
       // a missing or rate-limited record is read again next round
@@ -168,7 +163,7 @@ export async function fieldTick(): Promise<TickResult> {
   for (const id of fromQueue) {
     try {
       const m = await record(id, null)
-      if (m.lastEpoch != null && m.lastEpoch >= E - 1) activate(id, m)
+      if (m.lastEpoch != null && m.lastEpoch >= E - 1) activate(id, { ...m, readAt: Date.now() })
       done.push(id)
       refreshed++
     } catch {
@@ -187,10 +182,9 @@ export async function fieldTick(): Promise<TickResult> {
   // computors that fell two epochs behind leave the rounds; their holdings stay in the fields
   const before = active.length
   active = active.filter(c => c.lastEpoch == null || c.lastEpoch >= E - 1)
-  if (active.length !== before) {
-    activeDirty = true
-    scan.cursor = active.length ? scan.cursor % active.length : 0
-  }
+  if (active.length !== before) activeDirty = true
+  // every active computor has been read at least once since this moment
+  if (scan.listed && active.length) scan.lastFullPassAt = Math.min(...active.map(c => c.readAt ?? 0))
 
   // 4. seal past epochs once a full round finished after the epoch ended (older ones also need the queue read)
   const sealed: number[] = []
