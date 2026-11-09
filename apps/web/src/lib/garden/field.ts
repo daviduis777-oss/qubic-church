@@ -19,7 +19,9 @@ const K_EPOCHS = 'garden:epochs'
 const K_FIELD = (e: number) => `garden:field:${e}`
 /** computors re-read per tick; each is one explorer call */
 const ACTIVE_PER_TICK = 36
-const QUEUE_PER_TICK = 12
+const QUEUE_PER_TICK = 20
+/** pages of the newest brains looked at per tick, to find the computors at work right now */
+const NEWEST_PAGES = 3
 const LIST_PAGES_PER_TICK = 5
 const RELIST_MS = 7 * 24 * 3600_000
 const GAP_MS = 120
@@ -98,10 +100,16 @@ export async function fieldTick(): Promise<TickResult> {
   }
 
   // 2. computors behind the newest brains join the rounds straight away
-  try {
-    const fresh = await get<{ items: ExplorerSolution[] }>(`/solutions?algorithm=BPP9000&epoch=${E}&status=verified&limit=100`)
-    for (const s of fresh.items) activate(s.computorId, { lastEpoch: E })
-  } catch {}
+  for (let p = 0; p < NEWEST_PAGES; p++) {
+    try {
+      const fresh = await get<{ items: ExplorerSolution[] }>(`/solutions?algorithm=BPP9000&epoch=${E}&status=verified&limit=100&offset=${p * 100}`)
+      for (const s of fresh.items) activate(s.computorId, { lastEpoch: E })
+      if (fresh.items.length < 100) break
+    } catch {
+      break
+    }
+    await sleep(GAP_MS)
+  }
 
   // 3. one slice of the rounds, one slice of the queue
   const round = active.length ? Array.from({ length: Math.min(ACTIVE_PER_TICK, active.length) }, (_, k) => active[(scan.cursor + k) % active.length]!) : []
