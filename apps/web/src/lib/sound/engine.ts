@@ -69,7 +69,7 @@ class Engine {
     this.music.gain.value = 0
     this.music.connect(this.master)
     this.sfx = ctx.createGain()
-    this.sfx.gain.value = 0.9
+    this.sfx.gain.value = 0.45
     this.sfx.connect(this.master)
     this.verb = ctx.createConvolver()
     this.verb.buffer = impulse(ctx, 3.2, 3)
@@ -254,104 +254,78 @@ class Engine {
   }
 
   /**
-   * The machine of the future switching on: a whoop up ("uuiiii"), a dip, then it settles into a warm hum with a
-   * vibrato that widens as it spins up ("uuuuuu"), a sub thump at the start and glass on top as it locks in.
+   * The machine switching on, kept light: a soft sine rises with a breath of air ("uuii"), settles into a warm low
+   * hum with a slow gentle vibrato ("uuu"), and blooms into a quiet D chord of glass.
    */
   powerUp() {
     if (!this.ok('power', 400)) return
     const ctx = this.ctx!
     const t = ctx.currentTime + 0.01
-    const out = this.out(0, 0.35)
+    const out = this.out(0, 0.45)
     const lp = ctx.createBiquadFilter()
     lp.type = 'lowpass'
-    lp.Q.value = 9
-    lp.frequency.setValueAtTime(300, t)
-    lp.frequency.exponentialRampToValueAtTime(3800, t + 0.42)
-    lp.frequency.exponentialRampToValueAtTime(1200, t + 0.75)
-    lp.frequency.linearRampToValueAtTime(1700, t + 2.4)
-    const env = ctx.createGain()
-    env.gain.setValueAtTime(0, t)
-    env.gain.linearRampToValueAtTime(0.14, t + 0.06)
-    env.gain.setValueAtTime(0.14, t + 1.6)
-    env.gain.exponentialRampToValueAtTime(0.0001, t + 3.2)
-    lp.connect(env).connect(out)
-    // vibrato: slow and shallow while it climbs, then wider and quicker as it hums
+    lp.Q.value = 0.7
+    lp.frequency.value = 2200
+    lp.connect(out)
     const vib = ctx.createOscillator()
-    vib.frequency.setValueAtTime(3, t)
-    vib.frequency.linearRampToValueAtTime(6.2, t + 1.2)
+    vib.frequency.value = 4.5
     const vibAmt = ctx.createGain()
-    vibAmt.gain.setValueAtTime(2, t)
-    vibAmt.gain.linearRampToValueAtTime(14, t + 1.4)
+    vibAmt.gain.setValueAtTime(0, t)
+    vibAmt.gain.linearRampToValueAtTime(4, t + 1.2)
     vib.connect(vibAmt)
-    for (const [type, mul, det] of [['sawtooth', 1, -8], ['sawtooth', 1, 8], ['square', 0.5, 0]] as [OscillatorType, number, number][]) {
+    for (const [mul, det, vol] of [[1, -5, 0.05], [1, 5, 0.05], [2, 0, 0.015]] as [number, number, number][]) {
       const o = ctx.createOscillator()
-      o.type = type
+      o.type = 'sine'
       o.detune.value = det
-      o.frequency.setValueAtTime(110 * mul, t)
-      o.frequency.exponentialRampToValueAtTime(880 * mul, t + 0.38) // uu-iiii
-      o.frequency.exponentialRampToValueAtTime(392 * mul, t + 0.62) // u
-      o.frequency.exponentialRampToValueAtTime(587.33 * mul, t + 0.85) // UU
-      o.frequency.exponentialRampToValueAtTime(293.66 * mul, t + 1.35) // uuuuu
+      o.frequency.setValueAtTime(196 * mul, t)
+      o.frequency.exponentialRampToValueAtTime(587.33 * mul, t + 0.55) // uuii
+      o.frequency.exponentialRampToValueAtTime(293.66 * mul, t + 1.1) // uuu
       vibAmt.connect(o.frequency)
       const g = ctx.createGain()
-      g.gain.value = type === 'square' ? 0.5 : 0.7
+      g.gain.setValueAtTime(0, t)
+      g.gain.linearRampToValueAtTime(vol, t + 0.25)
+      g.gain.setValueAtTime(vol, t + 1.1)
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 2.6)
       o.connect(g).connect(lp)
       o.start(t)
-      o.stop(t + 3.3)
+      o.stop(t + 2.7)
     }
     vib.start(t)
-    vib.stop(t + 3.3)
-    // the sub thump as it engages, and the glass as it locks
-    this.tone(150, t, 0.5, 0.12, out, 'sine', 45)
-    this.hiss(t + 0.3, 0.35, 0.04, out, 2000, 9000, 4)
-    this.bell(1174.66, t + 0.85, 1.8, 0.04, out, 1.2)
-    this.bell(1760, t + 0.92, 1.6, 0.025, out, 0.9)
+    vib.stop(t + 2.7)
+    this.hiss(t, 0.6, 0.012, out, 600, 4000, 1.5)
+    this.bell(587.33, t + 0.55, 1.8, 0.025, out, 0.6)
+    this.bell(880, t + 0.62, 1.6, 0.018, out, 0.5)
+    this.bell(1174.66, t + 0.7, 1.5, 0.012, out, 0.4)
   }
 
-  /** And switching off: a last lift ("uu-ii") then it winds down and the vibrato slows with it ("uuuu"). */
+  /** And switching off: the hum lifts a little, then glides softly down and fades with a breath of air. */
   powerDown() {
     if (!this.ok('power', 400)) return
     const ctx = this.ctx!
     const t = ctx.currentTime + 0.01
-    const out = this.out(0, 0.35)
+    const out = this.out(0, 0.45)
     const lp = ctx.createBiquadFilter()
     lp.type = 'lowpass'
-    lp.Q.value = 9
-    lp.frequency.setValueAtTime(1600, t)
-    lp.frequency.exponentialRampToValueAtTime(3200, t + 0.25)
-    lp.frequency.exponentialRampToValueAtTime(180, t + 1.7)
-    const env = ctx.createGain()
-    env.gain.setValueAtTime(0, t)
-    env.gain.linearRampToValueAtTime(0.12, t + 0.04)
-    env.gain.setValueAtTime(0.12, t + 0.9)
-    env.gain.exponentialRampToValueAtTime(0.0001, t + 2)
-    lp.connect(env).connect(out)
-    const vib = ctx.createOscillator()
-    vib.frequency.setValueAtTime(6.2, t)
-    vib.frequency.linearRampToValueAtTime(1.5, t + 1.8)
-    const vibAmt = ctx.createGain()
-    vibAmt.gain.setValueAtTime(14, t)
-    vibAmt.gain.linearRampToValueAtTime(3, t + 1.8)
-    vib.connect(vibAmt)
-    for (const [type, mul, det] of [['sawtooth', 1, -8], ['sawtooth', 1, 8], ['square', 0.5, 0]] as [OscillatorType, number, number][]) {
+    lp.Q.value = 0.7
+    lp.frequency.setValueAtTime(2000, t)
+    lp.frequency.exponentialRampToValueAtTime(400, t + 1.4)
+    lp.connect(out)
+    for (const [det, vol] of [[-5, 0.045], [5, 0.045]] as [number, number][]) {
       const o = ctx.createOscillator()
-      o.type = type
+      o.type = 'sine'
       o.detune.value = det
-      o.frequency.setValueAtTime(293.66 * mul, t)
-      o.frequency.exponentialRampToValueAtTime(659.25 * mul, t + 0.22) // uu-ii
-      o.frequency.exponentialRampToValueAtTime(440 * mul, t + 0.4)
-      o.frequency.exponentialRampToValueAtTime(55 * mul, t + 1.8) // uuuu down
-      vibAmt.connect(o.frequency)
+      o.frequency.setValueAtTime(293.66, t)
+      o.frequency.exponentialRampToValueAtTime(440, t + 0.2)
+      o.frequency.exponentialRampToValueAtTime(110, t + 1.4)
       const g = ctx.createGain()
-      g.gain.value = type === 'square' ? 0.5 : 0.7
+      g.gain.setValueAtTime(0, t)
+      g.gain.linearRampToValueAtTime(vol, t + 0.08)
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 1.6)
       o.connect(g).connect(lp)
       o.start(t)
-      o.stop(t + 2.1)
+      o.stop(t + 1.7)
     }
-    vib.start(t)
-    vib.stop(t + 2.1)
-    this.hiss(t + 0.2, 0.6, 0.03, out, 7000, 600, 4)
-    this.tone(220, t + 1.5, 0.4, 0.06, out, 'sine', 40)
+    this.hiss(t + 0.1, 0.8, 0.01, out, 3000, 400, 1.5)
   }
 
   /* Maria at work: a quiet patter of data while she thinks, a pop when she answers, a chord when it is ready */
