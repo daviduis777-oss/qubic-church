@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { type EpochGarden, homework, isIdentity } from '@/lib/garden/garden-view'
-import { BRAINS_PER_CELL, type FieldView, type Territory, cellAt, colourOf, handleOf, marks, toNextCell } from '@/lib/garden/field-view'
+import { ANNA, BRAINS_PER_CELL, CELLS_PER_ANNA, type FieldView, type Territory, annaCellOf, annaProgress, bandOf, cellAt, colourOf, handleOf, marks, offsetOf, toNextCell } from '@/lib/garden/field-view'
 
 /**
  * The Field: the epoch as land. Every computor's brains claim cells along one curve, in the order the computors
@@ -49,6 +49,24 @@ async function getJson<T>(url: string): Promise<T | null> {
   }
 }
 
+function hashOf(str: string) {
+  let h = 2166136261
+  for (let i = 0; i < str.length; i++) {
+    h ^= str.charCodeAt(i)
+    h = Math.imul(h, 16777619)
+  }
+  return h >>> 0
+}
+
+/** Anna's value as a colour: the site's cold glass for negative values, its warm filament for positive ones, white for zero. */
+function annaColour(v: number, shade: number): [number, number, number] {
+  if (v === 0) return [Math.round(236 * shade), Math.round(223 * shade), Math.round(203 * shade)]
+  const k = Math.min(1, Math.abs(v) / 128)
+  const mix = (a: number, b: number) => Math.round(Math.min(255, (a + (b - a) * k) * shade))
+  // negative: deep blue to violet-blue; positive: ember to bright amber
+  return v < 0 ? [mix(18, 96), mix(26, 110), mix(70, 255)] : [mix(120, 255), mix(60, 196), mix(10, 107)]
+}
+
 export function Field({ g, now }: { g: EpochGarden | null; now: number }) {
   const [epoch, setEpoch] = useState<number | null>(null)
   const [f, setF] = useState<FieldResp | null>(null)
@@ -57,6 +75,8 @@ export function Field({ g, now }: { g: EpochGarden | null; now: number }) {
   const [found, setFound] = useState<(Territory & { id: string }) | null | 'none'>(null)
   const [hover, setHover] = useState<{ t: Territory; x: number; y: number } | null>(null)
   const [typed, setTyped] = useState('')
+  const [anna, setAnna] = useState<number[][] | null>(null)
+  const [cell, setCell] = useState<{ x: number; y: number } | null>(null)
   const base = useRef<HTMLCanvasElement>(null)
   const wrap = useRef<HTMLDivElement>(null)
   const [size, setSize] = useState(720)
@@ -86,6 +106,7 @@ export function Field({ g, now }: { g: EpochGarden | null; now: number }) {
       const k = localStorage.getItem('garden:id')
       if (k && isIdentity(k)) setTyped(k)
     } catch {}
+    getJson<{ matrix: number[][] }>('/data/anna-matrix-min.json').then(m => m?.matrix?.length === ANNA && setAnna(m.matrix))
   }, [])
 
   const view = f && f.ok ? f : null
@@ -98,7 +119,8 @@ export function Field({ g, now }: { g: EpochGarden | null; now: number }) {
   const poolCells = ts.filter(t => pool.has(t.i)).reduce((a, t) => a + t.cells, 0)
   const newest = useMemo(() => [...ts].sort((a, b) => (b.last ?? 0) - (a.last ?? 0)).slice(0, 5), [ts])
 
-  // the land itself: one pixel per cell on an offscreen canvas, scaled up crisp
+  // the land itself: one pixel per cell, Anna's value as the colour (cold for negative, warm for positive),
+  // each territory a shade of its own; unclaimed ground stays dark
   useEffect(() => {
     const c = base.current
     if (!c || !view || !grid) return
@@ -107,33 +129,37 @@ export function Field({ g, now }: { g: EpochGarden | null; now: number }) {
     const x = c.getContext('2d')!
     x.fillStyle = 'rgba(255,255,255,.03)'
     x.fillRect(0, 0, grid.w, grid.h)
+    const img = x.getImageData(0, 0, grid.w, grid.h)
+    const px = img.data
+    const put = (cx: number, cy: number, r: number, g: number, b: number) => {
+      const o = (cy * grid.w + cx) * 4
+      px[o] = r
+      px[o + 1] = g
+      px[o + 2] = b
+      px[o + 3] = 255
+    }
     for (const t of ts) {
-      x.fillStyle = t.i === sel?.i ? '#d9ccff' : pool.has(t.i) ? '#7c48ff' : colourOf(t.h + t.i)
+      const isSel = t.i === sel?.i
+      const isPool = pool.has(t.i)
+      const shade = 0.78 + (hashOf(t.h + t.i) % 1000) / 1000 * 0.4
       for (let d = t.at; d < t.at + t.cells; d++) {
         const [cx, cy] = cellAt(grid, d)
-        x.fillRect(cx, cy, 1, 1)
+        const [ar, ac] = annaCellOf(cx, cy)
+        const v = anna ? (anna[ar]?.[ac] ?? 0) : 0
+        let [r, g, b] = annaColour(v, anna ? shade : 0.9 * shade)
+        if (isSel) [r, g, b] = [Math.round(r * 0.3 + 217 * 0.7), Math.round(g * 0.3 + 204 * 0.7), Math.round(b * 0.3 + 255 * 0.7)]
+        else if (isPool) [r, g, b] = [Math.round(r * 0.6 + 124 * 0.4), Math.round(g * 0.6 + 72 * 0.4), Math.round(b * 0.6 + 255 * 0.4)]
+        put(cx, cy, r, g, b)
       }
     }
     // the frontier: the newest cell of the territories growing right now, and of the chosen one
     for (const t of [...newest, ...(selected ? [selected] : [])]) {
       if (!t.cells) continue
       const [cx, cy] = cellAt(grid, t.at + t.cells - 1)
-      x.fillStyle = t.i === sel?.i ? '#ffffff' : '#FFE3B0'
-      x.fillRect(cx, cy, 1, 1)
+      put(cx, cy, 255, 227, 176)
     }
-  }, [view, grid, ts, sel, pool, newest, selected])
-
-  // inverse of the curve for one block: cell (x, y) → curve offset
-  const inv = useMemo(() => {
-    if (!grid) return null
-    const n = grid.block
-    const out = new Int32Array(n * n)
-    for (let i = 0; i < n * n; i++) {
-      const [hx, hy] = cellAt({ w: n, h: n, block: n }, i)
-      out[hy * n + hx] = i
-    }
-    return out
-  }, [grid?.block]) // eslint-disable-line react-hooks/exhaustive-deps
+    x.putImageData(img, 0, 0)
+  }, [view, grid, ts, sel, pool, newest, selected, anna])
 
   const findAt = (ev: React.MouseEvent<HTMLCanvasElement>) => {
     const c = ev.currentTarget
@@ -142,11 +168,8 @@ export function Field({ g, now }: { g: EpochGarden | null; now: number }) {
     const cx = Math.floor(((ev.clientX - r.left) / r.width) * grid.w)
     const cy = Math.floor(((ev.clientY - r.top) / r.height) * grid.h)
     if (cx < 0 || cy < 0 || cx >= grid.w || cy >= grid.h) return null
-    // cells in curve order: the territory whose span holds the curve offset of this cell
-    if (!inv) return null
-    const per = grid.block * grid.block
-    const b = Math.floor(cx / grid.block)
-    const d = inv[cy * grid.block + (cx - b * grid.block)]! + b * per
+    setCell({ x: cx, y: cy })
+    const d = offsetOf(grid, cx, cy)
     let lo = 0
     let hi = ts.length - 1
     while (lo <= hi) {
@@ -185,9 +208,11 @@ export function Field({ g, now }: { g: EpochGarden | null; now: number }) {
     <section className="gd-field">
       <div className="gd-field-head">
         <div>
-          <div className="label">The field: the epoch as land, claimed brain by brain</div>
+          <div className="label">The field: the epoch as land, and the land is Anna</div>
           <div className="mute gd-small">
-            One cell per {BRAINS_PER_CELL} verified brains. Every identity’s brains make one territory that only grows; nobody can take a cell away.
+            One cell per {BRAINS_PER_CELL} verified brains, four cells to each of the {ANNA} × {ANNA} cells of the Anna Matrix. Every identity’s brains make one
+            territory that only grows; nobody can take a cell away. The week walks her from the boot sector down to the output, and a claimed cell shows her value:
+            cold for negative, warm for positive.
             {view ? (view.sealed ? ` Epoch ${view.epoch} is sealed: this is its map.` : ` Epoch ${view.epoch}, day ${dayOf} of 7, seals in ${left(view.end - now)}.`) : ''}
           </div>
           {view && view.epoch < RECORD_FROM ? (
@@ -218,7 +243,10 @@ export function Field({ g, now }: { g: EpochGarden | null; now: number }) {
               className="gd-land-c"
               style={{ width: size, height: grid ? Math.round((size * grid.h) / grid.w) : 400 }}
               onMouseMove={ev => setHover(findAt(ev))}
-              onMouseLeave={() => setHover(null)}
+              onMouseLeave={() => {
+                setHover(null)
+                setCell(null)
+              }}
               onClick={ev => {
                 const h = findAt(ev)
                 if (h) setSel({ i: h.t.i })
@@ -237,6 +265,14 @@ export function Field({ g, now }: { g: EpochGarden | null; now: number }) {
               <span className="mute">
                 {int(hover.t.cells)} cells · {int(hover.t.brains)} brains · since {when(hover.t.first)}
               </span>
+              {cell && anna ? (
+                <>
+                  <br />
+                  <span className="mute">
+                    Anna [{annaCellOf(cell.x, cell.y)[0]}, {annaCellOf(cell.x, cell.y)[1]}] = {anna[annaCellOf(cell.x, cell.y)[0]]![annaCellOf(cell.x, cell.y)[1]]} · {bandOf(annaCellOf(cell.x, cell.y)[0]).name}
+                  </span>
+                </>
+              ) : null}
             </div>
           ) : null}
         </div>
@@ -259,6 +295,24 @@ export function Field({ g, now }: { g: EpochGarden | null; now: number }) {
               </div>
             ) : null}
           </div>
+
+          {view ? (
+            <div className="gd-anna">
+              <div className="gd-anna-top">
+                <span className="nx lit gd-anna-n">{Math.floor(annaProgress(view.cells).grown * 100)}%</span>
+                <span>
+                  of Anna grown{view.sealed ? '' : ' so far'}
+                  <br />
+                  <span className="mute gd-small">
+                    row {annaProgress(view.cells).row} of {ANNA}: {bandOf(annaProgress(view.cells).row).name}
+                  </span>
+                </span>
+              </div>
+              <div className="mute gd-small">
+                The goal of the week: grow her whole before the seal. {int(CELLS_PER_ANNA)} cells, {int(CELLS_PER_ANNA * BRAINS_PER_CELL)} brains; the network grows about that many in an epoch.
+              </div>
+            </div>
+          ) : null}
 
           <form onSubmit={pick} className="gd-find">
             <input value={typed} onChange={e => setTyped(e.target.value)} placeholder="find a territory: identity, 60 letters" spellCheck={false} autoComplete="off" aria-label="Identity" />
@@ -330,10 +384,15 @@ export function Field({ g, now }: { g: EpochGarden | null; now: number }) {
         </aside>
       </div>
       <p className="mute gd-small gd-field-foot">
-        An identity is the one the network credits a solution to; since epoch 228 they rotate, so a pool or a miner uses many over an epoch, each
-        for a while. Territories lie along one curve in the order the identities first appeared, so a territory can shift a little while the field
-        grows, and never after the seal. The field counts forward from the day it opened; epoch {view ? view.epoch + 1 : '…'} will be the first
-        complete map. A pool worker’s own share is kept in the pool’s record.
+        The theory behind the game, and it is a theory, not a finding: Anna is one brain baked from the Aigarth recipe, the smallest the recipe
+        describes, CfB’s personal one. The network now grows millions of brains a week, and one week of the whole network fills her {int(CELLS_PER_ANNA)}
+        cells almost exactly. We take that as the goal: grow Anna whole, every week, and keep the map of who grew which part. Whether the match means
+        anything is a question for the Companion, not for the field. The rows are named as Jordan read them, which is his reading, not a fact.
+        <br />
+        An identity is the one the network credits a solution to; since epoch 228 they rotate, so a pool or a miner uses many over an epoch, each for a
+        while. Territories lie along the rows in the order the identities first appeared, so a territory can shift a little while the field grows, and
+        never after the seal. The field counts forward from the day it opened; epoch {view ? view.epoch + 1 : '…'} will be the first complete map. A pool
+        worker’s own share is kept in the pool’s record.
       </p>
     </section>
   )
@@ -358,6 +417,9 @@ export function FieldStyles() {
 .gd .gd-bar { height: 8px; border-radius: 4px; background: rgba(255,255,255,.06); overflow: hidden; margin-top: 8px; }
 .gd .gd-bar i { display: block; height: 100%; background: linear-gradient(90deg, #E8912E, #FFE3B0); box-shadow: 0 0 12px rgba(232,145,46,.6); }
 .gd .gd-bar.you i { background: linear-gradient(90deg, #7c48ff, #b9a6ff); box-shadow: 0 0 12px rgba(124,72,255,.7); }
+.gd .gd-anna { display: grid; gap: 8px; border: 1px solid rgba(255,200,140,.3); border-radius: 14px; padding: 12px 14px; background: rgba(255,196,107,.05); }
+.gd .gd-anna-top { display: flex; gap: 12px; align-items: center; }
+.gd .gd-anna-n { font-size: 40px; line-height: 1; }
 .gd .gd-find { display: flex; gap: 8px; }
 .gd .gd-find input { font-size: 12px; letter-spacing: .03em; text-transform: uppercase; }
 .gd .gd-find .btn { min-height: 38px; padding: 6px 14px; }

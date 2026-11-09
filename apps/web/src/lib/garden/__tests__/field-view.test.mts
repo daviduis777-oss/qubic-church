@@ -1,28 +1,36 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { BRAINS_PER_CELL, cellAt, colourOf, countInto, edgeHas, edgeNote, emptyField, gridFor, hilbert, marks, territories, toNextCell } from '../field-view.ts'
+import { BRAINS_PER_CELL, CELLS_PER_ANNA, annaCellOf, annaProgress, bandOf, cellAt, colourOf, countInto, edgeHas, edgeNote, emptyField, gridFor, marks, offsetOf, territories, toNextCell } from '../field-view.ts'
 
-test('the Hilbert curve visits every cell of the block once, neighbours in sequence', () => {
-  const n = 16
+test('the curve visits every cell of one Anna once, row by row, two by two', () => {
+  const g = gridFor(1)
+  assert.deepEqual(g, { w: 256, h: 256, block: 256 })
   const seen = new Set<string>()
-  for (let d = 0; d < n * n; d++) {
-    const [x, y] = hilbert(n, d)
-    assert.ok(x >= 0 && x < n && y >= 0 && y < n)
+  for (let d = 0; d < CELLS_PER_ANNA; d++) {
+    const [x, y] = cellAt(g, d)
+    assert.ok(x >= 0 && x < 256 && y >= 0 && y < 256)
     seen.add(`${x},${y}`)
+    assert.equal(offsetOf(g, x, y), d)
   }
-  assert.equal(seen.size, n * n)
-  for (let d = 1; d < n * n; d++) {
-    const [a, b] = hilbert(n, d - 1)
-    const [c, e] = hilbert(n, d)
-    assert.equal(Math.abs(a - c) + Math.abs(b - e), 1)
-  }
+  assert.equal(seen.size, CELLS_PER_ANNA)
+  // the first four cells are Anna's top-left cell; the second row of Anna runs back
+  assert.deepEqual([0, 1, 2, 3].map(d => cellAt(g, d)), [[0, 0], [1, 0], [0, 1], [1, 1]])
+  assert.deepEqual(cellAt(g, 128 * 4), [254, 2])
+  assert.deepEqual(annaCellOf(254, 2), [1, 127])
 })
 
-test('grids grow by blocks and cells continue into the next block', () => {
-  assert.deepEqual(gridFor(1000), { w: 256, h: 256, block: 256 })
+test('a second Anna opens beside the first when the epoch outgrows one', () => {
   assert.deepEqual(gridFor(70_000), { w: 512, h: 256, block: 256 })
-  const [x] = cellAt(gridFor(70_000), 256 * 256)
-  assert.ok(x >= 256)
+  const [x] = cellAt(gridFor(70_000), CELLS_PER_ANNA)
+  assert.equal(x, 256)
+})
+
+test('progress through Anna: the row reached and the share grown', () => {
+  assert.deepEqual(annaProgress(0), { row: 0, grown: 0 })
+  assert.deepEqual(annaProgress(512 * 43), { row: 43, grown: (512 * 43) / CELLS_PER_ANNA })
+  assert.equal(bandOf(43).name, 'processing core')
+  assert.equal(bandOf(127).name, 'the void')
+  assert.equal(annaProgress(CELLS_PER_ANNA + 5).grown, 1)
 })
 
 test('counting the stream: identities, firsts, lasts, best scores', () => {

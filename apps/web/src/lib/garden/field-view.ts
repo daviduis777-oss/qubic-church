@@ -127,45 +127,68 @@ export function countInto(f: FieldState, s: StreamItem, index: Map<string, numbe
   return i
 }
 
-/* ---------------- Hilbert curve ---------------- */
+/* ---------------- the ground: the Anna Matrix, two field cells to each of hers ---------------- */
 
-/** Position of the d-th point on a Hilbert curve over an n×n grid (n a power of two). */
-export function hilbert(n: number, d: number): [number, number] {
-  let x = 0
-  let y = 0
-  let t = d
-  for (let s = 1; s < n; s *= 2) {
-    const rx = 1 & (t >> 1)
-    const ry = 1 & (t ^ rx)
-    if (ry === 0) {
-      if (rx === 1) {
-        x = s - 1 - x
-        y = s - 1 - y
-      }
-      const tmp = x
-      x = y
-      y = tmp
-    }
-    x += s * rx
-    y += s * ry
-    t >>= 2
-  }
-  return [x, y]
-}
+/** Anna's side; the field's block side is twice that, so one block is one Anna. */
+export const ANNA = 128
+export const BLOCK = ANNA * 2
+/** cells in one block: one whole Anna */
+export const CELLS_PER_ANNA = BLOCK * BLOCK
 
-/** Grid for a number of cells: square Hilbert blocks of 256 side by side, as many as the cells need (at least one). */
+/** Grid for a number of cells: Anna-sized blocks side by side, as many as the cells need (at least one). */
 export function gridFor(cells: number): { w: number; h: number; block: number } {
-  const block = 256
-  const blocks = Math.max(1, Math.ceil(cells / (block * block)))
-  return { w: block * blocks, h: block, block }
+  const blocks = Math.max(1, Math.ceil(cells / CELLS_PER_ANNA))
+  return { w: BLOCK * blocks, h: BLOCK, block: BLOCK }
 }
 
-/** Cell at a curve offset, blocks of the Hilbert curve side by side. */
+/**
+ * Cell at a curve offset. The curve walks Anna row by row from the top, turning at the end of each row, and
+ * fills each of her cells (two by two field cells) before the next: so the week grows her from the boot sector
+ * down to the output, and a territory is a strip along a row.
+ */
 export function cellAt(grid: { w: number; h: number; block: number }, d: number): [number, number] {
-  const per = grid.block * grid.block
-  const b = Math.floor(d / per)
-  const [x, y] = hilbert(grid.block, d % per)
-  return [x + b * grid.block, y]
+  const b = Math.floor(d / CELLS_PER_ANNA)
+  const r0 = d - b * CELLS_PER_ANNA
+  const a = r0 >> 2
+  const sub = r0 & 3
+  const row = Math.floor(a / ANNA)
+  const c0 = a % ANNA
+  const col = row & 1 ? ANNA - 1 - c0 : c0
+  return [b * BLOCK + col * 2 + (sub & 1), row * 2 + (sub >> 1)]
+}
+
+/** Curve offset of a cell, the inverse of cellAt. */
+export function offsetOf(grid: { w: number; h: number; block: number }, x: number, y: number): number {
+  const b = Math.floor(x / BLOCK)
+  const lx = x - b * BLOCK
+  const row = y >> 1
+  const col = lx >> 1
+  const c0 = row & 1 ? ANNA - 1 - col : col
+  const sub = (lx & 1) + ((y & 1) << 1)
+  return b * CELLS_PER_ANNA + (row * ANNA + c0) * 4 + sub
+}
+
+/** Anna's cell under a field cell: row and column of the matrix. */
+export const annaCellOf = (x: number, y: number): [number, number] => [y >> 1, (x % BLOCK) >> 1]
+
+/** Jordan's reading of the rows (a hypothesis, kept as he drew it): what each band of the matrix is for. */
+export const BANDS: { from: number; to: number; name: string }[] = [
+  { from: 0, to: 20, name: 'boot sector' },
+  { from: 21, to: 21, name: 'input row' },
+  { from: 22, to: 42, name: 'shallow network' },
+  { from: 43, to: 67, name: 'processing core' },
+  { from: 68, to: 68, name: 'cortex bridge' },
+  { from: 69, to: 95, name: 'deep network' },
+  { from: 96, to: 96, name: 'output row' },
+  { from: 97, to: 127, name: 'the void' },
+]
+
+export const bandOf = (row: number) => BANDS.find(b => row >= b.from && row <= b.to) ?? BANDS[BANDS.length - 1]!
+
+/** Which of Anna's rows the field has reached with `cells` claimed cells (one block), and how much of her is grown. */
+export function annaProgress(cells: number): { row: number; grown: number } {
+  const inBlock = Math.min(cells, CELLS_PER_ANNA)
+  return { row: Math.min(ANNA - 1, Math.floor(inBlock / (ANNA * 4))), grown: inBlock / CELLS_PER_ANNA }
 }
 
 /* ---------------- layout ---------------- */

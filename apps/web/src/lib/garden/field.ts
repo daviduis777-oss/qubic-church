@@ -17,7 +17,7 @@ const K_IDS = (e: number, k: number) => `garden:field:${e}:ids:${k}`
 const PAGE = 1000
 const IDS_PER_CHUNK = 3000
 /** pages per tick: catching up with the current epoch, and with the one before it after the change of epoch */
-const CATCH_PAGES = 12
+const CATCH_PAGES = Number(process.env.GARDEN_CATCH_PAGES) || 12
 const PREV_PAGES = 6
 const GAP_MS = 150
 
