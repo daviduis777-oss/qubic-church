@@ -180,7 +180,7 @@ export async function fieldView(epoch?: number): Promise<FieldView | null> {
     updatedAt: f.updatedAt,
     grown: item.verification?.verified ?? item.solutions,
     counted: f.counted,
-    opened: f.opened,
+    opened: f.opened ?? f.first.reduce<number | null>((a, t) => (t != null && (a == null || t < a) ? t : a), null),
     grid: { w: g.w, h: g.h },
     territories: ts,
     cells,
