@@ -64,6 +64,7 @@ function Badge({ kind, live }: { kind?: NavBadge; live: Live }) {
   if (kind === 'countdown')
     return <span style={{ ...base, background: 'rgba(255,196,107,.14)', color: GOLD, border: '1px solid rgba(255,196,107,.45)' }}>{live.countdown === 'live' ? 'live now' : `live in ${live.countdown}`}</span>
   if (kind === 'epoch') return <span style={{ ...base, border: '1px solid rgba(255,255,255,.14)', color: '#e9dfcf' }}>E{live.epoch}</span>
+  if (kind === 'private') return <span style={{ ...base, border: '1px dashed rgba(255,196,107,.6)', color: GOLD }}>only you</span>
   return <span style={{ ...base, background: 'rgba(98,120,255,.16)', color: '#b9c4ff', border: '1px solid rgba(120,140,255,.4)' }}>new</span>
 }
 
@@ -214,7 +215,7 @@ export function NavV2() {
       pool.show
         ? NAV.map(x =>
             x.id === 'join'
-              ? { ...x, items: [{ href: POOL_TAB.href, name: POOL_TAB.label, desc: pool.preview ? 'Private preview: only you see this.' : 'Mine with Qubic Church.' }, ...x.items] }
+              ? { ...x, items: [{ href: POOL_TAB.href, name: POOL_TAB.label, desc: pool.preview ? 'Private preview. Hidden from everyone else until you open it.' : 'Mine with Qubic Church.', badge: pool.preview ? ('private' as const) : undefined }, ...x.items] }
               : x,
           )
         : NAV,

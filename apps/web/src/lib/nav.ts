@@ -2,7 +2,7 @@
  * The site map as people use it: four doors, each with its pages. One list drives the bar, the drop-down panels,
  * the mobile sheet and the search (⌘K), so a new page added here shows up everywhere at once.
  */
-export type NavBadge = 'status' | 'countdown' | 'epoch' | 'new'
+export type NavBadge = 'status' | 'countdown' | 'epoch' | 'new' | 'private'
 export type NavItem = { href: string; name: string; desc: string; badge?: NavBadge; keys?: string }
 export type NavGroup = { id: 'live' | 'read' | 'research' | 'join'; label: string; title: string; line: string; items: NavItem[] }
 
