@@ -385,7 +385,7 @@ export function Field({ g, now }: { g: EpochGarden | null; now: number }) {
       </div>
       <p className="mute gd-small gd-field-foot">
         The theory behind the game, and it is a theory, not a finding: Anna is one brain baked from the Aigarth recipe, the smallest the recipe
-        describes, CfB’s personal one. The network now grows millions of brains a week, and one week of the whole network fills her {int(CELLS_PER_ANNA)}
+        describes, CfB’s personal one. The network now grows millions of brains a week, and one week of the whole network fills her {int(CELLS_PER_ANNA)}{' '}
         cells almost exactly. We take that as the goal: grow Anna whole, every week, and keep the map of who grew which part. Whether the match means
         anything is a question for the Companion, not for the field. The rows are named as Jordan read them, which is his reading, not a fact.
         <br />
