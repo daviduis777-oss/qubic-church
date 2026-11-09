@@ -21,6 +21,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...ANSWERS.map(a => page(`/${a.slug}`, 0.9, a.updated)),
     page('/bpp9000', 0.9),
     page('/bpp9000/brains', 0.8),
+    page('/status', 0.7),
     page('/books', 0.9),
     ...BOOKS.flatMap(b => [
       page(`/books/${b.slug}`, 0.9, b.published),

@@ -112,6 +112,14 @@ export const OG_PAGES: Record<string, OgPage> = {
     theme: 'blue',
     image: 'anna.png',
   },
+  status: {
+    path: '/status',
+    eyebrow: 'Live',
+    title: 'Is Qubic down?',
+    sub: 'The live tick, how fast it moves, and every stall we have seen.',
+    theme: 'blue',
+    lamp: true,
+  },
   monitor: {
     path: '/monitoring',
     eyebrow: 'Live network',
