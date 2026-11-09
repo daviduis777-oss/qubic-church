@@ -36,6 +36,8 @@ async function cmd<T>(...args: (string | number)[]): Promise<T> {
         return (memSets.get(k!)?.size ?? 0) as T
       case 'SMEMBERS':
         return [...(memSets.get(k!) ?? [])] as T
+      case 'SISMEMBER':
+        return (memSets.get(k!)?.has(rest[0]!) ? 1 : 0) as T
       case 'MGET':
         return [k!, ...rest].map(x => mem.get(x) ?? null) as T
       case 'ZADD': {
@@ -129,4 +131,8 @@ export async function kvAddToSet(key: string, ...members: string[]) {
 
 export async function kvSetMembers(key: string): Promise<string[]> {
   return cmd<string[]>('SMEMBERS', key)
+}
+
+export async function kvSetHas(key: string, member: string): Promise<boolean> {
+  return (await cmd<number>('SISMEMBER', key, member)) === 1
 }

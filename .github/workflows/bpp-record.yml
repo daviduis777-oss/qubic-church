@@ -12,7 +12,7 @@ permissions: {}
 jobs:
   tick:
     runs-on: ubuntu-latest
-    timeout-minutes: 4
+    timeout-minutes: 12
     steps:
       - name: Tick
         run: curl -fsS --max-time 60 -X POST https://qubic.church/api/bpp/tick
@@ -22,3 +22,6 @@ jobs:
       - name: Network status
         # one look at the Qubic tick, so a stall is noticed even when nobody has /status open
         run: curl -fsS --max-time 30 -X POST https://qubic.church/api/network/status || true
+      - name: The field
+        # the garden's field: a few dozen computors' records per call, several calls per run; public and idempotent
+        run: for i in 1 2 3 4 5 6; do curl -fsS --max-time 60 -X POST https://qubic.church/api/garden/field/tick || true; sleep 20; done

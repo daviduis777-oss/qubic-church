@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { type EpochGarden, type Gen, type Lineage, type Plot, homework, isIdentity, sittings } from '@/lib/garden/garden-view'
+import { Field, FieldStyles } from './Field'
 
 /**
  * The Garden: the epoch as a season of growth. Brains grown so far, the births as they come, the best brain's
@@ -73,6 +74,7 @@ export function Garden() {
   return (
     <div className="gd">
       <GardenStyles />
+      <FieldStyles />
       <header className="gd-head">
         <div className="gd-eyebrow mute">
           The Garden <span className="gd-sep">·</span> epoch {g ? g.epoch : '…'} <span className="gd-sep">·</span> hidden preview
@@ -93,12 +95,9 @@ export function Garden() {
         </div>
       </header>
 
-      <Vine top={best?.hash ?? null} bestScore={best?.score ?? null} />
+      <Field g={g} now={now} />
 
-      <div className="gd-two">
-        <Births g={g} now={now} />
-        <Gardeners g={g} />
-      </div>
+      <Vine top={best?.hash ?? null} bestScore={best?.score ?? null} />
 
       <MyPlot epoch={g?.epoch ?? null} />
 
@@ -249,7 +248,7 @@ function Vine({ top, bestScore }: { top: string | null; bestScore: number | null
             const x1 = X(a.depth)
             const x2 = X(b.depth)
             const mid = (x1 + x2) / 2
-            const label = mid - lastLabel > (narrow ? 72 : 110)
+            const label = mid - lastLabel > (narrow ? 72 : 110) && mid < w - padR - (narrow ? 60 : 96)
             if (label) lastLabel = mid
             return (
               <g key={i}>
@@ -302,94 +301,6 @@ function Vine({ top, bestScore }: { top: string | null; bestScore: number | null
   )
 }
 
-/* ---------------- births and gardeners ---------------- */
-
-function Births({ g, now }: { g: EpochGarden | null; now: number }) {
-  return (
-    <section className="panel gd-box">
-      <div className="label">Just born</div>
-      <div className="mute gd-small">The newest verified brains, as the network accepts them.</div>
-      <table className="gd-table">
-        <thead>
-          <tr>
-            <th>when</th>
-            <th>gen</th>
-            <th>homework</th>
-            <th>gardener</th>
-            <th className="bpp-hide-sm">brain</th>
-          </tr>
-        </thead>
-        <tbody>
-          {(g?.births ?? []).map(b => (
-            <tr key={b.hash}>
-              <td className="mute">{ago(b.ts, now)}</td>
-              <td className="nx gd-num">{b.depth ?? '—'}</td>
-              <td className="glow-g">{pct(homework(b.score))}</td>
-              <td title={b.gardener}>{short(b.gardener)}</td>
-              <td className="mute bpp-hide-sm" title={b.hash}>
-                {short(b.hash)}
-              </td>
-            </tr>
-          ))}
-          {!g ? (
-            <tr>
-              <td colSpan={5} className="mute">
-                …
-              </td>
-            </tr>
-          ) : null}
-        </tbody>
-      </table>
-    </section>
-  )
-}
-
-function Gardeners({ g }: { g: EpochGarden | null }) {
-  return (
-    <section className="panel gd-box">
-      <div className="label">Gardeners of the epoch</div>
-      <div className="mute gd-small">
-        The identities behind this epoch’s hundred best brains, by how many brains each has grown so far. A brain keeps its gardener’s name for as
-        long as the network keeps the epoch.
-      </div>
-      <table className="gd-table">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>identity</th>
-            <th>grown</th>
-            <th>best</th>
-            <th className="bpp-hide-sm">last brain</th>
-          </tr>
-        </thead>
-        <tbody>
-          {(g?.gardeners ?? []).slice(0, 12).map((r, i) => (
-            <tr key={r.id}>
-              <td className="mute">{i + 1}</td>
-              <td title={r.id}>{short(r.id, 8, 6)}</td>
-              <td className="nx gd-num">{r.grown ? int(r.grown) : '—'}</td>
-              <td className="glow-g">{pct(r.best != null ? homework(r.best) : null)}</td>
-              <td className="mute bpp-hide-sm">{r.lastAt ? `${dayOf(r.lastAt)}, ${hm(r.lastAt)}` : '—'}</td>
-            </tr>
-          ))}
-          {!g ? (
-            <tr>
-              <td colSpan={5} className="mute">
-                …
-              </td>
-            </tr>
-          ) : null}
-        </tbody>
-      </table>
-      {g ? (
-        <p className="mute gd-small">
-          Ranked among {g.rankedFrom} identities. The explorer publishes no full per-epoch ranking; the best hundred brains are the door in.
-        </p>
-      ) : null}
-    </section>
-  )
-}
-
 /* ---------------- my plot ---------------- */
 
 const COACH = {
@@ -432,7 +343,7 @@ function MyPlot({ epoch }: { epoch: number | null }) {
 
   return (
     <section className="panel gd-box gd-plot">
-      <div className="label">My plot</div>
+      <div className="label">My record: brains per epoch</div>
       <div className="mute gd-small">Your Qubic identity, the public one of 60 letters. Never type a seed anywhere on this site.</div>
       <form onSubmit={look} className="gd-form">
         <input value={id} onChange={e => setId(e.target.value)} placeholder="ABCD…  (60 capital letters)" spellCheck={false} autoComplete="off" aria-label="Qubic identity" />
@@ -505,7 +416,6 @@ function GardenStyles() {
 .gd .gd-svg { display: block; max-width: 100%; }
 .gd .gd-svg circle { cursor: crosshair; }
 .gd .gd-vine-foot { margin: 6px 0 0; }
-.gd .gd-two { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
 .gd .gd-box { padding: 18px; display: grid; gap: 10px; align-content: start; }
 .gd .gd-table td, .gd .gd-table th { padding-left: 6px; padding-right: 6px; }
 .gd .gd-num { font-size: 16px; }
@@ -523,7 +433,7 @@ function GardenStyles() {
 .gd .gd-coach p { margin: 0; font-size: 15px; line-height: 1.5; }
 .gd .gd-honest { font-size: 13px; line-height: 1.55; max-width: 90ch; }
 @media (max-width: 760px) {
-  .gd .gd-two, .gd .gd-facts, .gd .gd-plot-top { grid-template-columns: 1fr; }
+  .gd .gd-facts, .gd .gd-plot-top { grid-template-columns: 1fr; }
   .gd .gd-fact { border-left: 0; padding-left: 0; border-top: 1px solid var(--line); padding-top: 10px; }
 }
 `}</style>
