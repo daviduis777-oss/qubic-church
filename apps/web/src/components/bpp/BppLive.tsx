@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { replay, type NetData } from '@/lib/bpp/sim'
 import { useRecord } from './TrackRecord'
 import { nx, sans } from './fonts'
+import { sound } from '@/lib/sound/engine'
 
 const NX = nx.style.fontFamily
 const SANS = sans.style.fontFamily
@@ -267,9 +268,11 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
       const p = shown
       shown = s
       if (first) for (let n = 0; n < N; n++) wt[n] = [0, 0, 0].map((_, i) => (i === s[n] ? 1 : 0))
-      else
+      let flips = 0
+      if (!first)
         for (let n = 0; n < N; n++)
           if (s[n] !== p[n]) {
+            flips++
             pop[n] = 1
             for (let k = 0; k < d.k; k++) {
               const c = links[n * d.k + k]
@@ -277,8 +280,11 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
             }
           }
       if (pulses.length > 180) pulses = pulses.slice(-180)
+      // the sound keeps time with the machine: a crackle as neurons flip, a relay and a note as it names an hour
+      if (flips) sound().zap(Math.min(1, (flips / N) * 3), (Math.random() - 0.5) * 0.8)
       const h = emitsUpTo(T)
       if (h !== lastH) {
+        if (!first && lastH >= 0 && h > 0) sound().call(sim.emitVal[h - 1] === 1, sim.emitVal[h - 1] === sim.exp[h - 1])
         ansFade = 0
         lastH = h
         const calls: View['calls'] = []

@@ -6,6 +6,7 @@ import { bppFonts } from '@/components/bpp/fonts'
 import { ALL_ITEMS, NAV, type NavBadge, type NavGroup } from '@/lib/nav'
 import { NO_TAB, POOL_TAB, type PoolTab, probePoolTab } from '@/lib/pool/nav'
 import { usePathname } from '@/navigation'
+import { SoundToggle } from '@/components/sound/SoundLayer'
 
 /*
  * Navigation v2 (lab): four doors (Live, Read, Research, Join) instead of eleven links. Each door opens a panel of
@@ -290,7 +291,8 @@ export function NavV2() {
               BPP-9000
               <span className="nv2-chip-n">{live.countdown === 'live' ? 'live' : live.countdown}</span>
             </Link>
-            <button aria-label="Search the site" className="nv2-search-btn" onClick={() => setSearch(true)} type="button">
+            <SoundToggle className="nv2-icon nv2-sound" />
+            <button aria-label="Search the site" className="nv2-search-btn" data-sound="open" onClick={() => setSearch(true)} type="button">
               <svg aria-hidden fill="none" height="15" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" width="15">
                 <circle cx="11" cy="11" r="7" />
                 <path d="M20 20l-3.5-3.5" />
@@ -381,6 +383,9 @@ const CSS = `
 .nv2-search-btn kbd { font: 11px/1 ui-monospace, monospace; padding: 3px 5px; border: 1px solid rgba(255,255,255,.18); border-radius: 5px; color: #a89fb8; }
 .nv2-icon { width: 38px; height: 38px; display: inline-grid; place-items: center; border-radius: 10px; border: 1px solid rgba(255,255,255,.12); color: #cfc6dc; }
 .nv2-icon:hover { color: #fff; border-color: rgba(255,255,255,.3); }
+.nv2-sound { background: none; cursor: pointer; padding: 0; }
+.nv2-sound[aria-pressed="true"] { color: #FFE3B0; border-color: rgba(255,196,107,.35); }
+.nv2-sound:focus-visible { outline: 2px solid #FFE3B0; outline-offset: 2px; }
 .nv2-donate { height: 38px; display: inline-flex; align-items: center; padding: 0 14px; border: 1px solid rgba(255,196,107,.5); color: ${GOLD}; text-decoration: none; font-size: 14px; font-weight: 500; }
 .nv2-menu { display: none; height: 38px; padding: 0 12px; background: none; border: 1px solid rgba(255,255,255,.14); border-radius: 10px; color: #e9dfcf; font-size: 14px; cursor: pointer; }
 .nv2-panel { border-top: 1px solid rgba(255,255,255,.06); background: linear-gradient(180deg, #0b0a11, #08070d); box-shadow: 0 30px 60px -20px rgba(0,0,0,.8); animation: nv2-in .16s ease-out; }

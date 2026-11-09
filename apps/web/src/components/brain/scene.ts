@@ -59,7 +59,7 @@ function ringTexture() {
 }
 
 export function mountBrain(el, opts) {
-  const { matrix, brain: B, miners = 2200, onPick, onHover, offset, wide = false } = opts
+  const { matrix, brain: B, miners = 2200, onPick, onHover, onLand, offset, wide = false } = opts
   let photoMode = false
   const coarse = window.matchMedia('(pointer: coarse)').matches
   const W = () => el.clientWidth || window.innerWidth, H = () => el.clientHeight || window.innerHeight
@@ -327,7 +327,7 @@ export function mountBrain(el, opts) {
 
   const clock = new THREE.Clock()
   let raf = 0, acc = 0, mineAcc = 0
-  const tmp = new THREE.Vector3(), t0 = new THREE.Vector3()
+  const tmp = new THREE.Vector3(), t0 = new THREE.Vector3(), landAt = new THREE.Vector3()
   function frame() {
     const dt = Math.min(0.05, clock.getDelta())
     const t = clock.elapsedTime
@@ -368,7 +368,12 @@ export function mountBrain(el, opts) {
     for (const s of sparks) {
       if (!s.alive) continue
       s.t += dt / s.dur
-      if (s.t >= 1) { s.alive = false; nHit[s.node] = s.mine ? 1.6 : 1; dirty = true; continue }
+      if (s.t >= 1) {
+        s.alive = false; nHit[s.node] = s.mine ? 1.6 : 1; dirty = true
+        // the sound of it: every one of yours, a few of everyone else's, placed left or right where it lands
+        if (onLand && (s.mine || Math.random() < 0.06)) onLand(s.mine, Math.max(-1, Math.min(1, landAt.copy(s.to).project(camera).x)))
+        continue
+      }
       const u = s.t * s.t * (3 - 2 * s.t)
       tmp.copy(s.from).multiplyScalar((1 - u) * (1 - u)).addScaledVector(s.mid, 2 * (1 - u) * u).addScaledVector(s.to, u * u)
       const u0 = Math.max(0, u - (s.mine ? 0.12 : 0.06))

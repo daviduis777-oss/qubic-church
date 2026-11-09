@@ -11,6 +11,7 @@ import { ThemeProvider } from '@/components/theme-provider'
 import { SiteFooter } from '@/components/site-footer'
 import { CosmicWrapper } from '@/components/church/backgrounds/CosmicWrapper'
 import { NavV2 } from '@/components/church/navigation/NavV2'
+import { SoundLayer } from '@/components/sound/SoundLayer'
 import { ConditionalSiteFooter } from '@/components/ConditionalSiteFooter'
 import { INDEXING, SITE_DESCRIPTION } from '@/lib/indexing'
 import { SITE_URL } from '@/lib/books'
@@ -226,6 +227,7 @@ export default async function RootLayout(props: {
                         type="application/ld+json"
                       />
                       <NavV2 />
+                      <SoundLayer />
 
                       <main
                         className="flex-1 focus:outline-none"

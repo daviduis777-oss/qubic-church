@@ -1,23 +1,13 @@
 /**
- * The brain's sound: a quiet generative score made in the browser with Web Audio, nothing downloaded and nothing
+ * The site's score: a quiet generative piece made in the browser with Web Audio, nothing downloaded and nothing
  * borrowed. An open drone in D that breathes through a slow filter, a faint glass shimmer above it, soft electric
- * crackle panned round the room, and a data blip now and then, like a lab instrument thinking. It starts only
- * when someone presses the button, fades in and out, and costs almost nothing.
+ * crackle panned round the room, and a data blip now and then, like a lab instrument thinking. The sound engine
+ * (`@/lib/sound/engine`) plays it into its music bus once someone has pressed something and sound is on.
  */
 
-type Ambient = { stop: () => void; blip: (strong?: boolean) => void }
+export type Score = { stop: () => void; blip: (strong?: boolean) => void }
 
 const D_PENTA = [587.33, 659.25, 739.99, 880, 987.77, 1174.66, 1318.51, 1479.98] // D major pentatonic, two octaves up
-
-function impulse(ctx: AudioContext, seconds: number, decay: number): AudioBuffer {
-  const len = Math.floor(ctx.sampleRate * seconds)
-  const buf = ctx.createBuffer(2, len, ctx.sampleRate)
-  for (let ch = 0; ch < 2; ch++) {
-    const d = buf.getChannelData(ch)
-    for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, decay)
-  }
-  return buf
-}
 
 function noise(ctx: AudioContext, seconds: number): AudioBuffer {
   const buf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * seconds), ctx.sampleRate)
@@ -26,24 +16,11 @@ function noise(ctx: AudioContext, seconds: number): AudioBuffer {
   return buf
 }
 
-export function startAmbient(volume = 0.55): Ambient {
-  const AC = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
-  const ctx = new AC()
-  const now = ctx.currentTime
-
+/** Builds the score into `out` (dry) and `verb` (the shared reverb); `stop` ends it at once (the caller fades the bus). */
+export function buildScore(ctx: AudioContext, out: AudioNode, verb: AudioNode): Score {
   const master = ctx.createGain()
-  master.gain.setValueAtTime(0, now)
-  master.gain.linearRampToValueAtTime(volume, now + 4)
-  const comp = ctx.createDynamicsCompressor()
-  comp.threshold.value = -18
-  comp.ratio.value = 3
-  master.connect(comp).connect(ctx.destination)
-
-  const verb = ctx.createConvolver()
-  verb.buffer = impulse(ctx, 5.5, 2.6)
-  const wet = ctx.createGain()
-  wet.gain.value = 0.55
-  verb.connect(wet).connect(master)
+  master.gain.value = 1
+  master.connect(out)
   const dry = ctx.createGain()
   dry.gain.value = 0.8
   dry.connect(master)
@@ -60,7 +37,7 @@ export function startAmbient(volume = 0.55): Ambient {
   /* the drone: an open D (root, fifth, octave, ninth), each voice a pair of slightly detuned oscillators */
   const pad = ctx.createBiquadFilter()
   pad.type = 'lowpass'
-  pad.frequency.value = 520
+  pad.frequency.value = 900
   pad.Q.value = 0.7
   const padGain = ctx.createGain()
   padGain.gain.value = 0.16
@@ -70,7 +47,7 @@ export function startAmbient(volume = 0.55): Ambient {
   const lfo = ctx.createOscillator()
   lfo.frequency.value = 0.035
   const lfoAmt = ctx.createGain()
-  lfoAmt.gain.value = 260
+  lfoAmt.gain.value = 450
   lfo.connect(lfoAmt).connect(pad.frequency)
   lfo.start()
   nodes.push(lfo)
@@ -79,7 +56,10 @@ export function startAmbient(volume = 0.55): Ambient {
     [110, 'triangle', 0.35],
     [146.83, 'sine', 0.45],
     [164.81, 'sine', 0.18],
-    [220, 'triangle', 0.12],
+    [220, 'triangle', 0.16],
+    // the upper voices carry the drone on phone and laptop speakers, which drop everything under ~250 Hz
+    [293.66, 'triangle', 0.2],
+    [440, 'sine', 0.12],
   ] as [number, OscillatorType, number][]) {
     for (const det of [-4, 4]) {
       const o = ctx.createOscillator()
@@ -106,7 +86,7 @@ export function startAmbient(volume = 0.55): Ambient {
     const t = ctx.createOscillator()
     t.frequency.value = rate
     const tg = ctx.createGain()
-    tg.gain.value = 0.012
+    tg.gain.value = 0.026
     t.connect(tg).connect(g.gain)
     o.connect(g)
     send(g, 1)
@@ -157,7 +137,7 @@ export function startAmbient(volume = 0.55): Ambient {
     mod.connect(modAmt).connect(car.frequency)
     const g = ctx.createGain()
     g.gain.setValueAtTime(0, t)
-    g.gain.linearRampToValueAtTime(strong ? 0.09 : 0.045, t + 0.008)
+    g.gain.linearRampToValueAtTime(strong ? 0.11 : 0.065, t + 0.008)
     g.gain.exponentialRampToValueAtTime(0.0001, t + (strong ? 2.6 : 1.8))
     const pan = ctx.createStereoPanner()
     pan.pan.value = Math.random() * 1.2 - 0.6
@@ -171,7 +151,7 @@ export function startAmbient(volume = 0.55): Ambient {
   }
   const blips = () => {
     blip()
-    blipT = window.setTimeout(blips, 2600 + Math.random() * 5200)
+    blipT = window.setTimeout(blips, 1800 + Math.random() * 3800)
   }
 
   crackleT = window.setTimeout(crackle, 1200)
@@ -180,20 +160,14 @@ export function startAmbient(volume = 0.55): Ambient {
   return {
     blip,
     stop() {
-      const t = ctx.currentTime
-      master.gain.cancelScheduledValues(t)
-      master.gain.setValueAtTime(master.gain.value, t)
-      master.gain.linearRampToValueAtTime(0, t + 1.6)
       window.clearTimeout(crackleT)
       window.clearTimeout(blipT)
-      window.setTimeout(() => {
-        for (const n of nodes) {
-          try {
-            n.stop()
-          } catch {}
-        }
-        void ctx.close()
-      }, 1800)
+      for (const n of nodes) {
+        try {
+          n.stop()
+        } catch {}
+      }
+      master.disconnect()
     },
   }
 }

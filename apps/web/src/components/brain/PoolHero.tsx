@@ -2,7 +2,8 @@
 
 import { type ReactNode, useEffect, useRef, useState } from 'react'
 import { bandOf } from '@/lib/garden/field-view'
-import { startAmbient } from './ambient'
+import { sound } from '@/lib/sound/engine'
+import { SoundToggle } from '@/components/sound/SoundLayer'
 
 /**
  * The first screen of the Aigarth Pool, in the site's own style (the BPP-9000 page is the reference): the
@@ -31,18 +32,6 @@ export function PoolHero({ phone, hooks, preview }: { phone: ReactNode; hooks: H
   const [hover, setHover] = useState<{ k: number; x: number; y: number } | null>(null)
   const [cell, setCell] = useState<number | null>(null)
   const [photo, setPhoto] = useState(false)
-  const [sound, setSound] = useState(false)
-  const amb = useRef<ReturnType<typeof startAmbient> | null>(null)
-
-  // the sound starts only from a press (browsers allow nothing else) and stops when the page goes
-  useEffect(() => {
-    if (sound) amb.current = startAmbient()
-    else {
-      amb.current?.stop()
-      amb.current = null
-    }
-  }, [sound])
-  useEffect(() => () => amb.current?.stop(), [])
   const grid = useRef<HTMLDivElement>(null)
 
   // big screens: the whole first screen scales up with the window (a 4K or ultrawide screen should not show a
@@ -89,7 +78,11 @@ export function PoolHero({ phone, hooks, preview }: { phone: ReactNode; hooks: H
           matrix: m.matrix,
           brain: parseBrain(b),
           wide: true,
-          onPick: (k: number | null) => setCell(k),
+          onPick: (k: number | null) => {
+            setCell(k)
+            if (k != null) sound().cell(m.matrix[Math.floor(k / 128)][k % 128])
+          },
+          onLand: (mine: boolean, pan: number) => sound().land(mine, pan * 0.8),
           onHover: (k: number | null, x: number, y: number) => setHover(k == null ? null : { k, x, y }),
         })
       } catch {
@@ -115,27 +108,15 @@ export function PoolHero({ phone, hooks, preview }: { phone: ReactNode; hooks: H
         {photo ? (
           <div className="ph-photo-ui">
             <span className="ph-photo-hint">drag to turn · pinch or scroll to zoom</span>
-            <button type="button" className={`ph-sound${sound ? ' on' : ''}`} onClick={() => setSound(x => !x)} aria-pressed={sound} aria-label={sound ? 'Sound off' : 'Sound on'} title={sound ? 'Sound off' : 'Sound on'}>
-              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M4 10v4h3l4 3.5v-11L7 10H4z" />
-                {sound ? <path d="M15 9.5a3.5 3.5 0 0 1 0 5M17.5 7a7 7 0 0 1 0 10" /> : <path d="M16 10l4 4M20 10l-4 4" />}
-              </svg>
-              <span>{sound ? 'Sound on' : 'Sound'}</span>
-            </button>
-            <button type="button" className="ph-photo-x" onClick={() => setPhoto(false)} aria-label="Leave photo mode">
+            <SoundToggle className="ph-sound" label />
+            <button type="button" className="ph-photo-x" data-sound="close" onClick={() => setPhoto(false)} aria-label="Leave photo mode">
               Back
             </button>
           </div>
         ) : (
           <div className="ph-tools">
-            <button type="button" className={`ph-sound${sound ? ' on' : ''}`} onClick={() => setSound(x => !x)} aria-pressed={sound} aria-label={sound ? 'Sound off' : 'Sound on'} title={sound ? 'Sound off' : 'Sound on'}>
-              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M4 10v4h3l4 3.5v-11L7 10H4z" />
-                {sound ? <path d="M15 9.5a3.5 3.5 0 0 1 0 5M17.5 7a7 7 0 0 1 0 10" /> : <path d="M16 10l4 4M20 10l-4 4" />}
-              </svg>
-              <span>{sound ? 'Sound on' : 'Sound'}</span>
-            </button>
-          <button type="button" className="ph-photo-btn" onClick={() => setPhoto(true)} aria-label="Photo mode: the brain alone, without the interface" title="Photo mode">
+            <SoundToggle className="ph-sound" label />
+          <button type="button" className="ph-photo-btn" data-sound="open" onClick={() => setPhoto(true)} aria-label="Photo mode: the brain alone, without the interface" title="Photo mode">
             <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
               <path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16" />
               <circle cx="12" cy="12" r="3.2" />
@@ -168,11 +149,11 @@ export function PoolHero({ phone, hooks, preview }: { phone: ReactNode; hooks: H
               <button
                 type="button"
                 className={`ph-btn main${on ? ' on' : ''}`}
+                data-sound={on ? 'off' : 'primary'}
                 onClick={() => {
                   const next = !on
                   setOn(next)
                   api.current?.connect(next)
-                  if (next) amb.current?.blip(true)
                   if (next) setTimeout(() => document.getElementById('join')?.scrollIntoView({ behavior: 'smooth' }), 2600)
                 }}
               >
@@ -288,7 +269,7 @@ export function PoolHero({ phone, hooks, preview }: { phone: ReactNode; hooks: H
 .ph-cell .neg { color: #9ec2ff; text-shadow: 0 0 14px rgba(80,140,255,.7); }
 .ph-cell .pos { color: var(--hot); text-shadow: 0 0 14px var(--fil); }
 .ph-tools { position: absolute; z-index: 3; right: clamp(16px, 2.5vw, 40px); bottom: 22px; display: flex; gap: 8px; }
-.ph-sound.on { border-color: rgba(255,196,107,.7); color: var(--hot); box-shadow: 0 0 16px rgba(232,145,46,.35); }
+.ph-sound[aria-pressed="true"] { border-color: rgba(255,196,107,.7); color: var(--hot); box-shadow: 0 0 16px rgba(232,145,46,.35); }
 .ph-photo-btn, .ph-sound { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px; border: 1px solid rgba(255,200,140,.3); background: rgba(11,10,14,.55); color: var(--ink); font: inherit; font-size: 13px; cursor: pointer; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
 .ph-photo-btn:hover, .ph-sound:hover { border-color: rgba(255,200,140,.6); }
 .ph-sound:focus-visible { outline: 2px solid var(--hot); outline-offset: 3px; }
