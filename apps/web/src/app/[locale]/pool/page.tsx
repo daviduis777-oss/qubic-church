@@ -15,9 +15,10 @@ import { runDates, type StatsView, statsView } from '@/lib/pool/stats-view'
 import { measureStore } from '@/lib/pool/store'
 import { PAYOUT_TERMS } from '@/lib/pool/ui-config'
 import type { Bar, Usage } from '@/lib/pool/usage'
-import { PoolStage } from './PoolStage'
 import p from './pool.module.css'
-import { Hero, Join, MariaIntro } from './qc'
+import { Join, MariaIntro } from './qc'
+import { MACHINE } from '@/lib/pool/why'
+import { Device } from '@/components/pool/Device'
 import { ReportLink } from './ReportLink'
 import { RecordStrip } from './why'
 
@@ -279,18 +280,36 @@ export default async function PoolPage(props: { params: Promise<{ locale: string
 
   return (
     <div className={`${p.backdrop} ${poolFontVars}`}>
-      {/* the first thing a miner sees: the brain the pool grows */}
-      <Brain variant="hero" />
-      <Hero preview={!poolPublic()} />
+      {/* the first thing a miner sees: the brain the pool grows, Maria beside it, the work in view */}
+      <Brain
+        variant="hero"
+        quote={MACHINE}
+        hooks={[
+          { href: '#participants', title: 'Who is growing it', note: 'every worker, what each gives' },
+          { href: '#join', title: 'Join in a few minutes', note: 'a wallet, a worker name, done' },
+          { href: '#hw', title: 'What your hardware does', note: 'measured rigs, not promises' },
+          { href: '#terms', title: `${keepPercent}% to the miners`, note: `pool fee ${POOL.feePercent}%, open` },
+        ]}
+        aside={
+          <div className={p.deviceWrap} id="maria-phone">
+            <Device label="Maria, the mining coach">
+              <MariaApp ai={ai} />
+            </Device>
+          </div>
+        }
+      />
       <div className={p.page}>
+        {!poolPublic() && (
+          <p className={p.pill} role="note">
+            <span aria-hidden className={p.pillDot} />
+            Private preview
+          </p>
+        )}
         <Join />
 
-        <div className={p.stage}>
-          <div aria-hidden className={p.glow} />
-          <PoolStage intro={<MariaIntro />}>
-            <MariaApp ai={ai} />
-          </PoolStage>
-        </div>
+        <section className={p.section}>
+          <MariaIntro />
+        </section>
 
         <section aria-labelledby="how" className={p.section}>
           <h2 className={p.h2} id="how">

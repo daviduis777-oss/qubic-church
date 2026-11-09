@@ -58,7 +58,7 @@ function ringTexture() {
   return ringTex
 }
 
-export function mountBrain(el, { matrix, brain: B, miners = 2200, onPick, onHover }) {
+export function mountBrain(el, { matrix, brain: B, miners = 2200, onPick, onHover, offset }) {
   const W = () => el.clientWidth || window.innerWidth, H = () => el.clientHeight || window.innerHeight
   const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' })
   renderer.setPixelRatio(Math.min(2, window.devicePixelRatio))
@@ -68,13 +68,26 @@ export function mountBrain(el, { matrix, brain: B, miners = 2200, onPick, onHove
   const scene = new THREE.Scene()
   const camera = new THREE.PerspectiveCamera(34, W() / H(), 0.05, 100)
   // far enough that the whole brain fits the width, on a phone too
-  const fit = () => Math.max(4.9, 0.98 / (Math.tan((camera.fov * Math.PI) / 360) * camera.aspect))
+  const fit = () => Math.max(offset ? 5.6 : 4.9, 0.98 / (Math.tan((camera.fov * Math.PI) / 360) * camera.aspect))
+  // where the brain sits on the screen: shifted off the centre by the page (to leave room for a column, a title)
+  const place = () => {
+    const o = offset?.() ?? { x: 0, y: 0 }
+    if (o.x || o.y) camera.setViewOffset(W(), H(), o.x, -o.y, W(), H())
+    else camera.clearViewOffset()
+  }
   camera.position.set(4.1, 0.55, 1.0).setLength(fit())
+  place()
   const controls = new OrbitControls(camera, renderer.domElement)
   controls.enableDamping = true
   controls.enablePan = false
   controls.minDistance = 2.2
   controls.maxDistance = 12
+  // the wheel scrolls the page, never zooms; on touch screens a finger scrolls the page too, taps still open cells
+  controls.enableZoom = false
+  if (window.matchMedia('(pointer: coarse)').matches) {
+    controls.enabled = false
+    renderer.domElement.style.touchAction = 'pan-y'
+  }
 
   const brain = new THREE.Group()
   scene.add(brain)
@@ -374,6 +387,7 @@ export function mountBrain(el, { matrix, brain: B, miners = 2200, onPick, onHove
     camera.aspect = W() / H()
     camera.updateProjectionMatrix()
     camera.position.setLength(Math.max(camera.position.length(), fit()))
+    place()
     renderer.setSize(W(), H())
     composer.setSize(W(), H())
   }
