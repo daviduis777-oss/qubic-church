@@ -23,12 +23,14 @@ export type FieldState = {
   best: (number | null)[]
   /** brains counted so far */
   counted: number
-  /** newest solution the catch-up has reached: everything newer is still to count, everything older is counted or the backfill's */
-  head: { tick: number; hashes: string[] } | null
+  /** newest solution the crawl has reached: everything newer is still to count, everything older is counted */
+  head: Edge | null
   /** a catch-up that did not reach the head in one tick continues here next tick; `min` is the oldest it counted */
   catchup: { offset: number; newTick: number; newHashes: string[]; min: Edge } | null
-  /** the backfill walks from the oldest solution towards `boundary` (the first catch-up's oldest tick); `max` is where it has reached */
-  backfill: { pos: number; max: Edge; boundary: number; done: boolean }
+  /** when the crawl of this epoch began (ms); brains before it are not in the field */
+  opened: number | null
+  /** the oldest tick the crawl has counted */
+  oldestTick: number | null
   updatedAt: string
   sealed: boolean
 }
@@ -54,8 +56,9 @@ export type FieldView = {
   updatedAt: string
   /** brains verified this epoch, from the explorer's epoch record */
   grown: number
-  /** brains the crawl has counted so far */
+  /** brains the crawl has counted so far, and since when */
   counted: number
+  opened: number | null
   grid: { w: number; h: number }
   /** territories in curve order */
   territories: Territory[]
@@ -77,7 +80,8 @@ export const emptyField = (epoch: number): FieldState => ({
   counted: 0,
   head: null,
   catchup: null,
-  backfill: { pos: 0, max: { tick: 0, hashes: [] }, boundary: Number.MAX_SAFE_INTEGER, done: false },
+  opened: null,
+  oldestTick: null,
   updatedAt: new Date(0).toISOString(),
   sealed: false,
 })

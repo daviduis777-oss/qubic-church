@@ -234,7 +234,7 @@ export function Field({ g, now }: { g: EpochGarden | null; now: number }) {
             <div className="nx lit gd-side-n">{view ? int(view.grown) : '…'}</div>
             <div className="mute gd-small">
               brains · {view ? int(view.cells) : '…'} cells claimed by {view ? int(ts.length) : '…'} identities
-              {view && view.counted < view.grown * 0.98 ? ` · field read ${Math.floor((view.counted / Math.max(1, view.grown)) * 100)}% so far` : ''}
+              {view?.opened && view.counted < view.grown * 0.98 ? ` · counted since ${when(view.opened)}, ${int(view.counted)} brains` : ''}
             </div>
             {poolCells ? (
               <div className="gd-small" style={{ marginTop: 6 }}>
@@ -318,9 +318,10 @@ export function Field({ g, now }: { g: EpochGarden | null; now: number }) {
         </aside>
       </div>
       <p className="mute gd-small gd-field-foot">
-        A computor is the identity the network credits a solution to; a pool or a miner may use several, and many appear for a few hours only.
-        Territories lie along one curve in the order the identities first appeared this epoch, so a territory can shift a little while the field
-        grows, and never after the seal. A pool worker’s own share is kept in the pool’s record.
+        An identity is the one the network credits a solution to; since epoch 228 they rotate, so a pool or a miner uses many over an epoch, each
+        for a while. Territories lie along one curve in the order the identities first appeared, so a territory can shift a little while the field
+        grows, and never after the seal. The field counts forward from the day it opened; epoch {view ? view.epoch + 1 : '…'} will be the first
+        complete map. A pool worker’s own share is kept in the pool’s record.
       </p>
     </section>
   )
