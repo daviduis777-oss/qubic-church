@@ -151,7 +151,7 @@ export function cellColour(v: number, progress: number, whole: boolean): [number
   const [r, g, b] = annaColour(v)
   if (whole) return [r, g, b]
   if (progress <= 0) return [16, 15, 22]
-  const k = 0.12 + 0.5 * Math.min(1, progress)
+  const k = 0.08 + 0.4 * Math.min(1, progress)
   return [Math.round(16 + (r - 16) * k), Math.round(15 + (g - 15) * k), Math.round(22 + (b - 22) * k)]
 }
 
