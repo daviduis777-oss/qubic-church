@@ -4,6 +4,7 @@ import { setRequestLocale } from 'next-intl/server'
 import { poolFontVars } from '@/components/pool/fonts'
 import { MariaApp } from '@/components/pool/maria/MariaApp'
 import { PoolTabs } from '@/components/pool/PoolTabs'
+import { Brain } from '@/components/brain/Brain'
 import { type HardwareRow, type Summary, selfReportedLine } from '@/lib/pool/aggregate'
 import { keepPercent, MEASURE, POOL, WALLET } from '@/lib/pool/config'
 import { poolAllowed, poolPublic } from '@/lib/pool/gate'
@@ -278,6 +279,8 @@ export default async function PoolPage(props: { params: Promise<{ locale: string
 
   return (
     <div className={`${p.backdrop} ${poolFontVars}`}>
+      {/* the first thing a miner sees: the brain the pool grows */}
+      <Brain variant="hero" />
       <Hero preview={!poolPublic()} />
       <div className={p.page}>
         <Join />

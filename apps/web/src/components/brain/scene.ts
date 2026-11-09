@@ -16,6 +16,7 @@ export function parseBrain(buf) {
   let o = 12
   const pos = new Float32Array(buf, o, nv * 3); o += nv * 12
   const faces = new Uint16Array(buf, o, nf * 3); o += nf * 6
+  o = (o + 3) & ~3 // the faces leave the floats that follow off a 4-byte boundary: padded
   const sulc = new Float32Array(buf, o, nv); o += nv * 4
   const cells = new Uint16Array(buf, o, nc)
   return { pos, faces, sulc, cells }
@@ -67,8 +68,8 @@ export function mountBrain(el, { matrix, brain: B, miners = 2200, onPick, onHove
   const scene = new THREE.Scene()
   const camera = new THREE.PerspectiveCamera(34, W() / H(), 0.05, 100)
   // far enough that the whole brain fits the width, on a phone too
-  const fit = () => Math.max(4.2, 0.98 / (Math.tan((camera.fov * Math.PI) / 360) * camera.aspect))
-  camera.position.set(-4.1, 0.55, 1.0).setLength(fit())
+  const fit = () => Math.max(4.9, 0.98 / (Math.tan((camera.fov * Math.PI) / 360) * camera.aspect))
+  camera.position.set(4.1, 0.55, 1.0).setLength(fit())
   const controls = new OrbitControls(camera, renderer.domElement)
   controls.enableDamping = true
   controls.enablePan = false
@@ -99,8 +100,10 @@ export function mountBrain(el, { matrix, brain: B, miners = 2200, onPick, onHove
         vec3 deep = vec3(0.02, 0.10, 0.28);
         vec3 cyan = vec3(0.20, 0.75, 1.00);
         vec3 warm = vec3(1.00, 0.55, 0.25);
-        vec3 col = deep*0.5 + cyan*(rim*0.8 + gyrus*0.12*(0.6+0.4*sweep)) + warm*pow(f, 8.0)*0.6;
-        float a = clamp(0.02 + pow(f, 3.0)*0.45 + gyrus*0.03, 0.0, 1.0);
+        // a soft light from above and in front, so the folds read like the gyri they are
+        float lit = max(dot(vN, normalize(vec3(0.35, 0.8, 0.45))), 0.0);
+        vec3 col = deep*0.5 + cyan*(rim*0.8 + gyrus*(0.22 + 0.5*lit)*(0.7+0.3*sweep)) + warm*pow(f, 8.0)*0.6;
+        float a = clamp(0.02 + pow(f, 3.0)*0.42 + gyrus*(0.05 + 0.12*lit), 0.0, 1.0);
         gl_FragColor = vec4(col*a, a);
       }`,
     transparent: true, depthWrite: false, side: THREE.FrontSide, blending: THREE.AdditiveBlending,
@@ -233,7 +236,7 @@ export function mountBrain(el, { matrix, brain: B, miners = 2200, onPick, onHove
   scene.add(new THREE.Points(fsGeo, new THREE.PointsMaterial({ color: 0x7f8fc0, size: 1.1, sizeAttenuation: false, transparent: true, opacity: 0.5, depthWrite: false })))
 
   /* you */
-  const youPos = new THREE.Vector3(-1.6, 1.25, 2.4)
+  const youPos = new THREE.Vector3(1.6, 1.25, 2.4)
   const you = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTexture(), color: 0xb9a6ff, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }))
   you.position.copy(youPos)
   you.scale.setScalar(0.07)
@@ -253,7 +256,7 @@ export function mountBrain(el, { matrix, brain: B, miners = 2200, onPick, onHove
     const s = sparks.find(x => !x.alive)
     if (!s) return
     s.alive = true; s.t = 0; s.mine = mine
-    s.dur = mine ? 0.9 + Math.random() * 0.4 : 1.4 + Math.random() * 1.6
+    s.dur = mine ? 1.3 + Math.random() * 0.5 : 2.8 + Math.random() * 2.4
     s.node = Math.floor(Math.random() * NC)
     if (mine) s.from.copy(youPos)
     else { const k = Math.floor(Math.random() * M); s.from.set(mPos[k * 3], mPos[k * 3 + 1], mPos[k * 3 + 2]) }
@@ -340,7 +343,7 @@ export function mountBrain(el, { matrix, brain: B, miners = 2200, onPick, onHove
 
     let dirty = false
     for (let k = 0; k < NC; k++) if (nHit[k] > 0) { nHit[k] = Math.max(0, nHit[k] - dt * 1.2); dirty = true }
-    acc += dt * 90
+    acc += dt * 55
     while (acc > 1) { launch(false); acc-- }
     if (connected) { mineAcc += dt * 9; while (mineAcc > 1) { launch(true); mineAcc-- } }
     let tl = 0
