@@ -60,17 +60,19 @@ function ringTexture() {
 
 export function mountBrain(el, opts) {
   const { matrix, brain: B, miners = 2200, onPick, onHover, offset, wide = false } = opts
+  let photoMode = false
+  const coarse = window.matchMedia('(pointer: coarse)').matches
   const W = () => el.clientWidth || window.innerWidth, H = () => el.clientHeight || window.innerHeight
   const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' })
   renderer.setPixelRatio(Math.min(2, window.devicePixelRatio))
   renderer.setSize(W(), H())
-  renderer.setClearColor(0x0b0a0e, 1)
+  renderer.setClearColor(0x07070b, 1)
   el.appendChild(renderer.domElement)
   const scene = new THREE.Scene()
   const camera = new THREE.PerspectiveCamera(34, W() / H(), 0.05, 100)
   // far enough that the whole brain fits the width, on a phone too
   // wide: the brain spreads behind something in the middle of the page (Maria's phone), so it is drawn larger
-  const fit = () => (wide ? Math.max(3.4, 0.62 / (Math.tan((camera.fov * Math.PI) / 360) * camera.aspect)) : Math.max(offset ? 5.6 : 4.9, 0.98 / (Math.tan((camera.fov * Math.PI) / 360) * camera.aspect)))
+  const fit = () => (wide && !photoMode ? Math.max(3.4, 0.62 / (Math.tan((camera.fov * Math.PI) / 360) * camera.aspect)) : Math.max(offset ? 5.6 : 4.9, 0.98 / (Math.tan((camera.fov * Math.PI) / 360) * camera.aspect)))
   // where the brain sits on the screen: shifted off the centre by the page (to leave room for a column, a title)
   const place = () => {
     const o = offset?.() ?? { x: 0, y: 0 }
@@ -86,7 +88,7 @@ export function mountBrain(el, opts) {
   controls.maxDistance = 12
   // the wheel scrolls the page, never zooms; on touch screens a finger scrolls the page too, taps still open cells
   controls.enableZoom = false
-  if (window.matchMedia('(pointer: coarse)').matches) {
+  if (coarse) {
     controls.enabled = false
     renderer.domElement.style.touchAction = 'pan-y'
   }
@@ -389,19 +391,37 @@ export function mountBrain(el, opts) {
   const onResize = () => {
     camera.aspect = W() / H()
     camera.updateProjectionMatrix()
-    camera.position.setLength(Math.max(camera.position.length(), fit()))
+    camera.position.setLength(photoMode ? Math.min(Math.max(camera.position.length(), controls.minDistance), controls.maxDistance) : Math.max(camera.position.length(), fit()))
     place()
     renderer.setSize(W(), H())
     composer.setSize(W(), H())
   }
   window.addEventListener('resize', onResize)
+  // the stage can change size without the window (photo mode): follow it
+  const ro = new ResizeObserver(() => onResize())
+  ro.observe(el)
 
   return {
     connect(on) { connected = on },
+    /** photo mode: the brain alone, turned by hand or by touch, drifting round slowly when left alone */
+    photo(on) {
+      photoMode = on
+      controls.enabled = on || !coarse
+      controls.enableZoom = on
+      controls.autoRotate = on
+      controls.autoRotateSpeed = 0.35
+      renderer.domElement.style.touchAction = on ? 'none' : coarse ? 'pan-y' : ''
+      requestAnimationFrame(() => {
+        onResize()
+        camera.position.setLength(fit())
+        place()
+      })
+    },
     select,
     dispose() {
       cancelAnimationFrame(raf)
       window.removeEventListener('resize', onResize)
+      ro.disconnect()
       renderer.domElement.removeEventListener('pointermove', onMove)
       renderer.domElement.removeEventListener('pointerdown', onDown)
       renderer.domElement.removeEventListener('pointerup', onUp)

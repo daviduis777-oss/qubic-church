@@ -9,7 +9,7 @@ import { bandOf } from '@/lib/garden/field-view'
  * behind it, the miners as stars round it, and the way down the page. Below it, the participants.
  * The participants are preview data until the pool's backend reports per worker; the page says so.
  */
-type Api = { connect: (on: boolean) => void; select: (k: number | null) => void; dispose: () => void }
+type Api = { connect: (on: boolean) => void; select: (k: number | null) => void; photo: (on: boolean) => void; dispose: () => void }
 type Worker = { tag: string; brains: number; share: number }
 export type Hook = { href: string; title: string; note: string }
 
@@ -29,6 +29,37 @@ export function PoolHero({ phone, hooks, preview }: { phone: ReactNode; hooks: H
   const [on, setOn] = useState(false)
   const [hover, setHover] = useState<{ k: number; x: number; y: number } | null>(null)
   const [cell, setCell] = useState<number | null>(null)
+  const [photo, setPhoto] = useState(false)
+  const grid = useRef<HTMLDivElement>(null)
+
+  // big screens: the whole first screen scales up with the window (a 4K or ultrawide screen should not show a
+  // small page floating in a sea of brain); the phone keeps to the window's height
+  useEffect(() => {
+    const fitGrid = () => {
+      const g = grid.current
+      if (!g) return
+      const wide = window.innerWidth >= 1181
+      const z = wide ? Math.max(1, Math.min(2.4, Math.min(window.innerWidth / 1440, window.innerHeight / 900))) : 1
+      g.style.setProperty('zoom', z === 1 ? '' : String(z))
+      g.style.setProperty('--device-h', `${Math.round(Math.min(800, (window.innerHeight - 140) / z))}px`)
+    }
+    fitGrid()
+    window.addEventListener('resize', fitGrid)
+    return () => window.removeEventListener('resize', fitGrid)
+  }, [])
+
+  // photo mode: the brain alone on the whole screen, like a game's photo mode; Esc or the button leaves it
+  useEffect(() => {
+    api.current?.photo(photo)
+    document.documentElement.style.overflow = photo ? 'hidden' : ''
+    if (!photo) return
+    const key = (e: KeyboardEvent) => e.key === 'Escape' && setPhoto(false)
+    window.addEventListener('keydown', key)
+    return () => {
+      window.removeEventListener('keydown', key)
+      document.documentElement.style.overflow = ''
+    }
+  }, [photo])
 
   useEffect(() => {
     let dead = false
@@ -66,10 +97,26 @@ export function PoolHero({ phone, hooks, preview }: { phone: ReactNode; hooks: H
 
   return (
     <>
-      <section className="ph" aria-labelledby="ph-title">
+      <section className={`ph${photo ? ' photo' : ''}`} aria-labelledby="ph-title">
         <div ref={el} className="ph-stage" />
+        {photo ? (
+          <div className="ph-photo-ui">
+            <span className="ph-photo-hint">drag to turn · pinch or scroll to zoom</span>
+            <button type="button" className="ph-photo-x" onClick={() => setPhoto(false)} aria-label="Leave photo mode">
+              Back
+            </button>
+          </div>
+        ) : (
+          <button type="button" className="ph-photo-btn" onClick={() => setPhoto(true)} aria-label="Photo mode: the brain alone, without the interface" title="Photo mode">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16" />
+              <circle cx="12" cy="12" r="3.2" />
+            </svg>
+            <span>Photo mode</span>
+          </button>
+        )}
 
-        <div className="ph-grid">
+        <div className="ph-grid" ref={grid}>
           <div className="ph-left">
             <div className="ph-eng">
               <span aria-hidden className="ph-pilot" />
@@ -147,7 +194,7 @@ export function PoolHero({ phone, hooks, preview }: { phone: ReactNode; hooks: H
           </nav>
         </div>
 
-        {hover && cell !== hover.k ? (
+        {hover && cell !== hover.k && !photo ? (
           <div className="ph-tip" style={{ left: hover.x + 14, top: hover.y - 10 }}>
             [{at(hover.k).r}, {at(hover.k).c}] = {at(hover.k).v}
           </div>
@@ -196,7 +243,7 @@ export function PoolHero({ phone, hooks, preview }: { phone: ReactNode; hooks: H
 .ph-btn.main:hover { background: var(--hot); }
 .ph-btn.main.on { background: rgba(124,72,255,.45); color: #f3efff; border-color: rgba(185,166,255,.8); box-shadow: 0 0 30px rgba(124,72,255,.7); }
 .ph-btn:focus-visible, .ph-hook:focus-visible { outline: 2px solid var(--hot); outline-offset: 3px; }
-.ph-phone { --device-h: min(800px, calc(100svh - 140px)); filter: drop-shadow(0 0 60px rgba(46,86,255,.25)); }
+.ph-phone { filter: drop-shadow(0 0 60px rgba(46,86,255,.25)); }
 .ph-right { justify-self: end; width: min(300px, 100%); display: grid; gap: 10px; }
 .ph-hook { display: grid; gap: 3px; padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: rgba(11,10,14,.55); color: var(--ink); text-decoration: none; transition: border-color .15s, background .15s; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
 .ph-hook:hover { border-color: rgba(255,200,140,.5); background: rgba(255,196,107,.06); }
@@ -210,6 +257,16 @@ export function PoolHero({ phone, hooks, preview }: { phone: ReactNode; hooks: H
 .ph-cell { font-family: var(--bpp-nx), sans-serif; font-size: 34px; line-height: 1; font-variant-numeric: tabular-nums; }
 .ph-cell .neg { color: #9ec2ff; text-shadow: 0 0 14px rgba(80,140,255,.7); }
 .ph-cell .pos { color: var(--hot); text-shadow: 0 0 14px var(--fil); }
+.ph-photo-btn { position: absolute; z-index: 3; right: clamp(16px, 2.5vw, 40px); bottom: 22px; display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px; border: 1px solid rgba(255,200,140,.3); background: rgba(11,10,14,.55); color: var(--ink); font: inherit; font-size: 13px; cursor: pointer; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+.ph-photo-btn:hover { border-color: rgba(255,200,140,.6); }
+.ph-photo-btn:focus-visible, .ph-photo-x:focus-visible { outline: 2px solid var(--hot); outline-offset: 3px; }
+.ph.photo .ph-stage { position: fixed; inset: 0; z-index: 200; -webkit-mask-image: none; mask-image: none; background: #050508; }
+.ph.photo .ph-grid, .ph.photo .ph-cue { visibility: hidden; }
+.ph-photo-ui { position: fixed; z-index: 201; left: 0; right: 0; bottom: max(20px, env(safe-area-inset-bottom)); display: flex; justify-content: center; align-items: center; gap: 14px; pointer-events: none; animation: ph-fade 4s ease forwards; }
+.ph-photo-ui:hover, .ph-photo-ui:focus-within { animation: none; opacity: 1; }
+@keyframes ph-fade { 0%, 70% { opacity: 1 } 100% { opacity: .25 } }
+.ph-photo-hint { font-size: 12px; color: var(--dim); }
+.ph-photo-x { pointer-events: auto; padding: 9px 18px; border-radius: 999px; border: 1px solid rgba(255,200,140,.35); background: rgba(11,10,14,.6); color: var(--ink); font: inherit; font-size: 14px; cursor: pointer; }
 .ph-tip { position: absolute; z-index: 3; pointer-events: none; font-size: 12px; background: rgba(11,10,14,.9); border: 1px solid var(--line); padding: 4px 8px; border-radius: 8px; font-variant-numeric: tabular-nums; }
 .ph-cue { position: absolute; z-index: 2; left: 50%; bottom: 22px; width: 18px; height: 18px; margin-left: -9px; border-right: 1.5px solid var(--fil); border-bottom: 1.5px solid var(--fil); transform: rotate(45deg); animation: ph-cue 2.2s ease-in-out infinite; }
 @keyframes ph-cue { 0%, 100% { transform: translateY(-3px) rotate(45deg); opacity: .4 } 50% { transform: translateY(4px) rotate(45deg); opacity: .95 } }
@@ -239,6 +296,8 @@ export function PoolHero({ phone, hooks, preview }: { phone: ReactNode; hooks: H
   .ph-stage { -webkit-mask-image: radial-gradient(80% 50% at 50% 60%, #000 50%, transparent 100%); mask-image: radial-gradient(80% 50% at 50% 60%, #000 50%, transparent 100%); }
   .ph-rows { grid-template-columns: 1fr; }
   .ph-lead { display: none; }
+  .ph-photo-btn { top: 10px; bottom: auto; right: 10px; padding: 8px; }
+  .ph-photo-btn span { display: none; }
 }
 `}</style>
     </>
