@@ -11,7 +11,14 @@ import { SoundToggle } from '@/components/sound/SoundLayer'
  * behind it, the miners as stars round it, and the way down the page. Below it, the participants.
  * The participants are preview data until the pool's backend reports per worker; the page says so.
  */
-type Api = { connect: (on: boolean) => void; select: (k: number | null) => void; photo: (on: boolean) => void; dispose: () => void }
+type Api = {
+  connect: (on: boolean) => void
+  select: (k: number | null) => void
+  photo: (on: boolean) => void
+  power: (p: number) => void
+  surge: () => void
+  dispose: () => void
+}
 type Worker = { tag: string; brains: number; share: number }
 export type Hook = { href: string; title: string; note: string }
 
@@ -24,6 +31,32 @@ const PREVIEW: Worker[] = (() => {
 
 const int = (n: number) => n.toLocaleString('en-US')
 
+/**
+ * The pool's power, as stages the whole pool climbs together. Each stage makes the brain burn brighter (more
+ * sparks, more glow), so the pool can see itself grow. Until the backend reports, the number is preview data.
+ */
+const STAGES = [
+  { name: 'Spark', at: 0 },
+  { name: 'Flame', at: 10_000 },
+  { name: 'Star', at: 25_000 },
+  { name: 'Nova', at: 60_000 },
+  { name: 'Supernova', at: 150_000 },
+]
+/** false until the pool's backend reports its power; the gauge says "preview" while it is false */
+const POWER_LIVE = false
+const PREVIEW_POWER = 17_260
+const PREVIEW_LIGHTS = 214
+const stageOf = (p: number) => {
+  let i = 0
+  for (let k = 0; k < STAGES.length; k++) if (p >= STAGES[k]!.at) i = k
+  const cur = STAGES[i]!
+  const next = STAGES[i + 1]
+  return { i, cur, next, within: next ? (p - cur.at) / (next.at - cur.at) : 1 }
+}
+
+/** What the boot sequence says while a light joins, a step at a time. */
+const BOOT = ['Linking to the Qubic network', 'Loading the BPP-9000 task', 'Warming up your neurons', 'Finding your place in Anna', 'Light on']
+
 export function PoolHero({ phone, hooks, preview }: { phone: ReactNode; hooks: Hook[]; preview: boolean }) {
   const el = useRef<HTMLDivElement>(null)
   const api = useRef<Api | null>(null)
@@ -32,6 +65,10 @@ export function PoolHero({ phone, hooks, preview }: { phone: ReactNode; hooks: H
   const [hover, setHover] = useState<{ k: number; x: number; y: number } | null>(null)
   const [cell, setCell] = useState<number | null>(null)
   const [photo, setPhoto] = useState(false)
+  const [boot, setBoot] = useState<number | null>(null)
+  const [power, setPower] = useState(PREVIEW_POWER)
+  const [lights, setLights] = useState(PREVIEW_LIGHTS)
+  const [bump, setBump] = useState(0)
   const grid = useRef<HTMLDivElement>(null)
 
   // big screens: the whole first screen scales up with the window (a 4K or ultrawide screen should not show a
@@ -49,6 +86,38 @@ export function PoolHero({ phone, hooks, preview }: { phone: ReactNode; hooks: H
     window.addEventListener('resize', fitGrid)
     return () => window.removeEventListener('resize', fitGrid)
   }, [])
+
+  // preview: the pool's power breathes a little, as a live number would; the brain burns to match
+  useEffect(() => {
+    if (POWER_LIVE) return
+    const t = window.setInterval(() => setPower(p => Math.round(Math.max(PREVIEW_POWER * 0.97, Math.min(PREVIEW_POWER * 1.03, p * (1 + (Math.random() - 0.48) * 0.006))))), 1600)
+    return () => window.clearInterval(t)
+  }, [])
+  const powerLevel = (p: number) => Math.min(1, (p / STAGES[STAGES.length - 1]!.at) * 0.6 + stageOf(p).i * 0.1)
+  const powerNow = useRef(power)
+  powerNow.current = power
+  useEffect(() => {
+    api.current?.power(powerLevel(power))
+  }, [power])
+
+  // the boot sequence: a step every ~0.6 s, a rising blip on each, then the light comes on
+  useEffect(() => {
+    if (boot == null) return
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (boot < BOOT.length - 1) {
+      sound().boot(boot)
+      const t = window.setTimeout(() => setBoot(boot + 1), reduce ? 160 : 560 + Math.random() * 180)
+      return () => window.clearTimeout(t)
+    }
+    sound().powerUp()
+    api.current?.connect(true)
+    api.current?.surge()
+    setLights(n => n + 1)
+    setBump(b => b + 1)
+    // stay on the brain for the moment it lights up; the page below waits for them
+    const t = window.setTimeout(() => setBoot(null), reduce ? 600 : 2400)
+    return () => window.clearTimeout(t)
+  }, [boot])
 
   // photo mode: the brain alone on the whole screen, like a game's photo mode; Esc or the button leaves it
   useEffect(() => {
@@ -85,6 +154,7 @@ export function PoolHero({ phone, hooks, preview }: { phone: ReactNode; hooks: H
           onLand: (mine: boolean, pan: number) => sound().land(mine, pan * 0.8),
           onHover: (k: number | null, x: number, y: number) => setHover(k == null ? null : { k, x, y }),
         })
+        api.current?.power(powerLevel(powerNow.current))
       } catch {
         // without WebGL the page still works: the phone, the words and the links
       }
@@ -150,21 +220,26 @@ export function PoolHero({ phone, hooks, preview }: { phone: ReactNode; hooks: H
                 type="button"
                 className={`ph-btn main${on ? ' on' : ''}`}
                 data-sound="none"
+                disabled={boot != null}
                 onClick={() => {
-                  const next = !on
-                  setOn(next)
-                  api.current?.connect(next)
-                  if (next) sound().powerUp()
-                  else sound().powerDown()
-                  if (next) setTimeout(() => document.getElementById('join')?.scrollIntoView({ behavior: 'smooth' }), 2600)
+                  if (!on) {
+                    setOn(true)
+                    setBoot(0)
+                  } else {
+                    setOn(false)
+                    api.current?.connect(false)
+                    sound().powerDown()
+                    setLights(n => n - 1)
+                  }
                 }}
               >
-                {on ? 'Your light is joining' : 'Add your light'}
+                {boot != null ? 'Connecting…' : on ? 'Your light is on' : 'Add your light'}
               </button>
               <a className="ph-btn" href="#join">
                 How to join
               </a>
             </div>
+            <PowerGauge power={power} lights={lights} bump={bump} preview={!POWER_LIVE} on={on && boot == null} />
           </div>
 
           <div className="ph-phone" id="maria-phone">
@@ -206,6 +281,28 @@ export function PoolHero({ phone, hooks, preview }: { phone: ReactNode; hooks: H
             )}
           </nav>
         </div>
+
+        {boot != null ? (
+          <div className="ph-boot" role="status" aria-live="polite">
+            <div className="ph-boot-box">
+              <div className="ph-eng ph-small">{boot < BOOT.length - 1 ? 'CONNECTING YOUR LIGHT' : 'YOU ARE IN'}</div>
+              <ol className="ph-boot-steps">
+                {BOOT.map((b, k) => (
+                  <li key={b} className={k < boot ? 'done' : k === boot ? 'now' : ''}>
+                    <i aria-hidden />
+                    {b}
+                  </li>
+                ))}
+              </ol>
+              <div className="ph-boot-bar" aria-hidden>
+                {Array.from({ length: 20 }, (_, k) => (
+                  <i key={k} className={k < Math.round(((boot + 1) / BOOT.length) * 20) ? 'f' : ''} />
+                ))}
+              </div>
+              <div className="ph-boot-pct">{Math.round(((boot + 1) / BOOT.length) * 100)}%</div>
+            </div>
+          </div>
+        ) : null}
 
         {hover && cell !== hover.k && !photo ? (
           <div className="ph-tip" style={{ left: hover.x + 14, top: hover.y - 10 }}>
@@ -255,6 +352,44 @@ export function PoolHero({ phone, hooks, preview }: { phone: ReactNode; hooks: H
 .ph-btn.main { background: var(--fil); color: #2a1404; border-color: var(--fil); box-shadow: 0 0 22px rgba(232,145,46,.5); }
 .ph-btn.main:hover { background: var(--hot); }
 .ph-btn.main.on { background: rgba(124,72,255,.45); color: #f3efff; border-color: rgba(185,166,255,.8); box-shadow: 0 0 30px rgba(124,72,255,.7); }
+.ph-btn:disabled { cursor: progress; opacity: .85; }
+.ph-gauge { margin-top: 22px; padding: 14px 16px 12px; border: 1px solid var(--line); border-radius: 14px; background: linear-gradient(180deg, rgba(255,196,107,.06), rgba(11,10,14,.55)); backdrop-filter: blur(6px); max-width: 400px; }
+.ph-gauge-top { display: flex; justify-content: space-between; align-items: baseline; }
+.ph-gauge-num { display: flex; align-items: baseline; gap: 8px; margin: 4px 0 8px; }
+.ph-gauge-num b { font-family: var(--bpp-nx), sans-serif; font-weight: 500; font-size: 44px; line-height: 1; color: var(--hot); font-variant-numeric: tabular-nums; text-shadow: 0 0 4px #ffd08a, 0 0 14px #FFC46B, 0 0 40px rgba(232,145,46,.6); }
+.ph-gauge-num span { font-family: var(--bpp-eng), sans-serif; font-size: 11px; letter-spacing: .14em; color: var(--dim); }
+.ph-gauge-bar, .ph-boot-bar { display: grid; grid-template-columns: repeat(20, 1fr); gap: 3px; height: 10px; }
+.ph-gauge-bar i, .ph-boot-bar i { border-radius: 2px; background: rgba(255,200,140,.1); }
+.ph-gauge-bar i.f, .ph-boot-bar i.f { background: var(--fil); box-shadow: 0 0 8px rgba(255,196,107,.8); }
+.ph-gauge-bar i.lead { background: rgba(255,196,107,.5); animation: ph-lead 1.1s ease-in-out infinite; }
+@keyframes ph-lead { 50% { background: var(--hot); box-shadow: 0 0 12px var(--fil); } }
+.ph-gauge-stage, .ph-gauge-foot { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; font-size: 13px; margin-top: 8px; }
+.ph-gauge-stage b { color: var(--hot); font-weight: 600; }
+.ph-gauge-foot b { font-family: var(--bpp-nx), sans-serif; font-weight: 500; font-size: 18px; color: var(--hot); }
+.ph-pop { display: inline-block; animation: ph-pop .9s cubic-bezier(.2,1.6,.4,1); }
+@keyframes ph-pop { 0% { transform: scale(1); } 30% { transform: scale(1.35); text-shadow: 0 0 16px var(--fil); } 100% { transform: scale(1); } }
+.ph-boot { position: absolute; inset: 0; z-index: 5; display: grid; place-items: center; background: radial-gradient(closest-side, rgba(7,7,11,.55), rgba(7,7,11,.15)); animation: ph-fade .25s ease-out; pointer-events: none; }
+@keyframes ph-fade { from { opacity: 0; } }
+.ph-boot-box { width: min(380px, calc(100vw - 32px)); padding: 20px 22px; border: 1px solid rgba(255,200,140,.35); border-radius: 16px; background: rgba(11,10,14,.96); box-shadow: 0 0 60px rgba(232,145,46,.25); }
+.ph-boot-steps { list-style: none; margin: 12px 0 14px; padding: 0; display: grid; gap: 6px; font-size: 14px; color: var(--dim); }
+.ph-boot-steps li { display: flex; align-items: center; gap: 10px; transition: color .2s; }
+.ph-boot-steps li i { width: 8px; height: 8px; border-radius: 50%; border: 1px solid rgba(255,200,140,.4); flex: none; }
+.ph-boot-steps li.now { color: var(--ink); }
+.ph-boot-steps li.now i { background: var(--fil); box-shadow: 0 0 10px var(--fil); animation: ph-lead .6s ease-in-out infinite; }
+.ph-boot-steps li.done { color: var(--ink); }
+.ph-boot-steps li.done i { background: var(--fil); border-color: var(--fil); }
+.ph-boot-pct { margin-top: 8px; text-align: right; font-family: var(--bpp-nx), sans-serif; font-size: 28px; line-height: 1; color: var(--hot); font-variant-numeric: tabular-nums; text-shadow: 0 0 14px var(--fil); }
+/* short wide screens (a laptop at 720-820 px tall): a lower title and a compact gauge keep the column on screen */
+@media (min-width: 1181px) and (max-height: 820px) {
+  .ph-title { font-size: min(clamp(76px, 9vw, 150px), 13.5vh); }
+  .ph-line { margin-top: 14px; }
+  .ph-btns { margin-top: 16px; }
+  .ph-gauge { margin-top: 14px; padding: 10px 14px 8px; }
+  .ph-gauge-num { margin: 2px 0 6px; }
+  .ph-gauge-num b { font-size: 34px; }
+  .ph-gauge-foot .ph-dim { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .ph-gauge-bar i.lead, .ph-boot-steps li.now i, .ph-pop { animation: none; } }
 .ph-btn:focus-visible, .ph-hook:focus-visible { outline: 2px solid var(--hot); outline-offset: 3px; }
 .ph-phone { filter: drop-shadow(0 0 60px rgba(46,86,255,.25)); }
 .ph-right { justify-self: end; width: min(300px, 100%); display: grid; gap: 10px; }
@@ -319,5 +454,45 @@ export function PoolHero({ phone, hooks, preview }: { phone: ReactNode; hooks: H
 }
 `}</style>
     </>
+  )
+}
+
+/** The pool's power and the stage it has reached, with the way to the next one. */
+function PowerGauge({ power, lights, bump, preview, on }: { power: number; lights: number; bump: number; preview: boolean; on: boolean }) {
+  const st = stageOf(power)
+  const seg = 20
+  const filled = Math.round(st.within * seg)
+  return (
+    <div className="ph-gauge" aria-label="Pool power">
+      <div className="ph-gauge-top">
+        <span className="ph-eng ph-small">POOL POWER</span>
+        {preview ? <span className="ph-small ph-amber">preview</span> : null}
+      </div>
+      <div className="ph-gauge-num">
+        <b>{int(power)}</b>
+        <span>it/s</span>
+      </div>
+      <div className="ph-gauge-bar" aria-hidden>
+        {Array.from({ length: seg }, (_, k) => (
+          <i key={k} className={k < filled ? 'f' : k === filled ? 'lead' : ''} />
+        ))}
+      </div>
+      <div className="ph-gauge-stage">
+        <span>
+          Stage {st.i + 1} · <b>{st.cur.name}</b>
+        </span>
+        {st.next ? (
+          <span className="ph-dim">
+            {st.next.name} at {int(st.next.at)}
+          </span>
+        ) : null}
+      </div>
+      <div className="ph-gauge-foot">
+        <span key={bump} className={bump ? 'ph-pop' : ''}>
+          <b>{int(lights)}</b> lights
+        </span>
+        <span className="ph-dim">{on ? 'yours is one of them' : 'each stage makes the brain burn brighter'}</span>
+      </div>
+    </div>
   )
 }

@@ -322,7 +322,10 @@ export function mountBrain(el, opts) {
   /* bloom */
   const composer = new EffectComposer(renderer)
   composer.addPass(new RenderPass(scene, camera))
-  composer.addPass(new UnrealBloomPass(new THREE.Vector2(W(), H()), 0.85, 0.45, 0.32))
+  const bloom = new UnrealBloomPass(new THREE.Vector2(W(), H()), 0.85, 0.45, 0.32)
+  composer.addPass(bloom)
+  // the pool's power (0..1) sets how hard the brain burns; a surge is the moment a new light joins
+  let power = 0, surgeT = 0
   composer.addPass(new OutputPass())
 
   const clock = new THREE.Clock()
@@ -361,7 +364,9 @@ export function mountBrain(el, opts) {
 
     let dirty = false
     for (let k = 0; k < NC; k++) if (nHit[k] > 0) { nHit[k] = Math.max(0, nHit[k] - dt * 1.2); dirty = true }
-    acc += dt * 55
+    if (surgeT > 0) surgeT = Math.max(0, surgeT - dt)
+    bloom.strength = 0.85 + power * 0.35 + surgeT * 0.9
+    acc += dt * 55 * (1 + power * 1.4)
     while (acc > 1) { launch(false); acc-- }
     if (connected) { mineAcc += dt * 9; while (mineAcc > 1) { launch(true); mineAcc-- } }
     let tl = 0
@@ -408,6 +413,10 @@ export function mountBrain(el, opts) {
 
   return {
     connect(on) { connected = on },
+    /** how strong the pool is, 0..1: more sparks and a brighter glow as it grows */
+    power(p) { power = Math.max(0, Math.min(1, p)) },
+    /** a light joins: a flash and a burst of your sparks */
+    surge() { surgeT = 1.2; for (let k = 0; k < 40; k++) launch(true) },
     /** photo mode: the brain alone, turned by hand or by touch, drifting round slowly when left alone */
     photo(on) {
       photoMode = on

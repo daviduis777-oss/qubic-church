@@ -366,6 +366,16 @@ class Engine {
     this.hiss(t + 0.1, 0.8, 0.01, out, 3000, 400, 1.5)
   }
 
+  /** one step of the boot sequence: a short bright blip, a step higher each time */
+  boot(step: number) {
+    if (!this.ok('boot', 50)) return
+    const t = this.ctx!.currentTime + 0.005
+    const out = this.out(0, 0.3)
+    const f = PENTA[Math.max(0, Math.min(PENTA.length - 1, step))]!
+    this.tone(f, t, 0.12, 0.03, out, 'triangle', f * 1.015)
+    this.hiss(t, 0.015, 0.025, out, 5200, 3600, 6)
+  }
+
   /* Maria at work: a quiet patter of data while she thinks, a pop when she answers, a chord when it is ready */
   private thinkers = 0
   private thinkT = 0
