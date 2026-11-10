@@ -119,6 +119,13 @@ export async function generateMetadata(props: {
 
 export const dynamicParams = true
 
+// Every page is rendered once per locale and kept for five minutes for everyone, instead of once per visit
+// (pages that must be per-visitor say force-dynamic themselves). This is most of what keeps the server cheap.
+export function generateStaticParams() {
+  return locales.map(locale => ({ locale }))
+}
+export const revalidate = 300
+
 export const viewport: Viewport = {
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: 'white' },

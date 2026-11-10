@@ -9,7 +9,7 @@ export function Crowd({ initial }: { initial: C }) {
   const [c, setC] = useState<C>(initial)
   useEffect(() => {
     const load = () =>
-      fetch('/api/bpp/crowd', { cache: 'no-store' })
+      fetch('/api/bpp/crowd')
         .then(r => r.json())
         .then(j => typeof j.signedUp === 'number' && setC({ signedUp: j.signedUp, trades: j.trades, total: j.total }))
         .catch(() => {})

@@ -14,7 +14,10 @@ const GARDEN_EVERY_MIN = 5
  * heartbeat: GitHub's schedule fires only every few hours, and Anna must keep up with the stream. At most one
  * reading per five minutes, from whichever visit comes first, after the answer is sent.
  */
-async function run() {
+async function run(req: Request) {
+  // a GET is the same answer for everyone: the CDN keeps it a minute, so a page view costs no function run
+  // (the /status page asks with ?fresh=1: it reads the tick itself and needs every reading)
+  const cache = req.method === 'GET' && !new URL(req.url).searchParams.has('fresh') ? 'public, s-maxage=60, stale-while-revalidate=300' : 'no-store'
   after(async () => {
     try {
       const slot = Math.floor(Date.now() / (GARDEN_EVERY_MIN * 60_000))
@@ -24,7 +27,7 @@ async function run() {
     }
   })
   try {
-    return NextResponse.json(await networkStatus(), { headers: { 'Cache-Control': 'no-store' } })
+    return NextResponse.json(await networkStatus(), { headers: { 'Cache-Control': cache } })
   } catch (e) {
     return NextResponse.json({ ok: false, reason: e instanceof Error ? e.message : 'unavailable' }, { status: 503, headers: { 'Cache-Control': 'no-store' } })
   }

@@ -13,8 +13,8 @@ import { RecordSection } from '@/components/bpp/RecordSection'
 import { BPP_FAQ, BPP_MD_URL, BPP_SUMMARY, BPP_URL } from '@/lib/bpp/explainer'
 import { bppFonts } from '@/components/bpp/fonts'
 
-// Market is cached for minutes on its own; the page stays live for the counts.
-export const dynamic = 'force-dynamic'
+// Rendered at most once a minute for everyone (market and counts move slower than that), not once per visit.
+export const revalidate = 60
 
 const TITLE = 'BPP-9000: watch the Bitcoin predictor Qubic miners grow'
 const DESC = 'The network Qubic miners grow to call each hour of bitcoin, UP or DOWN, running live in your browser. Live calls from 18 November. Join the experiment and keep your own journal.'

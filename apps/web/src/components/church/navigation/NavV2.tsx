@@ -25,7 +25,7 @@ function useLive() {
   useEffect(() => {
     let on = true
     const load = () =>
-      fetch('/api/network/status', { cache: 'no-store' })
+      fetch('/api/network/status')
         .then(r => r.json())
         .then(j => on && setNet(j?.ok ? j.verdict : 'unknown'))
         .catch(() => on && setNet('unknown'))

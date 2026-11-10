@@ -30,7 +30,7 @@ export function NetworkStatus() {
   useEffect(() => {
     let on = true
     const load = () =>
-      fetch('/api/network/status', { cache: 'no-store' })
+      fetch('/api/network/status?fresh=1', { cache: 'no-store' })
         .then(r => r.json())
         .then((j: NetStatus | { ok: false }) => {
           if (!on) return
