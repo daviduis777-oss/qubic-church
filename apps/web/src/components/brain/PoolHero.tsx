@@ -45,7 +45,9 @@ const STAGES = [
 /** false until the pool's backend reports its power; the gauge says "preview" while it is false */
 const POWER_LIVE = false
 const PREVIEW_POWER = 17_260
-const PREVIEW_LIGHTS = 214
+const PREVIEW_MINERS = 214
+/** what one more rig adds in the preview, until the pool reports the real figure */
+const PREVIEW_RIG = 1_240
 const stageOf = (p: number) => {
   let i = 0
   for (let k = 0; k < STAGES.length; k++) if (p >= STAGES[k]!.at) i = k
@@ -54,8 +56,8 @@ const stageOf = (p: number) => {
   return { i, cur, next, within: next ? (p - cur.at) / (next.at - cur.at) : 1 }
 }
 
-/** What the boot sequence says while a light joins, a step at a time. */
-const BOOT = ['Linking to the Qubic network', 'Loading the BPP-9000 task', 'Warming up your neurons', 'Finding your place in Anna', 'Light on']
+/** What the boot sequence says while a miner's power joins, a step at a time. */
+const BOOT = ['Linking to the Qubic network', 'Loading the BPP-9000 task', 'Warming up your neurons', 'Finding your place in Anna', 'Power on']
 
 export function PoolHero({ phone, hooks, preview }: { phone: ReactNode; hooks: Hook[]; preview: boolean }) {
   const el = useRef<HTMLDivElement>(null)
@@ -67,7 +69,8 @@ export function PoolHero({ phone, hooks, preview }: { phone: ReactNode; hooks: H
   const [photo, setPhoto] = useState(false)
   const [boot, setBoot] = useState<number | null>(null)
   const [power, setPower] = useState(PREVIEW_POWER)
-  const [lights, setLights] = useState(PREVIEW_LIGHTS)
+  const [miners, setMiners] = useState(PREVIEW_MINERS)
+  const base = useRef(PREVIEW_POWER)
   const [bump, setBump] = useState(0)
   const grid = useRef<HTMLDivElement>(null)
 
@@ -90,7 +93,7 @@ export function PoolHero({ phone, hooks, preview }: { phone: ReactNode; hooks: H
   // preview: the pool's power breathes a little, as a live number would; the brain burns to match
   useEffect(() => {
     if (POWER_LIVE) return
-    const t = window.setInterval(() => setPower(p => Math.round(Math.max(PREVIEW_POWER * 0.97, Math.min(PREVIEW_POWER * 1.03, p * (1 + (Math.random() - 0.48) * 0.006))))), 1600)
+    const t = window.setInterval(() => setPower(p => Math.round(Math.max(base.current * 0.97, Math.min(base.current * 1.03, p * (1 + (Math.random() - 0.48) * 0.006))))), 1600)
     return () => window.clearInterval(t)
   }, [])
   const powerLevel = (p: number) => Math.min(1, (p / STAGES[STAGES.length - 1]!.at) * 0.6 + stageOf(p).i * 0.1)
@@ -112,7 +115,9 @@ export function PoolHero({ phone, hooks, preview }: { phone: ReactNode; hooks: H
     sound().powerUp()
     api.current?.connect(true)
     api.current?.surge()
-    setLights(n => n + 1)
+    base.current += PREVIEW_RIG
+    setPower(p => p + PREVIEW_RIG)
+    setMiners(n => n + 1)
     setBump(b => b + 1)
     // stay on the brain for the moment it lights up; the page below waits for them
     const t = window.setTimeout(() => setBoot(null), reduce ? 600 : 2400)
@@ -229,17 +234,19 @@ export function PoolHero({ phone, hooks, preview }: { phone: ReactNode; hooks: H
                     setOn(false)
                     api.current?.connect(false)
                     sound().powerDown()
-                    setLights(n => n - 1)
+                    base.current -= PREVIEW_RIG
+                    setPower(p => p - PREVIEW_RIG)
+                    setMiners(n => n - 1)
                   }
                 }}
               >
-                {boot != null ? 'Connecting…' : on ? 'Your light is on' : 'Add your light'}
+                {boot != null ? 'Connecting…' : on ? 'Your power is in' : 'Add your power'}
               </button>
               <a className="ph-btn" href="#join">
                 How to join
               </a>
             </div>
-            <PowerGauge power={power} lights={lights} bump={bump} preview={!POWER_LIVE} on={on && boot == null} />
+            <PowerGauge power={power} miners={miners} bump={bump} preview={!POWER_LIVE} on={on && boot == null} />
           </div>
 
           <div className="ph-phone" id="maria-phone">
@@ -285,7 +292,7 @@ export function PoolHero({ phone, hooks, preview }: { phone: ReactNode; hooks: H
         {boot != null ? (
           <div className="ph-boot" role="status" aria-live="polite">
             <div className="ph-boot-box">
-              <div className="ph-eng ph-small">{boot < BOOT.length - 1 ? 'CONNECTING YOUR LIGHT' : 'YOU ARE IN'}</div>
+              <div className="ph-eng ph-small">{boot < BOOT.length - 1 ? 'CONNECTING YOUR POWER' : 'YOU ARE IN'}</div>
               <ol className="ph-boot-steps">
                 {BOOT.map((b, k) => (
                   <li key={b} className={k < boot ? 'done' : k === boot ? 'now' : ''}>
@@ -358,6 +365,9 @@ export function PoolHero({ phone, hooks, preview }: { phone: ReactNode; hooks: H
 .ph-gauge-num { display: flex; align-items: baseline; gap: 8px; margin: 4px 0 8px; }
 .ph-gauge-num b { font-family: var(--bpp-nx), sans-serif; font-weight: 500; font-size: 44px; line-height: 1; color: var(--hot); font-variant-numeric: tabular-nums; text-shadow: 0 0 4px #ffd08a, 0 0 14px #FFC46B, 0 0 40px rgba(232,145,46,.6); }
 .ph-gauge-num span { font-family: var(--bpp-eng), sans-serif; font-size: 11px; letter-spacing: .14em; color: var(--dim); }
+.ph-gauge-num b.ph-pop { transform-origin: left bottom; animation-name: ph-pop-num; }
+@keyframes ph-pop-num { 0% { transform: scale(1); } 30% { transform: scale(1.12); } 100% { transform: scale(1); } }
+.ph-gauge-you { margin-left: auto; font-style: normal; font-family: var(--bpp-eng), sans-serif; font-size: 12px; color: var(--hot); text-shadow: 0 0 10px rgba(255,196,107,.6); }
 .ph-gauge-bar, .ph-boot-bar { display: grid; grid-template-columns: repeat(20, 1fr); gap: 3px; height: 10px; }
 .ph-gauge-bar i, .ph-boot-bar i { border-radius: 2px; background: rgba(255,200,140,.1); }
 .ph-gauge-bar i.f, .ph-boot-bar i.f { background: var(--fil); box-shadow: 0 0 8px rgba(255,196,107,.8); }
@@ -389,7 +399,7 @@ export function PoolHero({ phone, hooks, preview }: { phone: ReactNode; hooks: H
   .ph-gauge-num b { font-size: 34px; }
   .ph-gauge-foot .ph-dim { display: none; }
 }
-@media (prefers-reduced-motion: reduce) { .ph-gauge-bar i.lead, .ph-boot-steps li.now i, .ph-pop { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .ph-gauge-bar i.lead, .ph-boot-steps li.now i, .ph-pop, .ph-gauge-num b.ph-pop { animation: none; } }
 .ph-btn:focus-visible, .ph-hook:focus-visible { outline: 2px solid var(--hot); outline-offset: 3px; }
 .ph-phone { filter: drop-shadow(0 0 60px rgba(46,86,255,.25)); }
 .ph-right { justify-self: end; width: min(300px, 100%); display: grid; gap: 10px; }
@@ -458,7 +468,7 @@ export function PoolHero({ phone, hooks, preview }: { phone: ReactNode; hooks: H
 }
 
 /** The pool's power and the stage it has reached, with the way to the next one. */
-function PowerGauge({ power, lights, bump, preview, on }: { power: number; lights: number; bump: number; preview: boolean; on: boolean }) {
+function PowerGauge({ power, miners, bump, preview, on }: { power: number; miners: number; bump: number; preview: boolean; on: boolean }) {
   const st = stageOf(power)
   const seg = 20
   const filled = Math.round(st.within * seg)
@@ -469,8 +479,9 @@ function PowerGauge({ power, lights, bump, preview, on }: { power: number; light
         {preview ? <span className="ph-small ph-amber">preview</span> : null}
       </div>
       <div className="ph-gauge-num">
-        <b>{int(power)}</b>
+        <b key={bump} className={bump ? 'ph-pop' : ''}>{int(power)}</b>
         <span>it/s</span>
+        {on ? <em className="ph-gauge-you">+{int(PREVIEW_RIG)} yours</em> : null}
       </div>
       <div className="ph-gauge-bar" aria-hidden>
         {Array.from({ length: seg }, (_, k) => (
@@ -489,9 +500,9 @@ function PowerGauge({ power, lights, bump, preview, on }: { power: number; light
       </div>
       <div className="ph-gauge-foot">
         <span key={bump} className={bump ? 'ph-pop' : ''}>
-          <b>{int(lights)}</b> lights
+          <b>{int(miners)}</b> miners
         </span>
-        <span className="ph-dim">{on ? 'yours is one of them' : 'each stage makes the brain burn brighter'}</span>
+        <span className="ph-dim">{on ? 'your power is in the brain' : 'more power, a brighter brain'}</span>
       </div>
     </div>
   )
