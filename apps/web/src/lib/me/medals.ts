@@ -17,7 +17,7 @@ export type Medal = {
 }
 
 export const MEDALS: Medal[] = [
-  { id: 'first-marathon', name: 'First Mining Marathon', for: 'Joined Qubic Church in the days of the first marathon, from epoch 233.', glyph: 'flame' },
+  { id: 'first-marathon', name: 'First Mining Marathon', for: 'Joined QC in the days of the first marathon, from epoch 233.', glyph: 'flame' },
   { id: 'anna-founder', name: 'Founder', for: 'Holds an Anna from the Anna Aigarth collection.', glyph: 'crown' },
   { id: 'crypt-author', name: 'Author of the Crypt', for: 'Published an article in The Crypt.', glyph: 'quill' },
   { id: 'crypt-voice', name: 'Voice of the Crypt', for: 'Answered in The Crypt.', glyph: 'speech' },
@@ -42,18 +42,47 @@ export function earned(f: MedalFacts): MedalId[] {
   return out
 }
 
-/** Stages by useful solutions: the same names as the pool's power gauge. */
-export const STAGES = [
+/*
+ * Power: one number for what a person brought to QC, like reputation on a forum.
+ * Useful solutions found in the QC pool carry it; the rest is a small push for being here.
+ * The levels are long on purpose: the pool is meant to run for years.
+ */
+export const POWER = { solution: 10, medal: 100, article: 50, reply: 5, trade: 1, tradeCap: 200 } as const
+
+export const LEVELS = [
   { name: 'Spark', at: 0 },
-  { name: 'Flame', at: 10 },
-  { name: 'Star', at: 50 },
-  { name: 'Nova', at: 200 },
-  { name: 'Supernova', at: 1000 },
+  { name: 'Ember', at: 250 },
+  { name: 'Flame', at: 1_000 },
+  { name: 'Blaze', at: 3_000 },
+  { name: 'Star', at: 10_000 },
+  { name: 'Constellation', at: 30_000 },
+  { name: 'Nova', at: 100_000 },
+  { name: 'Supernova', at: 300_000 },
+  { name: 'Pulsar', at: 1_000_000 },
 ] as const
 
-export function stageOf(solutions: number) {
+export type PowerFacts = { solutions: number; medals: number; articles: number; replies: number; trades: number }
+
+export function powerOf(f: PowerFacts) {
+  const parts = {
+    solutions: f.solutions * POWER.solution,
+    medals: f.medals * POWER.medal,
+    crypt: f.articles * POWER.article + f.replies * POWER.reply,
+    bpp: Math.min(f.trades, POWER.tradeCap) * POWER.trade,
+  }
+  const total = parts.solutions + parts.medals + parts.crypt + parts.bpp
+  return { total, parts, level: levelOf(total) }
+}
+
+export function levelOf(power: number) {
   let i = 0
-  for (let k = 0; k < STAGES.length; k++) if (solutions >= STAGES[k]!.at) i = k
-  const next = STAGES[i + 1] ?? null
-  return { index: i, name: STAGES[i]!.name, next: next ? { name: next.name, at: next.at, missing: next.at - solutions } : null }
+  for (let k = 0; k < LEVELS.length; k++) if (power >= LEVELS[k]!.at) i = k
+  const cur = LEVELS[i]!
+  const next = LEVELS[i + 1] ?? null
+  return {
+    index: i,
+    name: cur.name,
+    progress: next ? (power - cur.at) / (next.at - cur.at) : 1,
+    next: next ? { name: next.name, at: next.at, missing: next.at - power } : null,
+  }
 }

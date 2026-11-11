@@ -4,7 +4,7 @@ import type { ForumUser } from '@/lib/forum/auth'
 import { allParticipants, getParticipant, type Participant } from '@/lib/bpp/store'
 import { statsOf } from '@/lib/bpp/stats'
 import { getNFTById } from '@/config/nfts'
-import { earned, stageOf, type MedalId } from './medals'
+import { earned, powerOf, type MedalId } from './medals'
 
 /*
  * The cabinet's data: one person across the ecosystem, read on the server.
@@ -23,7 +23,7 @@ export type Person = {
   since: string | null
   medals: MedalId[]
   solutions: { total: number; epoch: number; preview: boolean; byEpoch: { epoch: number; n: number }[] }
-  stage: ReturnType<typeof stageOf>
+  power: ReturnType<typeof powerOf>
   crypt: { articles: number; replies: number; rank?: string }
   bpp: { joined: string; trades: number; winRate: number | null } | null
   annas: Anna[]
@@ -66,6 +66,7 @@ export async function personOf(user: Pick<ForumUser, 'handle' | 'name' | 'id'> &
   const annas = user.auth === 'qubic' ? await annasOf(user.id) : []
   const solutions = SOLUTIONS_LIVE ? { total: 0, epoch: 0, preview: false, byEpoch: [] } : previewSolutions(user.handle)
   const since = [part?.joined, m?.since].filter(Boolean).sort()[0] ?? null
+  const medals = earned({ bppJoined: since ?? undefined, articles, replies, annas: annas.length, solutions: SOLUTIONS_LIVE ? solutions.total : 0 })
   return {
     handle: user.handle,
     name: m?.name ?? user.name,
@@ -75,9 +76,9 @@ export async function personOf(user: Pick<ForumUser, 'handle' | 'name' | 'id'> &
     x: profile.x ?? m?.x,
     bio: forum.bioOf({ name: m?.name ?? user.name, handle: user.handle }),
     since,
-    medals: earned({ bppJoined: since ?? undefined, articles, replies, annas: annas.length, solutions: SOLUTIONS_LIVE ? solutions.total : 0 }),
+    medals,
     solutions,
-    stage: stageOf(solutions.total),
+    power: powerOf({ solutions: solutions.total, medals: medals.length, articles, replies, trades: stats?.trades ?? 0 }),
     crypt: { articles, replies, rank: m?.rank?.name },
     bpp: part ? { joined: part.joined, trades: stats?.trades ?? 0, winRate: stats && stats.trades ? stats.wins / stats.trades : null } : null,
     annas,
@@ -98,5 +99,43 @@ export async function people(): Promise<Person[]> {
     if (m.auth === 'x' || seen.has(m.handle.toLowerCase())) continue
     out.push(await personOf({ handle: m.handle, name: m.name, auth: m.auth, id: m.identity ?? '' }, null))
   }
-  return out.sort((a, b) => b.solutions.total - a.solutions.total || b.medals.length - a.medals.length || (a.since ?? '').localeCompare(b.since ?? ''))
+  return out.sort((a, b) => b.power.total - a.power.total || (a.since ?? '').localeCompare(b.since ?? ''))
+}
+
+/** What one person may see of the others. No names, no handles, no keys. */
+export type Circle = {
+  count: number
+  /** people who found a useful solution this epoch */
+  active: number
+  /** one entry per person, a level index each, in a stable shuffled order; `me` is the viewer's place in it */
+  stars: number[]
+  me: number
+  /** share of people with less power than the viewer, 0..1 */
+  brighter: number
+  /** the next person up: how far ahead and at what level */
+  above: { gap: number; level: string } | null
+  below: { gap: number; level: string } | null
+}
+
+export function circleOf(all: Person[], handle: string): Circle {
+  const sorted = all.slice().sort((a, b) => b.power.total - a.power.total)
+  const i = sorted.findIndex(p => p.handle.toLowerCase() === handle.toLowerCase())
+  const mine = i >= 0 ? sorted[i]!.power.total : 0
+  const hash = (s: string) => {
+    let h = 2166136261
+    for (const c of s.toLowerCase()) h = Math.imul(h ^ c.charCodeAt(0), 16777619)
+    return h >>> 0
+  }
+  const order = all.slice().sort((a, b) => hash(a.handle) - hash(b.handle))
+  const up = i > 0 ? sorted.slice(0, i).reverse().find(p => p.power.total > mine) : undefined
+  const down = i >= 0 ? sorted.slice(i + 1).find(p => p.power.total < mine) : undefined
+  return {
+    count: all.length,
+    active: all.filter(p => p.solutions.epoch > 0).length,
+    stars: order.map(p => p.power.level.index),
+    me: order.findIndex(p => p.handle.toLowerCase() === handle.toLowerCase()),
+    brighter: all.length > 1 ? all.filter(p => p.power.total < mine).length / (all.length - 1) : 0,
+    above: up ? { gap: up.power.total - mine, level: up.power.level.name } : null,
+    below: down ? { gap: mine - down.power.total, level: down.power.level.name } : null,
+  }
 }
