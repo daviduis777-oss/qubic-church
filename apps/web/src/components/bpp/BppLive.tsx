@@ -228,7 +228,7 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
     }
     const ease = (t: number) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2)
     const pop = new Float32Array(N)
-    let pulses: { c: number[]; t0: number; lit: boolean }[] = []
+    let pulses: { c: number[]; t0: number; lit: boolean; tgt: number }[] = []
     let ansFade = 1
     const emitsUpTo = (T: number) => {
       let lo = 0
@@ -257,8 +257,12 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
 
     // Smooth display: every tick is real, but each neuron's colour glides toward its state with inertia,
     // and pulses start staggered and travel slowly, so the picture flows instead of flickering.
-    const PULSE = 1100
-    const TAU = 240
+    // Nerves, not sparks: the picture takes the machine's state on a slow beat, signals crawl along the wires,
+    // a neuron swells as a signal reaches it, and every neuron breathes a little on its own.
+    const BEAT = 1100
+    const PULSE = 2600
+    const TAU = 700
+    let lastBeat = 0
     const wt = Array.from({ length: N }, () => [0, 0, 1])
     let shown: Uint8Array = sim.states[0]!
     let lastFrame = 0
@@ -272,10 +276,9 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
         for (let n = 0; n < N; n++)
           if (s[n] !== p[n]) {
             flips++
-            pop[n] = 1
             for (let k = 0; k < d.k; k++) {
               const c = links[n * d.k + k]
-              if (c) pulses.push({ c, t0: now + Math.random() * tickMs * 0.9, lit: p[sim.w.nb[n * d.k + k]!] !== 2 })
+              if (c) pulses.push({ c, t0: now + Math.random() * BEAT * 0.8, lit: p[sim.w.nb[n * d.k + k]!] !== 2, tgt: n })
             }
           }
       if (pulses.length > 180) pulses = pulses.slice(-180)
@@ -344,10 +347,12 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
       g.lineCap = 'round'
       for (const q of pulses) {
         if (now < q.t0) continue
-        const t = ease((now - q.t0) / PULSE)
-        const tail = Math.max(0, t - 0.16)
-        g.strokeStyle = 'rgba(255,205,110,.16)'
-        g.lineWidth = 1
+        const raw = (now - q.t0) / PULSE
+        const t = ease(raw)
+        const tail = Math.max(0, t - 0.22)
+        const swell = Math.sin(Math.PI * raw)
+        g.strokeStyle = `rgba(255,205,110,${0.06 + 0.22 * swell})`
+        g.lineWidth = 1 + 0.8 * swell
         g.beginPath()
         g.moveTo(q.c[0]!, q.c[1]!)
         g.quadraticCurveTo(q.c[2]!, q.c[3]!, q.c[4]!, q.c[5]!)
@@ -362,10 +367,15 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
         }
         g.stroke()
         const [x, y] = qp(q.c, t)
+        g.shadowColor = 'rgba(255,200,110,.9)'
+        g.shadowBlur = 10 * swell
         g.fillStyle = '#fff3dc'
         g.beginPath()
         g.arc(x, y, q.lit ? 2.6 : 1.8, 0, 7)
         g.fill()
+        g.shadowBlur = 0
+        // the signal arrives: the neuron at the end swells
+        if (raw > 0.82) pop[q.tgt] = Math.max(pop[q.tgt]!, 1)
       }
       // hub
       g.strokeStyle = 'rgba(255,205,110,.18)'
@@ -431,13 +441,14 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
       for (let n = 0; n < N; n++) {
         const [x, y] = P[n]!
         const big = n === CT || n === OUT
-        const r = big ? S * 0.027 : S * 0.0195
+        const breath = 1 + 0.035 * Math.sin(now / 1300 + n * 1.7)
+        const r = (big ? S * 0.027 : S * 0.0195) * breath * (1 + 0.16 * pop[n]!)
         const v = s[n]!
         const w = wt[n]!
         const F = [[42, 29, 16], [255, 214, 138], [18, 16, 20]]
         const L = [[255, 205, 110, 0.75], [255, 240, 207, 1], [255, 255, 255, 0.16]]
         const blend = (M: number[][]) => M[0]!.map((_, i) => w[0]! * M[0]![i]! + w[1]! * M[1]![i]! + w[2]! * M[2]![i]!)
-        const glow = w[1]!
+        const glow = Math.min(1, w[1]! + 0.5 * pop[n]!)
         if (glow > 0.02) {
           g.shadowColor = `rgba(255,190,80,${0.9 * glow})`
           g.shadowBlur = 14 * glow
@@ -472,13 +483,15 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
     const frame = () => {
       const now = performance.now()
       const T = tickOf(Date.now())
-      if (T !== lastT) {
+      if (T !== lastT && (lastT < 0 || now - lastBeat >= BEAT)) {
         tickTo(T, now, lastT < 0 || reduce.current)
         lastT = T
+        lastBeat = now
       }
       // colours glide toward the current state (frame-rate independent)
       const dt = lastFrame ? Math.min(100, now - lastFrame) : 16
       lastFrame = now
+      for (let n = 0; n < N; n++) if (pop[n]! > 0) pop[n] = Math.max(0, pop[n]! - dt / 1400)
       const a = 1 - Math.exp(-dt / TAU)
       for (let n = 0; n < N; n++) {
         const st = shown[n]!
