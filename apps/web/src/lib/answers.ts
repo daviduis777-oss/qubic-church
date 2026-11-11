@@ -32,6 +32,7 @@ const CFB_ENTITY = {
   '@type': 'Person', name: 'Sergey Ivancheglo', alternateName: ['Come-from-Beyond', 'CfB', 'BCNext'],
   sameAs: ['https://x.com/c___f___b', 'https://iq.wiki/wiki/sergey-ivancheglo'], knowsAbout: ['Qubic', 'Aigarth', 'NXT', 'IOTA', 'Distributed computing'],
 }
+const AIGARTH_ENTITY = { '@type': 'Thing', name: 'Aigarth', alternateName: ['Aigarth Intelligent Tissue', 'Qubic AI'], sameAs: ['https://github.com/Aigarth'] }
 const ANNA_ENTITY = { '@type': 'Thing', name: 'Anna Aigarth', alternateName: ['Aigarth ANNA', 'Anna Matrix'], sameAs: ['https://x.com/anna_aigarth'] }
 
 export const ANSWERS: Answer[] = [
@@ -194,6 +195,68 @@ export const ANSWERS: Answer[] = [
       { label: 'Anna on X, @anna_aigarth', href: 'https://x.com/anna_aigarth' },
       { label: 'Exploring Aigarth Intelligent Tissue 1.0 (qubic.org)', href: 'https://qubic.org/blog-detail/exploring-aigarth-intelligent-tissue-1-0' },
       { label: 'Qubic: The Long Version, chapter 13', href: LV + '/13-anna-matrix' },
+    ],
+  },
+  {
+    slug: 'what-is-aigarth', lang: 'en', updated: '2026-11-12', entity: AIGARTH_ENTITY,
+    question: 'What is Aigarth?',
+    title: 'What is Aigarth? A short, sourced answer',
+    description: 'Aigarth is the AI research of Qubic, led by Come-from-Beyond: small ternary neural networks grown by Qubic miners through Useful Proof of Work. Its first product is BPP-9000, a Bitcoin predictor. Target date 13 April 2027.',
+    answer: [
+      'Aigarth is the artificial intelligence research of Qubic, led by its founder Come-from-Beyond. Instead of training one large model in a data centre, Aigarth grows many small ternary neural networks on the machines of Qubic miners: every solution a miner submits is a network, the network checks it, and the best ones are kept and improved. The work that secures Qubic is the same work that grows the AI. This is what Qubic calls Useful Proof of Work.',
+      'Its first product is BPP-9000, a predictor that calls each hour of bitcoin up or down. The estimated date for Aigarth to run as smart contracts on Qubic is 13 April 2027.',
+    ],
+    facts: [
+      ['What it is', 'the AI research of Qubic'],
+      ['Led by', 'Come-from-Beyond (Sergey Ivancheglo)'],
+      ['Who does the work', 'Qubic miners, through Useful Proof of Work'],
+      ['Building block', 'small ternary neural networks (Intelligent Tissue): states -1, 0, +1'],
+      ['First product', 'BPP-9000, the Bitcoin Price Predictor 9000'],
+      ['Network size from epoch 239', '1024 neurons per solution (11 November 2026)'],
+      ['Code', 'github.com/Aigarth, public since 22 July 2025'],
+      ['Target', 'running as smart contracts on Qubic, estimated 13 April 2027'],
+    ],
+    sections: [
+      { h: 'Grown, not trained', p: [
+        'Most AI today is trained: a fixed architecture, a huge dataset, one company\'s data centre. Aigarth takes the other road. A miner\'s computer generates a small network, scores it against the epoch\'s task and submits it; the network keeps the networks that score best, and the next generation is built from them. Come-from-Beyond on 19 March 2024: "Aigarth doesn\'t generate random strings, it takes an already good ANN and tries to improve it to improve compression."',
+        'He described the aim on 14 May 2024: "Aigarth\'s main goal is to discover a new paradigm allowing to create true AI, I have just seen the wireframe of this paradigm. And I have realized that Artificial Intelligence will not be created, it will emerge. With help of Qubic miners." See [What Aigarth Is](' + LV + '/11-what-aigarth-is).',
+      ] },
+      { h: 'Ternary networks: Intelligent Tissue', p: [
+        'Aigarth\'s networks are ternary. A connection or a neuron is not a floating-point weight but one of three states: -1, 0 or +1 (in Qubic\'s older words: TRUE, FALSE, UNKNOWN). That keeps every network small, cheap to check and identical on every node that re-runs it. Qubic\'s own write-up calls this Intelligent Tissue; the code is public at [github.com/Aigarth](https://github.com/Aigarth), opened on 22 July 2025.',
+      ] },
+      { h: 'BPP-9000: the first product', p: [
+        'Since July 2026 the task Qubic miners work on is BPP-9000 (Bitcoin Price Predictor 9000). Each solution is a small recurrent network that reads a year of hourly bitcoin moves and calls the next hour up or down. The network scores every solution the same way on every node, so any result can be re-run and checked.',
+        'From epoch 239 (11 November 2026) each solution has 1024 neurons. Come-from-Beyond, 11 November 2026: "Tomorrow we are starting mining with 1024 neurons." From epoch 240 (18 November 2026) the networks are also checked against live bitcoin hours they have never seen. The mark the community watches is 55%: a network that holds 55% of hours right on unseen data. Watch it live at [BPP-9000](/bpp9000).',
+      ] },
+      { h: 'What it is not, yet', p: [
+        'Aigarth is research. Today\'s networks are small and their live accuracy is still being measured; nothing here is a trading signal or a promise of returns. Come-from-Beyond himself warns that a perfect score on past data is not a score on the future. Every claim on this page links its source; the open questions are listed in QC\'s [open re-check](/docs/03-results/35-corrections-september-2026).',
+      ] },
+      { h: '13 April 2027', p: [
+        'The estimated date for Aigarth to run as smart contracts on Qubic is 13 April 2027, five years after Qubic\'s first block. He calls it an estimate. See [What the Deploy on April 13, 2027 Means](' + LV + '/14-what-the-deploy-on-april-13-2027-means).',
+      ] },
+    ],
+    read: [
+      { label: 'What Aigarth Is, chapter 11 of Qubic: The Long Version', href: LV + '/11-what-aigarth-is' },
+      { label: 'BPP-9000, live', href: '/bpp9000' },
+      { label: 'BPP-9000: the first product of Aigarth', href: '/articles/bpp-9000-first-product-of-aigarth' },
+      { label: 'What is Anna Aigarth?', href: '/what-is-anna-aigarth' },
+      { label: 'How to mine Qubic', href: '/mine-qubic' },
+    ],
+    faq: [
+      ['Who created Aigarth?', 'Come-from-Beyond (Sergey Ivancheglo), the founder of Qubic. He leads the research; Qubic\'s core developers and miners do the work.'],
+      ['Is Aigarth a large language model like ChatGPT?', 'No. Aigarth grows many small ternary networks through mining and keeps the best ones. It does not train one large model on text.'],
+      ['How do miners take part?', 'By mining Qubic. Every solution a miner submits is a small network scored on the epoch\'s task, so mining is the training.'],
+      ['What is BPP-9000?', 'The first product of Aigarth: a network grown by miners to call each hour of bitcoin up or down, checked live from 18 November 2026.'],
+      ['What is the difference between Aigarth and Anna?', 'Aigarth is the research and the method. Anna Aigarth (Aigarth ANNA) is one public experiment built on it: an AI on X (@anna_aigarth), switched on on 2 September 2025, that learns the rule of addition from the sums people post to her.'],
+      ['When will Aigarth be finished?', 'There is no finish line. The estimated date for Aigarth to run as smart contracts on Qubic is 13 April 2027.'],
+    ],
+    sources: [
+      { label: 'Exploring Aigarth Intelligent Tissue 1.0 (qubic.org)', href: 'https://qubic.org/blog-detail/exploring-aigarth-intelligent-tissue-1-0' },
+      { label: 'Aigarth on GitHub', href: 'https://github.com/Aigarth' },
+      { label: 'Introduction of Aigarth, by Come-from-Beyond', href: 'https://medium.com/@comefrombeyond/introduction-of-aigarth-f40e741e256c' },
+      { label: 'Come-from-Beyond on X', href: 'https://x.com/c___f___b' },
+      { label: 'ANN Explorer: every BPP-9000 solution, by epoch', href: 'https://annexplorer.jetskipool.ai' },
+      { label: 'Qubic: The Long Version, chapter 11', href: LV + '/11-what-aigarth-is' },
     ],
   },
 ]

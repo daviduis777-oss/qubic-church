@@ -33,6 +33,7 @@ export const NAV: NavGroup[] = [
       { href: '/timeline#phase-satoshi', name: 'Satoshi', desc: 'The Satoshi Nakamoto question: the case block by block, and CfB’s own answers on record.', keys: 'satoshi nakamoto bitcoin creator identity' },
       { href: '/timeline', name: 'The Road to The Day', desc: 'Come-from-Beyond from 2000 to 13.04.2027, every item sourced.', keys: 'timeline history 2027 nxt iota' },
       { href: '/what-is-qubic', name: 'What is Qubic?', desc: 'The network in plain words: computors, epochs, useful proof of work.', keys: 'qubic explained basics' },
+      { href: '/what-is-aigarth', name: 'What is Aigarth?', desc: 'The AI Qubic miners grow, and its first product.', keys: 'aigarth ai intelligent tissue bpp' },
       { href: '/what-is-anna-aigarth', name: 'What is Anna?', desc: 'The AI the network grows, and what it can and cannot do yet.', keys: 'anna aigarth ai' },
     ],
   },

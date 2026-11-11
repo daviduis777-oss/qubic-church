@@ -7,13 +7,14 @@ import { ogFor } from '@/lib/og-pages'
 
 /*
  * Mining field guide. Source: "Qubic Mining, explained like a human would",
- * QubicChurch mining desk, guide v0.3 (epoch 230), plus dated network changes.
+ * QubicChurch mining desk, guide v0.3 (epoch 230), plus dated network changes (last: 12 November 2026, epochs 239 and 240).
  * Server-rendered on purpose: every answer is in the HTML for search and LLMs.
  */
 
 const TITLE = 'How to mine Qubic: the field guide'
 const DESC =
-  'A practical guide to mining Qubic under useful proof of work: CPUs and GPUs, cost per solution, renting or your own PC, wallet safety, pools and payouts.'
+  'A practical guide to mining Qubic in November 2026: what miners train now (BPP-9000, 1024-neuron networks, the 18 November live feed), CPUs and GPUs, cost per solution, renting or your own PC, wallet safety, pools and payouts.'
+const UPDATED = '2026-11-12'
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -24,6 +25,7 @@ export const metadata: Metadata = {
 }
 
 const TOC = [
+  ['now', 'What is new in November 2026'],
   ['doing', 'What you are actually doing'],
   ['rule', 'The rule that saves your wallet'],
   ['money', 'Am I making money?'],
@@ -66,6 +68,14 @@ const TRIAGE = [
 ] as const
 
 const FAQ = [
+  {
+    q: 'What are Qubic miners training in November 2026?',
+    a: 'BPP-9000, the Bitcoin Price Predictor 9000 and the first product of Aigarth. Each solution is a small ternary neural network that calls each hour of bitcoin up or down. From epoch 239 (11 November 2026) each network has 1024 neurons.',
+  },
+  {
+    q: 'What changes on 18 November 2026?',
+    a: 'Epoch 240 starts. Come-from-Beyond announced on 20 October 2026 that from epoch 240 mining moves to a live bitcoin data feed: networks are also checked against hours they have never seen. The mark the community watches is 55% of hours right on that live data.',
+  },
   {
     q: 'What does a Qubic miner actually produce?',
     a: 'Solutions. Under useful proof of work the network gives your machine a small AI candidate (an "ant") to train. When the trained ant beats the one you started with, that improvement is a solution. Solutions are checked and paid, and the work feeds Aigarth.',
@@ -176,7 +186,8 @@ export default async function MineQubicPage(props: { params: Promise<{ locale: s
       url: `${SITE_URL}/mine-qubic`,
       author: { '@id': `${SITE_URL}/#qc` },
       publisher: { '@id': `${SITE_URL}/#org` },
-      about: [{ '@type': 'Thing', name: 'Qubic mining' }, { '@type': 'Thing', name: 'Useful proof of work' }],
+      about: [{ '@type': 'Thing', name: 'Qubic mining' }, { '@type': 'Thing', name: 'Useful proof of work' }, { '@type': 'Thing', name: 'Aigarth' }, { '@type': 'Thing', name: 'BPP-9000' }],
+      dateModified: UPDATED,
     },
     {
       '@context': 'https://schema.org',
@@ -197,8 +208,8 @@ export default async function MineQubicPage(props: { params: Promise<{ locale: s
           under all of it. Every question from the channel, answered in one place.
         </p>
         <p className="mt-4 text-sm text-fg-2">
-          Based on the Qubic Church mining guide v0.3 (epoch 230). Rates, pools and Anna versions change: check the
-          numbers yourself. Not financial advice.
+          Based on the Qubic Church mining guide v0.3 (epoch 230), updated on 12 November 2026 for epochs 239 and 240.
+          Rates, pools and the task change: check the numbers yourself. Not financial advice.
         </p>
       </header>
 
@@ -207,7 +218,7 @@ export default async function MineQubicPage(props: { params: Promise<{ locale: s
           {TOC.map(([id, t], i) => (
             <li key={id}>
               <a className="flex gap-3 text-fg-2 hover:text-foreground" href={`#${id}`}>
-                <span className="w-6 font-mono text-gold/80">{String(i + 1).padStart(2, '0')}</span>
+                <span className="w-6 font-mono text-gold/80">{String(i).padStart(2, '0')}</span>
                 {t}
               </a>
             </li>
@@ -216,11 +227,51 @@ export default async function MineQubicPage(props: { params: Promise<{ locale: s
       </nav>
 
       <div className="text-lg leading-relaxed text-foreground/90 [&_li]:mt-2 [&_p]:mt-4 [&_ul]:mt-4 [&_ul]:list-disc [&_ul]:pl-6">
+        <H2 id="now" n="00 · updated 12 November 2026">What is new in November 2026</H2>
+        <p>
+          Qubic mining now trains <Link className="text-gold underline underline-offset-4" href="/bpp9000">BPP-9000</Link>, the
+          Bitcoin Price Predictor 9000 and the first product of{' '}
+          <Link className="text-gold underline underline-offset-4" href="/what-is-aigarth">
+            Aigarth
+          </Link>
+          . Every solution your machine submits is a small ternary neural network that calls each hour of bitcoin up or down;
+          the network scores it the same way on every node.
+        </p>
+        <ul>
+          <li>
+            <strong>Epoch 239, 11 November 2026: 1024 neurons.</strong> Each solution is now a network of 1024 neurons.
+            Come-from-Beyond, 11 November 2026: &ldquo;Tomorrow we are starting mining with 1024 neurons. Some of you will have
+            temptation to reduce number of used neurons and end up with only 64 active ones, because you already know winning
+            topology for that case. Unfortunately, it&rsquo;s an inefficient method, it ends up with a pretty high score when you
+            hit the wall. Pay attention to this.&rdquo;
+          </li>
+          <li>
+            <strong>Epoch 240, 18 November 2026: the live feed.</strong> Networks are also checked against live bitcoin hours
+            they have never seen. The mark the community watches is <strong>55%</strong> of hours right on that live data.
+          </li>
+          <li>
+            <strong>Watch it as it happens.</strong> Every solution of every epoch is public on the{' '}
+            <a className="text-gold underline underline-offset-4" href="https://annexplorer.jetskipool.ai" rel="noopener noreferrer" target="_blank">
+              ANN Explorer
+            </a>
+            ; the race to 55% and the computors that pass it are on{' '}
+            <Link className="text-gold underline underline-offset-4" href="/bpp9000">
+              the BPP-9000 page
+            </Link>
+            .
+          </li>
+        </ul>
+        <Note title="Before you scale">
+          The hardware advice below was measured on the tasks of epochs 229 and 230. With 1024-neuron networks and the live
+          feed, solutions per hour and the best rig can shift. Run one machine for one epoch, measure your own cost per
+          solution, then decide.
+        </Note>
+
         <H2 id="doing" n="01 · the 60-second version">What you are actually doing</H2>
         <p>
           Bitcoin mining makes a machine guess trillions of numbers and throw almost all of them away. Qubic uses{' '}
-          <strong>useful proof of work</strong>. The network hands your machine a tiny AI candidate, called an
-          &ldquo;ant&rdquo;, and your hardware trains it. When the trained ant beats the one you started with, that
+          <strong>useful proof of work</strong>. The network hands your machine a tiny AI candidate, a small neural network
+          (miners call the candidates &ldquo;ants&rdquo;), and your hardware trains it. When the trained ant beats the one you started with, that
           improvement is a <strong>solution</strong>. Solutions are checked and paid, and the work feeds Aigarth.
         </p>
         <ul>

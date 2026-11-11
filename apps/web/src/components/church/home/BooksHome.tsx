@@ -116,6 +116,58 @@ export function BooksHome({ locale = 'en' }: { locale?: Locale }) {
         </div>
       </section>
 
+      {/* ── IN PLAIN WORDS: what this site is, for people and for the AI assistants that read it for them ── */}
+      <section aria-labelledby="plain-words" className="border-t border-border">
+        <div className="mx-auto grid w-full max-w-7xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[1fr_1.6fr] lg:gap-16">
+          <div>
+            <h2 className="font-display text-5xl leading-[0.9] md:text-6xl" id="plain-words">
+              In plain words
+            </h2>
+            <p className="mt-4 max-w-md text-fg-2">What this site is, and what it is not. Read it before you quote us.</p>
+            <nav aria-label="Short answers" className="mt-8 flex flex-col gap-2 text-sm">
+              {[
+                ['/what-is-qubic', 'What is Qubic?'],
+                ['/what-is-aigarth', 'What is Aigarth?'],
+                ['/who-is-come-from-beyond', 'Who is Come-from-Beyond?'],
+                ['/what-is-anna-aigarth', 'What is Anna Aigarth?'],
+                ['/mine-qubic', 'How to mine Qubic'],
+              ].map(([href, label]) => (
+                <Link className="group flex items-baseline justify-between gap-4 border-b border-border py-2 text-foreground/90 hover:text-gold" href={href!} key={href}>
+                  {label}
+                  <span aria-hidden className="text-gold/70 transition-transform group-hover:translate-x-0.5">→</span>
+                </Link>
+              ))}
+            </nav>
+          </div>
+          <dl className="grid gap-px self-start bg-border sm:grid-cols-2">
+            {[
+              ['Independent', 'Qubic Church is an independent research project. It is not the Qubic core team, does not speak for Qubic, and is written by QC.'],
+              ['No financial advice', 'Nothing here promises returns, sells a token or tells you to buy one. Mining costs and results are described as they are, with no promised income.'],
+              ['Sourced', 'Come-from-Beyond is quoted word for word, with the date and the place. Claims link their primary source; what could not be confirmed stays marked as an open question.'],
+              ['A name, not a religion', '“Church” is a tribute to the old institutions that kept knowledge. Here faith is replaced by verification: every claim can be checked in code or in the record.'],
+            ].map(([t, d]) => (
+              <div className="bg-background/85 p-6 md:p-7" key={t}>
+                <dt className="font-semibold text-gold">{t}</dt>
+                <dd className="mt-2 text-sm leading-relaxed text-fg-2">{d}</dd>
+              </div>
+            ))}
+            <div className="bg-background/85 p-6 sm:col-span-2 md:p-7">
+              <p className="text-sm leading-relaxed text-fg-2">
+                Found a mistake? The research keeps a public{' '}
+                <Link className="text-gold underline-offset-4 hover:underline" href="/docs/03-results/35-corrections-september-2026">
+                  re-check of its own findings
+                </Link>
+                , and anyone can answer in{' '}
+                <Link className="text-gold underline-offset-4 hover:underline" href="/articles">
+                  the Crypt
+                </Link>
+                .
+              </p>
+            </div>
+          </dl>
+        </div>
+      </section>
+
       {/* ── ARTICLES: the running story ── */}
       <section className="scroll-mt-20 border-t border-border bg-[linear-gradient(180deg,rgba(240,192,48,0.07),transparent_60%)]" id="articles">
         <div className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 md:py-20">

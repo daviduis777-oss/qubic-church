@@ -5,7 +5,7 @@ import { SITE_URL } from '@/lib/books'
 import { ogFor } from '@/lib/og-pages'
 import { type Answer, answerBySlug, answerUrl } from '@/lib/answers'
 
-const OG: Record<string, 'about' | 'cfb' | 'nfts'> = { 'what-is-qubic': 'about', 'who-is-come-from-beyond': 'cfb', 'what-is-anna-aigarth': 'nfts' }
+const OG: Record<string, 'about' | 'cfb' | 'nfts'> = { 'what-is-qubic': 'about', 'who-is-come-from-beyond': 'cfb', 'what-is-anna-aigarth': 'nfts', 'what-is-aigarth': 'about' }
 const T = {
   en: { eyebrow: 'Short answer', facts: 'Key facts', read: 'Read further on qubic.church', faq: 'Questions people ask', sources: 'Sources', by: 'By QC, Qubic Church', updated: 'Updated', date: 'en-GB' },
 }

@@ -7,6 +7,7 @@ import { DONATION_ADDRESS } from '@/lib/donate'
 const FOOTER_LINKS = [
   { href: '/what-is-qubic', label: 'What is Qubic?' },
   { href: '/who-is-come-from-beyond', label: 'Who is Come-from-Beyond?' },
+  { href: '/what-is-aigarth', label: 'What is Aigarth?' },
   { href: '/what-is-anna-aigarth', label: 'What is Anna Aigarth?' },
   { href: '/books', label: 'Books' },
   { href: '/docs', label: 'Research' },
