@@ -207,9 +207,9 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
           P[n] = [cx + R * Math.cos(a), cy + R * Math.sin(a)]
         })
       } else {
-        // concentric rings between the hub and the year ring, each holding neurons in proportion to its length
-        const RINGS = 5
-        const radii = Array.from({ length: RINGS }, (_, i) => R * (0.66 + (0.34 * i) / (RINGS - 1)))
+        // one glowing band like the 32-neuron ring, made of three close lanes so the dots do not pile up
+        const RINGS = 3
+        const radii = Array.from({ length: RINGS }, (_, i) => R * (0.955 + 0.045 * i))
         const total = radii.reduce((a, b) => a + b, 0)
         let at = 0
         radii.forEach((rr, ri) => {
@@ -221,7 +221,7 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
           }
           at += count
         })
-        DOT = Math.max(1.6, Math.min(3.2, ((2 * Math.PI * R * 0.66) / (others.length / RINGS)) * 0.38))
+        DOT = Math.max(1.5, Math.min(3, ((2 * Math.PI * R * 0.955) / (others.length / RINGS)) * 0.42))
       }
       P[CT] = [cx - HUB - S * 0.01, cy]
       P[OUT] = [cx + HUB + S * 0.01, cy]
@@ -244,14 +244,25 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
       wireLayer.height = cv.height
       const wg = wireLayer.getContext('2d')!
       wg.setTransform(pr, 0, 0, pr, 0, 0)
-      wg.lineWidth = BIG ? 0.5 : 0.8
-      wg.strokeStyle = BIG ? 'rgba(255,205,110,.035)' : 'rgba(255,205,110,.09)'
+      wg.lineWidth = BIG ? 0.6 : 0.8
+      wg.strokeStyle = BIG ? 'rgba(255,205,110,.055)' : 'rgba(255,205,110,.09)'
       for (const c of links) {
         if (!c) continue
         wg.beginPath()
         wg.moveTo(c[0]!, c[1]!)
         wg.quadraticCurveTo(c[2]!, c[3]!, c[4]!, c[5]!)
         wg.stroke()
+      }
+      if (BIG) {
+        // a soft glow under the band of neurons, so the ring reads as one living thing
+        wg.shadowColor = 'rgba(255,180,70,.55)'
+        wg.shadowBlur = S * 0.04
+        wg.strokeStyle = 'rgba(255,196,107,.10)'
+        wg.lineWidth = R * 0.07
+        wg.beginPath()
+        wg.arc(cx, cy, R * 0.978, 0, Math.PI * 2)
+        wg.stroke()
+        wg.shadowBlur = 0
       }
     }
     layout()
@@ -299,9 +310,9 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
     // that flipped spark, and a soft wave runs from the hub out across the rings. Calm between beats.
     const BEAT = BIG ? 900 : 0
     const TAU = BIG ? 260 : 240
-    const SPARKS = 70
+    const THREADS = 36
     let lastBeat = 0
-    let wave0 = -1e9
+    let threads: { c: number[]; k: number }[] = []
     const wt = Array.from({ length: N }, () => [0, 0, 1])
     let shown: Uint8Array = sim.states[0]!
     let lastFrame = 0
@@ -323,14 +334,18 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
           }
       if (pulses.length > 180) pulses = pulses.slice(-180)
       if (BIG && !first && flips) {
-        // spark a handful of the neurons that flipped, picked at random, so the beat has a texture
-        const want = Math.min(SPARKS, flips)
+        // light the wires into a handful of the neurons that flipped: the weave shows which threads just carried
+        const want = Math.min(THREADS, flips)
         for (let i = 0, tries = 0; i < want && tries < want * 20; tries++) {
           const n = Math.floor(Math.random() * N)
-          if (n === CT || n === OUT || s[n] === p[n] || pop[n]! > 0.5) continue
-          pop[n] = 1
+          if (n === CT || n === OUT || s[n] === p[n]) continue
+          for (let k = 0; k < d.k; k++) {
+            const c = links[n * d.k + k]
+            if (c) threads.push({ c, k: 1 })
+          }
           i++
         }
+        if (threads.length > THREADS * 4) threads = threads.slice(-THREADS * 4)
       }
       // the sound keeps time with the machine: a crackle as neurons flip, a relay and a note as it names an hour
       // sound off on the network for now (with 1024 neurons it crackled every tick); Bob 11.11
@@ -416,6 +431,16 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
         g.arc(x, y, q.lit ? 2.6 : 1.8, 0, 7)
         g.fill()
       }
+      if (BIG && threads.length) {
+        g.lineWidth = 1
+        for (const q of threads) {
+          g.strokeStyle = `rgba(255,222,165,${0.42 * q.k * q.k})`
+          g.beginPath()
+          g.moveTo(q.c[0]!, q.c[1]!)
+          g.quadraticCurveTo(q.c[2]!, q.c[3]!, q.c[4]!, q.c[5]!)
+          g.stroke()
+        }
+      }
       // hub
       g.strokeStyle = 'rgba(255,205,110,.18)'
       g.lineWidth = 1
@@ -491,27 +516,6 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
           g.arc(x, y, DOT, 0, 7)
           g.fill()
         }
-        // sparks: a thin ring that opens and fades around a neuron that just flipped
-        g.lineWidth = 1
-        for (let n = 0; n < N; n++) {
-          const k = pop[n]!
-          if (k < 0.02 || n === CT || n === OUT) continue
-          const [x, y] = P[n]!
-          g.strokeStyle = `rgba(255,232,190,${0.85 * k})`
-          g.beginPath()
-          g.arc(x, y, DOT + (1 - k) * DOT * 3.2, 0, 7)
-          g.stroke()
-        }
-        // the beat: one soft wave from the hub to the year ring
-        const wt0 = (now - wave0) / (BEAT * 1.1)
-        if (wt0 >= 0 && wt0 < 1) {
-          const e = 1 - Math.pow(1 - wt0, 3)
-          g.strokeStyle = `rgba(255,205,110,${0.16 * (1 - wt0)})`
-          g.lineWidth = 2
-          g.beginPath()
-          g.arc(cx, cy, HUB + (R * 1.02 - HUB) * e, 0, 7)
-          g.stroke()
-        }
       }
       for (let n = 0; n < N; n++) {
         if (BIG && n !== CT && n !== OUT) continue
@@ -562,12 +566,14 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
         tickTo(T, now, lastT < 0 || reduce.current)
         lastT = T
         lastBeat = now
-        if (BIG && !reduce.current) wave0 = now
       }
       // colours glide toward the current state (frame-rate independent)
       const dt = lastFrame ? Math.min(100, now - lastFrame) : 16
       lastFrame = now
-      if (BIG) for (let n = 0; n < N; n++) if (pop[n]! > 0) pop[n] = Math.max(0, pop[n]! - dt / 750)
+      if (BIG && threads.length) {
+        for (const q of threads) q.k -= dt / 1500
+        threads = threads.filter(q => q.k > 0)
+      }
       const a = 1 - Math.exp(-dt / TAU)
       for (let n = 0; n < N; n++) {
         const st = shown[n]!
