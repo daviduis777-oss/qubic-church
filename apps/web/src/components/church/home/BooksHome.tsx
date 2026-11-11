@@ -109,13 +109,6 @@ export function BooksHome({ locale = 'en' }: { locale?: Locale }) {
 
             <div className="mt-12 border-t border-border pt-6 lg:mt-auto">
               <Countdown date />
-              <p className="mt-5 max-w-md text-sm leading-relaxed text-fg-2">
-                The Day: 13 April 2027 is Come-from-Beyond&rsquo;s estimated date for Aigarth to run as smart contracts on Qubic and for
-                the Arbitrator to step down. An estimate, not a promise.{' '}
-                <Link className="text-gold underline-offset-4 hover:underline" href="/books/qubic-the-long-version/14-what-the-deploy-on-april-13-2027-means">
-                  What it means
-                </Link>
-              </p>
             </div>
           </div>
 
