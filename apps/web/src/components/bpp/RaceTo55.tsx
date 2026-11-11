@@ -66,16 +66,16 @@ const css = `
 .r55-top code{font-family:var(--bpp-nx),monospace;color:var(--ink);font-size:13px}
 .r55-tag{font-size:11.5px;color:var(--dim);margin-left:8px}
 .r55-frame{color:var(--hot)}
-.r55-seats{display:grid;gap:14px}
-.r55-seats-head{display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+.r55-seats{display:grid;gap:16px;justify-items:center;text-align:center;padding:28px 16px 30px;border:1px solid var(--line);border-radius:14px;background:radial-gradient(60% 55% at 50% 45%,rgba(255,196,107,.06),transparent 70%)}
+.r55-seats-head{display:grid;gap:10px;justify-items:center}
 .r55-seats-num{font-family:var(--bpp-nx),sans-serif;font-size:clamp(46px,7vw,68px);line-height:.9;color:var(--hot);text-shadow:0 0 22px rgba(255,196,107,.45)}
 .r55-seats-of{font-family:var(--bpp-nx),sans-serif;font-size:clamp(22px,3vw,30px);color:var(--dim)}
-.r55-seats-text{display:grid;gap:4px;max-width:60ch}
-.r55-seats-text b{color:#f3e4ce;font-size:17px;font-weight:600}
+.r55-seats-text{display:grid;gap:6px;max-width:56ch;justify-items:center}
+.r55-seats-title{color:#f3e4ce;font-size:13px;font-weight:600;letter-spacing:.12em;text-transform:uppercase}
 .r55-seats-text span{font-size:14px;line-height:1.5}
-.r55-grid26{display:grid;grid-template-columns:repeat(26,1fr);gap:3px;max-width:560px}
+.r55-grid26{display:grid;grid-template-columns:repeat(26,1fr);gap:3px;width:100%;max-width:520px}
 .r55-grid26 i,.r55-seats-legend i{display:block;aspect-ratio:1;border-radius:2px}
-.r55-seats-legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:12.5px}
+.r55-seats-legend{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 18px;font-size:12.5px;max-width:560px}
 .r55-seats-legend span{display:inline-flex;align-items:center;gap:6px}
 .r55-seats-legend i{width:10px}
 .s-off{background:rgba(255,200,140,.05);box-shadow:inset 0 0 0 1px rgba(255,200,140,.08)}
@@ -128,12 +128,12 @@ function Seats({ seats, cap }: { seats: number[]; cap: number }) {
   return (
     <div className="r55-seats">
       <div className="r55-seats-head">
+        <b className="r55-seats-title">Toward the vote</b>
         <div>
           <span className="r55-seats-num">{full}</span>
-          <span className="r55-seats-of"> / {NEED}</span>
+          <span className="r55-seats-of"> / {NEED} computors</span>
         </div>
         <div className="r55-seats-text">
-          <b>Toward the vote</b>
           <span className="mute">
             Computors whose network holds 55% for the full week ({cap} frames). The explorer counts the computors&apos; vote on the next hour once {NEED} of them qualify.
           </span>
