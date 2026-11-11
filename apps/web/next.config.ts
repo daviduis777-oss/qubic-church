@@ -65,10 +65,8 @@ const nextConfig: NextConfig = {
       { source: '/satoshi-nakamoto', destination: '/timeline#satoshi', permanent: true },
       { source: '/chto-takoe-qubic', destination: '/what-is-qubic', permanent: true },
       { source: '/articles/cfb', destination: '/articles/board/founder', permanent: false },
-      // W4W Act I is frozen on the archive/w4w-act1 branch; /w4w points at mining until Stage 0 opens.
-      { source: '/w4w', destination: '/mine-qubic', permanent: false },
-      { source: '/w4w/:path*', destination: '/mine-qubic', permanent: false },
-      { source: '/pt/w4w', destination: '/pt/mine-qubic', permanent: false },
+      // W4W Act I is frozen on the archive/w4w-act1 branch; /w4w is the Stage 0 holding page, deeper paths land on it.
+      { source: '/w4w/:path+', destination: '/w4w', permanent: false },
       { source: '/kto-takoy-come-from-beyond', destination: '/who-is-come-from-beyond', permanent: true },
       { source: '/chto-takoe-anna-aigarth', destination: '/what-is-anna-aigarth', permanent: true },
       {

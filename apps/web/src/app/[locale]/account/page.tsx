@@ -17,14 +17,14 @@ export const metadata: Metadata = {
 const PLACES = [
   { href: '/articles', name: 'The Crypt', what: 'Write and publish articles under your name.', when: 'Open' },
   { href: '/bpp9000', name: 'BPP-9000', what: 'Keep your trading journal and your card.', when: 'Open' },
-  { href: '/mine-qubic', name: 'W4W', what: 'Stage 0: mining Qubic with Maria, the mining coach.', when: 'Coming soon' },
+  { href: '/w4w', name: 'W4W', what: 'Stage 0. The world opens soon.', when: 'Soon' },
   { href: '/donate', name: 'Atrium', what: 'The incubator. It will use the same account.', when: 'Next' },
 ] as const
 
 const KEEP = [
   'The name you choose to show',
   'Your public Qubic ID, or a short code made from your secret word',
-  'What you choose to publish or log: an article, a journal trade, your rigs in W4W',
+  'What you choose to publish or log: an article, a journal trade, your progress in W4W',
 ]
 const NEVER = [
   'Email, phone, password or real name',
