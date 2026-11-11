@@ -21,6 +21,7 @@ type Race = {
   ids: number
   top: { id: string; errors: number; computor: boolean; frame: number }[]
   frames: { networks: number; computors: number; best: number; cap: number }
+  seats?: number[]
   history: Point[]
   lastEpoch: { epoch: number; best: number } | null
   info: { goal: number; neurons: number; connections: number; core: string; solutions: number; verified: number; cap?: number } | null
@@ -65,6 +66,23 @@ const css = `
 .r55-top code{font-family:var(--bpp-nx),monospace;color:var(--ink);font-size:13px}
 .r55-tag{font-size:11.5px;color:var(--dim);margin-left:8px}
 .r55-frame{color:var(--hot)}
+.r55-seats{display:grid;gap:14px}
+.r55-seats-head{display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+.r55-seats-num{font-family:var(--bpp-nx),sans-serif;font-size:clamp(46px,7vw,68px);line-height:.9;color:var(--hot);text-shadow:0 0 22px rgba(255,196,107,.45)}
+.r55-seats-of{font-family:var(--bpp-nx),sans-serif;font-size:clamp(22px,3vw,30px);color:var(--dim)}
+.r55-seats-text{display:grid;gap:4px;max-width:60ch}
+.r55-seats-text b{color:#f3e4ce;font-size:17px;font-weight:600}
+.r55-seats-text span{font-size:14px;line-height:1.5}
+.r55-grid26{display:grid;grid-template-columns:repeat(26,1fr);gap:3px;max-width:560px}
+.r55-grid26 i,.r55-seats-legend i{display:block;aspect-ratio:1;border-radius:2px}
+.r55-seats-legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:12.5px}
+.r55-seats-legend span{display:inline-flex;align-items:center;gap:6px}
+.r55-seats-legend i{width:10px}
+.s-off{background:rgba(255,200,140,.05);box-shadow:inset 0 0 0 1px rgba(255,200,140,.08)}
+.s-zero{background:rgba(232,145,46,.28)}
+.s-mid{background:var(--fil)}
+.s-full{background:var(--hot);box-shadow:0 0 8px rgba(255,210,140,.9)}
+.s-100{outline:1.5px solid var(--hot);outline-offset:1px}
 .r55-frames{display:grid;gap:10px;padding:16px 18px;border:1px solid rgba(255,196,107,.35);border-radius:12px;background:rgba(255,196,107,.05)}
 .r55-frames-head{display:grid;gap:4px}
 .r55-frames-head b{color:var(--hot);font-size:17px;font-weight:600}
@@ -98,6 +116,44 @@ function Spark({ history, start, end }: { history: Point[]; start: string; end: 
       <line stroke="rgba(255,227,176,.5)" strokeDasharray="4 5" x1="0" x2={W} y1={goalY} y2={goalY} />
       <path d={d} fill="none" stroke="var(--fil)" strokeWidth="2.5" vectorEffect="non-scaling-stroke" />
     </svg>
+  )
+}
+
+/** The 676 computor seats as Qubic's own 26 x 26 square, best first: lit when a seat's network holds 55% for the full week. */
+function Seats({ seats, cap }: { seats: number[]; cap: number }) {
+  const full = seats.filter(f => f >= cap).length
+  const moving = seats.filter(f => f > 0 && f < cap).length
+  const scored = seats.filter(f => f >= 0).length
+  const NEED = 100
+  return (
+    <div className="r55-seats">
+      <div className="r55-seats-head">
+        <div>
+          <span className="r55-seats-num">{full}</span>
+          <span className="r55-seats-of"> / {NEED}</span>
+        </div>
+        <div className="r55-seats-text">
+          <b>Toward the vote</b>
+          <span className="mute">
+            Computors whose network holds 55% for the full week ({cap} frames). The explorer counts the computors&apos; vote on the next hour once {NEED} of them qualify.
+          </span>
+        </div>
+      </div>
+      <div aria-label={`${full} of ${seats.length} computors at the full week, ${moving} moving through frames, ${scored} scored`} className="r55-grid26" role="img">
+        {seats.map((f, i) => {
+          const cls = f < 0 ? 'off' : f >= cap ? 'full' : f > 0 ? 'mid' : 'zero'
+          const style = f > 0 && f < cap ? { opacity: 0.4 + (0.55 * f) / cap } : undefined
+          return <i className={`s-${cls}${i === NEED - 1 ? ' s-100' : ''}`} key={i} style={style} />
+        })}
+      </div>
+      <div className="r55-seats-legend mute">
+        <span><i className="s-full" /> full week</span>
+        <span><i className="s-mid" /> moving through frames ({moving})</span>
+        <span><i className="s-zero" /> scored, below the mark</span>
+        <span><i className="s-off" /> not scored yet ({seats.length - scored})</span>
+        <span><i className="s-zero s-100" /> the 100th seat</span>
+      </div>
+    </div>
   )
 }
 
@@ -202,6 +258,8 @@ export function RaceTo55() {
           </div>
         </div>
       ) : null}
+
+      {r.seats && r.seats.length ? <Seats cap={fr.cap} seats={r.seats} /> : null}
 
       {r.info && r.info.neurons ? (
         <p className="r55-facts">

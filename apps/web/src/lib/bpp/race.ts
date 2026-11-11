@@ -30,6 +30,8 @@ export type Race = {
   top: { id: string; errors: number; computor: boolean; frame: number }[]
   /** networks that passed the mark and advanced frames: their year of hours moved forward, up to cap hours */
   frames: { networks: number; computors: number; best: number; cap: number }
+  /** one entry per computor seat, best first: -1 not scored yet, otherwise the frame its network reached */
+  seats: number[]
   history: RacePoint[]
   lastEpoch: { epoch: number; best: number } | null
   /** the epoch's rules and archive, from the Jetski ANN Explorer (null when it does not answer) */
@@ -110,6 +112,9 @@ export async function race(): Promise<Race | null> {
   const framed = all.filter(x => x.frame > 0)
   const info = await infoP
   const frames = { networks: framed.length, computors: framed.filter(x => x.computor).length, best: framed[0]?.frame ?? 0, cap: info?.cap ?? 168 }
+  const seatCount = Number(f.network?.computors ?? 676) || 676
+  const scoredComps = all.filter(x => x.computor).map(x => x.frame)
+  const seats = [...scoredComps, ...Array(Math.max(0, seatCount - scoredComps.length)).fill(-1)].slice(0, seatCount)
 
   return {
     epoch,
@@ -123,6 +128,7 @@ export async function race(): Promise<Race | null> {
     computors: Number(f.network?.computors ?? 676),
     top,
     frames,
+    seats,
     history,
     lastEpoch,
     info,
