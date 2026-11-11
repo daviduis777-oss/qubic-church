@@ -4,6 +4,7 @@ import type { ForumUser } from '@/lib/forum/auth'
 import { allParticipants, getParticipant, type Participant } from '@/lib/bpp/store'
 import { statsOf } from '@/lib/bpp/stats'
 import { getNFTById } from '@/config/nfts'
+import { loadAll, resolveAuthor } from '@/lib/forum/publish'
 import { earned, powerOf, type MedalId } from './medals'
 
 /*
@@ -55,10 +56,30 @@ async function annasOf(id?: string): Promise<Anna[]> {
   }
 }
 
-export async function personOf(user: Pick<ForumUser, 'handle' | 'name' | 'id'> & { auth: Person['auth'] }, p?: Participant | null): Promise<Person> {
+type Login = Pick<ForumUser, 'handle' | 'name' | 'id'> & { auth: Person['auth'] }
+
+/**
+ * A login's member in the forum. A wallet or tripcode login linked to a member (TesserAI's wallet is @usetesserai)
+ * keeps its own handle in the session, while its posts, profile and picture live under the member's handle.
+ */
+export async function forumHandles(): Promise<(u: Login) => string> {
+  try {
+    const { known, links } = await loadAll()
+    return u => {
+      if (u.auth === 'x') return u.handle
+      const w = resolveAuthor({ auth: u.auth, id: u.id ?? '', name: u.name, handle: u.handle }, known, links.data)
+      return 'error' in w ? u.handle : w.handle
+    }
+  } catch {
+    return u => u.handle
+  }
+}
+
+export async function personOf(user: Login, p?: Participant | null, forumHandle?: string): Promise<Person> {
   const forum = await getForum()
-  const m = forum.memberByHandle(user.handle)
-  const profile = forum.profileOf(user.handle)
+  const fh = forumHandle ?? user.handle
+  const m = forum.memberByHandle(fh)
+  const profile = forum.profileOf(fh)
   const articles = m ? forum.postsOf(m).length : 0
   const replies = m?.replies ?? 0
   const part = p === undefined ? await getParticipant(user.handle).catch(() => null) : p
@@ -68,13 +89,13 @@ export async function personOf(user: Pick<ForumUser, 'handle' | 'name' | 'id'> &
   const since = [part?.joined, m?.since].filter(Boolean).sort()[0] ?? null
   const medals = earned({ bppJoined: since ?? undefined, articles, replies, annas: annas.length, solutions: SOLUTIONS_LIVE ? solutions.total : 0 })
   return {
-    handle: user.handle,
+    handle: m?.handle ?? fh,
     name: m?.name ?? user.name,
     auth: user.auth,
     id: user.auth === 'qubic' ? user.id : undefined,
     avatar: profile.avatar ?? m?.avatar,
     x: profile.x ?? m?.x,
-    bio: forum.bioOf({ name: m?.name ?? user.name, handle: user.handle }),
+    bio: forum.bioOf({ name: m?.name ?? user.name, handle: m?.handle ?? fh }),
     since,
     medals,
     solutions,
@@ -89,11 +110,16 @@ export async function personOf(user: Pick<ForumUser, 'handle' | 'name' | 'id'> &
 export async function people(): Promise<Person[]> {
   const forum = await getForum()
   const parts = await allParticipants().catch(() => [] as Participant[])
+  const fhOf = await forumHandles()
   const seen = new Set<string>()
   const out: Person[] = []
   for (const p of parts) {
+    const login = { handle: p.handle, name: p.name, auth: p.auth, id: p.id }
+    const fh = fhOf(login)
+    if (seen.has(fh.toLowerCase())) continue
+    seen.add(fh.toLowerCase())
     seen.add(p.handle.toLowerCase())
-    out.push(await personOf({ handle: p.handle, name: p.name, auth: p.auth, id: p.id }, p))
+    out.push(await personOf(login, p, fh))
   }
   for (const m of forum.members) {
     if (m.auth === 'x' || seen.has(m.handle.toLowerCase())) continue

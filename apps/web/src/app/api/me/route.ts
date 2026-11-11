@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { getSession, isModerator } from '@/lib/forum/auth'
 import { getParticipant } from '@/lib/bpp/store'
 import { getForum } from '@/lib/forum/live'
-import { circleOf, people, personOf } from '@/lib/me/me'
+import { circleOf, forumHandles, people, personOf } from '@/lib/me/me'
 
 // The cabinet is hidden while it is built: the moderator alone. ?as=<handle> previews anyone's cabinet.
 export const dynamic = 'force-dynamic'
@@ -16,12 +16,12 @@ export async function GET(req: Request) {
       const m = (await getForum()).memberByHandle(as)
       if (!p && !m) return NextResponse.json({ error: 'no such member' }, { status: 404 })
       const user = p ? { handle: p.handle, name: p.name, auth: p.auth, id: p.id } : { handle: m!.handle, name: m!.name, auth: m!.auth, id: m!.identity ?? '' }
-      const me = await personOf(user, p)
+      const me = await personOf(user, p, (await forumHandles())(user))
       return NextResponse.json({ me, circle: circleOf(await people(), me.handle), preview: true }, { headers: { 'Cache-Control': 'no-store' } })
     }
     const user = await getSession()
     if (!user) return NextResponse.json({ me: null }, { headers: { 'Cache-Control': 'no-store' } })
-    const me = await personOf(user)
+    const me = await personOf(user, undefined, (await forumHandles())(user))
     return NextResponse.json({ me, circle: circleOf(await people(), me.handle) }, { headers: { 'Cache-Control': 'no-store' } })
   } catch (e) {
     return NextResponse.json({ error: (e as Error).message }, { status: 500 })
