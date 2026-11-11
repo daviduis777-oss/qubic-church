@@ -22,6 +22,7 @@ type Race = {
   top: { id: string; errors: number; computor: boolean }[]
   history: Point[]
   lastEpoch: { epoch: number; best: number } | null
+  info: { goal: number; neurons: number; connections: number; core: string; solutions: number; verified: number } | null
   at: string
 }
 
@@ -29,6 +30,8 @@ const WINDOWS = 8760
 const GOAL = 3942
 const COIN = 4380
 const SOURCE = 'https://qubic.jetskipool.ai/tracker'
+const EXPLORER = 'https://annexplorer.jetskipool.ai/epochs/'
+const int = (n: number) => n.toLocaleString('en-US')
 
 const acc = (errors: number) => ((1 - errors / WINDOWS) * 100).toFixed(2)
 const pos = (errors: number) => Math.max(0, Math.min(1, (COIN - errors) / (COIN - GOAL)))
@@ -53,6 +56,7 @@ const css = `
 .r55-goal i{width:3px;height:36px;margin-top:0;box-shadow:0 0 12px var(--fil)}
 .r55-runner{position:absolute;top:22px;width:20px;height:20px;border-radius:50%;background:var(--hot);box-shadow:0 0 16px var(--fil),0 0 34px rgba(255,196,107,.6);transform:translateX(-50%);transition:left 1.2s cubic-bezier(.2,.8,.2,1)}
 .r55-ends{display:flex;justify-content:space-between;gap:12px;font-size:12.5px;white-space:nowrap}
+.r55-facts{display:flex;flex-wrap:wrap;gap:6px 18px;margin:-6px 0 0;font-size:13.5px;color:var(--dim)}
 .r55-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:clamp(18px,3vw,32px)}
 .r55-spark{width:100%;height:90px;display:block}
 .r55-top{list-style:none;margin:0;padding:0;display:grid;gap:6px;font-size:14px}
@@ -172,6 +176,15 @@ export function RaceTo55() {
         </div>
       </div>
 
+      {r.info && r.info.neurons ? (
+        <p className="r55-facts">
+          <span>{int(r.info.neurons)} neurons</span>
+          <span>{int(r.info.connections)} connections</span>
+          {r.info.solutions > 0 ? <span>{int(r.info.solutions)} solutions this epoch, {(Math.floor(r.info.verified * 10000) / 100).toFixed(2)}% verified</span> : <span>solutions archive catching up</span>}
+          {r.info.core ? <span>core {r.info.core}</span> : null}
+        </p>
+      ) : null}
+
       <div className="r55-grid">
         <div style={{ display: 'grid', gap: 8 }}>
           <span className="mute" style={{ fontSize: 13 }}>How the record fell this epoch</span>
@@ -202,7 +215,11 @@ export function RaceTo55() {
         <a className="mute" href={SOURCE} rel="noopener" style={{ textDecoration: 'underline', textUnderlineOffset: 3 }} target="_blank">
           Jetski Pool tracker
         </a>
-        , refreshed every minute. 55% is 0.45 × 8760 = {GOAL} errors, the qualification mark Come-from-Beyond named.
+        {' '}and{' '}
+        <a className="mute" href={EXPLORER + r.epoch} rel="noopener" style={{ textDecoration: 'underline', textUnderlineOffset: 3 }} target="_blank">
+          Jetski ANN Explorer
+        </a>
+        , refreshed every minute. At {GOAL} errors (55% right, 0.45 × 8760) a network advances a frame: its year of hours moves forward and it ranks above every network that has not.
       </p>
     </section>
   )

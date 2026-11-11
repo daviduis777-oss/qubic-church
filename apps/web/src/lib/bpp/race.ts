@@ -13,6 +13,8 @@ export const GOAL = Math.round(0.45 * WINDOWS) // 3942 errors = 55% right
 export const COIN = WINDOWS / 2 // 4380 errors = a coin flip
 export const SOURCE_URL = 'https://qubic.jetskipool.ai/tracker'
 const FEED = 'https://qubic.jetskipool.ai/api/qubic_data.json'
+const EXPLORER = 'https://annexplorer.jetskipool.ai/api/v1/epochs/'
+export const EXPLORER_URL = 'https://annexplorer.jetskipool.ai/epochs/'
 
 export type RacePoint = { t: string; best: number }
 export type Race = {
@@ -28,7 +30,37 @@ export type Race = {
   top: { id: string; errors: number; computor: boolean }[]
   history: RacePoint[]
   lastEpoch: { epoch: number; best: number } | null
+  /** the epoch's rules and archive, from the Jetski ANN Explorer (null when it does not answer) */
+  info: { goal: number; neurons: number; connections: number; core: string; solutions: number; verified: number } | null
   at: string
+}
+
+type Explorer = {
+  solutions?: number
+  verification?: { verified?: number; totalChecked?: number }
+  metadata?: { coreVersion?: string }
+  scoringParameters?: { parameters?: { advanceThreshold?: number; populationThreshold?: number; neighbors?: number } }[]
+}
+
+async function explorer(epoch: number): Promise<Race['info']> {
+  try {
+    const r = await fetch(EXPLORER + epoch, { cache: 'no-store', signal: AbortSignal.timeout(6000), headers: { Accept: 'application/json' } })
+    if (!r.ok) return null
+    const e = (await r.json()) as Explorer
+    const p = e.scoringParameters?.[0]?.parameters ?? {}
+    const neurons = Number(p.populationThreshold ?? 0)
+    const checked = Number(e.verification?.totalChecked ?? 0)
+    return {
+      goal: Number(p.advanceThreshold ?? GOAL),
+      neurons,
+      connections: neurons * Number(p.neighbors ?? 0),
+      core: String(e.metadata?.coreVersion ?? ''),
+      solutions: Number(e.solutions ?? 0),
+      verified: checked ? Number(e.verification?.verified ?? 0) / checked : 0,
+    }
+  } catch {
+    return null
+  }
 }
 
 type Feed = {
@@ -50,6 +82,7 @@ export async function race(): Promise<Race | null> {
   if (!epoch || !Number.isFinite(best) || best <= 0) return null
 
   const at = f.timestamp ?? new Date().toISOString()
+  const infoP = explorer(epoch)
   let history: RacePoint[] = []
   let lastEpoch: Race['lastEpoch'] = null
   try {
@@ -84,6 +117,7 @@ export async function race(): Promise<Race | null> {
     top,
     history,
     lastEpoch,
+    info: await infoP,
     at,
   }
 }
