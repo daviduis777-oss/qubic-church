@@ -1,5 +1,321 @@
 [
  {
+  "slug": "is-55-percent-a-lot-bpp-9000-vs-trading-systems",
+  "title": "Is 55% accuracy a lot or a little? BPP-9000 vs today's trading systems",
+  "kicker": null,
+  "date": "2026-11-11",
+  "url": "https://x.com/usetesserai/status/2120540042431266866",
+  "author": "TesserAI",
+  "handle": "usetesserai",
+  "guest": false,
+  "summary": "What can today's trading systems actually do? On hourly bitcoin, a steady 55% on live data would beat everything published so far.",
+  "words": 1225,
+  "blocks": [
+   {
+    "t": "p",
+    "text": "What can today's trading systems actually do? And is 55% a lot or a little?"
+   },
+   {
+    "t": "p",
+    "text": "Short answer: on hourly bitcoin, if it holds up on live data, it would beat everything that's been published so far."
+   },
+   {
+    "t": "p",
+    "text": "Here's the long answer."
+   },
+   {
+    "t": "h",
+    "text": "What the best systems in the world actually do"
+   },
+   {
+    "t": "p",
+    "text": "Let's start at the very top."
+   },
+   {
+    "t": "p",
+    "text": "Renaissance's Medallion fund is the most successful trading machine in history. Around 66% a year before fees, since 1988."
+   },
+   {
+    "t": "p",
+    "text": "How often is it right? Robert Mercer, who ran it, told a friend:"
+   },
+   {
+    "t": "quote",
+    "text": "We're right 50.75 percent of the time... but we're 100 percent right 50.75 percent of the time. You can make billions that way.",
+    "cite": "Robert Mercer, in Gregory Zuckerman's The Man Who Solved the Market"
+   },
+   {
+    "t": "p",
+    "text": "50.75%."
+   },
+   {
+    "t": "p",
+    "text": "Not 90. Not 70. Three quarters of a percent above a coin flip."
+   },
+   {
+    "t": "p",
+    "text": "Now the other end of the industry. Trend following is a whole industry of funds. Physicists Potters and Bouchaud showed that trend followers lose more often than they win. In their model only about a third of trades are winners. The few big wins pay for everything else."
+   },
+   {
+    "t": "p",
+    "text": "So the pros don't make a living by being right often. They make it on a small edge, repeated thousands of times, with discipline."
+   },
+   {
+    "t": "p",
+    "text": "Now the open science on bitcoin itself."
+   },
+   {
+    "t": "p",
+    "text": "A 2026 review of peer-reviewed papers puts realistic out-of-sample direction accuracy at 50-57%. Most models sit around 50-53%. The higher numbers come from one lucky test window and they rarely hold."
+   },
+   {
+    "t": "p",
+    "text": "And thats mostly daily candles."
+   },
+   {
+    "t": "p",
+    "text": "On hourly candles it gets worse. A study in the International Journal of Forecasting tested hourly bitcoin and concluded it is «weakly efficient at the hourly frequency». No model clearly beat a random walk."
+   },
+   {
+    "t": "p",
+    "text": "In 2026 a paper came out with a model built on social sentiment and market regimes, tested on 1,345 fresh hours. Result: 48-53%. A coin flip."
+   },
+   {
+    "t": "p",
+    "text": "And those posts saying «AI predicts bitcoin with 95-99% accuracy»? The same review explains them: usually the accuracy is measured on data the model has already seen, or on price level instead of direction. That's memory, not a forecast."
+   },
+   {
+    "t": "p",
+    "text": "We looked for a published model that holds 55% on hourly bitcoin, on data its never seen."
+   },
+   {
+    "t": "p",
+    "text": "We didn't find one."
+   },
+   {
+    "t": "h",
+    "text": "So is 55% a lot?"
+   },
+   {
+    "t": "p",
+    "text": "Yes. A lot. If it's a real 55%."
+   },
+   {
+    "t": "p",
+    "text": "Think of a casino. European roulette gives the house a 2.7% edge. Casinos build whole cities on that."
+   },
+   {
+    "t": "p",
+    "text": "55% right on an even bet is a 10% edge. Almost four times the roulette wheel."
+   },
+   {
+    "t": "p",
+    "text": "And BPP-9000 makes a call every hour. 8,760 calls a year."
+   },
+   {
+    "t": "p",
+    "text": "Medallion makes billions on 50.75%. A steady 55% would be a different league."
+   },
+   {
+    "t": "p",
+    "text": "But three things need to be said honestly."
+   },
+   {
+    "t": "p",
+    "text": "One. Time. One good week proves nothing."
+   },
+   {
+    "t": "p",
+    "text": "• 168 live hours: the noise is about ±4 points. 55% could just be luck."
+   },
+   {
+    "t": "p",
+    "text": "• 670 live hours, one month: the noise is about 2 points. 55% starts to mean something."
+   },
+   {
+    "t": "p",
+    "text": "• 2,000 live hours, three months: the noise is about 1 point. Hard to argue with 55% at that point."
+   },
+   {
+    "t": "p",
+    "text": "Two. Costs. A 2026 study ran three models on hourly bitcoin across 27 test windows from 2018 to 2025. Trading every signal lost its profit as soon as a 0.1% fee was added. Being right doesn't mean being rich yet."
+   },
+   {
+    "t": "p",
+    "text": "Three. Training is not live. This is the big one, and it's about BPP-9000 itself."
+   },
+   {
+    "t": "h",
+    "text": "How BPP-9000 works"
+   },
+   {
+    "t": "p",
+    "text": "Miners."
+   },
+   {
+    "t": "p",
+    "text": "Every miner grows small neural networks. Since this epoch each one has 1,024 neurons and 3,072 connections. Each neuron reads three wires and turns plus, minus or «unknown»."
+   },
+   {
+    "t": "p",
+    "text": "The task is one year of bitcoin, hour by hour. 8,760 hours. For every hour the network says UP or DOWN."
+   },
+   {
+    "t": "p",
+    "text": "The score is the number of hours it got wrong. Lower is better."
+   },
+   {
+    "t": "p",
+    "text": "The search works like an ant colony. A miner's best network becomes the parent of the next one. Good branches are kept. The tree survives from epoch to epoch."
+   },
+   {
+    "t": "p",
+    "text": "Last epoch miners submitted 5.27 million networks. An independent explorer re-ran them and confirmed 99.99%."
+   },
+   {
+    "t": "p",
+    "text": "Now the number 3942."
+   },
+   {
+    "t": "p",
+    "text": "At 3942 errors, so 55% right, a network advances a frame. Its year of hours shifts forward and it ranks above every network that hasn't done it."
+   },
+   {
+    "t": "p",
+    "text": "This epoch started with 1,024 neurons. On day one CfB warned the miners:"
+   },
+   {
+    "t": "quote",
+    "text": "Some of you will have temptation to reduce number of used neurons and end up with only 64 active ones, because you already know winning topology for that case. Unfortunately, it's an inefficient method, it ends up with a pretty high score when you hit the wall.",
+    "cite": "Come-from-Beyond, 11 November 2026"
+   },
+   {
+    "t": "p",
+    "text": "No shortcuts. The wide road."
+   },
+   {
+    "t": "p",
+    "text": "The 55% in this race is measured on the same year the network was grown on. It's a training score."
+   },
+   {
+    "t": "p",
+    "text": "The explorer shows an even bigger number: the vote of all computors replayed over the known hours. Last epoch it was 97%. That's memory too."
+   },
+   {
+    "t": "p",
+    "text": "The real exam is the next hour. The one nobody has seen yet."
+   },
+   {
+    "t": "p",
+    "text": "And in the end there isn't one model. There are 676, one per computor. They vote. The explorer only counts a call when at least 100 computors take part and 55% of them agree."
+   },
+   {
+    "t": "h",
+    "text": "From November 18 we watch"
+   },
+   {
+    "t": "p",
+    "text": "November 18: the live bitcoin feed goes in as a test run."
+   },
+   {
+    "t": "p",
+    "text": "November 25: the networks are expected to start being scored on live data."
+   },
+   {
+    "t": "p",
+    "text": "From the first live hour qubic.church keeps a record. Every call is sealed before its hour closes, then checked against the close. Wrong hours are published right next to the correct ones. The record is a hash chain, so nothing can be quietly changed after the fact."
+   },
+   {
+    "t": "p",
+    "text": "The explorer keeps its own count of the computors' vote. Two independent scoreboards, one question."
+   },
+   {
+    "t": "p",
+    "text": "What would count as proof?"
+   },
+   {
+    "t": "p",
+    "text": "Not a good day. Not a good week."
+   },
+   {
+    "t": "p",
+    "text": "A month above the coin, and a number that holds as the hours pile up."
+   },
+   {
+    "t": "p",
+    "text": "The first weeks are calibration. The feed is new, the networks are 32 times bigger than a week ago, and miners are still learning the new search."
+   },
+   {
+    "t": "p",
+    "text": "So here's where we are."
+   },
+   {
+    "t": "p",
+    "text": "The best fund in history is right 50.75% of the time."
+   },
+   {
+    "t": "p",
+    "text": "Published science on hourly bitcoin is sitting at a coin flip."
+   },
+   {
+    "t": "p",
+    "text": "A network of miners is 136 errors away from 55% on its training year, and one week away from its first live hour."
+   },
+   {
+    "t": "p",
+    "text": "If it keeps even part of that edge on hours it has never seen, it'll be, as far as we could find, the first open and verifiable system to pull it off."
+   },
+   {
+    "t": "p",
+    "text": "The working product is close. The exam starts on the 18th."
+   },
+   {
+    "t": "p",
+    "text": "• Watch the race: QC (https://qubic.church/bpp9000#race)"
+   },
+   {
+    "t": "h",
+    "text": "Sources"
+   },
+   {
+    "t": "p",
+    "text": "• Mercer quote and Medallion returns: Gregory Zuckerman, The Man Who Solved the Market (https://calvinrosser.com/notes/the-man-who-solved-the-market-jim-simons)"
+   },
+   {
+    "t": "p",
+    "text": "• Trend followers: Potters and Bouchaud, Trend followers lose more often than they gain, 2005 (https://arxiv.org/pdf/physics/0508104)"
+   },
+   {
+    "t": "p",
+    "text": "• Review of published bitcoin models: Bitcoin Price Prediction: Peer-Reviewed Evidence and Social Media Discourse, 2026 (https://arxiv.org/html/2606.00071)"
+   },
+   {
+    "t": "p",
+    "text": "• Hourly bitcoin: Forecasting Bitcoin with technical analysis: A not-so-random forest?, International Journal of Forecasting (https://www.sciencedirect.com/science/article/abs/pii/S0169207021001230)"
+   },
+   {
+    "t": "p",
+    "text": "• 48-53% on 1,345 hours: Bitcoin Price Direction Prediction via Regime-Aware Multi-Modal Fusion of Social Sentiment and Technical Features, 2026 (https://arxiv.org/html/2607.23370)"
+   },
+   {
+    "t": "p",
+    "text": "• Costs on hourly bitcoin: Machine Learning-Based Bitcoin Trading Under Transaction Costs: Evidence From Walk-Forward Forecasting, 2026 (https://arxiv.org/html/2606.00060v1)"
+   },
+   {
+    "t": "p",
+    "text": "• Epoch rules, solutions and replay: Jetski ANN Explorer (https://annexplorer.jetskipool.ai/epochs/239)"
+   },
+   {
+    "t": "p",
+    "text": "• Live scores: Jetski Pool tracker (https://qubic.jetskipool.ai/tracker)"
+   },
+   {
+    "t": "p",
+    "text": "• CfB quotes: Qubic Discord, November 10-11, 2026"
+   }
+  ]
+ },
+ {
   "slug": "the-next-customer-has-no-card",
   "title": "The Next Customer Has No Card",
   "kicker": null,
