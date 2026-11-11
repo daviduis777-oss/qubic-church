@@ -294,8 +294,14 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
     // Smooth display: every tick is real, but each neuron's colour glides toward its state with inertia,
     // and pulses start staggered and travel slowly, so the picture flows instead of flickering.
     const PULSE = 1100
-    // a big network flips hundreds of neurons a tick: let colours glide slowly so it breathes instead of flickering
-    const TAU = BIG ? 1400 : 240
+    // A big network flips hundreds of neurons a tick. Shown tick by tick it is noise, so it is shown on a beat:
+    // once every BEAT ms the picture takes the current state, the colours settle quickly, a few of the neurons
+    // that flipped spark, and a soft wave runs from the hub out across the rings. Calm between beats.
+    const BEAT = BIG ? 900 : 0
+    const TAU = BIG ? 260 : 240
+    const SPARKS = 70
+    let lastBeat = 0
+    let wave0 = -1e9
     const wt = Array.from({ length: N }, () => [0, 0, 1])
     let shown: Uint8Array = sim.states[0]!
     let lastFrame = 0
@@ -309,13 +315,23 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
         for (let n = 0; n < N; n++)
           if (s[n] !== p[n]) {
             flips++
-            pop[n] = 1
+            if (!BIG) pop[n] = 1
             for (let k = 0; k < d.k; k++) {
               const c = links[n * d.k + k]
               if (c && !BIG) pulses.push({ c, t0: now + Math.random() * tickMs * 0.9, lit: p[sim.w.nb[n * d.k + k]!] !== 2 })
             }
           }
-      if (pulses.length > (BIG ? 48 : 180)) pulses = pulses.slice(BIG ? -48 : -180)
+      if (pulses.length > 180) pulses = pulses.slice(-180)
+      if (BIG && !first && flips) {
+        // spark a handful of the neurons that flipped, picked at random, so the beat has a texture
+        const want = Math.min(SPARKS, flips)
+        for (let i = 0, tries = 0; i < want && tries < want * 20; tries++) {
+          const n = Math.floor(Math.random() * N)
+          if (n === CT || n === OUT || s[n] === p[n] || pop[n]! > 0.5) continue
+          pop[n] = 1
+          i++
+        }
+      }
       // the sound keeps time with the machine: a crackle as neurons flip, a relay and a note as it names an hour
       // sound off on the network for now (with 1024 neurons it crackled every tick); Bob 11.11
       void flips
@@ -470,11 +486,31 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
           const rr = Math.round(w[0]! * 150 + w[1]! * 255 + w[2]! * 70)
           const gg = Math.round(w[0]! * 98 + w[1]! * 232 + w[2]! * 62)
           const bb = Math.round(w[0]! * 40 + w[1]! * 190 + w[2]! * 70)
-          const r = DOT
           g.fillStyle = `rgb(${rr},${gg},${bb})`
           g.beginPath()
-          g.arc(x, y, r, 0, 7)
+          g.arc(x, y, DOT, 0, 7)
           g.fill()
+        }
+        // sparks: a thin ring that opens and fades around a neuron that just flipped
+        g.lineWidth = 1
+        for (let n = 0; n < N; n++) {
+          const k = pop[n]!
+          if (k < 0.02 || n === CT || n === OUT) continue
+          const [x, y] = P[n]!
+          g.strokeStyle = `rgba(255,232,190,${0.85 * k})`
+          g.beginPath()
+          g.arc(x, y, DOT + (1 - k) * DOT * 3.2, 0, 7)
+          g.stroke()
+        }
+        // the beat: one soft wave from the hub to the year ring
+        const wt0 = (now - wave0) / (BEAT * 1.1)
+        if (wt0 >= 0 && wt0 < 1) {
+          const e = 1 - Math.pow(1 - wt0, 3)
+          g.strokeStyle = `rgba(255,205,110,${0.16 * (1 - wt0)})`
+          g.lineWidth = 2
+          g.beginPath()
+          g.arc(cx, cy, HUB + (R * 1.02 - HUB) * e, 0, 7)
+          g.stroke()
         }
       }
       for (let n = 0; n < N; n++) {
@@ -522,13 +558,16 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
     const frame = () => {
       const now = performance.now()
       const T = tickOf(Date.now())
-      if (T !== lastT) {
+      if (T !== lastT && (!BIG || lastT < 0 || now - lastBeat >= BEAT)) {
         tickTo(T, now, lastT < 0 || reduce.current)
         lastT = T
+        lastBeat = now
+        if (BIG && !reduce.current) wave0 = now
       }
       // colours glide toward the current state (frame-rate independent)
       const dt = lastFrame ? Math.min(100, now - lastFrame) : 16
       lastFrame = now
+      if (BIG) for (let n = 0; n < N; n++) if (pop[n]! > 0) pop[n] = Math.max(0, pop[n]! - dt / 750)
       const a = 1 - Math.exp(-dt / TAU)
       for (let n = 0; n < N; n++) {
         const st = shown[n]!
