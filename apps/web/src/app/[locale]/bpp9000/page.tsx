@@ -18,7 +18,7 @@ import { bppFonts } from '@/components/bpp/fonts'
 export const revalidate = 60
 
 const TITLE = 'BPP-9000: watch the Bitcoin predictor Qubic miners grow'
-const DESC = 'The network Qubic miners grow to call each hour of bitcoin, UP or DOWN, running live in your browser. Live calls from 18 November. Join the experiment and keep your own journal.'
+const DESC = 'The network Qubic miners grow to call each hour of bitcoin, UP or DOWN, running live in your browser. Live calls from 18 November 2026. Join the experiment and keep your own journal.'
 
 export const metadata: Metadata = {
   title: { absolute: TITLE },

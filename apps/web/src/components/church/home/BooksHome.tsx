@@ -67,7 +67,7 @@ export function BooksHome({ locale = 'en' }: { locale?: Locale }) {
       <section className="relative overflow-hidden">
         <div className="relative mx-auto grid w-full max-w-7xl gap-8 px-4 pb-14 pt-8 sm:px-6 md:pb-20 md:pt-14 lg:grid-cols-[1.25fr_1fr] lg:gap-4">
           <div className="flex flex-col">
-            <p className="eyebrow text-gold">Qubic Church · books and open research by QC</p>
+            <p className="eyebrow text-gold">Qubic Church · independent books and open research by QC</p>
             <h1 className="-ml-[0.065em] mt-4 font-display text-[27vw] leading-[0.8] tracking-tight sm:text-[20vw] md:text-[13rem] lg:text-[13rem] xl:text-[15rem]">
               BOOKS
             </h1>
@@ -109,6 +109,13 @@ export function BooksHome({ locale = 'en' }: { locale?: Locale }) {
 
             <div className="mt-12 border-t border-border pt-6 lg:mt-auto">
               <Countdown date />
+              <p className="mt-5 max-w-md text-sm leading-relaxed text-fg-2">
+                The Day: 13 April 2027 is Come-from-Beyond&rsquo;s estimated date for Aigarth to run as smart contracts on Qubic and for
+                the Arbitrator to step down. An estimate, not a promise.{' '}
+                <Link className="text-gold underline-offset-4 hover:underline" href="/books/qubic-the-long-version/14-what-the-deploy-on-april-13-2027-means">
+                  What it means
+                </Link>
+              </p>
             </div>
           </div>
 
@@ -141,7 +148,7 @@ export function BooksHome({ locale = 'en' }: { locale?: Locale }) {
           </div>
           <dl className="grid gap-px self-start bg-border sm:grid-cols-2">
             {[
-              ['Independent', 'Qubic Church is an independent research project. It is not the Qubic core team, does not speak for Qubic, and is written by QC.'],
+              ['Independent', 'Qubic Church is an independent research project. It is not the Qubic core team and does not speak for Qubic. QC is the name under which Qubic Church publishes its books and research.'],
               ['No financial advice', 'Nothing here promises returns, sells a token or tells you to buy one. Mining costs and results are described as they are, with no promised income.'],
               ['Sourced', 'Come-from-Beyond is quoted word for word, with the date and the place. Claims link their primary source; what could not be confirmed stays marked as an open question.'],
               ['A name, not a religion', '“Church” is a tribute to the old institutions that kept knowledge. Here faith is replaced by verification: every claim can be checked in code or in the record.'],
