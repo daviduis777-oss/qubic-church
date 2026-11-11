@@ -48,9 +48,9 @@ const RULES = [
 ] as const
 
 const INVESTIGATIONS = [
+  { title: 'What is Aigarth?', text: 'The AI Qubic miners grow, its first product BPP-9000, and the road to 13.04.2027. A short, sourced answer.', href: '/what-is-aigarth' },
   { title: 'Anna Matrix', text: 'The 128 × 128 grid, its symmetries and what they do and do not prove.', href: '/evidence' },
   { title: 'Research log', text: 'Methods, results, re-checks. Every number recomputed.', href: '/docs' },
-  { title: 'Rarity Codex', text: 'All 200 Annas ranked by trait rarity, with every trait listed.', href: '/rarity-codex' },
   { title: 'The Road to The Day', text: 'Come-from-Beyond from 2000 to 13.04.2027, and the Satoshi Nakamoto question. Some doors left open.', href: '/timeline' },
   { title: 'Matrix companion', text: 'The forensic appendix to chapter 13.', href: '/companion' },
   { title: 'Network monitor', text: 'Live state of the Qubic network.', href: '/monitoring' },
@@ -72,7 +72,19 @@ export function BooksHome({ locale = 'en' }: { locale?: Locale }) {
               BOOKS
             </h1>
             <p className="mt-6 max-w-xl font-serif text-xl leading-relaxed text-foreground/85 md:text-2xl">
-              On Qubic, Aigarth and Come-from-Beyond. Free to read, chapter by chapter. Written from primary sources,
+              On{' '}
+              <Link className="underline decoration-gold/40 underline-offset-4 hover:decoration-gold" href="/what-is-qubic">
+                Qubic
+              </Link>
+              ,{' '}
+              <Link className="underline decoration-gold/40 underline-offset-4 hover:decoration-gold" href="/what-is-aigarth">
+                Aigarth
+              </Link>{' '}
+              and{' '}
+              <Link className="underline decoration-gold/40 underline-offset-4 hover:decoration-gold" href="/who-is-come-from-beyond">
+                Come-from-Beyond
+              </Link>
+              . Free to read, chapter by chapter. Written from primary sources,
               recomputed where it could be, kept as an open question where it could not.
             </p>
             <div className="mt-8 flex flex-wrap gap-2">
@@ -304,44 +316,41 @@ export function BooksHome({ locale = 'en' }: { locale?: Locale }) {
         </div>
       </section>
 
-      {/* ── ANNA AND THE INVESTIGATIONS ── */}
+      {/* ── AIGARTH AND THE INVESTIGATIONS ── */}
       <section className="border-t border-border">
         <div className="mx-auto grid w-full max-w-7xl gap-10 px-4 py-16 sm:px-6 md:py-24 lg:grid-cols-[1fr_1.4fr]">
           <div>
-            <p className="eyebrow text-gold">Anna Aigarth · the collection</p>
-            <h2 className="mt-3 font-display text-6xl leading-[0.9] md:text-7xl">The founders&rsquo; mark</h2>
+            <p className="eyebrow text-gold">Open research</p>
+            <h2 className="mt-3 font-display text-6xl leading-[0.9] md:text-7xl">Investigations</h2>
             <p className="mt-5 max-w-md font-serif text-lg leading-relaxed text-foreground/90">
-              The most important collection we hold. Each of the 200 Annas gives its holder the status of a founder
-              of Qubic Church. A keepsake of the years before Aigarth. And not only that.
+              Aigarth, the Anna Matrix and the network itself, from public data. Every number recomputed, every quote with its source, every
+              unconfirmed reading kept as an open question.
             </p>
             <div className="mt-6 flex flex-wrap gap-2">
               <Link
                 className="inline-flex h-11 items-center border border-gold bg-gold px-5 text-sm font-semibold uppercase tracking-widest text-black"
-                href="/nfts"
+                href="/what-is-aigarth"
               >
-                See the 200
+                What is Aigarth?
               </Link>
               <Link
                 className="inline-flex h-11 items-center border border-border px-5 text-sm font-medium text-fg-2 hover:text-foreground"
-                href="/rarity-codex"
+                href="/docs"
               >
-                Rarity codex
+                Research log
               </Link>
             </div>
           </div>
-          <div>
-            <p className="eyebrow mb-4 text-fg-2">Investigations</p>
-            <ul className="grid gap-px border border-border bg-border sm:grid-cols-2">
-              {INVESTIGATIONS.map(x => (
-                <li key={x.href}>
-                  <Link className="group flex h-full flex-col bg-background/80 p-5 backdrop-blur-sm hover:bg-card" href={x.href}>
-                    <span className="font-semibold group-hover:text-gold">{x.title}</span>
-                    <span className="mt-1 text-sm text-fg-2">{x.text}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <ul className="grid gap-px self-start border border-border bg-border sm:grid-cols-2">
+            {INVESTIGATIONS.map(x => (
+              <li key={x.href}>
+                <Link className="group flex h-full flex-col bg-background/80 p-5 backdrop-blur-sm hover:bg-card" href={x.href}>
+                  <span className="font-semibold group-hover:text-gold">{x.title}</span>
+                  <span className="mt-1 text-sm text-fg-2">{x.text}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 
@@ -430,6 +439,34 @@ export function BooksHome({ locale = 'en' }: { locale?: Locale }) {
           >
             Read about the Atrium →
           </Link>
+        </div>
+      </section>
+
+      {/* ── ANNA AIGARTH: the collection ── */}
+      <section className="border-t border-border">
+        <div className="mx-auto grid w-full max-w-7xl gap-6 px-4 py-14 sm:px-6 md:grid-cols-[1fr_auto] md:items-end">
+          <div>
+            <p className="eyebrow text-gold">Anna Aigarth · the collection</p>
+            <h2 className="mt-3 font-display text-5xl leading-[0.9] md:text-7xl">The founders&rsquo; mark</h2>
+            <p className="mt-4 max-w-2xl font-serif text-lg leading-relaxed text-foreground/90">
+              The most important collection we hold. Each of the 200 Annas gives its holder the status of a founder
+              of Qubic Church. A keepsake of the years before Aigarth. And not only that.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Link
+              className="inline-flex h-11 items-center border border-gold bg-gold px-5 text-sm font-semibold uppercase tracking-widest text-black"
+              href="/nfts"
+            >
+              See the 200
+            </Link>
+            <Link
+              className="inline-flex h-11 items-center border border-border px-5 text-sm font-medium text-fg-2 hover:text-foreground"
+              href="/rarity-codex"
+            >
+              Rarity codex
+            </Link>
+          </div>
         </div>
       </section>
 
