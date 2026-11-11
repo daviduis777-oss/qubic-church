@@ -71,6 +71,7 @@ const css = `
 .r55-seats-num{font-family:var(--bpp-nx),sans-serif;font-size:clamp(46px,7vw,68px);line-height:.9;color:var(--hot);text-shadow:0 0 22px rgba(255,196,107,.45)}
 .r55-seats-of{font-family:var(--bpp-nx),sans-serif;font-size:clamp(22px,3vw,30px);color:var(--dim)}
 .r55-seats-text{display:grid;gap:6px;max-width:56ch;justify-items:center}
+.r55-seats-cand{font-size:14px;color:var(--hot)}
 .r55-seats-title{color:#f3e4ce;font-size:13px;font-weight:600;letter-spacing:.12em;text-transform:uppercase}
 .r55-seats-text span{font-size:14px;line-height:1.5}
 .r55-grid26{display:grid;grid-template-columns:repeat(26,1fr);gap:3px;width:100%;max-width:520px}
@@ -120,7 +121,7 @@ function Spark({ history, start, end }: { history: Point[]; start: string; end: 
 }
 
 /** The 676 computor seats as Qubic's own 26 x 26 square, best first: lit when a seat's network holds 55% for the full week. */
-function Seats({ seats, cap }: { seats: number[]; cap: number }) {
+function Seats({ seats, cap, candidates }: { seats: number[]; cap: number; candidates: number }) {
   const full = seats.filter(f => f >= cap).length
   const moving = seats.filter(f => f > 0 && f < cap).length
   const scored = seats.filter(f => f >= 0).length
@@ -137,6 +138,11 @@ function Seats({ seats, cap }: { seats: number[]; cap: number }) {
           <span className="mute">
             Computors whose network holds 55% for the full week ({cap} frames). The explorer counts the computors&apos; vote on the next hour once {NEED} of them qualify.
           </span>
+          {candidates > 0 ? (
+            <span className="r55-seats-cand">
+              + {candidates} {candidates === 1 ? 'candidate has' : 'candidates have'} passed the mark too. They count once they win a seat.
+            </span>
+          ) : null}
         </div>
       </div>
       <div aria-label={`${full} of ${seats.length} computors at the full week, ${moving} moving through frames, ${scored} scored`} className="r55-grid26" role="img">
@@ -259,7 +265,7 @@ export function RaceTo55() {
         </div>
       ) : null}
 
-      {r.seats && r.seats.length ? <Seats cap={fr.cap} seats={r.seats} /> : null}
+      {r.seats && r.seats.length ? <Seats candidates={Math.max(0, fr.networks - fr.computors)} cap={fr.cap} seats={r.seats} /> : null}
 
       {r.info && r.info.neurons ? (
         <p className="r55-facts">
