@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
 import { setRequestLocale } from 'next-intl/server'
+import { poolAllowed } from '@/lib/pool/gate'
 import { BppStyles } from '@/components/bpp/BppStyles'
 import { bppFonts } from '@/components/bpp/fonts'
 import { Garden } from '@/components/garden/Garden'
@@ -11,6 +13,7 @@ export const dynamic = 'force-dynamic'
 export default async function GardenLab(props: { params: Promise<{ locale: string }> }) {
   const { locale } = await props.params
   setRequestLocale(locale)
+  if (!(await poolAllowed())) notFound()
   return (
     <div className={`bpp ${bppFonts}`} style={{ minHeight: '100vh' }}>
       <BppStyles />
