@@ -19,10 +19,11 @@ type Race = {
   worst: number
   scored: number
   ids: number
-  top: { id: string; errors: number; computor: boolean }[]
+  top: { id: string; errors: number; computor: boolean; frame: number }[]
+  frames: { networks: number; computors: number; best: number; cap: number }
   history: Point[]
   lastEpoch: { epoch: number; best: number } | null
-  info: { goal: number; neurons: number; connections: number; core: string; solutions: number; verified: number } | null
+  info: { goal: number; neurons: number; connections: number; core: string; solutions: number; verified: number; cap?: number } | null
   at: string
 }
 
@@ -63,6 +64,13 @@ const css = `
 .r55-top li{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px solid var(--line)}
 .r55-top code{font-family:var(--bpp-nx),monospace;color:var(--ink);font-size:13px}
 .r55-tag{font-size:11.5px;color:var(--dim);margin-left:8px}
+.r55-frame{color:var(--hot)}
+.r55-frames{display:grid;gap:10px;padding:16px 18px;border:1px solid rgba(255,196,107,.35);border-radius:12px;background:rgba(255,196,107,.05)}
+.r55-frames-head{display:grid;gap:4px}
+.r55-frames-head b{color:var(--hot);font-size:17px;font-weight:600}
+.r55-frames-head span{font-size:14px;line-height:1.5}
+.r55-frames-bar{height:8px;border-radius:8px;background:rgba(255,200,140,.08);overflow:hidden}
+.r55-frames-bar i{display:block;height:100%;border-radius:8px;background:linear-gradient(90deg,var(--fil),var(--hot));box-shadow:0 0 16px rgba(255,196,107,.6)}
 @media (prefers-reduced-motion:reduce){.r55-fill,.r55-runner{transition:none}.r55.lit .r55-fill{animation:none}}
 `
 
@@ -124,7 +132,8 @@ export function RaceTo55() {
   if (!r) return null
   const p = pos(r.best)
   const togo = Math.max(0, r.best - GOAL)
-  const done = r.best <= GOAL
+  const fr = r.frames ?? { networks: 0, computors: 0, best: 0, cap: 168 }
+  const done = r.best <= GOAL || fr.networks > 0
   return (
     <section aria-labelledby="r55-h" className={`r55${lit ? ' lit' : ''}`} id="race">
       <style>{css}</style>
@@ -142,7 +151,7 @@ export function RaceTo55() {
         <div className="r55-sub">
           <b>{acc(r.best)}% right</b>
           <span className="mute" style={{ fontSize: 14 }}>
-            {done ? 'The 55% mark is reached.' : `${togo} errors to go to the 55% mark (${GOAL}).`}
+            {fr.networks > 0 ? `The 55% mark is passed: ${fr.networks === 1 ? 'one network has' : `${fr.networks} networks have`} moved past it.` : done ? 'The 55% mark is reached.' : `${togo} errors to go to the 55% mark (${GOAL}).`}
           </span>
         </div>
       </div>
@@ -176,6 +185,24 @@ export function RaceTo55() {
         </div>
       </div>
 
+      {fr.networks > 0 ? (
+        <div className="r55-frames">
+          <div className="r55-frames-head">
+            <b>Past the mark</b>
+            <span className="mute">
+              {fr.networks} {fr.networks === 1 ? 'network' : 'networks'} ({fr.computors} {fr.computors === 1 ? 'computor' : 'computors'}) beat {GOAL} and moved forward in time. Each frame shifts its year one hour later; the cap is {fr.cap} hours, one week.
+            </span>
+          </div>
+          <div className="r55-frames-bar" aria-label={`Furthest frame ${fr.best} of ${fr.cap}`} role="img">
+            <i style={{ width: `${Math.min(1, fr.best / Math.max(1, fr.cap)) * 100}%` }} />
+          </div>
+          <div className="r55-ends mute">
+            <span>frame 0</span>
+            <span>furthest: frame {fr.best} of {fr.cap}{fr.best >= fr.cap ? ', the full week' : ''}</span>
+          </div>
+        </div>
+      ) : null}
+
       {r.info && r.info.neurons ? (
         <p className="r55-facts">
           <span>{int(r.info.neurons)} neurons</span>
@@ -200,6 +227,7 @@ export function RaceTo55() {
                 <span>
                   <code>{short(t.id)}</code>
                   <span className="r55-tag">{t.computor ? 'computor' : 'candidate'}</span>
+                  {t.frame > 0 ? <span className="r55-tag r55-frame">frame {t.frame}</span> : null}
                 </span>
                 <span>
                   {t.errors} <span className="mute">· {acc(t.errors)}%</span>

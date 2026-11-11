@@ -27,11 +27,13 @@ export type Race = {
   scored: number
   ids: number
   computors: number
-  top: { id: string; errors: number; computor: boolean }[]
+  top: { id: string; errors: number; computor: boolean; frame: number }[]
+  /** networks that passed the mark and advanced frames: their year of hours moved forward, up to cap hours */
+  frames: { networks: number; computors: number; best: number; cap: number }
   history: RacePoint[]
   lastEpoch: { epoch: number; best: number } | null
   /** the epoch's rules and archive, from the Jetski ANN Explorer (null when it does not answer) */
-  info: { goal: number; neurons: number; connections: number; core: string; solutions: number; verified: number } | null
+  info: { goal: number; neurons: number; connections: number; core: string; solutions: number; verified: number; cap: number } | null
   at: string
 }
 
@@ -39,7 +41,7 @@ type Explorer = {
   solutions?: number
   verification?: { verified?: number; totalChecked?: number }
   metadata?: { coreVersion?: string }
-  scoringParameters?: { parameters?: { advanceThreshold?: number; populationThreshold?: number; neighbors?: number } }[]
+  scoringParameters?: { parameters?: { advanceThreshold?: number; populationThreshold?: number; neighbors?: number; shiftCap?: number } }[]
 }
 
 async function explorer(epoch: number): Promise<Race['info']> {
@@ -57,6 +59,7 @@ async function explorer(epoch: number): Promise<Race['info']> {
       core: String(e.metadata?.coreVersion ?? ''),
       solutions: Number(e.solutions ?? 0),
       verified: checked ? Number(e.verification?.verified ?? 0) / checked : 0,
+      cap: Number(p.shiftCap ?? 168),
     }
   } catch {
     return null
@@ -66,7 +69,7 @@ async function explorer(epoch: number): Promise<Race['info']> {
 type Feed = {
   epoch?: { number?: number; start?: string; end?: string }
   network?: { minScore?: number; avgScore?: number; maxScore?: number; scoredIds?: number; totalIds?: number; computors?: number }
-  tracker?: { allIds?: { identity?: string; error?: number; score?: number; isComputor?: boolean; ratingComplete?: boolean }[] }
+  tracker?: { allIds?: { identity?: string; error?: number; score?: number; shift?: number; isComputor?: boolean; ratingComplete?: boolean }[] }
   timestamp?: string
 }
 
@@ -98,11 +101,15 @@ export async function race(): Promise<Race | null> {
     if (!history.length) history = [{ t: at, best }]
   }
 
-  const top = (f.tracker?.allIds ?? [])
-    .map(x => ({ id: String(x.identity ?? ''), errors: Number(x.error ?? x.score), computor: Boolean(x.isComputor) }))
+  // the core's ranking: further frame first, then fewer errors
+  const all = (f.tracker?.allIds ?? [])
+    .map(x => ({ id: String(x.identity ?? ''), errors: Number(x.error ?? x.score), computor: Boolean(x.isComputor), frame: Number(x.shift ?? 0) || 0 }))
     .filter(x => x.id && Number.isFinite(x.errors) && x.errors > 0)
-    .sort((a, b) => a.errors - b.errors)
-    .slice(0, 5)
+    .sort((a, b) => b.frame - a.frame || a.errors - b.errors)
+  const top = all.slice(0, 5)
+  const framed = all.filter(x => x.frame > 0)
+  const info = await infoP
+  const frames = { networks: framed.length, computors: framed.filter(x => x.computor).length, best: framed[0]?.frame ?? 0, cap: info?.cap ?? 168 }
 
   return {
     epoch,
@@ -115,9 +122,10 @@ export async function race(): Promise<Race | null> {
     ids: Number(f.network?.totalIds ?? 0),
     computors: Number(f.network?.computors ?? 676),
     top,
+    frames,
     history,
     lastEpoch,
-    info: await infoP,
+    info,
     at,
   }
 }
