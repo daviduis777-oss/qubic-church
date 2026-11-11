@@ -105,6 +105,8 @@ export async function people(): Promise<Person[]> {
 /** What one person may see of the others. No names, no handles, no keys. */
 export type Circle = {
   count: number
+  /** solutions are still the preview, not the pool */
+  preview: boolean
   /** people who found a useful solution this epoch */
   active: number
   /** one entry per person, a level index each, in a stable shuffled order; `me` is the viewer's place in it */
@@ -131,6 +133,7 @@ export function circleOf(all: Person[], handle: string): Circle {
   const down = i >= 0 ? sorted.slice(i + 1).find(p => p.power.total < mine) : undefined
   return {
     count: all.length,
+    preview: all.some(p => p.solutions.preview),
     active: all.filter(p => p.solutions.epoch > 0).length,
     stars: order.map(p => p.power.level.index),
     me: order.findIndex(p => p.handle.toLowerCase() === handle.toLowerCase()),

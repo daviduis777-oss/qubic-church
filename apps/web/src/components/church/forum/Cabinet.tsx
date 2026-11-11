@@ -8,7 +8,7 @@ import { LoginBox, type Me } from './LoginBox'
 type Profile = { x?: string; signature?: string; bio?: string; avatar?: string }
 
 /** Shrink any image to a 128px square JPEG in the browser, so nothing heavy reaches the server. */
-async function squareJpeg(file: File, size = 128): Promise<string> {
+export async function squareJpeg(file: File | Blob, size = 128): Promise<string> {
   const url = URL.createObjectURL(file)
   try {
     const img = await new Promise<HTMLImageElement>((ok, no) => {

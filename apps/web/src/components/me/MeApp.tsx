@@ -2,15 +2,16 @@
 
 /* eslint-disable @next/next/no-img-element */
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { bppFonts } from '@/components/bpp/fonts'
 import { Identicon } from '@/components/church/forum/Avatar'
+import { squareJpeg } from '@/components/church/forum/Cabinet'
 import { LEVELS, MEDALS, POWER } from '@/lib/me/medals'
 import type { Circle, Person } from '@/lib/me/me'
 import { MedalCoin } from './Medal'
 
 const css = `
-.me{min-height:100svh;background:radial-gradient(70% 45% at 70% 0%,rgba(255,196,107,.08),transparent 70%),#08080a;color:#ece6da;font-family:var(--bpp-sans),system-ui,sans-serif;padding:96px 16px 80px}
+.me{min-height:100svh;margin-bottom:-3rem;background:radial-gradient(70% 45% at 70% 0%,rgba(255,196,107,.08),transparent 70%),#08080a;color:#ece6da;font-family:var(--bpp-sans),system-ui,sans-serif;padding:96px 16px 128px}
 .me-in{max-width:1080px;margin:0 auto;display:grid;gap:28px}
 .me-top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-size:14px;color:#a39a8c}
 .me-chip{display:inline-block;padding:3px 10px;border:1px solid rgba(255,196,107,.4);border-radius:999px;color:#ffc46b;font-size:12px;letter-spacing:.06em}
@@ -73,6 +74,43 @@ const css = `
 .me-as{display:flex;gap:8px;align-items:center}
 .me-as input{background:#121014;border:1px solid #2c2620;border-radius:8px;color:#ece6da;padding:6px 10px;font:inherit;font-size:13.5px;width:160px}
 .me-as button{background:#ffc46b;color:#1a1408;border:0;border-radius:8px;padding:7px 12px;font:inherit;font-size:13.5px;font-weight:600;cursor:pointer}
+
+.me-ava-w{position:relative;display:grid;gap:8px;justify-items:center}
+.me-ava-b{background:none;border:0;padding:0;cursor:pointer;border-radius:50%}
+.me-ava-b:focus-visible{outline:2px solid #ffc46b;outline-offset:4px}
+.me-ava-edit{display:flex;gap:10px;font-size:12.5px}
+.me-ava-edit button{background:none;border:0;color:#ffe3b0;font:inherit;cursor:pointer;padding:0;text-decoration:underline;text-underline-offset:3px}
+.me-ava-edit button:disabled{opacity:.5;cursor:wait}
+.me-ava.ring-flame{box-shadow:0 0 0 3px #ff8a3d,0 0 24px rgba(255,138,61,.5)}
+.me-streak{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;background:rgba(255,138,61,.1);border:1px solid rgba(255,138,61,.35);color:#ffb27a;font-size:13.5px;width:max-content}
+.me-streak b{font-family:var(--bpp-nx),sans-serif;font-size:20px;color:#ffc46b;font-weight:400}
+.me-road{overflow-x:auto;padding-bottom:6px}
+.me-road-in{min-width:900px;position:relative}
+.me-road svg{display:block;width:100%;height:120px}
+.me-road-cols{display:grid;grid-template-columns:repeat(9,1fr);gap:8px}
+.me-road-c{display:grid;gap:4px;align-content:start;text-align:center;padding:0 2px}
+.me-road-c b{font-size:14px;color:#8a8175;font-weight:600}
+.me-road-c .at{font-size:12px;color:#6f675c;font-variant-numeric:tabular-nums}
+.me-road-c p{margin:4px 0 0;font-size:12px;line-height:1.45;color:#6f675c}
+.me-road-c.done b{color:#ffc46b}
+.me-road-c.done p{color:#a39a8c}
+.me-road-c.cur b{color:#fff3dc}
+.me-road-c.cur p{color:#ece6da}
+.me-road-c.nxt p{color:#ffe3b0}
+.me-road-c .tag{justify-self:center;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:999px;background:#ffc46b;color:#1a1408;font-weight:700}
+.me-road-c .tag.n{background:none;border:1px solid rgba(255,196,107,.5);color:#ffc46b}
+.me-steps{display:grid;gap:10px}
+.me-step{display:grid;grid-template-columns:30px 1fr auto;gap:14px;align-items:center;padding:14px 16px;border:1px solid #29241f;border-radius:14px;background:#0f0d10}
+.me-step.done{opacity:.62}
+.me-step.now{border-color:rgba(255,196,107,.55);background:linear-gradient(90deg,rgba(255,196,107,.09),rgba(255,196,107,.01))}
+.me-step i{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:15px;border:1.5px solid #3a3229;color:#8a8175}
+.me-step.done i{background:#ffc46b;border-color:#ffc46b;color:#1a1408}
+.me-step.now i{border-color:#ffc46b;color:#ffc46b}
+.me-step b{display:block;font-size:15px;color:#fff3dc;font-weight:600}
+.me-step span{display:block;font-size:13px;color:#a39a8c;margin-top:2px;line-height:1.45}
+.me-step em{font-style:normal;font-size:13px;color:#ffc46b;white-space:nowrap;text-align:right}
+.me-step a{color:#ffe3b0}
+@keyframes me-pulse{0%,100%{r:13}50%{r:17}}
 @keyframes me-tw{0%,100%{opacity:.55}50%{opacity:1}}
 .me-tw{animation:me-tw 4s ease-in-out infinite}
 @media (prefers-reduced-motion:reduce){.me-tw{animation:none}}
@@ -133,16 +171,16 @@ export function MeApp() {
             You are not signed in on this browser. <Link href="/articles/me">Sign in</Link>, or preview a member above.
           </div>
         )}
-        {me && <Cabinet circle={circle} me={me} />}
+        {me && <Cabinet circle={circle} me={me} onChange={() => load()} self={!preview} />}
       </div>
     </main>
   )
 }
 
-function Cabinet({ me, circle }: { me: Person; circle: Circle | null }) {
+function Cabinet({ me, circle, self, onChange }: { me: Person; circle: Circle | null; self: boolean; onChange: () => void }) {
   const founder = me.annas.length > 0
   const anna = me.annas.slice().sort((a, b) => a.rank - b.rank)[0]
-  const pic = anna ? anna.image : me.avatar
+  const pic = me.avatar ?? anna?.image
   const earned = new Set(me.medals)
   const ordered = MEDALS.slice().sort((a, b) => Number(earned.has(b.id)) - Number(earned.has(a.id)))
   const pw = me.power
@@ -152,7 +190,7 @@ function Cabinet({ me, circle }: { me: Person; circle: Circle | null }) {
       <section className="me-hero">
         <div className="me-card me-pass">
           <div className="me-pass-row">
-            <div className={`me-ava${founder ? ' founder' : ''}`}>{pic ? <img alt="" src={pic} /> : <Identicon seed={me.id ?? me.handle} size={88} />}</div>
+            <AvatarEdit anna={anna?.image} founder={founder} handle={me.handle} id={me.id} level={pw.level.index} onChange={onChange} pic={pic} self={self} />
             <div>
               <h1 className="me-name">{me.name}</h1>
               <div className="me-meta">
@@ -170,6 +208,11 @@ function Cabinet({ me, circle }: { me: Person; circle: Circle | null }) {
             </div>
           </div>
           {me.bio && <p className="me-bio">{me.bio}</p>}
+          {streakOf(me) > 1 && (
+            <span className="me-streak" title="Epochs in a row with at least one useful solution">
+              <b>{streakOf(me)}</b> epochs in a row with a solution
+            </span>
+          )}
           {me.medals.length > 0 && (
             <div className="me-row-medals">
               {MEDALS.filter(m => earned.has(m.id)).map(m => (
@@ -198,13 +241,6 @@ function Cabinet({ me, circle }: { me: Person; circle: Circle | null }) {
               {pw.level.next
                 ? `${n(pw.level.next.missing)} power to ${pw.level.next.name}: about ${n(Math.ceil(pw.level.next.missing / POWER.solution))} useful solutions.`
                 : 'The top of the sky.'}
-            </div>
-            <div className="me-ladder">
-              {LEVELS.map((l, i) => (
-                <span className={i === pw.level.index ? 'cur' : i < pw.level.index ? 'on' : ''} key={l.name} title={`${l.name}: ${n(l.at)}`}>
-                  {l.name}
-                </span>
-              ))}
             </div>
           </div>
           <div className="me-src">
@@ -241,6 +277,10 @@ function Cabinet({ me, circle }: { me: Person; circle: Circle | null }) {
         </div>
       </section>
 
+      <Road me={me} />
+
+      <Steps me={me} />
+
       {circle && circle.count > 1 && <Sky circle={circle} />}
 
       <section>
@@ -264,36 +304,6 @@ function Cabinet({ me, circle }: { me: Person; circle: Circle | null }) {
         </div>
       </section>
 
-      <section>
-        <h2 className="me-h">My trail</h2>
-        <div className="me-trail">
-          <div className="me-t">
-            <b>Mining</b>
-            <span className="n">{n(me.solutions.total)}</span>
-            <span>useful solutions in the QC pool{me.solutions.preview ? ' (preview until the pool opens)' : ''}</span>
-          </div>
-          <div className="me-t">
-            <b>The Crypt</b>
-            <span className="n">{me.crypt.articles}</span>
-            <span>
-              {me.crypt.articles === 1 ? 'article' : 'articles'} · {me.crypt.replies} {me.crypt.replies === 1 ? 'reply' : 'replies'}
-            </span>
-            <Link href={`/articles/profile/${me.handle.toLowerCase()}`}>Public profile</Link>
-          </div>
-          <div className="me-t">
-            <b>BPP-9000</b>
-            {me.bpp ? (
-              <>
-                <span className="n">{me.bpp.trades}</span>
-                <span>journal trades · since {date(me.bpp.joined)}</span>
-              </>
-            ) : (
-              <span>Not in the experiment yet.</span>
-            )}
-            <Link href="/bpp9000">Open BPP-9000</Link>
-          </div>
-        </div>
-      </section>
     </>
   )
 }
@@ -347,7 +357,7 @@ function Sky({ circle }: { circle: Circle }) {
           </div>
           <div className="me-big">
             {circle.active}
-            <small>found useful solutions this epoch</small>
+            <small>found useful solutions this epoch{circle.preview ? ' (preview)' : ''}</small>
           </div>
           <div className="me-chase">
             Your star is brighter than <b>{pct}%</b> of QC.{' '}
@@ -361,6 +371,192 @@ function Sky({ circle }: { circle: Circle }) {
             {circle.below ? ` The one behind you is ${n(circle.below.gap)} power back.` : ''}
           </div>
         </div>
+      </div>
+    </section>
+  )
+}
+
+/** Epochs in a row, up to the latest, with at least one useful solution. */
+function streakOf(me: Person) {
+  let k = 0
+  for (let i = me.solutions.byEpoch.length - 1; i >= 0 && me.solutions.byEpoch[i]!.n > 0; i--) k++
+  return k
+}
+
+/** The picture: your own upload wins, then your Anna, then the pixel avatar from your key. Only on your own cabinet can you change it. */
+function AvatarEdit(props: { pic?: string; anna?: string; founder: boolean; level: number; handle: string; id?: string; self: boolean; onChange: () => void }) {
+  const { pic, anna, founder, level, handle, id, self, onChange } = props
+  const file = useRef<HTMLInputElement>(null)
+  const [busy, setBusy] = useState(false)
+  const [msg, setMsg] = useState('')
+  const save = async (avatar: string | null) => {
+    setBusy(true)
+    setMsg('')
+    try {
+      // The profile route rewrites every field, so send back what is there now.
+      const cur = await fetch('/api/forum/profile', { cache: 'no-store' }).then(r => r.json())
+      if (cur.error) throw new Error(cur.error)
+      const p = cur.profile ?? {}
+      const r = await fetch('/api/forum/profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ x: p.x ?? '', signature: p.signature ?? '', bio: p.bio ?? '', ...(avatar ? { avatar } : { removeAvatar: true }) }),
+      }).then(r => r.json())
+      if (r.error) throw new Error(r.error)
+      onChange()
+    } catch (e) {
+      setMsg((e as Error).message)
+    } finally {
+      setBusy(false)
+    }
+  }
+  const ring = founder ? ' founder' : level >= 2 ? ' ring-flame' : ''
+  const face = <div className={`me-ava${ring}`}>{pic ? <img alt="" src={pic} /> : <Identicon seed={id ?? handle} size={88} />}</div>
+  if (!self) return face
+  return (
+    <div className="me-ava-w">
+      <button aria-label="Change your picture" className="me-ava-b" disabled={busy} onClick={() => file.current?.click()} title="Change your picture" type="button">
+        {face}
+      </button>
+      <input
+        accept="image/*"
+        hidden
+        onChange={async e => {
+          const f = e.target.files?.[0]
+          e.target.value = ''
+          if (f) save(await squareJpeg(f).catch(() => null))
+        }}
+        ref={file}
+        type="file"
+      />
+      <div className="me-ava-edit">
+        <button disabled={busy} onClick={() => file.current?.click()} type="button">
+          {busy ? 'Saving…' : 'Change'}
+        </button>
+        {anna && (
+          <button disabled={busy} onClick={async () => save(await squareJpeg(await fetch(anna).then(r => r.blob()), 256))} type="button">
+            Use my Anna
+          </button>
+        )}
+        {pic && !busy && (
+          <button onClick={() => save(null)} type="button">
+            Remove
+          </button>
+        )}
+      </div>
+      {msg && <span style={{ color: '#e0806a', fontSize: 12 }}>{msg}</span>}
+    </div>
+  )
+}
+
+/** The whole climb from Spark to Pulsar: where you are, what each level gives, how far in solutions. */
+function Road({ me }: { me: Person }) {
+  const cur = me.power.level.index
+  const W = 900
+  const H = 120
+  const col = W / LEVELS.length
+  // a slow climb: each level sits a little higher than the last
+  const pt = (i: number) => ({ x: col * i + col / 2, y: H - 22 - (i / (LEVELS.length - 1)) * (H - 50) })
+  const path = LEVELS.map((_, i) => pt(i))
+  const d = path.map((p, i) => (i ? `L${p.x},${p.y}` : `M${p.x},${p.y}`)).join(' ')
+  // how far along the segment from the current level to the next
+  const here = (() => {
+    const a = pt(cur)
+    const b = path[cur + 1]
+    if (!b) return a
+    const t = me.power.level.progress
+    return { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t }
+  })()
+  const done = path.slice(0, cur + 1).map((p, i) => (i ? `L${p.x},${p.y}` : `M${p.x},${p.y}`)).join(' ') + ` L${here.x},${here.y}`
+  return (
+    <section className="me-card">
+      <h2 className="me-h">The road to Pulsar</h2>
+      <div className="me-road">
+        <div className="me-road-in">
+          <svg aria-hidden preserveAspectRatio="none" viewBox={`0 0 ${W} ${H}`}>
+            <defs>
+              <radialGradient id="me-rd">
+                <stop offset="0" stopColor="#fff3dc" />
+                <stop offset=".45" stopColor="#ffc46b" />
+                <stop offset="1" stopColor="#ffc46b" stopOpacity="0" />
+              </radialGradient>
+            </defs>
+            <path d={d} fill="none" stroke="rgba(255,200,140,.14)" strokeDasharray="3 5" strokeWidth="2" />
+            <path d={done} fill="none" stroke="#ffc46b" strokeLinecap="round" strokeWidth="3" />
+            {path.map((p, i) => (
+              <circle cx={p.x} cy={p.y} fill={i <= cur ? 'url(#me-rd)' : '#1c1814'} key={i} r={5 + i * 1.3} stroke={i <= cur ? 'none' : 'rgba(255,200,140,.25)'} />
+            ))}
+            <circle cx={here.x} cy={here.y} fill="none" r="13" stroke="#ffc46b" strokeWidth="1.5" style={{ animation: 'me-pulse 2.4s ease-in-out infinite' }} />
+          </svg>
+          <div className="me-road-cols">
+            {LEVELS.map((l, i) => {
+              const cls = i < cur ? 'done' : i === cur ? 'cur' : i === cur + 1 ? 'nxt' : ''
+              return (
+                <div className={`me-road-c ${cls}`} key={l.name}>
+                  {i === cur && <span className="tag">You</span>}
+                  {i === cur + 1 && <span className="tag n">Next</span>}
+                  <b>{l.name}</b>
+                  <span className="at">{l.at ? `${n(l.at)} power` : 'start'}</span>
+                  <p>{l.gives}</p>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/** What to do next, in the order a newcomer meets it. The first open step is lit. */
+function Steps({ me }: { me: Person }) {
+  const live = !me.solutions.preview
+  const steps = [
+    { t: 'Get your key', s: 'A Qubic wallet or a secret word. You have it.', done: true, gain: '' },
+    {
+      t: 'Join the QC pool',
+      s: live ? 'Point your rig at the QC pool. Only solutions found here count.' : 'Opens soon. Only solutions found in the QC pool count toward your power.',
+      done: live && me.solutions.total > 0,
+      gain: live ? '' : 'soon',
+    },
+    { t: 'Find your first useful solution', s: 'A network your rig trained that the Qubic network accepted.', done: live && me.solutions.total > 0, gain: `+${POWER.solution} each` },
+    { t: 'Mine every epoch', s: 'Keep the streak: one solution a week keeps your flame burning.', done: live && streakOf(me) >= 2, gain: 'streak' },
+    {
+      t: 'Speak in the Crypt',
+      s: (
+        <>
+          Write an article or answer one. <Link href="/articles">Open the Crypt</Link>
+        </>
+      ),
+      done: me.crypt.articles + me.crypt.replies > 0,
+      gain: `+${POWER.article} / +${POWER.reply}`,
+    },
+    {
+      t: 'Keep a BPP-9000 journal',
+      s: (
+        <>
+          Trade beside the network and see who calls the hour better. <Link href="/bpp9000">Open BPP-9000</Link>
+        </>
+      ),
+      done: Boolean(me.bpp && me.bpp.trades > 0),
+      gain: `+${POWER.trade} a trade`,
+    },
+  ]
+  const first = steps.findIndex(x => !x.done)
+  return (
+    <section>
+      <h2 className="me-h">How to grow</h2>
+      <div className="me-steps">
+        {steps.map((x, i) => (
+          <div className={`me-step${x.done ? ' done' : i === first ? ' now' : ''}`} key={x.t}>
+            <i>{x.done ? '✓' : i + 1}</i>
+            <div>
+              <b>{x.t}</b>
+              <span>{x.s}</span>
+            </div>
+            <em>{x.done ? 'done' : x.gain}</em>
+          </div>
+        ))}
       </div>
     </section>
   )

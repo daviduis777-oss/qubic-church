@@ -50,15 +50,15 @@ export function earned(f: MedalFacts): MedalId[] {
 export const POWER = { solution: 10, medal: 100, article: 50, reply: 5, trade: 1, tradeCap: 200 } as const
 
 export const LEVELS = [
-  { name: 'Spark', at: 0 },
-  { name: 'Ember', at: 250 },
-  { name: 'Flame', at: 1_000 },
-  { name: 'Blaze', at: 3_000 },
-  { name: 'Star', at: 10_000 },
-  { name: 'Constellation', at: 30_000 },
-  { name: 'Nova', at: 100_000 },
-  { name: 'Supernova', at: 300_000 },
-  { name: 'Pulsar', at: 1_000_000 },
+  { name: 'Spark', at: 0, gives: 'Your star in the QC sky and this cabinet.' },
+  { name: 'Ember', at: 250, gives: 'Your level shows next to your name in the Crypt.' },
+  { name: 'Flame', at: 1_000, gives: 'A flame ring around your picture, everywhere on the site.' },
+  { name: 'Blaze', at: 3_000, gives: 'A vote in QC polls: what we build next.' },
+  { name: 'Star', at: 10_000, gives: 'Your name on your star: the sky shows who you are.' },
+  { name: 'Constellation', at: 30_000, gives: 'New QC tools before everyone else.' },
+  { name: 'Nova', at: 100_000, gives: 'A medal of your own, designed with you.' },
+  { name: 'Supernova', at: 300_000, gives: 'Your story told in the Crypt.' },
+  { name: 'Pulsar', at: 1_000_000, gives: 'Your name cut into the founding stone of QC, for good.' },
 ] as const
 
 export type PowerFacts = { solutions: number; medals: number; articles: number; replies: number; trades: number }
