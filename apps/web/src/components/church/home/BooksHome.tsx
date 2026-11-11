@@ -141,7 +141,7 @@ export function BooksHome({ locale = 'en' }: { locale?: Locale }) {
           </div>
           <dl className="grid gap-px self-start bg-border sm:grid-cols-2">
             {[
-              ['Independent', 'Qubic Church is an independent research project. It is not the Qubic core team and does not speak for Qubic. QC is the name under which Qubic Church publishes its books and research.'],
+              ['Independent', 'Qubic Church is an independent research project. QC is the name under which Qubic Church publishes its books and research.'],
               ['No financial advice', 'Nothing here promises returns, sells a token or tells you to buy one. Mining costs and results are described as they are, with no promised income.'],
               ['Sourced', 'Come-from-Beyond is quoted word for word, with the date and the place. Claims link their primary source; what could not be confirmed stays marked as an open question.'],
               ['A name, not a religion', '“Church” is a tribute to the old institutions that kept knowledge. Here faith is replaced by verification: every claim can be checked in code or in the record.'],
