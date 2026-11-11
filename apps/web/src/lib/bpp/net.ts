@@ -54,10 +54,23 @@ function dailyCloses(fp: Rec['searchReplay']['finalPredictions'], windows: numbe
   return out
 }
 
+const MAX_DRAWN = 64
+
 export async function bestNetwork(): Promise<NetData> {
   try {
     const ep = await get<{ items: { epoch: number; algoFamily: string; solutions: number }[] }>('/epochs', 300)
-    const cur = ep.items.filter(e => e.algoFamily === 'bpp9000').sort((a, b) => b.epoch - a.epoch)[0]
+    // The page draws the 32-neuron network. From epoch 239 the core grows 1024 neurons, which this drawing was not
+    // made for (Bob, 11.11: keep the 32 view), so show the latest epoch whose population is still small.
+    const eps = ep.items.filter(e => e.algoFamily === 'bpp9000').sort((a, b) => b.epoch - a.epoch).slice(0, 4)
+    let cur: (typeof eps)[number] | undefined
+    for (const e of eps) {
+      const info = await get<{ scoringParameters?: { parameters?: { populationThreshold?: number } }[] }>(`/epochs/${e.epoch}`, 3600)
+      const pop = Number(info.scoringParameters?.[0]?.parameters?.populationThreshold ?? 0)
+      if (pop > 0 && pop <= MAX_DRAWN) {
+        cur = e
+        break
+      }
+    }
     if (!cur) throw new Error('no epoch')
     const list = await get<{ items: Sol[] }>(`/solutions?algorithm=BPP9000&epoch=${cur.epoch}&status=verified&limit=100`, 600)
     const best = list.items.filter(s => typeof s.verification?.score === 'number').sort((a, b) => a.verification!.score! - b.verification!.score!)[0]
@@ -65,7 +78,7 @@ export async function bestNetwork(): Promise<NetData> {
     const r = await get<Rec>(`/solutions/${best.hash}/reconstruction`, 3600)
     const m = r.metrics
     const k = m.neighborsPerNeuron
-    if (m.lutEntriesPerNeuron !== 3 ** k || r.topology.nodes.length !== m.population) throw new Error('format')
+    if (m.lutEntriesPerNeuron !== 3 ** k || r.topology.nodes.length !== m.population || m.population > MAX_DRAWN) throw new Error('format')
     const nodes = r.topology.nodes.slice().sort((a, b) => a.id - b.id)
     return {
       hash: best.hash,
