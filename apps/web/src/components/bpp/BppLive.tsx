@@ -4,7 +4,6 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { replay, type NetData } from '@/lib/bpp/sim'
 import { useRecord } from './TrackRecord'
 import { nx, sans } from './fonts'
-import { sound } from '@/lib/sound/engine'
 
 const NX = nx.style.fontFamily
 const SANS = sans.style.fontFamily
@@ -183,6 +182,10 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
     let cy = 0
     let R = 0
     let HUB = 0
+    // 32 neurons sit on one ring with their symbols; 1024 need several rings, small dots, and the wires drawn once
+    const BIG = N > 64
+    let DOT = 0
+    const wireLayer = document.createElement('canvas')
     const layout = () => {
       const w = host.current!.clientWidth
       S = Math.min(w, 640)
@@ -198,10 +201,28 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
       HUB = R * 0.5
       const others = [...Array(N).keys()].filter(n => n !== CT && n !== OUT)
       P = []
-      others.forEach((n, i) => {
-        const a = (i / others.length) * Math.PI * 2 - Math.PI / 2 + Math.PI / others.length
-        P[n] = [cx + R * Math.cos(a), cy + R * Math.sin(a)]
-      })
+      if (!BIG) {
+        others.forEach((n, i) => {
+          const a = (i / others.length) * Math.PI * 2 - Math.PI / 2 + Math.PI / others.length
+          P[n] = [cx + R * Math.cos(a), cy + R * Math.sin(a)]
+        })
+      } else {
+        // concentric rings between the hub and the year ring, each holding neurons in proportion to its length
+        const RINGS = 5
+        const radii = Array.from({ length: RINGS }, (_, i) => R * (0.66 + (0.34 * i) / (RINGS - 1)))
+        const total = radii.reduce((a, b) => a + b, 0)
+        let at = 0
+        radii.forEach((rr, ri) => {
+          const count = ri === RINGS - 1 ? others.length - at : Math.round((others.length * rr) / total)
+          for (let i = 0; i < count; i++) {
+            const n = others[at + i]!
+            const a = (i / count) * Math.PI * 2 - Math.PI / 2 + (ri % 2 ? Math.PI / count : 0)
+            P[n] = [cx + rr * Math.cos(a), cy + rr * Math.sin(a)]
+          }
+          at += count
+        })
+        DOT = Math.max(1.2, Math.min(3.2, ((2 * Math.PI * R * 0.66) / (others.length / RINGS)) * 0.36))
+      }
       P[CT] = [cx - HUB - S * 0.01, cy]
       P[OUT] = [cx + HUB + S * 0.01, cy]
       links = []
@@ -217,6 +238,20 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
         const mx = (x1 + x2) / 2
         const my = (y1 + y2) / 2
         links.push([x1, y1, mx + (cx - mx) * 0.3, my + (cy - my) * 0.3, x2, y2])
+      }
+      // the wires do not change within an hour: draw them once
+      wireLayer.width = cv.width
+      wireLayer.height = cv.height
+      const wg = wireLayer.getContext('2d')!
+      wg.setTransform(pr, 0, 0, pr, 0, 0)
+      wg.lineWidth = BIG ? 0.5 : 0.8
+      wg.strokeStyle = BIG ? 'rgba(255,205,110,.035)' : 'rgba(255,205,110,.09)'
+      for (const c of links) {
+        if (!c) continue
+        wg.beginPath()
+        wg.moveTo(c[0]!, c[1]!)
+        wg.quadraticCurveTo(c[2]!, c[3]!, c[4]!, c[5]!)
+        wg.stroke()
       }
     }
     layout()
@@ -279,12 +314,13 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
               if (c) pulses.push({ c, t0: now + Math.random() * tickMs * 0.9, lit: p[sim.w.nb[n * d.k + k]!] !== 2 })
             }
           }
-      if (pulses.length > 180) pulses = pulses.slice(-180)
+      if (pulses.length > (BIG ? 48 : 180)) pulses = pulses.slice(BIG ? -48 : -180)
       // the sound keeps time with the machine: a crackle as neurons flip, a relay and a note as it names an hour
-      if (flips) sound().zap(Math.min(1, (flips / N) * 3), (Math.random() - 0.5) * 0.8)
+      // sound off on the network for now (with 1024 neurons it crackled every tick); Bob 11.11
+      void flips
       const h = emitsUpTo(T)
       if (h !== lastH) {
-        if (!first && lastH >= 0 && h > 0) sound().call(sim.emitVal[h - 1] === 1, sim.emitVal[h - 1] === sim.exp[h - 1])
+        // (the per-hour chime is off for now too)
         ansFade = 0
         lastH = h
         const calls: View['calls'] = []
@@ -330,16 +366,11 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
         g.fillStyle = m.frac <= h / yearSpan ? 'rgba(236,223,203,.75)' : 'rgba(236,223,203,.3)'
         g.fillText(m.label, cx + (RR + S * 0.028) * Math.cos(am), cy + (RR + S * 0.028) * Math.sin(am))
       }
-      // wires
-      g.lineWidth = 0.8
-      g.strokeStyle = 'rgba(255,205,110,.09)'
-      for (const c of links) {
-        if (!c) continue
-        g.beginPath()
-        g.moveTo(c[0]!, c[1]!)
-        g.quadraticCurveTo(c[2]!, c[3]!, c[4]!, c[5]!)
-        g.stroke()
-      }
+      // wires (cached layer)
+      g.save()
+      g.setTransform(1, 0, 0, 1, 0, 0)
+      g.drawImage(wireLayer, 0, 0)
+      g.restore()
       // pulses into neurons that just changed
       pulses = pulses.filter(q => now - q.t0 < PULSE)
       g.lineCap = 'round'
@@ -354,7 +385,7 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
         g.quadraticCurveTo(q.c[2]!, q.c[3]!, q.c[4]!, q.c[5]!)
         g.stroke()
         g.strokeStyle = q.lit ? 'rgba(255,227,176,.95)' : 'rgba(255,205,110,.45)'
-        g.lineWidth = q.lit ? 2 : 1.4
+        g.lineWidth = BIG ? (q.lit ? 1.4 : 1) : q.lit ? 2 : 1.4
         g.beginPath()
         for (let i = 0; i <= 8; i++) {
           const [px, py] = qp(q.c, tail + ((t - tail) * i) / 8)
@@ -429,7 +460,24 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
       g.font = `500 ${Math.max(9, S * 0.0165)}px ${SANS}`
       g.fillText(`${((sim.hits[h]! / Math.max(1, h)) * 100).toFixed(1)}% matched · tick ${T.toLocaleString('en-US')}`, cx, cy + HUB * 0.52)
       // neurons
+      if (BIG) {
+        for (let n = 0; n < N; n++) {
+          if (n === CT || n === OUT) continue
+          const [x, y] = P[n]!
+          const w = wt[n]!
+          // dim when '?', amber when '−', bright cream when '+'
+          const rr = Math.round(w[0]! * 150 + w[1]! * 255 + w[2]! * 70)
+          const gg = Math.round(w[0]! * 98 + w[1]! * 232 + w[2]! * 62)
+          const bb = Math.round(w[0]! * 40 + w[1]! * 190 + w[2]! * 70)
+          const r = DOT
+          g.fillStyle = `rgb(${rr},${gg},${bb})`
+          g.beginPath()
+          g.arc(x, y, r, 0, 7)
+          g.fill()
+        }
+      }
       for (let n = 0; n < N; n++) {
+        if (BIG && n !== CT && n !== OUT) continue
         const [x, y] = P[n]!
         const big = n === CT || n === OUT
         const r = big ? S * 0.027 : S * 0.0195
@@ -505,7 +553,7 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
     <div>
       <div ref={host} style={{ width: '100%', display: 'grid', placeItems: 'center', minHeight: 320 }}>
         {d ? (
-          <canvas ref={canvas} aria-label="The BPP-9000 network running live: 32 neurons, their states and the hour the network calls" role="img" />
+          <canvas ref={canvas} aria-label={`The BPP-9000 network running live: ${d?.n ?? 32} neurons, their states and the hour the network calls`} role="img" />
         ) : (
           <div className="mute" style={{ fontSize: 13 }}>
             Loading the network from the miners…
