@@ -217,11 +217,11 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
           for (let i = 0; i < count; i++) {
             const n = others[at + i]!
             const a = (i / count) * Math.PI * 2 - Math.PI / 2 + (ri % 2 ? Math.PI / count : 0)
-            P[n] = [cx + rr * Math.cos(a), cy + rr * Math.sin(a)]
+            P[n] = [Math.round(cx + rr * Math.cos(a)) + 0.5, Math.round(cy + rr * Math.sin(a)) + 0.5]
           }
           at += count
         })
-        DOT = Math.max(1.2, Math.min(3.2, ((2 * Math.PI * R * 0.66) / (others.length / RINGS)) * 0.36))
+        DOT = Math.max(1.6, Math.min(3.2, ((2 * Math.PI * R * 0.66) / (others.length / RINGS)) * 0.38))
       }
       P[CT] = [cx - HUB - S * 0.01, cy]
       P[OUT] = [cx + HUB + S * 0.01, cy]
@@ -294,7 +294,8 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
     // Smooth display: every tick is real, but each neuron's colour glides toward its state with inertia,
     // and pulses start staggered and travel slowly, so the picture flows instead of flickering.
     const PULSE = 1100
-    const TAU = 240
+    // a big network flips hundreds of neurons a tick: let colours glide slowly so it breathes instead of flickering
+    const TAU = BIG ? 1400 : 240
     const wt = Array.from({ length: N }, () => [0, 0, 1])
     let shown: Uint8Array = sim.states[0]!
     let lastFrame = 0
@@ -311,7 +312,7 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
             pop[n] = 1
             for (let k = 0; k < d.k; k++) {
               const c = links[n * d.k + k]
-              if (c) pulses.push({ c, t0: now + Math.random() * tickMs * 0.9, lit: p[sim.w.nb[n * d.k + k]!] !== 2 })
+              if (c && !BIG) pulses.push({ c, t0: now + Math.random() * tickMs * 0.9, lit: p[sim.w.nb[n * d.k + k]!] !== 2 })
             }
           }
       if (pulses.length > (BIG ? 48 : 180)) pulses = pulses.slice(BIG ? -48 : -180)
