@@ -8,4 +8,4 @@ export const INDEXING =
   (process.env.NEXT_PUBLIC_INDEXING !== '0' && process.env.VERCEL_ENV === 'production')
 
 export const SITE_DESCRIPTION =
-  'Independent research on Qubic, Aigarth and Come-from-Beyond, not affiliated with the Qubic core team: two free books by QC, an open research log with primary sources and an open re-check of its own findings.'
+  'Independent research on Qubic, Aigarth and Come-from-Beyond: two free books by QC, an open research log with primary sources and an open re-check of its own findings.'
