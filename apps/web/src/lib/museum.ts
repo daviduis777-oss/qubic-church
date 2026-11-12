@@ -688,6 +688,34 @@ export const ANNA: Exhibit[] = [
     ],
   },
   {
+    kind: 'talk',
+    at: '2026-06-24T12:34:00Z',
+    ask: {
+      who: 'Joji',
+      text: 'Let me understand. 1. Seven diferent anna.exe o 7 versions of same thing? 2. Do we have to touch 0 in 1 of them or all of them? 3. Is it good we save 7 diferent data files (one data file for each exe)? 4. Is better to run all the same file at the same time? 5. can we run all exe’s at same time?',
+    },
+    text: '1. no\n2. all\n3. yes\n4. doesn’t matter\n5. yes',
+  },
+  { kind: 'chat', at: '2026-06-24T12:37:00Z', who: 'neener neener', text: '1583\nown file\ngood it’s still moving' },
+  {
+    kind: 'talk',
+    at: '2026-06-25T11:39:00Z',
+    ask: { who: 'neener neener', text: '529' },
+    text: '@neener neener what score you have, I’ve just found a trick how to microimprove on long-stuck scores\nhold on',
+  },
+  {
+    kind: 'version',
+    id: 'n',
+    name: 'n.exe',
+    at: '2026-06-25T11:40:00Z',
+    built: '2026-06-25T11:40:16Z',
+    bytes: 149504,
+    sha256: 'b42acc2f89a4fa38856c8ccf7836e85af890c26288605269f8b500622b0e83cd',
+    format: 'Id: %3d | Epoch: %6d | Avg. ticks: %3d | Timeouts: %3d | SCORE: %5d + %5d = %5d (%4s) | %s-%d',
+    cfb: '550 is cap for tilda here',
+  },
+  { kind: 'talk', at: '2026-06-25T11:42:00Z', ask: { who: 'neener neener', text: 'crashes, is it AVX-2?' }, text: 'no\nmoment\nTest-7 capped at 550' },
+  {
     kind: 'mark',
     at: '2026-07-06',
     title: 'Anna.exe reaches 0',
@@ -698,6 +726,7 @@ export const ANNA: Exhibit[] = [
 
 // Scores people posted in the first days (lower is better, 0 is the goal). More will be added from the chat.
 export const RECORDS: { who: string; score: number; at: string; note: string }[] = [
+  { who: 'neener neener', score: 529, at: '2026-06-25T11:39:00Z', note: 'one of the seven tests' },
   { who: 'Come-from-Beyond', score: 0, at: '2026-06-24T07:44:00Z', note: 'the first zero on screen, 24 June; then the seven tests' },
   { who: 'ThatsNotMyCode', score: 11241, at: '2026-06-22T09:45:00Z', note: 'new score (since 18 June), shared Anna.data' },
   { who: 'Q979', score: 11265, at: '2026-06-22T09:44:00Z', note: 'new score (since 18 June), shared Anna.data' },

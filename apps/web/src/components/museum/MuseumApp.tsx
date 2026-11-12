@@ -114,6 +114,7 @@ const DAYS = [
   { at: '2026-06-17', sub: 'Joji saves 18 512 and cannot go lower. A new version is promised after the epoch.' },
   { at: '2026-06-18', sub: 'A new way to count the score: any number of threads, and the numbers no longer compare with the old ones.' },
   { at: '2026-06-19', sub: 'Why not run it on the whole network?' },
+  { at: '2026-06-25', sub: 'A trick for scores that are stuck: a file with Tilda capped at 550.' },
   { at: '2026-06-24', sub: 'Zero on Come-from-Beyond’s screen. Then seven tests, one file each, to be shared out.' },
   { at: '2026-06-22', sub: 'Two files in half an hour. The racers pass 11 300 on the new score.' },
   { at: '2026-06-21', sub: 'A faster file, and a new start from Come-from-Beyond’s progress.' },
@@ -318,7 +319,7 @@ export function MuseumApp() {
 
   const all = ANNA.slice().sort((a, b) => Date.parse(a.at) - Date.parse(b.at))
   const day = (d: string) => all.filter(e => e.at.startsWith(d))
-  const later = all.filter(e => e.at >= '2026-06-25')
+  const later = all.filter(e => e.at >= '2026-06-26')
 
   return (
     <main className={`mu ${bppFonts}`}>
