@@ -45,6 +45,8 @@ const AUG = AH('6 Aug 2026', 'qubic-all-hands-recap-august-6-2026')
 const MAY = AH('28 May 2026', 'qubic-all-hands-recap-may-28-2026')
 const APR = AH('30 Apr 2026', 'qubic-all-hands-recap-april-30-2026')
 const E100 = { label: 'qubic.org: Epoch 100 to 200', href: 'https://qubic.org/blog-detail/qubic-epoch-100-to-200-milestones-fastest-blockchain-decentralized-ai' }
+const X = (id: string, date: string) => ({ label: `Come-from-Beyond on X, ${date}`, href: `https://x.com/c___f___b/status/${id}` })
+const XQ = (text: string, when: string) => ({ text, when, where: 'X' })
 const THEFT = { label: 'Cointelegraph, 20 Oct 2026', href: 'https://cointelegraph.com/news/qubic-restarts-blockchain-opens-recovery-claims-after-14m-hack' }
 
 export const MOMENTS: Moment[] = [
@@ -196,6 +198,8 @@ export const MOMENTS: Moment[] = [
   { at: '2025-07-22', title: 'Aigarth code goes public', line: 'The Intelligent Tissue framework opens on GitHub.', kind: 'aigarth', major: true, quote: { text: 'Tests passed successfully, we are going to public now', when: '22 Jul 2025', where: D }, source: { label: 'github.com/Aigarth', href: 'https://github.com/Aigarth' } },
   { at: '2025-07-09', title: 'Two walls at once', line: 'Local extremum and overfitting solved together.', kind: 'aigarth' },
   { at: '2025-07-01', title: 'RPC 2.0', kind: 'network', source: E100 },
+  { at: '2025-05-28', title: 'Monero is a proof of concept', kind: 'mining', quote: XQ('$XMR mining is indeed a PoC and we are going to run it for a while. After Oracle Machines are implemented we’ll see if it makes sense to sell #Qubic computing power to companies.', '28 May 2025'), source: X('1927823638754996352', '28 May 2025') },
+  { at: '2025-05-22', title: 'Monero via Qubic beats Monero direct', kind: 'mining', quote: XQ('There is a point at which mining #Monero via #Qubic is more profitable than mining it directly...', '22 May 2025'), source: X('1925588570426818630', '22 May 2025') },
   {
     at: '2025-05-18',
     title: 'Qubic turns to Monero',
@@ -208,28 +212,53 @@ export const MOMENTS: Moment[] = [
   { at: '2025-03-22', title: 'Madrid Hackathon', line: 'The first live smart-contract deployments on testnet.', kind: 'network', source: E100 },
 
   /* ---------- 2024 ---------- */
+  { at: '2024-12-28', title: 'The Manhattan Project of AI', kind: 'aigarth', quote: XQ('#Aigarth is to #AI as the Manhattan Project is to atomic bomb.', '28 Dec 2024'), source: X('1873136509467181552', '28 Dec 2024') },
   { at: '2024-12-04', title: 'The midpoint of Aigarth', line: 'From generating networks to training them; Anna learns addition.', kind: 'aigarth', major: true, quote: { text: 'It’s the 2nd milestone of Aigarth. The first was 3 years ago.', when: '4 Dec 2024', where: D } },
   { at: '2024-12-15', approx: 'December 2024', title: 'Toward an AGI with Aigarth', line: 'The position paper.', kind: 'science', source: E100 },
+  { at: '2024-09-04', title: 'Mining with idle phases', line: 'Interleaved mining with idling switches on; the idle time is meant for user-defined computing.', kind: 'mining', source: X('1830852947128778945', '3 Sep 2024') },
+  { at: '2024-08-29', title: 'AI that only its creator can improve', line: 'A way to protect a grown AI as property, like a security hologram.', kind: 'aigarth', source: X('1829128009573335516', '29 Aug 2024') },
   { at: '2024-08-18', title: 'Where intelligence starts', kind: 'aigarth', quote: { text: 'The moment of intelligence emergence can probably be spotted when interconnections implement a function which doesn’t have the inverse function.', when: '18 Aug 2024', where: D } },
   { at: '2024-08-01', title: 'Project X', epoch: 123, line: 'Max supply cut from 1,000 to 200 trillion.', kind: 'economy', major: true, source: E100 },
   { at: '2024-07-23', title: 'The midpoint is named', kind: 'aigarth', quote: { text: 'Now we see that the 4th of Dec, 2024 will be the mid-point of our road to Aigarth. After that date we are starting working on practically usable AIs.', when: '23 Jul 2024', where: D } },
   { at: '2024-07-17', title: 'QUBIC on MEXC', line: 'After XT (20 June) and Bitget (29 June).', kind: 'economy', source: { label: 'Invezz, 17 Jul 2024', href: 'https://invezz.com/news/2024/07/17/qubic-announces-token-listing-on-mexc-alongside-ambitious-2024-roadmap' } },
+  { at: '2024-06-03', approx: 'June 2024', title: 'A new mining algorithm', line: 'Networks start changing other networks; Aigarth watches why.', kind: 'mining', quote: XQ('In 3 weeks #Qubic is changing its mining algorithm. For #Aigarth it means less control over #AI, we’ll be watching artificial neural networks trying to get why they change other ANNs one way or another.', '13 May 2024'), source: X('1789998588342231474', '13 May 2024') },
+  { at: '2024-05-29', title: 'MyLastMatch IPO', line: 'Another smart contract auctions its 676 shares.', kind: 'network', source: X('1795793676200747109', '29 May 2024') },
+  { at: '2024-05-14', title: 'AI will not be created, it will emerge', kind: 'aigarth', major: true, quote: XQ('#Aigarth’s main goal is to discover a new paradigm allowing to create true #AI, I have just seen the wireframe of this paradigm. And I have realized that Artificial Intelligence will not be created, it will emerge. With help of #Qubic miners.', '14 May 2024'), source: X('1790183387803930999', '14 May 2024') },
+  { at: '2024-05-01', title: 'The level of the human brain', line: 'Synapses per neuron reach the human count.', kind: 'aigarth', major: true, quote: XQ('After many steps of gradual synapses-per-neuron increase, we have finally reached the level of the human brain.', '1 May 2024'), source: X('1785656705251999881', '1 May 2024') },
   { at: '2024-04-18', title: 'A neuron like a transistor', kind: 'aigarth', quote: { text: 'No, we found neuron which behaves like a transistor.', when: '18 Apr 2024', where: D } },
 
   /* ---------- 2023 and before ---------- */
+  { at: '2024-04-05', approx: 'April 2024', title: 'Qx gets its order book', line: 'The matching engine of the decentralized exchange is finished; anyone can run a front end.', kind: 'network', source: X('1773278793408393530', '28 Mar 2024') },
+  { at: '2024-03-25', title: 'Aigarth runs on mining power', kind: 'aigarth', quote: XQ('Now, after 2 years of research, we can state with high level of confidence that success of #Aigarth depends on #Qubic mining power.', '25 Mar 2024'), source: X('1772126408073941341', '25 Mar 2024') },
+  { at: '2024-03-19', title: 'Not blockchain but quorum', kind: 'network', quote: XQ('Some corrected misconceptions about #Qubic: 1. Not #blockchain but #quorum. 2. Not #L1 but #L0. 3. Not quasi-finality but true #finality. 4. Not #AI but #AGI.', '19 Mar 2024'), source: X('1770089068442849386', '19 Mar 2024') },
+  { at: '2024-03-07', title: 'Gold nuggets and Rings of Power', kind: 'aigarth', quote: XQ('Short explanation of mining in #Qubic and its goal: 1. Miners find gold nuggets. 2. #Aigarth forges golden Rings of Power. 3. Humans wear and use these Rings.', '7 Mar 2024'), source: X('1765630976548360504', '7 Mar 2024') },
+  { at: '2023-12-13', title: 'The third smart contract IPO', line: 'A week of bidding in QUBIC for 676 shares, 13 to 20 December.', kind: 'network', source: X('1734518712063946798', '12 Dec 2023') },
   { at: '2023-11-20', title: 'Looking for the first signs', kind: 'aigarth', quote: { text: 'Now we are looking for threshold time when we can notice first signs of AI.', when: '20 Nov 2023', where: D } },
+  { at: '2023-11-10', title: 'A billion transactions, zero fees', line: 'A 40 million TPS stress test.', kind: 'network', quote: XQ('#Qubic already passed 1 billion tx limit during 40M tps stresstest, that cost zero in fees because Qubic is feeless for users.', '10 Nov 2023'), source: X('1722908411329642530', '10 Nov 2023') },
+  { at: '2023-07-05', approx: 'July 2023', title: 'Qx: the first smart contract IPO', line: 'Shares of Qx, the first decentralized exchange on Qubic, are auctioned to the community.', kind: 'network', major: true, quote: XQ('Undust your #Qubic tokens, #Qx shares sale is going to happen next week.', '29 Jun 2023'), source: X('1674430421814374401', '29 Jun 2023') },
   { at: '2023-03-21', title: 'A breakthrough on the DIKW pyramid', kind: 'aigarth', quote: { text: 'We have got a breakthrough recently, related to concept of DIKW pyramid. It may be a fundamental change of point of view on AI development.', when: '21 Mar 2023', where: D } },
+  { at: '2023-02-26', title: 'Transfers now, Oracle Machines next', kind: 'network', quote: XQ('We are already doing transfers on #Qubic, so #Bitcoin functionality is ready, #Ethereum is next, and then something novel for #cryptocurrency industry - #Oracle machines.', '26 Feb 2023'), source: X('1629935040372023299', '26 Feb 2023') },
   { at: '2023-01-07', title: 'Cargo cult', line: 'On the AI everyone was talking about.', kind: 'aigarth', quote: { text: 'What we see now is just a variant of cargo cult - AI generates phrases and often they sound reasonable but we cannot rely on anything it says.', when: '7 Jan 2023', where: D } },
+  { at: '2022-10-01', title: 'Payments with no connection at all', line: 'The problem he worked on in IOTA, solved in Qubic.', kind: 'network', source: X('1576307943741349888', '1 Oct 2022') },
+  { at: '2022-09-29', title: 'Sub-second finality', kind: 'network', major: true, quote: XQ('#Qubic has reached sub-second finality (0.4s on average for last several hours).', '29 Sep 2022'), source: X('1575400053514158081', '29 Sep 2022') },
+  { at: '2022-05-20', title: '676 computors, 26 × 26', line: 'Each marked with a two-letter code.', kind: 'network', source: X('1527606032767373313', '20 May 2022') },
   {
     at: '2022-04-13',
-    title: 'Mining begins',
-    line: 'Qubic’s first real mining. Five years later is the date everything points at.',
+    title: 'Qubic 1.0.0: mining begins',
+    line: 'The network goes live with 676 computors and useful proof of work. Five years later is the date everything points at.',
     kind: 'network',
     major: true,
-    quote: { text: 'Qubic launch is an important step toward Aigarth, a project aiming to compete against projects like [OpenAI].', when: '13 Apr 2022' },
-    source: { label: 'What is Qubic?', href: '/what-is-qubic' },
+    quote: XQ('#Qubic 1.0.0 has been launched.', '13 Apr 2022'),
+    source: X('1514213834952740878', '13 Apr 2022'),
   },
+  { at: '2022-04-13T01:00:00Z', title: 'A step toward Aigarth', line: 'The same day he names what the launch is for, linking NVIDIA’s DGX H100 as the scale to beat.', kind: 'aigarth', quote: XQ('#Qubic launch is an important step toward #Aigarth, a project aiming to compete against projects like [NVIDIA DGX H100].', '13 Apr 2022'), source: X('1514285603776573443', '13 Apr 2022') },
+  { at: '2022-01-31', title: 'Running on bare metal', line: 'No operating system: the node owns the caches.', kind: 'network', quote: XQ('#Qubic works on bare metal without any OS.', '31 Jan 2022'), source: X('1488237642957434882', '31 Jan 2022') },
+  { at: '2022-01-06', title: 'The first network miners trained', kind: 'aigarth', major: true, quote: XQ('This is an artificial neural network #Qubic miners have trained so far.', '6 Jan 2022'), source: X('1479190905789759488', '6 Jan 2022') },
+  { at: '2021-12-30', title: 'Mined on CPUs', kind: 'mining', quote: XQ('#Qubic will be mined on CPUs on the current stage of GPU progress. GPUs are either slower or incapable to process large artificial neural networks.', '30 Dec 2021'), source: X('1476581406604156930', '30 Dec 2021') },
   { at: '2021-12-15', approx: 'December 2021', title: 'The proof of concept', line: 'The first milestone of Aigarth.', kind: 'aigarth' },
+  { at: '2021-12-11', title: 'The first miner, for testing', line: 'Single-core CPU miner released on Discord.', kind: 'mining', source: X('1469633054956306432', '11 Dec 2021') },
+  { at: '2021-10-08', title: 'A DEX from day one', kind: 'network', quote: XQ('#Qubic will be released with #DecentralizedExchange (as a proof-of-concept) thus allowing trading from the start.', '8 Oct 2021'), source: X('1446592382699507715', '8 Oct 2021') },
+  { at: '2021-09-22', title: 'No ICO', line: 'Useful proof of work instead of a token sale.', kind: 'economy', major: true, quote: XQ('There will be no ICO. Just start "mining" when Qubic is ready. Unlike #Bitcoin, here number crunching is useful, because it’s about running qubics aka quorum-based computations.', '22 Sep 2021'), source: X('1440724811483795461', '22 Sep 2021') },
 ]
 
 /** The questions the chat asks most, answered in his words. */
