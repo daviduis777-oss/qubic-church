@@ -81,26 +81,31 @@ function targetsOf(b64: string, bits: number): Uint8Array {
 async function extendTargets(base: Uint8Array, task: Genome['task'], need: number): Promise<Uint8Array | string> {
   if (base.length >= need) return base
   const OVERLAP = 48
-  const from = hourOfIndex(task, base.length - OVERLAP) - 3600
-  const closes = await hourlyCloses(from, hourOfIndex(task, need - 1))
+  const from = hourOfIndex(task, base.length - OVERLAP) - 4 * 3600
+  const closes = await hourlyCloses(from, hourOfIndex(task, need + 2))
   const at = new Map(closes.map(c => [c.hour, c.close]))
-  const dir = (i: number) => {
-    const h = hourOfIndex(task, i)
+  const dirAt = (h: number) => {
     const prev = at.get(h - 3600)
     const cur = at.get(h)
     return prev == null || cur == null ? null : dirOf(prev, cur)
   }
-  let off = 0
-  for (let i = base.length - OVERLAP; i < base.length; i++) if (dir(i) !== base[i]) off++
-  if (off) return `overlap ${off}/${OVERLAP}, closes ${closes.length}, first ${closes[0]?.hour}, want ${hourOfIndex(task, base.length - OVERLAP)}`
-  const out = new Uint8Array(need)
-  out.set(base)
-  for (let i = base.length; i < need; i++) {
-    const d = dir(i)
-    if (d == null) return `missing hour ${hourOfIndex(task, i)}`
-    out[i] = d
+  // which candle each target is about: find the alignment the shipped targets agree with
+  const tried: string[] = []
+  for (const off of [0, 1, -1, 2, -2]) {
+    let bad = 0
+    for (let i = base.length - OVERLAP; i < base.length; i++) if (dirAt(hourOfIndex(task, i + off)) !== base[i]) bad++
+    tried.push(`${off}:${bad}`)
+    if (bad) continue
+    const out = new Uint8Array(need)
+    out.set(base)
+    for (let i = base.length; i < need; i++) {
+      const d = dirAt(hourOfIndex(task, i + off))
+      if (d == null) return `missing hour ${hourOfIndex(task, i + off)}`
+      out[i] = d
+    }
+    return out
   }
-  return out
+  return `no alignment (${tried.join(' ')})`
 }
 
 type Rec = ExplorerReconstruction & { searchReplay?: { finalPredictions?: { taskMovements?: string; taskMovementBits?: number } } }
