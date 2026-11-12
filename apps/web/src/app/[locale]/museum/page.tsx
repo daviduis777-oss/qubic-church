@@ -8,8 +8,14 @@ export const metadata: Metadata = {
   title: MUSEUM_TITLE,
   description: MUSEUM_DESCRIPTION,
   alternates: { canonical: MUSEUM_URL, types: { 'text/markdown': MUSEUM_MD_URL } },
-  openGraph: { type: 'website', url: MUSEUM_URL, title: MUSEUM_TITLE, description: MUSEUM_DESCRIPTION },
-  twitter: { card: 'summary_large_image', title: MUSEUM_TITLE, description: MUSEUM_DESCRIPTION },
+  openGraph: {
+    type: 'website',
+    url: MUSEUM_URL,
+    title: MUSEUM_TITLE,
+    description: MUSEUM_DESCRIPTION,
+    images: [{ url: 'https://qubic.church/og-museum.jpg', width: 1200, height: 630, alt: 'Museum, Hall 1: Anna.exe' }],
+  },
+  twitter: { card: 'summary_large_image', title: MUSEUM_TITLE, description: MUSEUM_DESCRIPTION, images: ['https://qubic.church/og-museum.jpg'] },
 }
 
 export const revalidate = 3600
