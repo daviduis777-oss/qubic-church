@@ -96,7 +96,12 @@ const css = `
 `
 
 function Spark({ history, start, end }: { history: Point[]; start: string; end: string }) {
-  if (history.length < 2) return <p className="mute" style={{ margin: 0, fontSize: 13.5 }}>The line appears after the record falls a second time this epoch.</p>
+  if (history.length < 2)
+    return (
+      <p className="mute" style={{ margin: 0, fontSize: 13.5 }}>
+        The line appears after the record falls a second time this epoch.
+      </p>
+    )
   const W = 600
   const H = 90
   const t0 = start ? Date.parse(start) : Date.parse(history[0]!.t)
@@ -138,7 +143,10 @@ function Seats({ seats, cap, candidates, epoch }: { seats: number[]; cap: number
         </div>
         <div className="r55-seats-text">
           <span className="mute">
-            Computors whose network holds 55% for the full week ({cap} frames). The explorer counts the computors&apos; vote on the next hour once {NEED} of them qualify.
+            Computors whose network holds 55% for the full week ({cap} frames).{' '}
+            {full >= NEED
+              ? 'Enough have qualified: the explorer now counts their vote on the next hour.'
+              : `The explorer counts the computors' vote on the next hour once ${NEED} of them qualify.`}
           </span>
           {candidates > 0 ? (
             <span className="r55-seats-cand">
@@ -147,7 +155,11 @@ function Seats({ seats, cap, candidates, epoch }: { seats: number[]; cap: number
           ) : null}
         </div>
       </div>
-      <div aria-label={`${full} of ${seats.length} computors at the full week, ${moving} moving through frames, ${scored} scored`} className="r55-grid26" role="img">
+      <div
+        aria-label={`${full} of ${seats.length} computors at the full week, ${moving} moving through frames, ${scored} scored`}
+        className="r55-grid26"
+        role="img"
+      >
         {seats.map((f, i) => {
           const cls = f < 0 ? 'off' : f >= cap ? 'full' : f > 0 ? 'mid' : 'zero'
           const style = f > 0 && f < cap ? { opacity: 0.4 + (0.55 * f) / cap } : undefined
@@ -155,14 +167,26 @@ function Seats({ seats, cap, candidates, epoch }: { seats: number[]; cap: number
         })}
       </div>
       <div className="r55-seats-legend mute">
-        <span><i className="s-full" /> full week</span>
-        <span><i className="s-mid" /> moving through frames ({moving})</span>
-        <span><i className="s-zero" /> scored, below the mark</span>
-        <span><i className="s-off" /> not scored yet ({seats.length - scored})</span>
-        <span><i className="s-zero s-100" /> the 100th seat</span>
+        <span>
+          <i className="s-full" /> full week
+        </span>
+        <span>
+          <i className="s-mid" /> moving through frames ({moving})
+        </span>
+        <span>
+          <i className="s-zero" /> scored, below the mark
+        </span>
+        <span>
+          <i className="s-off" /> not scored yet ({seats.length - scored})
+        </span>
+        <span>
+          <i className="s-zero s-100" /> the 100th seat
+        </span>
       </div>
       <a className="r55-seats-link" href={`${EXPLORER}${epoch}`} rel="noopener noreferrer" target="_blank">
-        When {NEED} qualify, the explorer shows Factual Accuracy: the vote checked on hours each network never saw →
+        {full >= NEED
+          ? 'Factual Accuracy is live on the explorer: the vote checked on hours each network never saw →'
+          : `When ${NEED} qualify, the explorer shows Factual Accuracy: the vote checked on hours each network never saw →`}
       </a>
     </div>
   )
@@ -214,11 +238,17 @@ export function RaceTo55() {
       </div>
 
       <div className="r55-big">
-        <span aria-label={`${r.best} errors`} className="r55-best">{r.best}</span>
+        <span aria-label={`${r.best} errors`} className="r55-best">
+          {r.best}
+        </span>
         <div className="r55-sub">
           <b>{acc(r.best)}% right</b>
           <span className="mute" style={{ fontSize: 14 }}>
-            {fr.networks > 0 ? `The 55% mark is passed: ${fr.networks === 1 ? 'one network has' : `${fr.networks} networks have`} moved past it.` : done ? 'The 55% mark is reached.' : `${togo} errors to go to the 55% mark (${GOAL}).`}
+            {fr.networks > 0
+              ? `The 55% mark is passed: ${fr.networks === 1 ? 'one network has' : `${fr.networks} networks have`} moved past it.`
+              : done
+                ? 'The 55% mark is reached.'
+                : `${togo} errors to go to the 55% mark (${GOAL}).`}
           </span>
         </div>
       </div>
@@ -257,7 +287,8 @@ export function RaceTo55() {
           <div className="r55-frames-head">
             <b>Past the mark</b>
             <span className="mute">
-              {fr.networks} {fr.networks === 1 ? 'network' : 'networks'} ({fr.computors} {fr.computors === 1 ? 'computor' : 'computors'}) beat {GOAL} and moved forward in time. Each frame shifts its year one hour later; the cap is {fr.cap} hours, one week.
+              {fr.networks} {fr.networks === 1 ? 'network' : 'networks'} ({fr.computors} {fr.computors === 1 ? 'computor' : 'computors'}) beat {GOAL} and moved
+              forward in time. Each frame shifts its year one hour later; the cap is {fr.cap} hours, one week.
             </span>
           </div>
           <div className="r55-frames-bar" aria-label={`Furthest frame ${fr.best} of ${fr.cap}`} role="img">
@@ -265,7 +296,10 @@ export function RaceTo55() {
           </div>
           <div className="r55-ends mute">
             <span>frame 0</span>
-            <span>furthest: frame {fr.best} of {fr.cap}{fr.best >= fr.cap ? ', the full week' : ''}</span>
+            <span>
+              furthest: frame {fr.best} of {fr.cap}
+              {fr.best >= fr.cap ? ', the full week' : ''}
+            </span>
           </div>
         </div>
       ) : null}
@@ -276,14 +310,22 @@ export function RaceTo55() {
         <p className="r55-facts">
           <span>{int(r.info.neurons)} neurons</span>
           <span>{int(r.info.connections)} connections</span>
-          {r.info.solutions > 0 ? <span>{int(r.info.solutions)} solutions this epoch, {(Math.floor(r.info.verified * 10000) / 100).toFixed(2)}% verified</span> : <span>solutions archive catching up</span>}
+          {r.info.solutions > 0 ? (
+            <span>
+              {int(r.info.solutions)} solutions this epoch, {(Math.floor(r.info.verified * 10000) / 100).toFixed(2)}% verified
+            </span>
+          ) : (
+            <span>solutions archive catching up</span>
+          )}
           {r.info.core ? <span>core {r.info.core}</span> : null}
         </p>
       ) : null}
 
       <div className="r55-grid">
         <div style={{ display: 'grid', gap: 8 }}>
-          <span className="mute" style={{ fontSize: 13 }}>How the record fell this epoch</span>
+          <span className="mute" style={{ fontSize: 13 }}>
+            How the record fell this epoch
+          </span>
           <Spark end={r.end} history={r.history} start={r.start} />
         </div>
         <div style={{ display: 'grid', gap: 8 }}>
@@ -311,12 +353,13 @@ export function RaceTo55() {
         Data:{' '}
         <a className="mute" href={SOURCE} rel="noopener" style={{ textDecoration: 'underline', textUnderlineOffset: 3 }} target="_blank">
           Jetski Pool tracker
-        </a>
-        {' '}and{' '}
+        </a>{' '}
+        and{' '}
         <a className="mute" href={EXPLORER + r.epoch} rel="noopener" style={{ textDecoration: 'underline', textUnderlineOffset: 3 }} target="_blank">
           Jetski ANN Explorer
         </a>
-        , refreshed every minute. At {GOAL} errors (55% right, 0.45 × 8760) a network advances a frame: its year of hours moves forward and it ranks above every network that has not.
+        , refreshed every minute. At {GOAL} errors (55% right, 0.45 × 8760) a network advances a frame: its year of hours moves forward and it ranks above every
+        network that has not.
       </p>
     </section>
   )
