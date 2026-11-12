@@ -65,9 +65,14 @@ export function frameErrors(em: Uint8Array, targets: Uint8Array, shift: number, 
   return e
 }
 
-/** The hour that target i is about: the candle opening at start + i hours. */
-export const hourOfIndex = (task: BrainTask, i: number) => task.start + i * 3600
-export const indexOfHour = (task: BrainTask, hour: number) => (hour - task.start) / 3600
+/**
+ * The hour that target i is about: the candle opening at start + (i + 1) hours (the explorer's firstTargetUnix),
+ * graded on its rounded close against the previous candle's. Checked on epoch 239: with this alignment the
+ * exchange agrees with all 48 last shipped targets and the replay gives the verified score exactly; one hour
+ * earlier agrees on about half, as chance would.
+ */
+export const hourOfIndex = (task: BrainTask, i: number) => task.start + (i + 1) * 3600
+export const indexOfHour = (task: BrainTask, hour: number) => (hour - task.start) / 3600 - 1
 
 /** The task's own direction rule: the hour's rounded close against the previous rounded close; flat is up. */
 export const dirOf = (prevClose: number, close: number): 0 | 1 => (Math.round(close) - Math.round(prevClose) >= 0 ? 1 : 0)

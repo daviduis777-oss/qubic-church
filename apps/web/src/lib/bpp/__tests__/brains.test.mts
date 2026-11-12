@@ -67,9 +67,9 @@ test('the emulator reproduces the explorer-verified score and the holdout call o
   assert.equal(B.dirOf(100000.4, 100000.6), 1, 'rounding to whole dollars first')
 })
 
-test('hour indexing: target 0 is the hour that opens at the task start and closes at the first target time', () => {
-  assert.equal(B.hourOfIndex(task, 0) + 3600, fx.task.firstTargetUnix)
-  assert.equal(B.indexOfHour(task, fx.task.sourceStartUnix + 8928 * 3600), 8928)
+test('hour indexing: target 0 is the candle that opens at the first target time', () => {
+  assert.equal(B.hourOfIndex(task, 0), fx.task.firstTargetUnix)
+  assert.equal(B.indexOfHour(task, fx.task.sourceStartUnix + 8929 * 3600), 8928)
 })
 
 test('live check: only hours after the loaded sequence count, not-sure calls are skipped, the rest are graded', () => {

@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
-import type { BrainRow, LiveHour } from '@/lib/bpp/brains-view'
+import { type BrainRow, hourOfIndex, indexOfHour, type LiveHour } from '@/lib/bpp/brains-view'
 import type { CheckedGenome, EnsembleResult, LiveResult, TopList } from '@/lib/bpp/brains'
 import { initial, step, wiring } from '@/lib/bpp/sim'
 import { luckChance } from '@/lib/bpp/stats'
@@ -303,7 +303,7 @@ function Ring({ g, live }: { g: CheckedGenome | null; live: LiveResult | null })
   const w = useMemo(() => (g ? wiring(g) : null), [g])
   const hourByIdx = useMemo(() => {
     const m = new Map<number, LiveHour>()
-    if (g && live) for (const h of live.hours) m.set((h.hour - g.task.start) / 3600, h)
+    if (g && live) for (const h of live.hours) m.set(indexOfHour(g.task, h.hour), h)
     return m
   }, [g, live])
   const timer = useRef<ReturnType<typeof setInterval> | undefined>(undefined)
@@ -316,7 +316,7 @@ function Ring({ g, live }: { g: CheckedGenome | null; live: LiveResult | null })
     let i = 0
     let c: 0 | 1 | 2 | null = null
     const start = g.task.hours
-    const last = live?.hours.at(-1) ? (live.hours.at(-1)!.hour - g.task.start) / 3600 : start + 168
+    const last = live?.hours.at(-1) ? indexOfHour(g.task, live.hours.at(-1)!.hour) : start + 168
     const nextHour = () => {
       for (let guard = 0; guard < 2000; guard++) {
         s = step(g, w, s)
@@ -361,7 +361,7 @@ function Ring({ g, live }: { g: CheckedGenome | null; live: LiveResult | null })
     return { x: cx + R * Math.cos(a), y: cy + R * Math.sin(a) }
   }
   const here = g ? hourByIdx.get(idx - 1) : undefined
-  const hourNow = g ? g.task.start + (idx - 1) * 3600 : null
+  const hourNow = g ? hourOfIndex(g.task, idx - 1) : null
   return (
     <figure style={{ margin: 0, display: 'grid', gap: 10, justifyItems: 'center' }}>
       <svg aria-label="The brain: 32 neurons, their wiring and their states, ticking hour by hour" role="img" style={{ width: '100%', maxWidth: 420, height: 'auto' }} viewBox="0 0 380 380">
