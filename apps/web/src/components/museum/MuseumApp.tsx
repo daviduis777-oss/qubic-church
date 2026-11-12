@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { bppFonts } from '@/components/bpp/fonts'
-import { ANNA, type Chat, type Exhibit, HALLS, PRELUDE, RACERS, RECORDS, type Talk, type Version } from '@/lib/museum'
+import { ANNA, type Board, type Chat, type Exhibit, HALLS, HISTORIANS, PRELUDE, RACERS, RECORDS, type Talk, type Version } from '@/lib/museum'
 
 const css = `
 .mu{min-height:100svh;margin-bottom:-3rem;background:#dcdad4;color:#141416;font-family:var(--bpp-sans),system-ui,sans-serif;padding:96px 16px 140px}
@@ -41,9 +41,20 @@ const css = `
 .mu-c:before{content:"";position:absolute;left:-54px;top:8px;width:8px;height:8px;border-radius:50%;border:1.5px solid #141416;background:#dcdad4}
 @media (max-width:640px){.mu-c:before{left:-31px;width:6px;height:6px}}
 .mu-c time{font-variant-numeric:tabular-nums;font-size:13px;color:#8a877e;padding-top:2px}
-.mu-c>div{border-left:2px dashed #b9b6ad;padding-left:14px}
+.mu-c>div{min-width:0;border-left:2px dashed #b9b6ad;padding-left:14px}
 .mu-chat{margin:0;font-size:15px;line-height:1.5;color:#3d3b36;white-space:pre-line;font-style:italic}
 .mu-chat b{font-style:normal;font-weight:600;color:#141416}
+.mu-board ol{list-style:none;margin:10px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:6px;max-width:560px}
+@media (max-width:640px){.mu-board ol{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.mu-board li{display:grid;gap:2px;background:#f7f6f2;padding:8px 10px;box-shadow:0 1px 0 #b9b6ad}
+.mu-board li span{font-size:12px;color:#76736b}
+.mu-board li b{font-family:var(--bpp-nx),sans-serif;font-weight:400;font-size:26px;line-height:1;font-variant-numeric:tabular-nums}
+.mu-board li.z{background:#ffd21f}
+.mu-hist blockquote{margin:0;background:#141416;color:#f7f6f2;padding:22px 24px;display:grid;gap:8px;max-width:640px}
+.mu-hist time{color:#ffd21f;font-size:13px}
+.mu-hist blockquote p{margin:0;font-size:clamp(18px,2.4vw,22px);line-height:1.35;color:#f7f6f2}
+.mu-hist small{color:#9b988f;font-size:13.5px;line-height:1.5}
+.mu-hist a{color:#ffd21f;font-size:14px}
 .mu-crew{margin-top:72px;display:grid;gap:14px}
 .mu-crew ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
 .mu-crew li{background:#f7f6f2;padding:6px 12px;font-size:14.5px;box-shadow:0 1px 0 #b9b6ad}
@@ -114,6 +125,12 @@ const DAYS = [
   { at: '2026-06-17', sub: 'Joji saves 18 512 and cannot go lower. A new version is promised after the epoch.' },
   { at: '2026-06-18', sub: 'A new way to count the score: any number of threads, and the numbers no longer compare with the old ones.' },
   { at: '2026-06-19', sub: 'Why not run it on the whole network?' },
+  { at: '2026-06-26', sub: 'Dogecoin or Anna?' },
+  { at: '2026-06-29', sub: 'The racers keep their own board of the seven tests. Anna-2 is at zero; Anna-7 is the hardest.' },
+  { at: '2026-07-01', sub: 'A stuck week.' },
+  { at: '2026-07-05', sub: 'Anna-7.3 joins the board.' },
+  { at: '2026-07-06', sub: 'Anna-1 and Anna-2 at zero by morning. In the afternoon a new file for Anna-7, and a call for independent screenshots.' },
+  { at: '2026-07-03', sub: 'A daily status from the racers.' },
   { at: '2026-06-25', sub: 'A trick for scores that are stuck: a file with Tilda capped at 550.' },
   { at: '2026-06-24', sub: 'Zero on Come-from-Beyond’s screen. Then seven tests, one file each, to be shared out.' },
   { at: '2026-06-22', sub: 'Two files in half an hour. The racers pass 11 300 on the new score.' },
@@ -170,6 +187,32 @@ function Aside({ c }: { c: Chat }) {
         <p className="mu-chat">
           <b>{c.who}:</b> {c.text}
         </p>
+      </div>
+    </div>
+  )
+}
+
+function Tally({ b }: { b: Board }) {
+  return (
+    <div className="mu-c mu-board">
+      <time dateTime={b.at}>{hm(b.at)}</time>
+      <div>
+        {b.re && (
+          <p className="mu-ask">
+            <b>{b.re.who}:</b> {b.re.text}
+          </p>
+        )}
+        <p className="mu-chat">
+          <b>{b.who}:</b> {b.note ?? 'the seven tests'}
+        </p>
+        <ol>
+          {b.rows.map(([n, v]) => (
+            <li key={n} className={v === 0 ? 'z' : undefined}>
+              <span>{n}</span>
+              <b>{v.toLocaleString('en-US')}</b>
+            </li>
+          ))}
+        </ol>
       </div>
     </div>
   )
@@ -279,6 +322,7 @@ function Item({ e }: { e: Exhibit }) {
   if (e.kind === 'version') return <Vitrine v={e} />
   if (e.kind === 'talk') return <Say t={e} />
   if (e.kind === 'chat') return <Aside c={e} />
+  if (e.kind === 'board') return <Tally b={e} />
   return (
     <section className="mu-end">
       <time dateTime={e.at}>{dm(e.at)}</time>
@@ -319,7 +363,7 @@ export function MuseumApp() {
 
   const all = ANNA.slice().sort((a, b) => Date.parse(a.at) - Date.parse(b.at))
   const day = (d: string) => all.filter(e => e.at.startsWith(d))
-  const later = all.filter(e => e.at >= '2026-06-26')
+  const later = all.filter(e => e.at >= '2026-07-07')
 
   return (
     <main className={`mu ${bppFonts}`}>
@@ -363,15 +407,18 @@ export function MuseumApp() {
               </section>
             ))}
 
-          <h2 className="mu-day mu-gap">After</h2>
-          <p className="mu-sub">The race went on until July. More versions and records are being hung.</p>
-          {later.map((e, i) => (
-            <Item key={i} e={e} />
-          ))}
+          {later.length > 0 && (
+            <>
+              <h2 className="mu-day mu-gap">After</h2>
+              {later.map((e, i) => (
+                <Item key={i} e={e} />
+              ))}
+            </>
+          )}
         </div>
 
         <section className="mu-rec">
-          <h2 className="mu-h2">Scores from the first days</h2>
+          <h2 className="mu-h2">Scores</h2>
           <p>
             Lower is better. From 18 June the score is counted a new way, so the newer numbers are not comparable with the older ones. The full record book
             follows.
@@ -396,6 +443,21 @@ export function MuseumApp() {
               ))}
             </tbody>
           </table>
+        </section>
+
+        <section className="mu-crew mu-hist">
+          <h2 className="mu-h2">For historians</h2>
+          <p>Posts Come-from-Beyond marked for history himself. More will be hung here.</p>
+          {HISTORIANS.map(h => (
+            <blockquote key={h.href}>
+              <time dateTime={h.at}>{dm(h.at)}</time>
+              <p>{h.text}</p>
+              <small>{h.shows}</small>
+              <a href={h.href} target="_blank" rel="noopener noreferrer">
+                The post on X
+              </a>
+            </blockquote>
+          ))}
         </section>
 
         <section className="mu-crew">

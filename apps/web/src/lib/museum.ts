@@ -26,10 +26,22 @@ export type Version = {
 export type Talk = { kind: 'talk'; at: string; text: string; ask?: { who: string; text: string }; where?: { label: string; href: string } }
 // The chat around it: racers' lines, verbatim.
 export type Chat = { kind: 'chat'; at: string; who: string; text: string; re?: { who: string; text: string } }
+// A racers' board: where each of the seven tests stands on a day.
+export type Board = { kind: 'board'; at: string; who: string; re?: { who: string; text: string }; rows: [string, number][]; note?: string }
 export type Mark = { kind: 'mark'; at: string; title: string; text?: string; quote?: string }
-export type Exhibit = Version | Talk | Chat | Mark
+export type Exhibit = Version | Talk | Chat | Board | Mark
 
 export type Hall = { id: string; n: number; name: string; span: string; open: boolean; lead: string }
+
+// Posts Come-from-Beyond himself marked for history.
+export const HISTORIANS = [
+  {
+    at: '2022-01-07T19:19:00Z',
+    text: 'For historians, this is how the first #miner of #Qubic looks:',
+    href: 'https://x.com/c___f___b/status/1479533239681396753',
+    shows: 'A console: the top 10 miners out of 90, v0.3.0.x, an 11th Gen Intel i9-11900KF, "There are 29\'949\'573 errors left".',
+  },
+]
 
 export const HALLS: Hall[] = [
   {
@@ -38,7 +50,7 @@ export const HALLS: Hall[] = [
     name: 'Anna.exe',
     span: '10 June – 6 July 2026',
     open: true,
-    lead: 'One afternoon Come-from-Beyond posted a small Windows program and asked the chat to run it. By that evening there were seven versions, and the score had become an altitude. Two weeks later the screen showed zero; on 6 July all seven tests did.',
+    lead: 'One afternoon Come-from-Beyond posted a small Windows program and asked the chat to run it. By that evening there were seven versions, and the score had become an altitude. Two weeks later the screen showed zero, and then came seven harder tests.',
   },
 ]
 
@@ -715,11 +727,116 @@ export const ANNA: Exhibit[] = [
     cfb: '550 is cap for tilda here',
   },
   { kind: 'talk', at: '2026-06-25T11:42:00Z', ask: { who: 'neener neener', text: 'crashes, is it AVX-2?' }, text: 'no\nmoment\nTest-7 capped at 550' },
+  { kind: 'talk', at: '2026-06-26T16:51:00Z', ask: { who: 'sylentz', text: '4) Pick something that makes money' }, text: 'Let’s mine Anna\n3P finally?' },
+  {
+    kind: 'talk',
+    at: '2026-06-26T16:52:00Z',
+    ask: { who: 'QubicMaxi', text: 'You said there is a plan and doge os part of it, what is your perspective now?' },
+    text: 'A good general always pay attention to what his soldiers want',
+  },
+  { kind: 'chat', at: '2026-06-26T16:54:00Z', who: 'StoicAF', text: 'I’m still deciding whether or not to turn on FULL POWER' },
+  {
+    kind: 'chat',
+    at: '2026-06-29T15:56:00Z',
+    who: 's-csk',
+    text: 'Correct me if wrong, but basically we’re testing the concept the tissue of anna is self evolving without preset parameters. Basically, anna figures out how to get zero alone.',
+  },
+  {
+    kind: 'board',
+    at: '2026-06-29T15:58:00Z',
+    who: 'Come-from-Barber',
+    re: { who: 'Prima Materia', text: 'Hi Anna runners, do we have a recap for every Anna? How many to zero?' },
+    rows: [
+      ['Anna-1', 1550],
+      ['Anna-2', 0],
+      ['Anna-3', 2660],
+      ['Anna-4', 2615],
+      ['Anna-5', 2456],
+      ['Anna-6', 1066],
+      ['Anna-7', 177],
+    ],
+  },
+  {
+    kind: 'chat',
+    at: '2026-06-29T16:00:00Z',
+    who: 'neener neener',
+    text: 'Anna-7',
+    re: { who: 'Prima Materia', text: 'You are doing so well guys. Which one is the hardest Anna?' },
+  },
+  {
+    kind: 'chat',
+    at: '2026-06-29T16:08:00Z',
+    who: 'sylentz',
+    text: 'so is it safe to say we’ve hit a "local" minima using the presets in the current 177 data? Shouldn’t we start over from scratch to see if another sequence results in a better minimum?',
+  },
+  { kind: 'talk', at: '2026-07-01T05:43:00Z', text: 'If we focused on running Anna.exe that would be great' },
+  { kind: 'talk', at: '2026-07-01T05:46:00Z', text: 'Was there progress after 237?' },
+  { kind: 'chat', at: '2026-07-01T05:47:00Z', who: 'Q979', text: 'No', re: { who: 'Come-from-Beyond', text: 'Was there progress after 237?' } },
+  { kind: 'talk', at: '2026-07-01T05:48:00Z', text: 'Watching charts instead of mining?' },
+  {
+    kind: 'board',
+    at: '2026-07-03T08:27:00Z',
+    who: 'deni_x00',
+    rows: [
+      ['Anna-1', 1550],
+      ['Anna-2', 0],
+      ['Anna-3', 2660],
+      ['Anna-4', 2615],
+      ['Anna-5', 2403],
+      ['Anna-6', 563],
+      ['Anna-7', 177],
+      ['Anna-7.2', 234],
+    ],
+    note: 'daily anna data status. progress since yesterday: Anna-5 = -37, Anna-6 = -99',
+  },
+  { kind: 'chat', at: '2026-07-05T08:19:00Z', who: 'zuqka', text: 'Also reached 421 running it from when posted' },
+  { kind: 'chat', at: '2026-07-05T17:58:00Z', who: 'Joji', text: '@Come-from-Beyond anna-1 done?' },
+  { kind: 'chat', at: '2026-07-06T04:37:00Z', who: 'ThatsNotMyCode', text: 'Solved' },
+  {
+    kind: 'board',
+    at: '2026-07-06T06:12:00Z',
+    who: 'deni_x00',
+    rows: [
+      ['Anna-1', 0],
+      ['Anna-2', 0],
+      ['Anna-3', 1620],
+      ['Anna-4', 2302],
+      ['Anna-5', 2403],
+      ['Anna-6', 563],
+      ['Anna-7', 176],
+      ['Anna-7.2', 233],
+      ['Anna-7.3', 419],
+    ],
+    note: 'daily anna data status. progress since yesterday: Anna-1 = -1550, Anna-4 = -17, Anna 7.3 = -2',
+  },
+  {
+    kind: 'version',
+    id: 'energy',
+    name: 'Anna-7, energy optimization',
+    at: '2026-07-06T08:19:00Z',
+    built: '2026-07-06T08:18:49Z',
+    bytes: 149504,
+    sha256: 'ce27d2cc2647a0cd14268ae07abe5b13f745243aa9a33bb4169cdc583d8c80f9',
+    format: 'Test: %d | Avg. ticks: %3d | Timeouts: %3d | SCORE: %5d + %5d = %5d (%4s) | %s-%d',
+    cfb: 'Speaking of energy optimization, use this version for Anna-7 instead of the old one.\nUse empty Anna.data to start it',
+    console: {
+      by: 'Come-from-Beyond',
+      at: '2026-07-06T08:54:00Z',
+      lines: [
+        'Test: 7 | Avg. ticks:   5 | Timeouts:   0 | SCORE:   528 +     0 =   528 (    ) | FORWARD-6',
+        'Test: 7 | Avg. ticks:   5 | Timeouts:   0 | SCORE:   528 +     0 =   528 (    ) | FORWARD-6',
+        'Test: 7 | Avg. ticks:   5 | Timeouts:   0 | SCORE:     0 +     0 =     0 ( 528) | FORWARD-6',
+        'STORED.',
+      ],
+    },
+  },
+  { kind: 'talk', at: '2026-07-06T08:29:00Z', ask: { who: 'QubicChurch', text: 'tilda not working?' }, text: 'restart, a bug probably' },
+  { kind: 'talk', at: '2026-07-06T08:54:00Z', text: 'Need independent verification, run the file and post screenshot plz' },
   {
     kind: 'mark',
-    at: '2026-07-06',
+    at: '2026-07-06T23:00:00Z',
     title: 'Anna.exe reaches 0',
-    text: 'All seven tests at zero, with Come-from-Beyond’s pretrained file.',
+    text: 'The day the race is remembered by. The screenshots that close it are still being hung.',
     quote: 'It’s not a milestone. It’s much bigger.',
   },
 ]
@@ -747,6 +864,8 @@ export const RECORDS: { who: string; score: number; at: string; note: string }[]
 
 // The racers: everyone on the screenshots who ran Anna.exe and posted from it.
 export const RACERS = [
+  'Egregius',
+  'zuqka',
   '(22/7)42!',
   'aang1040',
   'B.',
