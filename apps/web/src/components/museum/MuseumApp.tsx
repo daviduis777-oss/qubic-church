@@ -143,6 +143,12 @@ const DAYS = [
   { at: '2026-06-15', sub: 'The keys settle: Tilda, 1 to 9, F2. His own progress comes with the file.' },
 ]
 
+const ERAS = [
+  { name: 'The first score, 10 to 18 June', from: '2026-06-10', to: '2026-06-18T10:57:00Z' },
+  { name: 'The new score, 18 to 24 June', from: '2026-06-18T10:57:00Z', to: '2026-06-24T07:40:00Z' },
+  { name: 'Zero and the seven tests, from 24 June', from: '2026-06-24T07:40:00Z', to: '2027' },
+]
+
 const hm = (iso: string) => new Date(iso).toISOString().slice(11, 16)
 const dm = (iso: string) => new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })
 const kb = (b: number) => `${(b / 1024).toFixed(1)} KB`
@@ -435,30 +441,37 @@ export function MuseumApp() {
 
         <section className="mu-rec">
           <h2 className="mu-h2">Scores</h2>
-          <p>
-            Lower is better. From 18 June the score is counted a new way, so the newer numbers are not comparable with the older ones. The full record book
-            follows.
-          </p>
-          <table className="mu-tbl">
-            <thead>
-              <tr>
-                <th>Score</th>
-                <th>Who</th>
-                <th>Time</th>
-                <th>Note</th>
-              </tr>
-            </thead>
-            <tbody>
-              {RECORDS.map(r => (
-                <tr key={r.who + r.score}>
-                  <td className="s">{r.score.toLocaleString('en-US')}</td>
-                  <td>{r.who}</td>
-                  <td>{hm(r.at)}</td>
-                  <td className="n">{r.note}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <p>Lower is better, 0 is the goal. The score was counted three different ways, so each table only compares with itself.</p>
+          {ERAS.map(era => {
+            const rows = RECORDS.filter(r => r.at >= era.from && r.at < era.to).sort((x, y) => x.score - y.score)
+            return rows.length ? (
+              <div key={era.from}>
+                <h3 className="mu-day3">{era.name}</h3>
+                <table className="mu-tbl">
+                  <thead>
+                    <tr>
+                      <th>Score</th>
+                      <th>Who</th>
+                      <th>When (UTC)</th>
+                      <th>Note</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {rows.map(r => (
+                      <tr key={r.who + r.score}>
+                        <td className="s">{r.score.toLocaleString('en-US')}</td>
+                        <td>{r.who}</td>
+                        <td>
+                          {dm(r.at).replace(' 2026', '')}, {hm(r.at)}
+                        </td>
+                        <td className="n">{r.note}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : null
+          })}
         </section>
 
         <section className="mu-crew mu-hist">
@@ -477,8 +490,8 @@ export function MuseumApp() {
         </section>
 
         <section className="mu-crew">
-          <h2 className="mu-h2">The racers</h2>
-          <p>Everyone on these screenshots who ran Anna.exe and posted what it showed. Their lines in the hall are verbatim, in italics.</p>
+          <h2 className="mu-h2">The people in the hall</h2>
+          <p>Everyone who ran Anna.exe, posted a score or a board, or spoke in the race. Their lines in the hall are verbatim, in italics.</p>
           <ul>
             {RACERS.map(r => (
               <li key={r}>{r}</li>
