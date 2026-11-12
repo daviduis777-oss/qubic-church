@@ -78,8 +78,8 @@ function targetsOf(b64: string, bits: number): Uint8Array {
  * is graded on [S, S + frame), so the last S targets come from the exchange, by the task's own rule. The overlap
  * is checked first: if the exchange disagrees with the explorer on any of the last 48 shipped hours, nothing is extended.
  */
-async function extendTargets(base: Uint8Array, task: Genome['task'], need: number): Promise<Uint8Array | string> {
-  if (base.length >= need) return base
+async function extendTargets(base: Uint8Array, task: Genome['task'], need: number): Promise<{ targets: Uint8Array; align: number } | string> {
+  if (base.length >= need) return { targets: base, align: 0 }
   const OVERLAP = 48
   const from = hourOfIndex(task, base.length - OVERLAP) - 4 * 3600
   const closes = await hourlyCloses(from, hourOfIndex(task, need + 2))
@@ -103,14 +103,14 @@ async function extendTargets(base: Uint8Array, task: Genome['task'], need: numbe
       if (d == null) return `missing hour ${hourOfIndex(task, i + off)}`
       out[i] = d
     }
-    return out
+    return { targets: out, align: off }
   }
   return `no alignment (${tried.join(' ')})`
 }
 
 type Rec = ExplorerReconstruction & { searchReplay?: { finalPredictions?: { taskMovements?: string; taskMovementBits?: number } } }
 
-export type CheckedGenome = Genome & { check: { errors: number | null; matches: boolean; reason?: string } }
+export type CheckedGenome = Genome & { check: { errors: number | null; matches: boolean; reason?: string; align?: number } }
 
 const GENOME_KEY = (hash: string) => `bpp:brain:${hash}`
 
@@ -127,15 +127,19 @@ export async function brainGenome(hash: string): Promise<CheckedGenome | null> {
   const fp = rec.searchReplay?.finalPredictions
   let errors: number | null = null
   let reason: string | undefined
+  let align: number | undefined
   if (fp?.taskMovements && fp.taskMovementBits) {
     const need = g.shift + g.task.frame
     const targets = await extendTargets(targetsOf(fp.taskMovements, fp.taskMovementBits), g.task, need).catch(e => `error ${e instanceof Error ? e.message : e}`)
     const em = emits(g, need)
     if (typeof targets === 'string') reason = targets
     else if (em.length !== need) reason = `emits ${em.length} of ${need}`
-    else errors = frameErrors(em, targets, g.shift, g.task.frame)
+    else {
+      errors = frameErrors(em, targets.targets, g.shift, g.task.frame)
+      align = targets.align
+    }
   }
-  const checked: CheckedGenome = { ...g, check: { errors, matches: errors === g.score, ...(reason ? { reason } : {}) } }
+  const checked: CheckedGenome = { ...g, check: { errors, matches: errors === g.score, ...(reason ? { reason } : {}), ...(align != null ? { align } : {}) } }
   if (checked.check.matches) await kvSetJson(GENOME_KEY(hash), checked).catch(() => {})
   return checked
 }
