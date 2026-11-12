@@ -1,17 +1,29 @@
 import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
 import { setRequestLocale } from 'next-intl/server'
-import { isModerator } from '@/lib/forum/auth'
 import { MuseumApp } from '@/components/museum/MuseumApp'
+import { jsonLd } from '@/lib/json-ld'
+import { MUSEUM_DESCRIPTION, MUSEUM_MD_URL, MUSEUM_TITLE, MUSEUM_URL, museumLd } from '@/lib/museum-text'
 
-// Hidden while it is hung: the moderator alone, nothing indexed.
-export const dynamic = 'force-dynamic'
-export const metadata: Metadata = { title: 'Museum', robots: { index: false, follow: false } }
+export const metadata: Metadata = {
+  title: MUSEUM_TITLE,
+  description: MUSEUM_DESCRIPTION,
+  alternates: { canonical: MUSEUM_URL, types: { 'text/markdown': MUSEUM_MD_URL } },
+  openGraph: { type: 'website', url: MUSEUM_URL, title: MUSEUM_TITLE, description: MUSEUM_DESCRIPTION },
+  twitter: { card: 'summary_large_image', title: MUSEUM_TITLE, description: MUSEUM_DESCRIPTION },
+}
 
+export const revalidate = 3600
+
+/** Hall 1: the Anna.exe race, every file Come-from-Beyond posted, kept as it was. */
 export default async function MuseumPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params
   setRequestLocale(locale)
-  const mod = await isModerator()
-  if (!mod) notFound()
-  return <MuseumApp canDownload={mod} />
+  return (
+    <>
+      {museumLd().map((d, i) => (
+        <script dangerouslySetInnerHTML={{ __html: jsonLd(d) }} key={i} type="application/ld+json" />
+      ))}
+      <MuseumApp canDownload />
+    </>
+  )
 }

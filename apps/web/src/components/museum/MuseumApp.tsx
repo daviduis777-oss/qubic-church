@@ -411,7 +411,9 @@ export function MuseumApp({ canDownload = false }: { canDownload?: boolean }) {
         <style>{css}</style>
         <div className="mu-in">
           <header className="mu-hero">
-            <h1 className="mu-h">Museum</h1>
+            <h1 className="mu-h">
+              Museum<span className="sr-only">. Hall 1: Anna.exe, every version Come-from-Beyond posted, 10 June to 8 November 2026</span>
+            </h1>
             <blockquote className="mu-word">
               <p>
                 Finishing Aigarth is one of the most remarkable things I have seen with my own eyes. This museum is a way to capture the moment and to keep the

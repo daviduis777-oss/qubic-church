@@ -26,21 +26,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
     page('/bpp9000/brains', 0.8),
     page('/status', 0.7),
     page('/wen', 0.8),
+    page('/museum', 0.7),
     page('/epochs', 0.7),
     ...DIGEST_EPOCHS.map(e => page(`/epochs/${e}`, 0.6)),
     page('/books', 0.9),
-    ...BOOKS.flatMap(b => [
-      page(`/books/${b.slug}`, 0.9, b.published),
-      ...b.chapters.map(c => page(`/books/${b.slug}/${c.slug}`, 0.8, b.published)),
-    ]),
+    ...BOOKS.flatMap(b => [page(`/books/${b.slug}`, 0.9, b.published), ...b.chapters.map(c => page(`/books/${b.slug}/${c.slug}`, 0.8, b.published))]),
     page('/docs', 0.8),
-    ...allDocs
-      .filter(d => d.slugAsParams.startsWith('en/') && !d.noindex)
-      .map(d => page(`/docs/${d.slugAsParams.replace(/^en\/?/, '')}`, 0.7)),
+    ...allDocs.filter(d => d.slugAsParams.startsWith('en/') && !d.noindex).map(d => page(`/docs/${d.slugAsParams.replace(/^en\/?/, '')}`, 0.7)),
     page('/blog', 0.6),
-    ...allBlogs
-      .filter(p => p.slugAsParams.startsWith('en/'))
-      .map(p => page(`/blog/${p.slugAsParams.replace(/^en\/?/, '')}`, 0.6, p.date)),
+    ...allBlogs.filter(p => p.slugAsParams.startsWith('en/')).map(p => page(`/blog/${p.slugAsParams.replace(/^en\/?/, '')}`, 0.6, p.date)),
     page('/cfb', 0.7),
     page('/nfts', 0.5),
     page('/mine-qubic', 0.5),

@@ -20,8 +20,24 @@ export function GET() {
     'Readings that the September 2026 re-check did not confirm are listed openly, as open questions, on the re-check page.',
     '',
   )
-  out.push('## BPP-9000: the Bitcoin predictor of Aigarth', '', `- [BPP-9000, live](${BPP_URL}): ${BPP_SUMMARY}`, `- [How BPP-9000 works, as markdown](${BPP_MD_URL}): the task, mining, the ant colony, verification by every node, the Oracle Machine live feed from 18 November, and what counts as a forecast.`, `- [Brain Watch](${BPP_URL}/brains): the best brain of the epoch re-run with the core's rule, its homework (the training year), our replay checked against the core's verified score, the genome to download, one shelf per epoch. The exam on unseen hours opens with the live feed: today's brains read no input, so hours after their data test nothing.`, `- [WEN?](${SITE_URL}/wen): every date that matters for Qubic and Aigarth, newest first: the live BTC feed test on 18 November 2026, qualification by prediction accuracy on 25 November, The Day on 13 April 2027, and milestones back to 2021 (Oracle Machines, Outsourced Computing, Monero, Dogecoin, halvings, Neuraxon), each with its source and Come-from-Beyond's words. As markdown: ${SITE_URL}/text/wen.md`, `- [Is Qubic down?](${SITE_URL}/status): live network status, the current tick and its speed, and whether it has stopped.`, `- [Epochs](${SITE_URL}/epochs): one page per Qubic epoch: what changed in the network and the BPP-9000 task, science releases, verbatim quotes, the epoch's best brain and its exam.`, '')
-  out.push('## Short answers (start here)', '', ...ANSWERS.map(x => `- [${x.question}](${answerUrl(x)}): ${(x.answer[0] ?? '').replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')}`), '')
+  out.push(
+    '## BPP-9000: the Bitcoin predictor of Aigarth',
+    '',
+    `- [BPP-9000, live](${BPP_URL}): ${BPP_SUMMARY}`,
+    `- [How BPP-9000 works, as markdown](${BPP_MD_URL}): the task, mining, the ant colony, verification by every node, the Oracle Machine live feed from 18 November, and what counts as a forecast.`,
+    `- [Brain Watch](${BPP_URL}/brains): the best brain of the epoch re-run with the core's rule, its homework (the training year), our replay checked against the core's verified score, the genome to download, one shelf per epoch. The exam on unseen hours opens with the live feed: today's brains read no input, so hours after their data test nothing.`,
+    `- [WEN?](${SITE_URL}/wen): every date that matters for Qubic and Aigarth, newest first: the live BTC feed test on 18 November 2026, qualification by prediction accuracy on 25 November, The Day on 13 April 2027, and milestones back to 2021 (Oracle Machines, Outsourced Computing, Monero, Dogecoin, halvings, Neuraxon), each with its source and Come-from-Beyond's words. As markdown: ${SITE_URL}/text/wen.md`,
+    `- [Museum, Hall 1: Anna.exe](${SITE_URL}/museum): every Anna.exe Come-from-Beyond posted in the Qubic Discord from 10 June to 8 November 2026, in order: SHA-256, build time, console output and his words verbatim, from the first file to the seven tests at zero on 6 July and on to the BPP9000 fitness function. Files: https://github.com/daviduis777-oss/anna-archive. As markdown: ${SITE_URL}/text/museum.md`,
+    `- [Is Qubic down?](${SITE_URL}/status): live network status, the current tick and its speed, and whether it has stopped.`,
+    `- [Epochs](${SITE_URL}/epochs): one page per Qubic epoch: what changed in the network and the BPP-9000 task, science releases, verbatim quotes, the epoch's best brain and its exam.`,
+    '',
+  )
+  out.push(
+    '## Short answers (start here)',
+    '',
+    ...ANSWERS.map(x => `- [${x.question}](${answerUrl(x)}): ${(x.answer[0] ?? '').replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')}`),
+    '',
+  )
   out.push('## Books (free, full text online)', '')
   for (const b of BOOKS) {
     out.push(`- [${b.title} by QC](${bookUrl(b)}): ${b.description} PDF: ${SITE_URL}${b.pdf}`)
@@ -30,9 +46,7 @@ export function GET() {
     }
   }
   out.push('', '## Research log', '')
-  for (const d of allDocs
-    .filter(d => d.slugAsParams.startsWith('en/') && !d.noindex)
-    .sort((a, b) => a.slugAsParams.localeCompare(b.slugAsParams))) {
+  for (const d of allDocs.filter(d => d.slugAsParams.startsWith('en/') && !d.noindex).sort((a, b) => a.slugAsParams.localeCompare(b.slugAsParams))) {
     const path = d.slugAsParams.replace(/^en\/?/, '')
     out.push(`- [${d.title}](${SITE_URL}/docs/${path})${d.description ? `: ${d.description}` : ''}`)
   }
@@ -41,7 +55,11 @@ export function GET() {
     '## The Crypt: the forum of Qubic Church (/articles)',
     '',
     `The articles section is kept as an old-style forum at ${SITE_URL}/articles: three boards, member profiles with forum ranks, and one topic per article. Anyone can write, any topic, no censorship. Two ways in: start a topic at ${SITE_URL}/articles/new after logging in with a Qubic wallet signature or a tripcode (no email, no password, nothing personal; the post publishes on its own), or post on X starting with "hey @maria_aigarth" with #Qubic #Aigarth; Maria (the forum's Global Moderator) reposts it and it becomes a topic in the Open Board under the author's name, with +1 merit.`,
-    `Ranks: every article has a weight (an issue = ${WEIGHT.issue}, a primary source by Come-from-Beyond = ${WEIGHT.primary}, a repost by Maria = +${WEIGHT.maria} merit); activity = articles written, merit = given by others, weight = the sum and sets the rank, always written with its number (${RANKS.filter(r => Number.isFinite(r.min)).map(r => `${r.level} ${r.name} from ${r.min}`).join(', ')}); rank 10, Founder, is reserved for Come-from-Beyond, as Satoshi is Founder on BitcoinTalk. ${SITE_URL}/articles#ranks`,
+    `Ranks: every article has a weight (an issue = ${WEIGHT.issue}, a primary source by Come-from-Beyond = ${WEIGHT.primary}, a repost by Maria = +${WEIGHT.maria} merit); activity = articles written, merit = given by others, weight = the sum and sets the rank, always written with its number (${RANKS.filter(
+      r => Number.isFinite(r.min),
+    )
+      .map(r => `${r.level} ${r.name} from ${r.min}`)
+      .join(', ')}); rank 10, Founder, is reserved for Come-from-Beyond, as Satoshi is Founder on BitcoinTalk. ${SITE_URL}/articles#ranks`,
     '',
     '### Boards',
     '',

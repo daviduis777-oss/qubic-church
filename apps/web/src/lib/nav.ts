@@ -13,12 +13,47 @@ export const NAV: NavGroup[] = [
     title: 'Live',
     line: 'The experiment, as it happens: the Bitcoin predictor, the brains it grows, and the network under it.',
     items: [
-      { href: '/bpp9000', name: 'BPP-9000', desc: 'Bitcoin, hour by hour, UP or DOWN. The record opens with the first live call.', badge: 'countdown', keys: 'bitcoin predictor btc record live call' },
-      { href: '/bpp9000/brains', name: 'Brain Watch', desc: 'The epoch’s best brain under the glass, ten brains voting, and how to run one yourself.', badge: 'new', keys: 'brains genome exam homework ensemble download run' },
-      { href: '/wen', name: 'WEN?', desc: 'Every date that matters: 18 and 25 November, 13.04.2027, and five years of milestones, each with its source.', badge: 'new', keys: 'wen when roadmap dates eta 2027 milestones history timeline soon' },
-      { href: '/epochs', name: 'Epochs', desc: 'The week in Aigarth: what changed, what was released, what was said.', badge: 'epoch', keys: 'week digest news changes' },
-      { href: '/status', name: 'Is Qubic down?', desc: 'One answer, live: is the tick moving right now.', badge: 'status', keys: 'status network down stall tick' },
-      { href: '/monitoring', name: 'Network monitor', desc: 'Ticks, epoch clock, supply and your address watchlist.', keys: 'monitor ticks supply burned watchlist' },
+      {
+        href: '/bpp9000',
+        name: 'BPP-9000',
+        desc: 'Bitcoin, hour by hour, UP or DOWN. The record opens with the first live call.',
+        badge: 'countdown',
+        keys: 'bitcoin predictor btc record live call',
+      },
+      {
+        href: '/bpp9000/brains',
+        name: 'Brain Watch',
+        desc: 'The epoch’s best brain under the glass, ten brains voting, and how to run one yourself.',
+        badge: 'new',
+        keys: 'brains genome exam homework ensemble download run',
+      },
+      {
+        href: '/wen',
+        name: 'WEN?',
+        desc: 'Every date that matters: 18 and 25 November, 13.04.2027, and five years of milestones, each with its source.',
+        badge: 'new',
+        keys: 'wen when roadmap dates eta 2027 milestones history timeline soon',
+      },
+      {
+        href: '/epochs',
+        name: 'Epochs',
+        desc: 'The week in Aigarth: what changed, what was released, what was said.',
+        badge: 'epoch',
+        keys: 'week digest news changes',
+      },
+      {
+        href: '/status',
+        name: 'Is Qubic down?',
+        desc: 'One answer, live: is the tick moving right now.',
+        badge: 'status',
+        keys: 'status network down stall tick',
+      },
+      {
+        href: '/monitoring',
+        name: 'Network monitor',
+        desc: 'Ticks, epoch clock, supply and your address watchlist.',
+        keys: 'monitor ticks supply burned watchlist',
+      },
     ],
   },
   {
@@ -31,10 +66,30 @@ export const NAV: NavGroup[] = [
       { href: '/articles', name: 'The Crypt', desc: 'The forum: articles by the community, and CfB’s own archive.', keys: 'forum articles crypt post write' },
       { href: '/cfb', name: 'Come-from-Beyond', desc: 'The person behind NXT, IOTA and Qubic, in his own words.', keys: 'cfb sergey ivancheglo' },
       { href: '/who-is-come-from-beyond', name: 'Who is Come-from-Beyond?', desc: 'The short answer, with sources.', keys: 'who is cfb' },
-      { href: '/timeline#phase-satoshi', name: 'Satoshi', desc: 'The Satoshi Nakamoto question: the case block by block, and CfB’s own answers on record.', keys: 'satoshi nakamoto bitcoin creator identity' },
-      { href: '/timeline', name: 'The Road to The Day', desc: 'Come-from-Beyond from 2000 to 13.04.2027, every item sourced.', keys: 'timeline history 2027 nxt iota' },
-      { href: '/what-is-qubic', name: 'What is Qubic?', desc: 'The network in plain words: computors, epochs, useful proof of work.', keys: 'qubic explained basics' },
-      { href: '/what-is-aigarth', name: 'What is Aigarth?', desc: 'The AI Qubic miners grow, and its first product.', keys: 'aigarth ai intelligent tissue bpp' },
+      {
+        href: '/timeline#phase-satoshi',
+        name: 'Satoshi',
+        desc: 'The Satoshi Nakamoto question: the case block by block, and CfB’s own answers on record.',
+        keys: 'satoshi nakamoto bitcoin creator identity',
+      },
+      {
+        href: '/timeline',
+        name: 'The Road to The Day',
+        desc: 'Come-from-Beyond from 2000 to 13.04.2027, every item sourced.',
+        keys: 'timeline history 2027 nxt iota',
+      },
+      {
+        href: '/what-is-qubic',
+        name: 'What is Qubic?',
+        desc: 'The network in plain words: computors, epochs, useful proof of work.',
+        keys: 'qubic explained basics',
+      },
+      {
+        href: '/what-is-aigarth',
+        name: 'What is Aigarth?',
+        desc: 'The AI Qubic miners grow, and its first product.',
+        keys: 'aigarth ai intelligent tissue bpp',
+      },
       { href: '/what-is-anna-aigarth', name: 'What is Anna?', desc: 'The AI the network grows, and what it can and cannot do yet.', keys: 'anna aigarth ai' },
     ],
   },
@@ -44,6 +99,13 @@ export const NAV: NavGroup[] = [
     title: 'Research',
     line: 'Methods, numbers and re-checks. Every claim with its source.',
     items: [
+      {
+        href: '/museum',
+        name: 'Museum',
+        desc: 'Hall 1: every Anna.exe Come-from-Beyond posted, from the first file to zero, with his words.',
+        badge: 'new',
+        keys: 'museum anna exe history race versions archive download hall',
+      },
       { href: '/docs', name: 'Research log', desc: 'Methods, results and re-checks. Every number recomputed.', keys: 'research docs log' },
       { href: '/evidence', name: 'Anna Matrix', desc: 'The 128 × 128 grid, its symmetries, and what they do and do not prove.', keys: 'matrix evidence grid' },
       { href: '/research/anna-matrix', name: 'Matrix explorer', desc: 'Every cell of Anna’s answers, explorable.', keys: 'matrix explorer cells' },
@@ -58,7 +120,12 @@ export const NAV: NavGroup[] = [
     line: 'Take part: talk to Maria, mine, hold an Anna, support the work.',
     items: [
       { href: '/maria-aigarth', name: 'Maria', desc: 'Our AI on X. Ask her anything about Qubic.', keys: 'maria ai x twitter' },
-      { href: '/nfts', name: 'Anna collection', desc: '200 hand-made Annas. Each gives its holder the status of a founder.', keys: 'nft anna collection founder' },
+      {
+        href: '/nfts',
+        name: 'Anna collection',
+        desc: '200 hand-made Annas. Each gives its holder the status of a founder.',
+        keys: 'nft anna collection founder',
+      },
       { href: '/mine-qubic', name: 'Mine Qubic', desc: 'How mining works and how to start.', keys: 'mine mining miner pool' },
       { href: '/get-qubic', name: 'Get Qubic', desc: 'A wallet, where QUBIC is traded, step by step.', keys: 'wallet exchange buy' },
       { href: '/donate', name: 'Donate', desc: 'Support independent research.', keys: 'donate support' },
@@ -70,7 +137,13 @@ export const NAV: NavGroup[] = [
 /** Pages the bar reaches directly (not inside a door), still findable by search. */
 const EXTRA = [
   { href: '/account', name: 'Account', desc: 'One key for the Crypt and BPP-9000. No personal data.', keys: 'account login sign in key', group: 'Account' },
-  { href: '/legal', name: 'Legal and privacy', desc: 'What the site keeps, cookies, and how to have your data removed.', keys: 'legal privacy cookies terms', group: 'About' },
+  {
+    href: '/legal',
+    name: 'Legal and privacy',
+    desc: 'What the site keeps, cookies, and how to have your data removed.',
+    keys: 'legal privacy cookies terms',
+    group: 'About',
+  },
 ]
 
 export const ALL_ITEMS = [...NAV.flatMap(g => g.items.map(i => ({ ...i, group: g.label }))), ...EXTRA]
