@@ -7,6 +7,7 @@ import {
   EXPLORER,
   type Genome,
   emits,
+  dirOf,
   frameErrors,
   genomeOf,
   hourOfIndex,
@@ -72,6 +73,34 @@ function targetsOf(b64: string, bits: number): Uint8Array {
   return out
 }
 
+/**
+ * The explorer ships the targets of the base frame only (the first `frame` hours). A brain scored at shift S
+ * is graded on [S, S + frame), so the last S targets come from the exchange, by the task's own rule. The overlap
+ * is checked first: if the exchange disagrees with the explorer on any of the last 48 shipped hours, nothing is extended.
+ */
+async function extendTargets(base: Uint8Array, task: Genome['task'], need: number): Promise<Uint8Array | null> {
+  if (base.length >= need) return base
+  const OVERLAP = 48
+  const from = hourOfIndex(task, base.length - OVERLAP) - 3600
+  const closes = await hourlyCloses(from, hourOfIndex(task, need - 1))
+  const at = new Map(closes.map(c => [c.hour, c.close]))
+  const dir = (i: number) => {
+    const h = hourOfIndex(task, i)
+    const prev = at.get(h - 3600)
+    const cur = at.get(h)
+    return prev == null || cur == null ? null : dirOf(prev, cur)
+  }
+  for (let i = base.length - OVERLAP; i < base.length; i++) if (dir(i) !== base[i]) return null
+  const out = new Uint8Array(need)
+  out.set(base)
+  for (let i = base.length; i < need; i++) {
+    const d = dir(i)
+    if (d == null) return null
+    out[i] = d
+  }
+  return out
+}
+
 type Rec = ExplorerReconstruction & { searchReplay?: { finalPredictions?: { taskMovements?: string; taskMovementBits?: number } } }
 
 export type CheckedGenome = Genome & { check: { errors: number | null; matches: boolean } }
@@ -91,9 +120,10 @@ export async function brainGenome(hash: string): Promise<CheckedGenome | null> {
   const fp = rec.searchReplay?.finalPredictions
   let errors: number | null = null
   if (fp?.taskMovements && fp.taskMovementBits) {
-    const targets = targetsOf(fp.taskMovements, fp.taskMovementBits)
-    const em = emits(g, g.shift + g.task.frame)
-    errors = em.length === g.shift + g.task.frame && targets.length >= g.shift + g.task.frame ? frameErrors(em, targets, g.shift, g.task.frame) : null
+    const need = g.shift + g.task.frame
+    const targets = await extendTargets(targetsOf(fp.taskMovements, fp.taskMovementBits), g.task, need).catch(() => null)
+    const em = emits(g, need)
+    errors = targets && em.length === need ? frameErrors(em, targets, g.shift, g.task.frame) : null
   }
   const checked: CheckedGenome = { ...g, check: { errors, matches: errors === g.score } }
   if (checked.check.matches) await kvSetJson(GENOME_KEY(hash), checked).catch(() => {})
