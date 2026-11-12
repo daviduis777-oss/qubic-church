@@ -71,6 +71,8 @@ export function BrainWatch({ preview }: { preview: boolean }) {
   }, [hash])
 
   const rank = top?.rows.findIndex(r => r.hash === hash) ?? -1
+  // Our replay must reproduce the core's verified score before anything it computes is shown.
+  const pending = Boolean(g && !g.check.matches)
 
   return (
     <div style={{ display: 'grid', gap: 'clamp(28px, 4vw, 44px)' }}>
@@ -102,8 +104,8 @@ export function BrainWatch({ preview }: { preview: boolean }) {
       </div>
 
       <section className="panel" style={{ padding: 'clamp(18px, 3vw, 28px)', display: 'grid', gap: 'clamp(20px, 3vw, 32px)', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))', alignItems: 'start' }}>
-        <Ring g={g} live={live} />
-        <Sheet g={g} live={live} busy={busy} row={top?.rows.find(r => r.hash === hash) ?? null} rank={rank} />
+        {pending ? <Pending g={g!} /> : <Ring g={g} live={live} />}
+        <Sheet g={g} live={pending ? null : live} busy={busy} pending={pending} row={top?.rows.find(r => r.hash === hash) ?? null} rank={rank} />
       </section>
 
       <Ensemble epoch={epoch ?? top?.epoch ?? null} onPick={setHash} />
@@ -418,9 +420,31 @@ function Ring({ g, live }: { g: CheckedGenome | null; live: LiveResult | null })
   )
 }
 
+/* ---------------- a brain our replay cannot reproduce yet ---------------- */
+
+function Pending({ g }: { g: CheckedGenome }) {
+  return (
+    <figure style={{ margin: 0, display: 'grid', gap: 14, alignContent: 'center', minHeight: 300, padding: '8px 4px' }}>
+      <div className="nx" style={{ fontSize: 'clamp(40px, 6vw, 60px)', lineHeight: 1, color: 'var(--hot)', fontFamily: 'var(--bpp-nx)' }}>
+        {g.n.toLocaleString('en-US')} neurons
+      </div>
+      <p style={{ margin: 0, fontSize: 16, lineHeight: 1.55, color: '#f3e4ce', maxWidth: '40ch' }}>
+        This epoch&apos;s brains run on core {g.source.coreVersion}: {g.n.toLocaleString('en-US')} neurons and a new prediction model.
+      </p>
+      <p className="mute" style={{ margin: 0, fontSize: 14, lineHeight: 1.6, maxWidth: '44ch' }}>
+        We are updating our replay to that core. Until our run gives the same score as the verified one, we show no exam here: a number we cannot reproduce is not a number. The explorer counts its own{' '}
+        <a href={`https://annexplorer.jetskipool.ai/epochs/${g.epoch}`} rel="noopener noreferrer" style={{ color: 'var(--hot)' }} target="_blank">
+          Factual Accuracy
+        </a>{' '}
+        once 100 computors qualify.
+      </p>
+    </figure>
+  )
+}
+
 /* ---------------- the sheet: who, when, how good, download ---------------- */
 
-function Sheet({ g, live, busy, row, rank }: { g: CheckedGenome | null; live: LiveResult | null; busy: boolean; row: BrainRow | null; rank: number }) {
+function Sheet({ g, live, busy, pending, row, rank }: { g: CheckedGenome | null; live: LiveResult | null; busy: boolean; pending: boolean; row: BrainRow | null; rank: number }) {
   const r = g ?? row
   const frame = g?.task.frame ?? 8760
   const since = live?.sinceFound
@@ -453,14 +477,14 @@ function Sheet({ g, live, busy, row, rank }: { g: CheckedGenome | null; live: Li
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 16 }}>
         <Big big={r ? pct(accuracy(r, frame)) : '—'} label="Homework" small={r ? `of the training year, ${r.score.toLocaleString('en-US')} wrong hours of ${frame.toLocaleString('en-US')}${r.shift ? `, frame ${r.shift} hours in` : ''}` : ''} lit />
         <Big
-          big={all ? pct(all.rate) : busy ? '…' : '—'}
+          big={pending ? 'soon' : all ? pct(all.rate) : busy ? '…' : '—'}
           label="Exam"
-          small={all ? `on ${all.checked.toLocaleString('en-US')} hours it never saw, since ${live ? day(live.dataEnd) : ''}${all.unsure ? `, ${all.unsure} not sure` : ''}` : 'hours after the task ends'}
+          small={pending ? 'shown once our replay matches the core' : all ? `on ${all.checked.toLocaleString('en-US')} hours it never saw, since ${live ? day(live.dataEnd) : ''}${all.unsure ? `, ${all.unsure} not sure` : ''}` : 'hours after the task ends'}
         />
         <Big
-          big={since && since.checked ? pct(since.rate) : busy ? '…' : '—'}
+          big={pending ? 'soon' : since && since.checked ? pct(since.rate) : busy ? '…' : '—'}
           label="Since it was found"
-          small={since && since.checked ? `${since.checked} hours nobody could have fitted` : 'needs closed hours after the find'}
+          small={pending ? 'shown once our replay matches the core' : since && since.checked ? `${since.checked} hours nobody could have fitted` : 'needs closed hours after the find'}
         />
       </div>
 
@@ -512,7 +536,7 @@ function Sheet({ g, live, busy, row, rank }: { g: CheckedGenome | null; live: Li
         )}
       </div>
       <p className="mute" style={{ margin: 0, fontSize: 12.5, lineHeight: 1.6 }}>
-        A small JSON file: 32 neurons, each with its three sources, its 27-entry table and its start state, plus the rule to run it. Anyone can replay the homework and the exam.
+        A small JSON file: {g?.n ?? 32} neurons, each with its sources, its 27-entry table and its start state, plus the rule to run it. Anyone can replay the homework and the exam.
       </p>
     </div>
   )
