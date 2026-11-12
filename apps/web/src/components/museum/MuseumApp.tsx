@@ -94,7 +94,8 @@ const DAYS = [
   },
   { at: '2026-06-11', sub: 'A new method: a training set and a validation set. Come-from-Beyond names the problem it is after.' },
   { at: '2026-06-12', sub: 'Builds for older processors, an optimized file, the first score under 20 000.' },
-  { at: '2026-06-13', sub: 'Progress can now be saved and shared.' },
+  { at: '2026-06-13', sub: 'Progress can now be saved and shared. That evening Come-from-Beyond says his part is done.' },
+  { at: '2026-06-15', sub: 'The keys settle: Tilda, 1 to 9, F2. His own progress comes with the file.' },
 ]
 
 const hm = (iso: string) => new Date(iso).toISOString().slice(11, 16)
@@ -260,7 +261,7 @@ export function MuseumApp() {
 
   const all = ANNA.slice().sort((a, b) => Date.parse(a.at) - Date.parse(b.at))
   const day = (d: string) => all.filter(e => e.at.startsWith(d))
-  const later = all.filter(e => e.at >= '2026-06-14')
+  const later = all.filter(e => e.at >= '2026-06-16')
 
   return (
     <main className={`mu ${bppFonts}`}>
