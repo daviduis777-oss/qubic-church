@@ -33,7 +33,11 @@ export function TraderMaria({ r }: { r: RecordResp | null }) {
   }
   useEffect(() => () => clearTimeout(timer.current), [])
   return (
-    <section aria-labelledby="trader-h" id="trader" style={{ display: 'grid', gap: 24, paddingTop: 28, borderTop: '1px solid var(--line)', scrollMarginTop: 80 }}>
+    <section
+      aria-labelledby="trader-h"
+      id="trader"
+      style={{ display: 'grid', gap: 24, paddingTop: 28, borderTop: '1px solid var(--line)', scrollMarginTop: 80 }}
+    >
       <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
         <Halo face={36} label="Trader Maria" mode={busy ? 'thinking' : 'idle'} size={104} tone="#FFC46B" />
         <div style={{ flex: 1, minWidth: 220 }}>
@@ -50,7 +54,9 @@ export function TraderMaria({ r }: { r: RecordResp | null }) {
         One way to use the calls. Her results depend on the venue, its fees and her stake; the network&apos;s accuracy is the record above.
       </p>
       <p style={{ margin: 0, fontSize: 16, lineHeight: 1.6, maxWidth: '68ch' }}>
-        Maria trades every live BPP-9000 call on paper, under real conditions: fees, slippage, the payout a real venue gives. She starts with $100, puts 5% of what she has on each call and sits out the hours the network is not sure. <span className="mute">No real money yet. A bot on live calls comes later, after the record has run for months. Not before.</span>
+        Maria trades every live BPP-9000 call on paper, under real conditions: fees, slippage, the payout a real venue gives. She starts with $100, puts 5% of
+        what she has on each call and sits out the hours the network is not sure.{' '}
+        <span className="mute">No real money yet. A bot on live calls comes later, after the record has run for months. Not before.</span>
       </p>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))', gap: 16 }}>
@@ -80,10 +86,17 @@ export function TraderMaria({ r }: { r: RecordResp | null }) {
           />
           <div role="group" aria-label="Over how long" style={{ display: 'flex', gap: 6 }}>
             {SPANS.map(sp => (
-              <button aria-pressed={sp === span} className={`btn${sp === span ? ' btn-main' : ''}`} key={sp.bets} onClick={() => {
+              <button
+                aria-pressed={sp === span}
+                className={`btn${sp === span ? ' btn-main' : ''}`}
+                key={sp.bets}
+                onClick={() => {
                   setSpan(sp)
                   think()
-                }} style={{ minHeight: 36, padding: '6px 12px', fontSize: 13 }} type="button">
+                }}
+                style={{ minHeight: 36, padding: '6px 12px', fontSize: 13 }}
+                type="button"
+              >
                 {sp.label}
               </button>
             ))}
@@ -98,7 +111,10 @@ export function TraderMaria({ r }: { r: RecordResp | null }) {
                 <span className="mute" style={{ fontSize: 13 }}>
                   {v.name}, {span.label} of calls
                 </span>
-                <b className="nx" style={{ display: 'block', fontSize: 'clamp(28px, 4vw, 36px)', fontWeight: 400, color: up ? 'var(--fil)' : 'var(--r)', marginTop: 4 }}>
+                <b
+                  className="nx"
+                  style={{ display: 'block', fontSize: 'clamp(28px, 4vw, 36px)', fontWeight: 400, color: up ? 'var(--fil)' : 'var(--r)', marginTop: 4 }}
+                >
                   $100 → {money(end)}
                 </b>
               </div>
@@ -109,11 +125,11 @@ export function TraderMaria({ r }: { r: RecordResp | null }) {
           {rate <= 50
             ? 'A coin is right half the time. At 50% Maria still loses at both venues: the fees and the payout take their cut every hour.'
             : rate < breakEven(VENUES[0]!)
-              ? `Better than a coin, and still not enough: under her rules she grows above ${breakEven(VENUES[0]!).toFixed(1)}% at a prediction market, above ${breakEven(VENUES[1]!).toFixed(1)}% at a binary broker.`
+              ? `Better than a coin, and still not enough: under her rules she grows above ${breakEven(VENUES[0]!).toFixed(1)}% at a prediction market, above ${breakEven(VENUES[1]!).toFixed(1)}% at a binary broker. One bet alone pays off a little lower, from ${betBreakEven(VENUES[0]!).toFixed(1)}% and ${betBreakEven(VENUES[1]!).toFixed(1)}%; a run of bets needs more, because a loss of 5% is not undone by a gain of 5%.`
               : rate < breakEven(VENUES[1]!)
                 ? `Above the market's ${breakEven(VENUES[0]!).toFixed(1)}%, so she grows there. The broker's ${breakEven(VENUES[1]!).toFixed(1)}% is still out of reach.`
-                : 'Above both break-even lines: she grows at both venues. The record shows whether the network holds a rate like this live.'}{' '}
-          The typical outcome, not the luckiest one. One bet alone pays off a little lower, from {betBreakEven(VENUES[0]!).toFixed(1)}% and {betBreakEven(VENUES[1]!).toFixed(1)}%: a run of bets needs more, because a loss of 5% is not undone by a gain of 5%.
+                : 'Above both break-even lines: she grows at both venues.'}{' '}
+          These are typical results, not the luckiest ones. The record shows whether the network holds a rate like this live.
         </p>
       </div>
 
@@ -135,7 +151,10 @@ function VenueCard({ v, curve, live }: { v: Venue; curve: number[]; live: boolea
           grows above {breakEven(v).toFixed(1)}% right
         </span>
       </div>
-      <b className="nx" style={{ fontSize: 'clamp(34px, 5vw, 46px)', fontWeight: 400, lineHeight: 1, color: !live ? 'var(--ink)' : up ? 'var(--fil)' : 'var(--r)' }}>
+      <b
+        className="nx"
+        style={{ fontSize: 'clamp(34px, 5vw, 46px)', fontWeight: 400, lineHeight: 1, color: !live ? 'var(--ink)' : up ? 'var(--fil)' : 'var(--r)' }}
+      >
         {money(now)}
       </b>
       <span className="mute" style={{ fontSize: 13 }}>
