@@ -19,6 +19,7 @@ export type Version = {
   missing?: boolean // the file is not in the collection yet
   postedNote?: string // when the post itself is not on the screenshots yet
   files?: string // what came with it
+  batch?: { name: string; sha256: string; built: string }[] // several files in one post
   explain?: { at: string; ask: { who: string; text: string }; text: string } // Come-from-Beyond reading the screen
 }
 
@@ -37,7 +38,7 @@ export const HALLS: Hall[] = [
     name: 'Anna.exe',
     span: '10 June – 6 July 2026',
     open: true,
-    lead: 'One afternoon Come-from-Beyond posted a small Windows program and asked the chat to run it. By that evening there were seven versions, and the score had become an altitude. Twenty-six days later it reached zero.',
+    lead: 'One afternoon Come-from-Beyond posted a small Windows program and asked the chat to run it. By that evening there were seven versions, and the score had become an altitude. Two weeks later the screen showed zero; on 6 July all seven tests did.',
   },
 ]
 
@@ -638,6 +639,54 @@ export const ANNA: Exhibit[] = [
     cfb: 'This version doesn’t allow to go above 15000 with tilda',
   },
   { kind: 'chat', at: '2026-06-22T09:44:00Z', who: 'limited! add 125j', text: 'at this rate we will be at 0 at no time...' },
+  { kind: 'chat', at: '2026-06-24T07:19:00Z', who: 'Rudolfat', text: 'zero ?' },
+  {
+    kind: 'version',
+    id: 'zero',
+    name: 'The file that reached 0',
+    at: '2026-06-24T07:40:00Z',
+    built: '2026-06-24T07:36:02Z',
+    bytes: 148992,
+    sha256: 'd14ebb46c3ca3cce1015635e6fbe9a3030111c3b396deb5cac31c3a8f6e3fbde',
+    format: 'Id: %3d | Epoch: %6d | Avg. ticks: %3d | Timeouts: %3d | SCORE: %5d + %5d = %5d (%4s) | %s-%d',
+    files: 'Posted with Anna.data, 2.75 MB',
+    cfb: 'It computes score in a different way so the numbers are not comparable.',
+    console: {
+      by: 'Come-from-Beyond',
+      at: '2026-06-24T07:44:00Z',
+      lines: [
+        'Id:  18 | Epoch:   3167 | Avg. ticks:  13 | Timeouts:   0 | SCORE:     0 +     0 =     0 (    ) | FORWARD-2',
+        'Id:   1 | Epoch:   3178 | Avg. ticks:  13 | Timeouts:   0 | SCORE:     0 +     0 =     0 (    ) | FORWARD-2',
+        'Id:  19 | Epoch:   3168 | Avg. ticks:  13 | Timeouts:   0 | SCORE:     0 +     0 =     0 (    ) | FORWARD-2',
+        'Id:  22 | Epoch:   3177 | Avg. ticks:  13 | Timeouts:   0 | SCORE:     0 +     0 =     0 (    ) | FORWARD-2',
+        'Id:  31 | Epoch:   3171 | Avg. ticks:  13 | Timeouts:   0 | SCORE:     0 +     0 =     0 (    ) | FORWARD-2',
+        'Id:   3 | Epoch:   3159 | Avg. ticks:  13 | Timeouts:   0 | SCORE:     0 +     0 =     0 (    ) | FORWARD-2',
+        'Id:  26 | Epoch:   3163 | Avg. ticks:  13 | Timeouts:   0 | SCORE:     0 +     0 =     0 (    ) | FORWARD-2',
+      ],
+    },
+  },
+  { kind: 'chat', at: '2026-06-24T07:44:00Z', who: 'QubicChurch', text: 'whaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' },
+  { kind: 'talk', at: '2026-06-24T07:44:30Z', text: 'Alright guys, don’t run that file' },
+  { kind: 'talk', at: '2026-06-24T07:45:00Z', text: 'Now we need to run 7 extra tests\nThis will take 30-60 mins to prepare' },
+  {
+    kind: 'version',
+    id: 'seven-tests',
+    name: 'The seven tests',
+    at: '2026-06-24T07:57:00Z',
+    built: '2026-06-24T07:54:27Z',
+    bytes: 148992,
+    format: 'Id: %3d | Epoch: %6d | Avg. ticks: %3d | Timeouts: %3d | SCORE: %5d + %5d = %5d (%4s) | %s-%d',
+    cfb: 'Distribute tests in coordinated manner plz',
+    batch: [
+      { name: 'Anna-1.exe', sha256: '6e82cef3446e6c980e8f7704e65d268d8c271b8191dc6bf3579e395a969be22c', built: '2026-06-24T07:54:27Z' },
+      { name: 'Anna-2.exe', sha256: '88ff0fa3cf8c157b815d0bf69a4bf966f345d618b31729fa0bedeaf309010f17', built: '2026-06-24T07:55:09Z' },
+      { name: 'Anna-3.exe', sha256: '82fe96c0e333299dfccc80c799a23781debda22dcedf0df3da5f47bfd2f47df5', built: '2026-06-24T07:55:18Z' },
+      { name: 'Anna-4.exe', sha256: '02d5004a70fb59bdc2a506c6e1da4c4403e5c472f4ba562402cff8141f453fbc', built: '2026-06-24T07:55:28Z' },
+      { name: 'Anna-5.exe', sha256: '6079ee1e39d694c51bf02c6b6faa6723a74f74325277be3a9be869d939701ccf', built: '2026-06-24T07:55:38Z' },
+      { name: 'Anna-6.exe', sha256: '4d186995fd27f68563cc136e3e19b724baf6ef65dfb0182d0ce743bec91055b4', built: '2026-06-24T07:55:49Z' },
+      { name: 'Anna-7.exe', sha256: 'e63b14dbb6ac6abbd533a27431fbc310653693c79265045cc5af767cab24ad73', built: '2026-06-24T07:56:01Z' },
+    ],
+  },
   {
     kind: 'mark',
     at: '2026-07-06',
@@ -649,6 +698,7 @@ export const ANNA: Exhibit[] = [
 
 // Scores people posted in the first days (lower is better, 0 is the goal). More will be added from the chat.
 export const RECORDS: { who: string; score: number; at: string; note: string }[] = [
+  { who: 'Come-from-Beyond', score: 0, at: '2026-06-24T07:44:00Z', note: 'the first zero on screen, 24 June; then the seven tests' },
   { who: 'ThatsNotMyCode', score: 11241, at: '2026-06-22T09:45:00Z', note: 'new score (since 18 June), shared Anna.data' },
   { who: 'Q979', score: 11265, at: '2026-06-22T09:44:00Z', note: 'new score (since 18 June), shared Anna.data' },
   { who: 'shitshow', score: 17479, at: '2026-06-18T10:53:00Z', note: 'the last record before the new score (18 June)' },

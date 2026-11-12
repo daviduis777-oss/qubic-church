@@ -60,6 +60,9 @@ const css = `
 .mu-hash{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;word-break:break-all;color:#3d3b36}
 .mu-label blockquote{margin:0;padding-top:12px;border-top:1px solid #dedbd2;font-size:15px;line-height:1.5;white-space:pre-line}
 .mu-label blockquote cite{display:block;font-style:normal;color:#76736b;font-size:12px;margin-top:6px}
+.mu-batch{list-style:none;margin:4px 0 0;padding:0;display:grid;gap:8px}
+.mu-batch li{display:grid;gap:2px;font-size:13px}
+.mu-batch .mu-hash{font-size:10.5px}
 .mu-files,.mu-note{margin:0;font-size:13.5px;line-height:1.45;color:#3d3b36}
 .mu-note{padding-top:12px;border-top:1px solid #dedbd2;color:#5d5b55}
 .mu-say a{color:inherit;text-decoration:underline;text-underline-offset:3px}
@@ -111,6 +114,7 @@ const DAYS = [
   { at: '2026-06-17', sub: 'Joji saves 18 512 and cannot go lower. A new version is promised after the epoch.' },
   { at: '2026-06-18', sub: 'A new way to count the score: any number of threads, and the numbers no longer compare with the old ones.' },
   { at: '2026-06-19', sub: 'Why not run it on the whole network?' },
+  { at: '2026-06-24', sub: 'Zero on Come-from-Beyond’s screen. Then seven tests, one file each, to be shared out.' },
   { at: '2026-06-22', sub: 'Two files in half an hour. The racers pass 11 300 on the new score.' },
   { at: '2026-06-21', sub: 'A faster file, and a new start from Come-from-Beyond’s progress.' },
   { at: '2026-06-20', sub: 'The racers ask for a channel of their own. In the evening everyone starts again from an empty file.' },
@@ -196,6 +200,21 @@ function Vitrine({ v }: { v: Version }) {
             <div>
               <dt>SHA-256</dt>
               <dd className="mu-hash">{v.sha256}</dd>
+            </div>
+          )}
+          {v.batch && (
+            <div>
+              <dt>Seven files, SHA-256 and build time</dt>
+              <dd>
+                <ul className="mu-batch">
+                  {v.batch.map(f => (
+                    <li key={f.name}>
+                      <b>{f.name}</b> {hm(f.built)}
+                      <span className="mu-hash">{f.sha256}</span>
+                    </li>
+                  ))}
+                </ul>
+              </dd>
             </div>
           )}
         </dl>
@@ -299,7 +318,7 @@ export function MuseumApp() {
 
   const all = ANNA.slice().sort((a, b) => Date.parse(a.at) - Date.parse(b.at))
   const day = (d: string) => all.filter(e => e.at.startsWith(d))
-  const later = all.filter(e => e.at >= '2026-06-23')
+  const later = all.filter(e => e.at >= '2026-06-25')
 
   return (
     <main className={`mu ${bppFonts}`}>
