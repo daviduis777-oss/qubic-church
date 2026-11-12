@@ -226,7 +226,7 @@ export const ANSWERS: Answer[] = [
       ] },
       { h: 'BPP-9000: the first product', p: [
         'Since July 2026 the task Qubic miners work on is BPP-9000 (Bitcoin Price Predictor 9000). Each solution is a small recurrent network that reads a year of hourly bitcoin moves and calls the next hour up or down. The network scores every solution the same way on every node, so any result can be re-run and checked.',
-        'From epoch 239 (11 November 2026) each solution has 1024 neurons. Come-from-Beyond, 11 November 2026: "Tomorrow we are starting mining with 1024 neurons." From epoch 240 (18 November 2026) the networks are also checked against live bitcoin hours they have never seen. The mark the community watches is 55%: a network that holds 55% of hours right on unseen data. Watch it live at [BPP-9000](/bpp9000).',
+        'From epoch 239 (11 November 2026) each solution has 1024 neurons. Come-from-Beyond, 10 November 2026: "Tomorrow we are starting mining with 1024 neurons." From epoch 240 (18 November 2026) the networks are also checked against live bitcoin hours they have never seen. The mark the community watches is 55%: a network that holds 55% of hours right on unseen data. Watch it live at [BPP-9000](/bpp9000).',
       ] },
       { h: 'What it is not, yet', p: [
         'Aigarth is research. Today\'s networks are small and their live accuracy is still being measured; nothing here is a trading signal or a promise of returns. Come-from-Beyond himself warns that a perfect score on past data is not a score on the future. Every claim on this page links its source; the open questions are listed in QC\'s [open re-check](/docs/03-results/35-corrections-september-2026).',

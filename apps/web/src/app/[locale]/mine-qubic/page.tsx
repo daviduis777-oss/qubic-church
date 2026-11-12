@@ -240,7 +240,7 @@ export default async function MineQubicPage(props: { params: Promise<{ locale: s
         <ul>
           <li>
             <strong>Epoch 239, 11 November 2026: 1024 neurons.</strong> Each solution is now a network of 1024 neurons.
-            Come-from-Beyond, 11 November 2026: &ldquo;Tomorrow we are starting mining with 1024 neurons. Some of you will have
+            Come-from-Beyond, 10 November 2026: &ldquo;Tomorrow we are starting mining with 1024 neurons. Some of you will have
             temptation to reduce number of used neurons and end up with only 64 active ones, because you already know winning
             topology for that case. Unfortunately, it&rsquo;s an inefficient method, it ends up with a pretty high score when you
             hit the wall. Pay attention to this.&rdquo;
