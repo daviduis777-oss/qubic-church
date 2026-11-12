@@ -1,5 +1,288 @@
 [
  {
+  "slug": "1-introduction-overviewconcept-of-qubic",
+  "title": "1. Introduction & OverviewConcept of Qubic",
+  "kicker": null,
+  "date": "2026-11-12",
+  "url": "https://qubic.church/articles/1-introduction-overviewconcept-of-qubic",
+  "author": "suomsiang",
+  "handle": "t-buwhk6nt7r",
+  "guest": true,
+  "auth": "trip",
+  "summary": "Qubic (Quorum-Based Computation) is a Layer-1 blockchain platform designed to solve the major bottlenecks of legacy blockchains—specifically the massive waste of electrical energy on meaningless cryptographic puzzles (in traditional…",
+  "words": 1351,
+  "blocks": [
+   {
+    "t": "p",
+    "text": "1. Introduction & Overview"
+   },
+   {
+    "t": "h",
+    "text": "1.1 Background and Core Concept of Qubic"
+   },
+   {
+    "t": "p",
+    "text": "Qubic (Quorum-Based Computation) is a Layer-1 blockchain platform designed to solve the major bottlenecks of legacy blockchains—specifically the massive waste of electrical energy on meaningless cryptographic puzzles (in traditional Proof-of-Work systems), as well as speed limitations and transaction fees. Qubic transforms traditional mining by redirecting the computational power of global miners toward training Artificial Intelligence (AI) models and executing complex Smart Contracts."
+   },
+   {
+    "t": "p",
+    "text": "1.2 Vision and Goals (Useful Proof-of-Work and Decentralized AI)"
+   },
+   {
+    "t": "p",
+    "text": "Qubic’s ultimate mission is to achieve true Artificial General Intelligence (AGI) operating on a decentralized network, preventing AI monopolies by tech giants. It accomplishes this through Useful Proof-of-Work (uPoW), which converts \"mining work\" into \"AI training tasks\" that generate tangible scientific and technological value."
+   },
+   {
+    "t": "p",
+    "text": "1.3 Founder and Core Development Team (Sergey Ivancheglo / Come-from-Beyond)"
+   },
+   {
+    "t": "p",
+    "text": "The project was founded by Sergey Ivancheglo, widely known in the crypto space as Come-from-Beyond (CfB). He is a legendary figure in blockchain history, having co-founded IOTA (architecting the Tangle DAG structure) and created Nxt (one of the world's first pure Proof-of-Stake blockchains). He leads a dedicated team of hardcore systems engineers and developers pushing Qubic's infrastructure forward."
+   },
+   {
+    "t": "p",
+    "text": "2. Core Architecture & Technology"
+   },
+   {
+    "t": "h",
+    "text": "2.1 Useful Proof-of-Work (uPoW) Consensus Mechanism"
+   },
+   {
+    "t": "p",
+    "text": "Instead of having miners randomly guess hashes solely to compete for block creation, Qubic’s uPoW distributes datasets and Artificial Neural Network (ANN) computation tasks to miners. The resulting solutions are fed back into the network to evolve and improve its AI system, ensuring every watt of electricity spent on mining directly contributes to AI intelligence."
+   },
+   {
+    "t": "h",
+    "text": "2.2 Computors and Quorum-Based Consensus"
+   },
+   {
+    "t": "p",
+    "text": "The Qubic network is operated by a fixed set of 676 validator nodes known as Computors. Validating transactions and computational outputs relies on a Quorum system: at least 451 Computors (a 2/3+ supermajority) must reach the exact same result for it to be finalized. This architecture enables near-instant transaction finality."
+   },
+   {
+    "t": "h",
+    "text": "2.3 Aigarth: Artificial Intelligence Powered by Qubic"
+   },
+   {
+    "t": "p",
+    "text": "Aigarth is the core AI system running natively on the Qubic network. It harnesses the combined processing power of miners and Computors to build and refine Artificial Neural Networks using evolutionary algorithms, aiming to create self-learning models capable of solving complex real-world problems."
+   },
+   {
+    "t": "h",
+    "text": "2.4 High-Speed Processing and Feeless Transactions"
+   },
+   {
+    "t": "p",
+    "text": "Qubic is engineered to handle millions of transactions per second (TPS) in testing environments and offers Zero Gas Fees for standard token transfers. Rather than charging end-users per transaction, the network compensates node operators and miners through its weekly epoch emission system."
+   },
+   {
+    "t": "h",
+    "text": "2.5 C++ Smart Contracts and Bare-Metal Execution"
+   },
+   {
+    "t": "p",
+    "text": "Unlike most blockchains that rely on virtual machines (such as the EVM), Qubic executes Smart Contracts written directly in C++ on Bare Metal hardware. By eliminating virtualization overhead, Qubic maximizes CPU and GPU efficiency, drastically reduces latency, and enables heavy mathematical computations that conventional blockchains cannot support."
+   },
+   {
+    "t": "p",
+    "text": "3. Ecosystem & Key Components"
+   },
+   {
+    "t": "p",
+    "text": "3.1 Oracle Machines (External Data Connectivity)"
+   },
+   {
+    "t": "p",
+    "text": "Qubic integrates Oracle Machines natively at the protocol level. This allows Smart Contracts to securely fetch and verify external real-world data (such as stock prices, weather metrics, or external APIs) directly through the consensus of the 676 Computors without relying on third-party middleware."
+   },
+   {
+    "t": "h",
+    "text": "3.2 Data Storage and Network Communication"
+   },
+   {
+    "t": "p",
+    "text": "The network utilizes a specialized, high-speed Peer-to-Peer communication protocol designed so all 676 Computors can synchronize state within fractions of a second. State data is maintained directly in RAM for ultra-fast access and execution."
+   },
+   {
+    "t": "h",
+    "text": "3.3 Wallets and Developer Tools"
+   },
+   {
+    "t": "p",
+    "text": "The Qubic ecosystem includes official Qubic Wallets across Web, Mobile, and CLI (Command Line Interface) formats for miners and developers, alongside SDKs and a dedicated Testnet for writing, testing, and deploying C++ Smart Contracts and decentralized applications (dApps)."
+   },
+   {
+    "t": "p",
+    "text": "4. Tokenomics"
+   },
+   {
+    "t": "h",
+    "text": "4.1 QUBIC Token Fundamentals"
+   },
+   {
+    "t": "p",
+    "text": "Ticker: QUBIC (Qubic Units / QUs)"
+   },
+   {
+    "t": "p",
+    "text": "Nature of the Unit: Functions as a unit of computational energy used to fuel Smart Contracts and processing tasks on the network."
+   },
+   {
+    "t": "p",
+    "text": "Maximum Supply: Capped at 200 Trillion QUBIC (reduced from the initial 1,000 Trillion plan via community governance to tighten inflation control)."
+   },
+   {
+    "t": "h",
+    "text": "4.2 Weekly Token Emissions (Epochs) and Computor Distribution"
+   },
+   {
+    "t": "p",
+    "text": "Time on the Qubic network is divided into weekly cycles called Epochs (1 Epoch = 7 days). At the end of each Epoch, 1 Trillion new QUBIC are minted and distributed among the 676 Computors based on their performance scores for that week. Computors, in turn, distribute a portion of these rewards to the miners who contributed hash/processing power to them."
+   },
+   {
+    "t": "h",
+    "text": "4.3 Burn Mechanism and Deflationary Model"
+   },
+   {
+    "t": "p",
+    "text": "While standard token transfers are feeless, executing Smart Contracts, querying Oracles, or running AI workloads requires paying computational fees in QUBIC. All tokens spent on these operations are permanently burned from the supply. Once network usage grows to the point where weekly burns exceed the 1 Trillion weekly emission, QUBIC becomes strictly deflationary."
+   },
+   {
+    "t": "h",
+    "text": "4.4 Token Utility Within the Ecosystem"
+   },
+   {
+    "t": "p",
+    "text": "Paying execution costs for Smart Contracts."
+   },
+   {
+    "t": "p",
+    "text": "Covering fees for native Oracle data queries."
+   },
+   {
+    "t": "p",
+    "text": "Purchasing computational power from the Aigarth AI network."
+   },
+   {
+    "t": "p",
+    "text": "Serving as the primary medium of exchange and liquidity on native DEXs (such as QX) within the Qubic ecosystem."
+   },
+   {
+    "t": "p",
+    "text": "5. Mining & Network Participation"
+   },
+   {
+    "t": "p",
+    "text": "5.1 How Qubic Mining Works (AI Training & Mining)"
+   },
+   {
+    "t": "p",
+    "text": "Miners connect their CPUs and GPUs to a Mining Pool or directly to a Computor node to receive AI training tasks (for Aigarth). As miners solve these neural network problems and submit valid solutions, the network tracks their cumulative performance scores throughout the week."
+   },
+   {
+    "t": "h",
+    "text": "5.2 Weekly Computor Ranking and Selection"
+   },
+   {
+    "t": "p",
+    "text": "At the end of every Epoch (Wednesdays UTC), the network ranks all participating nodes based on their computational output. The top 676 nodes earn the right to serve as Computors for the upcoming Epoch, while underperforming nodes are rotated out to make room for higher-performing challengers. This competitive mechanism keeps network hardware and efficiency at peak levels."
+   },
+   {
+    "t": "h",
+    "text": "5.3 Miner Rewards and Costs"
+   },
+   {
+    "t": "p",
+    "text": "Miner earnings depend on the number of valid solutions submitted relative to total network hashpower, as well as the efficiency of their chosen pool or Computor. Primary operating costs involve electricity and hardware—CPUs and GPUs supporting AVX2 or AVX-512 instruction sets hold a distinct performance advantage for neural network calculations."
+   },
+   {
+    "t": "p",
+    "text": "6. Roadmap & Milestones"
+   },
+   {
+    "t": "h",
+    "text": "6.1 Key Past Milestones"
+   },
+   {
+    "t": "p",
+    "text": "Mainnet & uPoW Launch: Successfully deployed the live network and validated the 676-Computor Quorum consensus architecture."
+   },
+   {
+    "t": "p",
+    "text": "Launch of QX (Decentralized Exchange): Introduced the first native decentralized exchange on Qubic featuring feeless transfers."
+   },
+   {
+    "t": "p",
+    "text": "Tokenomics Overhaul (Supply Cap Reduction): Passed community governance proposals to reduce the max supply cap and reinforce burn mechanics for long-term economic sustainability."
+   },
+   {
+    "t": "p",
+    "text": "Aigarth Expansion: Transitioned live mining power toward active neural network training and opened public access to AI progress data."
+   },
+   {
+    "t": "h",
+    "text": "6.2 Future Roadmap"
+   },
+   {
+    "t": "p",
+    "text": "Commercializing Aigarth: Enabling external enterprises and developers to submit custom AI models and computational workloads to Qubic, paid for in QUBIC (which gets burned)."
+   },
+   {
+    "t": "p",
+    "text": "DeFi & Cross-Chain Expansion: Building cross-chain bridges to connect liquidity with major blockchains and funding ecosystem builders through developer grant programs."
+   },
+   {
+    "t": "p",
+    "text": "Developer Experience Upgrades: Streamlining tooling and documentation to lower the barrier to entry for writing and deploying C++ Smart Contracts."
+   },
+   {
+    "t": "p",
+    "text": "7. SWOT & Risk Analysis"
+   },
+   {
+    "t": "h",
+    "text": "7.1 Technological Strengths and Competitive Advantages"
+   },
+   {
+    "t": "p",
+    "text": "Distinctive Innovation: The uPoW model directly addresses environmental criticisms of traditional PoW by converting mining energy into practical AI training."
+   },
+   {
+    "t": "p",
+    "text": "Extreme Performance: Bare-metal C++ execution combined with a 676-node Quorum achieves ultra-high throughput and zero transfer fees."
+   },
+   {
+    "t": "p",
+    "text": "Proven Founder Track Record: Come-from-Beyond brings deep credibility and a history of pioneering novel blockchain architectures."
+   },
+   {
+    "t": "p",
+    "text": "Usage-Driven Deflation: Token burns scale directly with real Smart Contract and AI compute demand."
+   },
+   {
+    "t": "h",
+    "text": "7.2 Challenges, Risks, and Investor Considerations"
+   },
+   {
+    "t": "p",
+    "text": "High Technical Barrier: Writing bare-metal C++ Smart Contracts is significantly harder than using Ethereum’s Solidity, which may slow down dApp and developer adoption compared to rival chains."
+   },
+   {
+    "t": "p",
+    "text": "Early-Stage Inflation Pressure: The weekly issuance of 1 Trillion QUBIC creates continuous sell pressure from miners and Computors until network usage and token burns grow large enough to offset new supply."
+   },
+   {
+    "t": "p",
+    "text": "Practical Centralization Risks: Although structurally decentralized, if a few massive mining pools dominate network hashpower, they could disproportionately control the 676 Computor slots."
+   },
+   {
+    "t": "p",
+    "text": "Market Competition: The decentralized AI sector is fiercely competitive (against players like Bittensor, Render, and Akash); Qubic must prove that Aigarth can deliver commercially viable AI breakthroughs."
+   }
+  ]
+ },
+ {
   "slug": "is-55-percent-a-lot-bpp-9000-vs-trading-systems",
   "title": "Is 55% accuracy a lot or a little? BPP-9000 vs today's trading systems",
   "kicker": null,
