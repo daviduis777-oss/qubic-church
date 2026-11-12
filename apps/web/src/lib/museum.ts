@@ -1642,7 +1642,30 @@ export const ANNA: Exhibit[] = [
     format: 'Anna 0.%d.%d  |  %d  |  %d ticks  |  mode %d  |  %d mutations  |  %s  |  %d/%d accuracy (%d%%)  |  %d it/s',
     cfb: '@here It seems we have found what must be changed in BPP9000 fitness functions to divert ANNs from memorization to construction of BTC price model. The solution is likely not 100% efficient, but it doesn’t need to be 100% for BPP9000 to be profitable. Now we need to do A/B testing to verify the new fitness function, for that we need to run training with memorizing fitness function and then one with the other approach.\nThis Anna version is memorizing version, we need to run it today the whole day trying to reach as low score as possible. Tomorrow another version with another fitness function will be released, trained, and compared to today’s one.\nUse empty Anna.data.',
   },
-  { kind: 'talk', at: '2026-11-08T08:33:00Z', text: 'Anna 0.28.1024\nUse empty Anna.data.\nThis version runs in mode 2 only.' },
+  { kind: 'talk', at: '2026-11-08T08:31:00Z', ask: { who: 'neener neener', text: '3084' }, text: 'What’s best score?' },
+  {
+    kind: 'version',
+    id: 's0281024',
+    name: 'Anna 0.28.1024',
+    at: '2026-11-08T08:33:00Z',
+    built: '2026-11-08T08:32:47Z',
+    bytes: 184320,
+    sha256: 'aa352edc28a2b9dd876d7b38daa676478215fcca4822c4119e383ee3a11ff7e0',
+    format: 'Anna 0.%d.%d  |  %d  |  %d ticks  |  mode %d  |  %d mutations  |  %s  |  %d/%d accuracy (%d%%)  |  %d it/s',
+    cfb: 'Anna 0.28.1024\nUse empty Anna.data.\nThis version runs in mode 2 only.\nNow we need to try to reach ~3000 with this version',
+  },
+  {
+    kind: 'talk',
+    at: '2026-11-08T08:35:00Z',
+    ask: { who: 'Elitebreed', text: 'can we now move to the highest height' },
+    text: 'Current plan is:\nOn ~18th Nov we adding live price feed and run old fitness function then following epoch updating the function to another one and analyze what changes. Then gradually improve ANN parameters and training algo. While we don’t know about noise level of BTC price, our chances to solve it are pretty high.',
+  },
+  {
+    kind: 'mark',
+    at: '2026-11-18T12:00:00Z',
+    title: 'Next: the live price feed',
+    text: 'The plan Come-from-Beyond gave on 8 November. The hall continues from here.',
+  },
 ]
 
 // Scores people posted in the first days (lower is better, 0 is the goal). More will be added from the chat.
