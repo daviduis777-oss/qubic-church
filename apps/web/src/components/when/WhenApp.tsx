@@ -68,7 +68,7 @@ const css = `
 .wn-big h3{margin:0;font-size:clamp(19px,2.4vw,23px);color:#fff3dc;font-weight:600;line-height:1.25}
 .wn-big p{margin:0;color:#cfc6b8;font-size:14.5px;line-height:1.55;max-width:66ch}
 .wn-q{margin:8px 0 0;padding:10px 14px;border-left:2px solid var(--c,#ffc46b);background:rgba(255,196,107,.04);border-radius:0 10px 10px 0;max-width:66ch}
-.wn-q blockquote{margin:0;font-family:Georgia,serif;font-size:15px;line-height:1.55;color:#f3e8d6}
+.wn-q blockquote{margin:0;white-space:pre-line;font-family:Georgia,serif;font-size:15px;line-height:1.55;color:#f3e8d6}
 .wn-small .wn-q blockquote{font-size:14px}
 .wn-q figcaption{margin-top:5px;font-size:12px;color:#a39a8c}
 .wn-src{justify-self:start;font-size:12.5px;color:#ffe3b0;text-decoration:underline;text-decoration-color:rgba(255,196,107,.35);text-underline-offset:3px}
@@ -189,7 +189,6 @@ export function WhenApp() {
   const epPct = Math.min(100, Math.max(0, ((t - epochStart(ep)) / WEEK) * 100))
   const weeks = Array.from({ length: 8 }, (_, i) => ep - 2 + i)
   const counts = (k: Kind) => MOMENTS.filter(m => m.kind === k).length
-  const firstYear = Math.min(...MOMENTS.map(yearOf))
   let lastYear = 0
   return (
     <main className={`wn ${bppFonts}`}>
@@ -199,17 +198,6 @@ export function WhenApp() {
           <span className="wn-chip">HIDDEN · ONLY YOU SEE THIS</span>
           <h1 className="wn-h">WEN?</h1>
           <p className="wn-sub">Every date that matters for Qubic and Aigarth, from the proof of concept to The Day. Newest on top, each with its source.</p>
-          <div className="wn-stats">
-            <span>
-              <b>{MOMENTS.length}</b>moments
-            </span>
-            <span>
-              <b>{MOMENTS.filter(m => m.quote).length}</b>in his words
-            </span>
-            <span>
-              <b>{new Date(t).getUTCFullYear() - firstYear}</b>years on the road
-            </span>
-          </div>
         </div>
 
         <section aria-label="Coming next" className="wn-next">

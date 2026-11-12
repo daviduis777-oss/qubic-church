@@ -59,7 +59,7 @@ export const MOMENTS: Moment[] = [
     kind: 'aigarth',
     major: true,
     eta: true,
-    quote: { text: 'Long-term ETA was 13.04.2027 and short-term 18th-25th Nov.', when: '10 Nov 2026', where: D },
+    quote: { text: 'I can reveal this info on 13th of April 2027\nAnd you\u2019ll see who is really behind CFB acc', when: '10 Oct 2025', where: D },
     source: { label: 'What the deploy on 13 April 2027 means', href: '/books/qubic-the-long-version/14-what-the-deploy-on-april-13-2027-means' },
   },
   {
@@ -270,12 +270,11 @@ export const WEN: { q: string; a: string; quote: Quote }[] = [
   },
   { q: 'Wen do real predictions count?', a: 'From 25 November. Epoch 240 is a test; epoch 241 is the first scored on accuracy.', quote: { text: 'Should be 25th, 18th is test-run', when: '10 Nov 2026', where: D } },
   { q: 'Why not right away on the 18th?', a: 'Miners need the epoch to grow networks for the live feed.', quote: { text: 'Yes, because miners won’t produce trained ANN same day', when: '10 Nov 2026', where: D } },
-  { q: 'Wen do the score games stop?', a: 'On 25 November, when the score changes.', quote: { text: 'on 25th we are changing how score is computed, so games should stop automatically', when: '10 Nov 2026', where: D } },
   {
     q: 'Wen factual accuracy?',
     a: 'Planned for this epoch; the explorer shows it once 100 computors qualify.',
     quote: { text: 'Those who helped with Anna latest testing, we adjusted threshold score based on that testing, planning to see factual accuracy next epoch', when: '10 Nov 2026', where: D },
   },
   { q: 'Wen a higher bar than 55%?', a: 'After 55% is reached. A quick test showed 67% is out of reach for now.', quote: { text: 'if we reach 55% we’ll increase it', when: '10 Nov 2026', where: D } },
-  { q: 'Wen 13.04.2027?', a: 'On 13 April 2027. It is an estimate, declared years ahead.', quote: { text: 'Cannot help with that, ETA was declared beforehand, so you dont have ground for reclamation', when: '10 Nov 2026', where: D } },
+  { q: 'Wen 13.04.2027?', a: 'On 13 April 2027.', quote: { text: 'I can reveal this info on 13th of April 2027\nAnd you\u2019ll see who is really behind CFB acc', when: '10 Oct 2025', where: D } },
 ]
