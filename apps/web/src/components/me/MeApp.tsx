@@ -1,14 +1,14 @@
-"use client";
+'use client'
 
 /* eslint-disable @next/next/no-img-element */
-import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
-import { bppFonts } from "@/components/bpp/fonts";
-import { Identicon } from "@/components/church/forum/Avatar";
-import { squareJpeg } from "@/components/church/forum/Cabinet";
-import { LEVELS, MEDALS, POWER } from "@/lib/me/medals";
-import type { Circle, Person } from "@/lib/me/me";
-import { MedalCoin } from "./Medal";
+import Link from 'next/link'
+import { useEffect, useRef, useState } from 'react'
+import { bppFonts } from '@/components/bpp/fonts'
+import { Identicon } from '@/components/church/forum/Avatar'
+import { squareJpeg } from '@/components/church/forum/Cabinet'
+import { LEVELS, MEDALS, POWER } from '@/lib/me/medals'
+import type { Circle, Person } from '@/lib/me/me'
+import { MedalCoin } from './Medal'
 
 const css = `
 .me{min-height:100svh;margin-bottom:-3rem;background:radial-gradient(70% 45% at 70% 0%,rgba(255,196,107,.08),transparent 70%),#08080a;color:#ece6da;font-family:var(--bpp-sans),system-ui,sans-serif;padding:96px 16px 128px}
@@ -134,51 +134,47 @@ const css = `
 @keyframes me-tw{0%,100%{opacity:.55}50%{opacity:1}}
 .me-tw{animation:me-tw 4s ease-in-out infinite}
 @media (prefers-reduced-motion:reduce){.me-tw{animation:none}}
-`;
+`
 
-const n = (v: number) => v.toLocaleString("en-US");
+const n = (v: number) => v.toLocaleString('en-US')
 const date = (s: string | null) =>
   s
-    ? new Date(s).toLocaleDateString("en-GB", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
+    ? new Date(s).toLocaleDateString('en-GB', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
       })
-    : "";
+    : ''
 
 export function MeApp() {
-  const [me, setMe] = useState<Person | null | undefined>(undefined);
-  const [circle, setCircle] = useState<Circle | null>(null);
-  const [preview, setPreview] = useState(false);
-  const [as, setAs] = useState("");
-  const [err, setErr] = useState("");
+  const [me, setMe] = useState<Person | null | undefined>(undefined)
+  const [circle, setCircle] = useState<Circle | null>(null)
+  const [preview, setPreview] = useState(false)
+  const [as, setAs] = useState('')
+  const [err, setErr] = useState('')
 
   const load = (h?: string) => {
-    setErr("");
-    const q = h ?? new URLSearchParams(location.search).get("as") ?? "";
-    fetch(`/api/me${q ? `?as=${encodeURIComponent(q)}` : ""}`, {
-      cache: "no-store",
+    setErr('')
+    const q = h ?? new URLSearchParams(location.search).get('as') ?? ''
+    fetch(`/api/me${q ? `?as=${encodeURIComponent(q)}` : ''}`, {
+      cache: 'no-store',
     })
-      .then((r) => r.json())
-      .then((j) => {
-        if (j.error) setErr(j.error);
-        setMe(j.me ?? null);
-        setCircle(j.circle ?? null);
-        setPreview(Boolean(j.preview));
+      .then(r => r.json())
+      .then(j => {
+        if (j.error) setErr(j.error)
+        setMe(j.me ?? null)
+        setCircle(j.circle ?? null)
+        setPreview(Boolean(j.preview))
       })
-      .catch((e) => setErr(String(e)));
-  };
-  useEffect(() => load(), []);
+      .catch(e => setErr(String(e)))
+  }
+  useEffect(() => load(), [])
 
   const go = () => {
-    const h = as.trim();
-    history.replaceState(
-      null,
-      "",
-      h ? `?as=${encodeURIComponent(h)}` : location.pathname,
-    );
-    load(h);
-  };
+    const h = as.trim()
+    history.replaceState(null, '', h ? `?as=${encodeURIComponent(h)}` : location.pathname)
+    load(h)
+  }
 
   return (
     <main className={`me ${bppFonts}`}>
@@ -187,13 +183,13 @@ export function MeApp() {
         <div className="me-top">
           <span>
             <span className="me-chip">HIDDEN · ONLY YOU SEE THIS</span>
-            {preview ? "  previewing another member" : ""}
+            {preview ? '  previewing another member' : ''}
           </span>
           <span className="me-as">
             <input
               aria-label="Preview the cabinet of"
-              onChange={(e) => setAs(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && go()}
+              onChange={e => setAs(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && go()}
               placeholder="preview as handle"
               value={as}
             />
@@ -203,67 +199,38 @@ export function MeApp() {
           </span>
         </div>
 
-        {err && <p style={{ color: "#e0806a" }}>{err}</p>}
-        {me === undefined && <p style={{ color: "#a39a8c" }}>Loading…</p>}
+        {err && <p style={{ color: '#e0806a' }}>{err}</p>}
+        {me === undefined && <p style={{ color: '#a39a8c' }}>Loading…</p>}
         {me === null && !err && (
           <div className="me-card">
-            You are not signed in on this browser.{" "}
-            <Link href="/articles/me">Sign in</Link>, or preview a member above.
+            You are not signed in on this browser. <Link href="/articles/me">Sign in</Link>, or preview a member above.
           </div>
         )}
-        {me && (
-          <Cabinet
-            circle={circle}
-            me={me}
-            onChange={() => load()}
-            self={!preview}
-          />
-        )}
+        {me && <Cabinet circle={circle} me={me} onChange={() => load()} self={!preview} />}
       </div>
     </main>
-  );
+  )
 }
 
-function Cabinet({
-  me,
-  circle,
-  self,
-  onChange,
-}: {
-  me: Person;
-  circle: Circle | null;
-  self: boolean;
-  onChange: () => void;
-}) {
-  const founder = me.annas.length > 0;
-  const anna = me.annas.slice().sort((a, b) => a.rank - b.rank)[0];
-  const pic = me.avatar ?? anna?.image;
-  const earned = new Set(me.medals);
-  const ordered = MEDALS.slice().sort(
-    (a, b) => Number(earned.has(b.id)) - Number(earned.has(a.id)),
-  );
-  const pw = me.power;
-  const max = Math.max(1, ...me.solutions.byEpoch.map((e) => e.n));
-  const [open, setOpen] = useState<string | null>(null);
-  const toggle = (id: string) => setOpen((o) => (o === id ? null : id));
-  const steps = stepList(me);
-  const stepsDone = steps.filter((x) => x.done).length;
-  const nextStep = steps.find((x) => !x.done);
+function Cabinet({ me, circle, self, onChange }: { me: Person; circle: Circle | null; self: boolean; onChange: () => void }) {
+  const founder = me.annas.length > 0
+  const anna = me.annas.slice().sort((a, b) => a.rank - b.rank)[0]
+  const pic = me.avatar ?? anna?.image
+  const earned = new Set(me.medals)
+  const ordered = MEDALS.slice().sort((a, b) => Number(earned.has(b.id)) - Number(earned.has(a.id)))
+  const pw = me.power
+  const max = Math.max(1, ...me.solutions.byEpoch.map(e => e.n))
+  const [open, setOpen] = useState<string | null>(null)
+  const toggle = (id: string) => setOpen(o => (o === id ? null : id))
+  const steps = stepList(me)
+  const stepsDone = steps.filter(x => x.done).length
+  const nextStep = steps.find(x => !x.done)
   return (
     <>
       <section className="me-hero">
         <div className="me-card me-pass">
           <div className="me-pass-row">
-            <AvatarEdit
-              anna={anna?.image}
-              founder={founder}
-              handle={me.handle}
-              id={me.id}
-              level={pw.level.index}
-              onChange={onChange}
-              pic={pic}
-              self={self}
-            />
+            <AvatarEdit anna={anna?.image} founder={founder} handle={me.handle} id={me.id} level={pw.level.index} onChange={onChange} pic={pic} self={self} />
             <div>
               <h1 className="me-name">{me.name}</h1>
               <div className="me-meta">
@@ -271,13 +238,8 @@ function Cabinet({
                 {me.since && <span>In QC since {date(me.since)}</span>}
                 {me.x && (
                   <span>
-                    X:{" "}
-                    <a
-                      href={`https://x.com/${me.x}`}
-                      rel="noopener"
-                      style={{ color: "#ffe3b0" }}
-                      target="_blank"
-                    >
+                    X:{' '}
+                    <a href={`https://x.com/${me.x}`} rel="noopener" style={{ color: '#ffe3b0' }} target="_blank">
                       @{me.x}
                     </a>
                   </span>
@@ -287,16 +249,13 @@ function Cabinet({
           </div>
           {me.bio && <p className="me-bio">{me.bio}</p>}
           {streakOf(me) > 1 && (
-            <span
-              className="me-streak"
-              title="Epochs in a row with at least one useful solution"
-            >
+            <span className="me-streak" title="Epochs in a row with at least one useful solution">
               <b>{streakOf(me)}</b> epochs in a row with a solution
             </span>
           )}
           {me.medals.length > 0 && (
             <div className="me-row-medals">
-              {MEDALS.filter((m) => earned.has(m.id)).map((m) => (
+              {MEDALS.filter(m => earned.has(m.id)).map(m => (
                 <span key={m.id} title={m.name}>
                   <MedalCoin earned medal={m} size={34} />
                 </span>
@@ -308,9 +267,9 @@ function Cabinet({
         <div className="me-card">
           <div
             style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
             }}
           >
             <span className="me-lab">Power</span>
@@ -322,38 +281,27 @@ function Cabinet({
           </div>
           <div className="me-next">
             <div className="me-next-bar">
-              <i
-                style={{ width: `${Math.max(2, pw.level.progress * 100)}%` }}
-              />
+              <i style={{ width: `${Math.max(2, pw.level.progress * 100)}%` }} />
             </div>
             <div className="me-next-t">
               {pw.level.next
                 ? `${n(pw.level.next.missing)} power to ${pw.level.next.name}: about ${n(Math.ceil(pw.level.next.missing / POWER.solution))} useful solutions.`
-                : "The top of the sky."}
+                : 'The top of the sky.'}
             </div>
           </div>
           <div className="me-src">
             <div className="me-src-row main">
               <span>
                 Useful solutions · {n(me.solutions.total)}
-                <small>
-                  Found in the QC pool and accepted by the network.{" "}
-                  {POWER.solution} power each.
-                </small>
+                <small>Found in the QC pool and accepted by the network. {POWER.solution} power each.</small>
               </span>
               <b>{n(pw.parts.solutions)}</b>
             </div>
             {me.solutions.byEpoch.length > 0 && (
-              <div
-                aria-label="Useful solutions by epoch"
-                className="me-bars"
-                role="img"
-              >
-                {me.solutions.byEpoch.map((e) => (
+              <div aria-label="Useful solutions by epoch" className="me-bars" role="img">
+                {me.solutions.byEpoch.map(e => (
                   <div key={e.epoch}>
-                    <b
-                      style={{ height: `${Math.max(3, (e.n / max) * 34)}px` }}
-                    />
+                    <b style={{ height: `${Math.max(3, (e.n / max) * 34)}px` }} />
                     <span>E{e.epoch}</span>
                   </div>
                 ))}
@@ -365,10 +313,8 @@ function Cabinet({
             </div>
             <div className="me-src-row">
               <span>
-                The Crypt · {me.crypt.articles}{" "}
-                {me.crypt.articles === 1 ? "article" : "articles"},{" "}
-                {me.crypt.replies}{" "}
-                {me.crypt.replies === 1 ? "reply" : "replies"}
+                The Crypt · {me.crypt.articles} {me.crypt.articles === 1 ? 'article' : 'articles'}, {me.crypt.replies}{' '}
+                {me.crypt.replies === 1 ? 'reply' : 'replies'}
               </span>
               <b>{n(pw.parts.crypt)}</b>
             </div>
@@ -380,23 +326,42 @@ function Cabinet({
         </div>
       </section>
 
-      <Road me={me} />
-
       <div className="me-folds">
+        <Fold
+          id="road"
+          onToggle={toggle}
+          open={open === 'road'}
+          summary={
+            <>
+              {pw.level.name}
+              {pw.level.next ? (
+                <>
+                  {' '}
+                  · next: <b>{pw.level.next.name}</b>, {n(pw.level.next.missing)} power to go
+                </>
+              ) : (
+                ' · the top'
+              )}
+            </>
+          }
+          title="The road to Pulsar"
+        >
+          <Road me={me} />
+        </Fold>
         <Fold
           id="grow"
           onToggle={toggle}
-          open={open === "grow"}
+          open={open === 'grow'}
           summary={
             <>
               {stepsDone} of {steps.length} done
               {nextStep ? (
                 <>
-                  {" "}
+                  {' '}
                   · next: <b>{nextStep.t}</b>
                 </>
               ) : (
-                ""
+                ''
               )}
             </>
           }
@@ -408,11 +373,10 @@ function Cabinet({
           <Fold
             id="sky"
             onToggle={toggle}
-            open={open === "sky"}
+            open={open === 'sky'}
             summary={
               <>
-                {circle.count} people · you shine brighter than{" "}
-                <b>{Math.round(circle.brighter * 100)}%</b>
+                {circle.count} people · you shine brighter than <b>{Math.round(circle.brighter * 100)}%</b>
               </>
             }
             title="QC right now"
@@ -423,10 +387,10 @@ function Cabinet({
         <Fold
           id="medals"
           onToggle={toggle}
-          open={open === "medals"}
+          open={open === 'medals'}
           summary={
             <span className="me-fold-coins">
-              {MEDALS.filter((m) => earned.has(m.id)).map((m) => (
+              {MEDALS.filter(m => earned.has(m.id)).map(m => (
                 <MedalCoin earned key={m.id} medal={m} size={22} />
               ))}
               <span>
@@ -437,10 +401,10 @@ function Cabinet({
           title="Medals"
         >
           <div className="me-medals">
-            {ordered.map((m) => {
-              const on = earned.has(m.id);
+            {ordered.map(m => {
+              const on = earned.has(m.id)
               return (
-                <div className={`me-medal ${on ? "on" : "off"}`} key={m.id}>
+                <div className={`me-medal ${on ? 'on' : 'off'}`} key={m.id}>
                   <MedalCoin earned={on} medal={m} size={56} />
                   <div>
                     <b>{m.name}</b>
@@ -448,41 +412,37 @@ function Cabinet({
                     {!on && m.opens && <em>opens {m.opens}</em>}
                   </div>
                 </div>
-              );
+              )
             })}
           </div>
         </Fold>
       </div>
     </>
-  );
+  )
 }
 
 /** Everyone in QC as stars: brightness is power. No names, only that they are here. */
 function Sky({ circle }: { circle: Circle }) {
-  const W = 560;
-  const H = 360;
-  const N = circle.stars.length;
+  const W = 560
+  const H = 360
+  const N = circle.stars.length
   const pts = circle.stars.map((lvl, i) => {
-    const t = (i + 0.5) / N;
-    const a = i * 2.39996;
-    const r = Math.sqrt(t) * 0.92;
-    const jx = ((i * 7919) % 97) / 97 - 0.5;
-    const jy = ((i * 104729) % 89) / 89 - 0.5;
+    const t = (i + 0.5) / N
+    const a = i * 2.39996
+    const r = Math.sqrt(t) * 0.92
+    const jx = ((i * 7919) % 97) / 97 - 0.5
+    const jy = ((i * 104729) % 89) / 89 - 0.5
     return {
       x: W / 2 + Math.cos(a) * r * (W / 2 - 20) + jx * 14,
       y: H / 2 + Math.sin(a) * r * (H / 2 - 18) + jy * 12,
       lvl,
-    };
-  });
-  const me = pts[circle.me];
-  const pct = Math.round(circle.brighter * 100);
+    }
+  })
+  const me = pts[circle.me]
+  const pct = Math.round(circle.brighter * 100)
   return (
     <div className="me-sky">
-      <svg
-        aria-label={`${circle.count} people in QC; your star is marked`}
-        role="img"
-        viewBox={`0 0 ${W} ${H}`}
-      >
+      <svg aria-label={`${circle.count} people in QC; your star is marked`} role="img" viewBox={`0 0 ${W} ${H}`}>
         <defs>
           <radialGradient id="me-st">
             <stop offset="0" stopColor="#fff3dc" />
@@ -506,28 +466,9 @@ function Sky({ circle }: { circle: Circle }) {
         )}
         {me && (
           <g>
-            <circle
-              cx={me.x}
-              cy={me.y}
-              fill="none"
-              r={14 + me.lvl * 1.6}
-              stroke="#ffc46b"
-              strokeOpacity=".7"
-              strokeWidth="1.2"
-            />
-            <circle
-              cx={me.x}
-              cy={me.y}
-              fill="url(#me-st)"
-              r={6 + me.lvl * 1.8}
-            />
-            <text
-              fill="#ffe3b0"
-              fontSize="13"
-              textAnchor="middle"
-              x={me.x}
-              y={me.y - 22 - me.lvl * 1.6}
-            >
+            <circle cx={me.x} cy={me.y} fill="none" r={14 + me.lvl * 1.6} stroke="#ffc46b" strokeOpacity=".7" strokeWidth="1.2" />
+            <circle cx={me.x} cy={me.y} fill="url(#me-st)" r={6 + me.lvl * 1.8} />
+            <text fill="#ffe3b0" fontSize="13" textAnchor="middle" x={me.x} y={me.y - 22 - me.lvl * 1.6}>
               you
             </text>
           </g>
@@ -542,96 +483,68 @@ function Sky({ circle }: { circle: Circle }) {
           {circle.active}
           <small>
             found useful solutions this epoch
-            {circle.preview ? " (preview)" : ""}
+            {circle.preview ? ' (preview)' : ''}
           </small>
         </div>
         <div className="me-chase">
-          Your star is brighter than <b>{pct}%</b> of QC.{" "}
+          Your star is brighter than <b>{pct}%</b> of QC.{' '}
           {circle.above ? (
             <>
-              The next one up is a {circle.above.level},{" "}
-              <b>{n(circle.above.gap)}</b> power ahead: about{" "}
-              {n(Math.ceil(circle.above.gap / POWER.solution))} useful
-              solutions.
+              The next one up is a {circle.above.level}, <b>{n(circle.above.gap)}</b> power ahead: about {n(Math.ceil(circle.above.gap / POWER.solution))}{' '}
+              useful solutions.
             </>
           ) : (
             <>No one in QC shines brighter right now.</>
           )}
-          {circle.below
-            ? ` The one behind you is ${n(circle.below.gap)} power back.`
-            : ""}
+          {circle.below ? ` The one behind you is ${n(circle.below.gap)} power back.` : ''}
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 /** Epochs in a row, up to the latest, with at least one useful solution. */
 function streakOf(me: Person) {
-  let k = 0;
-  for (
-    let i = me.solutions.byEpoch.length - 1;
-    i >= 0 && me.solutions.byEpoch[i]!.n > 0;
-    i--
-  )
-    k++;
-  return k;
+  let k = 0
+  for (let i = me.solutions.byEpoch.length - 1; i >= 0 && me.solutions.byEpoch[i]!.n > 0; i--) k++
+  return k
 }
 
 /** The picture: your own upload wins, then your Anna, then the pixel avatar from your key. Only on your own cabinet can you change it. */
-function AvatarEdit(props: {
-  pic?: string;
-  anna?: string;
-  founder: boolean;
-  level: number;
-  handle: string;
-  id?: string;
-  self: boolean;
-  onChange: () => void;
-}) {
-  const { pic, anna, founder, level, handle, id, self, onChange } = props;
-  const file = useRef<HTMLInputElement>(null);
-  const [busy, setBusy] = useState(false);
-  const [msg, setMsg] = useState("");
+function AvatarEdit(props: { pic?: string; anna?: string; founder: boolean; level: number; handle: string; id?: string; self: boolean; onChange: () => void }) {
+  const { pic, anna, founder, level, handle, id, self, onChange } = props
+  const file = useRef<HTMLInputElement>(null)
+  const [busy, setBusy] = useState(false)
+  const [msg, setMsg] = useState('')
   const save = async (avatar: string | null) => {
-    setBusy(true);
-    setMsg("");
+    setBusy(true)
+    setMsg('')
     try {
       // The profile route rewrites every field, so send back what is there now.
-      const cur = await fetch("/api/forum/profile", { cache: "no-store" }).then(
-        (r) => r.json(),
-      );
-      if (cur.error) throw new Error(cur.error);
-      const p = cur.profile ?? {};
-      const r = await fetch("/api/forum/profile", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const cur = await fetch('/api/forum/profile', { cache: 'no-store' }).then(r => r.json())
+      if (cur.error) throw new Error(cur.error)
+      const p = cur.profile ?? {}
+      const r = await fetch('/api/forum/profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          x: p.x ?? "",
-          signature: p.signature ?? "",
-          bio: p.bio ?? "",
+          x: p.x ?? '',
+          signature: p.signature ?? '',
+          bio: p.bio ?? '',
           ...(avatar ? { avatar } : { removeAvatar: true }),
         }),
-      }).then((r) => r.json());
-      if (r.error) throw new Error(r.error);
-      onChange();
+      }).then(r => r.json())
+      if (r.error) throw new Error(r.error)
+      onChange()
     } catch (e) {
-      setMsg((e as Error).message);
+      setMsg((e as Error).message)
     } finally {
-      setBusy(false);
+      setBusy(false)
     }
-  };
-  const ring = founder ? " founder" : level >= 2 ? " ring-flame" : "";
-  const face = (
-    <div className={`me-ava${ring}`}>
-      {pic ? (
-        <img alt="" src={pic} />
-      ) : (
-        <Identicon seed={id ?? handle} size={88} />
-      )}
-    </div>
-  );
-  if (!self) return face;
+  }
+  const ring = founder ? ' founder' : level >= 2 ? ' ring-flame' : ''
+  const face = <div className={`me-ava${ring}`}>{pic ? <img alt="" src={pic} /> : <Identicon seed={id ?? handle} size={88} />}</div>
+  if (!self) return face
   return (
     <div className="me-ava-w">
       <button
@@ -647,32 +560,20 @@ function AvatarEdit(props: {
       <input
         accept="image/*"
         hidden
-        onChange={async (e) => {
-          const f = e.target.files?.[0];
-          e.target.value = "";
-          if (f) save(await squareJpeg(f).catch(() => null));
+        onChange={async e => {
+          const f = e.target.files?.[0]
+          e.target.value = ''
+          if (f) save(await squareJpeg(f).catch(() => null))
         }}
         ref={file}
         type="file"
       />
       <div className="me-ava-edit">
-        <button
-          disabled={busy}
-          onClick={() => file.current?.click()}
-          type="button"
-        >
-          {busy ? "Saving…" : "Change"}
+        <button disabled={busy} onClick={() => file.current?.click()} type="button">
+          {busy ? 'Saving…' : 'Change'}
         </button>
         {anna && (
-          <button
-            disabled={busy}
-            onClick={async () =>
-              save(
-                await squareJpeg(await fetch(anna).then((r) => r.blob()), 256),
-              )
-            }
-            type="button"
-          >
+          <button disabled={busy} onClick={async () => save(await squareJpeg(await fetch(anna).then(r => r.blob()), 256))} type="button">
             Use my Anna
           </button>
         )}
@@ -682,229 +583,163 @@ function AvatarEdit(props: {
           </button>
         )}
       </div>
-      {msg && <span style={{ color: "#e0806a", fontSize: 12 }}>{msg}</span>}
+      {msg && <span style={{ color: '#e0806a', fontSize: 12 }}>{msg}</span>}
     </div>
-  );
+  )
 }
 
 /** The whole climb from Spark to Pulsar: where you are, what each level gives, how far in solutions. */
 function Road({ me }: { me: Person }) {
-  const cur = me.power.level.index;
-  const W = 900;
-  const H = 120;
-  const col = W / LEVELS.length;
+  const cur = me.power.level.index
+  const W = 900
+  const H = 120
+  const col = W / LEVELS.length
   // a slow climb: each level sits a little higher than the last
   const pt = (i: number) => ({
     x: col * i + col / 2,
     y: H - 22 - (i / (LEVELS.length - 1)) * (H - 50),
-  });
-  const path = LEVELS.map((_, i) => pt(i));
-  const d = path
-    .map((p, i) => (i ? `L${p.x},${p.y}` : `M${p.x},${p.y}`))
-    .join(" ");
+  })
+  const path = LEVELS.map((_, i) => pt(i))
+  const d = path.map((p, i) => (i ? `L${p.x},${p.y}` : `M${p.x},${p.y}`)).join(' ')
   // how far along the segment from the current level to the next
   const here = (() => {
-    const a = pt(cur);
-    const b = path[cur + 1];
-    if (!b) return a;
-    const t = me.power.level.progress;
-    return { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t };
-  })();
+    const a = pt(cur)
+    const b = path[cur + 1]
+    if (!b) return a
+    const t = me.power.level.progress
+    return { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t }
+  })()
   const done =
     path
       .slice(0, cur + 1)
       .map((p, i) => (i ? `L${p.x},${p.y}` : `M${p.x},${p.y}`))
-      .join(" ") + ` L${here.x},${here.y}`;
+      .join(' ') + ` L${here.x},${here.y}`
   return (
-    <section className="me-card">
-      <h2 className="me-h">The road to Pulsar</h2>
-      <div className="me-road">
-        <div className="me-road-in">
-          <svg aria-hidden preserveAspectRatio="none" viewBox={`0 0 ${W} ${H}`}>
-            <defs>
-              <radialGradient id="me-rd">
-                <stop offset="0" stopColor="#fff3dc" />
-                <stop offset=".45" stopColor="#ffc46b" />
-                <stop offset="1" stopColor="#ffc46b" stopOpacity="0" />
-              </radialGradient>
-            </defs>
-            <path
-              d={d}
-              fill="none"
-              stroke="rgba(255,200,140,.14)"
-              strokeDasharray="3 5"
-              strokeWidth="2"
-            />
-            <path
-              d={done}
-              fill="none"
-              stroke="#ffc46b"
-              strokeLinecap="round"
-              strokeWidth="3"
-            />
-            {path.map((p, i) => (
-              <circle
-                cx={p.x}
-                cy={p.y}
-                fill={i <= cur ? "url(#me-rd)" : "#1c1814"}
-                key={i}
-                r={5 + i * 1.3}
-                stroke={i <= cur ? "none" : "rgba(255,200,140,.25)"}
-              />
-            ))}
+    <div className="me-road">
+      <div className="me-road-in">
+        <svg aria-hidden preserveAspectRatio="none" viewBox={`0 0 ${W} ${H}`}>
+          <defs>
+            <radialGradient id="me-rd">
+              <stop offset="0" stopColor="#fff3dc" />
+              <stop offset=".45" stopColor="#ffc46b" />
+              <stop offset="1" stopColor="#ffc46b" stopOpacity="0" />
+            </radialGradient>
+          </defs>
+          <path d={d} fill="none" stroke="rgba(255,200,140,.14)" strokeDasharray="3 5" strokeWidth="2" />
+          <path d={done} fill="none" stroke="#ffc46b" strokeLinecap="round" strokeWidth="3" />
+          {path.map((p, i) => (
             <circle
-              cx={here.x}
-              cy={here.y}
-              fill="none"
-              r="13"
-              stroke="#ffc46b"
-              strokeWidth="1.5"
-              style={{ animation: "me-pulse 2.4s ease-in-out infinite" }}
+              cx={p.x}
+              cy={p.y}
+              fill={i <= cur ? 'url(#me-rd)' : '#1c1814'}
+              key={i}
+              r={5 + i * 1.3}
+              stroke={i <= cur ? 'none' : 'rgba(255,200,140,.25)'}
             />
-          </svg>
-          <div className="me-road-cols">
-            {LEVELS.map((l, i) => {
-              const cls =
-                i < cur
-                  ? "done"
-                  : i === cur
-                    ? "cur"
-                    : i === cur + 1
-                      ? "nxt"
-                      : "";
-              return (
-                <div className={`me-road-c ${cls}`} key={l.name}>
-                  {i === cur && <span className="tag">You</span>}
-                  {i === cur + 1 && <span className="tag n">Next</span>}
-                  <b>{l.name}</b>
-                  <span className="at">
-                    {l.at ? `${n(l.at)} power` : "start"}
-                  </span>
-                  <p>{l.gives}</p>
-                </div>
-              );
-            })}
-          </div>
+          ))}
+          <circle cx={here.x} cy={here.y} fill="none" r="13" stroke="#ffc46b" strokeWidth="1.5" style={{ animation: 'me-pulse 2.4s ease-in-out infinite' }} />
+        </svg>
+        <div className="me-road-cols">
+          {LEVELS.map((l, i) => {
+            const cls = i < cur ? 'done' : i === cur ? 'cur' : i === cur + 1 ? 'nxt' : ''
+            return (
+              <div className={`me-road-c ${cls}`} key={l.name}>
+                {i === cur && <span className="tag">You</span>}
+                {i === cur + 1 && <span className="tag n">Next</span>}
+                <b>{l.name}</b>
+                <span className="at">{l.at ? `${n(l.at)} power` : 'start'}</span>
+                <p>{l.gives}</p>
+              </div>
+            )
+          })}
         </div>
       </div>
-    </section>
-  );
+    </div>
+  )
 }
 
 /** What to do next, in the order a newcomer meets it. The first open step is lit. */
-type Step = { t: string; s: React.ReactNode; done: boolean; gain: string };
+type Step = { t: string; s: React.ReactNode; done: boolean; gain: string }
 
 function stepList(me: Person): Step[] {
-  const live = !me.solutions.preview;
+  const live = !me.solutions.preview
   const steps = [
     {
-      t: "Get your key",
-      s: "A Qubic wallet or a secret word. You have it.",
+      t: 'Get your key',
+      s: 'A Qubic wallet or a secret word. You have it.',
       done: true,
-      gain: "",
+      gain: '',
     },
     {
-      t: "Join the QC pool",
-      s: live
-        ? "Point your rig at the QC pool. Only solutions found here count."
-        : "Opens soon. Only solutions found in the QC pool count toward your power.",
+      t: 'Join the QC pool',
+      s: live ? 'Point your rig at the QC pool. Only solutions found here count.' : 'Opens soon. Only solutions found in the QC pool count toward your power.',
       done: live && me.solutions.total > 0,
-      gain: live ? "" : "soon",
+      gain: live ? '' : 'soon',
     },
     {
-      t: "Find your first useful solution",
-      s: "A network your rig trained that the Qubic network accepted.",
+      t: 'Find your first useful solution',
+      s: 'A network your rig trained that the Qubic network accepted.',
       done: live && me.solutions.total > 0,
       gain: `+${POWER.solution} each`,
     },
     {
-      t: "Mine every epoch",
-      s: "Keep the streak: one solution a week keeps your flame burning.",
+      t: 'Mine every epoch',
+      s: 'Keep the streak: one solution a week keeps your flame burning.',
       done: live && streakOf(me) >= 2,
-      gain: "streak",
+      gain: 'streak',
     },
     {
-      t: "Speak in the Crypt",
+      t: 'Speak in the Crypt',
       s: (
         <>
-          Write an article or answer one.{" "}
-          <Link href="/articles">Open the Crypt</Link>
+          Write an article or answer one. <Link href="/articles">Open the Crypt</Link>
         </>
       ),
       done: me.crypt.articles + me.crypt.replies > 0,
       gain: `+${POWER.article} / +${POWER.reply}`,
     },
     {
-      t: "Keep a BPP-9000 journal",
+      t: 'Keep a BPP-9000 journal',
       s: (
         <>
-          Trade beside the network and see who calls the hour better.{" "}
-          <Link href="/bpp9000">Open BPP-9000</Link>
+          Trade beside the network and see who calls the hour better. <Link href="/bpp9000">Open BPP-9000</Link>
         </>
       ),
       done: Boolean(me.bpp && me.bpp.trades > 0),
       gain: `+${POWER.trade} a trade`,
     },
-  ];
-  return steps;
+  ]
+  return steps
 }
 
 function Steps({ steps }: { steps: Step[] }) {
-  const first = steps.findIndex((x) => !x.done);
+  const first = steps.findIndex(x => !x.done)
   return (
     <div className="me-steps">
       {steps.map((x, i) => (
-        <div
-          className={`me-step${x.done ? " done" : i === first ? " now" : ""}`}
-          key={x.t}
-        >
-          <i>{x.done ? "✓" : i + 1}</i>
+        <div className={`me-step${x.done ? ' done' : i === first ? ' now' : ''}`} key={x.t}>
+          <i>{x.done ? '✓' : i + 1}</i>
           <div>
             <b>{x.t}</b>
             <span>{x.s}</span>
           </div>
-          <em>{x.done ? "done" : x.gain}</em>
+          <em>{x.done ? 'done' : x.gain}</em>
         </div>
       ))}
     </div>
-  );
+  )
 }
 
 /** One fold of the cabinet: a line with the gist, opened one at a time so the page stays short. */
-function Fold(props: {
-  id: string;
-  title: string;
-  summary: React.ReactNode;
-  open: boolean;
-  onToggle: (id: string) => void;
-  children: React.ReactNode;
-}) {
-  const { id, title, summary, open, onToggle, children } = props;
+function Fold(props: { id: string; title: string; summary: React.ReactNode; open: boolean; onToggle: (id: string) => void; children: React.ReactNode }) {
+  const { id, title, summary, open, onToggle, children } = props
   return (
-    <section className={`me-fold${open ? " open" : ""}`}>
-      <button
-        aria-controls={`fold-${id}`}
-        aria-expanded={open}
-        className="me-fold-h"
-        onClick={() => onToggle(id)}
-        type="button"
-      >
+    <section className={`me-fold${open ? ' open' : ''}`}>
+      <button aria-controls={`fold-${id}`} aria-expanded={open} className="me-fold-h" onClick={() => onToggle(id)} type="button">
         <span className="me-fold-t">{title}</span>
         <span className="me-fold-s">{summary}</span>
-        <svg
-          aria-hidden
-          className="me-fold-c"
-          height="14"
-          viewBox="0 0 14 14"
-          width="14"
-        >
-          <path
-            d="M3 5l4 4 4-4"
-            fill="none"
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeWidth="1.8"
-          />
+        <svg aria-hidden className="me-fold-c" height="14" viewBox="0 0 14 14" width="14">
+          <path d="M3 5l4 4 4-4" fill="none" stroke="currentColor" strokeLinecap="round" strokeWidth="1.8" />
         </svg>
       </button>
       <div className="me-fold-b" id={`fold-${id}`} inert={!open}>
@@ -913,5 +748,5 @@ function Fold(props: {
         </div>
       </div>
     </section>
-  );
+  )
 }
