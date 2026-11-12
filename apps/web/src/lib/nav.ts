@@ -15,6 +15,7 @@ export const NAV: NavGroup[] = [
     items: [
       { href: '/bpp9000', name: 'BPP-9000', desc: 'Bitcoin, hour by hour, UP or DOWN. The record opens with the first live call.', badge: 'countdown', keys: 'bitcoin predictor btc record live call' },
       { href: '/bpp9000/brains', name: 'Brain Watch', desc: 'The epoch’s best brain under the glass, ten brains voting, and how to run one yourself.', badge: 'new', keys: 'brains genome exam homework ensemble download run' },
+      { href: '/wen', name: 'WEN?', desc: 'Every date that matters: 18 and 25 November, 13.04.2027, and five years of milestones, each with its source.', badge: 'new', keys: 'wen when roadmap dates eta 2027 milestones history timeline soon' },
       { href: '/epochs', name: 'Epochs', desc: 'The week in Aigarth: what changed, what was released, what was said.', badge: 'epoch', keys: 'week digest news changes' },
       { href: '/status', name: 'Is Qubic down?', desc: 'One answer, live: is the tick moving right now.', badge: 'status', keys: 'status network down stall tick' },
       { href: '/monitoring', name: 'Network monitor', desc: 'Ticks, epoch clock, supply and your address watchlist.', keys: 'monitor ticks supply burned watchlist' },
