@@ -1378,6 +1378,19 @@ export const ANNA: Exhibit[] = [
     format: 'Anna 0.%d.%d  |  %d  |  %d ticks  |  mode %d  |  %d mutations  |  %s  |  %d/%d accuracy (%d%%)  |  %d it/s',
     cfb: 'Anna 0.17.2048\nUse empty Anna.data.',
   },
+  { kind: 'chat', at: '2026-09-24T17:29:00Z', who: 'neener neener', text: '225 | 1263 ticks | mode 3 | 1 mutations | - | 78/157 accuracy (49%)' },
+  {
+    kind: 'version',
+    id: 's0174096',
+    name: 'Anna 0.17.4096',
+    at: '2026-09-24T17:30:00Z',
+    built: '2026-09-24T09:33:50Z',
+    bytes: 150528,
+    sha256: '9645f62c70ec87145719f40a8a49842e8edf5a17424b341506360ad68d835f5a',
+    format: 'Anna 0.%d.%d  |  %d  |  %d ticks  |  mode %d  |  %d mutations  |  %s  |  %d/%d accuracy (%d%%)  |  %d it/s',
+    cfb: 'Anna 0.17.4096\nUse empty Anna.data.',
+  },
+  { kind: 'talk', at: '2026-09-24T17:31:00Z', ask: { who: 'Maldon', text: 'why new one if we just reached 225?' }, text: 'we got 49% accuracy' },
 ]
 
 // Scores people posted in the first days (lower is better, 0 is the goal). More will be added from the chat.
