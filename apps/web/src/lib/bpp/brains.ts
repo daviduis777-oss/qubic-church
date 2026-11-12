@@ -78,7 +78,7 @@ function targetsOf(b64: string, bits: number): Uint8Array {
  * is graded on [S, S + frame), so the last S targets come from the exchange, by the task's own rule. The overlap
  * is checked first: if the exchange disagrees with the explorer on any of the last 48 shipped hours, nothing is extended.
  */
-async function extendTargets(base: Uint8Array, task: Genome['task'], need: number): Promise<Uint8Array | null> {
+async function extendTargets(base: Uint8Array, task: Genome['task'], need: number): Promise<Uint8Array | string> {
   if (base.length >= need) return base
   const OVERLAP = 48
   const from = hourOfIndex(task, base.length - OVERLAP) - 3600
@@ -90,12 +90,14 @@ async function extendTargets(base: Uint8Array, task: Genome['task'], need: numbe
     const cur = at.get(h)
     return prev == null || cur == null ? null : dirOf(prev, cur)
   }
-  for (let i = base.length - OVERLAP; i < base.length; i++) if (dir(i) !== base[i]) return null
+  let off = 0
+  for (let i = base.length - OVERLAP; i < base.length; i++) if (dir(i) !== base[i]) off++
+  if (off) return `overlap ${off}/${OVERLAP}, closes ${closes.length}, first ${closes[0]?.hour}, want ${hourOfIndex(task, base.length - OVERLAP)}`
   const out = new Uint8Array(need)
   out.set(base)
   for (let i = base.length; i < need; i++) {
     const d = dir(i)
-    if (d == null) return null
+    if (d == null) return `missing hour ${hourOfIndex(task, i)}`
     out[i] = d
   }
   return out
@@ -103,7 +105,7 @@ async function extendTargets(base: Uint8Array, task: Genome['task'], need: numbe
 
 type Rec = ExplorerReconstruction & { searchReplay?: { finalPredictions?: { taskMovements?: string; taskMovementBits?: number } } }
 
-export type CheckedGenome = Genome & { check: { errors: number | null; matches: boolean } }
+export type CheckedGenome = Genome & { check: { errors: number | null; matches: boolean; reason?: string } }
 
 const GENOME_KEY = (hash: string) => `bpp:brain:${hash}`
 
@@ -119,13 +121,16 @@ export async function brainGenome(hash: string): Promise<CheckedGenome | null> {
   // our own run against the task the explorer ships with the reconstruction
   const fp = rec.searchReplay?.finalPredictions
   let errors: number | null = null
+  let reason: string | undefined
   if (fp?.taskMovements && fp.taskMovementBits) {
     const need = g.shift + g.task.frame
-    const targets = await extendTargets(targetsOf(fp.taskMovements, fp.taskMovementBits), g.task, need).catch(() => null)
+    const targets = await extendTargets(targetsOf(fp.taskMovements, fp.taskMovementBits), g.task, need).catch(e => `error ${e instanceof Error ? e.message : e}`)
     const em = emits(g, need)
-    errors = targets && em.length === need ? frameErrors(em, targets, g.shift, g.task.frame) : null
+    if (typeof targets === 'string') reason = targets
+    else if (em.length !== need) reason = `emits ${em.length} of ${need}`
+    else errors = frameErrors(em, targets, g.shift, g.task.frame)
   }
-  const checked: CheckedGenome = { ...g, check: { errors, matches: errors === g.score } }
+  const checked: CheckedGenome = { ...g, check: { errors, matches: errors === g.score, ...(reason ? { reason } : {}) } }
   if (checked.check.matches) await kvSetJson(GENOME_KEY(hash), checked).catch(() => {})
   return checked
 }
