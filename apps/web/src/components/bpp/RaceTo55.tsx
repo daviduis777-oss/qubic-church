@@ -79,6 +79,8 @@ const css = `
 .r55-seats-legend{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 18px;font-size:12.5px;max-width:560px}
 .r55-seats-legend span{display:inline-flex;align-items:center;gap:6px}
 .r55-seats-legend i{width:10px}
+.r55-seats-link{font-size:13.5px;color:#ffe3b0;text-align:center;text-decoration:underline;text-decoration-color:rgba(255,196,107,.4);text-underline-offset:4px;max-width:560px}
+.r55-seats-link:hover{text-decoration-color:#ffc46b}
 .s-off{background:rgba(255,200,140,.05);box-shadow:inset 0 0 0 1px rgba(255,200,140,.08)}
 .s-zero{background:rgba(232,145,46,.28)}
 .s-mid{background:var(--fil)}
@@ -121,7 +123,7 @@ function Spark({ history, start, end }: { history: Point[]; start: string; end: 
 }
 
 /** The 676 computor seats as Qubic's own 26 x 26 square, best first: lit when a seat's network holds 55% for the full week. */
-function Seats({ seats, cap, candidates }: { seats: number[]; cap: number; candidates: number }) {
+function Seats({ seats, cap, candidates, epoch }: { seats: number[]; cap: number; candidates: number; epoch: number }) {
   const full = seats.filter(f => f >= cap).length
   const moving = seats.filter(f => f > 0 && f < cap).length
   const scored = seats.filter(f => f >= 0).length
@@ -159,6 +161,9 @@ function Seats({ seats, cap, candidates }: { seats: number[]; cap: number; candi
         <span><i className="s-off" /> not scored yet ({seats.length - scored})</span>
         <span><i className="s-zero s-100" /> the 100th seat</span>
       </div>
+      <a className="r55-seats-link" href={`${EXPLORER}${epoch}`} rel="noopener noreferrer" target="_blank">
+        When {NEED} qualify, the explorer shows Factual Accuracy: the vote checked on hours each network never saw →
+      </a>
     </div>
   )
 }
@@ -265,7 +270,7 @@ export function RaceTo55() {
         </div>
       ) : null}
 
-      {r.seats && r.seats.length ? <Seats candidates={Math.max(0, fr.networks - fr.computors)} cap={fr.cap} seats={r.seats} /> : null}
+      {r.seats && r.seats.length ? <Seats candidates={Math.max(0, fr.networks - fr.computors)} cap={fr.cap} epoch={r.epoch} seats={r.seats} /> : null}
 
       {r.info && r.info.neurons ? (
         <p className="r55-facts">
