@@ -26,6 +26,7 @@ const css = `
 .mu-tag span{position:absolute;left:4px;top:0;writing-mode:vertical-rl;transform:rotate(180deg);background:#ffd21f;color:#141416;font-family:var(--bpp-eng),sans-serif;font-size:11px;letter-spacing:.3em;padding:12px 6px;border-radius:4px}
 @media (max-width:640px){.mu-tag span{left:-4px;font-size:9px;padding:10px 4px}}
 .mu-day{font-family:var(--bpp-nx),sans-serif;font-size:clamp(40px,6vw,64px);font-weight:400;margin:0 0 28px;line-height:1}
+.mu-day3{font-family:var(--bpp-nx),sans-serif;font-weight:400;font-size:28px;margin:36px 0 18px}
 .mu-sub{margin:-18px 0 30px;font-size:15px;line-height:1.5;color:#5d5b55;max-width:62ch}
 .mu-t{position:relative;display:grid;grid-template-columns:64px 1fr;gap:4px 18px;margin:0 0 22px;max-width:760px}
 @media (max-width:640px){.mu-t{grid-template-columns:1fr}}
@@ -365,8 +366,9 @@ export function MuseumApp() {
   }, [])
 
   const all = ANNA.slice().sort((a, b) => Date.parse(a.at) - Date.parse(b.at))
-  const day = (d: string) => all.filter(e => e.at.startsWith(d))
-  const later = all.filter(e => e.at >= '2026-07-07')
+  const END = '2026-07-06T10:30:00Z' // the hall closes with the finale
+  const day = (d: string) => all.filter(e => e.at.startsWith(d) && e.at < END)
+  const later = all.filter(e => e.at >= END)
 
   return (
     <main className={`mu ${bppFonts}`}>
@@ -413,8 +415,18 @@ export function MuseumApp() {
           {later.length > 0 && (
             <>
               <h2 className="mu-day mu-gap">After</h2>
-              {later.map((e, i) => (
-                <Item key={i} e={e} />
+              <p className="mu-sub">
+                The hall ends at zero. That night the next race began: the files start reading an input, and the question becomes the next hour.
+              </p>
+              {[...new Set(later.map(e => e.at.slice(0, 10)))].map(d => (
+                <section key={d}>
+                  <h3 className="mu-day3">{dm(d + 'T00:00:00Z')}</h3>
+                  {later
+                    .filter(e => e.at.startsWith(d))
+                    .map((e, i) => (
+                      <Item key={i} e={e} />
+                    ))}
+                </section>
               ))}
             </>
           )}
