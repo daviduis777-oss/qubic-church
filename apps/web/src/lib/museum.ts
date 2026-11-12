@@ -1135,6 +1135,24 @@ export const ANNA: Exhibit[] = [
     format: 'Anna 0.5  |   %d   |   %d ticks   |   %s   |   %s   |   %d it/s',
     cfb: 'Anna 0.5\nUse empty Anna.data!\nThis is a version with 10% noise, we need a single model to reach 0, so it’s a shared effort',
   },
+  {
+    kind: 'version',
+    id: 's06',
+    name: 'Anna 0.6',
+    at: '2026-09-14T06:11:00Z',
+    built: '2026-09-14T06:05:11Z',
+    bytes: 159232,
+    sha256: 'd64d5d397db5f6d365d84fff1c9ad4494e82e5ac620a04799e40672d070c7fae',
+    format: 'Anna 0.6  |   %d   |   %d ticks   |   %s   |   %s   |   %d it/s',
+    cfb: 'Anna 0.6\n128 neurons.\nUse empty Anna.data.',
+  },
+  {
+    kind: 'talk',
+    at: '2026-09-14T06:18:00Z',
+    ask: { who: 'Cérriphi', text: 'Keep posting " Anna 0.x ", but arent we training bpp9k ? What is the link between Anna and bpp ? Bpp is Anna son ?' },
+    text: 'It’s prototypes used to improve bpp',
+  },
+  { kind: 'talk', at: '2026-09-15T09:10:00Z', text: 'Anna 0.7\n1024 neurons, new method. Use empty Anna.data.' },
 ]
 
 // Scores people posted in the first days (lower is better, 0 is the goal). More will be added from the chat.
