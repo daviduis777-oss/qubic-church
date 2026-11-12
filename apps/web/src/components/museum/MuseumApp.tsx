@@ -95,6 +95,10 @@ const DAYS = [
   { at: '2026-06-11', sub: 'A new method: a training set and a validation set. Come-from-Beyond names the problem it is after.' },
   { at: '2026-06-12', sub: 'Builds for older processors, an optimized file, the first score under 20 000.' },
   { at: '2026-06-13', sub: 'Progress can now be saved and shared. That evening Come-from-Beyond says his part is done.' },
+  { at: '2026-06-16', sub: 'What zero means.' },
+  { at: '2026-06-17', sub: 'Joji saves 18 512 and cannot go lower. A new version is promised after the epoch.' },
+  { at: '2026-06-18', sub: 'A new way to count the score: any number of threads, and the numbers no longer compare with the old ones.' },
+  { at: '2026-06-19', sub: 'Why not run it on the whole network?' },
   { at: '2026-06-15', sub: 'The keys settle: Tilda, 1 to 9, F2. His own progress comes with the file.' },
 ]
 
@@ -261,7 +265,7 @@ export function MuseumApp() {
 
   const all = ANNA.slice().sort((a, b) => Date.parse(a.at) - Date.parse(b.at))
   const day = (d: string) => all.filter(e => e.at.startsWith(d))
-  const later = all.filter(e => e.at >= '2026-06-16')
+  const later = all.filter(e => e.at >= '2026-06-20')
 
   return (
     <main className={`mu ${bppFonts}`}>
@@ -293,15 +297,17 @@ export function MuseumApp() {
             <span>RESEARCH</span>
           </div>
 
-          {DAYS.map((d, n) => (
-            <section key={d.at}>
-              <h2 className={n ? 'mu-day mu-gap' : 'mu-day'}>{dm(d.at + 'T00:00:00Z')}</h2>
-              <p className="mu-sub">{d.sub}</p>
-              {day(d.at).map((e, i) => (
-                <Item key={i} e={e} />
-              ))}
-            </section>
-          ))}
+          {DAYS.slice()
+            .sort((a, b) => a.at.localeCompare(b.at))
+            .map((d, n) => (
+              <section key={d.at}>
+                <h2 className={n ? 'mu-day mu-gap' : 'mu-day'}>{dm(d.at + 'T00:00:00Z')}</h2>
+                <p className="mu-sub">{d.sub}</p>
+                {day(d.at).map((e, i) => (
+                  <Item key={i} e={e} />
+                ))}
+              </section>
+            ))}
 
           <h2 className="mu-day mu-gap">After</h2>
           <p className="mu-sub">The race went on until July. More versions and records are being hung.</p>
