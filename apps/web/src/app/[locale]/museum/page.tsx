@@ -11,6 +11,7 @@ export const metadata: Metadata = { title: 'Museum', robots: { index: false, fol
 export default async function MuseumPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params
   setRequestLocale(locale)
-  if (!(await isModerator())) notFound()
-  return <MuseumApp />
+  const mod = await isModerator()
+  if (!mod) notFound()
+  return <MuseumApp canDownload={mod} />
 }

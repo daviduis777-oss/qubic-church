@@ -4,6 +4,9 @@
  * screenshots were taken at UTC+7 and converted.
  */
 
+// Where the unchanged files live, one zip per exhibit (not on qubic.church itself).
+export const ANNA_ARCHIVE = 'https://github.com/daviduis777-oss/anna-archive/releases/download/hall-1'
+
 export type Version = {
   kind: 'version'
   id: string
@@ -1644,7 +1647,7 @@ export const ANNA: Exhibit[] = [
     at: '2026-11-07T07:40:00Z',
     built: '2026-11-07T07:30:18Z',
     bytes: 185344,
-    sha256: '9dfe6e96e8c83db87baf172bd31e071d34d9c16a0963b2c02b0f592751824b93c',
+    sha256: '9dfe6e96e8c83db87baf172bd31e071d34d9c0dec5603f4dbe865a7881e7cda3',
     format: 'Anna 0.%d.%d  |  %d  |  %d ticks  |  mode %d  |  %d mutations  |  %s  |  %d/%d accuracy (%d%%)  |  %d it/s',
     cfb: '@here It seems we have found what must be changed in BPP9000 fitness functions to divert ANNs from memorization to construction of BTC price model. The solution is likely not 100% efficient, but it doesn’t need to be 100% for BPP9000 to be profitable. Now we need to do A/B testing to verify the new fitness function, for that we need to run training with memorizing fitness function and then one with the other approach.\nThis Anna version is memorizing version, we need to run it today the whole day trying to reach as low score as possible. Tomorrow another version with another fitness function will be released, trained, and compared to today’s one.\nUse empty Anna.data.',
   },

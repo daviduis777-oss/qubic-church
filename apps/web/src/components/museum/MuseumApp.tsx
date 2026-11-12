@@ -1,8 +1,8 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { createContext, useContext, useEffect, useRef, useState } from 'react'
 import { bppFonts } from '@/components/bpp/fonts'
-import { ANNA, type Board, type Chat, type Exhibit, HALLS, HISTORIANS, PRELUDE, RECORDS, type Talk, type Version } from '@/lib/museum'
+import { ANNA_ARCHIVE, ANNA, type Board, type Chat, type Exhibit, HALLS, HISTORIANS, PRELUDE, RECORDS, type Talk, type Version } from '@/lib/museum'
 
 const css = `
 .mu{min-height:100svh;margin-bottom:-3rem;background:#dcdad4;color:#141416;font-family:var(--bpp-sans),system-ui,sans-serif;padding:96px 16px 140px}
@@ -81,6 +81,10 @@ const css = `
 .mu-files,.mu-note{margin:0;font-size:13.5px;line-height:1.45;color:#3d3b36}
 .mu-note{padding-top:12px;border-top:1px solid #dedbd2;color:#5d5b55}
 .mu-say a{color:inherit;text-decoration:underline;text-underline-offset:3px}
+.mu-links{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:13px}
+.mu-links a,.mu-vt{color:#141416;text-decoration:underline;text-underline-offset:3px}
+.mu-links a:hover,.mu-vt:hover{color:#8a5a00}
+.mu-vt{font-size:12px}
 .mu-missing{font-size:13px;color:#8a5a00;background:#fff1b8;padding:8px 10px}
 .mu-con{background:#0c0c0c;color:#cccccc;border-radius:6px;overflow:hidden;align-self:start;box-shadow:0 18px 40px -24px rgba(0,0,0,.55)}
 .mu-bar{display:flex;align-items:center;gap:10px;background:#1f1f1f;color:#e6e6e6;font-size:12px;padding:7px 12px;font-family:var(--bpp-sans),sans-serif}
@@ -231,7 +235,12 @@ function Tally({ b }: { b: Board }) {
   )
 }
 
+// Downloads stay behind the moderator until the museum opens.
+const CanDownload = createContext(false)
+const vt = (sha: string) => `https://www.virustotal.com/gui/file/${sha}`
+
 function Vitrine({ v }: { v: Version }) {
+  const canDownload = useContext(CanDownload)
   return (
     <article className="mu-v" id={v.id}>
       <div className="mu-label">
@@ -259,6 +268,20 @@ function Vitrine({ v }: { v: Version }) {
               <dd className="mu-hash">{v.sha256}</dd>
             </div>
           )}
+          {(v.sha256 || v.batch) && (
+            <div className="mu-links">
+              {v.sha256 && (
+                <a href={vt(v.sha256)} target="_blank" rel="noopener noreferrer">
+                  Check on VirusTotal
+                </a>
+              )}
+              {canDownload && (
+                <a href={`${ANNA_ARCHIVE}/${v.id}.zip`} rel="noopener noreferrer">
+                  Download .zip
+                </a>
+              )}
+            </div>
+          )}
           {v.batch && (
             <div>
               <dt>Seven files, SHA-256 and build time</dt>
@@ -268,6 +291,9 @@ function Vitrine({ v }: { v: Version }) {
                     <li key={f.name}>
                       <b>{f.name}</b> {hm(f.built)}
                       <span className="mu-hash">{f.sha256}</span>
+                      <a className="mu-vt" href={vt(f.sha256)} target="_blank" rel="noopener noreferrer">
+                        Check on VirusTotal
+                      </a>
                     </li>
                   ))}
                 </ul>
@@ -351,7 +377,7 @@ function Item({ e }: { e: Exhibit }) {
   )
 }
 
-export function MuseumApp() {
+export function MuseumApp({ canDownload = false }: { canDownload?: boolean }) {
   const hall = HALLS[0]!
   const track = useRef<HTMLDivElement>(null)
   const [p, setP] = useState(0)
@@ -380,131 +406,133 @@ export function MuseumApp() {
   const later = all.filter(e => e.at >= END)
 
   return (
-    <main className={`mu ${bppFonts}`}>
-      <style>{css}</style>
-      <div className="mu-in">
-        <header className="mu-hero">
-          <h1 className="mu-h">Museum</h1>
-          <blockquote className="mu-word">
-            <p>
-              Finishing Aigarth is one of the most remarkable things I have seen with my own eyes. This museum is a way to capture the moment and to keep the
-              names of everyone who took part.
-            </p>
-            <p>Thank you for the journey.</p>
-            <cite>QC</cite>
-          </blockquote>
-          <div className="mu-hall">
-            <b>
-              Hall {hall.n}. {hall.name}
-            </b>
-            <span>{hall.span}</span>
-          </div>
-          <p className="mu-lead">{hall.lead}</p>
-          <div className="mu-pre">
-            {PRELUDE.map(t => (
-              <p key={t.at}>
-                {dm(t.at)}: <q>{t.text}</q>
+    <CanDownload.Provider value={canDownload}>
+      <main className={`mu ${bppFonts}`}>
+        <style>{css}</style>
+        <div className="mu-in">
+          <header className="mu-hero">
+            <h1 className="mu-h">Museum</h1>
+            <blockquote className="mu-word">
+              <p>
+                Finishing Aigarth is one of the most remarkable things I have seen with my own eyes. This museum is a way to capture the moment and to keep the
+                names of everyone who took part.
               </p>
-            ))}
-          </div>
-        </header>
+              <p>Thank you for the journey.</p>
+              <cite>QC</cite>
+            </blockquote>
+            <div className="mu-hall">
+              <b>
+                Hall {hall.n}. {hall.name}
+              </b>
+              <span>{hall.span}</span>
+            </div>
+            <p className="mu-lead">{hall.lead}</p>
+            <div className="mu-pre">
+              {PRELUDE.map(t => (
+                <p key={t.at}>
+                  {dm(t.at)}: <q>{t.text}</q>
+                </p>
+              ))}
+            </div>
+          </header>
 
-        <div className="mu-track" ref={track}>
-          <div className="mu-rail" aria-hidden>
-            <i style={{ ['--p' as string]: `${(p * 100).toFixed(1)}%` }} />
-          </div>
-          <div className="mu-tag" aria-hidden>
-            <span>RESEARCH</span>
-          </div>
+          <div className="mu-track" ref={track}>
+            <div className="mu-rail" aria-hidden>
+              <i style={{ ['--p' as string]: `${(p * 100).toFixed(1)}%` }} />
+            </div>
+            <div className="mu-tag" aria-hidden>
+              <span>RESEARCH</span>
+            </div>
 
-          {DAYS.slice()
-            .sort((a, b) => a.at.localeCompare(b.at))
-            .map((d, n) => (
-              <section key={d.at}>
-                <h2 className={n ? 'mu-day mu-gap' : 'mu-day'}>{dm(d.at + 'T00:00:00Z')}</h2>
-                <p className="mu-sub">{d.sub}</p>
-                {day(d.at).map((e, i) => (
-                  <Item key={i} e={e} />
-                ))}
-              </section>
-            ))}
-
-          {later.length > 0 && (
-            <>
-              <h2 className="mu-day mu-gap">After</h2>
-              <p className="mu-sub">
-                The hall ends at zero. That night the next race began: the files start reading an input, and the question becomes the next hour. In September
-                the numbering starts again at Anna 0.0.
-              </p>
-              {[...new Set(later.map(e => e.at.slice(0, 10)))].map(d => (
-                <section key={d}>
-                  <h3 className="mu-day3">{dm(d + 'T00:00:00Z')}</h3>
-                  {later
-                    .filter(e => e.at.startsWith(d))
-                    .map((e, i) => (
-                      <Item key={i} e={e} />
-                    ))}
+            {DAYS.slice()
+              .sort((a, b) => a.at.localeCompare(b.at))
+              .map((d, n) => (
+                <section key={d.at}>
+                  <h2 className={n ? 'mu-day mu-gap' : 'mu-day'}>{dm(d.at + 'T00:00:00Z')}</h2>
+                  <p className="mu-sub">{d.sub}</p>
+                  {day(d.at).map((e, i) => (
+                    <Item key={i} e={e} />
+                  ))}
                 </section>
               ))}
-            </>
-          )}
-        </div>
 
-        <section className="mu-rec">
-          <h2 className="mu-h2">Scores</h2>
-          <p>Lower is better, 0 is the goal. The score was counted three different ways, so each table only compares with itself.</p>
-          {ERAS.map(era => {
-            const rows = RECORDS.filter(r => r.at >= era.from && r.at < era.to).sort((x, y) => x.score - y.score)
-            return rows.length ? (
-              <div key={era.from}>
-                <h3 className="mu-day3">{era.name}</h3>
-                <table className="mu-tbl">
-                  <thead>
-                    <tr>
-                      <th>Score</th>
-                      <th>Who</th>
-                      <th>When (UTC)</th>
-                      <th>Note</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {rows.map(r => (
-                      <tr key={r.who + r.score}>
-                        <td className="s">{r.score.toLocaleString('en-US')}</td>
-                        <td>{r.who}</td>
-                        <td>
-                          {dm(r.at).replace(' 2026', '')}, {hm(r.at)}
-                        </td>
-                        <td className="n">{r.note}</td>
+            {later.length > 0 && (
+              <>
+                <h2 className="mu-day mu-gap">After</h2>
+                <p className="mu-sub">
+                  The hall ends at zero. That night the next race began: the files start reading an input, and the question becomes the next hour. In September
+                  the numbering starts again at Anna 0.0.
+                </p>
+                {[...new Set(later.map(e => e.at.slice(0, 10)))].map(d => (
+                  <section key={d}>
+                    <h3 className="mu-day3">{dm(d + 'T00:00:00Z')}</h3>
+                    {later
+                      .filter(e => e.at.startsWith(d))
+                      .map((e, i) => (
+                        <Item key={i} e={e} />
+                      ))}
+                  </section>
+                ))}
+              </>
+            )}
+          </div>
+
+          <section className="mu-rec">
+            <h2 className="mu-h2">Scores</h2>
+            <p>Lower is better, 0 is the goal. The score was counted three different ways, so each table only compares with itself.</p>
+            {ERAS.map(era => {
+              const rows = RECORDS.filter(r => r.at >= era.from && r.at < era.to).sort((x, y) => x.score - y.score)
+              return rows.length ? (
+                <div key={era.from}>
+                  <h3 className="mu-day3">{era.name}</h3>
+                  <table className="mu-tbl">
+                    <thead>
+                      <tr>
+                        <th>Score</th>
+                        <th>Who</th>
+                        <th>When (UTC)</th>
+                        <th>Note</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ) : null
-          })}
-        </section>
+                    </thead>
+                    <tbody>
+                      {rows.map(r => (
+                        <tr key={r.who + r.score}>
+                          <td className="s">{r.score.toLocaleString('en-US')}</td>
+                          <td>{r.who}</td>
+                          <td>
+                            {dm(r.at).replace(' 2026', '')}, {hm(r.at)}
+                          </td>
+                          <td className="n">{r.note}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : null
+            })}
+          </section>
 
-        <section className="mu-crew mu-hist">
-          <h2 className="mu-h2">For historians</h2>
-          <p>Posts Come-from-Beyond marked for history himself. More will be hung here.</p>
-          {HISTORIANS.map(h => (
-            <blockquote key={h.href}>
-              <time dateTime={h.at}>{dm(h.at)}</time>
-              <p>{h.text}</p>
-              <small>{h.shows}</small>
-              <a href={h.href} target="_blank" rel="noopener noreferrer">
-                The post on X
-              </a>
-            </blockquote>
-          ))}
-        </section>
+          <section className="mu-crew mu-hist">
+            <h2 className="mu-h2">For historians</h2>
+            <p>Posts Come-from-Beyond marked for history himself. More will be hung here.</p>
+            {HISTORIANS.map(h => (
+              <blockquote key={h.href}>
+                <time dateTime={h.at}>{dm(h.at)}</time>
+                <p>{h.text}</p>
+                <small>{h.shows}</small>
+                <a href={h.href} target="_blank" rel="noopener noreferrer">
+                  The post on X
+                </a>
+              </blockquote>
+            ))}
+          </section>
 
-        <p className="mu-foot">
-          The files are kept, not served. If you have a copy, compare its SHA-256 with the one on the label. Quotes are verbatim from the Qubic Discord; times
-          were converted to UTC.
-        </p>
-      </div>
-    </main>
+          <p className="mu-foot">
+            Every file can be checked on VirusTotal by its SHA-256. If you have a copy, compare its fingerprint with the one on the label. Quotes are verbatim
+            from the Qubic Discord; times were converted to UTC.
+          </p>
+        </div>
+      </main>
+    </CanDownload.Provider>
   )
 }
