@@ -13,13 +13,16 @@ export type Version = {
   bytes?: number
   sha256?: string
   format?: string // the line it prints, read from the file
-  cfb: string // what Come-from-Beyond wrote with the file
+  cfb?: string // what Come-from-Beyond wrote with the file
+  note?: string // our own words, when his are not in yet
   console?: { by: string; at: string; lines: string[] }
   missing?: boolean // the file is not in the collection yet
+  postedNote?: string // when the post itself is not on the screenshots yet
+  files?: string // what came with it
   explain?: { at: string; ask: { who: string; text: string }; text: string } // Come-from-Beyond reading the screen
 }
 
-export type Talk = { kind: 'talk'; at: string; text: string; ask?: { who: string; text: string } }
+export type Talk = { kind: 'talk'; at: string; text: string; ask?: { who: string; text: string }; where?: { label: string; href: string } }
 export type Mark = { kind: 'mark'; at: string; title: string; text?: string; quote?: string }
 export type Exhibit = Version | Talk | Mark
 
@@ -322,6 +325,76 @@ export const ANNA: Exhibit[] = [
   },
   { kind: 'talk', at: '2026-06-11T21:28:00Z', text: 'not asking to pump price, Anna will pump it more efficiently' },
   {
+    kind: 'talk',
+    at: '2026-06-12T07:50:00Z',
+    where: { label: 'X', href: 'https://x.com/c___f___b/status/2065341032158351648' },
+    text: '@ADAh2022 @Qubicfamilys I confirm. Go to #Qubic discord and run Anna.exe published there, you will see that upon improvement of fitness function score of the training set (green column) you often get improvement of the validation set (yellow column). In a several weeks this architecture will be deployed',
+  },
+  {
+    kind: 'version',
+    id: 'avx2',
+    name: 'AVX-2',
+    at: '2026-06-12T08:05:00Z',
+    built: '2026-06-12T06:42:37Z',
+    bytes: 149504,
+    sha256: 'd95c0ae84f1126ce96d228e5fe10e02a0d8dc13b02057bb4efaf4c457b9be7e8',
+    format: 'EP: %d [%d & %d] ::  {%d} %d + {%d} %d = %d  [{%d} %d : {%d} %d]   |   %d (%d)   |   %s-%d',
+    cfb: 'I’ll recompile\nAVX-2 version',
+  },
+  { kind: 'talk', at: '2026-06-12T08:08:00Z', ask: { who: 'shitshow', text: 'should i stop my anna.exe from yesterday?' }, text: 'what score?' },
+  { kind: 'talk', at: '2026-06-12T08:14:00Z', text: 'Looks like vector size option\nI forget that ppl still use non-AVX512 processors' },
+  { kind: 'talk', at: '2026-06-12T08:21:00Z', text: 'Looking forward seeing faces of those who thinks "I’ll buy when they show something working".' },
+  {
+    kind: 'talk',
+    at: '2026-06-12T09:09:00Z',
+    ask: { who: 'Carlosggmma', text: 'And what are the questions? Is it surpassing any kind of benchmark?' },
+    text: 'a+b',
+  },
+  {
+    kind: 'talk',
+    at: '2026-06-12T09:33:00Z',
+    text: 'What’s lowest score on recent version?\nI suggest to post here your score once you cross 1k boundary\nAfter 28k\n25900',
+  },
+  {
+    kind: 'version',
+    id: 'optimized',
+    name: 'The optimized version',
+    at: '2026-06-12T09:37:00Z',
+    built: '2026-06-12T09:34:49Z',
+    bytes: 154112,
+    sha256: '916215bac68fc31408f0972b1e41e9778e36542fea55098a9997122e7e805641',
+    format: 'EP: %d [%d & %d] ::  {%d} %d + {%d} %d = %d  [{%d} %d : {%d} %d]   |   %d (%d)   |   %s-%d',
+    cfb: '24911\nI got an optimized version',
+  },
+  { kind: 'talk', at: '2026-06-12T09:39:00Z', text: 'If you are above 25k then better run latest\nExcept @shitshow, he is running a special version' },
+  {
+    kind: 'version',
+    id: 'tilda',
+    name: 'The Tilda key',
+    at: '2026-06-12T13:08:53Z',
+    postedNote: 'After 13:08 UTC; the post is not on the screenshots yet',
+    built: '2026-06-12T13:08:53Z',
+    bytes: 155136,
+    sha256: 'bdf565f0de086e14e187eaf0385c001fc3ce27ede88b94fd6b4ed5c33db50f6b',
+    format: 'EP: %d [%d & %d] ::  {%d} %d + {%d} %d = %d  [{%d} %d : {%d} %d]   |   %d (%d)   |   %s-%d',
+    note: 'The file that brought the Tilda key for BACKWARD mode. Come-from-Beyond’s words with it are not on the screenshots yet.',
+  },
+  { kind: 'talk', at: '2026-06-12T12:39:00Z', text: 'Generalization - SOLVED\nUniversal training algo - SOLVED\nEnergy optimization - IN PROCESS' },
+  {
+    kind: 'version',
+    id: 'f2',
+    name: 'F2 and Anna.data',
+    at: '2026-06-13T09:40:00Z',
+    built: '2026-06-13T09:32:10Z',
+    bytes: 154624,
+    sha256: '4463781b84186ab5e46f04ec77ccc55bfbe7789312c4115470ee3560a8f992a8',
+    format: 'EP: %d [%d & %d] ::  {%d} %d + {%d} %d = %d  [{%d} %d : {%d} %d]   |   %d (%d)   |   %s-%d',
+    files: 'Posted with Anna.data, 2.1 KB: Come-from-Beyond’s own progress',
+    cfb: 'F2 for saving current progress. Can then share it with others or copy to other machines. [Tilda] key is used for BACKWARD mode for unstucking, press it like it’s very hot.',
+  },
+  { kind: 'talk', at: '2026-06-13T09:41:00Z', text: 'Once you start with my progress, press [Tilda] for a nanosecond to search in another direction.' },
+  { kind: 'talk', at: '2026-06-13T09:45:00Z', text: 'Once somebody reaches sub-20k, press F2 and share Anna.data here plz' },
+  {
     kind: 'mark',
     at: '2026-07-06',
     title: 'Anna.exe reaches 0',
@@ -330,10 +403,12 @@ export const ANNA: Exhibit[] = [
   },
 ]
 
-// Scores people posted in the first two days (lower is better, 0 is the goal). More will be added from the chat.
+// Scores people posted in the first days (lower is better, 0 is the goal). More will be added from the chat.
 export const RECORDS: { who: string; score: number; at: string; note: string }[] = [
+  { who: 'shitshow', score: 19821, at: '2026-06-12T12:38:00Z', note: 'the first under 20k' },
   { who: 'Misfitcompany', score: 22830, at: '2026-06-11T06:17:00Z', note: 'epoch 408000, the first file left running overnight' },
   { who: 'neener neener', score: 24153, at: '2026-06-10T18:12:00Z', note: 'Come-from-Beyond: “I’m catching up”' },
+  { who: 'Come-from-Beyond', score: 24911, at: '2026-06-12T09:37:00Z', note: 'with the optimized version' },
   { who: 'shitshow', score: 25280, at: '2026-06-10T22:04:00Z', note: 'v0.3, epoch 89300' },
   { who: 'ThatsNotMyCode', score: 25596, at: '2026-06-10T17:42:00Z', note: 'epoch 172100, the first single-thread file' },
   { who: 'Misfitcompany', score: 26665, at: '2026-06-10T16:40:00Z', note: '“I missed my epoch 666 but I got to see 26665”' },

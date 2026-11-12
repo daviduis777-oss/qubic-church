@@ -48,6 +48,9 @@ const css = `
 .mu-hash{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;word-break:break-all;color:#3d3b36}
 .mu-label blockquote{margin:0;padding-top:12px;border-top:1px solid #dedbd2;font-size:15px;line-height:1.5;white-space:pre-line}
 .mu-label blockquote cite{display:block;font-style:normal;color:#76736b;font-size:12px;margin-top:6px}
+.mu-files,.mu-note{margin:0;font-size:13.5px;line-height:1.45;color:#3d3b36}
+.mu-note{padding-top:12px;border-top:1px solid #dedbd2;color:#5d5b55}
+.mu-say a{color:inherit;text-decoration:underline;text-underline-offset:3px}
 .mu-missing{font-size:13px;color:#8a5a00;background:#fff1b8;padding:8px 10px}
 .mu-con{background:#0c0c0c;color:#cccccc;border-radius:6px;overflow:hidden;align-self:start;box-shadow:0 18px 40px -24px rgba(0,0,0,.55)}
 .mu-bar{display:flex;align-items:center;gap:10px;background:#1f1f1f;color:#e6e6e6;font-size:12px;padding:7px 12px;font-family:var(--bpp-sans),sans-serif}
@@ -84,6 +87,16 @@ const css = `
 .mu-foot{margin-top:72px;padding-top:24px;border-top:1px solid #b9b6ad;color:#5d5b55;font-size:14px;line-height:1.6;max-width:66ch}
 `
 
+const DAYS = [
+  {
+    at: '2026-06-10',
+    sub: 'Seven files in eight hours, all in #price-discussion, all times UTC. The middle number is the score: it starts near 32 700 and the goal is 0.',
+  },
+  { at: '2026-06-11', sub: 'A new method: a training set and a validation set. Come-from-Beyond names the problem it is after.' },
+  { at: '2026-06-12', sub: 'Builds for older processors, an optimized file, the first score under 20 000.' },
+  { at: '2026-06-13', sub: 'Progress can now be saved and shared.' },
+]
+
 const hm = (iso: string) => new Date(iso).toISOString().slice(11, 16)
 const dm = (iso: string) => new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })
 const kb = (b: number) => `${(b / 1024).toFixed(1)} KB`
@@ -99,7 +112,20 @@ function Say({ t }: { t: Talk }) {
           </p>
         )}
         <p className="mu-say">
-          <b>Come-from-Beyond:</b> {t.text}
+          <b>
+            Come-from-Beyond
+            {t.where && (
+              <>
+                {' '}
+                on{' '}
+                <a href={t.where.href} target="_blank" rel="noopener noreferrer">
+                  {t.where.label}
+                </a>
+              </>
+            )}
+            :
+          </b>{' '}
+          {t.text}
         </p>
       </div>
     </div>
@@ -114,9 +140,7 @@ function Vitrine({ v }: { v: Version }) {
         <dl>
           <div>
             <dt>Posted</dt>
-            <dd>
-              {dm(v.at)}, {hm(v.at)} UTC, #price-discussion
-            </dd>
+            <dd>{v.postedNote ? `${dm(v.at)}. ${v.postedNote}` : `${dm(v.at)}, ${hm(v.at)} UTC, #price-discussion`}</dd>
           </div>
           {v.built && (
             <div>
@@ -138,10 +162,15 @@ function Vitrine({ v }: { v: Version }) {
           )}
         </dl>
         {v.missing && <div className="mu-missing">The file is not in the collection yet.</div>}
-        <blockquote>
-          {v.cfb}
-          <cite>Come-from-Beyond, with the file</cite>
-        </blockquote>
+        {v.files && <p className="mu-files">{v.files}</p>}
+        {v.cfb ? (
+          <blockquote>
+            {v.cfb}
+            <cite>Come-from-Beyond, with the file</cite>
+          </blockquote>
+        ) : (
+          v.note && <p className="mu-note">{v.note}</p>
+        )}
       </div>
       <figure className="mu-con" style={{ margin: 0 }}>
         <div className="mu-bar">
@@ -231,7 +260,7 @@ export function MuseumApp() {
 
   const all = ANNA.slice().sort((a, b) => Date.parse(a.at) - Date.parse(b.at))
   const day = (d: string) => all.filter(e => e.at.startsWith(d))
-  const later = all.filter(e => e.at >= '2026-06-12')
+  const later = all.filter(e => e.at >= '2026-06-14')
 
   return (
     <main className={`mu ${bppFonts}`}>
@@ -263,18 +292,14 @@ export function MuseumApp() {
             <span>RESEARCH</span>
           </div>
 
-          <h2 className="mu-day">10 June 2026</h2>
-          <p className="mu-sub">
-            Seven files in eight hours, all in #price-discussion, all times UTC. The middle number is the score: it starts near 32 700 and the goal is 0.
-          </p>
-          {day('2026-06-10').map((e, i) => (
-            <Item key={i} e={e} />
-          ))}
-
-          <h2 className="mu-day mu-gap">11 June 2026</h2>
-          <p className="mu-sub">A new method: a training set and a validation set. Come-from-Beyond names the problem it is after.</p>
-          {day('2026-06-11').map((e, i) => (
-            <Item key={i} e={e} />
+          {DAYS.map((d, n) => (
+            <section key={d.at}>
+              <h2 className={n ? 'mu-day mu-gap' : 'mu-day'}>{dm(d.at + 'T00:00:00Z')}</h2>
+              <p className="mu-sub">{d.sub}</p>
+              {day(d.at).map((e, i) => (
+                <Item key={i} e={e} />
+              ))}
+            </section>
           ))}
 
           <h2 className="mu-day mu-gap">After</h2>
@@ -285,8 +310,8 @@ export function MuseumApp() {
         </div>
 
         <section className="mu-rec">
-          <h2 className="mu-h2">Scores from the first two days</h2>
-          <p>Lower is better. These are the screenshots posted on 10 and 11 June; the full record book follows.</p>
+          <h2 className="mu-h2">Scores from the first days</h2>
+          <p>Lower is better. These are the screenshots posted from 10 to 13 June; the full record book follows.</p>
           <table className="mu-tbl">
             <thead>
               <tr>
