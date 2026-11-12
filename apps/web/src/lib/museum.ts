@@ -1672,6 +1672,47 @@ export const ANNA: Exhibit[] = [
     title: 'Next: the live price feed',
     text: 'The plan Come-from-Beyond gave on 8 November. The hall continues from here.',
   },
+  {
+    kind: 'mark',
+    at: '2026-08-28T07:40:00Z',
+    title: 'jetski’s colony tracker',
+    text: 'jetski from the Jetski pool builds a tracker that adds up the computors’ next-hour BTC calls. Come-from-Beyond reads it.',
+  },
+  {
+    kind: 'talk',
+    at: '2026-08-28T07:44:00Z',
+    text: '@jetski Your tracker misses one important thing: Every computor/candidate constructs a separate model predicting next hour price movement direction. So with 676+ models we may assess accuracy of the whole colony.',
+  },
+  {
+    kind: 'talk',
+    at: '2026-08-28T07:45:00Z',
+    text: 'Remember that feeling when we reached 0 with Anna here? We are going to get it again with BPP9000 on large scale',
+  },
+  {
+    kind: 'talk',
+    at: '2026-08-28T07:49:00Z',
+    ask: { who: 'zqj0754', text: 'Can BPP9000 be applied in practical situations?' },
+    text: 'when we reduce time of model construction to 30 mins',
+  },
+  {
+    kind: 'chat',
+    at: '2026-08-30T12:05:00Z',
+    who: 'neener neener',
+    text: 'One equal vote per hour from each identity’s best Core-verified ANN, capped at 676. Accuracy is scored on known market hours only.',
+    re: { who: 'Come-from-Beyond', text: 'the 70% is combination of results from 676 trees. How is it calculated?' },
+  },
+  { kind: 'chat', at: '2026-08-30T12:06:00Z', who: 'AigarthX', text: '70.49%' },
+  { kind: 'talk', at: '2026-08-30T12:07:00Z', text: 'This is above my head, I’ll just trust that number' },
+  {
+    kind: 'talk',
+    at: '2026-08-30T12:07:30Z',
+    ask: {
+      who: 'Carlosggmma',
+      text: 'Just wondering, what is the required milestone for the colony model before we can start testing it on live market conditions?',
+    },
+    text: 'Predicting price direction within 30 min',
+  },
+  { kind: 'chat', at: '2026-08-30T12:13:00Z', who: 'neener neener', text: '@jetski is plain majority taken as final result once the equal votes are in?' },
 ]
 
 // Scores people posted in the first days (lower is better, 0 is the goal). More will be added from the chat.
