@@ -73,6 +73,9 @@ export function BrainWatch({ preview }: { preview: boolean }) {
   const rank = top?.rows.findIndex(r => r.hash === hash) ?? -1
   // Our replay must reproduce the core's verified score before anything it computes is shown.
   const pending = Boolean(g && !g.check.matches)
+  // These networks read no input: run past their data they cannot see a single new price, so hours after the
+  // task test nothing. The exam opens with the live feed (epoch 240), when the network is fed the past hour.
+  const examOpen = EXAM_OPEN
 
   return (
     <div style={{ display: 'grid', gap: 'clamp(28px, 4vw, 44px)' }}>
@@ -105,10 +108,10 @@ export function BrainWatch({ preview }: { preview: boolean }) {
 
       <section className="panel" style={{ padding: 'clamp(18px, 3vw, 28px)', display: 'grid', gap: 'clamp(20px, 3vw, 32px)', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))', alignItems: 'start' }}>
         {pending ? <Pending g={g!} /> : <Ring g={g} live={live} />}
-        <Sheet g={g} live={pending ? null : live} busy={busy} pending={pending} row={top?.rows.find(r => r.hash === hash) ?? null} rank={rank} />
+        <Sheet examOpen={examOpen} g={g} live={pending || !examOpen ? null : live} busy={busy} pending={pending} row={top?.rows.find(r => r.hash === hash) ?? null} rank={rank} />
       </section>
 
-      <Ensemble epoch={epoch ?? top?.epoch ?? null} onPick={setHash} />
+      {examOpen ? <Ensemble epoch={epoch ?? top?.epoch ?? null} onPick={setHash} /> : <WhyNoExam />}
 
       <TopTable top={top} hash={hash} onPick={setHash} epoch={epoch} onEpoch={e => {
           setEpoch(e)
@@ -420,6 +423,29 @@ function Ring({ g, live }: { g: CheckedGenome | null; live: LiveResult | null })
   )
 }
 
+/** Off until the live feed: an autonomous network run past its data is a coin, whatever it learned. */
+const EXAM_OPEN = false
+
+function WhyNoExam() {
+  return (
+    <section aria-labelledby="why-h" className="panel" style={{ padding: 'clamp(18px, 3vw, 28px)', display: 'grid', gap: 12, maxWidth: '78ch' }}>
+      <h2 className="eng" id="why-h" style={{ fontSize: 'clamp(16px, 2vw, 19px)', fontWeight: 400, margin: 0, color: '#f3e4ce' }}>
+        Why the exam waits for 18 November
+      </h2>
+      <p style={{ margin: 0, fontSize: 15, lineHeight: 1.6, color: '#f3e4ce' }}>
+        Today&apos;s brains read no input at all. They are grown to replay one year of bitcoin hours from their own inner rhythm. Run past the end of that year, they cannot see a single new price, so any of them, good or bad, lands near a coin flip. Grading them on later hours would test nothing.
+      </p>
+      <p className="mute" style={{ margin: 0, fontSize: 14, lineHeight: 1.6 }}>
+        From epoch 240 the live feed gives the network the past hour, and the brains are judged on hours they could not have known. That is the exam, and it opens here then. Until then the honest out-of-sample number is the explorer&apos;s{' '}
+        <a href="https://annexplorer.jetskipool.ai/epochs/239" rel="noopener noreferrer" style={{ color: 'var(--hot)' }} target="_blank">
+          Factual Accuracy
+        </a>
+        , counted once 100 computors qualify. What you can check here today: our replay of each brain gives exactly the score the core verified.
+      </p>
+    </section>
+  )
+}
+
 /* ---------------- a brain our replay cannot reproduce yet ---------------- */
 
 function Pending({ g }: { g: CheckedGenome }) {
@@ -444,7 +470,7 @@ function Pending({ g }: { g: CheckedGenome }) {
 
 /* ---------------- the sheet: who, when, how good, download ---------------- */
 
-function Sheet({ g, live, busy, pending, row, rank }: { g: CheckedGenome | null; live: LiveResult | null; busy: boolean; pending: boolean; row: BrainRow | null; rank: number }) {
+function Sheet({ g, live, busy, pending, examOpen, row, rank }: { g: CheckedGenome | null; live: LiveResult | null; busy: boolean; pending: boolean; examOpen: boolean; row: BrainRow | null; rank: number }) {
   const r = g ?? row
   const frame = g?.task.frame ?? 8760
   const since = live?.sinceFound
@@ -477,14 +503,14 @@ function Sheet({ g, live, busy, pending, row, rank }: { g: CheckedGenome | null;
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 16 }}>
         <Big big={r ? pct(accuracy(r, frame)) : '—'} label="Homework" small={r ? `of the training year, ${r.score.toLocaleString('en-US')} wrong hours of ${frame.toLocaleString('en-US')}${r.shift ? `, frame ${r.shift} hours in` : ''}` : ''} lit />
         <Big
-          big={pending ? 'soon' : all ? pct(all.rate) : busy ? '…' : '—'}
+          big={pending ? 'soon' : !examOpen ? '18 Nov' : all ? pct(all.rate) : busy ? '…' : '—'}
           label="Exam"
-          small={pending ? 'shown once our replay matches the core' : all ? `on ${all.checked.toLocaleString('en-US')} hours it never saw, since ${live ? day(live.dataEnd) : ''}${all.unsure ? `, ${all.unsure} not sure` : ''}` : 'hours after the task ends'}
+          small={pending ? 'shown once our replay matches the core' : !examOpen ? 'starts with the live feed: see below why' : all ? `on ${all.checked.toLocaleString('en-US')} hours it never saw, since ${live ? day(live.dataEnd) : ''}${all.unsure ? `, ${all.unsure} not sure` : ''}` : 'hours after the task ends'}
         />
         <Big
-          big={pending ? 'soon' : since && since.checked ? pct(since.rate) : busy ? '…' : '—'}
+          big={pending ? 'soon' : !examOpen ? '18 Nov' : since && since.checked ? pct(since.rate) : busy ? '…' : '—'}
           label="Since it was found"
-          small={pending ? 'shown once our replay matches the core' : since && since.checked ? `${since.checked} hours nobody could have fitted` : 'needs closed hours after the find'}
+          small={pending ? 'shown once our replay matches the core' : !examOpen ? 'starts with the live feed' : since && since.checked ? `${since.checked} hours nobody could have fitted` : 'needs closed hours after the find'}
         />
       </div>
 
