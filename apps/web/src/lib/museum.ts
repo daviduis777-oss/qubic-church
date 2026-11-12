@@ -50,7 +50,7 @@ export const HALLS: Hall[] = [
     name: 'Anna.exe',
     span: '10 June – 6 July 2026',
     open: true,
-    lead: 'One afternoon Come-from-Beyond posted a small Windows program and asked the chat to run it. By that evening there were seven versions, and the score had become an altitude. Two weeks later the screen showed zero, and then came seven harder tests.',
+    lead: 'One afternoon Come-from-Beyond posted a small Windows program and asked the chat to run it. By that evening there were seven versions, and the score had become an altitude. Two weeks later the screen showed zero, and on 6 July all seven tests did.',
   },
 ]
 
@@ -832,13 +832,36 @@ export const ANNA: Exhibit[] = [
   },
   { kind: 'talk', at: '2026-07-06T08:29:00Z', ask: { who: 'QubicChurch', text: 'tilda not working?' }, text: 'restart, a bug probably' },
   { kind: 'talk', at: '2026-07-06T08:54:00Z', text: 'Need independent verification, run the file and post screenshot plz' },
+  { kind: 'chat', at: '2026-07-06T09:21:00Z', who: 'Q979', text: 'A6: screens of zeros, Test 4 and Test 6' },
+  {
+    kind: 'talk',
+    at: '2026-07-06T09:32:00Z',
+    ask: { who: 'Q979', text: 'I’ve already used ~' },
+    text: 'So you did the following:\n1. Took my .data file posted today.\n2. Ran it for A6.\n3. Got NON-ZERO score.\n4. Pressed TILDA.\n5. Got 0 score.\nRight?',
+  },
+  { kind: 'chat', at: '2026-07-06T09:50:00Z', who: 'AigarthX', text: 'A4 0' },
+  {
+    kind: 'talk',
+    at: '2026-07-06T09:50:30Z',
+    ask: { who: 'neener neener', text: 'how come this latest data file runs with other Annas? couldn’t be done before' },
+    text: 'Probably uses part of "brain" which learned addition with optimized method\nDifferent formats are still compatible to some degree\nI mean half of ANN got correct copy and part got garbage and then healed during evolution\nSame as himans wuth damaged brain still can do things',
+  },
+  { kind: 'talk', at: '2026-07-06T10:19:00Z', text: 'Are ALL solved or not?' },
+  { kind: 'chat', at: '2026-07-06T10:19:10Z', who: 'Q979', text: 'A6-0' },
+  { kind: 'chat', at: '2026-07-06T10:19:20Z', who: 'AigarthX', text: 'All Zero' },
+  { kind: 'chat', at: '2026-07-06T10:19:30Z', who: 'The Dark Knight', text: 'ALL solved.' },
+  { kind: 'chat', at: '2026-07-06T10:21:00Z', who: 'neener neener', text: 'no one cares about riches, we’re doing it for the glory' },
+  { kind: 'chat', at: '2026-07-06T10:22:00Z', who: 'Sero', text: 'gg those who worked on anna' },
+  { kind: 'chat', at: '2026-07-06T10:23:00Z', who: 'Shelby', text: 'It seems that cfb didn’t expect to see 0 so quickly' },
   {
     kind: 'mark',
-    at: '2026-07-06T23:00:00Z',
+    at: '2026-07-06T10:23:30Z',
     title: 'Anna.exe reaches 0',
-    text: 'The day the race is remembered by. The screenshots that close it are still being hung.',
+    text: 'All seven tests at zero. Come-from-Beyond asked “Are ALL solved or not?” and the chat answered.',
     quote: 'It’s not a milestone. It’s much bigger.',
   },
+  { kind: 'talk', at: '2026-07-06T10:23:40Z', text: 'Afk to eat' },
+  { kind: 'chat', at: '2026-07-06T10:25:00Z', who: 'Spikeinjapan', text: 'WE. ARE. HERE !!! Witnessing a moment' },
 ]
 
 // Scores people posted in the first days (lower is better, 0 is the goal). More will be added from the chat.
@@ -864,6 +887,8 @@ export const RECORDS: { who: string; score: number; at: string; note: string }[]
 
 // The racers: everyone on the screenshots who ran Anna.exe and posted from it.
 export const RACERS = [
+  'AigarthX',
+  'The Dark Knight',
   'Egregius',
   'zuqka',
   '(22/7)42!',

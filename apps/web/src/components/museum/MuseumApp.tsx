@@ -129,7 +129,10 @@ const DAYS = [
   { at: '2026-06-29', sub: 'The racers keep their own board of the seven tests. Anna-2 is at zero; Anna-7 is the hardest.' },
   { at: '2026-07-01', sub: 'A stuck week.' },
   { at: '2026-07-05', sub: 'Anna-7.3 joins the board.' },
-  { at: '2026-07-06', sub: 'Anna-1 and Anna-2 at zero by morning. In the afternoon a new file for Anna-7, and a call for independent screenshots.' },
+  {
+    at: '2026-07-06',
+    sub: 'Anna-1 and Anna-2 at zero by morning. A new file for Anna-7, a call for independent screenshots, and by 10:19 UTC every test at zero.',
+  },
   { at: '2026-07-03', sub: 'A daily status from the racers.' },
   { at: '2026-06-25', sub: 'A trick for scores that are stuck: a file with Tilda capped at 550.' },
   { at: '2026-06-24', sub: 'Zero on Come-from-Beyond’s screen. Then seven tests, one file each, to be shared out.' },
