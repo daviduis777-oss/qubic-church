@@ -195,7 +195,9 @@ export function WhenApp() {
       <style>{css}</style>
       <div className="wn-in">
         <div className="wn-hero">
-          <h1 className="wn-h">WEN?</h1>
+          <h1 className="wn-h">
+            WEN?<span className="sr-only"> Every date that matters for Qubic and Aigarth: roadmap, ETA and milestones</span>
+          </h1>
           <p className="wn-sub">Every date that matters for Qubic and Aigarth, from the proof of concept to The Day. Newest on top, each with its source.</p>
         </div>
 
