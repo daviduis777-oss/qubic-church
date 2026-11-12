@@ -416,7 +416,8 @@ export function MuseumApp() {
             <>
               <h2 className="mu-day mu-gap">After</h2>
               <p className="mu-sub">
-                The hall ends at zero. That night the next race began: the files start reading an input, and the question becomes the next hour.
+                The hall ends at zero. That night the next race began: the files start reading an input, and the question becomes the next hour. In September
+                the numbering starts again at Anna 0.0.
               </p>
               {[...new Set(later.map(e => e.at.slice(0, 10)))].map(d => (
                 <section key={d}>
