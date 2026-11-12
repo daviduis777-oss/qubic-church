@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { bppFonts } from '@/components/bpp/fonts'
-import { ANNA, type Exhibit, HALLS, PRELUDE, RECORDS, type Talk, type Version } from '@/lib/museum'
+import { ANNA, type Chat, type Exhibit, HALLS, PRELUDE, RACERS, RECORDS, type Talk, type Version } from '@/lib/museum'
 
 const css = `
 .mu{min-height:100svh;margin-bottom:-3rem;background:#dcdad4;color:#141416;font-family:var(--bpp-sans),system-ui,sans-serif;padding:96px 16px 140px}
@@ -36,6 +36,18 @@ const css = `
 .mu-ask b{font-weight:600;color:#3d3b36}
 .mu-say{margin:0;font-size:17px;line-height:1.5;white-space:pre-line}
 .mu-say b{font-weight:600}
+.mu-c{position:relative;display:grid;grid-template-columns:64px 1fr;gap:4px 18px;margin:0 0 18px 0;max-width:700px}
+@media (max-width:640px){.mu-c{grid-template-columns:1fr}}
+.mu-c:before{content:"";position:absolute;left:-54px;top:8px;width:8px;height:8px;border-radius:50%;border:1.5px solid #141416;background:#dcdad4}
+@media (max-width:640px){.mu-c:before{left:-31px;width:6px;height:6px}}
+.mu-c time{font-variant-numeric:tabular-nums;font-size:13px;color:#8a877e;padding-top:2px}
+.mu-c>div{border-left:2px dashed #b9b6ad;padding-left:14px}
+.mu-chat{margin:0;font-size:15px;line-height:1.5;color:#3d3b36;white-space:pre-line;font-style:italic}
+.mu-chat b{font-style:normal;font-weight:600;color:#141416}
+.mu-crew{margin-top:72px;display:grid;gap:14px}
+.mu-crew ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.mu-crew li{background:#f7f6f2;padding:6px 12px;font-size:14.5px;box-shadow:0 1px 0 #b9b6ad}
+.mu-crew p{margin:0;color:#5d5b55;max-width:62ch;line-height:1.55}
 .mu-v{position:relative;display:grid;grid-template-columns:300px 1fr;gap:20px;margin:40px 0 48px;scroll-margin-top:100px}
 @media (max-width:860px){.mu-v{grid-template-columns:1fr}}
 .mu-v:before{content:"";position:absolute;left:-61px;top:18px;width:22px;height:22px;border-radius:4px;background:#ffd21f;border:3px solid #141416}
@@ -99,6 +111,9 @@ const DAYS = [
   { at: '2026-06-17', sub: 'Joji saves 18 512 and cannot go lower. A new version is promised after the epoch.' },
   { at: '2026-06-18', sub: 'A new way to count the score: any number of threads, and the numbers no longer compare with the old ones.' },
   { at: '2026-06-19', sub: 'Why not run it on the whole network?' },
+  { at: '2026-06-22', sub: 'Two files in half an hour. The racers pass 11 300 on the new score.' },
+  { at: '2026-06-21', sub: 'A faster file, and a new start from Come-from-Beyond’s progress.' },
+  { at: '2026-06-20', sub: 'The racers ask for a channel of their own. In the evening everyone starts again from an empty file.' },
   { at: '2026-06-15', sub: 'The keys settle: Tilda, 1 to 9, F2. His own progress comes with the file.' },
 ]
 
@@ -131,6 +146,24 @@ function Say({ t }: { t: Talk }) {
             :
           </b>{' '}
           {t.text}
+        </p>
+      </div>
+    </div>
+  )
+}
+
+function Aside({ c }: { c: Chat }) {
+  return (
+    <div className="mu-c">
+      <time dateTime={c.at}>{hm(c.at)}</time>
+      <div>
+        {c.re && (
+          <p className="mu-ask">
+            <b>{c.re.who}:</b> {c.re.text}
+          </p>
+        )}
+        <p className="mu-chat">
+          <b>{c.who}:</b> {c.text}
         </p>
       </div>
     </div>
@@ -225,6 +258,7 @@ function Vitrine({ v }: { v: Version }) {
 function Item({ e }: { e: Exhibit }) {
   if (e.kind === 'version') return <Vitrine v={e} />
   if (e.kind === 'talk') return <Say t={e} />
+  if (e.kind === 'chat') return <Aside c={e} />
   return (
     <section className="mu-end">
       <time dateTime={e.at}>{dm(e.at)}</time>
@@ -265,7 +299,7 @@ export function MuseumApp() {
 
   const all = ANNA.slice().sort((a, b) => Date.parse(a.at) - Date.parse(b.at))
   const day = (d: string) => all.filter(e => e.at.startsWith(d))
-  const later = all.filter(e => e.at >= '2026-06-20')
+  const later = all.filter(e => e.at >= '2026-06-23')
 
   return (
     <main className={`mu ${bppFonts}`}>
@@ -318,7 +352,10 @@ export function MuseumApp() {
 
         <section className="mu-rec">
           <h2 className="mu-h2">Scores from the first days</h2>
-          <p>Lower is better. These are the screenshots posted from 10 to 13 June; the full record book follows.</p>
+          <p>
+            Lower is better. From 18 June the score is counted a new way, so the newer numbers are not comparable with the older ones. The full record book
+            follows.
+          </p>
           <table className="mu-tbl">
             <thead>
               <tr>
@@ -339,6 +376,16 @@ export function MuseumApp() {
               ))}
             </tbody>
           </table>
+        </section>
+
+        <section className="mu-crew">
+          <h2 className="mu-h2">The racers</h2>
+          <p>Everyone on these screenshots who ran Anna.exe and posted what it showed. Their lines in the hall are verbatim, in italics.</p>
+          <ul>
+            {RACERS.map(r => (
+              <li key={r}>{r}</li>
+            ))}
+          </ul>
         </section>
 
         <p className="mu-foot">
