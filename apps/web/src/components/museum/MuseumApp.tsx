@@ -9,6 +9,9 @@ const css = `
 .mu-in{max-width:1080px;margin:0 auto}
 .mu-hero{display:grid;gap:18px;padding-bottom:56px;border-bottom:1px solid #b9b6ad;margin-bottom:56px}
 .mu-h{font-family:var(--bpp-nx),sans-serif;font-weight:500;font-size:clamp(88px,16vw,190px);line-height:.78;margin:0;letter-spacing:-.01em}
+.mu-word{margin:4px 0 20px;padding-left:18px;border-left:3px solid #ffd21f;max-width:56ch;display:grid;gap:8px}
+.mu-word p{margin:0;font-size:clamp(17px,2vw,20px);line-height:1.5;color:#141416}
+.mu-word cite{font-style:normal;font-size:13px;color:#5d5b55}
 .mu-hall{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap}
 .mu-hall b{font-family:var(--bpp-eng),sans-serif;font-weight:400;font-size:clamp(20px,3vw,30px)}
 .mu-hall span{color:#5d5b55;font-size:15px}
@@ -382,6 +385,14 @@ export function MuseumApp() {
       <div className="mu-in">
         <header className="mu-hero">
           <h1 className="mu-h">Museum</h1>
+          <blockquote className="mu-word">
+            <p>
+              Finishing Aigarth is one of the most remarkable things I have seen with my own eyes. This museum is a way to capture the moment and to keep the
+              names of everyone who took part.
+            </p>
+            <p>Thank you for the journey.</p>
+            <cite>QC</cite>
+          </blockquote>
           <div className="mu-hall">
             <b>
               Hall {hall.n}. {hall.name}
