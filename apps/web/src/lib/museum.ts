@@ -1200,6 +1200,22 @@ export const ANNA: Exhibit[] = [
     format: 'Anna 0.9  |   %d   |   %d ticks   |   %d   |   %s   |   %d it/s',
     cfb: 'Anna 0.9\nUse empty Anna.data.\nIn this version we need to get as close to 0 as possible to set baseline for denoised data.',
   },
+  { kind: 'talk', at: '2026-09-16T19:58:00Z', text: 'I added showing score without noise' },
+  {
+    kind: 'version',
+    id: 's01032',
+    name: 'Anna 0.10.32',
+    at: '2026-09-16T20:01:00Z',
+    built: '2026-09-16T19:58:09Z',
+    bytes: 157696,
+    sha256: 'eef38ede522bbb500a53fb9038c402d0180001e5ecba72c0ce6dc00615d5ada6',
+    format: 'Anna 0.10.%d  |   %d (%d)   |   %d ticks   |   mode %d   |   %d mutations   |   %s   |   %d it/s',
+    cfb: '32-neuron version if somebody wants to try quickly',
+  },
+  { kind: 'chat', at: '2026-09-16T20:02:00Z', who: 'neener neener', text: 'got 3365 with previous, do I try going lower before posting?' },
+  { kind: 'talk', at: '2026-09-16T20:08:00Z', text: 'This is the line where it clicks and model starts understanding pattern' },
+  { kind: 'talk', at: '2026-09-16T20:13:00Z', text: 'This sharp jump of denoised score clearly shows what happens' },
+  { kind: 'talk', at: '2026-09-17T06:36:00Z', text: 'Anna 0.10.1024\nUse empty Anna.data.' },
 ]
 
 // Scores people posted in the first days (lower is better, 0 is the goal). More will be added from the chat.
