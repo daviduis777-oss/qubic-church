@@ -4,8 +4,8 @@
  * screenshots were taken at UTC+7 and converted.
  */
 
-// Where the unchanged files live, one zip per exhibit (not on qubic.church itself).
-export const ANNA_ARCHIVE = 'https://github.com/daviduis777-oss/anna-archive/releases/download/hall-1'
+// Where the unchanged files live, one zip per exhibit, kept on GitHub (not on qubic.church itself).
+export const ANNA_ARCHIVE = 'https://github.com/daviduis777-oss/anna-archive/raw/main/files'
 
 export type Version = {
   kind: 'version'
