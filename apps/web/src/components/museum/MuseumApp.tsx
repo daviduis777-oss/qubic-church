@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { bppFonts } from '@/components/bpp/fonts'
-import { ANNA, type Board, type Chat, type Exhibit, HALLS, HISTORIANS, PRELUDE, RACERS, RECORDS, type Talk, type Version } from '@/lib/museum'
+import { ANNA, type Board, type Chat, type Exhibit, HALLS, HISTORIANS, PRELUDE, RECORDS, type Talk, type Version } from '@/lib/museum'
 
 const css = `
 .mu{min-height:100svh;margin-bottom:-3rem;background:#dcdad4;color:#141416;font-family:var(--bpp-sans),system-ui,sans-serif;padding:96px 16px 140px}
@@ -487,16 +487,6 @@ export function MuseumApp() {
               </a>
             </blockquote>
           ))}
-        </section>
-
-        <section className="mu-crew">
-          <h2 className="mu-h2">The people in the hall</h2>
-          <p>Everyone who ran Anna.exe, posted a score or a board, or spoke in the race. Their lines in the hall are verbatim, in italics.</p>
-          <ul>
-            {RACERS.map(r => (
-              <li key={r}>{r}</li>
-            ))}
-          </ul>
         </section>
 
         <p className="mu-foot">

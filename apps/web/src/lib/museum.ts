@@ -1413,6 +1413,12 @@ export const ANNA: Exhibit[] = [
     text: 'probably need to deploy to miners\nLet’s start next series of tests, miners will finish current one',
   },
   {
+    kind: 'chat',
+    at: '2026-09-25T11:27:30Z',
+    who: 'Pomm3sgab3l',
+    text: 'I’m trying another version right now with more set ANNA_KICK= maybe that will help us make some progress.',
+  },
+  {
     kind: 'version',
     id: 's01864',
     name: 'Anna 0.18.64',
