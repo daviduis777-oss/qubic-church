@@ -36,7 +36,14 @@ const EXPLORER = 'https://annexplorer.jetskipool.ai/epochs/'
 const int = (n: number) => n.toLocaleString('en-US')
 
 const acc = (errors: number) => ((1 - errors / WINDOWS) * 100).toFixed(2)
-const pos = (errors: number) => Math.max(0, Math.min(1, (COIN - errors) / (COIN - GOAL)))
+/**
+ * Where an error count sits on the track, from the coin flip (0) to the far end (1). The far end is the mark until a
+ * network passes it; then the track stretches to the leader (plus a little room), and the mark moves inside it.
+ */
+const farEnd = (best: number) => (best < GOAL ? best - Math.max(8, Math.round((GOAL - best) * 0.06)) : GOAL)
+const scale = (end: number) => (errors: number) => Math.max(0, Math.min(1, (COIN - errors) / (COIN - end)))
+/** Two marks closer than this (as a share of the track) would print their labels over each other. */
+const NEAR = 0.16
 const short = (id: string) => `${id.slice(0, 5)}…${id.slice(-4)}`
 
 const css = `
@@ -54,7 +61,12 @@ const css = `
 @keyframes r55flash{0%{filter:brightness(2.2)}100%{filter:brightness(1)}}
 .r55-mark{position:absolute;top:0;transform:translateX(-50%);display:grid;justify-items:center;gap:4px;font-size:12px;white-space:nowrap}
 .r55-mark i{display:block;width:2px;height:20px;background:currentColor;margin-top:16px}
-.r55-goal{right:0;transform:none;justify-items:end;color:var(--hot)}
+.r55-goal{color:var(--hot)}
+.r55-goal.r55-end{left:auto!important;right:0;transform:none;justify-items:end}
+.r55-goal.r55-in i{height:20px}
+.r55-mark.r55-low{top:34px}
+.r55-mark.r55-low i{margin-top:0;height:12px}
+.r55-mark.r55-r{transform:translateX(calc(-100% + 1px));justify-items:end}
 .r55-goal i{width:3px;height:36px;margin-top:0;box-shadow:0 0 12px var(--fil)}
 .r55-runner{position:absolute;top:22px;width:20px;height:20px;border-radius:50%;background:var(--hot);box-shadow:0 0 16px var(--fil),0 0 34px rgba(255,196,107,.6);transform:translateX(-50%);transition:left 1.2s cubic-bezier(.2,.8,.2,1)}
 .r55-ends{display:flex;justify-content:space-between;gap:12px;font-size:12.5px;white-space:nowrap}
@@ -221,7 +233,15 @@ export function RaceTo55() {
   }, [])
 
   if (!r) return null
-  const p = pos(r.best)
+  const at = scale(farEnd(r.best))
+  const p = at(r.best)
+  const g = at(GOAL)
+  const passed = r.best < GOAL
+  const avgAt = r.avg > 0 && r.avg < COIN ? at(r.avg) : null
+  const lastAt = r.lastEpoch && r.lastEpoch.best < COIN ? at(r.lastEpoch.best) : null
+  // Labels above the rail: the mark always; the average too unless it sits on the mark, then it goes below.
+  const avgLow = avgAt != null && Math.abs(avgAt - g) < NEAR
+  const lastText = lastAt != null && !(avgLow && avgAt != null && Math.abs(lastAt - avgAt) < NEAR)
   const togo = Math.max(0, r.best - GOAL)
   const fr = r.frames ?? { networks: 0, computors: 0, best: 0, cap: 168 }
   const done = r.best <= GOAL || fr.networks > 0
@@ -258,19 +278,28 @@ export function RaceTo55() {
           <div className="r55-rail">
             <div className="r55-fill" style={{ width: `${p * 100}%` }} />
           </div>
-          {r.avg > 0 && r.avg < COIN ? (
-            <div className="r55-mark mute" style={{ left: `${pos(r.avg) * 100}%` }}>
-              <span>average {Math.round(r.avg)}</span>
+          {avgAt != null ? (
+            <div className={`r55-mark mute${avgLow ? ' r55-low' : ''}`} style={{ left: `${avgAt * 100}%` }}>
+              {avgLow ? (
+                <>
+                  <i />
+                  <span>average {Math.round(r.avg)}</span>
+                </>
+              ) : (
+                <>
+                  <span>average {Math.round(r.avg)}</span>
+                  <i />
+                </>
+              )}
+            </div>
+          ) : null}
+          {lastAt != null && r.lastEpoch ? (
+            <div className={`r55-mark r55-low mute${lastAt > 0.88 ? ' r55-r' : ''}`} style={{ left: `${lastAt * 100}%` }}>
               <i />
+              {lastText && <span>last epoch {r.lastEpoch.best}</span>}
             </div>
           ) : null}
-          {r.lastEpoch && r.lastEpoch.best < COIN ? (
-            <div className="r55-mark mute" style={{ left: `${pos(r.lastEpoch.best) * 100}%`, top: 34 }}>
-              <i style={{ marginTop: 0, height: 12 }} />
-              <span>last epoch {r.lastEpoch.best}</span>
-            </div>
-          ) : null}
-          <div className="r55-mark r55-goal">
+          <div className={`r55-mark r55-goal${passed ? ' r55-in' : ' r55-end'}`} style={passed ? { left: `${g * 100}%` } : undefined}>
             <span>55% · {GOAL}</span>
             <i />
           </div>
@@ -278,7 +307,7 @@ export function RaceTo55() {
         </div>
         <div className="r55-ends mute">
           <span>50% · coin flip</span>
-          <span>Come-from-Beyond&apos;s mark</span>
+          <span>{passed ? `the best network, ${acc(r.best)}%` : <>Come-from-Beyond&apos;s mark</>}</span>
         </div>
       </div>
 
