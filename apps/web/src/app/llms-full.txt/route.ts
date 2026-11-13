@@ -4,6 +4,7 @@ import { ARTICLES, articleMarkdown } from '@/lib/articles'
 import { ANSWERS, answerUrl } from '@/lib/answers'
 import { wenMarkdown } from '@/lib/when-text'
 import { museumMarkdown } from '@/lib/museum-text'
+import { suggestMarkdown } from '@/lib/suggest-text'
 
 export const revalidate = 3600
 
@@ -22,6 +23,7 @@ export function GET() {
   }
   parts.push(wenMarkdown().replace(/^# /, '# '), '')
   parts.push(museumMarkdown(), '')
+  parts.push(suggestMarkdown(), '')
   for (const b of BOOKS) {
     parts.push(`# ${b.title}`, '', `By ${AUTHOR.name}. Qubic Church, ${b.published.slice(0, 4)}. Free. ${bookUrl(b)}`, '', b.description, '')
     for (const c of b.chapters) parts.push(chapterMarkdown(b, c))

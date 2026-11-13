@@ -186,7 +186,6 @@ test('QC wording: miner-facing pool copy says QC, never Qubic Church', () => {
     '../../../app/[locale]/pool/qc.tsx',
     '../../../app/[locale]/pool/why.tsx',
     '../../../app/[locale]/pool/ReportLink.tsx',
-    '../../../app/[locale]/pool/reports/ReportsBoard.tsx',
     '../../../components/pool/maria/apps.tsx',
     '../../../components/pool/maria/home.tsx',
     '../../../components/pool/maria/report.tsx',

@@ -11,7 +11,7 @@
  * Never stored: the IP, the raw user agent, a seed or an address (redacted in report.ts before this sees it).
  */
 import { createHmac, randomBytes } from 'node:crypto'
-import { base64Bytes, type Checked, checkReport, isStatus, REPORT, type ReportStatus, type StoredReport } from './report.ts'
+import { base64Bytes, type Checked, checkReport, isStatus, NOTE_MAX, REPORT, type ReportStatus, type StoredReport } from './report.ts'
 import { saltFromEnv } from './store.ts'
 
 export const IDS_KEY = 'pool:report:ids'
@@ -188,7 +188,8 @@ export function createReports(opts: Opts = {}) {
       if (!c.ok) return { ...c, status: 422 }
       const t = now()
       const n = await backend.hit(rateKey(ctx.ip, t.toISOString().slice(0, 10), salt), 90_000)
-      if (n > REPORT.perDay) return { ok: false, error: `That is today's ${REPORT.perDay} reports from this connection. Thank you; try again tomorrow.`, status: 429 }
+      if (n > REPORT.perDay)
+        return { ok: false, error: `That is today's ${REPORT.perDay} reports from this connection. Thank you; try again tomorrow.`, status: 429 }
       const { image, seed, ...d } = c.value
       const rec: StoredReport = {
         v: 1,
@@ -213,12 +214,27 @@ export function createReports(opts: Opts = {}) {
       return docs.map(parseReport).filter((r): r is StoredReport => !!r)
     },
     async setStatus(rid: unknown, status: unknown): Promise<Checked<StoredReport>> {
+      return this.update(rid, { status })
+    },
+    /** The moderator's tracker: change the status, the note, or both. An empty note removes it. */
+    async update(rid: unknown, change: { status?: unknown; note?: unknown }): Promise<Checked<StoredReport>> {
       if (typeof rid !== 'string' || !ID_PATTERN.test(rid)) return { ok: false, error: 'No such report.' }
-      if (!isStatus(status)) return { ok: false, error: 'Unknown status.' }
+      if (change.status !== undefined && !isStatus(change.status)) return { ok: false, error: 'Unknown status.' }
+      if (change.note !== undefined && typeof change.note !== 'string') return { ok: false, error: 'The note must be text.' }
       const [doc] = await backend.get([rid])
       const r = parseReport(doc ?? null)
       if (!r) return { ok: false, error: 'No such report.' }
-      const next: StoredReport = { ...r, status: status as ReportStatus }
+      const next: StoredReport = { ...r, updated: now().getTime() }
+      if (change.status !== undefined) next.status = change.status as ReportStatus
+      if (typeof change.note === 'string') {
+        // biome-ignore lint/suspicious/noControlCharactersInRegex: stripping them is the point
+        const n = change.note
+          .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, '')
+          .trim()
+          .slice(0, NOTE_MAX)
+        if (n) next.note = n
+        else delete next.note
+      }
       if (!(await backend.replace(rid, JSON.stringify(next)))) return { ok: false, error: 'No such report.' }
       return { ok: true, value: next }
     },

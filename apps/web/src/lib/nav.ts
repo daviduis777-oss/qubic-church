@@ -128,6 +128,13 @@ export const NAV: NavGroup[] = [
       },
       { href: '/mine-qubic', name: 'Mine Qubic', desc: 'How mining works and how to start.', keys: 'mine mining miner pool' },
       { href: '/get-qubic', name: 'Get Qubic', desc: 'A wallet, where QUBIC is traded, step by step.', keys: 'wallet exchange buy' },
+      {
+        href: '/suggest',
+        name: 'Suggest',
+        desc: 'An idea, an update, a tool you would use, or a review. We read every message.',
+        badge: 'new',
+        keys: 'suggest idea feedback review tool update request contact bug',
+      },
       { href: '/donate', name: 'Donate', desc: 'Support independent research.', keys: 'donate support' },
       { href: '/about', name: 'About', desc: 'What Qubic Church is, and what it is not.', keys: 'about church' },
     ],

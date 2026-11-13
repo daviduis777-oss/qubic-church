@@ -13,14 +13,23 @@ const ADDR = 'ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGH' // 6
 
 /** A data URL whose bytes start like a JPEG or a WebP, padded to n bytes. */
 const jpeg = (n = 400) => `data:image/jpeg;base64,${Buffer.concat([Buffer.from([0xff, 0xd8, 0xff, 0xe0]), Buffer.alloc(n - 4, 7)]).toString('base64')}`
-const webp = (n = 400) => `data:image/webp;base64,${Buffer.concat([Buffer.from('RIFF'), Buffer.from([0, 0, 0, 0]), Buffer.from('WEBPVP8 '), Buffer.alloc(n - 16, 3)]).toString('base64')}`
+const webp = (n = 400) =>
+  `data:image/webp;base64,${Buffer.concat([Buffer.from('RIFF'), Buffer.from([0, 0, 0, 0]), Buffer.from('WEBPVP8 '), Buffer.alloc(n - 16, 3)]).toString('base64')}`
 
 const good = { type: 'bug', text: 'The Connect app froze after I picked HiveOS.', ctx: { app: 'connect', step: 'os' } }
 
 const store = (o: { now?: () => Date; salt?: string | null } = {}) => {
   const backend = S.memoryReports()
   let n = 0
-  const r = S.createReports({ backend, salt: o.salt === undefined ? 'test-salt-0123456789' : o.salt, now: o.now, id: () => `r${String(++n).padStart(12, 'a').replace(/[^a-z2-9]/g, 'b')}` })
+  const r = S.createReports({
+    backend,
+    salt: o.salt === undefined ? 'test-salt-0123456789' : o.salt,
+    now: o.now,
+    id: () =>
+      `r${String(++n)
+        .padStart(12, 'a')
+        .replace(/[^a-z2-9]/g, 'b')}`,
+  })
   return { r, backend }
 }
 
@@ -30,13 +39,16 @@ test('validation: a type, enough words, not too many', () => {
   assert.equal(R.checkReport(null).ok, false)
   assert.equal(R.checkReport({ ...good, type: 'rant' }).ok, false)
   assert.equal(R.checkReport({ ...good, text: 42 }).ok, false)
-  const short = R.checkReport({ ...good, text: '   too short ' .slice(0, 8) })
+  const short = R.checkReport({ ...good, text: '   too short '.slice(0, 8) })
   assert.equal(short.ok, false)
   assert.match((short as { error: string }).error, /at least 10 characters/)
   assert.equal(R.checkReport({ ...good, text: 'x'.repeat(R.REPORT.maxText + 1) }).ok, false)
   assert.equal(R.checkReport({ ...good, text: 'x'.repeat(R.REPORT.maxText) }).ok, true)
   for (const type of ['bug', 'idea', 'update']) assert.equal(R.checkReport({ ...good, type }).ok, true, type)
-  assert.deepEqual(R.REPORT_TYPES.map(t => t.label), ['Bug', 'Idea', 'Update'])
+  assert.deepEqual(
+    R.REPORT_TYPES.map(t => t.label),
+    ['Bug', 'Idea', 'Update'],
+  )
 })
 
 test('validation: control characters out, newlines kept, blank runs folded', () => {
@@ -50,7 +62,8 @@ test('validation: contact is an optional Discord handle, stored with an @', () =
   assert.equal((R.checkReport({ ...good, contact: 'miner.bob_7' }) as { value: { contact?: string } }).value.contact, '@miner.bob_7')
   assert.equal((R.checkReport({ ...good, contact: '@miner' }) as { value: { contact?: string } }).value.contact, '@miner')
   assert.equal((R.checkReport({ ...good, contact: 'OldName#1234' }) as { value: { contact?: string } }).value.contact, '@OldName#1234')
-  for (const bad of ['a', 'has space', 'x'.repeat(41), 'https://evil.example', 'me@mail.com', 7]) assert.equal(R.checkReport({ ...good, contact: bad }).ok, false, String(bad))
+  for (const bad of ['a', 'has space', 'x'.repeat(41), 'https://evil.example', 'me@mail.com', 7])
+    assert.equal(R.checkReport({ ...good, contact: bad }).ok, false, String(bad))
 })
 
 test('validation: the context is codes only; user text cannot ride along as a step', () => {
@@ -159,13 +172,25 @@ test('rate limit: without a server secret in production, nothing is stored', asy
 test('storage: id, type, text, contact, context, device class, time; the image under its own key; never an IP', async () => {
   const at = new Date('2026-11-05T12:34:00Z')
   const { r, backend } = store({ now: () => at })
-  const x = await r.add({ ...good, contact: 'bob', image: webp(800) }, { ip: '192.0.2.77', ua: R.uaClass('Mozilla/5.0 (iPhone; CPU iPhone OS 18_1 like Mac OS X) AppleWebKit/605.1.15 Version/18.1 Mobile/15E148 Safari/604.1') })
+  const x = await r.add(
+    { ...good, contact: 'bob', image: webp(800) },
+    { ip: '192.0.2.77', ua: R.uaClass('Mozilla/5.0 (iPhone; CPU iPhone OS 18_1 like Mac OS X) AppleWebKit/605.1.15 Version/18.1 Mobile/15E148 Safari/604.1') },
+  )
   assert.ok(x.ok)
   const rec = x.value
   assert.match(rec.id, S.ID_PATTERN)
   assert.deepEqual(
     { type: rec.type, text: rec.text, contact: rec.contact, ctx: rec.ctx, ua: rec.ua, at: rec.at, status: rec.status, img: rec.img },
-    { type: 'bug', text: good.text, contact: '@bob', ctx: { app: 'connect', step: 'os' }, ua: 'mobile · iOS · Safari', at: at.getTime(), status: 'new', img: { type: 'webp', bytes: 800 } },
+    {
+      type: 'bug',
+      text: good.text,
+      contact: '@bob',
+      ctx: { app: 'connect', step: 'os' },
+      ua: 'mobile · iOS · Safari',
+      at: at.getTime(),
+      status: 'new',
+      img: { type: 'webp', bytes: 800 },
+    },
   )
   // the report JSON holds no image data; the image key holds the data URL
   const doc = backend.state.docs.get(S.reportKey(rec.id))!
@@ -185,7 +210,16 @@ test('storage: the list keeps the newest REPORT.keep, newest first, and drops th
   let t = Date.parse('2026-11-05T00:00:00Z')
   const backend = S.memoryReports()
   let n = 0
-  const r = S.createReports({ backend, salt: 's'.repeat(20), now: () => new Date((t += 1000)), id: () => `r${(++n).toString(32).padStart(12, '2').replace(/[01lo]/g, 'z')}` })
+  const r = S.createReports({
+    backend,
+    salt: 's'.repeat(20),
+    now: () => new Date((t += 1000)),
+    id: () =>
+      `r${(++n)
+        .toString(32)
+        .padStart(12, '2')
+        .replace(/[01lo]/g, 'z')}`,
+  })
   const ids: string[] = []
   for (let i = 0; i < R.REPORT.keep + 3; i++) {
     const x = await r.add({ ...good, image: i === 0 ? jpeg() : undefined }, { ip: `10.0.${i >> 8}.${i & 255}`, ua: 'desktop · Linux · Chrome' })
@@ -196,7 +230,10 @@ test('storage: the list keeps the newest REPORT.keep, newest first, and drops th
   assert.equal(backend.state.imgs.size, 0, 'the oldest report and its image are gone')
   const list = await r.list(10)
   assert.equal(list.length, 10)
-  assert.deepEqual(list.map(x => x.id), ids.slice(-10).reverse())
+  assert.deepEqual(
+    list.map(x => x.id),
+    ids.slice(-10).reverse(),
+  )
   assert.ok(list.every((x, i) => i === 0 || x.at < list[i - 1]!.at))
 })
 
@@ -227,7 +264,7 @@ test('the moderator marks a report seen or done; nothing else changes', async ()
   assert.ok(x.ok)
   const seen = await r.setStatus(x.value.id, 'seen')
   assert.ok(seen.ok)
-  assert.deepEqual({ ...seen.value, status: 'new' }, x.value)
+  assert.deepEqual({ ...seen.value, status: 'new', updated: undefined }, { ...x.value, updated: undefined })
   assert.equal((await r.list())[0]!.status, 'seen')
   assert.ok((await r.setStatus(x.value.id, 'done')).ok)
   assert.equal((await r.list())[0]!.status, 'done')
@@ -289,46 +326,96 @@ test('gating: sending is behind the pool gate; reading and marking are for the m
   assert.doesNotMatch(post, /console\./)
   assert.match(post, /ua: uaClass\(req\.headers\.get\('user-agent'\)\)/)
   const list = src('../../../app/api/pool/reports/route.ts')
-  for (const m of ['GET', 'PATCH']) assert.match(list, new RegExp(`export async function ${m}\\(req: Request\\) \\{\\n  if \\(!\\(await isModerator\\(req\\)\\)\\) return notFound\\(\\)`), m)
+  for (const m of ['GET', 'PATCH'])
+    assert.match(list, new RegExp(`export async function ${m}\\(req: Request\\) \\{\\n  if \\(!\\(await isModerator\\(req\\)\\)\\) return notFound\\(\\)`), m)
   assert.doesNotMatch(list, /poolAllowed|POOL_PUBLIC|poolPublic/, 'public or not, only the moderator')
   const img = src('../../../app/api/pool/reports/image/route.ts')
   assert.match(img, /if \(!\(await isModerator\(req\)\)\) return NextResponse\.json\(\{ error: 'Not found' \}, \{ status: 404/)
   assert.match(img, /nosniff/)
   assert.match(img, /private, no-store/)
-  const page = src('../../../app/[locale]/pool/reports/page.tsx')
-  assert.match(page, /if \(!\(await isModerator\(\)\)\) notFound\(\)/)
-  assert.match(page, /index: false/)
-  assert.doesNotMatch(page, /poolAllowed/)
+  for (const f of ['../../../app/[locale]/pool/reports/page.tsx', '../../../app/[locale]/mod/page.tsx']) {
+    const page = src(f)
+    assert.match(page, /if \(!\(await isModerator\(\)\)\) notFound\(\)/, f)
+    assert.match(page, /index: false/, f)
+    assert.doesNotMatch(page, /poolAllowed/, f)
+  }
   // not linked anywhere a visitor could see
-  for (const f of ['../../../app/[locale]/pool/page.tsx', '../../../app/[locale]/pool/qc.tsx', '../../../components/pool/maria/report.tsx', '../../../components/church/navigation/GlobalNavTrigger.tsx'])
-    assert.doesNotMatch(src(f), /\/pool\/reports/, f)
+  for (const f of [
+    '../../../app/[locale]/pool/page.tsx',
+    '../../../app/[locale]/pool/qc.tsx',
+    '../../../components/pool/maria/report.tsx',
+    '../../../components/church/navigation/GlobalNavTrigger.tsx',
+  ])
+    assert.doesNotMatch(src(f), /\/pool\/reports|'\/mod'/, f)
 })
 
-test('the mod-only list: newest first, type badges, the thumbnail, text and context, seen and done', () => {
-  const board = src('../../../app/[locale]/pool/reports/ReportsBoard.tsx')
-  assert.match(board, /REPORT_TYPES\.find/)
+test('the tracker: every kind and source, six statuses, a private note, the thumbnail, copy as an issue', () => {
+  const board = src('../../../app/[locale]/mod/Tracker.tsx')
+  assert.match(board, /TYPE_LABEL\[x\.type\]/)
   assert.match(board, /\/api\/pool\/reports\/image\?id=\$\{x\.id\}/)
   assert.match(board, /contextLine\(x\.ctx\)/)
-  assert.match(board, /mark\(x\.id, 'seen'\)/)
-  assert.match(board, /mark\(x\.id, 'done'\)/)
+  assert.match(board, /STATUSES\.map/)
+  assert.match(board, /save\(x\.id, \{ note \}\)/)
   assert.match(board, /Copy as GitHub issue/)
   assert.match(board, /method: 'PATCH'/)
   // screenshots are fetched lazily from the gated route, never inlined into the page
-  assert.doesNotMatch(src('../../../app/[locale]/pool/reports/page.tsx'), /image\(/)
+  assert.doesNotMatch(src('../../../app/[locale]/mod/page.tsx'), /image\(/)
+})
+
+test('the tracker: status and note change together or apart; an empty note removes it; nothing else changes', async () => {
+  const { r } = store()
+  const x = await r.add(good, { ip: '1.1.1.1', ua: 'desktop · Linux · Firefox' })
+  assert.ok(x.ok)
+  for (const s of R.STATUSES) assert.ok((await r.update(x.value.id, { status: s })).ok, s)
+  const n = await r.update(x.value.id, { status: 'planned', note: '  ship with the pool \u0007 ' })
+  assert.ok(n.ok)
+  assert.equal(n.value.note, 'ship with the pool')
+  assert.equal(n.value.status, 'planned')
+  assert.equal(typeof n.value.updated, 'number')
+  assert.deepEqual({ ...n.value, status: 'new', note: undefined, updated: undefined }, { ...x.value, note: undefined, updated: undefined })
+  assert.equal((await r.update(x.value.id, { note: 'x'.repeat(5000) })).ok && (await r.list())[0]!.note!.length, R.NOTE_MAX)
+  const cleared = await r.update(x.value.id, { note: '' })
+  assert.ok(cleared.ok && !('note' in cleared.value))
+  assert.equal((await r.update(x.value.id, { note: 5 })).ok, false)
+  assert.equal((await r.update(x.value.id, { status: 'archived' })).ok, false)
+})
+
+test('the Suggest form: site kinds, a page code, never a gate, the same store', () => {
+  assert.deepEqual(
+    R.SITE_TYPES.map(t => t.id),
+    ['idea', 'update', 'tool', 'review', 'bug'],
+  )
+  for (const t of ['tool', 'review']) assert.ok(R.checkReport({ type: t, text: 'A calculator for the pool share, please.' }).ok, t)
+  assert.equal(R.pageStep('/bpp9000/brains?x=1'), 'bpp9000.brains')
+  assert.equal(R.pageStep('/ru/museum'), 'museum')
+  assert.equal(R.pageStep('/'), 'home')
+  assert.equal(R.pageStep('javascript:alert(1)'), 'home')
+  assert.equal(R.pageStep(42), 'home')
+  assert.equal(R.contextLine({ app: 'site', step: 'bpp9000.brains' }), 'Site · /bpp9000/brains')
+  assert.equal(R.contextLine({ app: 'site', step: 'home' }), 'Site · /')
+  const api = src('../../../app/api/feedback/route.ts')
+  assert.doesNotMatch(api, /poolAllowed|isModerator/)
+  assert.match(api, /app: 'site', step: pageStep\(body\.page\)/)
+  assert.match(api, /reports\(\)\.add/)
+  assert.match(api, /body\.website/)
+  const form = src('../../../components/suggest/SuggestForm.tsx')
+  assert.match(form, /text: redactReport\(text\)\.text/)
+  assert.match(form, /'\/api\/feedback'/)
 })
 
 /* ---------------- the Report app ---------------- */
 
 test('Report app: the warning, redaction before sending, images only, downscaled, no log attached', () => {
   const app = src('../../../components/pool/maria/report.tsx')
+  const shrinker = src('../shrink-image.ts')
   assert.equal(R.REPORT_WARNING, "Don't include your seed or private keys in the screenshot.")
   assert.match(app, /\{REPORT_WARNING\}/)
   assert.match(app, /text: redactReport\(text\)\.text/)
   assert.match(app, /accept="image\/\*"/)
-  assert.match(app, /fitWithin\(pic\.w, pic\.h\)/)
-  assert.match(app, /toDataURL\('image\/webp', q\)/)
-  assert.match(app, /toDataURL\('image\/jpeg', q\)/)
-  assert.match(app, /REPORT\.rawMaxBytes/)
+  assert.match(shrinker, /fitWithin\(pic\.w, pic\.h\)/)
+  assert.match(shrinker, /toDataURL\('image\/webp', q\)/)
+  assert.match(shrinker, /toDataURL\('image\/jpeg', q\)/)
+  assert.match(shrinker, /REPORT\.rawMaxBytes/)
   // Fix my rig hands over rule ids, never the log; Ask Maria hands over the turn number, never the chat
   const flows = src('../../../components/pool/maria/flows.tsx')
   assert.match(flows, /go\('report', \{ from: 'doctor', step: reportStep\(v\) \}\)/)

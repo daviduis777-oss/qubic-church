@@ -27,6 +27,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     page('/status', 0.7),
     page('/wen', 0.8),
     page('/museum', 0.7),
+    page('/suggest', 0.5),
     page('/epochs', 0.7),
     ...DIGEST_EPOCHS.map(e => page(`/epochs/${e}`, 0.6)),
     page('/books', 0.9),

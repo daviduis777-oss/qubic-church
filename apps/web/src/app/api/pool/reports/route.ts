@@ -9,7 +9,7 @@ const notFound = () => NextResponse.json({ error: 'Not found' }, { status: 404, 
 
 /**
  * The reports, for the moderator only, public pool or not: everyone else gets a plain 404.
- * GET: the newest reports (no screenshots: /api/pool/reports/image serves those). PATCH {id, status}: mark it.
+ * GET: the newest reports (no screenshots: /api/pool/reports/image serves those). PATCH {id, status?, note?}: the tracker.
  */
 export async function GET(req: Request) {
   if (!(await isModerator(req))) return notFound()
@@ -18,8 +18,8 @@ export async function GET(req: Request) {
 
 export async function PATCH(req: Request) {
   if (!(await isModerator(req))) return notFound()
-  const b = (await req.json().catch(() => null)) as { id?: unknown; status?: unknown } | null
-  const r = await reports().setStatus(b?.id, b?.status)
+  const b = (await req.json().catch(() => null)) as { id?: unknown; status?: unknown; note?: unknown } | null
+  const r = await reports().update(b?.id, { status: b?.status, note: b?.note })
   if (!r.ok) return NextResponse.json({ ok: false, error: r.error }, { status: 422, headers })
   return NextResponse.json({ ok: true, report: r.value }, { headers })
 }

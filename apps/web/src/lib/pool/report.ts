@@ -9,8 +9,9 @@
 import { POOL } from './config.ts'
 import { redactWallets, SEED_MARK } from './redact.ts'
 
-export type ReportType = 'bug' | 'idea' | 'update'
-export type ReportStatus = 'new' | 'seen' | 'done'
+export type ReportType = 'bug' | 'idea' | 'update' | 'tool' | 'review'
+/** The tracker: new, seen, then planned, in progress, done, or declined. */
+export type ReportStatus = 'new' | 'seen' | 'planned' | 'doing' | 'done' | 'no'
 
 export const REPORT = {
   /** Description length, after trimming. */
@@ -36,12 +37,41 @@ export const REPORT = {
 export const REPORT_TYPES: { id: ReportType; label: string; ask: string; placeholder: string }[] = [
   { id: 'bug', label: 'Bug', ask: 'What went wrong, and what did you expect?', placeholder: 'Steps, what you saw, what you expected' },
   { id: 'idea', label: 'Idea', ask: 'What would make the pool or Maria better?', placeholder: 'Your idea, and who it helps' },
-  { id: 'update', label: 'Update', ask: 'Something out of date? Tell us what changed and where you saw it.', placeholder: 'What changed, and a link or source' },
+  {
+    id: 'update',
+    label: 'Update',
+    ask: 'Something out of date? Tell us what changed and where you saw it.',
+    placeholder: 'What changed, and a link or source',
+  },
 ]
+
+/** What the site's Suggest form offers (the pool's Report app keeps the three above). */
+export const SITE_TYPES: { id: ReportType; label: string; ask: string; placeholder: string }[] = [
+  { id: 'idea', label: 'Idea', ask: 'What should we build, write or explain?', placeholder: 'Your idea, and who it would help' },
+  {
+    id: 'update',
+    label: 'Update',
+    ask: 'Something out of date or wrong? Tell us what changed and where you saw it.',
+    placeholder: 'What changed, the page, and a link or source',
+  },
+  {
+    id: 'tool',
+    label: 'Tool',
+    ask: 'Which tool would you use? A tracker, a calculator, a checker, anything.',
+    placeholder: 'What it does, and what you would use it for',
+  },
+  { id: 'review', label: 'Review', ask: 'What do you think of the site? The good and the bad.', placeholder: 'What works, what does not, what confused you' },
+  { id: 'bug', label: 'Bug', ask: 'What went wrong, and what did you expect?', placeholder: 'The page, what you did, what you saw' },
+]
+
+export const TYPE_LABEL: Record<ReportType, string> = { bug: 'Bug', idea: 'Idea', update: 'Update', tool: 'Tool', review: 'Review' }
 
 export const REPORT_WARNING = "Don't include your seed or private keys in the screenshot."
 
-export const STATUS_LABEL: Record<ReportStatus, string> = { new: 'New', seen: 'Seen', done: 'Done' }
+export const STATUS_LABEL: Record<ReportStatus, string> = { new: 'New', seen: 'Seen', planned: 'Planned', doing: 'In progress', done: 'Done', no: 'Declined' }
+export const STATUSES = Object.keys(STATUS_LABEL) as ReportStatus[]
+/** A moderator's note on one item, as stored. */
+export const NOTE_MAX = 600
 
 /** Where in Maria the report was started: the app, and a code for the step. Never user text. */
 export type ReportContext = { app: string; step?: string }
@@ -70,12 +100,16 @@ export type StoredReport = {
   img?: { type: 'jpeg' | 'webp'; bytes: number }
   /** true when the redaction removed a seed from the text */
   seed?: boolean
+  /** the moderator's own note, never shown publicly */
+  note?: string
+  /** last change by the moderator */
+  updated?: number
 }
 
 export type Checked<T> = { ok: true; value: T } | { ok: false; error: string }
 
-const isType = (x: unknown): x is ReportType => x === 'bug' || x === 'idea' || x === 'update'
-export const isStatus = (x: unknown): x is ReportStatus => x === 'new' || x === 'seen' || x === 'done'
+const isType = (x: unknown): x is ReportType => typeof x === 'string' && x in TYPE_LABEL
+export const isStatus = (x: unknown): x is ReportStatus => typeof x === 'string' && x in STATUS_LABEL
 
 /** Apps and steps are codes: lowercase letters, digits and a few separators. */
 const CODE = /^[a-z][a-z0-9:+._-]{0,79}$/
@@ -140,7 +174,7 @@ export function checkImage(x: unknown): Checked<{ type: 'jpeg' | 'webp'; bytes: 
 export function checkReport(input: unknown): Checked<ReportDraft & { seed: boolean }> {
   if (!input || typeof input !== 'object') return { ok: false, error: 'Nothing to send.' }
   const b = input as Record<string, unknown>
-  if (!isType(b.type)) return { ok: false, error: 'Choose Bug, Idea or Update.' }
+  if (!isType(b.type)) return { ok: false, error: 'Choose what kind of message this is.' }
   if (typeof b.text !== 'string') return { ok: false, error: 'Write a few words first.' }
   const { text, seed } = redactReport(b.text)
   if (text.length < REPORT.minText) return { ok: false, error: `Write a little more: at least ${REPORT.minText} characters.` }
@@ -216,12 +250,27 @@ const APP_NAME: Record<string, string> = {
   record: 'The record',
   who: 'Who mines',
   help: 'Help',
+  site: 'Site',
 }
-export const contextLine = (c: ReportContext) => `${APP_NAME[c.app] ?? c.app}${c.step ? ` · ${c.step}` : ''}`
+export const contextLine = (c: ReportContext) =>
+  c.app === 'site' ? `Site · /${c.step && c.step !== 'home' ? c.step.replace(/\./g, '/') : ''}` : `${APP_NAME[c.app] ?? c.app}${c.step ? ` · ${c.step}` : ''}`
+
+/** A site path as a context step code: /bpp9000/brains becomes bpp9000.brains, / becomes home. */
+export function pageStep(path: unknown): string {
+  const p = typeof path === 'string' && path.startsWith('/') ? path.split(/[?#]/)[0]!.replace(/^\/(en|ru)(?=\/|$)/, '') : ''
+  const code = p
+    .split('/')
+    .filter(Boolean)
+    .join('.')
+    .toLowerCase()
+    .replace(/[^a-z0-9._-]/g, '')
+    .slice(0, 79)
+  return /^[a-z]/.test(code) ? code : 'home'
+}
 
 /** The report as a GitHub issue body, for the review page's copy button. Text inside a fence, never rendered raw. */
 export function issueMarkdown(r: StoredReport, site = 'https://qubic.church'): { title: string; body: string } {
-  const label = REPORT_TYPES.find(t => t.id === r.type)?.label ?? r.type
+  const label = TYPE_LABEL[r.type] ?? r.type
   const first = (r.text.split('\n')[0] ?? '').replace(/\s+/g, ' ').trim()
   const title = `[${label}] ${first.length > 72 ? `${first.slice(0, 71)}…` : first}`
   const fence = r.text.includes('```') ? '~~~~' : '```'
@@ -230,14 +279,15 @@ export function issueMarkdown(r: StoredReport, site = 'https://qubic.church'): {
     `**From:** ${contextLine(r.ctx)}`,
     `**Device:** ${r.ua}`,
     `**Reported:** ${new Date(r.at).toISOString().replace('T', ' ').slice(0, 16)} UTC`,
-    ...(r.contact ? [`**Contact:** Discord ${r.contact}`] : []),
+    ...(r.contact ? [`**Contact:** ${r.ctx.app === 'site' ? '' : 'Discord '}${r.contact}`] : []),
     ...(r.img ? [`**Screenshot:** attached in the review page (${site}/pool/reports, report ${r.id})`] : []),
     '',
     `${fence}text`,
     r.text,
     fence,
+    ...(r.note ? ['', `**Moderator note:** ${r.note.replace(/\s+/g, ' ')}`] : []),
     '',
-    `<sub>Report ${r.id} from the ${POOL.name} Report app. Seeds and addresses were redacted before it was stored.</sub>`,
+    `<sub>Report ${r.id} from ${r.ctx.app === 'site' ? 'the qubic.church Suggest form' : `the ${POOL.name} Report app`}. Seeds and addresses were redacted before it was stored.</sub>`,
   ].join('\n')
   return { title, body }
 }

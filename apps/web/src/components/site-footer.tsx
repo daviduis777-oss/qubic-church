@@ -16,6 +16,7 @@ const FOOTER_LINKS = [
   { href: '/timeline#phase-satoshi', label: 'Satoshi Nakamoto' },
   { href: '/maria-aigarth', label: 'Maria' },
   { href: '/about', label: 'About' },
+  { href: '/suggest', label: 'Suggest an idea' },
   { href: '/donate', label: 'Donate' },
   { href: '/legal', label: 'Legal' },
   { href: 'https://discord.gg/DTnCtckwRs', label: 'Discord' },
