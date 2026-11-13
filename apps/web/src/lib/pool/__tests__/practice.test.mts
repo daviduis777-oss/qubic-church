@@ -176,7 +176,7 @@ test('wizard: the OS procedure follows the values', () => {
   assert.ok(linux.procedures.every(p => p.sources.length > 0))
   assert.ok(linux.steps.filter(s => s.group).length > 10)
 
-  assert.match(cmds(plan({ os: 'linux', hw: 'cpu', dedicated: false })), /setsid -f nohup ~\/qubic-miner\/run\.sh/)
+  assert.match(cmds(plan({ os: 'linux', hw: 'cpu', dedicated: false })), /setsid -f nohup bash -c .echo \$\$ > ~\/qubic-miner\/keep\.pid; while true; do ~\/qubic-miner\/run\.sh/)
   assert.match(cmds(plan({ os: 'windows', hw: 'nvidia' })), /schtasks \/create/)
   assert.match(cmds(plan({ os: 'macos', hw: 'apple', avx: 'apple' })), /caffeinate -dimsu/)
   assert.ok(plan({ os: 'hiveos', hw: 'nvidia' }).steps.some(s => /Installation URL/.test(s.body ?? '')))
