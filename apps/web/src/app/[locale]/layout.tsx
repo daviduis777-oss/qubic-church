@@ -9,6 +9,7 @@ import { getObjectValueByLocale } from '@/lib/opendocs/utils/locale'
 import type { LocaleOptions } from '@/lib/opendocs/types/i18n'
 import { ThemeProvider } from '@/components/theme-provider'
 import { SiteFooter } from '@/components/site-footer'
+import { SuggestStrip } from '@/components/SuggestStrip'
 import { CosmicWrapper } from '@/components/church/backgrounds/CosmicWrapper'
 import { NavV2 } from '@/components/church/navigation/NavV2'
 import { SoundLayer } from '@/components/sound/SoundLayer'
@@ -244,6 +245,7 @@ export default async function RootLayout(props: {
                         {children}
                       </main>
 
+                      <SuggestStrip />
                       <ConditionalSiteFooter>
                         <SiteFooter />
                       </ConditionalSiteFooter>

@@ -60,7 +60,7 @@ export const NAV: NavGroup[] = [
     id: 'read',
     label: 'Read',
     title: 'Read',
-    line: 'Two free books, the forum, Come-from-Beyond, Satoshi, and the questions people ask most.',
+    line: 'Two free books, the forum, Come-from-Beyond, Satoshi, the questions people ask most, and who we are.',
     items: [
       { href: '/books', name: 'The Books', desc: 'Come-from-Beyond and Qubic: The Long Version, chapter by chapter.', keys: 'book chapters read' },
       { href: '/articles', name: 'The Crypt', desc: 'The forum: articles by the community, and CfB’s own archive.', keys: 'forum articles crypt post write' },
@@ -91,6 +91,7 @@ export const NAV: NavGroup[] = [
         keys: 'aigarth ai intelligent tissue bpp',
       },
       { href: '/what-is-anna-aigarth', name: 'What is Anna?', desc: 'The AI the network grows, and what it can and cannot do yet.', keys: 'anna aigarth ai' },
+      { href: '/about', name: 'About', desc: 'What Qubic Church is, and what it is not.', keys: 'about church' },
     ],
   },
   {
@@ -117,8 +118,15 @@ export const NAV: NavGroup[] = [
     id: 'join',
     label: 'Join',
     title: 'Join',
-    line: 'Take part: talk to Maria, mine, hold an Anna, support the work.',
+    line: 'Take part: send an idea, talk to Maria, mine, hold an Anna, support the work.',
     items: [
+      {
+        href: '/suggest',
+        name: 'Suggest',
+        desc: 'An idea, a fix, a tool you would use, or a review. We read every message.',
+        badge: 'new',
+        keys: 'suggest idea feedback review tool update request contact bug',
+      },
       { href: '/maria-aigarth', name: 'Maria', desc: 'Our AI on X. Ask her anything about Qubic.', keys: 'maria ai x twitter' },
       {
         href: '/nfts',
@@ -128,15 +136,7 @@ export const NAV: NavGroup[] = [
       },
       { href: '/mine-qubic', name: 'Mine Qubic', desc: 'How mining works and how to start.', keys: 'mine mining miner pool' },
       { href: '/get-qubic', name: 'Get Qubic', desc: 'A wallet, where QUBIC is traded, step by step.', keys: 'wallet exchange buy' },
-      {
-        href: '/suggest',
-        name: 'Suggest',
-        desc: 'An idea, an update, a tool you would use, or a review. We read every message.',
-        badge: 'new',
-        keys: 'suggest idea feedback review tool update request contact bug',
-      },
       { href: '/donate', name: 'Donate', desc: 'Support independent research.', keys: 'donate support' },
-      { href: '/about', name: 'About', desc: 'What Qubic Church is, and what it is not.', keys: 'about church' },
     ],
   },
 ]
