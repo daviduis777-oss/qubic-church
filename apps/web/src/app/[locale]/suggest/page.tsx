@@ -8,7 +8,7 @@ import { SUGGEST_DESCRIPTION, SUGGEST_FAQ, SUGGEST_MD_URL, SUGGEST_TITLE, SUGGES
 const OG = 'https://qubic.church/og-qubic-church.jpg'
 
 export const metadata: Metadata = {
-  title: SUGGEST_TITLE,
+  title: { absolute: SUGGEST_TITLE },
   description: SUGGEST_DESCRIPTION,
   alternates: { canonical: SUGGEST_URL, types: { 'text/markdown': SUGGEST_MD_URL } },
   openGraph: {
