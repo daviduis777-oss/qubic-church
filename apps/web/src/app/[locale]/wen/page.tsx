@@ -31,7 +31,7 @@ export default function WenPage() {
       {wenLd().map((d, i) => (
         <script dangerouslySetInnerHTML={{ __html: jsonLd(d) }} key={i} type="application/ld+json" />
       ))}
-      <WhenApp />
+      <WhenApp initialNow={Date.now()} />
     </>
   )
 }

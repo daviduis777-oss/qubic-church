@@ -7,25 +7,11 @@ import { epochAt, epochStart, type Kind, KINDS, MOMENTS, type Moment, WEEK, WEN 
 
 const css = `
 .wn{min-height:100svh;margin-bottom:-3rem;background:radial-gradient(60% 40% at 50% 0%,rgba(255,196,107,.09),transparent 70%),#08080a;color:#ece6da;font-family:var(--bpp-sans),system-ui,sans-serif;padding:92px 16px 128px}
-.wn-in{max-width:1040px;margin:0 auto;display:grid;gap:56px}
 .wn-chip{display:inline-block;padding:3px 10px;border:1px solid rgba(255,196,107,.4);border-radius:999px;color:#ffc46b;font-size:12px;letter-spacing:.06em}
-.wn-hero{text-align:center;display:grid;gap:14px;justify-items:center}
 .wn-h{font-family:var(--bpp-nx),sans-serif;font-weight:500;font-size:clamp(96px,18vw,200px);line-height:.8;margin:6px 0 0;color:#ffc46b;text-shadow:0 0 4px #ffd08a,0 0 22px rgba(255,196,107,.6),0 0 70px rgba(232,145,46,.4);letter-spacing:.02em}
 .wn-sub{font-size:clamp(16px,2vw,19px);color:#cfc6b8;max-width:48ch;line-height:1.55;margin:0}
-.wn-stats{display:flex;gap:22px;flex-wrap:wrap;justify-content:center;font-size:13.5px;color:#a39a8c}
-.wn-stats b{font-family:var(--bpp-nx),sans-serif;font-size:24px;color:#fff3dc;font-weight:400;margin-right:6px}
-.wn-next{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-@media (max-width:820px){.wn-next{grid-template-columns:1fr}}
-.wn-card{border:1px solid #29241f;border-radius:16px;background:linear-gradient(180deg,#121014,#0c0b0d);padding:22px;display:grid;gap:8px;align-content:start}
-.wn-card.first{border-color:rgba(255,196,107,.55);box-shadow:0 0 40px rgba(255,196,107,.08)}
-.wn-card small{font-size:12.5px;color:#a39a8c;letter-spacing:.04em}
-.wn-card b{font-size:17px;color:#fff3dc;font-weight:600;line-height:1.3}
 .wn-count{font-family:var(--bpp-nx),sans-serif;font-size:clamp(40px,5.4vw,56px);line-height:1;color:#ffc46b;font-variant-numeric:tabular-nums}
 .wn-count span{font-size:.45em;color:#a39a8c;margin:0 6px 0 2px}
-.wn-card p{margin:0;font-size:13.5px;color:#a39a8c;line-height:1.5}
-.wn-epoch{display:grid;gap:10px}
-.wn-epoch-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;font-size:14px;color:#a39a8c}
-.wn-epoch-top b{font-family:var(--bpp-nx),sans-serif;font-size:30px;color:#fff3dc;font-weight:400}
 .wn-bar{height:10px;border-radius:6px;background:rgba(255,200,140,.08);overflow:hidden}
 .wn-bar i{display:block;height:100%;background:linear-gradient(90deg,#e8912e,#ffc46b);box-shadow:0 0 12px rgba(255,196,107,.5)}
 .wn-weeks{display:grid;grid-template-columns:repeat(var(--n),1fr);gap:4px}
@@ -72,11 +58,6 @@ const css = `
 .wn-small .wn-q blockquote{font-size:14px}
 .wn-q figcaption{margin-top:5px;font-size:12px;color:#a39a8c}
 .wn-src{justify-self:start;font-size:12.5px;color:#ffe3b0;text-decoration:underline;text-decoration-color:rgba(255,196,107,.35);text-underline-offset:3px}
-.wn-now{position:relative;margin:26px 0 22px;display:flex;align-items:center;gap:12px;font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;color:#ffc46b}
-.wn-now:before{content:"";position:absolute;left:-34px;width:14px;height:14px;border-radius:50%;background:#ffc46b;box-shadow:0 0 0 6px rgba(255,196,107,.18);animation:wn-p 2.4s ease-in-out infinite}
-.wn-now:after{content:"";flex:1;height:1px;background:linear-gradient(90deg,rgba(255,196,107,.6),transparent)}
-@keyframes wn-p{50%{box-shadow:0 0 0 11px rgba(255,196,107,.05)}}
-@media (prefers-reduced-motion:reduce){.wn-now:before{animation:none}}
 .wn-faq{display:grid;gap:10px}
 .wn-faq details{border:1px solid #29241f;border-radius:14px;background:#0f0d10}
 .wn-faq summary{cursor:pointer;list-style:none;padding:16px 20px;display:flex;justify-content:space-between;gap:16px;font-size:16.5px;color:#fff3dc;font-weight:600}
@@ -87,6 +68,44 @@ const css = `
 .wn-faq .ans{padding:0 20px 18px;display:grid;gap:4px}
 .wn-faq .ans p{margin:0;color:#cfc6b8;font-size:15px;line-height:1.55}
 .wn-foot{font-size:13px;color:#7d7468;line-height:1.6;max-width:72ch}
+.wn-wrap{max-width:1200px;margin:0 auto;display:grid;gap:28px}
+.wn-top{display:flex;align-items:flex-end;gap:18px 26px;flex-wrap:wrap}
+.wn-top .wn-h{font-size:clamp(64px,9vw,104px);margin:0}
+.wn-top .wn-sub{font-size:15px;max-width:44ch;color:#a39a8c;padding-bottom:6px}
+.wn-grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;grid-template-areas:"latest side" "feed side";gap:28px 32px;align-items:start}
+.wn-latest-s{grid-area:latest}
+.wn-feed{grid-area:feed;min-width:0}
+.wn-side{grid-area:side;position:sticky;top:84px;display:grid;gap:12px;max-height:calc(100svh - 100px);overflow:auto;scrollbar-width:thin;padding-bottom:4px}
+@media (max-width:920px){.wn-grid{grid-template-columns:1fr;grid-template-areas:"latest" "side" "feed"}.wn-side{position:static;max-height:none;overflow:visible}}
+.wn-latest{position:relative;border:1px solid rgba(255,196,107,.5);border-radius:20px;background:radial-gradient(90% 120% at 0% 0%,color-mix(in srgb,var(--c) 14%,transparent),transparent 60%),linear-gradient(180deg,#141116,#0c0b0d);padding:clamp(22px,3.4vw,36px);display:grid;gap:12px;box-shadow:0 0 60px rgba(255,196,107,.08)}
+.wn-latest-k{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:13px;color:#a39a8c}
+.wn-live{display:inline-flex;align-items:center;gap:8px;padding:4px 11px;border-radius:999px;background:#ffc46b;color:#1a1408;font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.wn-live i{width:7px;height:7px;border-radius:50%;background:#1a1408;animation:wn-b 1.6s ease-in-out infinite}
+@keyframes wn-b{50%{opacity:.25}}
+@media (prefers-reduced-motion:reduce){.wn-live i{animation:none}}
+.wn-latest h2{margin:0;font-size:clamp(30px,4.6vw,50px);line-height:1.05;color:#fff3dc;font-weight:650;letter-spacing:-.01em;max-width:22ch}
+.wn-latest p{margin:0;font-size:clamp(16px,1.7vw,18px);line-height:1.6;color:#e2d8c8;max-width:62ch}
+.wn-latest .wn-q blockquote{font-size:17px}
+.wn-prev{display:flex;gap:10px 18px;flex-wrap:wrap;margin-top:6px;padding-top:14px;border-top:1px solid #241f1b;font-size:13.5px;color:#a39a8c}
+.wn-prev b{color:#e6dccb;font-weight:600}
+.wn-panel{border:1px solid #29241f;border-radius:16px;background:linear-gradient(180deg,#121014,#0c0b0d)}
+.wn-panel>summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 18px;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:#a39a8c}
+.wn-panel>summary::-webkit-details-marker{display:none}
+.wn-panel>summary:after{content:"+";font-size:18px;color:#7d7468;letter-spacing:0}
+.wn-panel[open]>summary:after{content:"−"}
+.wn-panel>summary:focus-visible{outline:2px solid #ffc46b;outline-offset:-2px;border-radius:16px}
+.wn-panel-b{padding:0 18px 18px;display:grid;gap:12px}
+.wn-up{display:grid;gap:2px;padding:10px 0;border-top:1px solid #1f1b18}
+.wn-up:first-child{border-top:0;padding-top:0}
+.wn-up small{font-size:12px;color:#7d7468}
+.wn-up b{font-size:14.5px;color:#fff3dc;font-weight:600;line-height:1.35}
+.wn-up em{font-style:normal;font-size:12.5px;color:#ffc46b;font-variant-numeric:tabular-nums}
+.wn-up.first .wn-count{font-size:44px;margin:4px 0}
+.wn-up.first p{margin:0;font-size:13px;color:#a39a8c;line-height:1.5}
+.wn-side .wn-faq summary{font-size:14px;padding:12px 14px}
+.wn-side .wn-faq .ans{padding:0 14px 14px}
+.wn-side .wn-faq .ans p{font-size:14px}
+.wn-feed .wn-h2{font-size:clamp(28px,3.6vw,38px)}
 `
 
 const fmtDay = (iso: string) => new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' })
@@ -151,7 +170,11 @@ function Item({ m, ahead }: { m: Moment; ahead: boolean }) {
           <time dateTime={m.at}>{day}</time>
           {m.epoch ? <span>· epoch {m.epoch}</span> : null}
           <span className="wn-kind">{KINDS[m.kind].name}</span>
-          {ahead ? <span className="wn-tag" style={{ color: c }}>{m.eta ? 'ETA' : 'ahead'}</span> : null}
+          {ahead ? (
+            <span className="wn-tag" style={{ color: c }}>
+              {m.eta ? 'ETA' : 'ahead'}
+            </span>
+          ) : null}
         </div>
         <h3>{m.title}</h3>
         {m.line ? <p>{m.line}</p> : null}
@@ -162,7 +185,7 @@ function Item({ m, ahead }: { m: Moment; ahead: boolean }) {
   )
 }
 
-export function WhenApp() {
+export function WhenApp({ initialNow }: { initialNow?: number }) {
   const [now, setNow] = useState<number | null>(null)
   const [kind, setKind] = useState<Kind | 'all'>('all')
   const [onlyBig, setOnlyBig] = useState(false)
@@ -171,166 +194,202 @@ export function WhenApp() {
     const t = setInterval(() => setNow(Date.now()), 30_000)
     return () => clearInterval(t)
   }, [])
-  const t = now ?? Date.UTC(2026, 10, 12)
+  const t = now ?? initialNow ?? Date.UTC(2026, 10, 12)
   const sorted = useMemo(() => MOMENTS.slice().sort((a, b) => Date.parse(b.at) - Date.parse(a.at)), [])
-  const ahead3 = useMemo(() => {
-    const seen = new Set<string>()
-    return sorted
-      .filter(m => Date.parse(m.at) > t && m.major)
-      .reverse()
-      .filter(m => (seen.has(m.at) ? false : (seen.add(m.at), true)))
-      .slice(0, 3)
-  }, [sorted, t])
-  const shown = sorted.filter(m => (kind === 'all' || m.kind === kind) && (!onlyBig || m.major))
-  const nowIdx = shown.findIndex(m => Date.parse(m.at) <= t)
-  const nowPct = shown.length ? `${((nowIdx < 0 ? shown.length : nowIdx) / shown.length) * 100}%` : '0%'
+  // what is coming lives in the side panel, oldest first; the feed is what already happened, newest first
+  const upcoming = useMemo(() => sorted.filter(m => Date.parse(m.at) > t).reverse(), [sorted, t])
+  const past = sorted.filter(m => Date.parse(m.at) <= t)
+  const latest = past[0]
+  const shown = past.slice(1).filter(m => (kind === 'all' || m.kind === kind) && (!onlyBig || m.major))
   const years = [...new Set(shown.map(yearOf))]
   const ep = epochAt(t)
   const epPct = Math.min(100, Math.max(0, ((t - epochStart(ep)) / WEEK) * 100))
   const weeks = Array.from({ length: 8 }, (_, i) => ep - 2 + i)
-  const counts = (k: Kind) => MOMENTS.filter(m => m.kind === k).length
+  const counts = (k: Kind) => past.slice(1).filter(m => m.kind === k).length
   let lastYear = 0
   return (
     <main className={`wn ${bppFonts}`}>
       <style>{css}</style>
-      <div className="wn-in">
-        <div className="wn-hero">
+      <div className="wn-wrap">
+        <header className="wn-top">
           <h1 className="wn-h">
             WEN?<span className="sr-only"> Every date that matters for Qubic and Aigarth: roadmap, ETA and milestones</span>
           </h1>
-          <p className="wn-sub">Every date that matters for Qubic and Aigarth, from the proof of concept to The Day. Newest on top, each with its source.</p>
-        </div>
+          <p className="wn-sub">
+            Every date that matters for Qubic and Aigarth, from the proof of concept to The Day. The latest on top, each with its source.
+          </p>
+        </header>
 
-        <section aria-label="Coming next" className="wn-next">
-          {ahead3.map((m, i) => {
-            const l = left(Date.parse(m.at) - t)
-            const same = MOMENTS.filter(x => x.at === m.at && x.major)
-            return (
-              <div className={`wn-card${i === 0 ? ' first' : ''}`} key={m.at}>
-                <small>
-                  {fmtDay(m.at)}
-                  {m.epoch ? ` · epoch ${m.epoch}` : ''}
-                </small>
-                <div className="wn-count">
-                  {l ? (
-                    <>
-                      {l.d}
-                      <span>d</span>
-                      {l.h}
-                      <span>h</span>
-                      {l.d < 3 ? (
-                        <>
-                          {l.m}
-                          <span>m</span>
-                        </>
+        <div className="wn-grid">
+          {latest ? (
+            <section aria-labelledby="wn-latest" className="wn-latest-s">
+              <Latest m={latest} next={past[1]} t={t} />
+            </section>
+          ) : null}
+
+          <aside aria-label="Coming next, this epoch, questions" className="wn-side">
+            <details className="wn-panel" open>
+              <summary>Coming next</summary>
+              <div className="wn-panel-b">
+                {upcoming.map(m => {
+                  const l = left(Date.parse(m.at) - t)
+                  const same = upcoming.filter(x => x.at === m.at)
+                  if (same[0] !== m) return null
+                  return (
+                    <div className={`wn-up${m === upcoming[0] ? ' first' : ''}`} key={m.at + m.title}>
+                      <small>
+                        {m.approx ?? fmtDay(m.at)}
+                        {m.epoch ? ` · epoch ${m.epoch}` : ''}
+                        {m.eta ? ' · ETA' : ''}
+                      </small>
+                      {m === upcoming[0] && l ? (
+                        <div className="wn-count">
+                          {l.d}
+                          <span>d</span>
+                          {l.h}
+                          <span>h</span>
+                          {l.d < 3 ? (
+                            <>
+                              {l.m}
+                              <span>m</span>
+                            </>
+                          ) : null}
+                        </div>
                       ) : null}
-                    </>
-                  ) : (
-                    'now'
-                  )}
-                </div>
-                <b>{same.map(x => x.title).join(' + ')}</b>
-                <p>{same[0]!.line}</p>
+                      <b>{same.map(x => x.title).join(' + ')}</b>
+                      {m === upcoming[0] ? <p>{m.line}</p> : l ? <em>in {l.d > 0 ? `${l.d} d ${l.h} h` : `${l.h} h ${l.m} m`}</em> : null}
+                    </div>
+                  )
+                })}
               </div>
-            )
-          })}
-        </section>
+            </details>
 
-        <section aria-label="This epoch" className="wn-epoch">
-          <div className="wn-epoch-top">
-            <span>
-              <b>Epoch {ep}</b> · a new epoch every Wednesday at 12:00 UTC
-            </span>
-            <span>{Math.round(epPct)}% through</span>
-          </div>
-          <div className="wn-bar">
-            <i style={{ width: `${epPct}%` }} />
-          </div>
-          <div className="wn-weeks" style={{ ['--n' as string]: weeks.length }}>
-            {weeks.map(e => {
-              const mark = MOMENTS.some(m => m.epoch === e && Date.parse(m.at) > t)
-              return (
-                <div className={e < ep ? 'past' : e === ep ? 'now' : mark ? 'mark' : ''} key={e}>
-                  <i />E{e}
+            <details className="wn-panel" open>
+              <summary>
+                Epoch {ep} · {Math.round(epPct)}%
+              </summary>
+              <div className="wn-panel-b">
+                <div className="wn-bar">
+                  <i style={{ width: `${epPct}%` }} />
                 </div>
-              )
-            })}
-          </div>
-        </section>
+                <div className="wn-weeks" style={{ ['--n' as string]: weeks.length }}>
+                  {weeks.map(e => {
+                    const mark = MOMENTS.some(m => m.epoch === e && Date.parse(m.at) > t)
+                    return (
+                      <div className={e < ep ? 'past' : e === ep ? 'now' : mark ? 'mark' : ''} key={e}>
+                        <i />
+                        {e}
+                      </div>
+                    )
+                  })}
+                </div>
+                <small style={{ fontSize: 12.5, color: '#7d7468' }}>A new epoch every Wednesday at 12:00 UTC.</small>
+              </div>
+            </details>
 
-        <section aria-labelledby="wn-road">
-          <h2 className="wn-h2" id="wn-road">
-            The road
-          </h2>
-          <p className="wn-lead">What is coming sits on top, then everything that already happened, back to 2021. Big cards are the turning points; colour shows the track.</p>
-          <div className="wn-bar2">
-            <div aria-label="Track" role="group" style={{ display: 'contents' }}>
-              <button aria-pressed={kind === 'all'} onClick={() => setKind('all')} type="button">
-                Everything
-              </button>
-              {(Object.keys(KINDS) as Kind[]).map(k => (
-                <button aria-pressed={kind === k} key={k} onClick={() => setKind(k)} type="button">
-                  <i style={{ background: KINDS[k].color }} />
-                  {KINDS[k].name} {counts(k)}
+            <details className="wn-panel">
+              <summary>Asked every day</summary>
+              <div className="wn-panel-b wn-faq">
+                {WEN.map(w => (
+                  <details key={w.q}>
+                    <summary>{w.q}</summary>
+                    <div className="ans">
+                      <p>{w.a}</p>
+                      <Quote q={w.quote} />
+                    </div>
+                  </details>
+                ))}
+              </div>
+            </details>
+          </aside>
+
+          <section aria-labelledby="wn-road" className="wn-feed">
+            <h2 className="wn-h2" id="wn-road">
+              Before that
+            </h2>
+            <p className="wn-lead">Everything that already happened, newest first, back to 2021. Big cards are the turning points; colour shows the track.</p>
+            <div className="wn-bar2">
+              <div aria-label="Track" role="group" style={{ display: 'contents' }}>
+                <button aria-pressed={kind === 'all'} onClick={() => setKind('all')} type="button">
+                  Everything
                 </button>
+                {(Object.keys(KINDS) as Kind[])
+                  .filter(k => counts(k) > 0)
+                  .map(k => (
+                    <button aria-pressed={kind === k} key={k} onClick={() => setKind(k)} type="button">
+                      <i style={{ background: KINDS[k].color }} />
+                      {KINDS[k].name} {counts(k)}
+                    </button>
+                  ))}
+              </div>
+              <span className="sep" />
+              <button aria-pressed={onlyBig} onClick={() => setOnlyBig(v => !v)} type="button">
+                Turning points only
+              </button>
+              <span className="sep" />
+              {years.map(y => (
+                <a href={`#y${y}`} key={y}>
+                  {y}
+                </a>
               ))}
             </div>
-            <span className="sep" />
-            <button aria-pressed={onlyBig} onClick={() => setOnlyBig(v => !v)} type="button">
-              Turning points only
-            </button>
-            <span className="sep" />
-            {years.map(y => (
-              <a href={`#y${y}`} key={y}>
-                {y}
-              </a>
-            ))}
-          </div>
-          <div className="wn-line" style={{ ['--now' as string]: nowPct }}>
-            {shown.map((m, i) => {
-              const y = yearOf(m)
-              const head = y !== lastYear
-              lastYear = y
-              return (
-                <div key={m.at + m.title}>
-                  {i === nowIdx ? <div className="wn-now">Now · epoch {ep}</div> : null}
-                  {head ? (
-                    <div className="wn-year" id={`y${y}`}>
-                      <b>{y}</b>
-                      <span>{shown.filter(x => yearOf(x) === y).length} moments</span>
-                    </div>
-                  ) : null}
-                  <Item ahead={Date.parse(m.at) > t} m={m} />
-                </div>
-              )
-            })}
-          </div>
-        </section>
-
-        <section aria-labelledby="wn-faq">
-          <h2 className="wn-h2" id="wn-faq">
-            Asked every day
-          </h2>
-          <p className="wn-lead">The questions the chat asks most, answered in Come-from-Beyond&rsquo;s own words.</p>
-          <div className="wn-faq">
-            {WEN.map(w => (
-              <details key={w.q}>
-                <summary>
-                  {w.q} <span>{w.a.split('.')[0]}</span>
-                </summary>
-                <div className="ans">
-                  <p>{w.a}</p>
-                  <Quote q={w.quote} />
-                </div>
-              </details>
-            ))}
-          </div>
-        </section>
-
-        <p className="wn-foot">
-          Dates are UTC days. An ETA is an estimate, not a promise. Quotes are verbatim; network and science events link the report they come from, the rest come from QC&rsquo;s research log.
-        </p>
+            <div className="wn-line" style={{ ['--now' as string]: '0%' }}>
+              {shown.map(m => {
+                const y = yearOf(m)
+                const head = y !== lastYear
+                lastYear = y
+                return (
+                  <div key={m.at + m.title}>
+                    {head ? (
+                      <div className="wn-year" id={`y${y}`}>
+                        <b>{y}</b>
+                        <span>{shown.filter(x => yearOf(x) === y).length} moments</span>
+                      </div>
+                    ) : null}
+                    <Item ahead={false} m={m} />
+                  </div>
+                )
+              })}
+            </div>
+            <p className="wn-foot" style={{ marginTop: 28 }}>
+              Dates are UTC days. An ETA is an estimate, not a promise. Quotes are verbatim; network and science events link the report they come from, the rest
+              come from QC&rsquo;s research log.
+            </p>
+          </section>
+        </div>
       </div>
     </main>
+  )
+}
+
+/** The newest thing that happened, full size: the first thing anyone opening the page sees. */
+function Latest({ m, next, t }: { m: Moment; next?: Moment; t: number }) {
+  const c = KINDS[m.kind].color
+  const h = Math.max(0, Math.floor((t - Date.parse(m.at)) / 3600000))
+  const ago = h < 1 ? 'just now' : h < 48 ? `${h} h ago` : `${Math.floor(h / 24)} days ago`
+  return (
+    <article className="wn-latest" style={{ ['--c' as string]: c }}>
+      <div className="wn-latest-k">
+        <span className="wn-live">
+          <i aria-hidden />
+          Latest
+        </span>
+        <time dateTime={m.at}>{m.approx ?? fmtDay(m.at)}</time>
+        <span>· {ago}</span>
+        {m.epoch ? <span>· epoch {m.epoch}</span> : null}
+        <span className="wn-kind">{KINDS[m.kind].name}</span>
+      </div>
+      <h2 id="wn-latest">{m.title}</h2>
+      {m.line ? <p>{m.line}</p> : null}
+      {m.quote ? <Quote q={m.quote} /> : null}
+      {m.source ? <Source s={m.source} /> : null}
+      {next ? (
+        <div className="wn-prev">
+          <span>Before it:</span>
+          <b>{next.title}</b>
+          <span>{fmtDay(next.at)}</span>
+        </div>
+      ) : null}
+    </article>
   )
 }
