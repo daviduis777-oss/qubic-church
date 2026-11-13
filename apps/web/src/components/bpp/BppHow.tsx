@@ -11,7 +11,7 @@ const STEPS: { n: string; title: string; body: string; tag?: string }[] = [
   {
     n: '2',
     title: 'Miners grow the networks',
-    body: 'Instead of burning hashes, Qubic miners mutate tiny ternary networks: 32 neurons, each with 3 wires and a table of 27 rules. Millions are tried every week. A network scores by how few hours it gets wrong.',
+    body: 'Instead of burning hashes, Qubic miners mutate small ternary networks: up to 1,024 neurons, each with 3 wires and a table of 27 rules. Millions are tried every week. A network scores by how few hours it gets wrong.',
   },
   {
     n: '3',
@@ -41,7 +41,16 @@ function Diagram() {
   // A left-to-right flow. On narrow screens it scrolls inside its own box, the page never does.
   const box = (x: number, label: string, sub: string, hot = false, dashed = false) => (
     <g key={label}>
-      <rect fill={hot ? 'rgba(255,196,107,.14)' : 'rgba(255,205,110,.04)'} height="86" rx="14" stroke={hot ? '#FFC46B' : 'rgba(255,205,110,.35)'} strokeDasharray={dashed ? '5 5' : undefined} width="150" x={x} y="52" />
+      <rect
+        fill={hot ? 'rgba(255,196,107,.14)' : 'rgba(255,205,110,.04)'}
+        height="86"
+        rx="14"
+        stroke={hot ? '#FFC46B' : 'rgba(255,205,110,.35)'}
+        strokeDasharray={dashed ? '5 5' : undefined}
+        width="150"
+        x={x}
+        y="52"
+      />
       <text fill="#ecdfcb" fontSize="14" fontWeight="600" textAnchor="middle" x={x + 75} y="88">
         {label}
       </text>
@@ -53,7 +62,12 @@ function Diagram() {
   const arrow = (x: number) => <path d={`M${x} 95 h22`} fill="none" key={x} markerEnd="url(#bpp-ar)" stroke="rgba(255,205,110,.6)" strokeWidth="1.6" />
   return (
     <div className="bpp-diag-wide" style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', margin: '0 -4px', padding: '0 4px' }}>
-      <svg aria-label="How BPP-9000 works: a year of bitcoin hours, miners grow networks, nodes verify them, the oracle feeds live prices, the network calls the next hour, the call is scored" role="img" style={{ display: 'block', minWidth: 1160, width: '100%', height: 'auto' }} viewBox="0 0 1160 230">
+      <svg
+        aria-label="How BPP-9000 works: a year of bitcoin hours, miners grow networks, nodes verify them, the oracle feeds live prices, the network calls the next hour, the call is scored"
+        role="img"
+        style={{ display: 'block', minWidth: 1160, width: '100%', height: 'auto' }}
+        viewBox="0 0 1160 230"
+      >
         <defs>
           <marker id="bpp-ar" markerHeight="8" markerWidth="8" orient="auto" refX="7" refY="4">
             <path d="M0 0 L8 4 L0 8 z" fill="#FFC46B" />
@@ -122,7 +136,12 @@ function DiagramTall() {
   const H = 64
   const G = 26
   return (
-    <svg aria-hidden className="bpp-diag-tall" style={{ display: 'none', width: '100%', height: 'auto', maxWidth: 420 }} viewBox={`0 0 320 ${rows.length * (H + G) + 30}`}>
+    <svg
+      aria-hidden
+      className="bpp-diag-tall"
+      style={{ display: 'none', width: '100%', height: 'auto', maxWidth: 420 }}
+      viewBox={`0 0 320 ${rows.length * (H + G) + 30}`}
+    >
       <defs>
         <marker id="bpp-ar2" markerHeight="8" markerWidth="8" orient="auto" refX="7" refY="4">
           <path d="M0 0 L8 4 L0 8 z" fill="#FFC46B" />
@@ -137,7 +156,16 @@ function DiagramTall() {
                 FROM 18 NOVEMBER
               </text>
             )}
-            <rect fill={hot ? 'rgba(255,196,107,.14)' : 'rgba(255,205,110,.04)'} height={H} rx="12" stroke={hot ? '#FFC46B' : 'rgba(255,205,110,.35)'} strokeDasharray={dashed ? '5 5' : undefined} width="316" x="2" y={y} />
+            <rect
+              fill={hot ? 'rgba(255,196,107,.14)' : 'rgba(255,205,110,.04)'}
+              height={H}
+              rx="12"
+              stroke={hot ? '#FFC46B' : 'rgba(255,205,110,.35)'}
+              strokeDasharray={dashed ? '5 5' : undefined}
+              width="316"
+              x="2"
+              y={y}
+            />
             <text fill="#ecdfcb" fontSize="15" fontWeight="600" x="18" y={y + 27}>
               {t}
             </text>
@@ -157,7 +185,9 @@ export function BppHow() {
     <section aria-label="How BPP-9000 works" id="how" style={{ scrollMarginTop: 80, paddingTop: 28, borderTop: '1px solid var(--line)' }}>
       <details className="bpp-how" id="bpp-how-d">
         <summary className="bpp-how-btn">
-          <span aria-hidden className="bpp-how-ico">?</span>
+          <span aria-hidden className="bpp-how-ico">
+            ?
+          </span>
           <span style={{ display: 'grid', gap: 4 }}>
             <span className="nx" id="bpp-how" style={{ fontWeight: 300, fontSize: 'clamp(30px, 4.4vw, 46px)', lineHeight: 1, color: 'var(--hot)' }}>
               How BPP-9000 works
@@ -166,88 +196,139 @@ export function BppHow() {
               From a year of bitcoin to an hourly call: miners, the colony, every node, the Oracle Machine. Tap to open.
             </span>
           </span>
-          <span aria-hidden className="bpp-how-chev">⌄</span>
+          <span aria-hidden className="bpp-how-chev">
+            ⌄
+          </span>
         </summary>
         <div style={{ display: 'grid', gap: 26, marginTop: 26 }}>
-      <div style={{ maxWidth: 760 }}>
-        <p style={{ fontSize: 17, lineHeight: 1.6, margin: 0, color: 'var(--ink)' }}>
-          BPP-9000 is a Bitcoin price predictor grown, not programmed. Qubic miners breed small neural networks for Aigarth, the network checks every one of them, and the best is set to call the next hour of bitcoin: up or down. The work that secures Qubic is the same work that trains it.
-        </p>
-      </div>
+          <div style={{ maxWidth: 760 }}>
+            <p style={{ fontSize: 17, lineHeight: 1.6, margin: 0, color: 'var(--ink)' }}>
+              BPP-9000 is a Bitcoin price predictor grown, not programmed. Qubic miners breed small neural networks for Aigarth, the network checks every one of
+              them, and the best is set to call the next hour of bitcoin: up or down. The work that secures Qubic is the same work that trains it.
+            </p>
+          </div>
 
-      <style>{`@media (max-width: 760px) { .bpp-diag-wide { display: none } .bpp-diag-tall { display: block !important } }`}</style>
-      <Diagram />
-      <DiagramTall />
+          <style>{`@media (max-width: 760px) { .bpp-diag-wide { display: none } .bpp-diag-tall { display: block !important } }`}</style>
+          <Diagram />
+          <DiagramTall />
 
-      <ol style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))', gap: 'clamp(18px, 3vw, 30px)' }}>
-        {STEPS.map(s => (
-          <li key={s.n} style={{ display: 'grid', gridTemplateColumns: '34px 1fr', gap: 12 }}>
-            <span
-              aria-hidden
-              className="nx"
-              style={{
-                width: 34,
-                height: 34,
-                borderRadius: '50%',
-                display: 'grid',
-                placeItems: 'center',
-                fontSize: 18,
-                background: s.tag ? 'transparent' : 'rgba(255,196,107,.14)',
-                border: `1px ${s.tag ? 'dashed' : 'solid'} rgba(255,196,107,.6)`,
-                color: 'var(--fil)',
-              }}
-            >
-              {s.n}
-            </span>
+          <ol
+            style={{
+              listStyle: 'none',
+              padding: 0,
+              margin: 0,
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))',
+              gap: 'clamp(18px, 3vw, 30px)',
+            }}
+          >
+            {STEPS.map(s => (
+              <li key={s.n} style={{ display: 'grid', gridTemplateColumns: '34px 1fr', gap: 12 }}>
+                <span
+                  aria-hidden
+                  className="nx"
+                  style={{
+                    width: 34,
+                    height: 34,
+                    borderRadius: '50%',
+                    display: 'grid',
+                    placeItems: 'center',
+                    fontSize: 18,
+                    background: s.tag ? 'transparent' : 'rgba(255,196,107,.14)',
+                    border: `1px ${s.tag ? 'dashed' : 'solid'} rgba(255,196,107,.6)`,
+                    color: 'var(--fil)',
+                  }}
+                >
+                  {s.n}
+                </span>
+                <div>
+                  <h3 style={{ margin: '5px 0 6px', fontSize: 15.5, fontWeight: 600 }}>
+                    {s.title}
+                    {s.tag && (
+                      <span
+                        style={{
+                          marginLeft: 8,
+                          fontSize: 11,
+                          fontWeight: 600,
+                          color: 'var(--fil)',
+                          border: '1px solid rgba(255,196,107,.5)',
+                          borderRadius: 999,
+                          padding: '1px 8px',
+                          verticalAlign: 2,
+                        }}
+                      >
+                        from 18 Nov
+                      </span>
+                    )}
+                  </h3>
+                  <p className="mute" style={{ margin: 0, fontSize: 14, lineHeight: 1.6 }}>
+                    {s.body}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ol>
+
+          <div
+            className="panel"
+            style={{
+              padding: 'clamp(18px, 3vw, 24px)',
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))',
+              gap: 'clamp(18px, 3vw, 32px)',
+            }}
+          >
             <div>
-              <h3 style={{ margin: '5px 0 6px', fontSize: 15.5, fontWeight: 600 }}>
-                {s.title}
-                {s.tag && (
-                  <span style={{ marginLeft: 8, fontSize: 11, fontWeight: 600, color: 'var(--fil)', border: '1px solid rgba(255,196,107,.5)', borderRadius: 999, padding: '1px 8px', verticalAlign: 2 }}>from 18 Nov</span>
-                )}
-              </h3>
+              <h3 style={{ margin: '0 0 6px', fontSize: 15.5, fontWeight: 600 }}>What you see above, today</h3>
               <p className="mute" style={{ margin: 0, fontSize: 14, lineHeight: 1.6 }}>
-                {s.body}
+                The best recent network from the miners, loaded from the Jetski ANN Explorer and run in your browser with the scoring rule from qubic/core.
+                Until the live feed it has no input: it is a rhythm fitted to the past year, so its match rate is a fit to history, not a forecast. It replays
+                that year once an hour, timed to end as the candle closes.
               </p>
             </div>
-          </li>
-        ))}
-      </ol>
+            <div>
+              <h3 style={{ margin: '0 0 6px', fontSize: 15.5, fontWeight: 600 }}>What counts, from 18 November</h3>
+              <p className="mute" style={{ margin: 0, fontSize: 14, lineHeight: 1.6 }}>
+                Only live calls, made before the hour closes, checked against the real close. A coin is right half the time, so the number to watch is how far
+                above 50% the network holds, over many hours. CfB asked for the same: a large, statistically significant test with many witnesses.
+              </p>
+            </div>
+          </div>
 
-      <div className="panel" style={{ padding: 'clamp(18px, 3vw, 24px)', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))', gap: 'clamp(18px, 3vw, 32px)' }}>
-        <div>
-          <h3 style={{ margin: '0 0 6px', fontSize: 15.5, fontWeight: 600 }}>What you see above, today</h3>
-          <p className="mute" style={{ margin: 0, fontSize: 14, lineHeight: 1.6 }}>
-            The best recent network from the miners, loaded from the Jetski ANN Explorer and run in your browser with the scoring rule from qubic/core. Until the live feed it has no input: it is a rhythm fitted to the past year, so its match rate is a fit to history, not a forecast. It replays that year once an hour, timed to end as the candle closes.
+          <p className="mute" style={{ margin: 0, fontSize: 12.5, lineHeight: 1.7 }}>
+            Sources:{' '}
+            <a
+              href="https://github.com/qubic/core/blob/main/src/mining/score_bpp9000.h"
+              rel="noopener noreferrer"
+              style={{ color: 'var(--dim)' }}
+              target="_blank"
+            >
+              qubic/core scorer
+            </a>
+            ,{' '}
+            <a
+              href="https://github.com/qubic/core/blob/main/src/oracle_interfaces/Price.h"
+              rel="noopener noreferrer"
+              style={{ color: 'var(--dim)' }}
+              target="_blank"
+            >
+              Oracle Machine price interface
+            </a>
+            ,{' '}
+            <a
+              href="https://qubic.org/blog-detail/qubic-ant-colony-mining-live-epoch-228"
+              rel="noopener noreferrer"
+              style={{ color: 'var(--dim)' }}
+              target="_blank"
+            >
+              Qubic: ant colony mining
+            </a>
+            ,{' '}
+            <a href="https://annexplorer.jetskipool.ai/" rel="noopener noreferrer" style={{ color: 'var(--dim)' }} target="_blank">
+              Jetski ANN Explorer
+            </a>
+            .
           </p>
-        </div>
-        <div>
-          <h3 style={{ margin: '0 0 6px', fontSize: 15.5, fontWeight: 600 }}>What counts, from 18 November</h3>
-          <p className="mute" style={{ margin: 0, fontSize: 14, lineHeight: 1.6 }}>
-            Only live calls, made before the hour closes, checked against the real close. A coin is right half the time, so the number to watch is how far above 50% the network holds, over many hours. CfB asked for the same: a large, statistically significant test with many witnesses.
-          </p>
-        </div>
-      </div>
-
-      <p className="mute" style={{ margin: 0, fontSize: 12.5, lineHeight: 1.7 }}>
-        Sources:{' '}
-        <a href="https://github.com/qubic/core/blob/main/src/mining/score_bpp9000.h" rel="noopener noreferrer" style={{ color: 'var(--dim)' }} target="_blank">
-          qubic/core scorer
-        </a>
-        ,{' '}
-        <a href="https://github.com/qubic/core/blob/main/src/oracle_interfaces/Price.h" rel="noopener noreferrer" style={{ color: 'var(--dim)' }} target="_blank">
-          Oracle Machine price interface
-        </a>
-        ,{' '}
-        <a href="https://qubic.org/blog-detail/qubic-ant-colony-mining-live-epoch-228" rel="noopener noreferrer" style={{ color: 'var(--dim)' }} target="_blank">
-          Qubic: ant colony mining
-        </a>
-        ,{' '}
-        <a href="https://annexplorer.jetskipool.ai/" rel="noopener noreferrer" style={{ color: 'var(--dim)' }} target="_blank">
-          Jetski ANN Explorer
-        </a>
-        .
-      </p>
         </div>
       </details>
       <style>{`
@@ -260,7 +341,12 @@ export function BppHow() {
 .bpp-how[open] .bpp-how-chev { transform: rotate(180deg); }
 @media (max-width: 520px) { .bpp-how-ico { width: 40px; height: 40px; font-size: 20px } .bpp-how-btn { gap: 12px } }
 `}</style>
-      <script dangerouslySetInnerHTML={{ __html: "(function(){function o(){if(location.hash==='#how'){var d=document.getElementById('bpp-how-d');if(d)d.open=true}}o();addEventListener('hashchange',o)})()" }} />
+      <script
+        dangerouslySetInnerHTML={{
+          __html:
+            "(function(){function o(){if(location.hash==='#how'){var d=document.getElementById('bpp-how-d');if(d)d.open=true}}o();addEventListener('hashchange',o)})()",
+        }}
+      />
     </section>
   )
 }

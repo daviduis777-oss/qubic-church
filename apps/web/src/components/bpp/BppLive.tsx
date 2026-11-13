@@ -43,14 +43,19 @@ export function BppLive({ liveAt }: { liveAt: string }) {
   const live = now != null && now >= Date.parse(liveAt)
   const left = now == null ? null : Math.max(0, Date.parse(liveAt) - now)
   const days = left == null ? 0 : Math.floor(left / 86400000)
-  const hms = left == null ? '--:--:--' : `${two(Math.floor((left % 86400000) / 3600000))}:${two(Math.floor((left % 3600000) / 60000))}:${two(Math.floor((left % 60000) / 1000))}`
+  const hms =
+    left == null
+      ? '--:--:--'
+      : `${two(Math.floor((left % 86400000) / 3600000))}:${two(Math.floor((left % 3600000) / 60000))}:${two(Math.floor((left % 60000) / 1000))}`
   const inSample = replayView ? replayView.total : null
   const rec = useRecord()
   const hourNow = now == null ? null : Math.floor(now / 3600000) * 3600
   const current = rec?.hours.find(h => h.hour === hourNow) ?? null
 
   return (
-    <section style={{ display: 'grid', gap: 'clamp(24px, 4vw, 40px)', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 480px), 1fr))', alignItems: 'start' }}>
+    <section
+      style={{ display: 'grid', gap: 'clamp(24px, 4vw, 40px)', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 480px), 1fr))', alignItems: 'start' }}
+    >
       <div>
         {!live ? (
           <>
@@ -72,14 +77,20 @@ export function BppLive({ liveAt }: { liveAt: string }) {
           </>
         ) : (
           <>
-            <p className="mute" style={{ fontSize: 17, margin: 0 }}>Bitcoin, this hour</p>
+            <p className="mute" style={{ fontSize: 17, margin: 0 }}>
+              Bitcoin, this hour
+            </p>
             {current && current.side !== 'skip' ? (
               <>
                 <div className="nx lit" style={{ fontWeight: 300, fontSize: 'clamp(110px, 20vw, 230px)', lineHeight: 0.85, marginTop: 18 }}>
                   {current.side === 'up' ? '▲ UP' : '▼ DOWN'}
                 </div>
                 <p className="mute" style={{ fontSize: 15 }}>
-                  Sealed at {current.sealedAt.slice(11, 16)} UTC, before the hour closes. <a className="mute" href="#record" style={{ textDecoration: 'underline', textUnderlineOffset: 3 }}>The record</a> checks it against the close.
+                  Sealed at {current.sealedAt.slice(11, 16)} UTC, before the hour closes.{' '}
+                  <a className="mute" href="#record" style={{ textDecoration: 'underline', textUnderlineOffset: 3 }}>
+                    The record
+                  </a>{' '}
+                  checks it against the close.
                 </p>
               </>
             ) : (
@@ -88,7 +99,9 @@ export function BppLive({ liveAt }: { liveAt: string }) {
                   {current ? 'Not sure' : 'Waiting for the feed'}
                 </div>
                 <p className="mute" style={{ fontSize: 15 }}>
-                  {current ? 'The network sits this hour out. Trader Maria does too.' : 'The live feed is due now. The call appears here as soon as the network makes it, and goes straight into the record.'}
+                  {current
+                    ? 'The network sits this hour out. Trader Maria does too.'
+                    : 'The live feed is due now. The call appears here as soon as the network makes it, and goes straight into the record.'}
                 </p>
               </>
             )}
@@ -250,7 +263,7 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
         MONTHS.push({ label: MON[m.getUTCMonth()]!, frac: Math.max(0, frac) })
       }
     }
-    const tickOf = (ms: number) => Math.min(TT, Math.floor(((ms / 1000) % 3600) / 3600 * TT))
+    const tickOf = (ms: number) => Math.min(TT, Math.floor((((ms / 1000) % 3600) / 3600) * TT))
     let lastT = -1
     let lastH = -1
     let raf = 0
@@ -445,8 +458,16 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
         const r = (big ? S * 0.027 : S * 0.0195) * breath * (1 + 0.16 * pop[n]!)
         const v = s[n]!
         const w = wt[n]!
-        const F = [[42, 29, 16], [255, 214, 138], [18, 16, 20]]
-        const L = [[255, 205, 110, 0.75], [255, 240, 207, 1], [255, 255, 255, 0.16]]
+        const F = [
+          [42, 29, 16],
+          [255, 214, 138],
+          [18, 16, 20],
+        ]
+        const L = [
+          [255, 205, 110, 0.75],
+          [255, 240, 207, 1],
+          [255, 255, 255, 0.16],
+        ]
         const blend = (M: number[][]) => M[0]!.map((_, i) => w[0]! * M[0]![i]! + w[1]! * M[1]![i]! + w[2]! * M[2]![i]!)
         const glow = Math.min(1, w[1]! + 0.5 * pop[n]!)
         if (glow > 0.02) {
@@ -517,7 +538,7 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
     <div>
       <div ref={host} style={{ width: '100%', display: 'grid', placeItems: 'center', minHeight: 320 }}>
         {d ? (
-          <canvas ref={canvas} aria-label="The BPP-9000 network running live: 32 neurons, their states and the hour the network calls" role="img" />
+          <canvas ref={canvas} aria-label={`The BPP-9000 network running live: ${d.n} neurons, their states and the hour the network calls`} role="img" />
         ) : (
           <div className="mute" style={{ fontSize: 13 }}>
             Loading the network from the miners…
@@ -526,8 +547,10 @@ function Machine({ d, onReplay }: { d: NetData | null; onReplay: (v: View) => vo
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', gap: 20, flexWrap: 'wrap', marginTop: 10, fontSize: 13.5, lineHeight: 1.5 }}>
         <p className="mute" style={{ margin: 0, maxWidth: 440 }}>
-          <b style={{ color: 'var(--ink)' }}>The machine behind the call.</b> {d?.n ?? 32} neurons grown by Qubic miners, running live in your browser. Each tick a neuron reads its {d?.k ?? 3} wires and turns{' '}
-          <b style={{ color: 'var(--ink)' }}>+</b>, <b style={{ color: 'var(--ink)' }}>−</b> or <b style={{ color: 'var(--ink)' }}>?</b>. When CLOCK fires, ANSWER names an hour. The ring is the year it replays.
+          <b style={{ color: 'var(--ink)' }}>The machine behind the call.</b> {d?.n ?? 32} neurons grown by Qubic miners, running live in your browser. Each
+          tick a neuron reads its {d?.k ?? 3} wires and turns <b style={{ color: 'var(--ink)' }}>+</b>, <b style={{ color: 'var(--ink)' }}>−</b> or{' '}
+          <b style={{ color: 'var(--ink)' }}>?</b>. When CLOCK fires, ANSWER names an hour. The ring is the year it replays.
+          {d && d.n <= 64 ? ' Since epoch 239 networks grow up to 1,024 neurons; this drawing shows the last epoch small enough to draw.' : ''}
         </p>
         <p className="mute" style={{ margin: 0, textAlign: 'right' }}>
           {cap}

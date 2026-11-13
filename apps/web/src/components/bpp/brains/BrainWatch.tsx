@@ -80,7 +80,10 @@ export function BrainWatch({ preview }: { preview: boolean }) {
   return (
     <div style={{ display: 'grid', gap: 'clamp(28px, 4vw, 44px)' }}>
       <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-        <h1 className="eng" style={{ fontSize: 'clamp(18px, 2.4vw, 22px)', fontWeight: 400, margin: 0, color: '#f3e4ce', display: 'flex', alignItems: 'center', gap: 14 }}>
+        <h1
+          className="eng"
+          style={{ fontSize: 'clamp(18px, 2.4vw, 22px)', fontWeight: 400, margin: 0, color: '#f3e4ce', display: 'flex', alignItems: 'center', gap: 14 }}
+        >
           <span aria-hidden className="pilot" />
           Brain Watch
         </h1>
@@ -102,26 +105,58 @@ export function BrainWatch({ preview }: { preview: boolean }) {
           <span className="mute">, re-run here with the core&apos;s own rule and graded on the hours it never saw.</span>
         </p>
         <p className="mute" style={{ margin: '12px 0 0', fontSize: 14.5, lineHeight: 1.6 }}>
-          Every week thousands of machines mutate small networks that call the next hour of bitcoin. The network keeps the ones that fit a year of past hours best. We take the best of them, run it ourselves and let it keep calling, hour after hour, into the months the year never held. The year it was trained on is its homework. What follows is the exam.
+          Every week thousands of machines mutate small networks that call the next hour of bitcoin. The network keeps the ones that fit a year of past hours
+          best. We take the best of them, run it ourselves and let it keep calling, hour after hour, into the months the year never held. The year it was
+          trained on is its homework. What follows is the exam.
         </p>
       </div>
 
-      <section className="panel" style={{ padding: 'clamp(18px, 3vw, 28px)', display: 'grid', gap: 'clamp(20px, 3vw, 32px)', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))', alignItems: 'start' }}>
+      <section
+        className="panel"
+        style={{
+          padding: 'clamp(18px, 3vw, 28px)',
+          display: 'grid',
+          gap: 'clamp(20px, 3vw, 32px)',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))',
+          alignItems: 'start',
+        }}
+      >
         {pending ? <Pending g={g!} /> : <Ring g={g} live={live} />}
-        <Sheet examOpen={examOpen} g={g} live={pending || !examOpen ? null : live} busy={busy} pending={pending} row={top?.rows.find(r => r.hash === hash) ?? null} rank={rank} />
+        <Sheet
+          examOpen={examOpen}
+          g={g}
+          live={pending || !examOpen ? null : live}
+          busy={busy}
+          pending={pending}
+          row={top?.rows.find(r => r.hash === hash) ?? null}
+          rank={rank}
+        />
       </section>
 
       {examOpen ? <Ensemble epoch={epoch ?? top?.epoch ?? null} onPick={setHash} /> : <WhyNoExam />}
 
-      <TopTable top={top} hash={hash} onPick={setHash} epoch={epoch} onEpoch={e => {
+      <TopTable
+        top={top}
+        hash={hash}
+        onPick={setHash}
+        epoch={epoch}
+        onEpoch={e => {
           setEpoch(e)
           setHash(null)
-        }} />
+        }}
+      />
 
       <RunIt />
 
       <footer className="mute" style={{ fontSize: 12.5, lineHeight: 1.7, maxWidth: '80ch' }}>
-        Genomes and verified scores come from the public Jetski ANN Explorer, which replays the exact core release for every solution. We re-run each brain with the scorer&apos;s rule from qubic/core and show it only when our error count equals the verified score. &ldquo;Hours it never saw&rdquo; are the hours after the task sequence ends; &ldquo;since it was found&rdquo; are the hours after the solution was published, which nobody could have fitted. The core has not published its live-call rule yet; what the network itself will call live from 18 November is a separate matter, kept in <a className="mute" href="/bpp9000#record" style={{ textDecoration: 'underline', textUnderlineOffset: 3 }}>the record</a>. An experiment, not financial advice.
+        Genomes and verified scores come from the public Jetski ANN Explorer, which replays the exact core release for every solution. We re-run each brain with
+        the scorer&apos;s rule from qubic/core and show it only when our error count equals the verified score. &ldquo;Hours it never saw&rdquo; are the hours
+        after the task sequence ends; &ldquo;since it was found&rdquo; are the hours after the solution was published, which nobody could have fitted. The core
+        has not published its live-call rule yet; what the network itself will call live from 18 November is a separate matter, kept in{' '}
+        <a className="mute" href="/bpp9000#record" style={{ textDecoration: 'underline', textUnderlineOffset: 3 }}>
+          the record
+        </a>
+        . An experiment, not financial advice.
       </footer>
     </div>
   )
@@ -157,11 +192,17 @@ function Ensemble({ epoch, onPick }: { epoch: number | null; onPick: (h: string)
           {n} brains voting
         </h2>
         <p className="mute" style={{ margin: '10px 0 0', fontSize: 14.5, lineHeight: 1.6 }}>
-          One brain could be luck. So the {n} best of the epoch vote every hour after their task: the side with more votes is the call, a tie is &ldquo;not sure&rdquo;. If the brains had learned something real about bitcoin, the crowd should beat any one of them.
+          One brain could be luck. So the {n} best of the epoch vote every hour after their task: the side with more votes is the call, a tie is &ldquo;not
+          sure&rdquo;. If the brains had learned something real about bitcoin, the crowd should beat any one of them.
         </p>
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: 18 }}>
-        <Big big={r ? pct(r.vote.rate) : '…'} label="The vote" lit small={r ? `${r.vote.hits.toLocaleString('en-US')} of ${r.vote.checked.toLocaleString('en-US')} hours it never saw` : 'counting…'} />
+        <Big
+          big={r ? pct(r.vote.rate) : '…'}
+          label="The vote"
+          lit
+          small={r ? `${r.vote.hits.toLocaleString('en-US')} of ${r.vote.checked.toLocaleString('en-US')} hours it never saw` : 'counting…'}
+        />
         <Big big={best ? pct(best.rate) : '…'} label="The best brain alone" small="the same hours" />
         <Big big="50%" label="A coin" small="the line to beat" />
       </div>
@@ -171,24 +212,37 @@ function Ensemble({ epoch, onPick }: { epoch: number | null; onPick: (h: string)
             Each voter&apos;s own exam
           </span>
           <div style={{ position: 'relative' }}>
-          <span aria-hidden style={{ position: 'absolute', left: 0, right: 0, bottom: 44, borderTop: '1px dashed rgba(243,228,206,.35)', pointerEvents: 'none' }} />
-          <div role="list" style={{ display: 'grid', gridTemplateColumns: `repeat(${n}, minmax(0, 1fr))`, gap: 4, alignItems: 'end', height: 88 }}>
-            {r.members.map((m, i) => {
-              const rate = m.exam.rate ?? 50
-              const h = Math.max(6, Math.min(100, 50 + (rate - 50) * 8))
-              return (
-                <button
-                  aria-label={`Brain ${i + 1}, ${pct(m.exam.rate)} on its exam. Put it under the glass.`}
-                  key={m.hash}
-                  onClick={() => onPick(m.hash)}
-                  role="listitem"
-                  style={{ height: `${h}%`, border: 0, padding: 0, cursor: 'pointer', borderRadius: '4px 4px 0 0', background: rate >= 50 ? 'linear-gradient(180deg, #FFC46B, rgba(232,145,46,.35))' : 'linear-gradient(180deg, rgba(185,174,207,.55), rgba(185,174,207,.15))' }}
-                  title={`${pct(m.exam.rate)} · ${m.hash.slice(0, 10)}…`}
-                  type="button"
-                />
-              )
-            })}
-          </div>
+            <span
+              aria-hidden
+              style={{ position: 'absolute', left: 0, right: 0, bottom: 44, borderTop: '1px dashed rgba(243,228,206,.35)', pointerEvents: 'none' }}
+            />
+            <div role="list" style={{ display: 'grid', gridTemplateColumns: `repeat(${n}, minmax(0, 1fr))`, gap: 4, alignItems: 'end', height: 88 }}>
+              {r.members.map((m, i) => {
+                const rate = m.exam.rate ?? 50
+                const h = Math.max(6, Math.min(100, 50 + (rate - 50) * 8))
+                return (
+                  <button
+                    aria-label={`Brain ${i + 1}, ${pct(m.exam.rate)} on its exam. Put it under the glass.`}
+                    key={m.hash}
+                    onClick={() => onPick(m.hash)}
+                    role="listitem"
+                    style={{
+                      height: `${h}%`,
+                      border: 0,
+                      padding: 0,
+                      cursor: 'pointer',
+                      borderRadius: '4px 4px 0 0',
+                      background:
+                        rate >= 50
+                          ? 'linear-gradient(180deg, #FFC46B, rgba(232,145,46,.35))'
+                          : 'linear-gradient(180deg, rgba(185,174,207,.55), rgba(185,174,207,.15))',
+                    }}
+                    title={`${pct(m.exam.rate)} · ${m.hash.slice(0, 10)}…`}
+                    type="button"
+                  />
+                )
+              })}
+            </div>
           </div>
           <div className="mute" style={{ fontSize: 12.5, marginTop: 6 }}>
             gold: above a coin · grey: below · dashed line: 50% · click a bar to put that brain under the glass
@@ -197,7 +251,8 @@ function Ensemble({ epoch, onPick }: { epoch: number | null; onPick: (h: string)
       )}
       {r && (
         <p className="mute" style={{ margin: 0, fontSize: 12.5, lineHeight: 1.6 }}>
-          Only brains we reproduced to the exact error and that share one task vote. Ties: {r.ties.toLocaleString('en-US')} hours, left out like a single brain&apos;s &ldquo;not sure&rdquo;. Re-counted every half hour.
+          Only brains we reproduced to the exact error and that share one task vote. Ties: {r.ties.toLocaleString('en-US')} hours, left out like a single
+          brain&apos;s &ldquo;not sure&rdquo;. Re-counted every half hour.
         </p>
       )}
     </section>
@@ -237,7 +292,13 @@ function RunIt() {
         </a>
         <br />
         Put it in the same folder as the brain. It needs Python 3.8 or newer (
-        <a className="mute" href="https://www.python.org/downloads/" rel="noopener noreferrer" style={{ textDecoration: 'underline', textUnderlineOffset: 3 }} target="_blank">
+        <a
+          className="mute"
+          href="https://www.python.org/downloads/"
+          rel="noopener noreferrer"
+          style={{ textDecoration: 'underline', textUnderlineOffset: 3 }}
+          target="_blank"
+        >
           python.org
         </a>
         ) and nothing else: no installs, no keys.
@@ -272,7 +333,8 @@ EXAM      1,441 of 2,983 hours right = 48.31%   (hours since 08 Jul 2026 it neve
           Run a brain yourself
         </h2>
         <p className="mute" style={{ margin: '10px 0 0', fontSize: 14.5, lineHeight: 1.6 }}>
-          The download is the brain itself: 32 neurons, who listens to whom, and each neuron&apos;s lookup table, exactly as the Qubic network stores it. A JSON viewer only shows numbers. To see it think, run it. You do not have to trust this page.
+          The download is the brain itself: every neuron, who listens to whom, and each neuron&apos;s lookup table, exactly as the Qubic network stores it. A
+          JSON viewer only shows numbers. To see it think, run it. You do not have to trust this page.
         </p>
       </div>
       <ol style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gap: 18 }}>
@@ -291,13 +353,16 @@ EXAM      1,441 of 2,983 hours right = 48.31%   (hours since 08 Jul 2026 it neve
         ))}
       </ol>
       <p className="mute" style={{ margin: 0, fontSize: 13, lineHeight: 1.65, maxWidth: '80ch' }}>
-        What it does: it ticks the network the way the core scores it (every neuron reads its three sources and looks up its answer; whenever the control neuron is not &ldquo;unsure&rdquo;, the output neuron is the call for the next hour), then fetches hourly BTC/USDT closes from Binance and grades every hour after the year the brain was grown on. Up means the rounded close is at or above the previous hour&apos;s. The homework is the Qubic network&apos;s own score, read from the file. The script is about 120 lines; read it before you run it.
+        What it does: it ticks the network the way the core scores it (every neuron reads its three sources and looks up its answer; whenever the control neuron
+        is not &ldquo;unsure&rdquo;, the output neuron is the call for the next hour), then fetches hourly BTC/USDT closes from Binance and grades every hour
+        after the year the brain was grown on. Up means the rounded close is at or above the previous hour&apos;s. The homework is the Qubic network&apos;s own
+        score, read from the file. The script is about 120 lines; read it before you run it.
       </p>
     </section>
   )
 }
 
-/* ---------------- the ring: 32 neurons ticking through the unseen hours ---------------- */
+/* ---------------- the ring: a 32-neuron brain ticking through the unseen hours (bigger ones show Pending) ---------------- */
 
 function Ring({ g, live }: { g: CheckedGenome | null; live: LiveResult | null }) {
   const [state, setState] = useState<Uint8Array | null>(null)
@@ -367,14 +432,28 @@ function Ring({ g, live }: { g: CheckedGenome | null; live: LiveResult | null })
   const hourNow = g ? hourOfIndex(g.task, idx - 1) : null
   return (
     <figure style={{ margin: 0, display: 'grid', gap: 10, justifyItems: 'center' }}>
-      <svg aria-label="The brain: 32 neurons, their wiring and their states, ticking hour by hour" role="img" style={{ width: '100%', maxWidth: 420, height: 'auto' }} viewBox="0 0 380 380">
+      <svg
+        aria-label="The brain: 32 neurons, their wiring and their states, ticking hour by hour"
+        role="img"
+        style={{ width: '100%', maxWidth: 420, height: 'auto' }}
+        viewBox="0 0 380 380"
+      >
         <circle cx={cx} cy={cy} fill="none" r={R + 22} stroke="rgba(255,200,140,.08)" />
         {g &&
           g.links.map(([t, slot, src], k) => {
             const a = pos(src)
             const b = pos(t)
             const lit = state && state[src] === 1
-            return <path d={`M${a.x},${a.y} Q${cx},${cy} ${b.x},${b.y}`} fill="none" key={k} stroke={lit ? 'rgba(255,196,107,.28)' : 'rgba(255,200,140,.07)'} strokeWidth={slot === 0 ? 1 : 0.7} style={{ transition: 'stroke .9s ease' }} />
+            return (
+              <path
+                d={`M${a.x},${a.y} Q${cx},${cy} ${b.x},${b.y}`}
+                fill="none"
+                key={k}
+                stroke={lit ? 'rgba(255,196,107,.28)' : 'rgba(255,200,140,.07)'}
+                strokeWidth={slot === 0 ? 1 : 0.7}
+                style={{ transition: 'stroke .9s ease' }}
+              />
+            )
           })}
         {Array.from({ length: N }, (_, n) => {
           const p = pos(n)
@@ -404,20 +483,39 @@ function Ring({ g, live }: { g: CheckedGenome | null; live: LiveResult | null })
           )
         })}
         <circle cx={cx} cy={cy} fill="rgba(11,10,14,.82)" r={86} />
-        <text className="nx" key={idx} fill={call == null ? 'var(--dim)' : call === 1 ? 'var(--hot)' : call === 0 ? 'var(--r)' : 'var(--dim)'} fontSize={call === 2 ? 28 : 42} fontWeight="300" textAnchor="middle" x={cx} y={cy + 8} style={{ fontFamily: 'var(--bpp-nx)', animation: 'bw-in .6s ease both' }}>
+        <text
+          className="nx"
+          key={idx}
+          fill={call == null ? 'var(--dim)' : call === 1 ? 'var(--hot)' : call === 0 ? 'var(--r)' : 'var(--dim)'}
+          fontSize={call === 2 ? 28 : 42}
+          fontWeight="300"
+          textAnchor="middle"
+          x={cx}
+          y={cy + 8}
+          style={{ fontFamily: 'var(--bpp-nx)', animation: 'bw-in .6s ease both' }}
+        >
           {!g ? '' : call === 1 ? '▲ UP' : call === 0 ? '▼ DOWN' : call === 2 ? 'NOT SURE' : ''}
         </text>
         <text fill="var(--dim)" fontSize="11" textAnchor="middle" x={cx} y={cy + 32}>
           {hourNow && idx > 0 ? `${hh(hourNow)} UTC` : g ? 'running the training year…' : 'loading the brain…'}
         </text>
         {here && here.hit != null && (
-          <text fill={here.hit ? 'var(--fil)' : 'var(--r)'} fontSize="11" key={`h${idx}`} style={{ animation: 'bw-in .6s ease .25s both' }} textAnchor="middle" x={cx} y={cy + 50}>
+          <text
+            fill={here.hit ? 'var(--fil)' : 'var(--r)'}
+            fontSize="11"
+            key={`h${idx}`}
+            style={{ animation: 'bw-in .6s ease .25s both' }}
+            textAnchor="middle"
+            x={cx}
+            y={cy + 50}
+          >
             bitcoin went {here.went ? 'up' : 'down'}: {here.hit ? 'right' : 'wrong'}
           </text>
         )}
       </svg>
       <figcaption className="mute" style={{ fontSize: 12.5, textAlign: 'center', maxWidth: '44ch', lineHeight: 1.5 }}>
-        Lit: 1. Dark: 0. Dotted: not sure. Every tick each neuron reads its three sources and answers from its 27-entry table. The clock neuron decides when the call neuron speaks.
+        Lit: 1. Dark: 0. Dotted: not sure. Every tick each neuron reads its three sources and answers from its 27-entry table. The clock neuron decides when the
+        call neuron speaks.
       </figcaption>
     </figure>
   )
@@ -433,10 +531,12 @@ function WhyNoExam() {
         Why the exam waits for 18 November
       </h2>
       <p style={{ margin: 0, fontSize: 15, lineHeight: 1.6, color: '#f3e4ce' }}>
-        Today&apos;s brains read no input at all. They are grown to replay one year of bitcoin hours from their own inner rhythm. Run past the end of that year, they cannot see a single new price, so any of them, good or bad, lands near a coin flip. Grading them on later hours would test nothing.
+        Today&apos;s brains read no input at all. They are grown to replay one year of bitcoin hours from their own inner rhythm. Run past the end of that year,
+        they cannot see a single new price, so any of them, good or bad, lands near a coin flip. Grading them on later hours would test nothing.
       </p>
       <p className="mute" style={{ margin: 0, fontSize: 14, lineHeight: 1.6 }}>
-        From epoch 240 the live feed gives the network the past hour, and the brains are judged on hours they could not have known. That is the exam, and it opens here then. Until then the honest out-of-sample number is the explorer&apos;s{' '}
+        From epoch 240 the live feed gives the network the past hour, and the brains are judged on hours they could not have known. That is the exam, and it
+        opens here then. Until then the honest out-of-sample number is the explorer&apos;s{' '}
         <a href="https://annexplorer.jetskipool.ai/epochs/239" rel="noopener noreferrer" style={{ color: 'var(--hot)' }} target="_blank">
           Factual Accuracy
         </a>
@@ -458,7 +558,8 @@ function Pending({ g }: { g: CheckedGenome }) {
         This epoch&apos;s brains run on core {g.source.coreVersion}: {g.n.toLocaleString('en-US')} neurons and a new prediction model.
       </p>
       <p className="mute" style={{ margin: 0, fontSize: 14, lineHeight: 1.6, maxWidth: '44ch' }}>
-        We are updating our replay to that core. Until our run gives the same score as the verified one, we show no exam here: a number we cannot reproduce is not a number. The explorer counts its own{' '}
+        We are updating our replay to that core. Until our run gives the same score as the verified one, we show no exam here: a number we cannot reproduce is
+        not a number. The explorer counts its own{' '}
         <a href={`https://annexplorer.jetskipool.ai/epochs/${g.epoch}`} rel="noopener noreferrer" style={{ color: 'var(--hot)' }} target="_blank">
           Factual Accuracy
         </a>{' '}
@@ -470,7 +571,23 @@ function Pending({ g }: { g: CheckedGenome }) {
 
 /* ---------------- the sheet: who, when, how good, download ---------------- */
 
-function Sheet({ g, live, busy, pending, examOpen, row, rank }: { g: CheckedGenome | null; live: LiveResult | null; busy: boolean; pending: boolean; examOpen: boolean; row: BrainRow | null; rank: number }) {
+function Sheet({
+  g,
+  live,
+  busy,
+  pending,
+  examOpen,
+  row,
+  rank,
+}: {
+  g: CheckedGenome | null
+  live: LiveResult | null
+  busy: boolean
+  pending: boolean
+  examOpen: boolean
+  row: BrainRow | null
+  rank: number
+}) {
   const r = g ?? row
   const frame = g?.task.frame ?? 8760
   const since = live?.sinceFound
@@ -501,22 +618,48 @@ function Sheet({ g, live, busy, pending, examOpen, row, rank }: { g: CheckedGeno
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 16 }}>
-        <Big big={r ? pct(accuracy(r, frame)) : '—'} label="Homework" small={r ? `of the training year, ${r.score.toLocaleString('en-US')} wrong hours of ${frame.toLocaleString('en-US')}${r.shift ? `, frame ${r.shift} hours in` : ''}` : ''} lit />
+        <Big
+          big={r ? pct(accuracy(r, frame)) : '—'}
+          label="Homework"
+          small={
+            r
+              ? `of the training year, ${r.score.toLocaleString('en-US')} wrong hours of ${frame.toLocaleString('en-US')}${r.shift ? `, frame ${r.shift} hours in` : ''}`
+              : ''
+          }
+          lit
+        />
         <Big
           big={pending ? 'soon' : !examOpen ? '18 Nov' : all ? pct(all.rate) : busy ? '…' : '—'}
           label="Exam"
-          small={pending ? 'shown once our replay matches the core' : !examOpen ? 'starts with the live feed: see below why' : all ? `on ${all.checked.toLocaleString('en-US')} hours it never saw, since ${live ? day(live.dataEnd) : ''}${all.unsure ? `, ${all.unsure} not sure` : ''}` : 'hours after the task ends'}
+          small={
+            pending
+              ? 'shown once our replay matches the core'
+              : !examOpen
+                ? 'starts with the live feed: see below why'
+                : all
+                  ? `on ${all.checked.toLocaleString('en-US')} hours it never saw, since ${live ? day(live.dataEnd) : ''}${all.unsure ? `, ${all.unsure} not sure` : ''}`
+                  : 'hours after the task ends'
+          }
         />
         <Big
           big={pending ? 'soon' : !examOpen ? '18 Nov' : since && since.checked ? pct(since.rate) : busy ? '…' : '—'}
           label="Since it was found"
-          small={pending ? 'shown once our replay matches the core' : !examOpen ? 'starts with the live feed' : since && since.checked ? `${since.checked} hours nobody could have fitted` : 'needs closed hours after the find'}
+          small={
+            pending
+              ? 'shown once our replay matches the core'
+              : !examOpen
+                ? 'starts with the live feed'
+                : since && since.checked
+                  ? `${since.checked} hours nobody could have fitted`
+                  : 'needs closed hours after the find'
+          }
         />
       </div>
 
       {all && all.checked >= 10 && (
         <p className="mute" style={{ margin: 0, fontSize: 13.5, lineHeight: 1.6 }}>
-          A coin lands on 50%. The chance a coin does at least this well over {all.checked.toLocaleString('en-US')} hours: <b style={{ color: 'var(--ink)', fontWeight: 600 }}>{luck == null ? '—' : luck < 0.001 ? 'under 0.1%' : pct(luck * 100)}</b>.
+          A coin lands on 50%. The chance a coin does at least this well over {all.checked.toLocaleString('en-US')} hours:{' '}
+          <b style={{ color: 'var(--ink)', fontWeight: 600 }}>{luck == null ? '—' : luck < 0.001 ? 'under 0.1%' : pct(luck * 100)}</b>.
         </p>
       )}
 
@@ -531,7 +674,11 @@ function Sheet({ g, live, busy, pending, examOpen, row, rank }: { g: CheckedGeno
                 {Array.from({ length: 24 }, (_, i) => {
                   const h = lamps[off + i - (48 - lamps.length)] ?? null
                   return (
-                    <i className={!h ? 'off' : h.hit ? 'hit' : 'miss'} key={i} title={h ? `${hh(h.hour)} UTC: called ${h.call === 1 ? 'UP' : 'DOWN'}, went ${h.went ? 'UP' : 'DOWN'}` : undefined}>
+                    <i
+                      className={!h ? 'off' : h.hit ? 'hit' : 'miss'}
+                      key={i}
+                      title={h ? `${hh(h.hour)} UTC: called ${h.call === 1 ? 'UP' : 'DOWN'}, went ${h.went ? 'UP' : 'DOWN'}` : undefined}
+                    >
                       {h ? (h.call === 1 ? '▲' : '▼') : ''}
                     </i>
                   )
@@ -539,7 +686,9 @@ function Sheet({ g, live, busy, pending, examOpen, row, rank }: { g: CheckedGeno
               </div>
             ))}
           </div>
-          <div className="mute" style={{ fontSize: 12.5, marginTop: 6 }}>lit: right · dark: wrong · newest at the right</div>
+          <div className="mute" style={{ fontSize: 12.5, marginTop: 6 }}>
+            lit: right · dark: wrong · newest at the right
+          </div>
         </div>
       )}
 
@@ -557,12 +706,17 @@ function Sheet({ g, live, busy, pending, examOpen, row, rank }: { g: CheckedGeno
         )}
         {g && (
           <span className="mute" style={{ fontSize: 12.5 }}>
-            {g.check.matches ? `our run: ${g.check.errors?.toLocaleString('en-US')} errors, equals the verified score` : g.check.errors == null ? 'our run could not be checked against the task' : `our run: ${g.check.errors} errors, the verified score says ${g.score}`}
+            {g.check.matches
+              ? `our run: ${g.check.errors?.toLocaleString('en-US')} errors, equals the verified score`
+              : g.check.errors == null
+                ? 'our run could not be checked against the task'
+                : `our run: ${g.check.errors} errors, the verified score says ${g.score}`}
           </span>
         )}
       </div>
       <p className="mute" style={{ margin: 0, fontSize: 12.5, lineHeight: 1.6 }}>
-        A small JSON file: {g?.n ?? 32} neurons, each with its sources, its 27-entry table and its start state, plus the rule to run it. Anyone can replay the homework and the exam.
+        A small JSON file: {g?.n ?? 32} neurons, each with its sources, its 27-entry table and its start state, plus the rule to run it. Anyone can replay the
+        homework and the exam.
       </p>
     </div>
   )
@@ -574,7 +728,16 @@ function Big({ big, small, lit, label }: { big: string; small: string; lit?: boo
       <span className="label" style={{ display: 'block', marginBottom: 6 }}>
         {label}
       </span>
-      <b className={`nx${lit ? ' lit' : ''}`} style={{ display: 'block', fontWeight: lit ? 300 : 400, fontSize: lit ? 'clamp(44px, 6vw, 60px)' : 'clamp(30px, 4vw, 42px)', lineHeight: 1, color: lit ? undefined : 'var(--fil)' }}>
+      <b
+        className={`nx${lit ? ' lit' : ''}`}
+        style={{
+          display: 'block',
+          fontWeight: lit ? 300 : 400,
+          fontSize: lit ? 'clamp(44px, 6vw, 60px)' : 'clamp(30px, 4vw, 42px)',
+          lineHeight: 1,
+          color: lit ? undefined : 'var(--fil)',
+        }}
+      >
         {big}
       </b>
       <span className="mute" style={{ fontSize: 12.5, lineHeight: 1.45, display: 'block', marginTop: 6 }}>
@@ -586,7 +749,19 @@ function Big({ big, small, lit, label }: { big: string; small: string; lit?: boo
 
 /* ---------------- the shelf: this epoch's best, and the epochs we keep ---------------- */
 
-function TopTable({ top, hash, onPick, epoch, onEpoch }: { top: Top | null; hash: string | null; onPick: (h: string) => void; epoch: number | null; onEpoch: (e: number | null) => void }) {
+function TopTable({
+  top,
+  hash,
+  onPick,
+  epoch,
+  onEpoch,
+}: {
+  top: Top | null
+  hash: string | null
+  onPick: (h: string) => void
+  epoch: number | null
+  onEpoch: (e: number | null) => void
+}) {
   const epochs = top?.epochs ?? []
   const shown = top?.epoch ?? null
   return (
@@ -596,16 +771,31 @@ function TopTable({ top, hash, onPick, epoch, onEpoch }: { top: Top | null; hash
           {shown ? `Epoch ${shown}: the best brains` : 'The best brains'}
         </h2>
         <span className="mute" style={{ fontSize: 13 }}>
-          {top ? `${top.solutions.toLocaleString('en-US')} networks grown this epoch${top.live ? '' : ', from our shelf'}. Click a row to put it under the glass.` : 'Loading…'}
+          {top
+            ? `${top.solutions.toLocaleString('en-US')} networks grown this epoch${top.live ? '' : ', from our shelf'}. Click a row to put it under the glass.`
+            : 'Loading…'}
         </span>
       </div>
       {epochs.length > 0 && (
         <div role="group" aria-label="Epochs on the shelf" style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-          <button aria-pressed={epoch == null} className={`btn${epoch == null ? ' btn-main' : ''}`} onClick={() => onEpoch(null)} style={{ minHeight: 34, padding: '4px 12px', fontSize: 13 }} type="button">
+          <button
+            aria-pressed={epoch == null}
+            className={`btn${epoch == null ? ' btn-main' : ''}`}
+            onClick={() => onEpoch(null)}
+            style={{ minHeight: 34, padding: '4px 12px', fontSize: 13 }}
+            type="button"
+          >
             now
           </button>
           {epochs.map(e => (
-            <button aria-pressed={epoch === e} className={`btn${epoch === e ? ' btn-main' : ''}`} key={e} onClick={() => onEpoch(e)} style={{ minHeight: 34, padding: '4px 12px', fontSize: 13 }} type="button">
+            <button
+              aria-pressed={epoch === e}
+              className={`btn${epoch === e ? ' btn-main' : ''}`}
+              key={e}
+              onClick={() => onEpoch(e)}
+              style={{ minHeight: 34, padding: '4px 12px', fontSize: 13 }}
+              type="button"
+            >
               {e}
             </button>
           ))}
@@ -631,7 +821,21 @@ function TopTable({ top, hash, onPick, epoch, onEpoch }: { top: Top | null; hash
                 <tr key={r.hash} onClick={() => onPick(r.hash)} style={{ cursor: 'pointer', background: on ? 'rgba(255,196,107,.07)' : undefined }}>
                   <td>{i + 1}</td>
                   <td>
-                    <button className="mute" onClick={() => onPick(r.hash)} style={{ background: 'none', border: 0, padding: 0, font: 'inherit', color: on ? 'var(--hot)' : 'var(--ink)', cursor: 'pointer', textDecoration: on ? 'none' : 'underline', textUnderlineOffset: 3 }} type="button">
+                    <button
+                      className="mute"
+                      onClick={() => onPick(r.hash)}
+                      style={{
+                        background: 'none',
+                        border: 0,
+                        padding: 0,
+                        font: 'inherit',
+                        color: on ? 'var(--hot)' : 'var(--ink)',
+                        cursor: 'pointer',
+                        textDecoration: on ? 'none' : 'underline',
+                        textUnderlineOffset: 3,
+                      }}
+                      type="button"
+                    >
                       {short(r.hash, 10, 4)}
                     </button>
                   </td>
@@ -656,7 +860,8 @@ function TopTable({ top, hash, onPick, epoch, onEpoch }: { top: Top | null; hash
         </table>
       </div>
       <p className="mute" style={{ margin: 0, fontSize: 12.5, lineHeight: 1.6 }}>
-        Ranked as the core ranks them: frame progress first, then fewer wrong hours. Homework is the share of the training year the brain fits; it says nothing about the exam. Each epoch&apos;s list is kept here when it closes: a museum of brains, one shelf per week.
+        Ranked as the core ranks them: frame progress first, then fewer wrong hours. Homework is the share of the training year the brain fits; it says nothing
+        about the exam. Each epoch&apos;s list is kept here when it closes: a museum of brains, one shelf per week.
       </p>
     </section>
   )
