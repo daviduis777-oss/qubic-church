@@ -93,6 +93,14 @@ export const MOMENTS: Moment[] = [
 
   /* ---------- 2026 ---------- */
   {
+    at: '2026-11-13T19:17:00Z',
+    title: 'Neuraxon 3.0 × Aigarth',
+    line: 'José Sánchez and David Vivancos show where the two lines meet. Neuraxon 3.0 learns while it runs; Aigarth stays fixed and improves by search. What they already share: ternary code, local wiring where no unit sees the whole network, and results anyone can re-run. Their own next step: “smaller networks, closer to Aigarth’s size.”',
+    kind: 'science',
+    major: true,
+    source: { label: 'José Sánchez on X, 13 Nov 2026', href: 'https://x.com/josesanchezhb' },
+  },
+  {
     at: '2026-11-13T18:41:00Z',
     title: 'The task file is gone',
     line: 'cyber-pc opens the live feed in the core: nodes take the hourly BTC/USDT price from the Binance oracle, and the task grows by one hour at a time. Each solution is graded on the hours known before it, and a child must beat its parent on that same new data. Not merged yet.',
