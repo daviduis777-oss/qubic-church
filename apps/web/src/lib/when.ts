@@ -93,7 +93,7 @@ export const MOMENTS: Moment[] = [
 
   /* ---------- 2026 ---------- */
   {
-    at: '2026-11-14',
+    at: '2026-11-13T18:41:00Z',
     title: 'The task file is gone',
     line: 'cyber-pc opens the live feed in the core: nodes take the hourly BTC/USDT price from the Binance oracle, and the task grows by one hour at a time. Each solution is graded on the hours known before it, and a child must beat its parent on that same new data. Not merged yet.',
     kind: 'aigarth',
