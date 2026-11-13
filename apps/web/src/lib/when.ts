@@ -93,6 +93,14 @@ export const MOMENTS: Moment[] = [
 
   /* ---------- 2026 ---------- */
   {
+    at: '2026-11-14',
+    title: 'The task file is gone',
+    line: 'cyber-pc opens the live feed in the core: nodes take the hourly BTC/USDT price from the Binance oracle, and the task grows by one hour at a time. Each solution is graded on the hours known before it, and a child must beat its parent on that same new data. Not merged yet.',
+    kind: 'aigarth',
+    major: true,
+    source: { label: 'qubic/core #1070: live feed price', href: 'https://github.com/qubic/core/pull/1070' },
+  },
+  {
     at: '2026-11-11T12:00:00Z',
     title: '1024 neurons',
     epoch: 239,
