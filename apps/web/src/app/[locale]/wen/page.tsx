@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { WhenApp } from '@/components/when/WhenApp'
 import { jsonLd } from '@/lib/json-ld'
+import { ogFor } from '@/lib/og-pages'
 import { WEN_MD_URL, WEN_URL, wenLd } from '@/lib/when-text'
 
 const TITLE = 'WEN? Every date that matters for Qubic and Aigarth'
@@ -16,9 +17,9 @@ export const metadata: Metadata = {
     url: WEN_URL,
     title: TITLE,
     description: DESCRIPTION,
-    images: [{ url: 'https://qubic.church/og-qubic-church.jpg', width: 1200, height: 630, alt: 'WEN? Every date that matters for Qubic and Aigarth' }],
+    images: ogFor('wen', TITLE).images,
   },
-  twitter: { card: 'summary_large_image', title: TITLE, description: DESCRIPTION, images: ['https://qubic.church/og-qubic-church.jpg'] },
+  twitter: { card: 'summary_large_image', title: TITLE, description: DESCRIPTION, images: ogFor('wen').twitter.images },
 }
 
 export const revalidate = 3600

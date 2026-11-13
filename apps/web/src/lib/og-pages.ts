@@ -120,6 +120,14 @@ export const OG_PAGES: Record<string, OgPage> = {
     theme: 'blue',
     lamp: true,
   },
+  wen: {
+    path: '/wen',
+    eyebrow: 'The calendar',
+    title: 'WEN?',
+    sub: 'Every date that matters for Qubic and Aigarth: 18\u00a0November, 25\u00a0November, 13\u00a0April\u00a02027. Each with its source.',
+    theme: 'gold',
+    lamp: true,
+  },
   monitor: {
     path: '/monitoring',
     eyebrow: 'Live network',
